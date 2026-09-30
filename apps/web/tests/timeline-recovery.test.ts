@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { setImmediate } from "node:timers/promises";
 import { createSnapshotReconciler } from "../src/hooks/snapshotReconciler";
+import { loadEarlierTimelinePage } from "../src/hooks/loadEarlierTimelinePage";
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
@@ -200,4 +201,106 @@ test("an invalidation at snapshot completion cannot get stranded behind the fini
   await sync.invalidate();
   assert.equal(attempts, 2);
   assert.deepEqual(published, [1, 2]);
+});
+
+test("a complete snapshot defeats a late earlier-page cursor and a late earlier-page failure", async () => {
+  for (const outcome of ["success", "failure"] as const) {
+    const earlier = deferred<{ items: string[]; nextCursor: string | null }>();
+    let revision = 1;
+    let items = ["latest"];
+    let cursor: string | null = "older-cursor";
+    let error: unknown = null;
+    const pending = loadEarlierTimelinePage({
+      readVersion: () => ({ generation: 1, revision }),
+      load: () => earlier.promise,
+      onPage: (page) => {
+        items.push(...page.items);
+        cursor = page.nextCursor;
+        error = null;
+      },
+      onError: (value) => {
+        error = value;
+      },
+    });
+    const snapshot = createSnapshotReconciler({
+      load: async () => ["historical backfill", "earlier", "latest", "new"],
+      onValue: (fresh) => {
+        revision++;
+        items = fresh;
+        cursor = null;
+        error = null;
+      },
+      onError: (value) => {
+        error = value;
+      },
+      onSyncing: () => {},
+    });
+    await snapshot.invalidate();
+    if (outcome === "success")
+      earlier.resolve({
+        items: ["earlier"],
+        nextCursor: "obsolete-tail-cursor",
+      });
+    else earlier.reject(new Error("NETWORK_ERROR"));
+    await pending;
+    assert.deepEqual(items, [
+      "historical backfill",
+      "earlier",
+      "latest",
+      "new",
+    ]);
+    assert.equal(cursor, null, outcome);
+    assert.equal(error, null, outcome);
+    snapshot.dispose();
+  }
+});
+
+test("normal earlier pages still merge, preserve a failed-page cursor and allow retry", async () => {
+  let items = ["latest"];
+  let cursor: string | null = "older-cursor";
+  let error: unknown = null;
+  let failed = true;
+  const attempt = () =>
+    loadEarlierTimelinePage({
+      readVersion: () => ({ generation: 1, revision: 1 }),
+      load: async () => {
+        if (failed) throw new Error("temporary page failure");
+        return { items: ["earlier"], nextCursor: "last-page-cursor" };
+      },
+      onPage: (page) => {
+        items.push(...page.items);
+        cursor = page.nextCursor;
+        error = null;
+      },
+      onError: (value) => {
+        error = value;
+      },
+    });
+  await attempt();
+  assert.deepEqual(items, ["latest"]);
+  assert.equal(cursor, "older-cursor");
+  assert.match(String(error), /temporary page failure/);
+  failed = false;
+  await attempt();
+  assert.deepEqual(items, ["latest", "earlier"]);
+  assert.equal(cursor, "last-page-cursor");
+  assert.equal(error, null);
+});
+
+test("switching group invalidates an earlier-page completion without requiring another snapshot", async () => {
+  const earlier = deferred<string>();
+  let generation = 1;
+  const values: string[] = [];
+  const errors: unknown[] = [];
+  const pending = loadEarlierTimelinePage({
+    readVersion: () => ({ generation, revision: 1 }),
+    load: () => earlier.promise,
+    onPage: (value) => values.push(value),
+    onError: (value) => errors.push(value),
+  });
+  generation++;
+  earlier.resolve("old group");
+  await pending;
+  assert.deepEqual(values, []);
+  assert.deepEqual(errors, []);
 });

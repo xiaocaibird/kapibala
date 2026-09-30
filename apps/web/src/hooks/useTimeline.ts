@@ -4,6 +4,7 @@ import { messagesSchema, type Message } from "../api/schemas";
 import { useLive } from "../state/live";
 import { mergeMessages } from "../api/messages";
 import { createSnapshotReconciler } from "./snapshotReconciler";
+import { loadEarlierTimelinePage } from "./loadEarlierTimelinePage";
 import type { SnapshotEvidence } from "../attention/model";
 
 interface TimelineSnapshot {
@@ -129,19 +130,25 @@ export function useTimeline(groupId: string) {
     const current = generation.current;
     setLoadingEarlier(true);
     try {
-      const page = await request(
-        `${path}?limit=50&before=${encodeURIComponent(cursor)}`,
-        messagesSchema,
-        { signal: lifetime.current?.signal },
-      );
-      if (generation.current === current) {
-        // Old snapshot rows must not replace newer delivery state or corrected sentAt.
-        setItems((existing) => mergeMessages(existing, page.items, false));
-        setCursor(page.nextCursor);
-        setError(null);
-      }
-    } catch (value) {
-      if (generation.current === current) setError(value);
+      await loadEarlierTimelinePage({
+        readVersion: () => ({
+          generation: generation.current,
+          revision: snapshotRevision.current,
+        }),
+        load: () =>
+          request(
+            `${path}?limit=50&before=${encodeURIComponent(cursor)}`,
+            messagesSchema,
+            { signal: lifetime.current?.signal },
+          ),
+        onPage: (page) => {
+          // Old snapshot rows must not replace newer delivery state or corrected sentAt.
+          setItems((existing) => mergeMessages(existing, page.items, false));
+          setCursor(page.nextCursor);
+          setError(null);
+        },
+        onError: setError,
+      });
     } finally {
       if (generation.current === current) setLoadingEarlier(false);
     }
