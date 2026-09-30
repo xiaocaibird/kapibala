@@ -12,7 +12,7 @@
 | 核对十一项可靠性缺陷的修复与回归 | [可靠性复查记录](reliability-review.md) |
 | 核对目标、固定约束、阶段与协作要求 | [工程要求](engineering-requirements.md) |
 | 追踪用户新增功能、实施状态与本轮单点反馈 | [需求变更记录](change-requests.md) |
-| 查看已批准实施的群目录排序、搜索、分页与表单保护 | [群列表与资料完善方案](group-directory-profile-proposal.md)；[待验证场景GD01–GD12](acceptance.md#group-directory-acceptance) |
+| 查看已批准实施的群目录排序、搜索、分页与表单保护 | [群列表与资料完善方案](group-directory-profile-proposal.md)；[验证范围与待验项GD01–GD12](acceptance.md#group-directory-acceptance) |
 | 区分用户已确认决定与暂定技术选择 | [决策与变更记录](decisions.md) |
 | 理解后端及控制台的接口依赖 | [模块协作接口](module-interfaces.md) |
 | 理解状态、发送、群任务和消息恢复 | [网关设计](gateway-design.md) |
@@ -22,29 +22,32 @@
 | 核对本轮实际环境与选择依据 | [工具链记录](toolchain.md) |
 | 查看固定的完整原始要求 | [原始需求（只读）](original-interview-question.md) |
 
-## 代码与命令执行位置
+<a id="代码与命令执行位置"></a>
+## 当前演示与代码位置
 
-所有文档中的 `apps/`、`packages/`、`db/`、`scripts/`、`tests/` 与根README路径均相对于完整代码仓库；模块文件的简写在需求矩阵中另列映射。执行命令前用 `git branch --show-current`、`git rev-parse HEAD` 核对当前位置；完整安装和验证命令见[项目README](../README.md)。
+当前演示已于**2026-09-30 22:18:35（北京时间）**从main的`9bc34fd`启动，schemaVersion为6，控制台HTTP200。父进程38119、模拟38120、API38121、Vite38122；入口[本地控制台](http://127.0.0.1:5173)，管理员`admin/admin`，只读账号`viewer/viewer`。启动源码、产品树及进程以[运行证据](evidence/group-directory-rollout.json)和main `.runtime/runtime-manifest.json`为准，文档提交不会自动重启服务。
 
-| 用途 | 本地路径 | 版本说明 |
+当前main最终源码为`028a2e8`，Vite实际提供该前端源码，manifest已记录`frontendSourceCommit`；API仍运行22:18:35启动的`9bc34fd`，没有因纯前端修正再次重启。群目录排序、四字段搜索、游标分页及两处表单保护已实现。028a2e8恢复原创建任务`kapibala:createJob` sessionStorage跨整页刷新找回，并捕获存储异常；目录关键词/方向/页仍仅在本次登录内存保留。补充build/typecheck和前端38/38通过，独立新QA确认仅1次创建POST、reload同任务保留、隐藏后reload不再出现，详见验证记录。真实存储拒绝浏览器场景未执行，防护只作源码审阅证据。
+
+| 用途 | 本地路径 | 版本与执行边界 |
 |---|---|---|
-| 本地main及当前演示目录 | `/Users/zcm/Desktop/kapibala` | 群资料扩展已本地合入；20:57:22启动源码7efdbf3，产品源码与已验证2d67500一致 |
-| 发布验证工作树 | `/Users/zcm/.codex/worktrees/platform-gateway/kapibala` | `agent/group-metadata-release`；本批集成及隔离验证在此执行 |
-| 历史实施目录 | `/Users/zcm/.codex/worktrees/42fe/kapibala` | 旧演示已停止；保留实施历史和较早日志，不再从此目录启动默认端口 |
+| main及当前演示 | `/Users/zcm/Desktop/kapibala` | 本次先ff-only到9bc34fd并启动API，后ff到028a2e8更新Vite前端；默认端口只从此目录启动 |
+| 群目录集成与文档 | `/Users/zcm/.codex/worktrees/42fe/kapibala` | `agent/group-directory-release`；隔离验证后集成，不在此启动第二套默认端口 |
+| 历史群资料验证 | `/Users/zcm/.codex/worktrees/platform-gateway/kapibala` | 当时群资料集成记录保留；当前是否复用以对应工作树实际状态为准，不视为默认运行目录 |
 
-服务已运行，直接访问 [本地控制台](http://127.0.0.1:5173)，管理员 `admin/admin`，只读账号 `viewer/viewer`。2026-09-30 **20:57:22（北京时间）**从main的 `7efdbf3` 启动本批群资料功能，产品源码与已验证 `2d67500` 一致：父进程58240、模拟服务58241、业务API58242、Vite58243，健康检查schemaVersion为5。运行manifest在main的 `.runtime/runtime-manifest.json`，后续文档提交不改变该次已加载产品源码。
+更新前四类在途任务再次核对为0；备份在main `.runtime/backups/2026-09-30-before-group-directory`，65327字节PG归档可列目录。006迁移重复两次，17表业务及auth行哈希不变，4个旧群和其中3个无名称/3个无简介保留，两个模拟器JSON哈希不变。更新后独立viewer浏览器看到4群；[主实例截图](evidence/group-directory-main.png)和运行记录保留范围。未写入演示业务数据或操作用户Chrome；备份可读不等于完整灾难恢复演练。
 
-群名称、简介、创建时间与变更台账已交付，具体规则和待确认项见[CR-001–CR-005](change-requests.md)。迁移005只增加两个可空本地字段；更新前已备份PG及模拟器状态，17张业务与会话表的既有字段规范化JSON在迁移前后完全一致，4个旧群保持无名称/简介且创建时间不变。用户新群及“你好，我是用户4”消息已在更新后只读核对；两个模拟器文件备份与启动后哈希相同。[本批运行证据](evidence/group-metadata-rollout.json)记录版本、进程、备份、保留核对和独立页面结果。
+所有`apps/`、`packages/`、`db/`、`scripts/`、`tests/`及根README路径相对完整仓库。执行命令前核对`git branch --show-current`、`git rev-parse HEAD`及运行manifest；安装和冷启动见[项目README](../README.md)，只有服务未运行时才启动，避免不同工作树争用默认端口。
 
-19:57:51启动的9befc8a、父6107/API6110等属于上一轮运行，见[历史统一演示证据](evidence/demo-verification.json)。此前开发者新增的复验群及用户数据均保留，不回删历史数据。
+20:57:22的7efdbf3/schema5群资料版本及19:57:51的9befc8a/schema4均已成为历史，分别见[群资料运行证据](evidence/group-metadata-rollout.json)、[基础运行证据](evidence/demo-verification.json)。既有业务与用户验收记录保留，不将后续数据变化追溯为当时计数。
 
-原始目录的文档入口为 `/Users/zcm/Desktop/kapibala/docs/README.md`。后续本地启动默认使用此main目录；只有服务未运行时才执行冷启动命令，不要同时从两个工作树启动默认端口。
-
-后续群目录批次正在 `agent/group-directory-release`（`/Users/zcm/.codex/worktrees/42fe/kapibala`）实施，起点`324486b`、契约`c4831e0`。CR-007–010已批准实施，验证与演示切换尚待单独留证；本段不把旧20:57:22运行记录更新成新功能已上线。提醒、其他产品及架构方案仍按各自待审索引保留。
+提醒专项已经在另一线程获得独立实施授权，本批未合入提醒代码或交付该能力；其负责人继续维护范围及进度。后续PI-01及PI-02状态/Agent开关筛选另获独立授权，交由后续分支；不并入本批已测范围。其他未采纳产品/架构建议仍按各自记录评审。
 
 ## 来源与证据边界
 
-本批 `2d67500` 构建、类型和原文校验通过，独立临时base库常规143项登记、140通过、3跳过、0失败，111.872秒；新增字段创建/编辑/清空、旧群回退、跨日时间和viewer只读通过独立浏览器检查，见[本批验证](evidence/group-metadata-verification.json)。用户对新群资料功能仍待验收。
+群目录完整套件从`3486a11`启动，执行期间仅追加JobProgress一句文案，完成时HEAD为`9bc34fd`；未重新启动9bc34fd的exact-head全套。该次169登记/166通过/3旧计时跳过/0失败，约112.306秒；build/typecheck在3486a11通过，其后9bc34fd仅JobProgress文案。实际命令、独立base删除、18项目录前端与真实PG16专项，以及隔离浏览器范围见[验证证据](evidence/group-directory-verification.json)和[GD01–GD12](acceptance.md#group-directory-acceptance)。QA服务及临时数据库已清理。最终028a2e8另通过build/typecheck、前端38/38及独立任务找回浏览器复验；未重跑完整后端套件，不能将上述跨提交执行的169项改记为028a2e8全套。两次QA及临时库均清理，用户人工验收仍待进行。
+
+上一批群资料 `2d67500` 构建、类型和原文校验通过，独立临时base库常规143项登记、140通过、3跳过、0失败，111.872秒；新增字段创建/编辑/清空、旧群回退、跨日时间和viewer只读通过独立浏览器检查，见[本批验证](evidence/group-metadata-verification.json)。用户对新群资料功能仍待验收。
 
 文档由最初工程基线持续更新，最新源码版本、测试命令、日志、浏览器场景及待验范围集中记录在[需求矩阵](requirements-matrix.md)。较早日志保留其时间和覆盖范围，不能证明后来发现的并发或故障窗口；R11活动时钟接管初始化竞态已在候选`f52faec`修复，真实PG屏障回归与模块检查通过；最终82312b9隔离基库常规128项登记、125通过、3跳过、0失败，f52faec相同产品源的独立真实长计时3/3通过，新版演示关键流程已由开发者复验通过，用户人工验收仍待进行。十一项实现缺陷单独记录在可靠性复查表，不与外部协议本身缺少判定证据的限制混同。
 

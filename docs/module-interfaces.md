@@ -16,10 +16,11 @@ MessagingService.enqueueSend(input,tx?) 返回公开 Message（包含稳定 id�
 
 ## 本批群 metadata 契约变更（已实现，待用户验收）
 
-[CR-001、CR-002、CR-005](change-requests.md)已为 Group 增加本地可空名称、简介和 `createdAt: string`；日期仍按 ISO UTC 输出，取已有 `groups.created_at`。创建请求可省略新字段；PATCH 未提供的字段保持原值，简介显式清空才写空值。名称/简介不发送到 gateway，旧ID契约不变。字段校验建议、数据保留及最终实现提交以台账为准，当前schema5演示已启用，见[运行证据](evidence/group-metadata-rollout.json)。
+[CR-001、CR-002、CR-005](change-requests.md)已为 Group 增加本地可空名称、简介和 `createdAt: string`；日期仍按 ISO UTC 输出，取已有 `groups.created_at`。创建请求可省略新字段；PATCH 未提供的字段保持原值，简介显式清空才写空值。名称/简介不发送到 gateway，旧ID契约不变。字段校验建议、数据保留及最终实现提交以台账为准，当次schema5演示已启用，历史见[资料运行证据](evidence/group-metadata-rollout.json)；当前schema6运行见[群目录记录](evidence/group-directory-rollout.json)。
 
-## 群目录增量契约（已批准实施，验证待完成）
+<a id="群目录增量契约已批准实施验证待完成"></a>
+## 群目录增量契约（已实现并切换演示）
 
 共享`GroupDirectoryItem`及`GroupDirectoryPage`已由`c4831e0`定义：新 `GET /api/group-directory?pageSize&order&q&cursor` 返回 `{items,nextCursor}`。`pageSize`为1–50整数、默认20，`order`为asc/desc、默认desc；q首尾trim、内部空白保留、最多500并拒NUL，按名称/简介/两个ID不敏感字面包含搜索。原 `GET /api/groups` 数组及详情/写接口不变。
 
-目录摘要提供成员数及活动run ID，不返回完整成员数组；服务端按created_at方向、id始终ASC，用UTC六位微秒边界续页。cursor v1严格校验字段和值，绑定保留原大小写的trim后q、order、pageSize；每次请求仍鉴权，编码不是安全签名。正常活数据分页不是消息快照分页，不提供total或随机跳页。接口及客户端刷新/过期规则以[批准方案](group-directory-profile-proposal.md#2-目录接口与查询语义)为准；实现与GD01–GD12证据待补，未声明新端点已验证上线。
+目录摘要提供成员数及活动run ID，不返回完整成员数组；服务端按created_at方向、id始终ASC，用UTC六位微秒边界续页。cursor v1严格校验字段和值，绑定保留原大小写的trim后q、order、pageSize；每次请求仍鉴权，编码不是安全签名。正常活数据分页不是消息快照分页，不提供total或随机跳页。接口及客户端刷新/过期规则以[批准方案](group-directory-profile-proposal.md#2-目录接口与查询语义)为准；f7045d0实现已由真实PG相关场景验证，前端3486a11的控制器及独立浏览器证据见[GD01–GD12](acceptance.md#group-directory-acceptance)；未验细项保留。22:18:35已从main 9bc34fd启动schema6演示，实际保留与只读冒烟见[运行记录](evidence/group-directory-rollout.json)；用户验收仍待进行。
