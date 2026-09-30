@@ -1,5 +1,5 @@
 import type { AppContext } from '../../core/context.js';
-import type { Queryable } from '../../core/db.js';
+import { currentOperationSignal, type Queryable } from '../../core/db.js';
 import { AppError, RemoteError } from '../../core/errors.js';
 import type { MessagingService } from '../../core/messaging.js';
 import type { AgentRun, Message } from '../../../../../packages/contracts/src/index.js';
@@ -44,11 +44,14 @@ export class AgentTools {
       attempts++;
       await this.ctx.db.query('UPDATE agent_steps SET state=\'auditing\',audit_attempts=$3 WHERE run_id=$1 AND ordinal=$2', [run.id, step.ordinal, attempts]);
       let verdict: 'pass' | 'fail' | undefined;
+      const operation = currentOperationSignal();
+      const timeout = AbortSignal.timeout(Math.min(5000, Math.max(1, left)));
       try {
-        const response = await fetch(`${this.ctx.agent.baseUrl}/agent/audit`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text, groupId: run.group_id }), signal: AbortSignal.timeout(Math.min(5000, Math.max(1, left))) });
+        const response = await fetch(`${this.ctx.agent.baseUrl}/agent/audit`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text, groupId: run.group_id }), signal: operation ? AbortSignal.any([timeout, operation]) : timeout });
         const raw = await response.text(); const parsed = response.ok ? auditSchema.safeParse(JSON.parse(raw) as unknown) : null;
         if (parsed?.success) verdict = parsed.data.verdict;
-      } catch { /* An uncertain audit response grants no permission. */ }
+      } catch { operation?.throwIfAborted(); /* An uncertain audit response grants no permission. */ }
+      operation?.throwIfAborted();
       if (verdict) { await this.ctx.db.query('UPDATE agent_steps SET audit_verdict=$3,state=\'ready\' WHERE run_id=$1 AND ordinal=$2', [run.id, step.ordinal, verdict]); return verdict; }
     }
     await this.host.completeStep(run, step, toolError('AUDIT_REJECTED', 'Audit service returned no conclusive verdict after three attempts.', 'The run is blocked; no side effect was executed.'));
@@ -113,8 +116,17 @@ export class AgentTools {
       await tx.query('UPDATE agent_steps SET state=\'executing\',intent=$3 WHERE run_id=$1 AND ordinal=$2', [run.id, step.ordinal, JSON.stringify({ accountId, targetPlatformUserId: input.platform_user_id })]);
     });
     if (denied) { await this.host.completeStep(run, step, denied); return; }
-    try { await this.messaging.kick({ groupId: run.group_id, accountId: accountId!, targetPlatformUserId: input.platform_user_id }); }
+    const deadline = AbortSignal.timeout(Math.max(1, this.host.remaining(run)));
+    try { await this.messaging.kick({ groupId: run.group_id, accountId: accountId!, targetPlatformUserId: input.platform_user_id }, { signal: deadline }); }
     catch (error) {
+      currentOperationSignal()?.throwIfAborted();
+      if (deadline.aborted) {
+        // Budget exhaustion ends the run, not the uncertain external effect. Keep
+        // its intent as executing so a later process can never replay this kick.
+        await this.ctx.db.query('UPDATE agent_steps SET result_summary=$3 WHERE run_id=$1 AND ordinal=$2', [run.id, step.ordinal, 'Activity budget ended while the kick outcome remained unknown; this intent is not replayed.']);
+        await this.host.pause(run, 'The activity budget expired during a kick. Its external result remains unknown and the saved intent will not be replayed.');
+        await this.host.finish(run, 'failed', 'wall_clock'); return;
+      }
       const code = error instanceof RemoteError || error instanceof AppError ? error.code : 'UNKNOWN';
       if ((error instanceof RemoteError && error.status >= 500) || ['NETWORK_TIMEOUT', 'UNKNOWN', 'KICK_UNKNOWN', 'HTTP_503', 'SERVICE_UNAVAILABLE'].includes(code)) { await this.host.pause(run, 'The dispatched kick has no provable outcome; automatic replay is paused.'); return; }
       const mapped = ['OWNER_LEFT', 'NO_PERMISSION', 'GROUP_UNREACHABLE'].includes(code) ? code : 'SEND_FAILED';

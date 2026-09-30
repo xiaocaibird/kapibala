@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { FastifyInstance } from 'fastify';
 import type { PoolClient } from 'pg';
 import type { AppContext } from '../../core/context.js';
-import { emit, type Queryable } from '../../core/db.js';
+import { currentOperationSignal, emit, type Queryable } from '../../core/db.js';
 import { AppError } from '../../core/errors.js';
 import type { MessagingService } from '../../core/messaging.js';
 import type { AgentRun } from '../../../../../packages/contracts/src/index.js';
@@ -144,10 +144,13 @@ export class AgentModule {
   private async turn(run: RunRow, timeoutMs: number): Promise<void> {
     await this.ctx.db.query('UPDATE agent_runs SET inflight_turn=true WHERE id=$1', [run.id]);
     let raw = ''; let code: 'BAD_JSON' | 'TURN_TIMEOUT' | null = null;
+    const operation = currentOperationSignal();
+    const timeout = AbortSignal.timeout(Math.max(1, timeoutMs));
     try {
-      const response = await fetch(`${this.ctx.agent.baseUrl}/agent/turn`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ runId: run.id, tools, messages: run.history }), signal: AbortSignal.timeout(Math.max(1, timeoutMs)) });
+      const response = await fetch(`${this.ctx.agent.baseUrl}/agent/turn`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ runId: run.id, tools, messages: run.history }), signal: operation ? AbortSignal.any([timeout, operation]) : timeout });
       raw = await response.text(); if (!response.ok) code = 'BAD_JSON';
-    } catch (error) { code = error instanceof Error && ['TimeoutError', 'AbortError'].includes(error.name) ? 'TURN_TIMEOUT' : 'BAD_JSON'; raw = error instanceof Error ? error.message : String(error); }
+    } catch (error) { operation?.throwIfAborted(); code = error instanceof Error && ['TimeoutError', 'AbortError'].includes(error.name) ? 'TURN_TIMEOUT' : 'BAD_JSON'; raw = error instanceof Error ? error.message : String(error); }
+    operation?.throwIfAborted();
     const response = code ? null : parseTurn(raw);
     if (!response) { await this.protocolError(run, code ?? 'BAD_JSON', raw); return; }
     if (response.stop_reason === 'end_turn') {
