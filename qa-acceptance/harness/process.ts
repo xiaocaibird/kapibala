@@ -32,6 +32,9 @@ export class OwnedProcess {
   get pid(): number | undefined {
     return this.child?.pid;
   }
+  get exitOutcome(): { code: number | null; signal: NodeJS.Signals | null } | undefined {
+    return this.outcome ? { ...this.outcome } : undefined;
+  }
   get running(): boolean {
     return (
       !!this.child &&

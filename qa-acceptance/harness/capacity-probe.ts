@@ -109,7 +109,7 @@ export async function captureKickEvidence(
   await qa.evidence(name, {
     at: new Date().toISOString(),
     coverageBoundary:
-      'Public concurrent/audit-wait regression only; capacity refusal and entity contention are not established.',
+      'This snapshot records public facts only; proof of capacity refusal requires separately associated controller events. No entity-lock contention is established here.',
     kicks,
     runs: await Promise.all(kicks.map((kick) => qa.api.agentRun(kick.runId))),
     gateway: qa.gateway.snapshot(),

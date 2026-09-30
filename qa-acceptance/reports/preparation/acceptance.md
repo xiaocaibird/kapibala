@@ -4,8 +4,10 @@
 
 本报告是准备状态清单，未启动或连接被测系统，不能用于宣称产品验收通过。
 
+准备状态专项登记 24 条：脚本可进入后续授权试跑 10；仍缺工程/夹具接入 13；业务口径待决 1。这是准备状态，不是产品执行结果。自动化数量增加不能解释为这些依赖已解决。
+
 - 范围内用例：246；通过 0，失败 0，阻塞 0，未执行 246。
-- 自动化 212，人工 10，设计阻塞 24，候选 5。
+- 方法登记（非就绪统计）：自动化 235，人工 10，尚缺完整执行方案 1，候选 5。
 - 有用例覆盖、实际执行和通过率分别统计；跳过、缺少浏览器项目、缺少环境均不作通过。JSON另列required/release/candidate各范围计数及已执行通过率；多范围用例分别计数，不可直接相加。
 
 ## 版本、环境与授权
@@ -16,11 +18,11 @@
   "sutExecutionAuthorized": false,
   "productTestsExecuted": 0,
   "qaTree": {
-    "sha256": "1dc2378462b88879ad74275177beec9081763390000e95517e4f9d2f72fc3222",
+    "sha256": "170035e3da5193ecd66fbcb105ede12c266fec6785b64acf39e2f725ae55770f",
     "files": [
       {
         "path": ".gitignore",
-        "sha256": "dcff0a58ca382aba5b190e90249b644433755cf2578e49539661405b9ad870d9"
+        "sha256": "419ced137b12d10386b0c3d71d1247a2ec99e8f841b3f1e1ba28018230801ab8"
       },
       {
         "path": ".prettierrc.json",
@@ -28,7 +30,7 @@
       },
       {
         "path": "cases/architecture-capacity.json",
-        "sha256": "8df519a49c35ee5688449e0f362110b99fdd4ab912918bc289bb107285305e3b"
+        "sha256": "1478b40b7974ccebd0da697a3a38d72423108b4ae740373815318d4667d57442"
       },
       {
         "path": "cases/architecture-contract.json",
@@ -36,7 +38,7 @@
       },
       {
         "path": "cases/architecture-observation.json",
-        "sha256": "076d91735aa641dff48feb832b67f0cd6e031e938095a3e01032aa66169e16ee"
+        "sha256": "8ebe6cff255a6e50fe581ad6bfd3a198a26a734d2ddfd6c9c997e3fa75f343fe"
       },
       {
         "path": "cases/architecture-ui.json",
@@ -55,12 +57,16 @@
         "sha256": "074baa35d0bc74cc10deaf18b2964a303eca4dfe2cfd018d7352485226fa7f58"
       },
       {
+        "path": "cases/fixture-boundaries.json",
+        "sha256": "8e757f798887e88d9bbe87629f506321872384c1f4f59f7e020a421d4a0eb32a"
+      },
+      {
         "path": "cases/foundation.json",
         "sha256": "56e39ef944c862aa0439c96bae47e5fa5ee834068123e144ea4494100c720a74"
       },
       {
         "path": "cases/generated/architecture-capacity.md",
-        "sha256": "e1a5084ded20a0221b0c742359d8099c0eb9fff73be5503e0b1a90938fbb9c43"
+        "sha256": "ed52781697bccbb040157031fa3595e45a15b792871a3b95ffaba0a2f1c31d74"
       },
       {
         "path": "cases/generated/architecture-contract.md",
@@ -68,7 +74,7 @@
       },
       {
         "path": "cases/generated/architecture-observation.md",
-        "sha256": "09aa45386eae0a445eca944c4aa8eba2bc8e1b5f0fe34d13f92f2492a302d96c"
+        "sha256": "f70e22926b46e57ad4c09192620931b3ffe19057ace9be85098a80400520661e"
       },
       {
         "path": "cases/generated/architecture-ui.md",
@@ -87,20 +93,32 @@
         "sha256": "8b1591b8f450fe984e8f0c7d59fdf0b622c7b5573587184f80fead2e57b53b03"
       },
       {
+        "path": "cases/generated/fixture-boundaries.md",
+        "sha256": "8219fbba27b0de6fcfc46c009cf9cc2651018cecd033923029f4e434aca9a077"
+      },
+      {
         "path": "cases/generated/foundation.md",
         "sha256": "947dac820cbdd69ebd66f7100862fe34496a4710405275e40b502f5fe7324150"
       },
       {
         "path": "cases/generated/manual.md",
-        "sha256": "ff3b3ed7a50f5b2be9ef960756fe579d088839a8d73547d0dc9cfbd9f2f2ee28"
+        "sha256": "d75f1ea952f8f2a59fa6ff3d0047c45f9db954d2c2a2c4fc8e86a8ce31982449"
+      },
+      {
+        "path": "cases/generated/protocol-boundaries.md",
+        "sha256": "b510e69b193cd2b177e150400ffcb2d2a677127053d0a164469846b974ad621e"
       },
       {
         "path": "cases/generated/release.md",
         "sha256": "837b108b673cde29a511b1731b21d55d3a1d8a37bdd076a7719ea0ead63d1539"
       },
       {
+        "path": "cases/generated/spec-boundaries.md",
+        "sha256": "fdbdb1f133788378d3f1a771578503aa5a7547a8f3e4a5a10c46b5120c883080"
+      },
+      {
         "path": "cases/generated/ui-extra.md",
-        "sha256": "d72356c35bd3057d0ed973699cec0374f0c35706bb048bbf292d0461b359e069"
+        "sha256": "d5a5213158c4e5d6084e5f57fd14cc09eb5e7961d1190f57879dbb505067de75"
       },
       {
         "path": "cases/generated/ui.md",
@@ -108,19 +126,27 @@
       },
       {
         "path": "cases/manual.json",
-        "sha256": "06e0f21016c979dd71b940b244d0e37d19c0aea6e3a7e6241065d0c950f19af7"
+        "sha256": "6b1338c9579271f5d6f7370e7bad3e0d87a59bd7cde9cd2ff37ca0e30f8c0c51"
+      },
+      {
+        "path": "cases/protocol-boundaries.json",
+        "sha256": "1568eb71e8d6ec2c443eebf540ce307ed9dc380330a20a10901755f6391a647d"
       },
       {
         "path": "cases/README.md",
-        "sha256": "6aafb2ef2b6698fb092ea6e48ea029f7fcfca7d2240a15650050700fb4c802a4"
+        "sha256": "31e0c1e80083864ae2d6f58c5bc621291b942b07b075903ebbb11f0269247f2f"
       },
       {
         "path": "cases/release.json",
         "sha256": "222f7f0acc1e75306962898ee42d38fcc2d32edb65672a5fe16695c33bad77d5"
       },
       {
+        "path": "cases/spec-boundaries.json",
+        "sha256": "5a90daa846daa1678b6bdaaf7648588cd2113c0db2864994c3d0696d6cc2bb84"
+      },
+      {
         "path": "cases/ui-extra.json",
-        "sha256": "01e72cf243dd44c496ed4ec32690936d36867bab2547678345970fd97507b7e3"
+        "sha256": "c4d0ec4dd3d14c1041b0e023abbed867a24d8e78203ff5a8e530a257e2a0b1f8"
       },
       {
         "path": "cases/ui.json",
@@ -129,6 +155,14 @@
       {
         "path": "config/authorization.example.json",
         "sha256": "730d90bffa800678a795c3f7d6b49c46ddb0eda32a411e84470996a2eabda92d"
+      },
+      {
+        "path": "config/fixture-binding.example.json",
+        "sha256": "04afa7758840d5fcce194a3ba759d0485f943af526135f14d8986e06093fa865"
+      },
+      {
+        "path": "config/fixtures.example.json",
+        "sha256": "ee59614befde0df4a56c627c2813802448ad9293c8b1a600a1d730e9010bd013"
       },
       {
         "path": "config/manual-review.example.json",
@@ -144,7 +178,11 @@
       },
       {
         "path": "contracts/capacity-observation.md",
-        "sha256": "66717bc7ad2684f4c20737f99208dcbdb227215c05aa7040f13df5b37666fc63"
+        "sha256": "0f8cc16469aaf2e0b761f6965d612a5ccb4a314e696defa15f5b05aa7d4290c9"
+      },
+      {
+        "path": "contracts/fixture-artifacts.md",
+        "sha256": "caa28d6b83ffb1235fbb1e1c9c8dc3656880acdd4ba3038950ca2dc87d46bcf7"
       },
       {
         "path": "contracts/public-api.ts",
@@ -163,8 +201,12 @@
         "sha256": "3c7b7636bc2c8488bc28a4bd7068171a521d71ac0c256c938a65c8f022b4b177"
       },
       {
+        "path": "harness/capacity-control.ts",
+        "sha256": "c231c8002ac55c7e9f72eb62104569f8d306e1b70b60f2c3addc1744d3b929e4"
+      },
+      {
         "path": "harness/capacity-probe.ts",
-        "sha256": "25febe9b6233d72c7d939e76539111f657ddf6be10a6c471a9f9ce48bbb21548"
+        "sha256": "74cfdc37ca6b66d81e2d4b2397c8a3fbfd4de968a1195818403da646e85dc958"
       },
       {
         "path": "harness/catalog-check.ts",
@@ -172,7 +214,7 @@
       },
       {
         "path": "harness/catalog.ts",
-        "sha256": "aaa1bb8749dec08006c0e75607953e5be3379035af005f4693b88c52c598ede5"
+        "sha256": "5001a2b1172cb4b8f07ca5ef80f22ea752b47a9a7ac0b6920f5ccadc5ca35411"
       },
       {
         "path": "harness/change-review-check.ts",
@@ -192,7 +234,7 @@
       },
       {
         "path": "harness/environment.ts",
-        "sha256": "b6819886f6321cd796c89799a466da5a3cfcb904d0b0587f5a6840650b7ced94"
+        "sha256": "375879485199a34b78aa376a5eb8aa7cf83e0b1e2a99e8649a30e9a053cd9458"
       },
       {
         "path": "harness/execution-gate.ts",
@@ -201,6 +243,10 @@
       {
         "path": "harness/execution-plan.ts",
         "sha256": "428db84da8047471dcebf601ea7186468f86ae18cbc783b51eb0a13230ba4c3f"
+      },
+      {
+        "path": "harness/fixture-artifacts.ts",
+        "sha256": "2c959275286d2a337f7257385ee79ad6b721d15055e22cd179ef49aeb6f6a3d8"
       },
       {
         "path": "harness/gateway.ts",
@@ -219,12 +265,16 @@
         "sha256": "3ccb1c4855732d4e6154b8a9ff824f9a6749b31edd0a8b707ea58b30fadd51b1"
       },
       {
+        "path": "harness/observation.ts",
+        "sha256": "8fc04d7fffc3bfb023d77368cb1979a17331322f25d6dc6b7498080079fe27b8"
+      },
+      {
         "path": "harness/platform-client.ts",
         "sha256": "2b995c004a297c17d1d5d562605eb1965d215d82951281a53a3933519624a9e1"
       },
       {
         "path": "harness/process.ts",
-        "sha256": "b3715e14018755318a36ecbdb4b2eb6fae702a30eacac2ed922faab652db8784"
+        "sha256": "e0047da7d54a2b7f2a8e9055e2b21f49b7e1d655b268c101b6d7758cb072ee0e"
       },
       {
         "path": "harness/provenance.ts",
@@ -236,11 +286,11 @@
       },
       {
         "path": "harness/render-cases.ts",
-        "sha256": "ab68f3c2d94289f74f9c4beeb827dd4a49db86b381d9f1828d4e62bbcb0607db"
+        "sha256": "b83e78b005aabe2cd2f9a45c394d10e5ef0b1009f0b3ddd1e97d1e365c830dd7"
       },
       {
         "path": "harness/report.ts",
-        "sha256": "8141436168596ed72dc8d8df31a25967c533a2f12b09a873999c0dfa39f399cf"
+        "sha256": "da209b5752c4bde87c28b6ea9c1c030285e082ded7ba95c6274047ad97a9da42"
       },
       {
         "path": "harness/reporter.ts",
@@ -248,7 +298,7 @@
       },
       {
         "path": "harness/security.ts",
-        "sha256": "e860b8b331d6be194e8586bb5a4b3fbc618559469afd02b35ee508d2e64cb24f"
+        "sha256": "290557119a547ed82a0826f3b6546037a9e27c1d51348293382296cdad5e6981"
       },
       {
         "path": "harness/suites-check.ts",
@@ -260,7 +310,7 @@
       },
       {
         "path": "harness/types.ts",
-        "sha256": "8f37173ded8194b913eec62cb33f5b1c19dca4c053eb6b8cc0f74ebf44c5cf06"
+        "sha256": "4cf3a35cb633052f2405bfdf4bed2280f93c02d6c3e37105e566556fc581be92"
       },
       {
         "path": "harness/verify-tools.ts",
@@ -280,15 +330,19 @@
       },
       {
         "path": "README.md",
-        "sha256": "bab385dd17609140addf3afd441db4e58110217dcaa53a796f46d066147fb42e"
+        "sha256": "c908c81c978f21717a3b05a96344949e22d339dfef38d6a727671a6930481af7"
       },
       {
         "path": "requirements/architecture-impact.md",
-        "sha256": "ec902de904d0c1d53327e13a27ea67808c0bf64c5bcdeb49293b0bc8ea9b0c58"
+        "sha256": "8be2e077a3d5c68cd4067fb689f241fffcd816f69dcf404388abebf6a4e57477"
       },
       {
         "path": "requirements/baseline.json",
         "sha256": "af0e17de9bed3c6565b2b284f481c46212f1485a7aa822c78cd40b04be431aa5"
+      },
+      {
+        "path": "requirements/blocker-reassessment.md",
+        "sha256": "83b0f5fdc17be108dd6a653248924caf7d60d49fb3757ed38b0ee1e6fc40f060"
       },
       {
         "path": "requirements/catalog.json",
@@ -300,7 +354,7 @@
       },
       {
         "path": "requirements/clarifications.md",
-        "sha256": "fc01df5fe9a0588d6601c59dd760f877afbd106a0186f2cdc821957a742f1fce"
+        "sha256": "742687ebac3212ac0fe5850db13972ecf3a3c10e6edbfe2644a5cd5e1204ad48"
       },
       {
         "path": "requirements/collaboration.md",
@@ -316,11 +370,15 @@
       },
       {
         "path": "requirements/risk-coverage-review.md",
-        "sha256": "618c2c921ef3668344e65bb2eb8e662402e3cb305957f0b8dfe0425216d2735b"
+        "sha256": "6bfa879eda107d63c207c9590c748ae02f6be0ca0cef48663a3569a2078d18fe"
+      },
+      {
+        "path": "requirements/spec-boundaries-resolution.md",
+        "sha256": "d9009302fe22eb2bc43f38467a15b0647c8b0e63479c11a6a302d3048aa77d7b"
       },
       {
         "path": "requirements/traceability.md",
-        "sha256": "7055dc6b0bbef0b69bdc628916fd4cc38a595666add604066385922a22f5e368"
+        "sha256": "1e45a7fd6778d1d0b2bea9c55e3f9b32e9147d249a19f356996a24509aa4eb54"
       },
       {
         "path": "sharing/README.md",
@@ -375,6 +433,10 @@
         "sha256": "418ce615bb184bcdc0ee461354a8adce44c8dd726e288e9232effef67aff293b"
       },
       {
+        "path": "tests/self/capacity-control.test.ts",
+        "sha256": "11d5e0c6cf9836d25ffa348bd12ece0f3cb693bef7e5cf67f8cb18ca1a7076aa"
+      },
+      {
         "path": "tests/self/change-review.test.ts",
         "sha256": "66d74355d476cca2f5a5abb17d5108c5e4e824f39b81f3df1c3517f70b5e8010"
       },
@@ -383,8 +445,16 @@
         "sha256": "95bb9eeb805323cdf01833285387b709685bd27c5da7c2060804be3961539d5c"
       },
       {
+        "path": "tests/self/fixture-artifacts.test.ts",
+        "sha256": "6ffbf445060266b2e04d4f84dde140c94dc809119fd97794bfda408dcb597301"
+      },
+      {
         "path": "tests/self/infrastructure.test.ts",
-        "sha256": "a3efc8de97ae77f8c6412f9c8f35342e45cf2859b405ce58c290027b98cc80b0"
+        "sha256": "4a6abe6ba45f61c65c05869420816330301e0a2dc9fb44a95a6076681f56a6ad"
+      },
+      {
+        "path": "tests/self/observation.test.ts",
+        "sha256": "7bdd33818f79f012ee260f4c38aed6c04271fb99e1783a5e73ef84a8aafde2d9"
       },
       {
         "path": "tests/self/preflight-execution.test.ts",
@@ -411,8 +481,20 @@
         "sha256": "5550fa7a986332300cca2a6224f3de8bb2f8fa2213a4da660f8e5a374a9a4613"
       },
       {
+        "path": "tests/system/capacity-control.spec.ts",
+        "sha256": "bf6b91b6786cf43a35704ea49d7df1eb2b6001ea93f49840c3d1d5303e4d05e1"
+      },
+      {
         "path": "tests/system/capacity.spec.ts",
         "sha256": "d00e016ad311749cc54db52bf63f28d26b694914ef457352afe76604b4489808"
+      },
+      {
+        "path": "tests/system/fixture-boundaries.spec.ts",
+        "sha256": "14bc528c07ad1b536d13324c0387af9226ba2782c67c9ef7d212f809f444a597"
+      },
+      {
+        "path": "tests/system/protocol-boundaries.spec.ts",
+        "sha256": "56ec359ef23e9fe05d4aaf2b80c892c7659919f1cec8fbc809f969a555cbc4af"
       },
       {
         "path": "tests/system/recovery.spec.ts",
@@ -423,12 +505,20 @@
         "sha256": "e8e0162a3fad5f99464ab41875cf296a959bd064bbdad6b2c8e0d8238a555a1d"
       },
       {
+        "path": "tests/system/spec-boundaries.spec.ts",
+        "sha256": "40d0186d9fc22e98969f65038c06598b57d8a25324e19b3bcb0bb33462e67009"
+      },
+      {
         "path": "tests/ui/architecture.spec.ts",
         "sha256": "f258875b7d7582433e7deaee05c8e2d1172c1122319080d40947a31cb6151ea4"
       },
       {
         "path": "tests/ui/console.spec.ts",
         "sha256": "b318f886a43ed028e2d62a1b4b3208698849bbfa1d2862639111e3ad2fb2e936"
+      },
+      {
+        "path": "tests/ui/observation-boundaries.spec.ts",
+        "sha256": "2be9efe6eb097a39848bac06563e3ce5d454c3eaea5dd4878196818ccfadd66f"
       },
       {
         "path": "tsconfig.json",
@@ -656,20 +746,20 @@
 |CAP-REG-002 审计等待期间关闭 autoKick 后不得继续派发|R-A5-07, R-A5-09|NOT_RUN|尚未执行||
 |CAP-REG-003 审计等待后重新检查执行账号在线状态|R-A5-07, R-A5-08|NOT_RUN|尚未执行||
 |CAP-REG-004 审计等待后成员身份和管理员角色均重新检查|R-A5-07, R-A5-08|NOT_RUN|尚未执行||
-|CAP-001 确证容量拒绝后零远端且释放后同一步只审计/踢人一次|ENG-ADMISSION-01, R-A5-05, R-A5-07, R-A5-09|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。||
-|CAP-002 容量等待期间关闭 Agent 的取消边界|ENG-ADMISSION-01, R-A5-13|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。||
-|CAP-003 持续容量拒绝计入原 60 秒活动预算|ENG-ADMISSION-01, R-A5-05, R-A5-06|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。||
-|CAP-004 容量等待期间关闭踢人政策再次检查|ENG-ADMISSION-01, R-A5-07, R-A5-09|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。||
-|CAP-005 容量等待期间群变不可写阻止迟发踢人|ENG-ADMISSION-01, R-A1-04, R-A5-13|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。||
-|CAP-006 容量等待期间执行账号终态/离线/离群后重新选择|ENG-ADMISSION-01, R-A1-04, R-A5-08|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。||
-|CAP-007 容量等待期间目标成员退出或退出后重新加入|ENG-ADMISSION-01, R-A5-09, R-A5-11|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。此外原协议未明确未派发 kick 的目标自行退出/重入时的工具结果，须在执行前确认，不能按当前实现倒推。||
-|CAP-008 真实同一实体锁竞争与容量不足保持不同判定|ENG-ADMISSION-01, R-A5-09|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。同群单活跃 run 使两条公开 Agent kick 无法直接竞争；需先说明合法可达入口及外部错误映射，禁止伪造手动 kick API。||
-|CAP-009 容量已拒绝但 ready 持久化之前崩溃的恢复|ENG-ADMISSION-01, R-A5-11|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。缺少拒绝后但 ready 尚未保存的可控外部边界；关联 CL-01/CG-05 强恢复限制，审计或网关屏障不能替代。||
-|CAP-010 已派发且效果未知的 kick 不得因为后续容量压力重置重放|ENG-ADMISSION-01, R-A5-09, R-A5-11|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。本组合额外要求确定性容量压力；普通 504 和崩溃恢复仍分别执行既有 AGENT-029/REC-007，不能复用其通过来关闭本组合。||
+|CAP-001 确证容量拒绝后零远端且释放后同一步只审计/踢人一次|ENG-ADMISSION-01, R-A5-05, R-A5-07, R-A5-09|NOT_RUN|尚未执行||
+|CAP-002 容量等待期间关闭 Agent 的取消边界|ENG-ADMISSION-01, R-A5-13|NOT_RUN|尚未执行||
+|CAP-003 持续容量拒绝计入原 60 秒活动预算|ENG-ADMISSION-01, R-A5-05, R-A5-06|NOT_RUN|尚未执行||
+|CAP-004 容量等待期间关闭踢人政策再次检查|ENG-ADMISSION-01, R-A5-07, R-A5-09|NOT_RUN|尚未执行||
+|CAP-005 容量等待期间群变不可写阻止迟发踢人|ENG-ADMISSION-01, R-A1-04, R-A5-13|NOT_RUN|尚未执行||
+|CAP-006 容量等待后在线、成员与管理员资格复核|ENG-ADMISSION-01, R-A1-04, R-A5-08|NOT_RUN|尚未执行||
+|CAP-007 容量等待中目标退出或重新加入后按同一用户身份完成移除且不重复|ENG-ADMISSION-01, R-A5-09, R-A5-11|NOT_RUN|尚未执行||
+|CAP-008 容量延期后真实网关群主或权限错误仍按原业务契约返回|ENG-ADMISSION-01, R-A5-09|NOT_RUN|尚未执行||
+|CAP-009 容量已拒绝但 ready 持久化之前崩溃的恢复|ENG-ADMISSION-01, R-A5-11|NOT_RUN|尚未执行||
+|CAP-010 已派发且2秒内收敛的504踢人遇容量压力不退回重放|ENG-ADMISSION-01, R-A5-09, R-A5-11|NOT_RUN|尚未执行||
 |ARC-API-001 序列定义的独立严格输入矩阵|ENG-CONTRACT-01, R-B1-02, R-A0-03|NOT_RUN|尚未执行||
 |ARC-API-002 序列启动的键类型边界与失败后可重试|ENG-CONTRACT-01, R-B1-02, R-A0-03|NOT_RUN|尚未执行||
 |ARC-API-003 序列启动缺省变量对象兼容|ENG-CONTRACT-01, R-B1-02, R-A0-03|NOT_RUN|尚未执行||
-|ARC-UI-BLK-001 通用资源读取失败不能提交成功快照或提前确认未呈现提醒|ENG-READ-02, ADD-ATT-03|NOT_RUN|现有UI适配尚不能证明具体通用资源消费者与提醒成功版本的关联；需在获准接入时确认公开页面和观测入口。不直接调用内部helper，不把消息时间线用例替代该场景。||
+|ARC-UI-BLK-001 通用资源读取失败不能提交成功快照或提前确认未呈现提醒|ENG-READ-02, ADD-ATT-03|NOT_RUN|尚未执行||
 |ARC-UI-001 序列定义额外字段明确拒绝而非静默剥离|ENG-CONTRACT-01|NOT_RUN|尚未执行||
 |ARC-UI-002 非连续或重复步号在浏览器阻止提交|ENG-CONTRACT-01|NOT_RUN|尚未执行||
 |ARC-UI-003 已登记序列尺寸边界在浏览器明确拒绝|ENG-CONTRACT-01|NOT_RUN|尚未执行||
@@ -838,26 +928,21 @@
 |EXT-010 异字段并发及旧请求兼容|ADD-CONFLICT-03, ADD-META-04|NOT_RUN|尚未执行||
 |EXT-011 null原值与非法条件|ADD-CONFLICT-01|NOT_RUN|尚未执行||
 |EXT-012 资料跨重启持久性|ADD-META-03, ADD-META-04, ADD-CONFLICT-01|NOT_RUN|尚未执行||
+|BLK-MIG-001 已有历史schema低于候选时明确拒启且不改变结构数据|R-A0-02|NOT_RUN|尚未执行||
 |BASE-001 全新未迁移schema拒启|R-A0-02|NOT_RUN|尚未执行||
 |BASE-002 交付声明与栈约束入口|R-A0-06|NOT_RUN|尚未执行||
 |API-001 独立公开API结构契约|R-A0-03, R-A0-06, R-A3-05, R-A5-14, R-B1-05|NOT_RUN|尚未执行||
 |MAN-UX-001 操作员能识别阻断、失败与账号/群角色含义|R-A6-03, ADD-COPY-01|NOT_RUN|尚未执行||
 |MAN-IME-001 真实操作系统中文输入法不触发中间查询|ADD-DIR-11|NOT_RUN|尚未执行||
 |MAN-FOCUS-001 真实失焦与浏览器标签标题favicon呈现|ADD-ATT-02, ADD-ATT-03|NOT_RUN|尚未执行||
-|BLK-EXT-001 send响应前崩溃的未决远端副作用|R-A2-01, R-A5-11|NOT_RUN|CL-01：参见requirements/clarifications.md；没有已确认的唯一验收裁判||
-|BLK-EXT-002 create成功但groupId尚未保存的恢复|R-A3-02, R-A2-01|NOT_RUN|CL-01：参见requirements/clarifications.md；没有已确认的唯一验收裁判||
-|BLK-EXT-003 promote响应丢失且角色无查询能力|R-A3-02, R-A3-04|NOT_RUN|CL-01：参见requirements/clarifications.md；没有已确认的唯一验收裁判||
-|BLK-EXT-004 kick已经生效后目标重新加入|R-A5-09, R-A5-11|NOT_RUN|CL-01：参见requirements/clarifications.md；没有已确认的唯一验收裁判||
-|BLK-EXT-005 有状态Agent轮次响应丢失重放|R-A5-02, R-A5-11|NOT_RUN|CL-01：参见requirements/clarifications.md；没有已确认的唯一验收裁判||
-|BLK-SPEC-001 混合在线和限流序列候选选择|R-B1-01|NOT_RUN|CL-08：参见requirements/clarifications.md；没有已确认的唯一验收裁判||
 |BLK-SPEC-002 序列普通发送失败后的运行策略|R-B1-07, R-B1-08|NOT_RUN|CL-09：参见requirements/clarifications.md；没有已确认的唯一验收裁判||
-|BLK-SPEC-003 手动online或rate_limited状态的外部含义|R-A1-01, R-A1-08|NOT_RUN|CL-05：参见requirements/clarifications.md；没有已确认的唯一验收裁判||
-|BLK-SPEC-004 未知工具和非法参数是否重置协议错误计数|R-A5-04, R-A5-05|NOT_RUN|CL-06：参见requirements/clarifications.md；没有已确认的唯一验收裁判||
-|BLK-SPEC-005 审计预算和取消同时发生的终态优先级|R-A5-06, R-A5-07, R-A5-13|NOT_RUN|CL-07：参见requirements/clarifications.md；没有已确认的唯一验收裁判||
-|BLK-SPEC-006 资料与工具输入未定边界|ADD-META-04, R-A5-12, R-A5-15|NOT_RUN|CL-10/CL-11：参见requirements/clarifications.md；没有已确认的唯一验收裁判||
 |MAN-DELIVERY-001 接收方核对仓库Git历史及版本对应|R-DELIVERY-01|NOT_RUN|尚未执行||
 |MAN-DELIVERY-002 接收方只依README在全新隔离环境复现启动|R-DELIVERY-02|NOT_RUN|尚未执行||
-|BLK-MIG-001 已有历史schema低于候选的拒启|R-A0-02|NOT_RUN|尚缺经确认的旧版本不透明数据库快照与预期公开API夹具；root BASE用例仅覆盖空schema，不能读取产品迁移实现来构造符合实现的期望||
+|BLK-EXT-001 未收到响应的发送崩溃：相同前缀下落地/不落地两个分支|R-A2-01, R-A5-11|NOT_RUN|尚未执行||
+|BLK-EXT-002 建群成功响应丢失：原群身份与额外远端群核对|R-A3-02, R-A2-01|NOT_RUN|尚未执行||
+|BLK-EXT-003 promote响应丢失：角色真相与两次调用上限|R-A3-02, R-A3-04|NOT_RUN|尚未执行||
+|BLK-EXT-004 kick已生效后目标重新加入：恢复不重踢|R-A5-09, R-A5-11|NOT_RUN|尚未执行||
+|BLK-EXT-005 模型未执行响应丢失：允许不同合法响应且保留已持久历史|R-A5-02, R-A5-11|NOT_RUN|尚未执行||
 |OPS-001 批准负载profile的混合API容量|REL-05|NOT_RUN|尚未执行||
 |OPS-002 批准持续时间的稳定运行|REL-05|NOT_RUN|尚未执行||
 |OPS-003 真实备份与隔离恢复演练|REL-05|NOT_RUN|尚未执行||
@@ -866,6 +951,11 @@
 |OPS-MAN-003 监控与告警实际到达及恢复|REL-05, REL-03|NOT_RUN|尚未执行||
 |OPS-MAN-004 授权版本证据及清理复核|REL-01, REL-02, REL-04, REL-07|NOT_RUN|尚未执行||
 |DOC-MAN-001 追加需求台账来源与状态审核|ADD-DOC-01|NOT_RUN|尚未执行||
+|BLK-SPEC-001 序列在线候选过滤与已入队限流消息的账号及顺序保持|R-B1-01, R-A2-09|NOT_RUN|尚未执行||
+|BLK-SPEC-003 手动状态遵守CAS和已提交事件，离线目标产生明确disconnect效果|R-A1-01, R-A1-08|NOT_RUN|尚未执行||
+|BLK-SPEC-004 混合协议错误累计三次，合法工具业务错误清零连续计数|R-A5-04, R-A5-05|NOT_RUN|尚未执行||
+|BLK-SPEC-005 第三次未知审计与关闭Agent重叠时合法终态稳定且不产生副作用|R-A5-07, R-A5-13|NOT_RUN|尚未执行||
+|BLK-SPEC-006 资料版本化输入规则、工具公开schema一致性及明确字节上限|ADD-META-04, R-A5-12, R-A5-15|NOT_RUN|尚未执行||
 |UI-023 简介两行纯文本摘要与完整详情|ADD-DIR-03|NOT_RUN|尚未执行||
 |UI-024 单页五秒轮询及并发失效合并|ADD-DIR-07, ADD-DIR-11|NOT_RUN|尚未执行||
 |UI-025 返回恢复内存条件分页位置及刷新清空|ADD-DIR-09, ADD-DIR-06|NOT_RUN|尚未执行||
@@ -880,7 +970,7 @@
 |UI-034 Agent自动消息失焦提醒|ADD-ATT-06|NOT_RUN|尚未执行||
 |UI-035 序列自动消息失焦提醒|ADD-ATT-06|NOT_RUN|尚未执行||
 |UI-036 编辑卸载迟到结果隔离|ADD-FORM-02|NOT_RUN|尚未执行||
-|UI-037 目录微秒及同时间ID跨页边界的确定性数据夹具|ADD-DIR-01, ADD-DIR-05|NOT_RUN|待可复现、经审核的外部数据库快照/数据夹具；禁止用随机创建宣称覆盖||
+|UI-037 目录微秒及同时间ID跨页边界的确定性数据夹具|ADD-DIR-01, ADD-DIR-05|NOT_RUN|尚未执行||
 |UI-001 viewer登录后各页不提供业务写入口|R-A6-01, R-A0-05|NOT_RUN|尚未执行||
 |UI-002 账号状态与合法操作实时更新|R-A6-02, ADD-COPY-01|NOT_RUN|尚未执行||
 |UI-003 群角色及消息回流只显示一行|R-A6-03, R-A4-02|NOT_RUN|尚未执行||
@@ -903,6 +993,35 @@
 |UI-020 失焦提醒和呈现后确认|ADD-ATT-01, ADD-ATT-02, ADD-ATT-03|NOT_RUN|尚未执行||
 |UI-021 路由范围销毁|ADD-ATT-01|NOT_RUN|尚未执行||
 |UI-022 创建表单关闭保护|ADD-FORM-01|NOT_RUN|尚未执行||
+
+## 准备依赖专项登记
+
+|用例|准备状态|责任方|待办与边界|
+|---|---|---|---|
+|CAP-001|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
+|CAP-002|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
+|CAP-003|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
+|CAP-004|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
+|CAP-005|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
+|CAP-006|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
+|CAP-007|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
+|CAP-008|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
+|CAP-009|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
+|CAP-010|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
+|ARC-UI-BLK-001|dependency-pending|QA|账号通用读取失败与提醒确认脚本已实现；尚需授权后确认候选真实页面定位及消费者关联，adapterConfirmed当前不代表已确认|
+|BLK-MIG-001|dependency-pending|QA与候选交付方|解析、恢复与断言已实现；真实版本化dump及独立manifest尚未提供；制品双哈希和对应版本/出处需按contracts/fixture-artifacts.md准备；授权后仅导入本轮新建专属库|
+|BLK-SPEC-002|decision-pending|用户决定业务策略，QA固化断言|普通failed后终止run，或继续并定义后续排期基准；已提出具体选项；当前原文只定义sent/skipped后排期，不按现实现自行决定|
+|BLK-EXT-001|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过；外部强恢复风险保留，明确违约FAIL、观察不足BLOCKED；不虚造协议幂等或恢复期限|
+|BLK-EXT-002|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过；外部强恢复风险保留，明确违约FAIL、观察不足BLOCKED；不虚造协议幂等或恢复期限|
+|BLK-EXT-003|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过；外部强恢复风险保留，明确违约FAIL、观察不足BLOCKED；不虚造协议幂等或恢复期限|
+|BLK-EXT-004|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过；外部强恢复风险保留，明确违约FAIL、观察不足BLOCKED；不虚造协议幂等或恢复期限|
+|BLK-EXT-005|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过；外部强恢复风险保留，明确违约FAIL、观察不足BLOCKED；不虚造协议幂等或恢复期限|
+|BLK-SPEC-001|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过|
+|BLK-SPEC-003|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过|
+|BLK-SPEC-004|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过|
+|BLK-SPEC-005|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过|
+|BLK-SPEC-006|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过|
+|UI-037|dependency-pending|QA与候选交付方|解析、恢复与断言已实现；真实版本化dump及独立manifest尚未提供；制品双哈希和对应版本/出处需按contracts/fixture-artifacts.md准备；授权后仅导入本轮新建专属库|
 
 ## 缺陷与复测
 

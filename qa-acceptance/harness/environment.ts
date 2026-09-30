@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { mkdir, writeFile, appendFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { GatewaySimulator } from './gateway.js';
@@ -14,6 +15,7 @@ export class QaEnvironment {
   readonly agent = new AgentSimulator();
   api!: PlatformClient;
   webUrl = '';
+  private readonly resourceToken = randomUUID();
   private database = '';
   private apiPort = 0;
   private webPort = 0;
@@ -42,6 +44,7 @@ export class QaEnvironment {
   private env(port = this.apiPort): NodeJS.ProcessEnv {
     return isolatedEnv({
       ...this.config.sut.env,
+      QA_ACCEPTANCE_RESOURCE_TOKEN: this.resourceToken,
       PORT: String(port),
       DATABASE_URL: this.cluster.url(this.database, this.proxy!.port),
       GATEWAY_URL: this.gateway.url,
@@ -69,6 +72,16 @@ export class QaEnvironment {
     if (!this.cluster.ownsDatabase(this.database))
       throw new Error('当前用例没有已确认归属的数据库');
     return { cluster: this.cluster, database: this.database };
+  }
+  capacityControlTarget(): { apiUrl: string; revision: string; pid: number; ownerToken: string } {
+    this.server?.assertRunning();
+    if (!this.server?.pid) throw new Error('没有本轮可绑定的被测进程');
+    return {
+      apiUrl: this.api.baseUrl,
+      revision: this.config.sut.revision,
+      pid: this.server.pid,
+      ownerToken: this.resourceToken,
+    };
   }
   async initialize(): Promise<void> {
     if (this.disposed || this.database) throw new Error('环境不可重复初始化');

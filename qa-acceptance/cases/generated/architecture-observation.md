@@ -7,25 +7,30 @@
 ## ARC-UI-BLK-001 · 通用资源读取失败不能提交成功快照或提前确认未呈现提醒
 
 - 需求：ENG-READ-02、ADD-ATT-03
-- 优先级：P1；方法：blocked
-- 自动化入口：按下面步骤人工执行或先解决阻塞
-- 阻塞：现有UI适配尚不能证明具体通用资源消费者与提醒成功版本的关联；需在获准接入时确认公开页面和观测入口。不直接调用内部helper，不把消息时间线用例替代该场景。
+- 优先级：P1；方法：automated
+- 自动化入口：tests/ui/observation-boundaries.spec.ts
+
+**准备状态：dependency-pending；责任方：QA**
+
+1. 账号通用读取失败与提醒确认脚本已实现
+2. 尚需授权后确认候选真实页面定位及消费者关联，adapterConfirmed当前不代表已确认
 
 **前置条件**
 
-1. 后续已授权的隔离浏览器环境
-2. 识别确实由通用读取控制器驱动且参与当前页提醒确认的可见页面及成功版本判据
+1. 后续获准的隔离浏览器环境；本轮尚不执行产品
+2. 目标adapters.fixtureArtifacts绑定配置路径与SHA256；observation定位需经可见页面确认并绑定候选SHA；未提供时runtime BLOCKED，不宣称接入ready
 
 **执行步骤**
 
-1. 在该可见页面成功呈现旧版本，失焦后制造相关新版本提醒
-2. 保持必要通用资源GET失败；操作可见错误区域及旧数据区域
-3. 验证未成功呈现的新版本提醒不被清除；恢复后成功呈现并明确操作才能确认
+1. 公开API使独立账号online；浏览器成功呈现旧状态并记录安静标题/favicon
+2. 真实标签失焦，保持浏览器GET /api/accounts持续503；通过公开transition把目标账号改为disconnected，并从API确认新事实
+3. 验证失败请求已发生、界面仍呈现online；仅聚焦、点击错误、点击旧状态分别不能清除标题/favicon提醒
+4. 恢复真实GET并经已确认可见刷新入口成功呈现disconnected；明确操作新状态后提示恢复；保留HTTP、页面与状态证据
 
 **预期结果**
 
-1. 失败不能冒充新版本成功呈现；未读变化不因错误点击或旧数据点击提前清除
-2. 恢复并真实呈现后保持原有明确确认语义，不擅加新的交互要求
+1. 旧值不作为已呈现新版本；焦点、错误和旧值操作不确认失败读取后的变化
+2. 只在真实新状态成功呈现并明确操作后清除；不调用产品helper、不伪造焦点或私有快照
 
 **时序要求**
 
@@ -49,6 +54,13 @@
 ```json
 {
   "source": "已批准AR-09失败不提交成功快照；既有ADD-ATT-03只确认已呈现内容",
-  "existingCoverage": "UI-029仅证明消息时间线失败，不能直接证明其他通用资源消费者"
+  "existingCoverage": "UI-029仅证明消息时间线失败，不能直接证明其他通用资源消费者",
+  "readiness": {
+    "script": "implemented",
+    "uiAdapter": "not-provided",
+    "sutExecuted": false
+  },
+  "config": "config/fixtures.example.json",
+  "consumer": "公开账号列表 GET /api/accounts；确定账号online→disconnected"
 }
 ```

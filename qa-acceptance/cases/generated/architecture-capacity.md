@@ -209,21 +209,26 @@
 ## CAP-001 · 确证容量拒绝后零远端且释放后同一步只审计/踢人一次
 
 - 需求：ENG-ADMISSION-01、R-A5-05、R-A5-07、R-A5-09
-- 优先级：P0；方法：blocked
-- 自动化入口：按下面步骤人工执行或先解决阻塞
-- 阻塞：缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。
+- 优先级：P0；方法：automated
+- 自动化入口：tests/system/capacity-control.spec.ts
+
+**准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
+
+1. 操作与断言脚本已实现，尚无真实工程容量控制器
+2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
+3. fake-controller自测不证明工程接入或容量场景已触发
 
 **前置条件**
 
 1. 本阶段仅建设测试资产；未来用户明确授权并冻结 SUT/QA 版本后才可执行
 2. 每用例专用 PostgreSQL、进程、网关与 Agent 桩；至少三个可连接的服务账号作为夹具前提
-3. 先取得 contracts/capacity-observation.md 所列经过确认的外部准入诊断和占用/释放控制；不得仅以零请求或固定并发数推测命中
+3. 目标配置冻结 adapters.capacityControl.url/contractReference，工程控制器已按contracts/capacity-observation.md接入；先验证当前QA进程ownerToken归属，再建立真实容量占用和零远端拒绝证据；缺能力运行时BLOCKED
 
 **执行步骤**
 
 1. 建立可观察且可保持的容量占用；让目标 run 的 kick 完成审计后尝试准入
 2. 必须获得关联目标 run/toolUseId 的 capacity_unavailable，确认与 entity lock busy 不同；同时查看网关零请求/零效果
-3. 在预算内至少观察两次明确容量拒绝，检查未伪造工具错误、未新建步骤/额外审计；释放指定占用者
+3. 至少取得一次确证容量拒绝；持续核对未伪造工具错误、未新建步骤/额外审计，再释放指定占用者；若实际发生多次尝试仍核对审计唯一，不强迫内部轮询策略
 4. 等待目标原 run 完成，关联唯一 audit、kick 请求、实际移除和公开工具结果
 
 **预期结果**
@@ -237,18 +242,20 @@
 
 **故障注入**
 
-1. 按步骤使用独立协议桩屏障，禁止读取业务私表或导入业务实现
+1. 外部控制器必须操纵真实准入容量；禁止以返回假错误代替容量耗尽；仅本例专属进程和租约受控
 
 **取证**
 
 1. 公开 API 请求/响应与 runId、toolUseId
 2. Agent turn/audit 原始请求与时间戳
 3. 网关请求、实际效果、成员、事件及屏障完整账本
+4. 控制器协议、归属校验、租约/期限、单调诊断事件及逐次请求；敏感ownerToken脱敏
+5. 脚本可执行登记与工程控制器接入状态分别记录；没有接入不意味着产品验收通过
 
 **清理**
 
-1. finally 释放本例 Agent/网关屏障；fixture 仅销毁本轮专属进程、数据库和模拟器
-2. 保留报告与故障证据，不清理其他运行资源
+1. finally先释放本例Agent/网关屏障，再DELETE本adapter创建的随机leaseId；创建响应丢失也按已知leaseId清理，失败保存证据，工程控制器TTL兜底释放
+2. controller释放失败不得覆盖已观察到的产品FAIL；fixture仅清理本例进程、数据库、模拟器，保留全部证据
 
 **数据**
 
@@ -257,7 +264,15 @@
   "observationContract": "contracts/capacity-observation.md",
   "productResults": "NOT_RUN",
   "capacityThreshold": "执行环境参数，非产品硬指标",
-  "internalPollingInterval": "不作为验收要求"
+  "internalPollingInterval": "不作为验收要求",
+  "scriptReadiness": "implemented-not-product-executed",
+  "integrationStatus": "pending-engineering-control-adapter",
+  "pendingDependencies": [
+    "独立目标控制器尚未交付/接入；不是业务需求待裁定",
+    "需关联实例、runId、toolUseId的真实容量拒绝诊断与可释放占用"
+  ],
+  "configPath": "adapters.capacityControl",
+  "controlProtocol": "qa-capacity-control/1"
 }
 ```
 
@@ -266,15 +281,20 @@
 ## CAP-002 · 容量等待期间关闭 Agent 的取消边界
 
 - 需求：ENG-ADMISSION-01、R-A5-13
-- 优先级：P0；方法：blocked
-- 自动化入口：按下面步骤人工执行或先解决阻塞
-- 阻塞：缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。
+- 优先级：P0；方法：automated
+- 自动化入口：tests/system/capacity-control.spec.ts
+
+**准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
+
+1. 操作与断言脚本已实现，尚无真实工程容量控制器
+2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
+3. fake-controller自测不证明工程接入或容量场景已触发
 
 **前置条件**
 
 1. 本阶段仅建设测试资产；未来用户明确授权并冻结 SUT/QA 版本后才可执行
 2. 每用例专用 PostgreSQL、进程、网关与 Agent 桩；至少三个可连接的服务账号作为夹具前提
-3. 先取得 contracts/capacity-observation.md 所列经过确认的外部准入诊断和占用/释放控制；不得仅以零请求或固定并发数推测命中
+3. 目标配置冻结 adapters.capacityControl.url/contractReference，工程控制器已按contracts/capacity-observation.md接入；先验证当前QA进程ownerToken归属，再建立真实容量占用和零远端拒绝证据；缺能力运行时BLOCKED
 
 **执行步骤**
 
@@ -290,21 +310,24 @@
 **时序要求**
 
 1. 屏障仅控制故障顺序；辅助轮询/等待上限不是产品 SLA，未建立所需时序则 BLOCKED
+2. 释放后至少1500ms持续采样稳定终态、清空活跃引用、唯一审计及零迟发效果；有限观察不证明无限期无迟发
 
 **故障注入**
 
-1. 按步骤使用独立协议桩屏障，禁止读取业务私表或导入业务实现
+1. 外部控制器必须操纵真实准入容量；禁止以返回假错误代替容量耗尽；仅本例专属进程和租约受控
 
 **取证**
 
 1. 公开 API 请求/响应与 runId、toolUseId
 2. Agent turn/audit 原始请求与时间戳
 3. 网关请求、实际效果、成员、事件及屏障完整账本
+4. 控制器协议、归属校验、租约/期限、单调诊断事件及逐次请求；敏感ownerToken脱敏
+5. 脚本可执行登记与工程控制器接入状态分别记录；没有接入不意味着产品验收通过
 
 **清理**
 
-1. finally 释放本例 Agent/网关屏障；fixture 仅销毁本轮专属进程、数据库和模拟器
-2. 保留报告与故障证据，不清理其他运行资源
+1. finally先释放本例Agent/网关屏障，再DELETE本adapter创建的随机leaseId；创建响应丢失也按已知leaseId清理，失败保存证据，工程控制器TTL兜底释放
+2. controller释放失败不得覆盖已观察到的产品FAIL；fixture仅清理本例进程、数据库、模拟器，保留全部证据
 
 **数据**
 
@@ -313,7 +336,15 @@
   "observationContract": "contracts/capacity-observation.md",
   "productResults": "NOT_RUN",
   "capacityThreshold": "执行环境参数，非产品硬指标",
-  "internalPollingInterval": "不作为验收要求"
+  "internalPollingInterval": "不作为验收要求",
+  "scriptReadiness": "implemented-not-product-executed",
+  "integrationStatus": "pending-engineering-control-adapter",
+  "pendingDependencies": [
+    "独立目标控制器尚未交付/接入；不是业务需求待裁定",
+    "需关联实例、runId、toolUseId的真实容量拒绝诊断与可释放占用"
+  ],
+  "configPath": "adapters.capacityControl",
+  "controlProtocol": "qa-capacity-control/1"
 }
 ```
 
@@ -322,15 +353,20 @@
 ## CAP-003 · 持续容量拒绝计入原 60 秒活动预算
 
 - 需求：ENG-ADMISSION-01、R-A5-05、R-A5-06
-- 优先级：P0；方法：blocked
-- 自动化入口：按下面步骤人工执行或先解决阻塞
-- 阻塞：缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。
+- 优先级：P0；方法：automated
+- 自动化入口：tests/system/capacity-control.spec.ts
+
+**准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
+
+1. 操作与断言脚本已实现，尚无真实工程容量控制器
+2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
+3. fake-controller自测不证明工程接入或容量场景已触发
 
 **前置条件**
 
 1. 本阶段仅建设测试资产；未来用户明确授权并冻结 SUT/QA 版本后才可执行
 2. 每用例专用 PostgreSQL、进程、网关与 Agent 桩；至少三个可连接的服务账号作为夹具前提
-3. 先取得 contracts/capacity-observation.md 所列经过确认的外部准入诊断和占用/释放控制；不得仅以零请求或固定并发数推测命中
+3. 目标配置冻结 adapters.capacityControl.url/contractReference，工程控制器已按contracts/capacity-observation.md接入；先验证当前QA进程ownerToken归属，再建立真实容量占用和零远端拒绝证据；缺能力运行时BLOCKED
 
 **执行步骤**
 
@@ -347,21 +383,25 @@
 **时序要求**
 
 1. 屏障仅控制故障顺序；辅助轮询/等待上限不是产品 SLA，未建立所需时序则 BLOCKED
+2. 释放后至少1500ms持续采样稳定终态、清空活跃引用、唯一审计及零迟发效果；有限观察不证明无限期无迟发
 
 **故障注入**
 
-1. 按步骤使用独立协议桩屏障，禁止读取业务私表或导入业务实现
+1. 外部控制器必须操纵真实准入容量；禁止以返回假错误代替容量耗尽；仅本例专属进程和租约受控
 
 **取证**
 
 1. 公开 API 请求/响应与 runId、toolUseId
 2. Agent turn/audit 原始请求与时间戳
 3. 网关请求、实际效果、成员、事件及屏障完整账本
+4. 控制器协议、归属校验、租约/期限、单调诊断事件及逐次请求；敏感ownerToken脱敏
+5. 脚本可执行登记与工程控制器接入状态分别记录；没有接入不意味着产品验收通过
+6. QA独立performance.now创建/公开终态区间与控制器活动时间交叉证据；不能用自报60000冒充精确实测
 
 **清理**
 
-1. finally 释放本例 Agent/网关屏障；fixture 仅销毁本轮专属进程、数据库和模拟器
-2. 保留报告与故障证据，不清理其他运行资源
+1. finally先释放本例Agent/网关屏障，再DELETE本adapter创建的随机leaseId；创建响应丢失也按已知leaseId清理，失败保存证据，工程控制器TTL兜底释放
+2. controller释放失败不得覆盖已观察到的产品FAIL；fixture仅清理本例进程、数据库、模拟器，保留全部证据
 
 **数据**
 
@@ -370,7 +410,16 @@
   "observationContract": "contracts/capacity-observation.md",
   "productResults": "NOT_RUN",
   "capacityThreshold": "执行环境参数，非产品硬指标",
-  "internalPollingInterval": "不作为验收要求"
+  "internalPollingInterval": "不作为验收要求",
+  "scriptReadiness": "implemented-not-product-executed",
+  "integrationStatus": "pending-engineering-control-adapter",
+  "pendingDependencies": [
+    "独立目标控制器尚未交付/接入；不是业务需求待裁定",
+    "需关联实例、runId、toolUseId的真实容量拒绝诊断与可释放占用",
+    "CAP-003需要原run活动预算决定的权威区间；采样跨60秒时仍BLOCKED，不虚构容差"
+  ],
+  "configPath": "adapters.capacityControl",
+  "controlProtocol": "qa-capacity-control/1"
 }
 ```
 
@@ -379,15 +428,20 @@
 ## CAP-004 · 容量等待期间关闭踢人政策再次检查
 
 - 需求：ENG-ADMISSION-01、R-A5-07、R-A5-09
-- 优先级：P0；方法：blocked
-- 自动化入口：按下面步骤人工执行或先解决阻塞
-- 阻塞：缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。
+- 优先级：P0；方法：automated
+- 自动化入口：tests/system/capacity-control.spec.ts
+
+**准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
+
+1. 操作与断言脚本已实现，尚无真实工程容量控制器
+2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
+3. fake-controller自测不证明工程接入或容量场景已触发
 
 **前置条件**
 
 1. 本阶段仅建设测试资产；未来用户明确授权并冻结 SUT/QA 版本后才可执行
 2. 每用例专用 PostgreSQL、进程、网关与 Agent 桩；至少三个可连接的服务账号作为夹具前提
-3. 先取得 contracts/capacity-observation.md 所列经过确认的外部准入诊断和占用/释放控制；不得仅以零请求或固定并发数推测命中
+3. 目标配置冻结 adapters.capacityControl.url/contractReference，工程控制器已按contracts/capacity-observation.md接入；先验证当前QA进程ownerToken归属，再建立真实容量占用和零远端拒绝证据；缺能力运行时BLOCKED
 
 **执行步骤**
 
@@ -406,18 +460,20 @@
 
 **故障注入**
 
-1. 按步骤使用独立协议桩屏障，禁止读取业务私表或导入业务实现
+1. 外部控制器必须操纵真实准入容量；禁止以返回假错误代替容量耗尽；仅本例专属进程和租约受控
 
 **取证**
 
 1. 公开 API 请求/响应与 runId、toolUseId
 2. Agent turn/audit 原始请求与时间戳
 3. 网关请求、实际效果、成员、事件及屏障完整账本
+4. 控制器协议、归属校验、租约/期限、单调诊断事件及逐次请求；敏感ownerToken脱敏
+5. 脚本可执行登记与工程控制器接入状态分别记录；没有接入不意味着产品验收通过
 
 **清理**
 
-1. finally 释放本例 Agent/网关屏障；fixture 仅销毁本轮专属进程、数据库和模拟器
-2. 保留报告与故障证据，不清理其他运行资源
+1. finally先释放本例Agent/网关屏障，再DELETE本adapter创建的随机leaseId；创建响应丢失也按已知leaseId清理，失败保存证据，工程控制器TTL兜底释放
+2. controller释放失败不得覆盖已观察到的产品FAIL；fixture仅清理本例进程、数据库、模拟器，保留全部证据
 
 **数据**
 
@@ -426,7 +482,15 @@
   "observationContract": "contracts/capacity-observation.md",
   "productResults": "NOT_RUN",
   "capacityThreshold": "执行环境参数，非产品硬指标",
-  "internalPollingInterval": "不作为验收要求"
+  "internalPollingInterval": "不作为验收要求",
+  "scriptReadiness": "implemented-not-product-executed",
+  "integrationStatus": "pending-engineering-control-adapter",
+  "pendingDependencies": [
+    "独立目标控制器尚未交付/接入；不是业务需求待裁定",
+    "需关联实例、runId、toolUseId的真实容量拒绝诊断与可释放占用"
+  ],
+  "configPath": "adapters.capacityControl",
+  "controlProtocol": "qa-capacity-control/1"
 }
 ```
 
@@ -435,20 +499,25 @@
 ## CAP-005 · 容量等待期间群变不可写阻止迟发踢人
 
 - 需求：ENG-ADMISSION-01、R-A1-04、R-A5-13
-- 优先级：P0；方法：blocked
-- 自动化入口：按下面步骤人工执行或先解决阻塞
-- 阻塞：缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。
+- 优先级：P0；方法：automated
+- 自动化入口：tests/system/capacity-control.spec.ts
+
+**准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
+
+1. 操作与断言脚本已实现，尚无真实工程容量控制器
+2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
+3. fake-controller自测不证明工程接入或容量场景已触发
 
 **前置条件**
 
 1. 本阶段仅建设测试资产；未来用户明确授权并冻结 SUT/QA 版本后才可执行
 2. 每用例专用 PostgreSQL、进程、网关与 Agent 桩；至少三个可连接的服务账号作为夹具前提
-3. 先取得 contracts/capacity-observation.md 所列经过确认的外部准入诊断和占用/释放控制；不得仅以零请求或固定并发数推测命中
+3. 目标配置冻结 adapters.capacityControl.url/contractReference，工程控制器已按contracts/capacity-observation.md接入；先验证当前QA进程ownerToken归属，再建立真实容量占用和零远端拒绝证据；缺能力运行时BLOCKED
 
 **执行步骤**
 
 1. 确证 kick 因容量拒绝且零远端，保留占用者
-2. 用公开发送与网关 GROUP_WRITE_FORBIDDEN 产生已确认 unreachable 群快照和事件
+2. 网关注入creator账号suspended，等待公开群状态unreachable；保持容量占用时检查取消，不需另启动一次发送来碰运气
 3. 释放占用者后检查 run 取消、活动引用以及 kick 账本
 
 **预期结果**
@@ -459,21 +528,24 @@
 **时序要求**
 
 1. 屏障仅控制故障顺序；辅助轮询/等待上限不是产品 SLA，未建立所需时序则 BLOCKED
+2. 释放后至少1500ms持续采样稳定终态、清空活跃引用、唯一审计及零迟发效果；有限观察不证明无限期无迟发
 
 **故障注入**
 
-1. 按步骤使用独立协议桩屏障，禁止读取业务私表或导入业务实现
+1. 外部控制器必须操纵真实准入容量；禁止以返回假错误代替容量耗尽；仅本例专属进程和租约受控
 
 **取证**
 
 1. 公开 API 请求/响应与 runId、toolUseId
 2. Agent turn/audit 原始请求与时间戳
 3. 网关请求、实际效果、成员、事件及屏障完整账本
+4. 控制器协议、归属校验、租约/期限、单调诊断事件及逐次请求；敏感ownerToken脱敏
+5. 脚本可执行登记与工程控制器接入状态分别记录；没有接入不意味着产品验收通过
 
 **清理**
 
-1. finally 释放本例 Agent/网关屏障；fixture 仅销毁本轮专属进程、数据库和模拟器
-2. 保留报告与故障证据，不清理其他运行资源
+1. finally先释放本例Agent/网关屏障，再DELETE本adapter创建的随机leaseId；创建响应丢失也按已知leaseId清理，失败保存证据，工程控制器TTL兜底释放
+2. controller释放失败不得覆盖已观察到的产品FAIL；fixture仅清理本例进程、数据库、模拟器，保留全部证据
 
 **数据**
 
@@ -482,36 +554,48 @@
   "observationContract": "contracts/capacity-observation.md",
   "productResults": "NOT_RUN",
   "capacityThreshold": "执行环境参数，非产品硬指标",
-  "internalPollingInterval": "不作为验收要求"
+  "internalPollingInterval": "不作为验收要求",
+  "scriptReadiness": "implemented-not-product-executed",
+  "integrationStatus": "pending-engineering-control-adapter",
+  "pendingDependencies": [
+    "独立目标控制器尚未交付/接入；不是业务需求待裁定",
+    "需关联实例、runId、toolUseId的真实容量拒绝诊断与可释放占用"
+  ],
+  "configPath": "adapters.capacityControl",
+  "controlProtocol": "qa-capacity-control/1"
 }
 ```
 
 <a id="CAP-006"></a>
 
-## CAP-006 · 容量等待期间执行账号终态/离线/离群后重新选择
+## CAP-006 · 容量等待后在线、成员与管理员资格复核
 
 - 需求：ENG-ADMISSION-01、R-A1-04、R-A5-08
-- 优先级：P0；方法：blocked
-- 自动化入口：按下面步骤人工执行或先解决阻塞
-- 阻塞：缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。
+- 优先级：P0；方法：automated
+- 自动化入口：tests/system/capacity-control.spec.ts
+
+**准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
+
+1. 操作与断言脚本已实现，尚无真实工程容量控制器
+2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
+3. fake-controller自测不证明工程接入或容量场景已触发
 
 **前置条件**
 
 1. 本阶段仅建设测试资产；未来用户明确授权并冻结 SUT/QA 版本后才可执行
 2. 每用例专用 PostgreSQL、进程、网关与 Agent 桩；至少三个可连接的服务账号作为夹具前提
-3. 先取得 contracts/capacity-observation.md 所列经过确认的外部准入诊断和占用/释放控制；不得仅以零请求或固定并发数推测命中
+3. 目标配置冻结 adapters.capacityControl.url/contractReference，工程控制器已按contracts/capacity-observation.md接入；先验证当前QA进程ownerToken归属，再建立真实容量占用和零远端拒绝证据；缺能力运行时BLOCKED
 
 **执行步骤**
 
-1. 确证 kick 已审计并因容量拒绝等待
-2. 分别在独立夹具中让原候选账号离线、终态、离群；保留替代在线 admin 或移除全部可用管理账号
-3. 确认公开快照反映变更，再释放容量，检查实际 byAccountId 和错误
+1. 独立夹具分别构造两种变体；每次在真实容量拒绝后改变执行资格
+2. 变体一只让admin离线，creator仍online；变体二让creator/admin都离线并移除admin，普通member仍online
+3. 公开API确认新状态，再释放容量；读取原run/step、实际byAccountId与网关副作用
 
 **预期结果**
 
-1. 有合法替代账号时只从当前 online 群内 creator/admin 选择，绝不复用失效的候选
-2. 无合格候选返回 NO_AVAILABLE_ACCOUNT；如已实际执行中转终态则按原 SEND_FAILED 场景另判，不能混淆时点
-3. 零重复审计/步骤/副作用；所有变体均须有确定容量拒绝证据
+1. 仅creator合格时由当前creator执行一次kick；无合格管理账号时NO_AVAILABLE_ACCOUNT且零kick
+2. 已有审计与工具身份不重复；普通online成员不能替代admin；账号终态导致群不可写的组合由CAP-005及原终态矩阵覆盖
 
 **时序要求**
 
@@ -519,18 +603,20 @@
 
 **故障注入**
 
-1. 按步骤使用独立协议桩屏障，禁止读取业务私表或导入业务实现
+1. 外部控制器必须操纵真实准入容量；禁止以返回假错误代替容量耗尽；仅本例专属进程和租约受控
 
 **取证**
 
 1. 公开 API 请求/响应与 runId、toolUseId
 2. Agent turn/audit 原始请求与时间戳
 3. 网关请求、实际效果、成员、事件及屏障完整账本
+4. 控制器协议、归属校验、租约/期限、单调诊断事件及逐次请求；敏感ownerToken脱敏
+5. 脚本可执行登记与工程控制器接入状态分别记录；没有接入不意味着产品验收通过
 
 **清理**
 
-1. finally 释放本例 Agent/网关屏障；fixture 仅销毁本轮专属进程、数据库和模拟器
-2. 保留报告与故障证据，不清理其他运行资源
+1. finally先释放本例Agent/网关屏障，再DELETE本adapter创建的随机leaseId；创建响应丢失也按已知leaseId清理，失败保存证据，工程控制器TTL兜底释放
+2. controller释放失败不得覆盖已观察到的产品FAIL；fixture仅清理本例进程、数据库、模拟器，保留全部证据
 
 **数据**
 
@@ -539,35 +625,49 @@
   "observationContract": "contracts/capacity-observation.md",
   "productResults": "NOT_RUN",
   "capacityThreshold": "执行环境参数，非产品硬指标",
-  "internalPollingInterval": "不作为验收要求"
+  "internalPollingInterval": "不作为验收要求",
+  "scriptReadiness": "implemented-not-product-executed",
+  "integrationStatus": "pending-engineering-control-adapter",
+  "pendingDependencies": [
+    "独立目标控制器尚未交付/接入；不是业务需求待裁定",
+    "需关联实例、runId、toolUseId的真实容量拒绝诊断与可释放占用"
+  ],
+  "configPath": "adapters.capacityControl",
+  "controlProtocol": "qa-capacity-control/1"
 }
 ```
 
 <a id="CAP-007"></a>
 
-## CAP-007 · 容量等待期间目标成员退出或退出后重新加入
+## CAP-007 · 容量等待中目标退出或重新加入后按同一用户身份完成移除且不重复
 
 - 需求：ENG-ADMISSION-01、R-A5-09、R-A5-11
-- 优先级：P0；方法：blocked
-- 自动化入口：按下面步骤人工执行或先解决阻塞
-- 阻塞：缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。此外原协议未明确未派发 kick 的目标自行退出/重入时的工具结果，须在执行前确认，不能按当前实现倒推。
+- 优先级：P0；方法：automated
+- 自动化入口：tests/system/capacity-control.spec.ts
+
+**准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
+
+1. 操作与断言脚本已实现，尚无真实工程容量控制器
+2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
+3. fake-controller自测不证明工程接入或容量场景已触发
 
 **前置条件**
 
 1. 本阶段仅建设测试资产；未来用户明确授权并冻结 SUT/QA 版本后才可执行
 2. 每用例专用 PostgreSQL、进程、网关与 Agent 桩；至少三个可连接的服务账号作为夹具前提
-3. 先取得 contracts/capacity-observation.md 所列经过确认的外部准入诊断和占用/释放控制；不得仅以零请求或固定并发数推测命中
+3. 目标配置冻结 adapters.capacityControl.url/contractReference，工程控制器已按contracts/capacity-observation.md接入；先验证当前QA进程ownerToken归属，再建立真实容量占用和零远端拒绝证据；缺能力运行时BLOCKED
 
 **执行步骤**
 
-1. 确证目标 kick 在未派发容量拒绝处等待，记录目标成员身份与事件序号
-2. 分别注入目标 member_left，以及 member_left 后 member_joined；等待对应公开可见状态
-3. 释放容量并按确认的目标成员语义判定工具结果、实际请求与最终成员
+1. 确证原kick未派发且因真实容量不足等待；分别在两次新run中注入目标退出、退出后重入并重复事件
+2. 在释放容量前核对独立网关真实成员状态；外部成员无需出现在只列服务账号的DTO
+3. 释放容量，读取同一run/toolUseId、传回Agent的tool_result、审计及真实成员/副作用
 
 **预期结果**
 
-1. 不能把新的成员状态当作已经执行 kick 的证据，不能盲目重放旧未知结果
-2. 同一逻辑动作不得因重复事件而多次 kick/audit；具体目标已离群时的工具返回与重入语义需先裁定
+1. 工具仍以原platform_user_id为目标，返回既定{kicked:true}且最后网关目标不在成员中
+2. 同run/toolUseId仅一步、audit一次、kick和真实效果最多一次；目标本来已退出时允许无需再次远端移除
+3. 不自创成员加入代次或人工业务裁定；已派发未知效果后重入是另外的恢复轨迹，不能用本例替代
 
 **时序要求**
 
@@ -575,18 +675,20 @@
 
 **故障注入**
 
-1. 按步骤使用独立协议桩屏障，禁止读取业务私表或导入业务实现
+1. 外部控制器必须操纵真实准入容量；禁止以返回假错误代替容量耗尽；仅本例专属进程和租约受控
 
 **取证**
 
 1. 公开 API 请求/响应与 runId、toolUseId
 2. Agent turn/audit 原始请求与时间戳
 3. 网关请求、实际效果、成员、事件及屏障完整账本
+4. 控制器协议、归属校验、租约/期限、单调诊断事件及逐次请求；敏感ownerToken脱敏
+5. 脚本可执行登记与工程控制器接入状态分别记录；没有接入不意味着产品验收通过
 
 **清理**
 
-1. finally 释放本例 Agent/网关屏障；fixture 仅销毁本轮专属进程、数据库和模拟器
-2. 保留报告与故障证据，不清理其他运行资源
+1. finally先释放本例Agent/网关屏障，再DELETE本adapter创建的随机leaseId；创建响应丢失也按已知leaseId清理，失败保存证据，工程控制器TTL兜底释放
+2. controller释放失败不得覆盖已观察到的产品FAIL；fixture仅清理本例进程、数据库、模拟器，保留全部证据
 
 **数据**
 
@@ -595,35 +697,50 @@
   "observationContract": "contracts/capacity-observation.md",
   "productResults": "NOT_RUN",
   "capacityThreshold": "执行环境参数，非产品硬指标",
-  "internalPollingInterval": "不作为验收要求"
+  "internalPollingInterval": "不作为验收要求",
+  "scriptReadiness": "implemented-not-product-executed",
+  "integrationStatus": "pending-engineering-control-adapter",
+  "pendingDependencies": [
+    "独立目标控制器尚未交付/接入；不是业务需求待裁定",
+    "需关联实例、runId、toolUseId的真实容量拒绝诊断与可释放占用"
+  ],
+  "configPath": "adapters.capacityControl",
+  "controlProtocol": "qa-capacity-control/1",
+  "scopeCorrection": "原QA登记误加目标离群/重入必须额外业务裁定；原工具按platform_user_id执行，本轮移除该人为门禁，保留原返回与副作用不变量"
 }
 ```
 
 <a id="CAP-008"></a>
 
-## CAP-008 · 真实同一实体锁竞争与容量不足保持不同判定
+## CAP-008 · 容量延期后真实网关群主或权限错误仍按原业务契约返回
 
 - 需求：ENG-ADMISSION-01、R-A5-09
-- 优先级：P0；方法：blocked
-- 自动化入口：按下面步骤人工执行或先解决阻塞
-- 阻塞：缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。同群单活跃 run 使两条公开 Agent kick 无法直接竞争；需先说明合法可达入口及外部错误映射，禁止伪造手动 kick API。
+- 优先级：P0；方法：automated
+- 自动化入口：tests/system/capacity-control.spec.ts
+
+**准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
+
+1. 操作与断言脚本已实现，尚无真实工程容量控制器
+2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
+3. fake-controller自测不证明工程接入或容量场景已触发
 
 **前置条件**
 
 1. 本阶段仅建设测试资产；未来用户明确授权并冻结 SUT/QA 版本后才可执行
 2. 每用例专用 PostgreSQL、进程、网关与 Agent 桩；至少三个可连接的服务账号作为夹具前提
-3. 先取得 contracts/capacity-observation.md 所列经过确认的外部准入诊断和占用/释放控制；不得仅以零请求或固定并发数推测命中
+3. 目标配置冻结 adapters.capacityControl.url/contractReference，工程控制器已按contracts/capacity-observation.md接入；先验证当前QA进程ownerToken归属，再建立真实容量占用和零远端拒绝证据；缺能力运行时BLOCKED
 
 **执行步骤**
 
-1. 取得外部可验证的充足本地容量以及同一群同一目标被另一合法执行持有的证据
-2. 通过确认的可达入口触发目标 kick 准入，取得 lock_busy 而非 capacity_unavailable 诊断
-3. 分别释放实体持有者和容量持有者，确认两种原因的结果不混同
+1. 在每个独立group/run中确证零远端容量拒绝，保留已有审计/步骤
+2. 分别安排外部网关OWNER_LEFT和NO_PERMISSION错误，再释放容量
+3. 检查同一run/toolUseId的具体工具错误、网关调用数、目标成员，以及账号/群状态
 
 **预期结果**
 
-1. 实体冲突不伪装成容量延期；容量不足不伪装成成员处理中/发送超时
-2. 冲突尝试不产生额外远端副作用；具体公开工具错误沿原已确认契约，不硬绑定内部错误字符串
+1. 容量延期不能吞掉或伪造后续真实网关错误；返回原OWNER_LEFT/NO_PERMISSION
+2. 每变体一次audit、一次kick请求、零实际移除；错误不直接改变本地账号/群状态
+3. 本例不宣称证明内部lock_busy分支；不可达私有锁竞争不作为独立功能门禁。后续出现合法入口时由工程影响评估再纳入
 
 **时序要求**
 
@@ -631,18 +748,20 @@
 
 **故障注入**
 
-1. 按步骤使用独立协议桩屏障，禁止读取业务私表或导入业务实现
+1. 外部控制器必须操纵真实准入容量；禁止以返回假错误代替容量耗尽；仅本例专属进程和租约受控
 
 **取证**
 
 1. 公开 API 请求/响应与 runId、toolUseId
 2. Agent turn/audit 原始请求与时间戳
 3. 网关请求、实际效果、成员、事件及屏障完整账本
+4. 控制器协议、归属校验、租约/期限、单调诊断事件及逐次请求；敏感ownerToken脱敏
+5. 脚本可执行登记与工程控制器接入状态分别记录；没有接入不意味着产品验收通过
 
 **清理**
 
-1. finally 释放本例 Agent/网关屏障；fixture 仅销毁本轮专属进程、数据库和模拟器
-2. 保留报告与故障证据，不清理其他运行资源
+1. finally先释放本例Agent/网关屏障，再DELETE本adapter创建的随机leaseId；创建响应丢失也按已知leaseId清理，失败保存证据，工程控制器TTL兜底释放
+2. controller释放失败不得覆盖已观察到的产品FAIL；fixture仅清理本例进程、数据库、模拟器，保留全部证据
 
 **数据**
 
@@ -651,7 +770,16 @@
   "observationContract": "contracts/capacity-observation.md",
   "productResults": "NOT_RUN",
   "capacityThreshold": "执行环境参数，非产品硬指标",
-  "internalPollingInterval": "不作为验收要求"
+  "internalPollingInterval": "不作为验收要求",
+  "scriptReadiness": "implemented-not-product-executed",
+  "integrationStatus": "pending-engineering-control-adapter",
+  "pendingDependencies": [
+    "独立目标控制器尚未交付/接入；不是业务需求待裁定",
+    "需关联实例、runId、toolUseId的真实容量拒绝诊断与可释放占用"
+  ],
+  "configPath": "adapters.capacityControl",
+  "controlProtocol": "qa-capacity-control/1",
+  "scopeCorrection": "原CAP-008要求通过公开单活跃run制造内部同实体锁竞争并无可达入口依据；此QA附加要求撤回，重写为原文明确可达业务错误，不声称原内部场景已通过"
 }
 ```
 
@@ -660,21 +788,27 @@
 ## CAP-009 · 容量已拒绝但 ready 持久化之前崩溃的恢复
 
 - 需求：ENG-ADMISSION-01、R-A5-11
-- 优先级：P0；方法：blocked
-- 自动化入口：按下面步骤人工执行或先解决阻塞
-- 阻塞：缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。缺少拒绝后但 ready 尚未保存的可控外部边界；关联 CL-01/CG-05 强恢复限制，审计或网关屏障不能替代。
+- 优先级：P0；方法：automated
+- 自动化入口：tests/system/capacity-control.spec.ts
+
+**准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
+
+1. 操作与断言脚本已实现，尚无真实工程容量控制器
+2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
+3. fake-controller自测不证明工程接入或容量场景已触发
 
 **前置条件**
 
 1. 本阶段仅建设测试资产；未来用户明确授权并冻结 SUT/QA 版本后才可执行
 2. 每用例专用 PostgreSQL、进程、网关与 Agent 桩；至少三个可连接的服务账号作为夹具前提
-3. 先取得 contracts/capacity-observation.md 所列经过确认的外部准入诊断和占用/释放控制；不得仅以零请求或固定并发数推测命中
+3. 目标配置冻结 adapters.capacityControl.url/contractReference，工程控制器已按contracts/capacity-observation.md接入；先验证当前QA进程ownerToken归属，再建立真实容量占用和零远端拒绝证据；缺能力运行时BLOCKED
 
 **执行步骤**
 
 1. 在已确证零远端容量拒绝之后、恢复就绪状态持久化之前，用外部控制契约停住同一工具尝试
 2. 记录窗口证据后 SIGKILL 被测实例；保持数据库、Agent 与网关事实，释放占用并重启
 3. 追踪原 runId/toolUseId 恢复、审计与真实副作用直到终态
+4. 紧邻杀进程前核对租约held且未到期、窗口未进入ready；进程终止完成时如已过期，场景未确证记BLOCKED
 
 **预期结果**
 
@@ -688,18 +822,20 @@
 
 **故障注入**
 
-1. 按步骤使用独立协议桩屏障，禁止读取业务私表或导入业务实现
+1. 外部控制器必须操纵真实准入容量；禁止以返回假错误代替容量耗尽；仅本例专属进程和租约受控
 
 **取证**
 
 1. 公开 API 请求/响应与 runId、toolUseId
 2. Agent turn/audit 原始请求与时间戳
 3. 网关请求、实际效果、成员、事件及屏障完整账本
+4. 控制器协议、归属校验、租约/期限、单调诊断事件及逐次请求；敏感ownerToken脱敏
+5. 脚本可执行登记与工程控制器接入状态分别记录；没有接入不意味着产品验收通过
 
 **清理**
 
-1. finally 释放本例 Agent/网关屏障；fixture 仅销毁本轮专属进程、数据库和模拟器
-2. 保留报告与故障证据，不清理其他运行资源
+1. finally先释放本例Agent/网关屏障，再DELETE本adapter创建的随机leaseId；创建响应丢失也按已知leaseId清理，失败保存证据，工程控制器TTL兜底释放
+2. controller释放失败不得覆盖已观察到的产品FAIL；fixture仅清理本例进程、数据库、模拟器，保留全部证据
 
 **数据**
 
@@ -708,35 +844,51 @@
   "observationContract": "contracts/capacity-observation.md",
   "productResults": "NOT_RUN",
   "capacityThreshold": "执行环境参数，非产品硬指标",
-  "internalPollingInterval": "不作为验收要求"
+  "internalPollingInterval": "不作为验收要求",
+  "scriptReadiness": "implemented-not-product-executed",
+  "integrationStatus": "pending-engineering-control-adapter",
+  "pendingDependencies": [
+    "独立目标控制器尚未交付/接入；不是业务需求待裁定",
+    "需关联实例、runId、toolUseId的真实容量拒绝诊断与可释放占用",
+    "工程需提供已拒绝但ready尚未持久的专属暂停屏障；普通网关/审计屏障不能替代"
+  ],
+  "configPath": "adapters.capacityControl",
+  "controlProtocol": "qa-capacity-control/1"
 }
 ```
 
 <a id="CAP-010"></a>
 
-## CAP-010 · 已派发且效果未知的 kick 不得因为后续容量压力重置重放
+## CAP-010 · 已派发且2秒内收敛的504踢人遇容量压力不退回重放
 
 - 需求：ENG-ADMISSION-01、R-A5-09、R-A5-11
-- 优先级：P0；方法：blocked
-- 自动化入口：按下面步骤人工执行或先解决阻塞
-- 阻塞：缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。本组合额外要求确定性容量压力；普通 504 和崩溃恢复仍分别执行既有 AGENT-029/REC-007，不能复用其通过来关闭本组合。
+- 优先级：P0；方法：automated
+- 自动化入口：tests/system/capacity-control.spec.ts
+
+**准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
+
+1. 操作与断言脚本已实现，尚无真实工程容量控制器
+2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
+3. fake-controller自测不证明工程接入或容量场景已触发
 
 **前置条件**
 
 1. 本阶段仅建设测试资产；未来用户明确授权并冻结 SUT/QA 版本后才可执行
 2. 每用例专用 PostgreSQL、进程、网关与 Agent 桩；至少三个可连接的服务账号作为夹具前提
-3. 先取得 contracts/capacity-observation.md 所列经过确认的外部准入诊断和占用/释放控制；不得仅以零请求或固定并发数推测命中
+3. 目标配置冻结 adapters.capacityControl.url/contractReference，工程控制器已按contracts/capacity-observation.md接入；先验证当前QA进程ownerToken归属，再建立真实容量占用和零远端拒绝证据；缺能力运行时BLOCKED
 
 **执行步骤**
 
-1. 让 kick 请求已到网关并出现真实未知结果/504，独立保留已落地和未落地两种合法轨迹
-2. 此后建立并确证容量压力，按已确认协议开放成员收敛查询或重启恢复
-3. 比较步骤身份、审计次数、远端请求/效果与最终成员；与纯零远端容量拒绝轨迹并列
+1. 合法kick通过审计并到达网关request屏障；这时请求已派发，不能再当零远端拒绝
+2. 控制器在该专属实例建立真实容量占用；释放网关，返回504且1500ms后移除目标，不推成员事件
+3. 保持容量压力直到原run按成员查询收敛完成，再释放占用；检查请求/审计/效果次数
+4. 收敛采样的每次公开读取前后与终态时均核对容量租约held且未过期；压力消失记前提不足，不能PASS
 
 **预期结果**
 
-1. 只有确定未派发的容量拒绝可以安全延期，已发出的未知结果不能退回 ready 盲重放
-2. 原强恢复要求、AGENT-029、REC-007 与 BLK-EXT-004 的边界保持，不用容量修复宣称未知效果问题已解决
+1. 同run/toolUseId finished/final且工具成功，只有一次audit/一次kick/一次移除
+2. 已派发504不能因后续容量不足复位成安全重试；网关2秒收敛保证保持
+3. 仅覆盖明确504有限收敛组合；任意未知副作用或未知效果后重入的原BLK-EXT-004/REC-007边界不因此闭合
 
 **时序要求**
 
@@ -744,18 +896,20 @@
 
 **故障注入**
 
-1. 按步骤使用独立协议桩屏障，禁止读取业务私表或导入业务实现
+1. 外部控制器必须操纵真实准入容量；禁止以返回假错误代替容量耗尽；仅本例专属进程和租约受控
 
 **取证**
 
 1. 公开 API 请求/响应与 runId、toolUseId
 2. Agent turn/audit 原始请求与时间戳
 3. 网关请求、实际效果、成员、事件及屏障完整账本
+4. 控制器协议、归属校验、租约/期限、单调诊断事件及逐次请求；敏感ownerToken脱敏
+5. 脚本可执行登记与工程控制器接入状态分别记录；没有接入不意味着产品验收通过
 
 **清理**
 
-1. finally 释放本例 Agent/网关屏障；fixture 仅销毁本轮专属进程、数据库和模拟器
-2. 保留报告与故障证据，不清理其他运行资源
+1. finally先释放本例Agent/网关屏障，再DELETE本adapter创建的随机leaseId；创建响应丢失也按已知leaseId清理，失败保存证据，工程控制器TTL兜底释放
+2. controller释放失败不得覆盖已观察到的产品FAIL；fixture仅清理本例进程、数据库、模拟器，保留全部证据
 
 **数据**
 
@@ -764,6 +918,14 @@
   "observationContract": "contracts/capacity-observation.md",
   "productResults": "NOT_RUN",
   "capacityThreshold": "执行环境参数，非产品硬指标",
-  "internalPollingInterval": "不作为验收要求"
+  "internalPollingInterval": "不作为验收要求",
+  "scriptReadiness": "implemented-not-product-executed",
+  "integrationStatus": "pending-engineering-control-adapter",
+  "pendingDependencies": [
+    "独立目标控制器尚未交付/接入；不是业务需求待裁定",
+    "需关联实例、runId、toolUseId的真实容量拒绝诊断与可释放占用"
+  ],
+  "configPath": "adapters.capacityControl",
+  "controlProtocol": "qa-capacity-control/1"
 }
 ```

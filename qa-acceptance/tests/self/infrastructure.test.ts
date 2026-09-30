@@ -120,6 +120,8 @@ test('redaction covers headers, nested raw JSON, query secrets and database URLs
     url: 'http://127.0.0.1/a?token=dummy-q&x=ok',
     database: 'postgres://qa:dummy-db@127.0.0.1:123/a',
     command: ['POSTGRES_PASSWORD=dummy-env'],
+    ownerToken: 'dummy-owner',
+    nested: '{"ownerToken":"dummy-nested-owner","QA_ACCEPTANCE_RESOURCE_TOKEN":"dummy-resource"}',
   });
   for (const secret of [
     'dummy-cookie',
@@ -130,6 +132,9 @@ test('redaction covers headers, nested raw JSON, query secrets and database URLs
     'dummy-q',
     'dummy-db',
     'dummy-env',
+    'dummy-owner',
+    'dummy-nested-owner',
+    'dummy-resource',
   ])
     assert.ok(!text.includes(secret), secret);
   assert.match(text, /x=ok/);
@@ -183,6 +188,9 @@ test('target blocks injected database env, Node hooks, external routes and empty
     (c: TargetConfig) => {
       c.sut.env.NODE_OPTIONS = '--import other.js';
     },
+    (c: TargetConfig) => {
+      c.sut.env.QA_ACCEPTANCE_RESOURCE_TOKEN = 'caller-controlled-ownership';
+    },
   ]) {
     const c = await config();
     c.sut.cwd = dir;
@@ -190,6 +198,70 @@ test('target blocks injected database env, Node hooks, external routes and empty
     await writeFile(file, JSON.stringify(c));
     await assert.rejects(loadTarget(file, qaRoot), BlockedError);
   }
+});
+test('capacity endpoint is loopback, versioned and bound by target authorization', async (t) => {
+  const dir = await temporary(t);
+  const file = resolve(dir, 'target.json');
+  for (const url of [
+    'not a URL',
+    'http://example.test:9',
+    'http://127.0.0.1',
+    'http://user:pass@127.0.0.1:8',
+    'http://127.0.0.1:8/other',
+    'http://127.0.0.1:8/?secret=a',
+  ]) {
+    const c = await config();
+    c.adapters = { capacityControl: { url, contractReference: 'test-only-contract' } };
+    await writeFile(file, JSON.stringify(c));
+    await assert.rejects(loadTarget(file, qaRoot), BlockedError);
+  }
+  const c = await config();
+  c.adapters = {
+    capacityControl: { url: 'http://127.0.0.1:39001/', contractReference: 'test-only-contract' },
+  };
+  await writeFile(file, JSON.stringify(c));
+  const loaded = await loadTarget(file, qaRoot);
+  const approval = authorization(loaded);
+  loaded.adapters!.capacityControl!.url = 'http://127.0.0.1:39002/';
+  assert.throws(() => validateAuthorization(approval, loaded), BlockedError);
+});
+test('preparation report distinguishes implemented scripts, missing integration and user decisions', async (t) => {
+  const dir = await temporary(t);
+  const entries = [
+    definition('SELF-001', {
+      preparation: { state: 'script-ready', owner: 'QA', details: ['script only'] },
+    }),
+    definition('SELF-002', {
+      preparation: {
+        state: 'dependency-pending',
+        owner: 'engineering',
+        details: ['controller absent'],
+      },
+    }),
+    definition('SELF-003', {
+      mode: 'blocked',
+      automation: undefined,
+      blocker: 'business policy',
+      preparation: {
+        state: 'decision-pending',
+        owner: 'user',
+        details: ['choose failed step policy'],
+      },
+    }),
+  ];
+  await writeReport(dir, [requirement('R-SELF')], entries, [], { phase: 'preparation' });
+  const report = JSON.parse(await readFile(resolve(dir, 'results.json'), 'utf8'));
+  assert.equal(report.metrics.automated, 2);
+  assert.equal(report.metrics.blockedDesign, 1);
+  assert.equal(report.metrics.preparationReadiness.trackedCases, 3);
+  assert.equal(report.metrics.preparationReadiness.dependenciesPending, 1);
+  assert.equal(report.metrics.preparationReadiness.decisionsPending, 1);
+  assert.equal(report.metrics.preparationReadiness.scriptReady, 1);
+  assert.equal(report.conclusions.unconditionalPass, false);
+  assert.ok(report.results.every((result: { status: string }) => result.status === 'NOT_RUN'));
+  const markdown = await readFile(resolve(dir, 'acceptance.md'), 'utf8');
+  assert.match(markdown, /controller absent/);
+  assert.match(markdown, /业务口径待决 1/);
 });
 test('process environment drops inherited DB and Node hook values', () => {
   const old = process.env.DATABASE_URL;
@@ -222,6 +294,10 @@ test('owned process drains output, reports exit failure, cleans missing command'
     resolve(dir, 'fail.log'),
   );
   await assert.rejects(fail.runOnce(), /命令失败\(7\)/);
+  assert.deepEqual(fail.exitOutcome, { code: 7, signal: null });
+  const outcome = fail.exitOutcome!;
+  outcome.code = 0;
+  assert.equal(fail.exitOutcome?.code, 7);
   const missing = new OwnedProcess(
     { command: resolve(dir, 'missing-command'), args: [] },
     dir,

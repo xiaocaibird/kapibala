@@ -1,9 +1,10 @@
 # 独立 QA 验收体系
 
-本目录交付需求追踪、完整用例、独立协议桩、自动化脚本和报告工具。**当前仅完成准备与 QA 工具自身验证，没有启动、连接或测试被测工程。** 产品结果统一从 `NOT_RUN` 开始；开发自测和旧报告不计入本轮证据。
+本目录维护需求追踪、用例、独立协议桩、自动化脚本和报告工具。**当前为准备阶段，没有启动、连接或测试被测工程。** 脚本已实现与环境已接入分开统计；产品结果统一从 `NOT_RUN` 开始，开发自测和旧报告不计入本轮证据。
 
 ## 阅读入口
 
+- [原24条设计阻塞复核](requirements/blocker-reassessment.md)：逐项区分脚本、工程/夹具依赖和唯一业务待决，不以 automated 数量冒充就绪度。
 - [共享用例与开发提测入口](sharing/README.md)：QA 维护一份标准，开发只读选取预跑，报告与正式验收隔离。
 - [本轮方案影响评估](requirements/architecture-impact.md)、[横向风险覆盖复核](requirements/risk-coverage-review.md)、[跨职责交接流程](requirements/collaboration.md)。
 - [需求基线与来源](requirements/baseline.json)、[逐项需求](requirements/catalog.json)、[需求—用例追踪](requirements/traceability.md)。
@@ -49,6 +50,7 @@ PLAYWRIGHT_BROWSERS_PATH="$PWD/.runtime/browsers" npm exec playwright install ch
 ```
 
 5. 通过实际可见页面确认 `ui.routes` 与 `ui.selectors` 后设置 `adapterConfirmed=true`。这些是定位适配，不是对 DOM 属性、页面路由或 UI 库的产品要求。模板中的 `data-qa`/`data-testid` 只是占位定位方式；不要求开发为测试改业务代码。定位缺失先修适配，不降低业务断言。真实 OS 输入法、系统标签栏焦点和主观可读性另有人工用例。
+   旧版本库和微秒分页还须按 [制品接入](contracts/fixture-artifacts.md) 提供独立期望及双哈希归档；容量专项须按 [容量接入](contracts/capacity-observation.md) 提供实际工程控制器。当前模板、解析器和客户端不等于这些外部依赖已经交付。
 6. 填写批准的上线 profile 和指标。负载脚本的固定混合为账号／群／消息读取及发送各 25%，外部依赖为独立模拟器；报告只对这个拓扑与负载成立。不能拿本地模拟结果代替生产目标环境的容量证明。`durationSeconds`、`soakSeconds`、并发、p95、错误率、RPO／RTO 均不提供武断默认值。
 7. 计算目标配置摘要，将后续真实授权记录到 `config/authorization.local.json`；目标、命令、环境或 UI 适配变化后重新记录对应摘要。
 
@@ -107,7 +109,7 @@ npm run record:manual -- --run reports/runs/<run-id> --input path/to/review.json
 npm run report -- --run reports/runs/<run-id>
 ```
 
-设计阻塞项只有在正式澄清证据存在、相应场景实际执行后才能关闭。原先自动化的用例必须用自动化复测。复测使用新 run 目录，记录关联缺陷与修改版本，不覆盖原报告；未重新执行的用例不得直接继承此前通过状态。
+业务待决项须有明确裁定；工程依赖须有实际接入证据，不能互相替代。原先自动化的用例必须用自动化复测。复测使用新 run 目录，记录关联缺陷与修改版本，不覆盖原报告；未重新执行的用例不得直接继承此前通过状态。
 
 ## 验收结论规则
 
@@ -115,7 +117,7 @@ npm run report -- --run reports/runs/<run-id>
 
 覆盖率、执行率、通过率分别计算。自动化全绿不表示人工、协议阻塞或上线门禁已完成；CLI 对不完整验收使用非零结果提示。报告分别给出需求符合性和上线准备度；全部必验项通过且无关键门禁缺证据，才能无条件通过。
 
-强保证的缺口不藏在测试桩里：send 请求未取得明确 504 的崩溃窗口、建群无幂等操作ID、kick后再入群、Agent相同历史重试语义等保留需求阻塞。已经观察到重复或丢失应记 FAIL，不能借“协议限制”撤销失败。有限故障窗口实验不能证明任意时刻数学上的恰好一次。
+强保证的缺口不藏在测试桩里：send 未取得明确504的崩溃窗口、建群无幂等操作ID、kick后再入群均有可执行反例与外部账本；明确违约记 FAIL，观察不足记 BLOCKED。Agent丢失且尚未执行的响应可以在重试时变化，原协议不要求逐字重放。有限故障窗口实验不能证明任意时刻数学上的恰好一次。
 
 计时不擅自增加业务容差。无法准确观测创建、收讫或完成时刻时保存时间区间；区间跨越门槛则记录测量不足，不把轮询误差折算成放宽后的通过标准。
 

@@ -357,6 +357,22 @@ export async function writeReport(
     scope: r.scope,
     cases: cases.filter((c) => c.requirements.includes(r.id)).map((c) => c.id),
   }));
+  const preparationEntries = cases
+    .filter((c) => c.preparation)
+    .map((c) => ({
+      caseId: c.id,
+      ...c.preparation!,
+    }));
+  const preparationReadiness = {
+    trackedCases: preparationEntries.length,
+    scriptReady: preparationEntries.filter((entry) => entry.state === 'script-ready').length,
+    dependenciesPending: preparationEntries.filter((entry) => entry.state === 'dependency-pending')
+      .length,
+    decisionsPending: preparationEntries.filter((entry) => entry.state === 'decision-pending')
+      .length,
+    note: '仅统计明确登记的准备状态；脚本已实现不代表环境已接入、产品已试跑或验收通过。未登记用例不推定就绪。',
+    entries: preparationEntries,
+  };
   const report = {
     formatVersion: 1,
     generatedAt: new Date().toISOString(),
@@ -372,6 +388,7 @@ export async function writeReport(
         release === 'PASS',
     },
     metrics: {
+      preparationReadiness,
       requirements: requirements.length,
       requirementsWithCases: mapping.filter((m) => m.cases.length).length,
       requiredCases: total,
@@ -409,13 +426,25 @@ export async function writeReport(
   const text =
     header +
     preflightText +
-    `- 范围内用例：${total}；通过 ${counts.PASS}，失败 ${counts.FAIL}，阻塞 ${counts.BLOCKED}，未执行 ${counts.NOT_RUN}。\n- 自动化 ${report.metrics.automated}，人工 ${report.metrics.manual}，设计阻塞 ${report.metrics.blockedDesign}，候选 ${report.metrics.candidate}。\n- 有用例覆盖、实际执行和通过率分别统计；跳过、缺少浏览器项目、缺少环境均不作通过。JSON另列required/release/candidate各范围计数及已执行通过率；多范围用例分别计数，不可直接相加。\n\n## 版本、环境与授权\n\n\x60\x60\x60json\n${redact(metadata)}\n\x60\x60\x60\n\n## 逐项结果\n\n|用例|需求|结果|说明|证据|\n|---|---|---|---|---|\n` +
+    (preparationEntries.length
+      ? `准备状态专项登记 ${preparationReadiness.trackedCases} 条：脚本可进入后续授权试跑 ${preparationReadiness.scriptReady}；仍缺工程/夹具接入 ${preparationReadiness.dependenciesPending}；业务口径待决 ${preparationReadiness.decisionsPending}。这是准备状态，不是产品执行结果。自动化数量增加不能解释为这些依赖已解决。\n\n`
+      : '') +
+    `- 范围内用例：${total}；通过 ${counts.PASS}，失败 ${counts.FAIL}，阻塞 ${counts.BLOCKED}，未执行 ${counts.NOT_RUN}。\n- 方法登记（非就绪统计）：自动化 ${report.metrics.automated}，人工 ${report.metrics.manual}，尚缺完整执行方案 ${report.metrics.blockedDesign}，候选 ${report.metrics.candidate}。\n- 有用例覆盖、实际执行和通过率分别统计；跳过、缺少浏览器项目、缺少环境均不作通过。JSON另列required/release/candidate各范围计数及已执行通过率；多范围用例分别计数，不可直接相加。\n\n## 版本、环境与授权\n\n\x60\x60\x60json\n${redact(metadata)}\n\x60\x60\x60\n\n## 逐项结果\n\n|用例|需求|结果|说明|证据|\n|---|---|---|---|---|\n` +
     cases
       .map((c) => {
         const r = results.find((r) => r.id === c.id)!;
         return `|${c.id} ${cell(c.title)}|${c.requirements.join(', ')}|${r.status}|${cell(r.reason ?? '')}|${r.evidence.map((e) => `[证据](${e})`).join(' ')}|`;
       })
       .join('\n') +
+    (preparationEntries.length
+      ? '\n\n## 准备依赖专项登记\n\n|用例|准备状态|责任方|待办与边界|\n|---|---|---|---|\n' +
+        preparationEntries
+          .map(
+            (entry) =>
+              `|${entry.caseId}|${entry.state}|${cell(entry.owner)}|${cell(entry.details.join('；'))}|`,
+          )
+          .join('\n')
+      : '') +
     '\n\n## 缺陷与复测\n\n' +
     (defects.length
       ? defects
