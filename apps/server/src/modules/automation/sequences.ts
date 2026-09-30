@@ -98,19 +98,27 @@ export class SequenceModule {
   }
   private async rebaseExpired(): Promise<void> {
     const runs = (await this.ctx.db.query<RunRow>('SELECT * FROM sequence_runs WHERE status=\'running\'')).rows;
-    for (const run of runs) await this.ctx.db.withLock(`sequence:${run.id}`, async () => {
+    for (const run of runs) {
+      let previous = -1;
+      // A message confirmation may have committed before the old scheduler saved
+      // step progress. Catch up known effects before choosing the one step to rebase.
+      for (let i = 0; i <= 200; i++) {
+        const current = (await this.ctx.db.query<RunRow>('SELECT * FROM sequence_runs WHERE id=$1', [run.id])).rows[0];
+        if (!current || current.status !== 'running' || current.current_step_index === previous) break;
+        previous = current.current_step_index; await this.advance(run.id, true);
+      }
       // Only the earliest unresolved step has a schedule; accepted sends retain their identity.
-      await this.ctx.db.query(`UPDATE sequence_steps SET scheduled_at=now()+delay_seconds*interval '1 second' WHERE run_id=$1 AND index=$2 AND status='pending' AND client_msg_id IS NULL AND scheduled_at<now()`, [run.id, run.current_step_index]);
-    });
+      await this.ctx.db.query(`UPDATE sequence_steps s SET scheduled_at=now()+s.delay_seconds*interval '1 second' FROM sequence_runs r WHERE s.run_id=r.id AND r.id=$1 AND r.status='running' AND s.index=r.current_step_index AND s.status='pending' AND s.client_msg_id IS NULL AND s.scheduled_at<now()`, [run.id]);
+    }
   }
   async tick(): Promise<void> {
     if (!await this.ensureScheduler()) return;
     const runs = (await this.ctx.db.query<RunRow>('SELECT * FROM sequence_runs WHERE status=\'running\'')).rows;
     // These are short local transactions; bound lock connections independently of
     // the number of groups so connection capacity remains available to their work.
-    for (const run of runs) await this.ctx.db.withLock(`sequence:${run.id}`, async () => this.advance(run.id));
+    for (const run of runs) { if (!this.scheduler) return; await this.advance(run.id); }
   }
-  private async advance(id: string): Promise<void> {
+  private async advance(id: string, recovering = false): Promise<void> {
     await this.ctx.db.transaction(async tx => {
       const initial = (await tx.query<RunRow>('SELECT * FROM sequence_runs WHERE id=$1', [id])).rows[0]; if (!initial) return;
       // Match gateway lock order: group -> run -> messages/steps.
@@ -131,6 +139,7 @@ export class SequenceModule {
         await tx.query('UPDATE sequence_steps SET status=$3,sent_at=$4 WHERE run_id=$1 AND index=$2', [id, step.index, step.status, step.sent_at]);
       }
       if (['sent', 'skipped', 'failed'].includes(step.status)) { await this.progress(tx, run, step); return; }
+      if (recovering) return;
       if (step.client_msg_id || !step.scheduled_at || step.scheduled_at.getTime() > Date.now()) return;
       const account = (await tx.query<{ id: string; status: string; rate_limited_until: Date | null }>(`SELECT a.id,a.status,a.rate_limited_until FROM members m JOIN accounts a ON a.id=m.account_id WHERE m.group_id=$1 AND a.status IN ('online','rate_limited') AND (CASE WHEN $2='admin' THEN m.role IN ('creator','admin') ELSE m.role='member' END) ORDER BY CASE WHEN a.status='online' THEN 0 ELSE 1 END,CASE WHEN m.role='admin' THEN 0 ELSE 1 END,a.id LIMIT 1`, [run.group_id, step.account_role])).rows[0];
       if (!account) { step.status = 'skipped'; step.sent_at = new Date(); await tx.query('UPDATE sequence_steps SET status=\'skipped\',sent_at=$3 WHERE run_id=$1 AND index=$2', [id, step.index, step.sent_at]); await this.progress(tx, run, step); return; }

@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { after, before, test } from 'node:test';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { Database, type Queryable } from '../../apps/server/src/core/db.js';
-import { AppError } from '../../apps/server/src/core/errors.js';
+import { AppError, RemoteError } from '../../apps/server/src/core/errors.js';
 import { RemoteClient } from '../../apps/server/src/core/remote.js';
 import type { MessagingService, SendInput } from '../../apps/server/src/core/messaging.js';
 import { createAutomationModule } from '../../apps/server/src/modules/automation/index.js';
@@ -17,6 +17,7 @@ type AgentReply = (body: TurnBody) => unknown;
 let db: Database; let admin: Database; let api: FastifyInstance; let remote: FastifyInstance;
 let module: ReturnType<typeof createAutomationModule>; let second: ReturnType<typeof createAutomationModule>;
 let agentReply: AgentReply; let auditReply: () => unknown; let auditCalls = 0; let enqueueCalls = 0; let kickCalls = 0;
+let sendState: Message['deliveryStatus'] = 'accepted'; let kickFailure: string | null = null;
 const schema = `automation_${randomUUID().replaceAll('-', '')}`;
 const groupId = 'g-automation';
 const delay = async (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
@@ -37,20 +38,21 @@ async function reset(): Promise<void> {
   await db.query('UPDATE groups SET agent_enabled=true,auto_kick_enabled=false,status=\'active\'');
   await db.query('UPDATE accounts SET status=\'online\',rate_limited_until=NULL');
   auditCalls = 0; enqueueCalls = 0; kickCalls = 0; agentReply = () => end(); auditReply = () => ({ verdict: 'pass', reason: 'allowed' });
+  sendState = 'accepted'; kickFailure = null;
   const context = { db, agent: new RemoteClient(remote.listeningOrigin), gateway: new RemoteClient(remote.listeningOrigin), log: api.log };
   module = createAutomationModule(context, messaging); second = createAutomationModule(context, messaging);
 }
 const messaging: MessagingService = {
   async enqueueSend(input: SendInput, tx?: Queryable): Promise<Message> {
     enqueueCalls++; const id = randomUUID(); const client = input.clientMsgId ?? randomUUID();
-    await (tx ?? db).query(`INSERT INTO messages(id,group_id,client_msg_id,account_id,sender_platform_user_id,is_own,text,delivery_status,metadata) VALUES($1,$2,$3,$4,$4,true,$5,'accepted',$6)`, [id, input.groupId, client, input.accountId, input.text, JSON.stringify({ source: input.source, sourceRef: input.sourceRef })]);
-    return { id, msgId: null, clientMsgId: client, senderPlatformUserId: input.accountId, isOwn: true, text: input.text, sentAt: new Date().toISOString(), deliveryStatus: 'accepted', failCode: null };
+    await (tx ?? db).query(`INSERT INTO messages(id,group_id,client_msg_id,account_id,sender_platform_user_id,is_own,text,delivery_status,metadata) VALUES($1,$2,$3,$4,$4,true,$5,$7,$6)`, [id, input.groupId, client, input.accountId, input.text, JSON.stringify({ source: input.source, sourceRef: input.sourceRef }), sendState]);
+    return { id, msgId: null, clientMsgId: client, senderPlatformUserId: input.accountId, isOwn: true, text: input.text, sentAt: new Date().toISOString(), deliveryStatus: sendState, failCode: null };
   },
   async getMessage(clientMsgId: string): Promise<Message | null> {
     const row = (await db.query<{ id: string; text: string; delivery_status: Message['deliveryStatus']; fail_code: string | null }>('SELECT * FROM messages WHERE client_msg_id=$1', [clientMsgId])).rows[0];
     return row ? { id: row.id, msgId: null, clientMsgId, senderPlatformUserId: 'account-1', isOwn: true, text: row.text, sentAt: new Date().toISOString(), deliveryStatus: row.delivery_status, failCode: row.fail_code } : null;
   },
-  async kick(): Promise<{ kicked: true }> { kickCalls++; return { kicked: true }; },
+  async kick(): Promise<{ kicked: true }> { kickCalls++; if (kickFailure) throw new RemoteError(409, kickFailure); return { kicked: true }; },
 };
 before(async () => {
   const base = process.env.DATABASE_URL ?? 'postgres://kapibala:kapibala@localhost:55432/kapibala';
@@ -257,4 +259,80 @@ test('an accepted send whose account becomes terminal yields SEND_FAILED without
   await waitFor(async () => (await latestRun())?.status === 'finished');
   assert.equal(enqueueCalls, 1); assert.equal(auditCalls, 0);
   assert.equal((await db.query<{ error_code: string }>('SELECT error_code FROM agent_steps WHERE run_id=$1 AND ordinal=1', [id])).rows[0]!.error_code, 'SEND_FAILED');
+});
+
+test('restart catches up a committed send before rebasing the next unscheduled step', async () => {
+  await reset(); await db.query('UPDATE groups SET agent_enabled=false');
+  const definition = await api.inject({ method: 'POST', url: '/api/sequences', payload: { name: 'restart gap', steps: [1, 2].map(index => ({ index, accountRole: 'admin', text: 'test', delaySeconds: index === 1 ? 0 : 10 })) } });
+  const start = await api.inject({ method: 'POST', url: `/api/groups/${groupId}/sequence-runs`, payload: { sequenceId: definition.json<{ id: string }>().id } });
+  const runId = start.json<{ runId: string }>().runId; await module.tick();
+  await db.query('UPDATE messages SET delivery_status=\'sent\',updated_at=now()-interval \'1 hour\' WHERE is_own');
+  await module.close!(); const before = Date.now(); await second.recover!();
+  const rows = (await db.query<{ status: string; scheduled_at: Date }>('SELECT * FROM sequence_steps WHERE run_id=$1 ORDER BY index', [runId])).rows;
+  assert.equal(rows[0]!.status, 'sent'); assert.equal(rows[1]!.status, 'pending');
+  assert.ok(rows[1]!.scheduled_at.getTime() >= before + 9900); assert.equal(enqueueCalls, 1);
+});
+test('kick permission errors remain tool errors and a confirmed kick succeeds', async () => {
+  for (const code of ['OWNER_LEFT', 'NO_PERMISSION', null]) {
+    await reset(); await db.query('UPDATE groups SET auto_kick_enabled=true'); kickFailure = code;
+    let turns = 0; agentReply = () => ++turns === 1 ? use('kick', 'kick_user', { platform_user_id: 'external', reason: 'approved policy' }) : end();
+    await inbound(); await waitFor(async () => (await latestRun())?.status === 'finished');
+    const step = (await db.query<{ error_code: string | null; result: { kicked?: boolean } }>('SELECT error_code,result FROM agent_steps WHERE ordinal=1')).rows[0]!;
+    assert.equal(step.error_code, code); if (!code) assert.equal(step.result.kicked, true);
+    assert.equal(kickCalls, 1); assert.equal(auditCalls, 1);
+  }
+});
+test('SEND_TIMEOUT retries with the same key read the eventual send without re-auditing', async () => {
+  await reset(); sendState = 'unknown'; let turns = 0;
+  agentReply = async () => { turns++; if (turns === 2) await db.query('UPDATE messages SET delivery_status=\'sent\' WHERE is_own'); return turns <= 2 ? use(`timeout-send-${turns}`, 'send_message', { text: 'once', idempotency_key: 'timeout-key' }) : end(); };
+  await inbound(); await waitFor(async () => (await latestRun())?.status === 'finished', 8000);
+  const steps = (await db.query<{ error_code: string | null; result: { deliveryStatus?: string } }>('SELECT error_code,result FROM agent_steps ORDER BY ordinal')).rows;
+  assert.equal(steps[0]!.error_code, 'SEND_TIMEOUT'); assert.equal(steps[1]!.result.deliveryStatus, 'sent');
+  assert.equal(enqueueCalls, 1); assert.equal(auditCalls, 1);
+});
+test('sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp', async () => {
+  await reset(); await db.query('UPDATE groups SET agent_enabled=false');
+  await db.query(`INSERT INTO members(group_id,account_id,platform_user_id,role) VALUES($1,'account-4','account-4','member') ON CONFLICT DO NOTHING`, [groupId]);
+  const definition = await api.inject({ method: 'POST', url: '/api/sequences', payload: { name: 'roles', steps: [1, 2, 3].map(index => ({ index, accountRole: index === 1 ? 'admin' : 'member', text: 'role test', delaySeconds: 0 })) } });
+  const start = await api.inject({ method: 'POST', url: `/api/groups/${groupId}/sequence-runs`, payload: { sequenceId: definition.json<{ id: string }>().id } });
+  const id = start.json<{ runId: string }>().runId; await module.tick();
+  assert.equal((await db.query<{ account_id: string }>('SELECT account_id FROM messages')).rows[0]!.account_id, 'account-2');
+  await db.query('UPDATE messages SET delivery_status=\'sent\',updated_at=now()'); await module.tick(); await module.tick();
+  assert.equal((await db.query<{ account_id: string }>('SELECT account_id FROM messages ORDER BY created_at DESC LIMIT 1')).rows[0]!.account_id, 'account-3');
+  await db.query('UPDATE messages SET delivery_status=\'sent\',updated_at=now()');
+  await db.query('UPDATE accounts SET status=\'disconnected\' WHERE id IN (\'account-3\',\'account-4\')');
+  await module.tick(); await module.tick();
+  const result = (await api.inject(`/api/sequence-runs/${id}`)).json<{ status: string; steps: { status: string; sentAt: string | null }[] }>();
+  assert.equal(result.status, 'finished'); assert.equal(result.steps[2]!.status, 'skipped'); assert.ok(result.steps[2]!.sentAt);
+});
+
+const realTiming = process.env.AUTOMATION_TIMING_TESTS === '1';
+test('timing: the default twelve-second turn timeout discards the late response', { skip: !realTiming }, async () => {
+  await reset(); let turns = 0;
+  agentReply = async () => { turns++; if (turns === 1) { await delay(13200); return end('late first response'); } return end('after timeout'); };
+  const started = Date.now(); await inbound();
+  await waitFor(async () => (await latestRun())?.status === 'finished', 16000);
+  const elapsed = Date.now() - started; assert.ok(elapsed >= 11900 && elapsed < 15500, `elapsed ${elapsed}ms`);
+  const steps = (await db.query<{ kind: string; error_code: string }>('SELECT kind,error_code FROM agent_steps ORDER BY ordinal')).rows;
+  assert.equal(steps[0]!.error_code, 'TURN_TIMEOUT'); assert.equal(steps[1]!.kind, 'final'); assert.equal(turns, 2);
+  await delay(1400); assert.equal((await db.query('SELECT * FROM agent_steps')).rowCount, 2);
+});
+test('timing: three five-second inconclusive audit attempts block without sending', { skip: !realTiming }, async () => {
+  await reset();
+  agentReply = () => use('slow-audit', 'send_message', { text: 'no audit approval in time', idempotency_key: 'slow-audit' });
+  auditReply = async () => { await delay(6200); return { verdict: 'pass', reason: 'too late' }; };
+  const started = Date.now(); await inbound();
+  await waitFor(async () => (await latestRun())?.status === 'blocked', 19000);
+  const elapsed = Date.now() - started; assert.ok(elapsed >= 14900 && elapsed < 18500, `elapsed ${elapsed}ms`);
+  assert.equal(auditCalls, 3); assert.equal(enqueueCalls, 0); assert.equal((await latestRun()).end_reason, 'audit_blocked');
+  await delay(1400); assert.equal(enqueueCalls, 0);
+});
+test('timing: sixty seconds of activity ends the run even below the twelve-step cap', { skip: !realTiming }, async () => {
+  await reset(); let turns = 0;
+  agentReply = async () => { const id = `slow-read-${++turns}`; await delay(8000); return use(id, 'get_recent_messages', { limit: 1 }); };
+  const started = Date.now(); await inbound();
+  await waitFor(async () => (await latestRun())?.status === 'failed', 66000);
+  const elapsed = Date.now() - started; assert.ok(elapsed >= 59500 && elapsed < 65000, `elapsed ${elapsed}ms`);
+  const run = await latestRun(); assert.equal(run.end_reason, 'wall_clock'); assert.ok(turns < 12);
+  assert.equal((await db.query<{ error_code: string }>('SELECT error_code FROM agent_steps ORDER BY ordinal DESC LIMIT 1')).rows[0]!.error_code, 'TURN_TIMEOUT');
 });

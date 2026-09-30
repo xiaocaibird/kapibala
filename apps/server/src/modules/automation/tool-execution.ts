@@ -116,7 +116,7 @@ export class AgentTools {
     try { await this.messaging.kick({ groupId: run.group_id, accountId: accountId!, targetPlatformUserId: input.platform_user_id }); }
     catch (error) {
       const code = error instanceof RemoteError || error instanceof AppError ? error.code : 'UNKNOWN';
-      if ((error instanceof RemoteError && error.status === 503) || ['NETWORK_TIMEOUT', 'UNKNOWN', 'KICK_UNKNOWN', 'HTTP_503', 'SERVICE_UNAVAILABLE'].includes(code)) { await this.host.pause(run, 'The dispatched kick has no provable outcome; automatic replay is paused.'); return; }
+      if ((error instanceof RemoteError && error.status >= 500) || ['NETWORK_TIMEOUT', 'UNKNOWN', 'KICK_UNKNOWN', 'HTTP_503', 'SERVICE_UNAVAILABLE'].includes(code)) { await this.host.pause(run, 'The dispatched kick has no provable outcome; automatic replay is paused.'); return; }
       const mapped = ['OWNER_LEFT', 'NO_PERMISSION', 'GROUP_UNREACHABLE'].includes(code) ? code : 'SEND_FAILED';
       await this.host.completeStep(run, step, toolError(mapped, code)); return;
     }
