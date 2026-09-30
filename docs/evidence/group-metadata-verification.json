@@ -1,0 +1,126 @@
+{
+  "verifiedAt": "2026-09-30T12:56:08.742919+00:00",
+  "sourceCommit": "2d675005a4ba1e3ef69e18440c7f21a5579fb718",
+  "scope": [
+    "CR-001",
+    "CR-002",
+    "CR-003",
+    "CR-004",
+    "CR-005"
+  ],
+  "sourceTrees": {
+    "apps": "6c1b1701ad713499fd067e133b4629ede410788f",
+    "db": "22144193780ea08a46aee5f5a67c7e0561d8c76d",
+    "packages": "07248d43cafe073bf22a3035e40e4b9138fcd213",
+    "scripts": "fee2e4763fb4a91fd0e2f351211471b33681dd1c"
+  },
+  "automatic": {
+    "command": "npm test",
+    "temporaryBaseDatabase": "verification_29df7a7d3eaa47a28f485d626740bb96",
+    "temporaryBaseRemoved": true,
+    "registered": 143,
+    "passed": 140,
+    "skipped": 3,
+    "failed": 0,
+    "durationMs": 111872.178083,
+    "log": ".runtime/group-metadata-isolated-verification.log",
+    "logSha256": "560c7485fbf82b3fa48ed728da2a908f659e996d4665c1dbcfb087c3e4dc8584",
+    "buildAndTypecheck": "passed",
+    "originalSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+    "newBackendTestsPassed": 8,
+    "webTestsPassed": 20,
+    "timingTests": "Not rerun for this metadata change; prior independent evidence retains its own source version."
+  },
+  "browser": {
+    "source": "isolated Codex in-app browser; current user Chrome page not controlled",
+    "qa": {
+      "pid": 52933,
+      "dbName": "group_metadata_qa_e2db4c4b7e3b47a98c460024c13d8e05",
+      "status": "stopped",
+      "startedAt": "2026-09-30T12:51:49.215Z",
+      "url": "http://127.0.0.1:64563",
+      "serverURL": "http://127.0.0.1:64460",
+      "gatewayURL": "http://127.0.0.1:64443",
+      "agentURL": "http://127.0.0.1:64444",
+      "legacyGroup": {
+        "id": "e9db42ab-e4a0-44fd-8eb0-8111849e791e",
+        "name": null,
+        "description": null,
+        "createdAt": "2026-09-29T16:05:06.000Z",
+        "gatewayGroupId": "558feb6e-5a82-44d3-9ef6-88f1ff54478b",
+        "status": "active",
+        "creatorAccountId": "account-1",
+        "agentEnabled": false,
+        "autoKickEnabled": false,
+        "members": [
+          {
+            "accountId": "account-2",
+            "platformUserId": "platform-account-2",
+            "role": "admin"
+          },
+          {
+            "accountId": "account-1",
+            "platformUserId": "platform-account-1",
+            "role": "creator"
+          },
+          {
+            "accountId": "account-3",
+            "platformUserId": "platform-account-3",
+            "role": "member"
+          }
+        ],
+        "activeAgentRunId": null,
+        "activeSequenceRunId": null
+      },
+      "syntheticCreatedAt": "2026-09-29T16:05:06.000Z",
+      "temporaryDirectory": "/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-group-metadata-BZTX7M",
+      "stoppedAt": "2026-09-30T12:56:31.765Z",
+      "cleanupErrors": []
+    },
+    "createdGroupId": "dcfb08e8-c44c-4681-bdde-b1509766e0f9",
+    "createdGatewayGroupId": "2ef64163-5f72-4c50-8bdd-11dcbc9c2e51",
+    "checks": [
+      "Unnamed group falls back to gateway ID in list/detail; null description shows unfilled",
+      "Synthetic QA timestamp 2026-09-29T16:05:06.000Z renders 2026/09/30 00:05:06 in Asia/Shanghai",
+      "Whitespace-only create name rejected, entered description and accounts retained",
+      "Trimmed name and description create successfully through asynchronous job",
+      "Newer group appears before older synthetic fixture",
+      "Rename and multiline description persist after page reload; original creation time unchanged",
+      "Clearing description preserves name and creation time",
+      "Viewer reads name/description/date and has no edit control",
+      "Renamed list label retains gateway diagnostic ID"
+    ],
+    "screenshots": [
+      "group-metadata-list.png",
+      "group-metadata-detail.png",
+      "group-metadata-viewer.png"
+    ],
+    "cleanup": "Independent services stopped, temporary database and simulator directory removed with no cleanup errors"
+  },
+  "testIsolationDeviation": {
+    "description": "First gateway/automation focused run used disposable random schemas inside the default kapibala database, rather than a separate base database. Fixture operations were schema-scoped and cleanup hooks completed; no public business table writes were part of those fixtures. Exact schema IDs and wall-clock times were not logged.",
+    "firstResult": {
+      "passed": 76,
+      "skipped": 3,
+      "failed": 0,
+      "durationMs": 17773.636667
+    },
+    "independentRepeat": {
+      "database": "metadata_verify_da87d0367d9d4042bdbb90a632409879",
+      "passed": 76,
+      "skipped": 3,
+      "failed": 0,
+      "durationMs": 17703,
+      "databaseRemoved": true
+    },
+    "latestFullRunUsesSeparateBase": true
+  },
+  "limits": [
+    "Developer validation is not user acceptance.",
+    "Metadata is local, with no gateway synchronization.",
+    "Names trim to 1..80 and descriptions to at most 500 UTF-16 code units; these are implementation proposals.",
+    "Concurrent edits to the same field use last committed write; untouched fields are omitted.",
+    "Unsubmitted browser input is not a persisted database record.",
+    "Descending creation order remains a proposal pending user direction confirmation."
+  ]
+}
