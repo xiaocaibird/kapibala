@@ -8,6 +8,7 @@
 |---|---|
 | 按原始A/B要求逐组评审证据、关键机制与剩余风险 | [核心功能验收与验证记录](acceptance.md)；工程侧执行验证，负责人审查标准与结果 |
 | 区分原始要求未闭合与额外产品增强 | [核心缺口与证据复核](core-requirements-gap-review.md)；[额外增强建议](product-enhancement-proposal.md)；[旧PI提案映射](product-improvement-proposal.md) |
+| 跟踪已授权核心修复、补证和协议待决事项 | [本轮核心质量收口](core-quality-closeout.md)；修复与开发验证不自动代表用户验收 |
 | 快速了解当前能力、来源、实现与用户验收状态 | [当前功能总表与需求追踪](feature-matrix.md) |
 | 先体验和验收功能 | [分批验收与运行说明](acceptance.md) |
 | 查看逐条实现、测试证据和未验范围 | [需求实现与验证矩阵](requirements-matrix.md) |

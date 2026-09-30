@@ -1,0 +1,2995 @@
+{
+  "recordedAt": "2026-09-30T17:26:36.717Z",
+  "purpose": "Authorized core CG01–19 repair/evidence closeout; not user acceptance or protocol deviation approval.",
+  "candidate": {
+    "actualProductCommit": "393d43e295febab5527164c64b04af94e7554376",
+    "documentHeadAtRecording": "194a6738c3704f583c7baa8b31c47140a09d2b3a",
+    "frontendOriginalCommit": "6a6dd80a032f526d91bcf99f384e2f986af8aad3",
+    "backendBaseline": "7f424f6c1db97b18289f8ebcc5555d606b011758",
+    "backendChanges": "",
+    "sourceTrees": {
+      "apps/web/src": "b704c95d57d131c3d849a6250bd2e76520ea2107",
+      "apps/server/src": "1e76ddc176a7f8232c8edaf3698c6ceac65a644a",
+      "apps/simulator/src": "ea007f1148263baa5a8a477aa009064548f9af37",
+      "db": "f09e590f03258b9835063400cce86f6149edc80e",
+      "packages": "785ad5068c3d3fb29a6a85fb9c642b50ead7302e"
+    }
+  },
+  "original": {
+    "path": "docs/original-interview-question.md",
+    "sha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75"
+  },
+  "tests": {
+    "final": {
+      "registered": 110,
+      "pass": 110,
+      "fail": 0,
+      "skip": 0,
+      "durationMs": 31124.060125,
+      "composition": {
+        "frontend": 98,
+        "coreAutomation": 6,
+        "coreGateway": 6
+      },
+      "command": "DATABASE_URL=postgres://kapibala:kapibala@localhost:55432/postgres node --import tsx --test tests/integration/core-automation-closeout.test.ts tests/integration/core-gateway-closeout.test.ts apps/web/tests/*.test.ts"
+    },
+    "build": {
+      "command": "npm run build",
+      "passed": true,
+      "includes": "server TypeScript, web TypeScript, Vite production build"
+    },
+    "logs": {
+      "build": {
+        "path": "evidence/core-closeout-build.log",
+        "sha256": "a411cd38c411cfaf5928102072742dc252a6259223df4b7b600949248fe949db",
+        "provenance": "Captured directly from the actual candidate command stdout/stderr."
+      },
+      "tests": {
+        "path": "evidence/core-closeout-tests.log",
+        "sha256": "eb40e4af7c57de2565e019282161ebba926c8e04c91795eedcbc0b46c2a9ab7b",
+        "provenance": "Captured directly from the actual candidate command stdout/stderr."
+      }
+    },
+    "timing": {
+      "provenance": "Archived after execution from recorded tools output, not original shell-captured logs. Hashes identify these post-run archives only.",
+      "productSource": "7f424f6c1db97b18289f8ebcc5555d606b011758",
+      "testCommits": [
+        "6d993a3",
+        "9da0eb9"
+      ],
+      "versionBoundary": "9/9 preceded the added complete-history-prefix assertion; subsequent 6/6 includes it. CG08 only test title was refined afterward, not execution logic.",
+      "logs": {
+        "nine-tests.tool-transcript.log": {
+          "sha256": "b80431c16a3724a5458049e2741487a21a795ae7bc197e04ed062cd87a8aa3c7",
+          "archivePath": "evidence/core-automation-nine-tests.tool-transcript.log"
+        },
+        "six-tests-final.tool-transcript.log": {
+          "sha256": "34ecbc69ec44b0d1b954b0c30d041e1b24110711fdbb8f46ff97ddb18cfa7695",
+          "archivePath": "evidence/core-automation-six-tests-final.tool-transcript.log"
+        }
+      },
+      "cleanup": {
+        "adminDatabase": "postgres",
+        "query": "SELECT datname FROM pg_database WHERE datname=ANY($1::text[])",
+        "databases": [
+          "kapibala_test_cdea867869f5494f981a9053152a3eaf",
+          "kapibala_test_09aba41cde9b4b9293e24e595ecbe491",
+          "kapibala_test_c989041c4fcc4dc384cc77c667fc9fec",
+          "kapibala_test_f824170be34b49d2ae65542f45a40787",
+          "kapibala_test_8b8d83dfa82a4c498db00697267b7033",
+          "kapibala_test_e25791dd29874d7aacbfc14cf5129da0",
+          "kapibala_test_d015115cdc4d4c1ea5db5aa23b0df624",
+          "kapibala_test_4b7ce4a3cd754d5d9dce2e506e274fbc",
+          "kapibala_test_721e03807dad46dfb451a7f99400a7eb",
+          "kapibala_test_d8c8835fb2104a009b886d6296905c7d",
+          "kapibala_test_2f6981a1d3ca44c3aefad752248cf2af",
+          "kapibala_test_015a4f08bb3d4c1e8cdc4ca8560c8595",
+          "kapibala_test_0b313ed525224b8d8c1ee7410afd2dd1",
+          "kapibala_test_dc0734c79db249da8223789243ede479",
+          "kapibala_test_51e0b411457a428ca8ae3d2403984422"
+        ],
+        "actualToolResult": {
+          "checked": 15,
+          "remaining": []
+        },
+        "rerunForArchival": false
+      }
+    },
+    "notRerun": [
+      "all historical backend suite",
+      "historical 60-second budget test"
+    ],
+    "intermediate": {
+      "pass": 101,
+      "fail": 0,
+      "skip": 0,
+      "source": "610b9d4 before CG12 fix; superseded for frontend final validation"
+    }
+  },
+  "browser": {
+    "driver": "Root CUA hidden Codex in-app browser only; user Chrome not used",
+    "fixture": {
+      "pid": 79476,
+      "dbName": "core_console_qa_dead8850976e4069805de6af52d1922b",
+      "sourceHead": "8bc7ef9029380cbefb7f38fd2bca832788ea060f",
+      "status": "stopped",
+      "startedAt": "2026-09-30T16:57:09.579Z",
+      "url": "http://127.0.0.1:60525",
+      "serverURL": "http://127.0.0.1:60518",
+      "gatewayURL": "http://127.0.0.1:60513",
+      "agentURL": "http://127.0.0.1:60514",
+      "temporaryDirectory": "/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-core-console-qa-v3LuW1",
+      "groupId": "d89ccabc-9036-4aa1-b850-4f921f81fdac",
+      "initialMessages": 125,
+      "controls": [
+        "control",
+        "reset-metrics",
+        "expire-access",
+        "publish",
+        "group-setting",
+        "sender",
+        "agent-scenario"
+      ],
+      "stoppedAt": "2026-09-30T17:14:05.890Z",
+      "cleanupErrors": []
+    },
+    "frontend": "6a6dd80 after reload; backend loaded at 8bc7ef9, unchanged versus candidate",
+    "cg01": {
+      "baselineExpressionReproduction": {
+        "sourceCommit": "7f424f6",
+        "sourceFile": "apps/web/src/components/Timeline.tsx",
+        "method": "Execute the unchanged selected expression extracted from git source against a candidate list after account-2 becomes unavailable; no UI or API operation",
+        "expression": "candidates.some((account) => account.id === accountId)\n    ? accountId\n    : (candidates[0]?.id ?? \"\")",
+        "results": [
+          {
+            "selectedBefore": "account-2",
+            "unavailableStatus": "disconnected",
+            "actualSubmittedAccountId": "account-1",
+            "expectedRetainedAccountId": "account-2"
+          },
+          {
+            "selectedBefore": "account-2",
+            "unavailableStatus": "idle",
+            "actualSubmittedAccountId": "account-1",
+            "expectedRetainedAccountId": "account-2"
+          },
+          {
+            "selectedBefore": "account-2",
+            "unavailableStatus": "suspended",
+            "actualSubmittedAccountId": "account-1",
+            "expectedRetainedAccountId": "account-2"
+          },
+          {
+            "selectedBefore": "account-2",
+            "unavailableStatus": "session_expired",
+            "actualSubmittedAccountId": "account-1",
+            "expectedRetainedAccountId": "account-2"
+          }
+        ]
+      },
+      "invalidSelection": {
+        "at": 1790787659920,
+        "draft": "CG01 保留身份草稿",
+        "notice": [
+          "实时同步中",
+          "群消息有更新。刷新并查看更新",
+          "可用发送身份列表有更新；刷新后确认当前范围。刷新并查看更新",
+          "原发送身份 account-2 已不可用，请重新选择后再发送。消息草稿已保留。"
+        ],
+        "selected": "account-2",
+        "sendDisabled": true
+      },
+      "rateLimited": {
+        "at": 1790787687922,
+        "rows": [
+          {
+            "id": "668e653b-be26-4766-8625-220fd46e811a",
+            "text": "我platform-account-3服务账号10/01 01:01:10CG01 保留身份草稿已发送 4f818cc4-b814-4c3c-ae22-78eb2d33bb14"
+          },
+          {
+            "id": "4773250f-0523-4827-80c9-ee2c1c941cb0",
+            "text": "我platform-account-2服务账号10/01 01:01:27CG01 限流仍按原身份排队排队中 dec15c6a-f550-4041-aa2a-c6c6706613c7"
+          }
+        ],
+        "selected": "account-2"
+      },
+      "finalMessages": [
+        {
+          "id": "668e653b-be26-4766-8625-220fd46e811a",
+          "msg_id": "4f818cc4-b814-4c3c-ae22-78eb2d33bb14",
+          "client_msg_id": "31f77285-6ec8-4396-bbb7-a50ee2affa5d",
+          "account_id": "account-3",
+          "text": "CG01 保留身份草稿",
+          "sent_at": "2026-09-30T17:01:10.730Z",
+          "delivery_status": "sent"
+        },
+        {
+          "id": "4773250f-0523-4827-80c9-ee2c1c941cb0",
+          "msg_id": "be4f61d4-f9fd-4a85-bf2e-1ab9d66ac436",
+          "client_msg_id": "dec15c6a-f550-4041-aa2a-c6c6706613c7",
+          "account_id": "account-2",
+          "text": "CG01 限流仍按原身份排队",
+          "sent_at": "2026-09-30T17:01:33.820Z",
+          "delivery_status": "sent"
+        }
+      ],
+      "finalMessagesSource": "Later cg17-state.json snapshot after the original account-2 queue was released and sent",
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/groups/d89ccabc-9036-4aa1-b850-4f921f81fdac/send",
+          "at": 1790787670509,
+          "role": "admin",
+          "username": "admin",
+          "body": {
+            "accountId": "account-3",
+            "text": "CG01 保留身份草稿",
+            "clientMsgId": "31f77285-6ec8-4396-bbb7-a50ee2affa5d"
+          },
+          "status": 202
+        },
+        {
+          "method": "POST",
+          "path": "/api/groups/d89ccabc-9036-4aa1-b850-4f921f81fdac/send",
+          "at": 1790787687540,
+          "role": "admin",
+          "username": "admin",
+          "body": {
+            "accountId": "account-2",
+            "text": "CG01 限流仍按原身份排队",
+            "clientMsgId": "dec15c6a-f550-4041-aa2a-c6c6706613c7"
+          },
+          "status": 202
+        }
+      ]
+    },
+    "cg02": {
+      "api": {
+        "run": {
+          "id": "d32160f8-fa95-464a-8f88-52811ffef2e0",
+          "status": "failed",
+          "currentStepIndex": 1,
+          "steps": [
+            {
+              "index": 1,
+              "status": "failed",
+              "scheduledAt": "2026-09-30T17:12:44.809Z",
+              "sentAt": "2026-09-30T17:12:45.029Z",
+              "clientMsgId": "05725727-b0cd-411d-89d4-7c282ecaf740",
+              "resolvedVars": {},
+              "varSources": {}
+            },
+            {
+              "index": 2,
+              "status": "pending",
+              "scheduledAt": null,
+              "sentAt": null,
+              "clientMsgId": null,
+              "resolvedVars": {},
+              "varSources": {}
+            }
+          ]
+        },
+        "messages": {
+          "items": [
+            {
+              "id": "0ee2a32e-e752-4309-932d-76c71029d215",
+              "msgId": null,
+              "clientMsgId": "05725727-b0cd-411d-89d4-7c282ecaf740",
+              "senderPlatformUserId": "platform-account-2",
+              "isOwn": true,
+              "text": "CG02 failed timestamp",
+              "sentAt": "2026-09-30T17:12:44.826Z",
+              "deliveryStatus": "failed",
+              "failCode": "ACCOUNT_OFFLINE"
+            },
+            {
+              "id": "a17533ec-2368-4259-9e33-cad7b2f348fe",
+              "msgId": "039ac978-f3ad-4f92-9e9c-e35334d0173f",
+              "clientMsgId": "5d1eabaf-9607-4882-994c-07449ddce260",
+              "senderPlatformUserId": "platform-account-2",
+              "isOwn": true,
+              "text": "CG02 remain pending",
+              "sentAt": "2026-09-30T17:11:41.377Z",
+              "deliveryStatus": "sent",
+              "failCode": null
+            },
+            {
+              "id": "83bd7ab2-d526-41e4-a8d5-85691b2818a0",
+              "msgId": "942af122-f6dd-4fdf-b4f5-4e5bf3032ce6",
+              "clientMsgId": "5b81d5df-6f64-4bcc-a58e-c4023e4f62e2",
+              "senderPlatformUserId": "platform-account-2",
+              "isOwn": true,
+              "text": "CG02 failed timestamp",
+              "sentAt": "2026-09-30T17:11:40.972Z",
+              "deliveryStatus": "sent",
+              "failCode": null
+            },
+            {
+              "id": "ab1ae938-68e8-4d21-b090-1a504335b907",
+              "msgId": "b8ba25a1-bb2f-407a-8ab2-61852674f24d",
+              "clientMsgId": null,
+              "senderPlatformUserId": "qa-external",
+              "isOwn": false,
+              "text": "CG19-protocol-trigger-001",
+              "sentAt": "2026-09-30T17:10:04.119Z",
+              "deliveryStatus": null,
+              "failCode": null
+            }
+          ],
+          "nextCursor": null,
+          "snapshotId": "5324a8dc-bc43-4b00-9b6f-1bfec5679b0d"
+        }
+      },
+      "renderedFailed": "- complementary:\n  - link \"K kapibala .\":\n    - /url: \"#/groups\"\n    - generic: K\n    - text: kapibala\n    - generic: .\n  - generic: 工作空间\n  - navigation:\n    - link \"群组工作台\":\n      - /url: \"#/groups\"\n      - generic: 群组工作台\n    - link \"服务账号\":\n      - /url: \"#/accounts\"\n      - generic: 服务账号\n    - link \"Agent 运行\":\n      - /url: \"#/agent-runs\"\n      - generic: Agent 运行\n    - link \"定时序列\":\n      - /url: \"#/sequences\"\n      - generic: 定时序列\n  - strong: 消息运营平台\n  - generic: 本地工作空间\n  - generic: A\n  - strong: admin\n  - generic: 管理员\n  - button \"退出登录\":\n- text: 工作空间\n- generic: /\n- strong: 定时序列\n- status: 实时同步中\n- main:\n  - strong: Agent 审计阻塞\n  - generic: c4d43380-725d-4995-87fc-1dbacf2d4f3d\n  - link \"查看运行详情 →\":\n    - /url: \"#/agent-runs/c4d43380-725d-4995-87fc-1dbacf2d4f3d\"\n  - button \"关闭提醒\": ×\n  - generic: SCHEDULED MESSAGING\n  - heading \"定时序列\" [level=1]\n  - paragraph: 预检每一步的消息与变量来源，再有序发送到群组。\n  - button \"新建序列\":\n    - text: 新建序列\n  - status:\n    - generic: 当前选择的群状态或运行有更新。\n    - button \"刷新并查看更新\"\n  - paragraph: 当前群组：CG19 protocol · cf806e14-9289-4dce-92fb-eee28f15ff02 · 状态：active\n  - paragraph: 当前展示运行：d32160f8-fa95-464a-8f88-52811ffef2e0\n  - heading \"运行配置\" [level=2]\n  - generic: 先预检 · 后执行\n  - text: 目标群组\n  - combobox \"目标群组\":\n    - option \"请选择群组\" [disabled]\n    - option \"CG19 protocol · cf806e14-9289-4dce-92fb-eee28f15ff02 · 可用\" [selected]\n    - option \"CG19 blocked · d2f20246-905a-4dfe-8391-7fc20e338f19 · 可用\"\n    - option \"CG12 时间线与重连验收 · 37181c43-252f-4f57-a0b0-08b6b7174d9d · 可用\"\n  - text: 消息序列\n  - combobox \"消息序列\":\n    - option \"请选择序列\" [disabled]\n    - option \"CG02 失败处理时间验证 · 2 步\" [selected]\n  - generic: \"1\"\n  - strong: CG02 failed timestamp\n  - generic: 管理员 / 群主 · 延迟 0 秒\n  - generic: \"2\"\n  - strong: CG02 remain pending\n  - generic: 管理员 / 群主 · 延迟 0 秒\n  - text: 默认变量\n  - code: vars\n  - textbox \"默认变量 vars\": \"{}\"\n  - paragraph: JSON 键值对象。此序列没有占位符。空字符串视为未提供。\n  - text: 分步变量\n  - code: stepVars\n  - textbox \"分步变量 stepVars\": \"{}\"\n  - paragraph:\n    - text: 例如\n    - code: \"{\\\"2\\\":{\\\"location\\\":\\\"共享盘\\\"}}\"\n    - text: 。从该步起沿用新值；空字符串保留原值。\n  - button \"预检所有步骤\":\n    - text: 预检所有步骤\n  - status:\n    - generic: 序列运行状态有更新。\n    - button \"刷新并查看更新\"\n  - heading \"序列执行进度\" [level=2]\n  - generic: 失败\n  - paragraph: 当前步骤 1\n  - text: d32160f8-fa95-464a-8f88-52811ffef2e0\n  - strong: 1 / 2 步已处理\n  - generic: 当前步骤 1\n  - progressbar \"序列执行进度\"\n  - article:\n    - strong: 第 1 步\n    - generic: 失败\n    - text: 计划发送\n    - time: 10/01 01:12:44\n    - text: 失败处理时间\n    - time: 10/01 01:12:45\n    - code: 05725727-b0cd-411d-89d4-7c282ecaf740\n    - generic \"变量与来源\"\n  - article:\n    - strong: 第 2 步\n    - generic: 待执行\n    - text: 计划发送\n    - generic: —\n    - generic: 尚无确认发出时间\n    - generic \"变量与来源\"\n  - heading \"发送后，再开始下一步计时\" [level=3]\n  - paragraph: 限流时步骤等待恢复。没有匹配角色的可用账号时跳过；群不可写时停止运行。\n  - generic: Kapibala Console\n  - generic: 状态有记录，执行可追踪。",
+      "renderedSent": "- complementary:\n  - link \"K kapibala .\":\n    - /url: \"#/groups\"\n    - generic: K\n    - text: kapibala\n    - generic: .\n  - generic: 工作空间\n  - navigation:\n    - link \"群组工作台\":\n      - /url: \"#/groups\"\n      - generic: 群组工作台\n    - link \"服务账号\":\n      - /url: \"#/accounts\"\n      - generic: 服务账号\n    - link \"Agent 运行\":\n      - /url: \"#/agent-runs\"\n      - generic: Agent 运行\n    - link \"定时序列\":\n      - /url: \"#/sequences\"\n      - generic: 定时序列\n  - strong: 消息运营平台\n  - generic: 本地工作空间\n  - generic: A\n  - strong: admin\n  - generic: 管理员\n  - button \"退出登录\":\n- text: 工作空间\n- generic: /\n- strong: 定时序列\n- status: 实时同步中\n- main:\n  - strong: Agent 审计阻塞\n  - generic: c4d43380-725d-4995-87fc-1dbacf2d4f3d\n  - link \"查看运行详情 →\":\n    - /url: \"#/agent-runs/c4d43380-725d-4995-87fc-1dbacf2d4f3d\"\n  - button \"关闭提醒\": ×\n  - generic: SCHEDULED MESSAGING\n  - heading \"定时序列\" [level=1]\n  - paragraph: 预检每一步的消息与变量来源，再有序发送到群组。\n  - button \"新建序列\":\n    - text: 新建序列\n  - status:\n    - generic: 当前选择的群状态或运行有更新。\n    - button \"刷新并查看更新\"\n  - paragraph: 当前群组：CG19 protocol · cf806e14-9289-4dce-92fb-eee28f15ff02 · 状态：active\n  - paragraph: 当前展示运行：b76898eb-d3ba-4dd2-99a4-bf474eb1ef30\n  - heading \"运行配置\" [level=2]\n  - generic: 先预检 · 后执行\n  - text: 目标群组\n  - combobox \"目标群组\":\n    - option \"请选择群组\" [disabled]\n    - option \"CG19 protocol · cf806e14-9289-4dce-92fb-eee28f15ff02 · 可用\" [selected]\n    - option \"CG19 blocked · d2f20246-905a-4dfe-8391-7fc20e338f19 · 可用\"\n    - option \"CG12 时间线与重连验收 · 37181c43-252f-4f57-a0b0-08b6b7174d9d · 可用\"\n  - text: 消息序列\n  - combobox \"消息序列\":\n    - option \"请选择序列\" [disabled]\n    - option \"CG02 失败处理时间验证 · 2 步\" [selected]\n  - generic: \"1\"\n  - strong: CG02 failed timestamp\n  - generic: 管理员 / 群主 · 延迟 0 秒\n  - generic: \"2\"\n  - strong: CG02 remain pending\n  - generic: 管理员 / 群主 · 延迟 0 秒\n  - text: 默认变量\n  - code: vars\n  - textbox \"默认变量 vars\": \"{}\"\n  - paragraph: JSON 键值对象。此序列没有占位符。空字符串视为未提供。\n  - text: 分步变量\n  - code: stepVars\n  - textbox \"分步变量 stepVars\": \"{}\"\n  - paragraph:\n    - text: 例如\n    - code: \"{\\\"2\\\":{\\\"location\\\":\\\"共享盘\\\"}}\"\n    - text: 。从该步起沿用新值；空字符串保留原值。\n  - button \"预检所有步骤\":\n    - text: 预检所有步骤\n  - status:\n    - generic: 序列运行状态有更新。\n    - button \"刷新并查看更新\"\n  - heading \"序列执行进度\" [level=2]\n  - generic: 已完成\n  - paragraph: 当前步骤 2\n  - text: b76898eb-d3ba-4dd2-99a4-bf474eb1ef30\n  - strong: 2 / 2 步已处理\n  - generic: 当前步骤 2\n  - progressbar \"序列执行进度\"\n  - article:\n    - strong: 第 1 步\n    - generic: 已发送\n    - text: 计划发送\n    - time: 10/01 01:11:40\n    - text: 确认发出时间\n    - time: 10/01 01:11:40\n    - code: 5b81d5df-6f64-4bcc-a58e-c4023e4f62e2\n    - generic \"变量与来源\"\n  - article:\n    - strong: 第 2 步\n    - generic: 已发送\n    - text: 计划发送\n    - time: 10/01 01:11:40\n    - text: 确认发出时间\n    - time: 10/01 01:11:41\n    - code: 5d1eabaf-9607-4882-994c-07449ddce260\n    - generic \"变量与来源\"\n  - heading \"发送后，再开始下一步计时\" [level=3]\n  - paragraph: 限流时步骤等待恢复。没有匹配角色的可用账号时跳过；群不可写时停止运行。\n  - generic: Kapibala Console\n  - generic: 状态有记录，执行可追踪。",
+      "coverage": "Real UI sent/failed/pending; actual component test covers all five statuses. First unsupported fault control string produced success only; actual failure used independent gateway disconnect returning ACCOUNT_OFFLINE."
+    },
+    "cg12": {
+      "before": {
+        "at": 1790787613011,
+        "buttons": [
+          "加载更早"
+        ],
+        "errors": [],
+        "rows": [
+          {
+            "id": "0df21304-ab6e-4ec0-9f72-9244c5b4a3ee",
+            "text": "CG12-race-old-001",
+            "time": "2020-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "78d816c6-ec28-4d53-8502-b44858228f18",
+            "text": "CG12-backfill-001",
+            "time": "2020-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "849d114f-d1d2-402d-af0c-398ff03a9956",
+            "text": "CG12-seed-001",
+            "time": "2026-09-30T16:57:10.662Z"
+          },
+          {
+            "id": "850c3a1d-41c8-46a5-93f2-c4f20b430bb0",
+            "text": "CG12-seed-002",
+            "time": "2026-09-30T16:57:10.663Z"
+          },
+          {
+            "id": "3f87084a-4c4b-4d74-8909-84f831a84d25",
+            "text": "CG12-seed-003",
+            "time": "2026-09-30T16:57:10.664Z"
+          },
+          {
+            "id": "b49c986a-43af-4c66-be4c-31573e12b8dc",
+            "text": "CG12-seed-004",
+            "time": "2026-09-30T16:57:10.665Z"
+          },
+          {
+            "id": "d0702b07-9779-4032-9554-b3202dc8e3b5",
+            "text": "CG12-seed-005",
+            "time": "2026-09-30T16:57:10.666Z"
+          },
+          {
+            "id": "4d7258d5-2e55-42be-a7b8-5741a82ec10c",
+            "text": "CG12-seed-006",
+            "time": "2026-09-30T16:57:10.667Z"
+          },
+          {
+            "id": "9ef8bbd5-8c81-43bc-834f-5c005e758bb5",
+            "text": "CG12-seed-007",
+            "time": "2026-09-30T16:57:10.668Z"
+          },
+          {
+            "id": "f8032177-7ddd-4cad-9804-b6df50a0d2ba",
+            "text": "CG12-seed-008",
+            "time": "2026-09-30T16:57:10.669Z"
+          },
+          {
+            "id": "4024710f-1152-4598-8b72-6f41fd3ba5e0",
+            "text": "CG12-seed-009",
+            "time": "2026-09-30T16:57:10.670Z"
+          },
+          {
+            "id": "421ad65d-1292-42ea-b137-da5587d86dc6",
+            "text": "CG12-seed-010",
+            "time": "2026-09-30T16:57:10.671Z"
+          },
+          {
+            "id": "6bd831b8-b2af-48fe-87ce-c33d449525f0",
+            "text": "CG12-seed-011",
+            "time": "2026-09-30T16:57:10.672Z"
+          },
+          {
+            "id": "72ff0acb-3bb0-4ad0-924e-faebbbecaee3",
+            "text": "CG12-seed-012",
+            "time": "2026-09-30T16:57:10.673Z"
+          },
+          {
+            "id": "821a222e-765f-4702-8029-43767a3d2bdc",
+            "text": "CG12-seed-013",
+            "time": "2026-09-30T16:57:10.674Z"
+          },
+          {
+            "id": "4759e94e-a207-4168-979f-b4e96eb73f6d",
+            "text": "CG12-seed-014",
+            "time": "2026-09-30T16:57:10.675Z"
+          },
+          {
+            "id": "54fa5242-5199-46d6-932a-603abae298c0",
+            "text": "CG12-seed-015",
+            "time": "2026-09-30T16:57:10.676Z"
+          },
+          {
+            "id": "21f7c568-6812-4e17-b3cb-ea49f7a3fd5d",
+            "text": "CG12-seed-016",
+            "time": "2026-09-30T16:57:10.677Z"
+          },
+          {
+            "id": "22b70d52-7863-4c08-98ba-49ef03d3f34e",
+            "text": "CG12-seed-017",
+            "time": "2026-09-30T16:57:10.678Z"
+          },
+          {
+            "id": "2c9c7eca-d453-4305-9c50-ffaa45946510",
+            "text": "CG12-seed-018",
+            "time": "2026-09-30T16:57:10.679Z"
+          },
+          {
+            "id": "e9f978f3-1f05-4415-8c28-f0b6ae39680c",
+            "text": "CG12-seed-019",
+            "time": "2026-09-30T16:57:10.680Z"
+          },
+          {
+            "id": "be722617-31fd-46ff-b1e5-6989a55bb7e2",
+            "text": "CG12-seed-020",
+            "time": "2026-09-30T16:57:10.681Z"
+          },
+          {
+            "id": "7e4e9c3f-56f9-4c76-9d45-739c3c5c4089",
+            "text": "CG12-seed-021",
+            "time": "2026-09-30T16:57:10.682Z"
+          },
+          {
+            "id": "4151702d-92b0-4ea9-9f62-fa1e90c5f8ab",
+            "text": "CG12-seed-022",
+            "time": "2026-09-30T16:57:10.683Z"
+          },
+          {
+            "id": "2183c5df-686a-4aa9-9e81-c7989c4443da",
+            "text": "CG12-seed-023",
+            "time": "2026-09-30T16:57:10.684Z"
+          },
+          {
+            "id": "8f7517e5-fc93-4724-902f-a8ff086e10a3",
+            "text": "CG12-seed-024",
+            "time": "2026-09-30T16:57:10.685Z"
+          },
+          {
+            "id": "c0a0d896-e544-4b75-aa9d-f8823615650c",
+            "text": "CG12-seed-025",
+            "time": "2026-09-30T16:57:10.686Z"
+          },
+          {
+            "id": "71b1ccc6-eb94-4e06-8732-c1b1c58c5c95",
+            "text": "CG12-seed-026",
+            "time": "2026-09-30T16:57:10.687Z"
+          },
+          {
+            "id": "db525ae8-6d5e-455a-9f0d-07e50f5c6661",
+            "text": "CG12-seed-027",
+            "time": "2026-09-30T16:57:10.688Z"
+          },
+          {
+            "id": "e0685f16-9304-4ec2-ab04-f3cb3a903f13",
+            "text": "CG12-seed-028",
+            "time": "2026-09-30T16:57:10.689Z"
+          },
+          {
+            "id": "e190b8b0-4182-4648-8eb4-4898109e54ad",
+            "text": "CG12-seed-029",
+            "time": "2026-09-30T16:57:10.690Z"
+          },
+          {
+            "id": "3cb9e899-f023-4c21-b945-30e5394cc72e",
+            "text": "CG12-seed-030",
+            "time": "2026-09-30T16:57:10.691Z"
+          },
+          {
+            "id": "d9a15480-2b2e-4260-8738-e434986faeee",
+            "text": "CG12-seed-031",
+            "time": "2026-09-30T16:57:10.692Z"
+          },
+          {
+            "id": "1df94c50-862d-4fab-9dfc-a02d6b694ffe",
+            "text": "CG12-seed-032",
+            "time": "2026-09-30T16:57:10.693Z"
+          },
+          {
+            "id": "41f1b63d-2eb5-467c-a44a-fd1fd1092994",
+            "text": "CG12-seed-033",
+            "time": "2026-09-30T16:57:10.694Z"
+          },
+          {
+            "id": "d1fa0452-0db8-490c-beed-b71833bea0af",
+            "text": "CG12-seed-034",
+            "time": "2026-09-30T16:57:10.695Z"
+          },
+          {
+            "id": "00822732-83d1-4462-91ed-7a332a6f265a",
+            "text": "CG12-seed-035",
+            "time": "2026-09-30T16:57:10.696Z"
+          },
+          {
+            "id": "033ca0bc-b95e-4eb3-891a-d272a64b45ec",
+            "text": "CG12-seed-036",
+            "time": "2026-09-30T16:57:10.697Z"
+          },
+          {
+            "id": "147f43c6-66d2-4161-b215-d060117511a8",
+            "text": "CG12-seed-037",
+            "time": "2026-09-30T16:57:10.698Z"
+          },
+          {
+            "id": "5cff63bb-e906-4ae5-a6fa-99a59ced1a73",
+            "text": "CG12-seed-038",
+            "time": "2026-09-30T16:57:10.699Z"
+          },
+          {
+            "id": "c3416ce9-40a2-4331-92ba-6a52bfe20df7",
+            "text": "CG12-seed-039",
+            "time": "2026-09-30T16:57:10.700Z"
+          },
+          {
+            "id": "c5878c9e-0ab3-4833-a18c-5257f37a5f80",
+            "text": "CG12-seed-040",
+            "time": "2026-09-30T16:57:10.701Z"
+          },
+          {
+            "id": "fb28815f-8a7d-4945-8152-013dd20d3c86",
+            "text": "CG12-seed-041",
+            "time": "2026-09-30T16:57:10.702Z"
+          },
+          {
+            "id": "553edefa-b35d-4075-b8cf-59b7c567e8cc",
+            "text": "CG12-seed-042",
+            "time": "2026-09-30T16:57:10.703Z"
+          },
+          {
+            "id": "7af95982-3405-407c-8e35-1850fb2d4e87",
+            "text": "CG12-seed-043",
+            "time": "2026-09-30T16:57:10.704Z"
+          },
+          {
+            "id": "f93cdb8c-0ba7-4efc-9721-2c4e18e1f2b7",
+            "text": "CG12-seed-044",
+            "time": "2026-09-30T16:57:10.705Z"
+          },
+          {
+            "id": "f13a2161-336d-4e9f-bea8-8fda7d04db14",
+            "text": "CG12-seed-045",
+            "time": "2026-09-30T16:57:10.706Z"
+          },
+          {
+            "id": "c38d2f7b-ec76-40cd-b41b-c7cdc8002dc7",
+            "text": "CG12-seed-046",
+            "time": "2026-09-30T16:57:10.707Z"
+          },
+          {
+            "id": "f434e31f-c870-4f1d-8f82-edae8c5549cc",
+            "text": "CG12-seed-047",
+            "time": "2026-09-30T16:57:10.708Z"
+          },
+          {
+            "id": "45b4f200-886b-4190-a822-6c49dcb093aa",
+            "text": "CG12-seed-048",
+            "time": "2026-09-30T16:57:10.709Z"
+          },
+          {
+            "id": "34828265-5de0-46a6-a810-058dad2d6a60",
+            "text": "CG12-seed-049",
+            "time": "2026-09-30T16:57:10.710Z"
+          },
+          {
+            "id": "d49a9b41-c79b-4d7c-b7e6-aaab5445bf39",
+            "text": "CG12-seed-050",
+            "time": "2026-09-30T16:57:10.711Z"
+          },
+          {
+            "id": "8ed1f04b-03c5-4f42-822d-5cdd2fba819a",
+            "text": "CG12-seed-051",
+            "time": "2026-09-30T16:57:10.712Z"
+          },
+          {
+            "id": "6416ce8b-2b45-4dad-8a02-9a52014a2f13",
+            "text": "CG12-seed-052",
+            "time": "2026-09-30T16:57:10.713Z"
+          },
+          {
+            "id": "9668c9fe-deaa-4a0a-85a4-1f96cd5df550",
+            "text": "CG12-seed-053",
+            "time": "2026-09-30T16:57:10.714Z"
+          },
+          {
+            "id": "8e25e283-5c8b-4b8a-ae78-c210bb89df70",
+            "text": "CG12-seed-054",
+            "time": "2026-09-30T16:57:10.715Z"
+          },
+          {
+            "id": "43172fdb-4478-484a-a660-3002ea3d7485",
+            "text": "CG12-seed-055",
+            "time": "2026-09-30T16:57:10.716Z"
+          },
+          {
+            "id": "a63b6c83-8e00-4d98-b418-5394ecd14769",
+            "text": "CG12-seed-056",
+            "time": "2026-09-30T16:57:10.717Z"
+          },
+          {
+            "id": "0afdd414-1124-46b3-b8a2-81600aa69519",
+            "text": "CG12-seed-057",
+            "time": "2026-09-30T16:57:10.718Z"
+          },
+          {
+            "id": "7c870123-0f87-468e-87bc-b2dd32dd2703",
+            "text": "CG12-seed-058",
+            "time": "2026-09-30T16:57:10.719Z"
+          },
+          {
+            "id": "2db510fb-3769-43fb-8a33-3e7908dc1e11",
+            "text": "CG12-seed-059",
+            "time": "2026-09-30T16:57:10.720Z"
+          },
+          {
+            "id": "d2c3b68c-eb46-4234-ab67-c24deb5282d4",
+            "text": "CG12-seed-060",
+            "time": "2026-09-30T16:57:10.721Z"
+          },
+          {
+            "id": "7b05a58b-57ab-47f9-9cc1-89195193dba5",
+            "text": "CG12-seed-061",
+            "time": "2026-09-30T16:57:10.722Z"
+          },
+          {
+            "id": "848a9673-e084-4e7e-9fcf-21b7075a698f",
+            "text": "CG12-seed-062",
+            "time": "2026-09-30T16:57:10.723Z"
+          },
+          {
+            "id": "006853cf-eaef-45bf-8a8f-9c9e0e076045",
+            "text": "CG12-seed-063",
+            "time": "2026-09-30T16:57:10.724Z"
+          },
+          {
+            "id": "530da791-a037-414e-b0bf-07a1aa69658f",
+            "text": "CG12-seed-064",
+            "time": "2026-09-30T16:57:10.725Z"
+          },
+          {
+            "id": "430c653b-1ee3-4107-adfc-002497214545",
+            "text": "CG12-seed-065",
+            "time": "2026-09-30T16:57:10.726Z"
+          },
+          {
+            "id": "4a20c037-6583-49e1-9509-cf6db83afc9a",
+            "text": "CG12-seed-066",
+            "time": "2026-09-30T16:57:10.727Z"
+          },
+          {
+            "id": "3b837f41-fd16-4a2c-bdde-f570ae5517a6",
+            "text": "CG12-seed-067",
+            "time": "2026-09-30T16:57:10.728Z"
+          },
+          {
+            "id": "bade7a73-331f-4d59-a789-c5e080647efc",
+            "text": "CG12-seed-068",
+            "time": "2026-09-30T16:57:10.729Z"
+          },
+          {
+            "id": "7ca521b8-a193-49f6-b47b-d40443bf2e31",
+            "text": "CG12-seed-069",
+            "time": "2026-09-30T16:57:10.730Z"
+          },
+          {
+            "id": "ed2a882e-bc6a-4bec-9b73-2e935563acbc",
+            "text": "CG12-seed-070",
+            "time": "2026-09-30T16:57:10.731Z"
+          },
+          {
+            "id": "fff4f39a-4c8f-4a80-ae1d-c2328776ed35",
+            "text": "CG12-seed-071",
+            "time": "2026-09-30T16:57:10.732Z"
+          },
+          {
+            "id": "9d09b40a-0710-4aa8-9761-ea796d22e002",
+            "text": "CG12-seed-072",
+            "time": "2026-09-30T16:57:10.733Z"
+          },
+          {
+            "id": "f133141a-ecf1-429c-9398-804b2d6036f4",
+            "text": "CG12-seed-073",
+            "time": "2026-09-30T16:57:10.734Z"
+          },
+          {
+            "id": "5641d3fd-876d-4266-8487-e482a5b972ef",
+            "text": "CG12-seed-074",
+            "time": "2026-09-30T16:57:10.735Z"
+          },
+          {
+            "id": "cc747899-004f-441f-af93-1eabec963fa4",
+            "text": "CG12-seed-075",
+            "time": "2026-09-30T16:57:10.736Z"
+          },
+          {
+            "id": "573820b3-429f-4948-a4b9-14d3c6e9314c",
+            "text": "CG12-seed-076",
+            "time": "2026-09-30T16:57:10.737Z"
+          },
+          {
+            "id": "a1d6d272-e780-436e-bf0a-d1b61c720744",
+            "text": "CG12-seed-077",
+            "time": "2026-09-30T16:57:10.738Z"
+          },
+          {
+            "id": "67857ea8-fc12-45fa-b4e4-fc63ca07046a",
+            "text": "CG12-seed-078",
+            "time": "2026-09-30T16:57:10.739Z"
+          },
+          {
+            "id": "48eca92d-e7e3-42cf-a6f9-b55a978d7c30",
+            "text": "CG12-seed-079",
+            "time": "2026-09-30T16:57:10.740Z"
+          },
+          {
+            "id": "e52d5fa4-336e-497e-8c17-73e2b2e25066",
+            "text": "CG12-seed-080",
+            "time": "2026-09-30T16:57:10.741Z"
+          },
+          {
+            "id": "47a96efb-2708-4700-bc97-1c689fdb343e",
+            "text": "CG12-seed-081",
+            "time": "2026-09-30T16:57:10.742Z"
+          },
+          {
+            "id": "0aa32c78-a2fd-403d-be8f-2a7b5507260d",
+            "text": "CG12-seed-082",
+            "time": "2026-09-30T16:57:10.743Z"
+          },
+          {
+            "id": "a54dd772-cd73-417c-afee-be531a0d7ebf",
+            "text": "CG12-seed-083",
+            "time": "2026-09-30T16:57:10.744Z"
+          },
+          {
+            "id": "1eb52d42-1a71-48f6-9853-cc6fe04dc2b9",
+            "text": "CG12-seed-084",
+            "time": "2026-09-30T16:57:10.745Z"
+          },
+          {
+            "id": "93588f55-9ca3-495a-a2d0-5039ffb8b649",
+            "text": "CG12-seed-085",
+            "time": "2026-09-30T16:57:10.746Z"
+          },
+          {
+            "id": "cf423294-51db-4e69-811d-b377cf21e2eb",
+            "text": "CG12-seed-086",
+            "time": "2026-09-30T16:57:10.747Z"
+          },
+          {
+            "id": "0d3c9ef4-7f43-46c8-a048-19bed9ca7b7f",
+            "text": "CG12-seed-087",
+            "time": "2026-09-30T16:57:10.748Z"
+          },
+          {
+            "id": "b4154dc4-4503-475b-bd47-b97763a4cb02",
+            "text": "CG12-seed-088",
+            "time": "2026-09-30T16:57:10.749Z"
+          },
+          {
+            "id": "0c8ba111-d5d4-4d3b-80cb-6ba97bdcbc26",
+            "text": "CG12-seed-089",
+            "time": "2026-09-30T16:57:10.750Z"
+          },
+          {
+            "id": "7ea1db9f-e9d8-4bdd-bf10-aa18790dfc95",
+            "text": "CG12-seed-090",
+            "time": "2026-09-30T16:57:10.751Z"
+          },
+          {
+            "id": "1a2896ba-b715-4746-ac4d-594efd5bf8f0",
+            "text": "CG12-seed-091",
+            "time": "2026-09-30T16:57:10.752Z"
+          },
+          {
+            "id": "861c1026-8d62-4c7d-8a3c-58b63a068422",
+            "text": "CG12-seed-092",
+            "time": "2026-09-30T16:57:10.753Z"
+          },
+          {
+            "id": "e1df2d74-c511-4cd1-85bf-c28be7664b5a",
+            "text": "CG12-seed-093",
+            "time": "2026-09-30T16:57:10.754Z"
+          },
+          {
+            "id": "e1db4eb8-0d53-43d8-84e0-d5251abcd737",
+            "text": "CG12-seed-094",
+            "time": "2026-09-30T16:57:10.755Z"
+          },
+          {
+            "id": "18a37e4f-7fde-4931-92c5-ba13099f00da",
+            "text": "CG12-seed-095",
+            "time": "2026-09-30T16:57:10.756Z"
+          },
+          {
+            "id": "a77b4c6a-2cf7-4f02-ad78-cb87f4c8e128",
+            "text": "CG12-seed-096",
+            "time": "2026-09-30T16:57:10.757Z"
+          },
+          {
+            "id": "f5d87384-aa49-459f-8022-646d6f22bbf7",
+            "text": "CG12-seed-097",
+            "time": "2026-09-30T16:57:10.758Z"
+          },
+          {
+            "id": "94ed2b53-1ac6-43d5-9676-e6bcc8c16e4e",
+            "text": "CG12-seed-098",
+            "time": "2026-09-30T16:57:10.759Z"
+          },
+          {
+            "id": "8c2ef227-5624-4b9b-9196-cd7f65f15514",
+            "text": "CG12-seed-099",
+            "time": "2026-09-30T16:57:10.760Z"
+          },
+          {
+            "id": "d84bc794-8cac-47b8-b81f-2de1481d8169",
+            "text": "CG12-seed-100",
+            "time": "2026-09-30T16:57:10.761Z"
+          },
+          {
+            "id": "d908bede-2ff9-4cc5-aef9-241bf57a36ce",
+            "text": "CG12-seed-101",
+            "time": "2026-09-30T16:57:10.762Z"
+          },
+          {
+            "id": "413467ea-6863-4940-96f6-68297b14e9df",
+            "text": "CG12-seed-102",
+            "time": "2026-09-30T16:57:10.763Z"
+          },
+          {
+            "id": "5b24f213-bf7e-49ab-891c-62d118dd31cc",
+            "text": "CG12-seed-103",
+            "time": "2026-09-30T16:57:10.764Z"
+          },
+          {
+            "id": "a8846f1b-030f-4dcc-bd00-a1db8c24cf4f",
+            "text": "CG12-seed-104",
+            "time": "2026-09-30T16:57:10.765Z"
+          },
+          {
+            "id": "1cbc926a-7833-411c-ae21-dc1c13b99f70",
+            "text": "CG12-seed-105",
+            "time": "2026-09-30T16:57:10.766Z"
+          },
+          {
+            "id": "aea0d5c3-a958-41e0-ba60-994b37fe12d4",
+            "text": "CG12-seed-106",
+            "time": "2026-09-30T16:57:10.767Z"
+          },
+          {
+            "id": "bf23d3cb-4576-40ed-9cf3-c1cf100a7559",
+            "text": "CG12-seed-107",
+            "time": "2026-09-30T16:57:10.768Z"
+          },
+          {
+            "id": "8f81043d-ea3b-4141-8087-ae25c0380a64",
+            "text": "CG12-seed-108",
+            "time": "2026-09-30T16:57:10.769Z"
+          },
+          {
+            "id": "f65e8e43-24c3-499d-9e7c-6518cc6151be",
+            "text": "CG12-seed-109",
+            "time": "2026-09-30T16:57:10.770Z"
+          },
+          {
+            "id": "c9f27bda-1479-414d-a162-7889b199d57e",
+            "text": "CG12-seed-110",
+            "time": "2026-09-30T16:57:10.771Z"
+          },
+          {
+            "id": "9046e184-9b63-4475-a067-3ecf9cfbba57",
+            "text": "CG12-seed-111",
+            "time": "2026-09-30T16:57:10.772Z"
+          },
+          {
+            "id": "b1b94657-80c5-4ebd-8e31-671777ec02d6",
+            "text": "CG12-seed-112",
+            "time": "2026-09-30T16:57:10.773Z"
+          },
+          {
+            "id": "10681bc7-09ce-488c-8caf-c55d7b3ccc04",
+            "text": "CG12-seed-113",
+            "time": "2026-09-30T16:57:10.774Z"
+          },
+          {
+            "id": "5edf5140-361e-4ad4-8d14-8bb8a006c920",
+            "text": "CG12-seed-114",
+            "time": "2026-09-30T16:57:10.775Z"
+          },
+          {
+            "id": "ad2fcd2a-5c51-4607-b6f7-acd069937b02",
+            "text": "CG12-seed-115",
+            "time": "2026-09-30T16:57:10.776Z"
+          },
+          {
+            "id": "8e5a15b3-516f-4368-bdd2-523ccc920ae9",
+            "text": "CG12-seed-116",
+            "time": "2026-09-30T16:57:10.777Z"
+          },
+          {
+            "id": "ad8c7ee9-4af0-48c1-a02b-7d7a20ea574b",
+            "text": "CG12-seed-117",
+            "time": "2026-09-30T16:57:10.778Z"
+          },
+          {
+            "id": "95688f70-dcf1-4b5e-a2bc-51ecd42037a3",
+            "text": "CG12-seed-118",
+            "time": "2026-09-30T16:57:10.779Z"
+          },
+          {
+            "id": "9eabd12b-7a0a-4ae9-afba-792f782d4fb9",
+            "text": "CG12-seed-119",
+            "time": "2026-09-30T16:57:10.780Z"
+          },
+          {
+            "id": "e0594be0-f0b8-4ac1-81b5-3710705e5cfc",
+            "text": "CG12-seed-120",
+            "time": "2026-09-30T16:57:10.781Z"
+          },
+          {
+            "id": "58fcf1ff-7442-403b-902c-6b8b147ab0b2",
+            "text": "CG12-seed-121",
+            "time": "2026-09-30T16:57:10.782Z"
+          },
+          {
+            "id": "628e71d1-7e93-4c18-b39d-9964a87069f1",
+            "text": "CG12-seed-122",
+            "time": "2026-09-30T16:57:10.783Z"
+          },
+          {
+            "id": "8857f42e-8fd6-4922-92ca-43916af50732",
+            "text": "CG12-seed-123",
+            "time": "2026-09-30T16:57:10.784Z"
+          },
+          {
+            "id": "de410659-9192-4ee2-ab06-b7f2d871c0bd",
+            "text": "CG12-seed-124",
+            "time": "2026-09-30T16:57:10.785Z"
+          },
+          {
+            "id": "e7b68ebe-aaba-42d8-a381-44e670e53ebd",
+            "text": "CG12-seed-125",
+            "time": "2026-09-30T16:57:10.786Z"
+          },
+          {
+            "id": "98ba7e70-e5e8-41d3-a451-752847071fac",
+            "text": "CG12-new-001",
+            "time": "2026-09-30T16:58:40.250Z"
+          },
+          {
+            "id": "41e3382b-19eb-4b58-afd9-e2e0f6cfd719",
+            "text": "CG12-new-002",
+            "time": "2026-09-30T16:58:40.251Z"
+          },
+          {
+            "id": "9efbabbd-d42f-4225-b241-402bbf84d2c8",
+            "text": "CG12-race-new-001",
+            "time": "2026-09-30T17:00:01.112Z"
+          },
+          {
+            "id": "287b5d59-0db0-4465-9824-d63d9f182a6d",
+            "text": "CG12-race-new-002",
+            "time": "2026-09-30T17:00:01.113Z"
+          }
+        ]
+      },
+      "beforeServer": {
+        "marks": {
+          "publishStartedAt": 1790787601213,
+          "eventsCommittedBy": 1790787601268,
+          "latestPublish": [
+            {
+              "groupId": "37181c43-252f-4f57-a0b0-08b6b7174d9d",
+              "senderPlatformUserId": "qa-external",
+              "text": "CG12-race-old-001",
+              "sentAt": "2020-01-01T00:00:00.000Z",
+              "msgId": "4902301d-4611-4894-a553-14e85a6d7326"
+            }
+          ],
+          "latestEvent": {
+            "seq": "142",
+            "type": "message",
+            "created_at": "2026-09-30T17:00:01.217Z"
+          },
+          "earlierResponseCapturedAt": 1790787592358,
+          "earlierResponseReleasedAt": 1790787602863
+        },
+        "source": "Next archived state retained the matching captured/released timestamps; the immediate release response contained a previous release mark"
+      },
+      "after": {
+        "at": 1790787870140,
+        "buttons": [],
+        "errors": [],
+        "rows": [
+          {
+            "id": "0df21304-ab6e-4ec0-9f72-9244c5b4a3ee",
+            "text": "CG12-race-old-001",
+            "time": "2020-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "358d4be3-9475-4a86-8656-574023088b4e",
+            "text": "CG12-fixed-old-001",
+            "time": "2020-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "78d816c6-ec28-4d53-8502-b44858228f18",
+            "text": "CG12-backfill-001",
+            "time": "2020-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "849d114f-d1d2-402d-af0c-398ff03a9956",
+            "text": "CG12-seed-001",
+            "time": "2026-09-30T16:57:10.662Z"
+          },
+          {
+            "id": "850c3a1d-41c8-46a5-93f2-c4f20b430bb0",
+            "text": "CG12-seed-002",
+            "time": "2026-09-30T16:57:10.663Z"
+          },
+          {
+            "id": "3f87084a-4c4b-4d74-8909-84f831a84d25",
+            "text": "CG12-seed-003",
+            "time": "2026-09-30T16:57:10.664Z"
+          },
+          {
+            "id": "b49c986a-43af-4c66-be4c-31573e12b8dc",
+            "text": "CG12-seed-004",
+            "time": "2026-09-30T16:57:10.665Z"
+          },
+          {
+            "id": "d0702b07-9779-4032-9554-b3202dc8e3b5",
+            "text": "CG12-seed-005",
+            "time": "2026-09-30T16:57:10.666Z"
+          },
+          {
+            "id": "4d7258d5-2e55-42be-a7b8-5741a82ec10c",
+            "text": "CG12-seed-006",
+            "time": "2026-09-30T16:57:10.667Z"
+          },
+          {
+            "id": "9ef8bbd5-8c81-43bc-834f-5c005e758bb5",
+            "text": "CG12-seed-007",
+            "time": "2026-09-30T16:57:10.668Z"
+          },
+          {
+            "id": "f8032177-7ddd-4cad-9804-b6df50a0d2ba",
+            "text": "CG12-seed-008",
+            "time": "2026-09-30T16:57:10.669Z"
+          },
+          {
+            "id": "4024710f-1152-4598-8b72-6f41fd3ba5e0",
+            "text": "CG12-seed-009",
+            "time": "2026-09-30T16:57:10.670Z"
+          },
+          {
+            "id": "421ad65d-1292-42ea-b137-da5587d86dc6",
+            "text": "CG12-seed-010",
+            "time": "2026-09-30T16:57:10.671Z"
+          },
+          {
+            "id": "6bd831b8-b2af-48fe-87ce-c33d449525f0",
+            "text": "CG12-seed-011",
+            "time": "2026-09-30T16:57:10.672Z"
+          },
+          {
+            "id": "72ff0acb-3bb0-4ad0-924e-faebbbecaee3",
+            "text": "CG12-seed-012",
+            "time": "2026-09-30T16:57:10.673Z"
+          },
+          {
+            "id": "821a222e-765f-4702-8029-43767a3d2bdc",
+            "text": "CG12-seed-013",
+            "time": "2026-09-30T16:57:10.674Z"
+          },
+          {
+            "id": "4759e94e-a207-4168-979f-b4e96eb73f6d",
+            "text": "CG12-seed-014",
+            "time": "2026-09-30T16:57:10.675Z"
+          },
+          {
+            "id": "54fa5242-5199-46d6-932a-603abae298c0",
+            "text": "CG12-seed-015",
+            "time": "2026-09-30T16:57:10.676Z"
+          },
+          {
+            "id": "21f7c568-6812-4e17-b3cb-ea49f7a3fd5d",
+            "text": "CG12-seed-016",
+            "time": "2026-09-30T16:57:10.677Z"
+          },
+          {
+            "id": "22b70d52-7863-4c08-98ba-49ef03d3f34e",
+            "text": "CG12-seed-017",
+            "time": "2026-09-30T16:57:10.678Z"
+          },
+          {
+            "id": "2c9c7eca-d453-4305-9c50-ffaa45946510",
+            "text": "CG12-seed-018",
+            "time": "2026-09-30T16:57:10.679Z"
+          },
+          {
+            "id": "e9f978f3-1f05-4415-8c28-f0b6ae39680c",
+            "text": "CG12-seed-019",
+            "time": "2026-09-30T16:57:10.680Z"
+          },
+          {
+            "id": "be722617-31fd-46ff-b1e5-6989a55bb7e2",
+            "text": "CG12-seed-020",
+            "time": "2026-09-30T16:57:10.681Z"
+          },
+          {
+            "id": "7e4e9c3f-56f9-4c76-9d45-739c3c5c4089",
+            "text": "CG12-seed-021",
+            "time": "2026-09-30T16:57:10.682Z"
+          },
+          {
+            "id": "4151702d-92b0-4ea9-9f62-fa1e90c5f8ab",
+            "text": "CG12-seed-022",
+            "time": "2026-09-30T16:57:10.683Z"
+          },
+          {
+            "id": "2183c5df-686a-4aa9-9e81-c7989c4443da",
+            "text": "CG12-seed-023",
+            "time": "2026-09-30T16:57:10.684Z"
+          },
+          {
+            "id": "8f7517e5-fc93-4724-902f-a8ff086e10a3",
+            "text": "CG12-seed-024",
+            "time": "2026-09-30T16:57:10.685Z"
+          },
+          {
+            "id": "c0a0d896-e544-4b75-aa9d-f8823615650c",
+            "text": "CG12-seed-025",
+            "time": "2026-09-30T16:57:10.686Z"
+          },
+          {
+            "id": "71b1ccc6-eb94-4e06-8732-c1b1c58c5c95",
+            "text": "CG12-seed-026",
+            "time": "2026-09-30T16:57:10.687Z"
+          },
+          {
+            "id": "db525ae8-6d5e-455a-9f0d-07e50f5c6661",
+            "text": "CG12-seed-027",
+            "time": "2026-09-30T16:57:10.688Z"
+          },
+          {
+            "id": "e0685f16-9304-4ec2-ab04-f3cb3a903f13",
+            "text": "CG12-seed-028",
+            "time": "2026-09-30T16:57:10.689Z"
+          },
+          {
+            "id": "e190b8b0-4182-4648-8eb4-4898109e54ad",
+            "text": "CG12-seed-029",
+            "time": "2026-09-30T16:57:10.690Z"
+          },
+          {
+            "id": "3cb9e899-f023-4c21-b945-30e5394cc72e",
+            "text": "CG12-seed-030",
+            "time": "2026-09-30T16:57:10.691Z"
+          },
+          {
+            "id": "d9a15480-2b2e-4260-8738-e434986faeee",
+            "text": "CG12-seed-031",
+            "time": "2026-09-30T16:57:10.692Z"
+          },
+          {
+            "id": "1df94c50-862d-4fab-9dfc-a02d6b694ffe",
+            "text": "CG12-seed-032",
+            "time": "2026-09-30T16:57:10.693Z"
+          },
+          {
+            "id": "41f1b63d-2eb5-467c-a44a-fd1fd1092994",
+            "text": "CG12-seed-033",
+            "time": "2026-09-30T16:57:10.694Z"
+          },
+          {
+            "id": "d1fa0452-0db8-490c-beed-b71833bea0af",
+            "text": "CG12-seed-034",
+            "time": "2026-09-30T16:57:10.695Z"
+          },
+          {
+            "id": "00822732-83d1-4462-91ed-7a332a6f265a",
+            "text": "CG12-seed-035",
+            "time": "2026-09-30T16:57:10.696Z"
+          },
+          {
+            "id": "033ca0bc-b95e-4eb3-891a-d272a64b45ec",
+            "text": "CG12-seed-036",
+            "time": "2026-09-30T16:57:10.697Z"
+          },
+          {
+            "id": "147f43c6-66d2-4161-b215-d060117511a8",
+            "text": "CG12-seed-037",
+            "time": "2026-09-30T16:57:10.698Z"
+          },
+          {
+            "id": "5cff63bb-e906-4ae5-a6fa-99a59ced1a73",
+            "text": "CG12-seed-038",
+            "time": "2026-09-30T16:57:10.699Z"
+          },
+          {
+            "id": "c3416ce9-40a2-4331-92ba-6a52bfe20df7",
+            "text": "CG12-seed-039",
+            "time": "2026-09-30T16:57:10.700Z"
+          },
+          {
+            "id": "c5878c9e-0ab3-4833-a18c-5257f37a5f80",
+            "text": "CG12-seed-040",
+            "time": "2026-09-30T16:57:10.701Z"
+          },
+          {
+            "id": "fb28815f-8a7d-4945-8152-013dd20d3c86",
+            "text": "CG12-seed-041",
+            "time": "2026-09-30T16:57:10.702Z"
+          },
+          {
+            "id": "553edefa-b35d-4075-b8cf-59b7c567e8cc",
+            "text": "CG12-seed-042",
+            "time": "2026-09-30T16:57:10.703Z"
+          },
+          {
+            "id": "7af95982-3405-407c-8e35-1850fb2d4e87",
+            "text": "CG12-seed-043",
+            "time": "2026-09-30T16:57:10.704Z"
+          },
+          {
+            "id": "f93cdb8c-0ba7-4efc-9721-2c4e18e1f2b7",
+            "text": "CG12-seed-044",
+            "time": "2026-09-30T16:57:10.705Z"
+          },
+          {
+            "id": "f13a2161-336d-4e9f-bea8-8fda7d04db14",
+            "text": "CG12-seed-045",
+            "time": "2026-09-30T16:57:10.706Z"
+          },
+          {
+            "id": "c38d2f7b-ec76-40cd-b41b-c7cdc8002dc7",
+            "text": "CG12-seed-046",
+            "time": "2026-09-30T16:57:10.707Z"
+          },
+          {
+            "id": "f434e31f-c870-4f1d-8f82-edae8c5549cc",
+            "text": "CG12-seed-047",
+            "time": "2026-09-30T16:57:10.708Z"
+          },
+          {
+            "id": "45b4f200-886b-4190-a822-6c49dcb093aa",
+            "text": "CG12-seed-048",
+            "time": "2026-09-30T16:57:10.709Z"
+          },
+          {
+            "id": "34828265-5de0-46a6-a810-058dad2d6a60",
+            "text": "CG12-seed-049",
+            "time": "2026-09-30T16:57:10.710Z"
+          },
+          {
+            "id": "d49a9b41-c79b-4d7c-b7e6-aaab5445bf39",
+            "text": "CG12-seed-050",
+            "time": "2026-09-30T16:57:10.711Z"
+          },
+          {
+            "id": "8ed1f04b-03c5-4f42-822d-5cdd2fba819a",
+            "text": "CG12-seed-051",
+            "time": "2026-09-30T16:57:10.712Z"
+          },
+          {
+            "id": "6416ce8b-2b45-4dad-8a02-9a52014a2f13",
+            "text": "CG12-seed-052",
+            "time": "2026-09-30T16:57:10.713Z"
+          },
+          {
+            "id": "9668c9fe-deaa-4a0a-85a4-1f96cd5df550",
+            "text": "CG12-seed-053",
+            "time": "2026-09-30T16:57:10.714Z"
+          },
+          {
+            "id": "8e25e283-5c8b-4b8a-ae78-c210bb89df70",
+            "text": "CG12-seed-054",
+            "time": "2026-09-30T16:57:10.715Z"
+          },
+          {
+            "id": "43172fdb-4478-484a-a660-3002ea3d7485",
+            "text": "CG12-seed-055",
+            "time": "2026-09-30T16:57:10.716Z"
+          },
+          {
+            "id": "a63b6c83-8e00-4d98-b418-5394ecd14769",
+            "text": "CG12-seed-056",
+            "time": "2026-09-30T16:57:10.717Z"
+          },
+          {
+            "id": "0afdd414-1124-46b3-b8a2-81600aa69519",
+            "text": "CG12-seed-057",
+            "time": "2026-09-30T16:57:10.718Z"
+          },
+          {
+            "id": "7c870123-0f87-468e-87bc-b2dd32dd2703",
+            "text": "CG12-seed-058",
+            "time": "2026-09-30T16:57:10.719Z"
+          },
+          {
+            "id": "2db510fb-3769-43fb-8a33-3e7908dc1e11",
+            "text": "CG12-seed-059",
+            "time": "2026-09-30T16:57:10.720Z"
+          },
+          {
+            "id": "d2c3b68c-eb46-4234-ab67-c24deb5282d4",
+            "text": "CG12-seed-060",
+            "time": "2026-09-30T16:57:10.721Z"
+          },
+          {
+            "id": "7b05a58b-57ab-47f9-9cc1-89195193dba5",
+            "text": "CG12-seed-061",
+            "time": "2026-09-30T16:57:10.722Z"
+          },
+          {
+            "id": "848a9673-e084-4e7e-9fcf-21b7075a698f",
+            "text": "CG12-seed-062",
+            "time": "2026-09-30T16:57:10.723Z"
+          },
+          {
+            "id": "006853cf-eaef-45bf-8a8f-9c9e0e076045",
+            "text": "CG12-seed-063",
+            "time": "2026-09-30T16:57:10.724Z"
+          },
+          {
+            "id": "530da791-a037-414e-b0bf-07a1aa69658f",
+            "text": "CG12-seed-064",
+            "time": "2026-09-30T16:57:10.725Z"
+          },
+          {
+            "id": "430c653b-1ee3-4107-adfc-002497214545",
+            "text": "CG12-seed-065",
+            "time": "2026-09-30T16:57:10.726Z"
+          },
+          {
+            "id": "4a20c037-6583-49e1-9509-cf6db83afc9a",
+            "text": "CG12-seed-066",
+            "time": "2026-09-30T16:57:10.727Z"
+          },
+          {
+            "id": "3b837f41-fd16-4a2c-bdde-f570ae5517a6",
+            "text": "CG12-seed-067",
+            "time": "2026-09-30T16:57:10.728Z"
+          },
+          {
+            "id": "bade7a73-331f-4d59-a789-c5e080647efc",
+            "text": "CG12-seed-068",
+            "time": "2026-09-30T16:57:10.729Z"
+          },
+          {
+            "id": "7ca521b8-a193-49f6-b47b-d40443bf2e31",
+            "text": "CG12-seed-069",
+            "time": "2026-09-30T16:57:10.730Z"
+          },
+          {
+            "id": "ed2a882e-bc6a-4bec-9b73-2e935563acbc",
+            "text": "CG12-seed-070",
+            "time": "2026-09-30T16:57:10.731Z"
+          },
+          {
+            "id": "fff4f39a-4c8f-4a80-ae1d-c2328776ed35",
+            "text": "CG12-seed-071",
+            "time": "2026-09-30T16:57:10.732Z"
+          },
+          {
+            "id": "9d09b40a-0710-4aa8-9761-ea796d22e002",
+            "text": "CG12-seed-072",
+            "time": "2026-09-30T16:57:10.733Z"
+          },
+          {
+            "id": "f133141a-ecf1-429c-9398-804b2d6036f4",
+            "text": "CG12-seed-073",
+            "time": "2026-09-30T16:57:10.734Z"
+          },
+          {
+            "id": "5641d3fd-876d-4266-8487-e482a5b972ef",
+            "text": "CG12-seed-074",
+            "time": "2026-09-30T16:57:10.735Z"
+          },
+          {
+            "id": "cc747899-004f-441f-af93-1eabec963fa4",
+            "text": "CG12-seed-075",
+            "time": "2026-09-30T16:57:10.736Z"
+          },
+          {
+            "id": "573820b3-429f-4948-a4b9-14d3c6e9314c",
+            "text": "CG12-seed-076",
+            "time": "2026-09-30T16:57:10.737Z"
+          },
+          {
+            "id": "a1d6d272-e780-436e-bf0a-d1b61c720744",
+            "text": "CG12-seed-077",
+            "time": "2026-09-30T16:57:10.738Z"
+          },
+          {
+            "id": "67857ea8-fc12-45fa-b4e4-fc63ca07046a",
+            "text": "CG12-seed-078",
+            "time": "2026-09-30T16:57:10.739Z"
+          },
+          {
+            "id": "48eca92d-e7e3-42cf-a6f9-b55a978d7c30",
+            "text": "CG12-seed-079",
+            "time": "2026-09-30T16:57:10.740Z"
+          },
+          {
+            "id": "e52d5fa4-336e-497e-8c17-73e2b2e25066",
+            "text": "CG12-seed-080",
+            "time": "2026-09-30T16:57:10.741Z"
+          },
+          {
+            "id": "47a96efb-2708-4700-bc97-1c689fdb343e",
+            "text": "CG12-seed-081",
+            "time": "2026-09-30T16:57:10.742Z"
+          },
+          {
+            "id": "0aa32c78-a2fd-403d-be8f-2a7b5507260d",
+            "text": "CG12-seed-082",
+            "time": "2026-09-30T16:57:10.743Z"
+          },
+          {
+            "id": "a54dd772-cd73-417c-afee-be531a0d7ebf",
+            "text": "CG12-seed-083",
+            "time": "2026-09-30T16:57:10.744Z"
+          },
+          {
+            "id": "1eb52d42-1a71-48f6-9853-cc6fe04dc2b9",
+            "text": "CG12-seed-084",
+            "time": "2026-09-30T16:57:10.745Z"
+          },
+          {
+            "id": "93588f55-9ca3-495a-a2d0-5039ffb8b649",
+            "text": "CG12-seed-085",
+            "time": "2026-09-30T16:57:10.746Z"
+          },
+          {
+            "id": "cf423294-51db-4e69-811d-b377cf21e2eb",
+            "text": "CG12-seed-086",
+            "time": "2026-09-30T16:57:10.747Z"
+          },
+          {
+            "id": "0d3c9ef4-7f43-46c8-a048-19bed9ca7b7f",
+            "text": "CG12-seed-087",
+            "time": "2026-09-30T16:57:10.748Z"
+          },
+          {
+            "id": "b4154dc4-4503-475b-bd47-b97763a4cb02",
+            "text": "CG12-seed-088",
+            "time": "2026-09-30T16:57:10.749Z"
+          },
+          {
+            "id": "0c8ba111-d5d4-4d3b-80cb-6ba97bdcbc26",
+            "text": "CG12-seed-089",
+            "time": "2026-09-30T16:57:10.750Z"
+          },
+          {
+            "id": "7ea1db9f-e9d8-4bdd-bf10-aa18790dfc95",
+            "text": "CG12-seed-090",
+            "time": "2026-09-30T16:57:10.751Z"
+          },
+          {
+            "id": "1a2896ba-b715-4746-ac4d-594efd5bf8f0",
+            "text": "CG12-seed-091",
+            "time": "2026-09-30T16:57:10.752Z"
+          },
+          {
+            "id": "861c1026-8d62-4c7d-8a3c-58b63a068422",
+            "text": "CG12-seed-092",
+            "time": "2026-09-30T16:57:10.753Z"
+          },
+          {
+            "id": "e1df2d74-c511-4cd1-85bf-c28be7664b5a",
+            "text": "CG12-seed-093",
+            "time": "2026-09-30T16:57:10.754Z"
+          },
+          {
+            "id": "e1db4eb8-0d53-43d8-84e0-d5251abcd737",
+            "text": "CG12-seed-094",
+            "time": "2026-09-30T16:57:10.755Z"
+          },
+          {
+            "id": "18a37e4f-7fde-4931-92c5-ba13099f00da",
+            "text": "CG12-seed-095",
+            "time": "2026-09-30T16:57:10.756Z"
+          },
+          {
+            "id": "a77b4c6a-2cf7-4f02-ad78-cb87f4c8e128",
+            "text": "CG12-seed-096",
+            "time": "2026-09-30T16:57:10.757Z"
+          },
+          {
+            "id": "f5d87384-aa49-459f-8022-646d6f22bbf7",
+            "text": "CG12-seed-097",
+            "time": "2026-09-30T16:57:10.758Z"
+          },
+          {
+            "id": "94ed2b53-1ac6-43d5-9676-e6bcc8c16e4e",
+            "text": "CG12-seed-098",
+            "time": "2026-09-30T16:57:10.759Z"
+          },
+          {
+            "id": "8c2ef227-5624-4b9b-9196-cd7f65f15514",
+            "text": "CG12-seed-099",
+            "time": "2026-09-30T16:57:10.760Z"
+          },
+          {
+            "id": "d84bc794-8cac-47b8-b81f-2de1481d8169",
+            "text": "CG12-seed-100",
+            "time": "2026-09-30T16:57:10.761Z"
+          },
+          {
+            "id": "d908bede-2ff9-4cc5-aef9-241bf57a36ce",
+            "text": "CG12-seed-101",
+            "time": "2026-09-30T16:57:10.762Z"
+          },
+          {
+            "id": "413467ea-6863-4940-96f6-68297b14e9df",
+            "text": "CG12-seed-102",
+            "time": "2026-09-30T16:57:10.763Z"
+          },
+          {
+            "id": "5b24f213-bf7e-49ab-891c-62d118dd31cc",
+            "text": "CG12-seed-103",
+            "time": "2026-09-30T16:57:10.764Z"
+          },
+          {
+            "id": "a8846f1b-030f-4dcc-bd00-a1db8c24cf4f",
+            "text": "CG12-seed-104",
+            "time": "2026-09-30T16:57:10.765Z"
+          },
+          {
+            "id": "1cbc926a-7833-411c-ae21-dc1c13b99f70",
+            "text": "CG12-seed-105",
+            "time": "2026-09-30T16:57:10.766Z"
+          },
+          {
+            "id": "aea0d5c3-a958-41e0-ba60-994b37fe12d4",
+            "text": "CG12-seed-106",
+            "time": "2026-09-30T16:57:10.767Z"
+          },
+          {
+            "id": "bf23d3cb-4576-40ed-9cf3-c1cf100a7559",
+            "text": "CG12-seed-107",
+            "time": "2026-09-30T16:57:10.768Z"
+          },
+          {
+            "id": "8f81043d-ea3b-4141-8087-ae25c0380a64",
+            "text": "CG12-seed-108",
+            "time": "2026-09-30T16:57:10.769Z"
+          },
+          {
+            "id": "f65e8e43-24c3-499d-9e7c-6518cc6151be",
+            "text": "CG12-seed-109",
+            "time": "2026-09-30T16:57:10.770Z"
+          },
+          {
+            "id": "c9f27bda-1479-414d-a162-7889b199d57e",
+            "text": "CG12-seed-110",
+            "time": "2026-09-30T16:57:10.771Z"
+          },
+          {
+            "id": "9046e184-9b63-4475-a067-3ecf9cfbba57",
+            "text": "CG12-seed-111",
+            "time": "2026-09-30T16:57:10.772Z"
+          },
+          {
+            "id": "b1b94657-80c5-4ebd-8e31-671777ec02d6",
+            "text": "CG12-seed-112",
+            "time": "2026-09-30T16:57:10.773Z"
+          },
+          {
+            "id": "10681bc7-09ce-488c-8caf-c55d7b3ccc04",
+            "text": "CG12-seed-113",
+            "time": "2026-09-30T16:57:10.774Z"
+          },
+          {
+            "id": "5edf5140-361e-4ad4-8d14-8bb8a006c920",
+            "text": "CG12-seed-114",
+            "time": "2026-09-30T16:57:10.775Z"
+          },
+          {
+            "id": "ad2fcd2a-5c51-4607-b6f7-acd069937b02",
+            "text": "CG12-seed-115",
+            "time": "2026-09-30T16:57:10.776Z"
+          },
+          {
+            "id": "8e5a15b3-516f-4368-bdd2-523ccc920ae9",
+            "text": "CG12-seed-116",
+            "time": "2026-09-30T16:57:10.777Z"
+          },
+          {
+            "id": "ad8c7ee9-4af0-48c1-a02b-7d7a20ea574b",
+            "text": "CG12-seed-117",
+            "time": "2026-09-30T16:57:10.778Z"
+          },
+          {
+            "id": "95688f70-dcf1-4b5e-a2bc-51ecd42037a3",
+            "text": "CG12-seed-118",
+            "time": "2026-09-30T16:57:10.779Z"
+          },
+          {
+            "id": "9eabd12b-7a0a-4ae9-afba-792f782d4fb9",
+            "text": "CG12-seed-119",
+            "time": "2026-09-30T16:57:10.780Z"
+          },
+          {
+            "id": "e0594be0-f0b8-4ac1-81b5-3710705e5cfc",
+            "text": "CG12-seed-120",
+            "time": "2026-09-30T16:57:10.781Z"
+          },
+          {
+            "id": "58fcf1ff-7442-403b-902c-6b8b147ab0b2",
+            "text": "CG12-seed-121",
+            "time": "2026-09-30T16:57:10.782Z"
+          },
+          {
+            "id": "628e71d1-7e93-4c18-b39d-9964a87069f1",
+            "text": "CG12-seed-122",
+            "time": "2026-09-30T16:57:10.783Z"
+          },
+          {
+            "id": "8857f42e-8fd6-4922-92ca-43916af50732",
+            "text": "CG12-seed-123",
+            "time": "2026-09-30T16:57:10.784Z"
+          },
+          {
+            "id": "de410659-9192-4ee2-ab06-b7f2d871c0bd",
+            "text": "CG12-seed-124",
+            "time": "2026-09-30T16:57:10.785Z"
+          },
+          {
+            "id": "e7b68ebe-aaba-42d8-a381-44e670e53ebd",
+            "text": "CG12-seed-125",
+            "time": "2026-09-30T16:57:10.786Z"
+          },
+          {
+            "id": "98ba7e70-e5e8-41d3-a451-752847071fac",
+            "text": "CG12-new-001",
+            "time": "2026-09-30T16:58:40.250Z"
+          },
+          {
+            "id": "41e3382b-19eb-4b58-afd9-e2e0f6cfd719",
+            "text": "CG12-new-002",
+            "time": "2026-09-30T16:58:40.251Z"
+          },
+          {
+            "id": "9efbabbd-d42f-4225-b241-402bbf84d2c8",
+            "text": "CG12-race-new-001",
+            "time": "2026-09-30T17:00:01.112Z"
+          },
+          {
+            "id": "287b5d59-0db0-4465-9824-d63d9f182a6d",
+            "text": "CG12-race-new-002",
+            "time": "2026-09-30T17:00:01.113Z"
+          },
+          {
+            "id": "668e653b-be26-4766-8625-220fd46e811a",
+            "text": "CG01 保留身份草稿",
+            "time": "2026-09-30T17:01:10.730Z"
+          },
+          {
+            "id": "4773250f-0523-4827-80c9-ee2c1c941cb0",
+            "text": "CG01 限流仍按原身份排队",
+            "time": "2026-09-30T17:01:33.820Z"
+          },
+          {
+            "id": "830e55b2-801c-4e4a-b8a4-597eee3c046d",
+            "text": "CG17 续期后只写一次",
+            "time": "2026-09-30T17:02:15.443Z"
+          },
+          {
+            "id": "3c07ae2e-9415-422d-a13a-75be5cbf9003",
+            "text": "CG12-fixed-new-001",
+            "time": "2026-09-30T17:04:18.229Z"
+          },
+          {
+            "id": "c236342a-c67f-4094-a3dd-1ade7e935609",
+            "text": "CG12-fixed-new-002",
+            "time": "2026-09-30T17:04:18.230Z"
+          }
+        ]
+      },
+      "afterServer": {
+        "marks": {
+          "accessExpiredAt": 1790787724527,
+          "earlierResponseCapturedAt": 1790787849903,
+          "earlierResponseReleasedAt": 1790787859974,
+          "publishStartedAt": 1790787858335,
+          "eventsCommittedBy": 1790787858389,
+          "latestPublish": [
+            {
+              "groupId": "37181c43-252f-4f57-a0b0-08b6b7174d9d",
+              "senderPlatformUserId": "qa-external",
+              "text": "CG12-fixed-old-001",
+              "sentAt": "2020-01-01T00:00:00.000Z",
+              "msgId": "4b3ff0fb-554b-49d5-8ac1-6db5c6c302c8"
+            }
+          ],
+          "latestEvent": {
+            "seq": "158",
+            "type": "message",
+            "created_at": "2026-09-30T17:04:18.338Z"
+          }
+        }
+      },
+      "lateFailure": {
+        "at": 1790787940815,
+        "buttons": [],
+        "count": 138,
+        "errors": [],
+        "hasFresh": true
+      },
+      "lateFailureMarks": {
+        "accessExpiredAt": 1790787724527,
+        "earlierResponseCapturedAt": 1790787890703,
+        "publishStartedAt": 1790787897973,
+        "eventsCommittedBy": 1790787898028,
+        "latestPublish": [
+          {
+            "groupId": "37181c43-252f-4f57-a0b0-08b6b7174d9d",
+            "senderPlatformUserId": "qa-external",
+            "text": "CG12-fixed-error-001",
+            "sentAt": "2026-09-30T17:04:57.973Z",
+            "msgId": "7ccd93b2-fce6-4137-bb1f-1511d9b0e929"
+          }
+        ],
+        "latestEvent": {
+          "seq": "159",
+          "type": "message",
+          "created_at": "2026-09-30T17:04:57.976Z"
+        },
+        "previousRequestReleasedAt": 1790787859974,
+        "releaseNote": "The held request had already timed out in the browser and had not completed release when this control response was captured. previousRequestReleasedAt belongs to the earlier successful-race fixture, not this request.",
+        "observationAfterCaptureMs": 50112
+      },
+      "notes": "First long hold exceeded 20-second client timeout; not claimed as successful late response. After fix, late success keeps cursor null and late timeout does not reintroduce an error."
+    },
+    "cg17": {
+      "counters": {
+        "refreshCount": 1,
+        "heldRefresh": 1,
+        "heldEarlier": 0,
+        "timelineFailures": 0
+      },
+      "http": [
+        {
+          "method": "POST",
+          "path": "/api/auth/refresh",
+          "startedAt": 1790787724985,
+          "finishedAt": 1790787735182,
+          "status": 200
+        },
+        {
+          "method": "GET",
+          "path": "/api/groups/d89ccabc-9036-4aa1-b850-4f921f81fdac",
+          "startedAt": 1790787726239,
+          "finishedAt": 1790787726242,
+          "status": 401
+        },
+        {
+          "method": "GET",
+          "path": "/api/groups/d89ccabc-9036-4aa1-b850-4f921f81fdac/agent-runs",
+          "startedAt": 1790787726259,
+          "finishedAt": 1790787726261,
+          "status": 401
+        },
+        {
+          "method": "GET",
+          "path": "/api/accounts",
+          "startedAt": 1790787727239,
+          "finishedAt": 1790787727242,
+          "status": 401
+        },
+        {
+          "method": "POST",
+          "path": "/api/groups/d89ccabc-9036-4aa1-b850-4f921f81fdac/send",
+          "startedAt": 1790787730239,
+          "finishedAt": 1790787730241,
+          "status": 401
+        },
+        {
+          "method": "POST",
+          "path": "/api/groups/d89ccabc-9036-4aa1-b850-4f921f81fdac/send",
+          "startedAt": 1790787735184,
+          "finishedAt": 1790787735194,
+          "status": 202
+        }
+      ],
+      "writes": [
+        {
+          "method": "POST",
+          "path": "/api/groups/d89ccabc-9036-4aa1-b850-4f921f81fdac/send",
+          "at": 1790787735185,
+          "role": "admin",
+          "username": "admin",
+          "body": {
+            "accountId": "account-2",
+            "text": "CG17 续期后只写一次",
+            "clientMsgId": "d1eaf8e4-af1b-4499-bffd-f9b64818b347"
+          },
+          "status": 202
+        }
+      ],
+      "ws": [
+        {
+          "type": "closed",
+          "at": 1790787724583,
+          "code": 4401
+        },
+        {
+          "type": "connected",
+          "at": 1790787735184
+        },
+        {
+          "type": "auth-received",
+          "at": 1790787735185,
+          "sinceSeq": 152
+        },
+        {
+          "type": "auth",
+          "at": 1790787735186
+        },
+        {
+          "type": "message",
+          "at": 1790787735286,
+          "seq": 153
+        },
+        {
+          "type": "message",
+          "at": 1790787735387,
+          "seq": 154
+        },
+        {
+          "type": "message",
+          "at": 1790787735485,
+          "seq": 155
+        }
+      ],
+      "matchingMessages": [
+        {
+          "id": "830e55b2-801c-4e4a-b8a4-597eee3c046d",
+          "msg_id": "b8e946d0-2062-4d96-a158-a786b1e4bb64",
+          "client_msg_id": "d1eaf8e4-af1b-4499-bffd-f9b64818b347",
+          "account_id": "account-2",
+          "text": "CG17 续期后只写一次",
+          "sent_at": "2026-09-30T17:02:15.443Z",
+          "delivery_status": "sent"
+        }
+      ],
+      "uiRows": [
+        {
+          "id": "830e55b2-801c-4e4a-b8a4-597eee3c046d",
+          "text": "我platform-account-2服务账号10/01 01:02:15CG17 续期后只写一次已发送 b8e946d0-2062-4d96-a158-a786b1e4bb64"
+        }
+      ],
+      "uiIdentityEvidence": "AX and DOM showed admin 管理员; raw text concatenated Aadmin管理员. Authenticated successful handler recorded role=admin and username=admin; selected account-2."
+    },
+    "cg18": {
+      "dataCount": 144,
+      "snapshotPages": 3,
+      "outageMs": 20192,
+      "marks": {
+        "outageStartedAt": 1790788079561,
+        "publishStartedAt": 1790788079606,
+        "eventsCommittedBy": 1790788079661,
+        "latestPublish": [
+          {
+            "groupId": "37181c43-252f-4f57-a0b0-08b6b7174d9d",
+            "senderPlatformUserId": "qa-external",
+            "text": "CG18-observed-001",
+            "sentAt": "2026-09-30T17:07:59.606Z",
+            "msgId": "4cb79a5d-4d72-488b-972a-24ed09999102"
+          },
+          {
+            "groupId": "37181c43-252f-4f57-a0b0-08b6b7174d9d",
+            "senderPlatformUserId": "qa-external",
+            "text": "CG18-observed-002",
+            "sentAt": "2026-09-30T17:07:59.607Z",
+            "msgId": "e1bf5a33-5c43-4453-b176-48a0bdaa6448"
+          }
+        ],
+        "latestEvent": {
+          "seq": "167",
+          "type": "message",
+          "created_at": "2026-09-30T17:07:59.619Z"
+        },
+        "groupChangedCommittedBy": 1790788079710,
+        "restoreScheduledAt": 1790788079752,
+        "restoreAfterMs": 20000,
+        "transportRestoredAt": 1790788099753,
+        "lastTimelineFailureAt": 1790788100813
+      },
+      "ws": [
+        {
+          "type": "closed",
+          "at": 1790788079562,
+          "code": 1012
+        },
+        {
+          "type": "connected",
+          "at": 1790788100738
+        },
+        {
+          "type": "auth-received",
+          "at": 1790788100739,
+          "sinceSeq": 165
+        },
+        {
+          "type": "auth",
+          "at": 1790788100740
+        },
+        {
+          "type": "message",
+          "at": 1790788100841,
+          "seq": 166
+        },
+        {
+          "type": "message",
+          "at": 1790788100841,
+          "seq": 167
+        },
+        {
+          "type": "group_changed",
+          "at": 1790788100841,
+          "seq": 168
+        }
+      ],
+      "counters": {
+        "refreshCount": 0,
+        "heldRefresh": 0,
+        "heldEarlier": 0,
+        "timelineFailures": 1
+      },
+      "observedAt": 1790788101204,
+      "afterTransportMs": 1451,
+      "afterAuthenticatedWsMs": 464,
+      "observedRows": [
+        {
+          "id": "0df21304-ab6e-4ec0-9f72-9244c5b4a3ee",
+          "text": "CG12-race-old-001",
+          "time": "2020-01-01T00:00:00.000Z"
+        },
+        {
+          "id": "358d4be3-9475-4a86-8656-574023088b4e",
+          "text": "CG12-fixed-old-001",
+          "time": "2020-01-01T00:00:00.000Z"
+        },
+        {
+          "id": "78d816c6-ec28-4d53-8502-b44858228f18",
+          "text": "CG12-backfill-001",
+          "time": "2020-01-01T00:00:00.000Z"
+        },
+        {
+          "id": "849d114f-d1d2-402d-af0c-398ff03a9956",
+          "text": "CG12-seed-001",
+          "time": "2026-09-30T16:57:10.662Z"
+        },
+        {
+          "id": "850c3a1d-41c8-46a5-93f2-c4f20b430bb0",
+          "text": "CG12-seed-002",
+          "time": "2026-09-30T16:57:10.663Z"
+        },
+        {
+          "id": "3f87084a-4c4b-4d74-8909-84f831a84d25",
+          "text": "CG12-seed-003",
+          "time": "2026-09-30T16:57:10.664Z"
+        },
+        {
+          "id": "b49c986a-43af-4c66-be4c-31573e12b8dc",
+          "text": "CG12-seed-004",
+          "time": "2026-09-30T16:57:10.665Z"
+        },
+        {
+          "id": "d0702b07-9779-4032-9554-b3202dc8e3b5",
+          "text": "CG12-seed-005",
+          "time": "2026-09-30T16:57:10.666Z"
+        },
+        {
+          "id": "4d7258d5-2e55-42be-a7b8-5741a82ec10c",
+          "text": "CG12-seed-006",
+          "time": "2026-09-30T16:57:10.667Z"
+        },
+        {
+          "id": "9ef8bbd5-8c81-43bc-834f-5c005e758bb5",
+          "text": "CG12-seed-007",
+          "time": "2026-09-30T16:57:10.668Z"
+        },
+        {
+          "id": "f8032177-7ddd-4cad-9804-b6df50a0d2ba",
+          "text": "CG12-seed-008",
+          "time": "2026-09-30T16:57:10.669Z"
+        },
+        {
+          "id": "4024710f-1152-4598-8b72-6f41fd3ba5e0",
+          "text": "CG12-seed-009",
+          "time": "2026-09-30T16:57:10.670Z"
+        },
+        {
+          "id": "421ad65d-1292-42ea-b137-da5587d86dc6",
+          "text": "CG12-seed-010",
+          "time": "2026-09-30T16:57:10.671Z"
+        },
+        {
+          "id": "6bd831b8-b2af-48fe-87ce-c33d449525f0",
+          "text": "CG12-seed-011",
+          "time": "2026-09-30T16:57:10.672Z"
+        },
+        {
+          "id": "72ff0acb-3bb0-4ad0-924e-faebbbecaee3",
+          "text": "CG12-seed-012",
+          "time": "2026-09-30T16:57:10.673Z"
+        },
+        {
+          "id": "821a222e-765f-4702-8029-43767a3d2bdc",
+          "text": "CG12-seed-013",
+          "time": "2026-09-30T16:57:10.674Z"
+        },
+        {
+          "id": "4759e94e-a207-4168-979f-b4e96eb73f6d",
+          "text": "CG12-seed-014",
+          "time": "2026-09-30T16:57:10.675Z"
+        },
+        {
+          "id": "54fa5242-5199-46d6-932a-603abae298c0",
+          "text": "CG12-seed-015",
+          "time": "2026-09-30T16:57:10.676Z"
+        },
+        {
+          "id": "21f7c568-6812-4e17-b3cb-ea49f7a3fd5d",
+          "text": "CG12-seed-016",
+          "time": "2026-09-30T16:57:10.677Z"
+        },
+        {
+          "id": "22b70d52-7863-4c08-98ba-49ef03d3f34e",
+          "text": "CG12-seed-017",
+          "time": "2026-09-30T16:57:10.678Z"
+        },
+        {
+          "id": "2c9c7eca-d453-4305-9c50-ffaa45946510",
+          "text": "CG12-seed-018",
+          "time": "2026-09-30T16:57:10.679Z"
+        },
+        {
+          "id": "e9f978f3-1f05-4415-8c28-f0b6ae39680c",
+          "text": "CG12-seed-019",
+          "time": "2026-09-30T16:57:10.680Z"
+        },
+        {
+          "id": "be722617-31fd-46ff-b1e5-6989a55bb7e2",
+          "text": "CG12-seed-020",
+          "time": "2026-09-30T16:57:10.681Z"
+        },
+        {
+          "id": "7e4e9c3f-56f9-4c76-9d45-739c3c5c4089",
+          "text": "CG12-seed-021",
+          "time": "2026-09-30T16:57:10.682Z"
+        },
+        {
+          "id": "4151702d-92b0-4ea9-9f62-fa1e90c5f8ab",
+          "text": "CG12-seed-022",
+          "time": "2026-09-30T16:57:10.683Z"
+        },
+        {
+          "id": "2183c5df-686a-4aa9-9e81-c7989c4443da",
+          "text": "CG12-seed-023",
+          "time": "2026-09-30T16:57:10.684Z"
+        },
+        {
+          "id": "8f7517e5-fc93-4724-902f-a8ff086e10a3",
+          "text": "CG12-seed-024",
+          "time": "2026-09-30T16:57:10.685Z"
+        },
+        {
+          "id": "c0a0d896-e544-4b75-aa9d-f8823615650c",
+          "text": "CG12-seed-025",
+          "time": "2026-09-30T16:57:10.686Z"
+        },
+        {
+          "id": "71b1ccc6-eb94-4e06-8732-c1b1c58c5c95",
+          "text": "CG12-seed-026",
+          "time": "2026-09-30T16:57:10.687Z"
+        },
+        {
+          "id": "db525ae8-6d5e-455a-9f0d-07e50f5c6661",
+          "text": "CG12-seed-027",
+          "time": "2026-09-30T16:57:10.688Z"
+        },
+        {
+          "id": "e0685f16-9304-4ec2-ab04-f3cb3a903f13",
+          "text": "CG12-seed-028",
+          "time": "2026-09-30T16:57:10.689Z"
+        },
+        {
+          "id": "e190b8b0-4182-4648-8eb4-4898109e54ad",
+          "text": "CG12-seed-029",
+          "time": "2026-09-30T16:57:10.690Z"
+        },
+        {
+          "id": "3cb9e899-f023-4c21-b945-30e5394cc72e",
+          "text": "CG12-seed-030",
+          "time": "2026-09-30T16:57:10.691Z"
+        },
+        {
+          "id": "d9a15480-2b2e-4260-8738-e434986faeee",
+          "text": "CG12-seed-031",
+          "time": "2026-09-30T16:57:10.692Z"
+        },
+        {
+          "id": "1df94c50-862d-4fab-9dfc-a02d6b694ffe",
+          "text": "CG12-seed-032",
+          "time": "2026-09-30T16:57:10.693Z"
+        },
+        {
+          "id": "41f1b63d-2eb5-467c-a44a-fd1fd1092994",
+          "text": "CG12-seed-033",
+          "time": "2026-09-30T16:57:10.694Z"
+        },
+        {
+          "id": "d1fa0452-0db8-490c-beed-b71833bea0af",
+          "text": "CG12-seed-034",
+          "time": "2026-09-30T16:57:10.695Z"
+        },
+        {
+          "id": "00822732-83d1-4462-91ed-7a332a6f265a",
+          "text": "CG12-seed-035",
+          "time": "2026-09-30T16:57:10.696Z"
+        },
+        {
+          "id": "033ca0bc-b95e-4eb3-891a-d272a64b45ec",
+          "text": "CG12-seed-036",
+          "time": "2026-09-30T16:57:10.697Z"
+        },
+        {
+          "id": "147f43c6-66d2-4161-b215-d060117511a8",
+          "text": "CG12-seed-037",
+          "time": "2026-09-30T16:57:10.698Z"
+        },
+        {
+          "id": "5cff63bb-e906-4ae5-a6fa-99a59ced1a73",
+          "text": "CG12-seed-038",
+          "time": "2026-09-30T16:57:10.699Z"
+        },
+        {
+          "id": "c3416ce9-40a2-4331-92ba-6a52bfe20df7",
+          "text": "CG12-seed-039",
+          "time": "2026-09-30T16:57:10.700Z"
+        },
+        {
+          "id": "c5878c9e-0ab3-4833-a18c-5257f37a5f80",
+          "text": "CG12-seed-040",
+          "time": "2026-09-30T16:57:10.701Z"
+        },
+        {
+          "id": "fb28815f-8a7d-4945-8152-013dd20d3c86",
+          "text": "CG12-seed-041",
+          "time": "2026-09-30T16:57:10.702Z"
+        },
+        {
+          "id": "553edefa-b35d-4075-b8cf-59b7c567e8cc",
+          "text": "CG12-seed-042",
+          "time": "2026-09-30T16:57:10.703Z"
+        },
+        {
+          "id": "7af95982-3405-407c-8e35-1850fb2d4e87",
+          "text": "CG12-seed-043",
+          "time": "2026-09-30T16:57:10.704Z"
+        },
+        {
+          "id": "f93cdb8c-0ba7-4efc-9721-2c4e18e1f2b7",
+          "text": "CG12-seed-044",
+          "time": "2026-09-30T16:57:10.705Z"
+        },
+        {
+          "id": "f13a2161-336d-4e9f-bea8-8fda7d04db14",
+          "text": "CG12-seed-045",
+          "time": "2026-09-30T16:57:10.706Z"
+        },
+        {
+          "id": "c38d2f7b-ec76-40cd-b41b-c7cdc8002dc7",
+          "text": "CG12-seed-046",
+          "time": "2026-09-30T16:57:10.707Z"
+        },
+        {
+          "id": "f434e31f-c870-4f1d-8f82-edae8c5549cc",
+          "text": "CG12-seed-047",
+          "time": "2026-09-30T16:57:10.708Z"
+        },
+        {
+          "id": "45b4f200-886b-4190-a822-6c49dcb093aa",
+          "text": "CG12-seed-048",
+          "time": "2026-09-30T16:57:10.709Z"
+        },
+        {
+          "id": "34828265-5de0-46a6-a810-058dad2d6a60",
+          "text": "CG12-seed-049",
+          "time": "2026-09-30T16:57:10.710Z"
+        },
+        {
+          "id": "d49a9b41-c79b-4d7c-b7e6-aaab5445bf39",
+          "text": "CG12-seed-050",
+          "time": "2026-09-30T16:57:10.711Z"
+        },
+        {
+          "id": "8ed1f04b-03c5-4f42-822d-5cdd2fba819a",
+          "text": "CG12-seed-051",
+          "time": "2026-09-30T16:57:10.712Z"
+        },
+        {
+          "id": "6416ce8b-2b45-4dad-8a02-9a52014a2f13",
+          "text": "CG12-seed-052",
+          "time": "2026-09-30T16:57:10.713Z"
+        },
+        {
+          "id": "9668c9fe-deaa-4a0a-85a4-1f96cd5df550",
+          "text": "CG12-seed-053",
+          "time": "2026-09-30T16:57:10.714Z"
+        },
+        {
+          "id": "8e25e283-5c8b-4b8a-ae78-c210bb89df70",
+          "text": "CG12-seed-054",
+          "time": "2026-09-30T16:57:10.715Z"
+        },
+        {
+          "id": "43172fdb-4478-484a-a660-3002ea3d7485",
+          "text": "CG12-seed-055",
+          "time": "2026-09-30T16:57:10.716Z"
+        },
+        {
+          "id": "a63b6c83-8e00-4d98-b418-5394ecd14769",
+          "text": "CG12-seed-056",
+          "time": "2026-09-30T16:57:10.717Z"
+        },
+        {
+          "id": "0afdd414-1124-46b3-b8a2-81600aa69519",
+          "text": "CG12-seed-057",
+          "time": "2026-09-30T16:57:10.718Z"
+        },
+        {
+          "id": "7c870123-0f87-468e-87bc-b2dd32dd2703",
+          "text": "CG12-seed-058",
+          "time": "2026-09-30T16:57:10.719Z"
+        },
+        {
+          "id": "2db510fb-3769-43fb-8a33-3e7908dc1e11",
+          "text": "CG12-seed-059",
+          "time": "2026-09-30T16:57:10.720Z"
+        },
+        {
+          "id": "d2c3b68c-eb46-4234-ab67-c24deb5282d4",
+          "text": "CG12-seed-060",
+          "time": "2026-09-30T16:57:10.721Z"
+        },
+        {
+          "id": "7b05a58b-57ab-47f9-9cc1-89195193dba5",
+          "text": "CG12-seed-061",
+          "time": "2026-09-30T16:57:10.722Z"
+        },
+        {
+          "id": "848a9673-e084-4e7e-9fcf-21b7075a698f",
+          "text": "CG12-seed-062",
+          "time": "2026-09-30T16:57:10.723Z"
+        },
+        {
+          "id": "006853cf-eaef-45bf-8a8f-9c9e0e076045",
+          "text": "CG12-seed-063",
+          "time": "2026-09-30T16:57:10.724Z"
+        },
+        {
+          "id": "530da791-a037-414e-b0bf-07a1aa69658f",
+          "text": "CG12-seed-064",
+          "time": "2026-09-30T16:57:10.725Z"
+        },
+        {
+          "id": "430c653b-1ee3-4107-adfc-002497214545",
+          "text": "CG12-seed-065",
+          "time": "2026-09-30T16:57:10.726Z"
+        },
+        {
+          "id": "4a20c037-6583-49e1-9509-cf6db83afc9a",
+          "text": "CG12-seed-066",
+          "time": "2026-09-30T16:57:10.727Z"
+        },
+        {
+          "id": "3b837f41-fd16-4a2c-bdde-f570ae5517a6",
+          "text": "CG12-seed-067",
+          "time": "2026-09-30T16:57:10.728Z"
+        },
+        {
+          "id": "bade7a73-331f-4d59-a789-c5e080647efc",
+          "text": "CG12-seed-068",
+          "time": "2026-09-30T16:57:10.729Z"
+        },
+        {
+          "id": "7ca521b8-a193-49f6-b47b-d40443bf2e31",
+          "text": "CG12-seed-069",
+          "time": "2026-09-30T16:57:10.730Z"
+        },
+        {
+          "id": "ed2a882e-bc6a-4bec-9b73-2e935563acbc",
+          "text": "CG12-seed-070",
+          "time": "2026-09-30T16:57:10.731Z"
+        },
+        {
+          "id": "fff4f39a-4c8f-4a80-ae1d-c2328776ed35",
+          "text": "CG12-seed-071",
+          "time": "2026-09-30T16:57:10.732Z"
+        },
+        {
+          "id": "9d09b40a-0710-4aa8-9761-ea796d22e002",
+          "text": "CG12-seed-072",
+          "time": "2026-09-30T16:57:10.733Z"
+        },
+        {
+          "id": "f133141a-ecf1-429c-9398-804b2d6036f4",
+          "text": "CG12-seed-073",
+          "time": "2026-09-30T16:57:10.734Z"
+        },
+        {
+          "id": "5641d3fd-876d-4266-8487-e482a5b972ef",
+          "text": "CG12-seed-074",
+          "time": "2026-09-30T16:57:10.735Z"
+        },
+        {
+          "id": "cc747899-004f-441f-af93-1eabec963fa4",
+          "text": "CG12-seed-075",
+          "time": "2026-09-30T16:57:10.736Z"
+        },
+        {
+          "id": "573820b3-429f-4948-a4b9-14d3c6e9314c",
+          "text": "CG12-seed-076",
+          "time": "2026-09-30T16:57:10.737Z"
+        },
+        {
+          "id": "a1d6d272-e780-436e-bf0a-d1b61c720744",
+          "text": "CG12-seed-077",
+          "time": "2026-09-30T16:57:10.738Z"
+        },
+        {
+          "id": "67857ea8-fc12-45fa-b4e4-fc63ca07046a",
+          "text": "CG12-seed-078",
+          "time": "2026-09-30T16:57:10.739Z"
+        },
+        {
+          "id": "48eca92d-e7e3-42cf-a6f9-b55a978d7c30",
+          "text": "CG12-seed-079",
+          "time": "2026-09-30T16:57:10.740Z"
+        },
+        {
+          "id": "e52d5fa4-336e-497e-8c17-73e2b2e25066",
+          "text": "CG12-seed-080",
+          "time": "2026-09-30T16:57:10.741Z"
+        },
+        {
+          "id": "47a96efb-2708-4700-bc97-1c689fdb343e",
+          "text": "CG12-seed-081",
+          "time": "2026-09-30T16:57:10.742Z"
+        },
+        {
+          "id": "0aa32c78-a2fd-403d-be8f-2a7b5507260d",
+          "text": "CG12-seed-082",
+          "time": "2026-09-30T16:57:10.743Z"
+        },
+        {
+          "id": "a54dd772-cd73-417c-afee-be531a0d7ebf",
+          "text": "CG12-seed-083",
+          "time": "2026-09-30T16:57:10.744Z"
+        },
+        {
+          "id": "1eb52d42-1a71-48f6-9853-cc6fe04dc2b9",
+          "text": "CG12-seed-084",
+          "time": "2026-09-30T16:57:10.745Z"
+        },
+        {
+          "id": "93588f55-9ca3-495a-a2d0-5039ffb8b649",
+          "text": "CG12-seed-085",
+          "time": "2026-09-30T16:57:10.746Z"
+        },
+        {
+          "id": "cf423294-51db-4e69-811d-b377cf21e2eb",
+          "text": "CG12-seed-086",
+          "time": "2026-09-30T16:57:10.747Z"
+        },
+        {
+          "id": "0d3c9ef4-7f43-46c8-a048-19bed9ca7b7f",
+          "text": "CG12-seed-087",
+          "time": "2026-09-30T16:57:10.748Z"
+        },
+        {
+          "id": "b4154dc4-4503-475b-bd47-b97763a4cb02",
+          "text": "CG12-seed-088",
+          "time": "2026-09-30T16:57:10.749Z"
+        },
+        {
+          "id": "0c8ba111-d5d4-4d3b-80cb-6ba97bdcbc26",
+          "text": "CG12-seed-089",
+          "time": "2026-09-30T16:57:10.750Z"
+        },
+        {
+          "id": "7ea1db9f-e9d8-4bdd-bf10-aa18790dfc95",
+          "text": "CG12-seed-090",
+          "time": "2026-09-30T16:57:10.751Z"
+        },
+        {
+          "id": "1a2896ba-b715-4746-ac4d-594efd5bf8f0",
+          "text": "CG12-seed-091",
+          "time": "2026-09-30T16:57:10.752Z"
+        },
+        {
+          "id": "861c1026-8d62-4c7d-8a3c-58b63a068422",
+          "text": "CG12-seed-092",
+          "time": "2026-09-30T16:57:10.753Z"
+        },
+        {
+          "id": "e1df2d74-c511-4cd1-85bf-c28be7664b5a",
+          "text": "CG12-seed-093",
+          "time": "2026-09-30T16:57:10.754Z"
+        },
+        {
+          "id": "e1db4eb8-0d53-43d8-84e0-d5251abcd737",
+          "text": "CG12-seed-094",
+          "time": "2026-09-30T16:57:10.755Z"
+        },
+        {
+          "id": "18a37e4f-7fde-4931-92c5-ba13099f00da",
+          "text": "CG12-seed-095",
+          "time": "2026-09-30T16:57:10.756Z"
+        },
+        {
+          "id": "a77b4c6a-2cf7-4f02-ad78-cb87f4c8e128",
+          "text": "CG12-seed-096",
+          "time": "2026-09-30T16:57:10.757Z"
+        },
+        {
+          "id": "f5d87384-aa49-459f-8022-646d6f22bbf7",
+          "text": "CG12-seed-097",
+          "time": "2026-09-30T16:57:10.758Z"
+        },
+        {
+          "id": "94ed2b53-1ac6-43d5-9676-e6bcc8c16e4e",
+          "text": "CG12-seed-098",
+          "time": "2026-09-30T16:57:10.759Z"
+        },
+        {
+          "id": "8c2ef227-5624-4b9b-9196-cd7f65f15514",
+          "text": "CG12-seed-099",
+          "time": "2026-09-30T16:57:10.760Z"
+        },
+        {
+          "id": "d84bc794-8cac-47b8-b81f-2de1481d8169",
+          "text": "CG12-seed-100",
+          "time": "2026-09-30T16:57:10.761Z"
+        },
+        {
+          "id": "d908bede-2ff9-4cc5-aef9-241bf57a36ce",
+          "text": "CG12-seed-101",
+          "time": "2026-09-30T16:57:10.762Z"
+        },
+        {
+          "id": "413467ea-6863-4940-96f6-68297b14e9df",
+          "text": "CG12-seed-102",
+          "time": "2026-09-30T16:57:10.763Z"
+        },
+        {
+          "id": "5b24f213-bf7e-49ab-891c-62d118dd31cc",
+          "text": "CG12-seed-103",
+          "time": "2026-09-30T16:57:10.764Z"
+        },
+        {
+          "id": "a8846f1b-030f-4dcc-bd00-a1db8c24cf4f",
+          "text": "CG12-seed-104",
+          "time": "2026-09-30T16:57:10.765Z"
+        },
+        {
+          "id": "1cbc926a-7833-411c-ae21-dc1c13b99f70",
+          "text": "CG12-seed-105",
+          "time": "2026-09-30T16:57:10.766Z"
+        },
+        {
+          "id": "aea0d5c3-a958-41e0-ba60-994b37fe12d4",
+          "text": "CG12-seed-106",
+          "time": "2026-09-30T16:57:10.767Z"
+        },
+        {
+          "id": "bf23d3cb-4576-40ed-9cf3-c1cf100a7559",
+          "text": "CG12-seed-107",
+          "time": "2026-09-30T16:57:10.768Z"
+        },
+        {
+          "id": "8f81043d-ea3b-4141-8087-ae25c0380a64",
+          "text": "CG12-seed-108",
+          "time": "2026-09-30T16:57:10.769Z"
+        },
+        {
+          "id": "f65e8e43-24c3-499d-9e7c-6518cc6151be",
+          "text": "CG12-seed-109",
+          "time": "2026-09-30T16:57:10.770Z"
+        },
+        {
+          "id": "c9f27bda-1479-414d-a162-7889b199d57e",
+          "text": "CG12-seed-110",
+          "time": "2026-09-30T16:57:10.771Z"
+        },
+        {
+          "id": "9046e184-9b63-4475-a067-3ecf9cfbba57",
+          "text": "CG12-seed-111",
+          "time": "2026-09-30T16:57:10.772Z"
+        },
+        {
+          "id": "b1b94657-80c5-4ebd-8e31-671777ec02d6",
+          "text": "CG12-seed-112",
+          "time": "2026-09-30T16:57:10.773Z"
+        },
+        {
+          "id": "10681bc7-09ce-488c-8caf-c55d7b3ccc04",
+          "text": "CG12-seed-113",
+          "time": "2026-09-30T16:57:10.774Z"
+        },
+        {
+          "id": "5edf5140-361e-4ad4-8d14-8bb8a006c920",
+          "text": "CG12-seed-114",
+          "time": "2026-09-30T16:57:10.775Z"
+        },
+        {
+          "id": "ad2fcd2a-5c51-4607-b6f7-acd069937b02",
+          "text": "CG12-seed-115",
+          "time": "2026-09-30T16:57:10.776Z"
+        },
+        {
+          "id": "8e5a15b3-516f-4368-bdd2-523ccc920ae9",
+          "text": "CG12-seed-116",
+          "time": "2026-09-30T16:57:10.777Z"
+        },
+        {
+          "id": "ad8c7ee9-4af0-48c1-a02b-7d7a20ea574b",
+          "text": "CG12-seed-117",
+          "time": "2026-09-30T16:57:10.778Z"
+        },
+        {
+          "id": "95688f70-dcf1-4b5e-a2bc-51ecd42037a3",
+          "text": "CG12-seed-118",
+          "time": "2026-09-30T16:57:10.779Z"
+        },
+        {
+          "id": "9eabd12b-7a0a-4ae9-afba-792f782d4fb9",
+          "text": "CG12-seed-119",
+          "time": "2026-09-30T16:57:10.780Z"
+        },
+        {
+          "id": "e0594be0-f0b8-4ac1-81b5-3710705e5cfc",
+          "text": "CG12-seed-120",
+          "time": "2026-09-30T16:57:10.781Z"
+        },
+        {
+          "id": "58fcf1ff-7442-403b-902c-6b8b147ab0b2",
+          "text": "CG12-seed-121",
+          "time": "2026-09-30T16:57:10.782Z"
+        },
+        {
+          "id": "628e71d1-7e93-4c18-b39d-9964a87069f1",
+          "text": "CG12-seed-122",
+          "time": "2026-09-30T16:57:10.783Z"
+        },
+        {
+          "id": "8857f42e-8fd6-4922-92ca-43916af50732",
+          "text": "CG12-seed-123",
+          "time": "2026-09-30T16:57:10.784Z"
+        },
+        {
+          "id": "de410659-9192-4ee2-ab06-b7f2d871c0bd",
+          "text": "CG12-seed-124",
+          "time": "2026-09-30T16:57:10.785Z"
+        },
+        {
+          "id": "e7b68ebe-aaba-42d8-a381-44e670e53ebd",
+          "text": "CG12-seed-125",
+          "time": "2026-09-30T16:57:10.786Z"
+        },
+        {
+          "id": "98ba7e70-e5e8-41d3-a451-752847071fac",
+          "text": "CG12-new-001",
+          "time": "2026-09-30T16:58:40.250Z"
+        },
+        {
+          "id": "41e3382b-19eb-4b58-afd9-e2e0f6cfd719",
+          "text": "CG12-new-002",
+          "time": "2026-09-30T16:58:40.251Z"
+        },
+        {
+          "id": "9efbabbd-d42f-4225-b241-402bbf84d2c8",
+          "text": "CG12-race-new-001",
+          "time": "2026-09-30T17:00:01.112Z"
+        },
+        {
+          "id": "287b5d59-0db0-4465-9824-d63d9f182a6d",
+          "text": "CG12-race-new-002",
+          "time": "2026-09-30T17:00:01.113Z"
+        },
+        {
+          "id": "668e653b-be26-4766-8625-220fd46e811a",
+          "text": "CG01 保留身份草稿",
+          "time": "2026-09-30T17:01:10.730Z"
+        },
+        {
+          "id": "4773250f-0523-4827-80c9-ee2c1c941cb0",
+          "text": "CG01 限流仍按原身份排队",
+          "time": "2026-09-30T17:01:33.820Z"
+        },
+        {
+          "id": "830e55b2-801c-4e4a-b8a4-597eee3c046d",
+          "text": "CG17 续期后只写一次",
+          "time": "2026-09-30T17:02:15.443Z"
+        },
+        {
+          "id": "3c07ae2e-9415-422d-a13a-75be5cbf9003",
+          "text": "CG12-fixed-new-001",
+          "time": "2026-09-30T17:04:18.229Z"
+        },
+        {
+          "id": "c236342a-c67f-4094-a3dd-1ade7e935609",
+          "text": "CG12-fixed-new-002",
+          "time": "2026-09-30T17:04:18.230Z"
+        },
+        {
+          "id": "018b8a80-ea3f-4e26-b119-4d3cbd92e0fd",
+          "text": "CG12-fixed-error-001",
+          "time": "2026-09-30T17:04:57.973Z"
+        },
+        {
+          "id": "a7019cfc-0224-4c5b-a159-4fa5015840f0",
+          "text": "CG18-reconnect-001",
+          "time": "2026-09-30T17:06:03.461Z"
+        },
+        {
+          "id": "b0220637-31a3-4053-9df5-0b01f111549f",
+          "text": "CG18-reconnect-002",
+          "time": "2026-09-30T17:06:03.462Z"
+        },
+        {
+          "id": "cfee9a57-b051-4b82-be99-7ae6093d7a8e",
+          "text": "CG18-timed-001",
+          "time": "2026-09-30T17:06:58.734Z"
+        },
+        {
+          "id": "e15acea3-03e5-40d6-85a4-cc2c57b0e958",
+          "text": "CG18-timed-002",
+          "time": "2026-09-30T17:06:58.735Z"
+        },
+        {
+          "id": "358461cf-976c-42a1-9a2c-db882c794abd",
+          "text": "CG18-observed-001",
+          "time": "2026-09-30T17:07:59.606Z"
+        },
+        {
+          "id": "4251ed5c-f519-4417-b3c3-4b3e97dcd38c",
+          "text": "CG18-observed-002",
+          "time": "2026-09-30T17:07:59.607Z"
+        }
+      ],
+      "expectedIds": [
+        "0df21304-ab6e-4ec0-9f72-9244c5b4a3ee",
+        "358d4be3-9475-4a86-8656-574023088b4e",
+        "78d816c6-ec28-4d53-8502-b44858228f18",
+        "849d114f-d1d2-402d-af0c-398ff03a9956",
+        "850c3a1d-41c8-46a5-93f2-c4f20b430bb0",
+        "3f87084a-4c4b-4d74-8909-84f831a84d25",
+        "b49c986a-43af-4c66-be4c-31573e12b8dc",
+        "d0702b07-9779-4032-9554-b3202dc8e3b5",
+        "4d7258d5-2e55-42be-a7b8-5741a82ec10c",
+        "9ef8bbd5-8c81-43bc-834f-5c005e758bb5",
+        "f8032177-7ddd-4cad-9804-b6df50a0d2ba",
+        "4024710f-1152-4598-8b72-6f41fd3ba5e0",
+        "421ad65d-1292-42ea-b137-da5587d86dc6",
+        "6bd831b8-b2af-48fe-87ce-c33d449525f0",
+        "72ff0acb-3bb0-4ad0-924e-faebbbecaee3",
+        "821a222e-765f-4702-8029-43767a3d2bdc",
+        "4759e94e-a207-4168-979f-b4e96eb73f6d",
+        "54fa5242-5199-46d6-932a-603abae298c0",
+        "21f7c568-6812-4e17-b3cb-ea49f7a3fd5d",
+        "22b70d52-7863-4c08-98ba-49ef03d3f34e",
+        "2c9c7eca-d453-4305-9c50-ffaa45946510",
+        "e9f978f3-1f05-4415-8c28-f0b6ae39680c",
+        "be722617-31fd-46ff-b1e5-6989a55bb7e2",
+        "7e4e9c3f-56f9-4c76-9d45-739c3c5c4089",
+        "4151702d-92b0-4ea9-9f62-fa1e90c5f8ab",
+        "2183c5df-686a-4aa9-9e81-c7989c4443da",
+        "8f7517e5-fc93-4724-902f-a8ff086e10a3",
+        "c0a0d896-e544-4b75-aa9d-f8823615650c",
+        "71b1ccc6-eb94-4e06-8732-c1b1c58c5c95",
+        "db525ae8-6d5e-455a-9f0d-07e50f5c6661",
+        "e0685f16-9304-4ec2-ab04-f3cb3a903f13",
+        "e190b8b0-4182-4648-8eb4-4898109e54ad",
+        "3cb9e899-f023-4c21-b945-30e5394cc72e",
+        "d9a15480-2b2e-4260-8738-e434986faeee",
+        "1df94c50-862d-4fab-9dfc-a02d6b694ffe",
+        "41f1b63d-2eb5-467c-a44a-fd1fd1092994",
+        "d1fa0452-0db8-490c-beed-b71833bea0af",
+        "00822732-83d1-4462-91ed-7a332a6f265a",
+        "033ca0bc-b95e-4eb3-891a-d272a64b45ec",
+        "147f43c6-66d2-4161-b215-d060117511a8",
+        "5cff63bb-e906-4ae5-a6fa-99a59ced1a73",
+        "c3416ce9-40a2-4331-92ba-6a52bfe20df7",
+        "c5878c9e-0ab3-4833-a18c-5257f37a5f80",
+        "fb28815f-8a7d-4945-8152-013dd20d3c86",
+        "553edefa-b35d-4075-b8cf-59b7c567e8cc",
+        "7af95982-3405-407c-8e35-1850fb2d4e87",
+        "f93cdb8c-0ba7-4efc-9721-2c4e18e1f2b7",
+        "f13a2161-336d-4e9f-bea8-8fda7d04db14",
+        "c38d2f7b-ec76-40cd-b41b-c7cdc8002dc7",
+        "f434e31f-c870-4f1d-8f82-edae8c5549cc",
+        "45b4f200-886b-4190-a822-6c49dcb093aa",
+        "34828265-5de0-46a6-a810-058dad2d6a60",
+        "d49a9b41-c79b-4d7c-b7e6-aaab5445bf39",
+        "8ed1f04b-03c5-4f42-822d-5cdd2fba819a",
+        "6416ce8b-2b45-4dad-8a02-9a52014a2f13",
+        "9668c9fe-deaa-4a0a-85a4-1f96cd5df550",
+        "8e25e283-5c8b-4b8a-ae78-c210bb89df70",
+        "43172fdb-4478-484a-a660-3002ea3d7485",
+        "a63b6c83-8e00-4d98-b418-5394ecd14769",
+        "0afdd414-1124-46b3-b8a2-81600aa69519",
+        "7c870123-0f87-468e-87bc-b2dd32dd2703",
+        "2db510fb-3769-43fb-8a33-3e7908dc1e11",
+        "d2c3b68c-eb46-4234-ab67-c24deb5282d4",
+        "7b05a58b-57ab-47f9-9cc1-89195193dba5",
+        "848a9673-e084-4e7e-9fcf-21b7075a698f",
+        "006853cf-eaef-45bf-8a8f-9c9e0e076045",
+        "530da791-a037-414e-b0bf-07a1aa69658f",
+        "430c653b-1ee3-4107-adfc-002497214545",
+        "4a20c037-6583-49e1-9509-cf6db83afc9a",
+        "3b837f41-fd16-4a2c-bdde-f570ae5517a6",
+        "bade7a73-331f-4d59-a789-c5e080647efc",
+        "7ca521b8-a193-49f6-b47b-d40443bf2e31",
+        "ed2a882e-bc6a-4bec-9b73-2e935563acbc",
+        "fff4f39a-4c8f-4a80-ae1d-c2328776ed35",
+        "9d09b40a-0710-4aa8-9761-ea796d22e002",
+        "f133141a-ecf1-429c-9398-804b2d6036f4",
+        "5641d3fd-876d-4266-8487-e482a5b972ef",
+        "cc747899-004f-441f-af93-1eabec963fa4",
+        "573820b3-429f-4948-a4b9-14d3c6e9314c",
+        "a1d6d272-e780-436e-bf0a-d1b61c720744",
+        "67857ea8-fc12-45fa-b4e4-fc63ca07046a",
+        "48eca92d-e7e3-42cf-a6f9-b55a978d7c30",
+        "e52d5fa4-336e-497e-8c17-73e2b2e25066",
+        "47a96efb-2708-4700-bc97-1c689fdb343e",
+        "0aa32c78-a2fd-403d-be8f-2a7b5507260d",
+        "a54dd772-cd73-417c-afee-be531a0d7ebf",
+        "1eb52d42-1a71-48f6-9853-cc6fe04dc2b9",
+        "93588f55-9ca3-495a-a2d0-5039ffb8b649",
+        "cf423294-51db-4e69-811d-b377cf21e2eb",
+        "0d3c9ef4-7f43-46c8-a048-19bed9ca7b7f",
+        "b4154dc4-4503-475b-bd47-b97763a4cb02",
+        "0c8ba111-d5d4-4d3b-80cb-6ba97bdcbc26",
+        "7ea1db9f-e9d8-4bdd-bf10-aa18790dfc95",
+        "1a2896ba-b715-4746-ac4d-594efd5bf8f0",
+        "861c1026-8d62-4c7d-8a3c-58b63a068422",
+        "e1df2d74-c511-4cd1-85bf-c28be7664b5a",
+        "e1db4eb8-0d53-43d8-84e0-d5251abcd737",
+        "18a37e4f-7fde-4931-92c5-ba13099f00da",
+        "a77b4c6a-2cf7-4f02-ad78-cb87f4c8e128",
+        "f5d87384-aa49-459f-8022-646d6f22bbf7",
+        "94ed2b53-1ac6-43d5-9676-e6bcc8c16e4e",
+        "8c2ef227-5624-4b9b-9196-cd7f65f15514",
+        "d84bc794-8cac-47b8-b81f-2de1481d8169",
+        "d908bede-2ff9-4cc5-aef9-241bf57a36ce",
+        "413467ea-6863-4940-96f6-68297b14e9df",
+        "5b24f213-bf7e-49ab-891c-62d118dd31cc",
+        "a8846f1b-030f-4dcc-bd00-a1db8c24cf4f",
+        "1cbc926a-7833-411c-ae21-dc1c13b99f70",
+        "aea0d5c3-a958-41e0-ba60-994b37fe12d4",
+        "bf23d3cb-4576-40ed-9cf3-c1cf100a7559",
+        "8f81043d-ea3b-4141-8087-ae25c0380a64",
+        "f65e8e43-24c3-499d-9e7c-6518cc6151be",
+        "c9f27bda-1479-414d-a162-7889b199d57e",
+        "9046e184-9b63-4475-a067-3ecf9cfbba57",
+        "b1b94657-80c5-4ebd-8e31-671777ec02d6",
+        "10681bc7-09ce-488c-8caf-c55d7b3ccc04",
+        "5edf5140-361e-4ad4-8d14-8bb8a006c920",
+        "ad2fcd2a-5c51-4607-b6f7-acd069937b02",
+        "8e5a15b3-516f-4368-bdd2-523ccc920ae9",
+        "ad8c7ee9-4af0-48c1-a02b-7d7a20ea574b",
+        "95688f70-dcf1-4b5e-a2bc-51ecd42037a3",
+        "9eabd12b-7a0a-4ae9-afba-792f782d4fb9",
+        "e0594be0-f0b8-4ac1-81b5-3710705e5cfc",
+        "58fcf1ff-7442-403b-902c-6b8b147ab0b2",
+        "628e71d1-7e93-4c18-b39d-9964a87069f1",
+        "8857f42e-8fd6-4922-92ca-43916af50732",
+        "de410659-9192-4ee2-ab06-b7f2d871c0bd",
+        "e7b68ebe-aaba-42d8-a381-44e670e53ebd",
+        "98ba7e70-e5e8-41d3-a451-752847071fac",
+        "41e3382b-19eb-4b58-afd9-e2e0f6cfd719",
+        "9efbabbd-d42f-4225-b241-402bbf84d2c8",
+        "287b5d59-0db0-4465-9824-d63d9f182a6d",
+        "668e653b-be26-4766-8625-220fd46e811a",
+        "4773250f-0523-4827-80c9-ee2c1c941cb0",
+        "830e55b2-801c-4e4a-b8a4-597eee3c046d",
+        "3c07ae2e-9415-422d-a13a-75be5cbf9003",
+        "c236342a-c67f-4094-a3dd-1ade7e935609",
+        "018b8a80-ea3f-4e26-b119-4d3cbd92e0fd",
+        "a7019cfc-0224-4c5b-a159-4fa5015840f0",
+        "b0220637-31a3-4053-9df5-0b01f111549f",
+        "cfee9a57-b051-4b82-be99-7ae6093d7a8e",
+        "e15acea3-03e5-40d6-85a4-cc2c57b0e958",
+        "358461cf-976c-42a1-9a2c-db882c794abd",
+        "4251ed5c-f519-4417-b3c3-4b3e97dcd38c"
+      ],
+      "idsAndOrderMatch": true,
+      "uniqueIds": 144,
+      "settingValue": "true",
+      "errors": [],
+      "measurementCaveat": "First two observations started too late for a 3-second upper bound. Third run scheduled recovery and continuously waited before restoration. General history-size or outage SLA not claimed."
+    },
+    "cg19": {
+      "blocked": {
+        "id": "c4d43380-725d-4995-87fc-1dbacf2d4f3d",
+        "groupId": "cf4657f5-1899-4e40-9b61-088c6090ee4c",
+        "status": "blocked",
+        "endReason": "audit_blocked",
+        "summary": null,
+        "recoveryNote": null,
+        "steps": [
+          {
+            "ordinal": 1,
+            "kind": "tool_use",
+            "toolUseId": "qa-blocked-send",
+            "name": "send_message",
+            "input": {
+              "text": "CG19 blocked 不应发送",
+              "idempotency_key": "cg19-blocked"
+            },
+            "resultSummary": "{\"code\":\"AUDIT_REJECTED\",\"message\":\"Audit service returned no conclusive verdict after three attempts.\",\"hint\":\"The run is blocked; no side effect was executed.\"}",
+            "isError": true,
+            "errorCode": "AUDIT_REJECTED",
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"qa-blocked-send\",\"name\":\"send_message\",\"input\":{\"text\":\"CG19 blocked 不应发送\",\"idempotency_key\":\"cg19-blocked\"}}]}"
+          }
+        ]
+      },
+      "blockedUi": "- complementary:\n  - link \"K kapibala .\":\n    - /url: \"#/groups\"\n    - generic: K\n    - text: kapibala\n    - generic: .\n  - generic: 工作空间\n  - navigation:\n    - link \"群组工作台\":\n      - /url: \"#/groups\"\n      - generic: 群组工作台\n    - link \"服务账号\":\n      - /url: \"#/accounts\"\n      - generic: 服务账号\n    - link \"Agent 运行\":\n      - /url: \"#/agent-runs\"\n      - generic: Agent 运行\n    - link \"定时序列\":\n      - /url: \"#/sequences\"\n      - generic: 定时序列\n  - strong: 消息运营平台\n  - generic: 本地工作空间\n  - generic: A\n  - strong: admin\n  - generic: 管理员\n  - button \"退出登录\":\n- text: 工作空间\n- generic: /\n- strong: Agent 运行\n- status: 实时同步中\n- main:\n  - strong: Agent 审计阻塞\n  - generic: c4d43380-725d-4995-87fc-1dbacf2d4f3d\n  - link \"查看运行详情 →\":\n    - /url: \"#/agent-runs/c4d43380-725d-4995-87fc-1dbacf2d4f3d\"\n  - button \"关闭提醒\": ×\n  - link \"← 返回群组\":\n    - /url: \"#/groups/cf4657f5-1899-4e40-9b61-088c6090ee4c\"\n  - generic: AGENT EXECUTION\n  - heading \"运行详情\" [level=1]\n  - paragraph: c4d43380-725d-4995-87fc-1dbacf2d4f3d\n  - generic: 审计阻塞\n  - strong: 当前运行状态\n  - generic: 审计阻塞\n  - strong: 审计阻塞 · 副作用未执行\n  - generic: 审计服务在重试后仍未给出明确结论。请检查下面的步骤与审计服务状态。\n  - generic: 结束原因\n  - strong: audit_blocked\n  - generic: 执行步数\n  - strong: 1 / 12\n  - generic: 运行摘要\n  - paragraph: 尚未生成摘要\n  - heading \"执行轨迹\" [level=2]\n  - generic: 每一步保留输入、结果和错误证据\n  - article:\n    - generic: \"01\"\n    - heading \"send_message\" [level=3]\n    - text: qa-blocked-send\n    - generic: 工具调用\n    - heading \"输入参数\" [level=4]\n    - generic: \"{ \\\"text\\\": \\\"CG19 blocked 不应发送\\\", \\\"idempotency_key\\\": \\\"cg19-blocked\\\" }\"\n    - heading \"第 1 步 · send_message · 执行结果\" [level=4]\n    - paragraph: \"{\\\"code\\\":\\\"AUDIT_REJECTED\\\",\\\"message\\\":\\\"Audit service returned no conclusive verdict after three attempts.\\\",\\\"hint\\\":\\\"The run is blocked; no side effect was executed.\\\"}\"\n    - code: AUDIT_REJECTED\n    - generic \"查看原始响应 最多 2 KB\" [active]\n    - generic: \"{\\\"stop_reason\\\":\\\"tool_use\\\",\\\"content\\\":[{\\\"type\\\":\\\"tool_use\\\",\\\"id\\\":\\\"qa-blocked-send\\\",\\\"name\\\":\\\"send_message\\\",\\\"input\\\":{\\\"text\\\":\\\"CG19 blocked 不应发送\\\",\\\"idempotency_key\\\":\\\"cg19-blocked\\\"}}]}\"\n  - generic: Kapibala Console\n  - generic: 状态有记录，执行可追踪。",
+      "protocol": {
+        "id": "59d570f2-4337-41ed-aebd-564e103bc987",
+        "groupId": "512117a0-dc44-47ca-873b-22ce8f35adb7",
+        "status": "finished",
+        "endReason": "final",
+        "summary": "协议错误后合法完成",
+        "recoveryNote": null,
+        "steps": [
+          {
+            "ordinal": 1,
+            "kind": "protocol_error",
+            "toolUseId": null,
+            "name": null,
+            "input": null,
+            "resultSummary": "BAD_JSON",
+            "isError": true,
+            "errorCode": "BAD_JSON",
+            "auditVerdict": null,
+            "rawResponse": "{CG19 malformed response"
+          },
+          {
+            "ordinal": 2,
+            "kind": "tool_use",
+            "toolUseId": "qa-finish",
+            "name": "finish",
+            "input": {
+              "summary": "协议错误后合法完成"
+            },
+            "resultSummary": "{\"ok\":true}",
+            "isError": false,
+            "errorCode": null,
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"qa-finish\",\"name\":\"finish\",\"input\":{\"summary\":\"协议错误后合法完成\"}}]}"
+          }
+        ]
+      },
+      "protocolUi": "- complementary:\n  - link \"K kapibala .\":\n    - /url: \"#/groups\"\n    - generic: K\n    - text: kapibala\n    - generic: .\n  - generic: 工作空间\n  - navigation:\n    - link \"群组工作台\":\n      - /url: \"#/groups\"\n      - generic: 群组工作台\n    - link \"服务账号\":\n      - /url: \"#/accounts\"\n      - generic: 服务账号\n    - link \"Agent 运行\":\n      - /url: \"#/agent-runs\"\n      - generic: Agent 运行\n    - link \"定时序列\":\n      - /url: \"#/sequences\"\n      - generic: 定时序列\n  - strong: 消息运营平台\n  - generic: 本地工作空间\n  - generic: A\n  - strong: admin\n  - generic: 管理员\n  - button \"退出登录\":\n- text: 工作空间\n- generic: /\n- strong: Agent 运行\n- status: 实时同步中\n- main:\n  - strong: Agent 审计阻塞\n  - generic: c4d43380-725d-4995-87fc-1dbacf2d4f3d\n  - link \"查看运行详情 →\":\n    - /url: \"#/agent-runs/c4d43380-725d-4995-87fc-1dbacf2d4f3d\"\n  - button \"关闭提醒\": ×\n  - link \"← 返回群组\":\n    - /url: \"#/groups/512117a0-dc44-47ca-873b-22ce8f35adb7\"\n  - generic: AGENT EXECUTION\n  - heading \"运行详情\" [level=1]\n  - paragraph: 59d570f2-4337-41ed-aebd-564e103bc987\n  - generic: 已完成\n  - strong: 当前运行状态\n  - generic: 已完成\n  - generic: 结束原因\n  - strong: final\n  - generic: 执行步数\n  - strong: 2 / 12\n  - generic: 运行摘要\n  - paragraph: 协议错误后合法完成\n  - heading \"执行轨迹\" [level=2]\n  - generic: 每一步保留输入、结果和错误证据\n  - article:\n    - generic: \"01\"\n    - heading \"协议错误\" [level=3]\n    - text: 无工具调用 ID\n    - generic: 协议错误\n    - heading \"第 1 步 · 协议错误 · 执行结果\" [level=4]\n    - paragraph: BAD_JSON\n    - code: BAD_JSON\n    - generic \"查看协议错误原始响应 最多 2 KB\" [active]\n    - generic: \"{CG19 malformed response\"\n  - article:\n    - generic: \"02\"\n    - heading \"finish\" [level=3]\n    - text: qa-finish\n    - generic: 工具调用\n    - heading \"输入参数\" [level=4]\n    - generic: \"{ \\\"summary\\\": \\\"协议错误后合法完成\\\" }\"\n    - heading \"第 2 步 · finish · 执行结果\" [level=4]\n    - paragraph: \"{\\\"ok\\\":true}\"\n    - generic \"查看原始响应 最多 2 KB\"\n  - generic: Kapibala Console\n  - generic: 状态有记录，执行可追踪。",
+      "notes": "Blocked auditVerdict is null, not a reject verdict. No claim of general zero effects for earlier steps.",
+      "counterEvidence": {
+        "path": "evidence/core-console-cg19-counter.tool-transcript.json",
+        "sha256": "f93beef593ecd7b95735d7a0b46f667e107faac49d8d791505df26936a3882a9",
+        "provenance": "Post-run reconstruction from actual displayed tool output; not an original standalone capture. Text-filtered request counter only, not all run side effects."
+      }
+    },
+    "screenshots": {
+      "core-sender-unavailable.png": {
+        "path": "evidence/core-sender-unavailable.png",
+        "sha256": "e3dd1a9d29471506989982b610397086a753585de5c12a73cebe74bf90be92f6"
+      },
+      "core-sequence-failed.png": {
+        "path": "evidence/core-sequence-failed.png",
+        "sha256": "8d4250a1ddfe913126eac90a601ef0a819c6e5620f149ff2994d005664dc0c1f"
+      },
+      "core-agent-blocked.png": {
+        "path": "evidence/core-agent-blocked.png",
+        "sha256": "b24cb28ef512c0683d29bcd40cae20b23259b92f5cc523aecdcba1b8e8baace3"
+      },
+      "core-agent-protocol.png": {
+        "path": "evidence/core-agent-protocol.png",
+        "sha256": "7a4cfb57d5a31c01cada0ae4c374c903a66eaf1f4c662ce535207db00677041e"
+      }
+    },
+    "capturedBrowserWarnErrorLog": [],
+    "logBoundary": "Captured dev logs are not an independent pageerror counter."
+  },
+  "cleanup": {
+    "checkedAt": "2026-09-30T17:26:36.767Z",
+    "query": "SELECT datname FROM pg_database WHERE datname=ANY($1::text[])",
+    "namedDatabases": [
+      "kapibala_test_0a765bc9a72c4b50ab2f4c525fe41046",
+      "kapibala_test_880a45c73bf1409a93a47e318025279f",
+      "kapibala_test_bcbd4f825322455a9174975877dbd7e8",
+      "kapibala_test_9e285b8bc5d248c6973256621202912b",
+      "kapibala_test_df42a392090041229bfca1b59620adcf",
+      "kapibala_test_81f11c9ef0384e67a1552ba2bb290ff6",
+      "kapibala_test_a03327a579d647ad93d4c439f353f01e",
+      "kapibala_test_4f7c6313cb474a998d210ab301a06208",
+      "kapibala_test_14712064fbc94f5b99ce566544b0d935",
+      "kapibala_test_3c283e4333d14927a395b9331658a731",
+      "kapibala_test_8af5b7d44cb3498db3265e3cbcc7327c",
+      "kapibala_test_f9a4b94a9e004082b90782384d985f0f",
+      "kapibala_test_f4720f15f74c487aaf0459f17e0bd136",
+      "kapibala_test_49caa552956c4f9f8a7074ba96543599",
+      "kapibala_test_da2f1dc01d544492b84ef5e80bf5dae1",
+      "kapibala_test_7e99565a233e4cdf9397ff422d8d163b",
+      "kapibala_test_ad05275a75c244349a3dc1946468d49d",
+      "kapibala_test_85f851018e6c43439bc466d7684bb22d",
+      "kapibala_test_b8c892b58573491490cdaf9d85709e4c",
+      "kapibala_test_c8b2869f066c4617b8cc66aaa59d98b1",
+      "kapibala_test_9aacd80022d841caa591fe475cf3d167",
+      "kapibala_test_12aabc12f3b44865831d67bdd790128d",
+      "kapibala_test_390650767d2c43b794765be6b1bac520",
+      "kapibala_test_93d5ffcdd35d4c9080d3170742dd87c1",
+      "kapibala_test_cdea867869f5494f981a9053152a3eaf",
+      "kapibala_test_09aba41cde9b4b9293e24e595ecbe491",
+      "kapibala_test_c989041c4fcc4dc384cc77c667fc9fec",
+      "kapibala_test_f824170be34b49d2ae65542f45a40787",
+      "kapibala_test_8b8d83dfa82a4c498db00697267b7033",
+      "kapibala_test_e25791dd29874d7aacbfc14cf5129da0",
+      "kapibala_test_d015115cdc4d4c1ea5db5aa23b0df624",
+      "kapibala_test_4b7ce4a3cd754d5d9dce2e506e274fbc",
+      "kapibala_test_721e03807dad46dfb451a7f99400a7eb",
+      "kapibala_test_d8c8835fb2104a009b886d6296905c7d",
+      "kapibala_test_2f6981a1d3ca44c3aefad752248cf2af",
+      "kapibala_test_015a4f08bb3d4c1e8cdc4ca8560c8595",
+      "kapibala_test_0b313ed525224b8d8c1ee7410afd2dd1",
+      "kapibala_test_dc0734c79db249da8223789243ede479",
+      "kapibala_test_51e0b411457a428ca8ae3d2403984422",
+      "core_console_qa_dead8850976e4069805de6af52d1922b"
+    ],
+    "remaining": [],
+    "console": {
+      "checkedAt": "2026-09-30T17:14:06.205Z",
+      "metadataStatus": "stopped",
+      "cleanupErrors": [],
+      "database": "core_console_qa_dead8850976e4069805de6af52d1922b",
+      "databaseExists": false,
+      "temporaryDirectory": "/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-core-console-qa-v3LuW1",
+      "directoryExists": false,
+      "pid": 79476
+    },
+    "browserTabClosed": true
+  },
+  "openDecisions": [
+    "CG03 general send response-loss determinability",
+    "CG04 lost create result",
+    "CG05 uncertain kick versus rejoin",
+    "CG06 lost Agent turn response",
+    "CG07 left members projection interpretation",
+    "CG08 strict active-time precision across hard termination"
+  ],
+  "userAcceptance": "Pending; no D022 first or final deviation confirmation recorded; no core protocol/clock redesign implemented."
+}
