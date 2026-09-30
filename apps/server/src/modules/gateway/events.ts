@@ -120,9 +120,10 @@ export class GatewayEvents {
           while (!signal.aborted) {
             const next = await reader.read();
             if (next.done) break;
-            buffer += decoder
-              .decode(next.value, { stream: true })
-              .replace(/\r\n/g, "\n");
+            // Normalize after joining: CR and LF can arrive in different chunks.
+            buffer = (
+              buffer + decoder.decode(next.value, { stream: true })
+            ).replace(/\r\n/g, "\n");
             let end: number;
             while ((end = buffer.indexOf("\n\n")) !== -1) {
               const frame = buffer.slice(0, end);
