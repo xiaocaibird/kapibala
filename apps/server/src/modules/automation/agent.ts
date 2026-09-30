@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import type { FastifyInstance } from "fastify";
-import type { PoolClient } from "pg";
 import type { AppContext } from "../../core/context.js";
 import { currentOperationSignal, emit, type Queryable } from "../../core/db.js";
 import { AppError } from "../../core/errors.js";
@@ -20,6 +19,7 @@ import {
 } from "./protocol.js";
 import type { GroupRow, RecentRow, RunRow, StepRow } from "./types.js";
 import { AgentTools } from "./tool-execution.js";
+import { ActivityClock } from "./activity-clock.js";
 
 function runPublic(run: RunRow): AgentRun {
   return {
@@ -43,7 +43,7 @@ async function notify(tx: Queryable, run: RunRow): Promise<void> {
 export class AgentModule {
   private readonly running = new Map<string, Promise<void>>();
   private readonly deadlines = new Map<string, number>();
-  private readonly startedAt = new Date();
+  private readonly activityClock: ActivityClock;
   private closing = false;
   private readonly turnTimeoutMs: number;
   private readonly toolRunner: AgentTools;
@@ -51,6 +51,7 @@ export class AgentModule {
     private readonly ctx: AppContext,
     messaging: MessagingService,
   ) {
+    this.activityClock = new ActivityClock(ctx);
     this.toolRunner = new AgentTools(ctx, messaging, {
       completeStep: (run, step, outcome, endReason) =>
         this.completeStep(run, step, outcome, endReason),
@@ -109,6 +110,7 @@ export class AgentModule {
   }
   async tick(): Promise<void> {
     if (this.closing) return;
+    await this.activityClock.start();
     await this.scan();
     const groups = (
       await this.ctx.db.query<{ group_id: string }>(
@@ -138,9 +140,7 @@ export class AgentModule {
       // other runs' final commits instead of consuming every connection with locks.
       if (this.running.size >= 4) break;
       const task = this.ctx.db
-        .withLock(`agent:${run.id}`, async (connection) =>
-          this.run(run.id, connection),
-        )
+        .withLock(`agent:${run.id}`, async () => this.run(run.id))
         .then(() => undefined)
         .catch((error) => {
           this.ctx.log.error(
@@ -157,9 +157,10 @@ export class AgentModule {
   async close(): Promise<void> {
     this.closing = true;
     await Promise.allSettled(this.running.values());
+    await this.activityClock.close();
   }
   async recover(): Promise<void> {
-    /* Individual run locks distinguish recovery from a live second instance. */
+    await this.activityClock.start();
   }
   private async scan(): Promise<void> {
     await this.ctx.db.query(
@@ -276,7 +277,7 @@ export class AgentModule {
     await this.scan();
     await this.startNext(run.group_id);
   }
-  private async run(id: string, connection: PoolClient): Promise<void> {
+  private async run(id: string): Promise<void> {
     let run = await this.readRun(id);
     if (!run || run.status !== "running" || run.recovery_note) return;
     // Older persisted runs can contain the former two-commit audit-block window.
@@ -299,44 +300,11 @@ export class AgentModule {
       );
       return;
     }
-    // Include waiting for a local execution slot. On process recovery, the new
-    // instance's start time excludes the unavailable period from this increment.
-    run = (
-      await this.ctx.db.query<RunRow>(
-        `UPDATE agent_runs SET active_ms=active_ms+GREATEST(0,floor(extract(epoch FROM (now()-GREATEST(updated_at,$2::timestamptz)))*1000))::bigint,updated_at=now() WHERE id=$1 RETURNING *`,
-        [id, this.startedAt],
-      )
-    ).rows[0]!;
-    this.deadlines.set(
-      id,
-      Date.now() + Math.max(0, 60000 - Number(run.active_ms)),
-    );
-    let lastHeartbeat = Date.now();
-    let heartbeatFailure: unknown;
-    let heartbeatWork = Promise.resolve();
-    const persistTime = (): Promise<void> => {
-      const now = Date.now();
-      const elapsed = Math.max(0, now - lastHeartbeat);
-      lastHeartbeat = now;
-      heartbeatWork = heartbeatWork
-        .then(async () => {
-          await connection.query(
-            "UPDATE agent_runs SET active_ms=active_ms+$2,updated_at=now() WHERE id=$1 AND status='running'",
-            [id, elapsed],
-          );
-        })
-        .catch((error) => {
-          heartbeatFailure = error;
-        });
-      return heartbeatWork;
-    };
-    const timer = setInterval(() => {
-      void persistTime();
-    }, 500);
+    // The shared clock already accounts for both queued and executing runs.
+    // Include its not-yet-sampled fraction in this execution's local deadline.
+    this.deadlines.set(id, Date.now() + this.remaining(run));
     try {
       while (!this.closing) {
-        await persistTime();
-        if (heartbeatFailure) throw heartbeatFailure;
         run = await this.readRun(id);
         if (!run || run.status !== "running" || run.recovery_note) return;
         const finalStep = (
@@ -409,8 +377,6 @@ export class AgentModule {
         await this.turn(run, Math.min(this.turnTimeoutMs, this.remaining(run)));
       }
     } finally {
-      clearInterval(timer);
-      await persistTime();
       this.deadlines.delete(id);
     }
   }
@@ -418,7 +384,8 @@ export class AgentModule {
     return Math.max(
       0,
       (this.deadlines.get(run.id) ??
-        Date.now() + 60000 - Number(run.active_ms)) - Date.now(),
+        run.activity_updated_at.getTime() + 60000 - Number(run.active_ms)) -
+        Date.now(),
     );
   }
   private async turn(run: RunRow, timeoutMs: number): Promise<void> {

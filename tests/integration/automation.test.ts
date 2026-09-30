@@ -227,6 +227,12 @@ before(async () => {
       "utf8",
     ),
   );
+  await db.query(
+    await readFile(
+      new URL("../../db/migrations/003_agent_activity.sql", import.meta.url),
+      "utf8",
+    ),
+  );
   await db.query("UPDATE accounts SET status='online',platform_user_id=id");
   await db.query(
     `INSERT INTO groups(id,gateway_group_id,creator_account_id,agent_enabled) VALUES($1,'remote-group','account-1',true)`,
@@ -236,7 +242,7 @@ before(async () => {
     `INSERT INTO members(group_id,account_id,platform_user_id,role) VALUES($1,'account-1','account-1','creator'),($1,'account-2','account-2','admin'),($1,'account-3','account-3','member')`,
     [groupId],
   );
-  remote = Fastify();
+  remote = Fastify({ forceCloseConnections: true });
   remote.post("/agent/turn", async (request) =>
     agentReply(request.body as TurnBody),
   );
@@ -1443,6 +1449,188 @@ test("closing and recreating modules preserves activity while excluding actual d
     resumedActivity >= 0 && resumedActivity < 350,
     `downtime leaked into activity: ${resumedActivity}ms`,
   );
+});
+
+test("queued runs persist online activity across a real shutdown without counting downtime or a second clock", async () => {
+  await reset();
+  const groupIds = Array.from({ length: 5 }, () => `queued-${randomUUID()}`);
+  const releases: (() => void)[] = [];
+  let queuedRunId = "";
+  agentReply = async () => {
+    await new Promise<void>((resolve) => releases.push(resolve));
+    return use(randomUUID(), "get_recent_messages", { limit: 1 });
+  };
+  try {
+    for (const id of groupIds) {
+      await db.query(
+        "INSERT INTO groups(id,gateway_group_id,creator_account_id,agent_enabled) VALUES($1,$1,'account-1',true)",
+        [id],
+      );
+      await db.query(
+        "INSERT INTO messages(id,group_id,msg_id,sender_platform_user_id,is_own,text) VALUES($1,$2,$1,'external',false,'queued budget')",
+        [randomUUID(), id],
+      );
+    }
+    await module.tick();
+    for (let i = 0; i < 100 && releases.length !== 4; i++) await delay(10);
+    assert.equal(releases.length, 4, "four execution slots must be occupied");
+    queuedRunId = (
+      await db.query<{ id: string }>(
+        "SELECT id FROM agent_runs WHERE NOT inflight_turn AND step_count=0",
+      )
+    ).rows[0]!.id;
+    await db.query("UPDATE agent_runs SET active_ms=58000 WHERE id=$1", [
+      queuedRunId,
+    ]);
+    // A live second module may compete for the clock, but does not take execution slots.
+    await second.recover!();
+    const onlineStart = Date.now();
+    await delay(1200);
+    const sampled = (
+      await db.query<{ active_ms: string; step_count: number }>(
+        "SELECT active_ms,step_count FROM agent_runs WHERE id=$1",
+        [queuedRunId],
+      )
+    ).rows[0]!;
+    const consumed = Number(sampled.active_ms) - 58000;
+    assert.ok(
+      consumed >= 850,
+      `queued online time was not persisted: ${consumed}ms`,
+    );
+    assert.ok(
+      consumed <= Date.now() - onlineStart + 150,
+      `activity counted twice: ${consumed}ms`,
+    );
+    assert.equal(sampled.step_count, 0);
+    const closing = module.close!();
+    releases.forEach((release) => release());
+    await closing;
+    await second.close!();
+    const before = Number(
+      (
+        await db.query<{ active_ms: string }>(
+          "SELECT active_ms FROM agent_runs WHERE id=$1",
+          [queuedRunId],
+        )
+      ).rows[0]!.active_ms,
+    );
+    await delay(700);
+    const context = {
+      db,
+      agent: new RemoteClient(remote.listeningOrigin),
+      gateway: new RemoteClient(remote.listeningOrigin),
+      log: api.log,
+    };
+    module = createAutomationModule(context, messaging);
+    second = createAutomationModule(context, messaging);
+    await module.recover!();
+    const after = Number(
+      (
+        await db.query<{ active_ms: string }>(
+          "SELECT active_ms FROM agent_runs WHERE id=$1",
+          [queuedRunId],
+        )
+      ).rows[0]!.active_ms,
+    );
+    assert.ok(
+      after >= before && after - before < 100,
+      `recovery must preserve queued activity and exclude actual downtime: ${after - before}ms`,
+    );
+    agentReply = async (body) => {
+      if (body.runId === queuedRunId) await delay(1500);
+      return end("resumed");
+    };
+    const resumedAt = Date.now();
+    await waitFor(
+      async () =>
+        !(await db.query("SELECT id FROM agent_runs WHERE status='running'"))
+          .rowCount,
+    );
+    const result = (
+      await db.query<{ status: string; end_reason: string }>(
+        "SELECT status,end_reason FROM agent_runs WHERE id=$1",
+        [queuedRunId],
+      )
+    ).rows[0]!;
+    assert.equal(result.status, "failed");
+    assert.equal(result.end_reason, "wall_clock");
+    assert.ok(
+      Date.now() - resumedAt < 1300,
+      "queued run received a fresh budget after restart",
+    );
+  } finally {
+    releases.forEach((release) => release());
+    await module.close!();
+    await second.close!();
+  }
+});
+
+test("frequent activity samples retain subinterval time instead of losing rounded milliseconds", async () => {
+  await reset();
+  await module.recover!();
+  const runId = randomUUID();
+  const initial = (
+    await db.query<{ activity_updated_at: Date }>(
+      "INSERT INTO agent_runs(id,group_id) VALUES($1,$2) RETURNING activity_updated_at",
+      [runId, groupId],
+    )
+  ).rows[0]!.activity_updated_at;
+  for (let i = 0; i < 40; i++) await module.recover!();
+  const sample = (
+    await db.query<{ active_ms: string; activity_updated_at: Date }>(
+      "SELECT active_ms,activity_updated_at FROM agent_runs WHERE id=$1",
+      [runId],
+    )
+  ).rows[0]!;
+  assert.ok(sample.activity_updated_at.getTime() > initial.getTime());
+  assert.equal(
+    Number(sample.active_ms),
+    sample.activity_updated_at.getTime() - initial.getTime(),
+  );
+});
+
+test("activity clock survives loss of its own PostgreSQL session and only bills once after takeover", async () => {
+  await reset();
+  await module.recover!();
+  const runId = randomUUID();
+  await db.query("INSERT INTO agent_runs(id,group_id) VALUES($1,$2)", [
+    runId,
+    groupId,
+  ]);
+  await delay(750);
+  const before = Number(
+    (
+      await db.query<{ active_ms: string }>(
+        "SELECT active_ms FROM agent_runs WHERE id=$1",
+        [runId],
+      )
+    ).rows[0]!.active_ms,
+  );
+  assert.ok(before >= 400 && before < 800);
+  const killed = await db.query(
+    `SELECT pg_terminate_backend(pid) FROM pg_locks WHERE locktype='advisory' AND database=(SELECT oid FROM pg_database WHERE datname=current_database()) AND classid::bigint=((hashtextextended(current_schema()||':automation:activity-clock',0)>>32)&4294967295) AND objid::bigint=(hashtextextended(current_schema()||':automation:activity-clock',0)&4294967295) AND granted`,
+  );
+  assert.equal(
+    killed.rowCount,
+    1,
+    "terminate only this schema's activity clock owner",
+  );
+  await second.recover!();
+  await delay(750);
+  const after = Number(
+    (
+      await db.query<{ active_ms: string }>(
+        "SELECT active_ms FROM agent_runs WHERE id=$1",
+        [runId],
+      )
+    ).rows[0]!.active_ms,
+  );
+  assert.ok(after - before >= 400, "new owner did not resume the clock");
+  assert.ok(after - before < 800, "multiple owners charged activity twice");
+  const owners = await db.query(
+    `SELECT pid FROM pg_locks WHERE locktype='advisory' AND database=(SELECT oid FROM pg_database WHERE datname=current_database()) AND classid::bigint=((hashtextextended(current_schema()||':automation:activity-clock',0)>>32)&4294967295) AND objid::bigint=(hashtextextended(current_schema()||':automation:activity-clock',0)&4294967295) AND granted`,
+  );
+  assert.equal(owners.rowCount, 1);
 });
 
 const realTiming = process.env.AUTOMATION_TIMING_TESTS === "1";

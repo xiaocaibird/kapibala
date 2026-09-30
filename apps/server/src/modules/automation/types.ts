@@ -11,6 +11,7 @@ export interface RunRow {
   step_count: number;
   protocol_errors: number;
   active_ms: string;
+  activity_updated_at: Date;
   cancel_requested: boolean;
   inflight_turn: boolean;
   recovery_note: string | null;
