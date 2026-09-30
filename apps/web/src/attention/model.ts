@@ -31,10 +31,21 @@ export class AttentionCandidates {
     background: boolean,
     baseline?: string,
     definitive = false,
+    originSeq = seq,
   ): boolean {
-    if (seq <= startSeq || seq <= (this.consumed.get(key) ?? -1)) return false;
-    this.consumed.set(key, seq);
+    if (originSeq <= startSeq || seq <= startSeq) return false;
     const previous = this.pending.get(key);
+    if (seq <= (this.consumed.get(key) ?? -1)) {
+      // A multi-field event is journaled with each field's original seq. An
+      // additional field can prove the SAME pending change without recreating
+      // an already confirmed candidate or consuming a second event.
+      if (previous?.seq === seq && definitive && !previous.definitive) {
+        previous.definitive = true;
+        return true;
+      }
+      return false;
+    }
+    this.consumed.set(key, seq);
     // A newer visible state subsumes intermediate states of this same target.
     if (previous && previous.seq >= seq) return false;
     this.pending.set(key, {

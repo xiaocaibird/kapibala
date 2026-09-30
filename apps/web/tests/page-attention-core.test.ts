@@ -5,12 +5,91 @@ import {
   type SnapshotEvidence,
 } from "../src/attention/model";
 import { canFullyFitViewport } from "../src/attention/browser";
-import { isDefinitiveBusinessEvent } from "../src/attention/events";
+import {
+  attentionOriginSequence,
+  isDefinitiveBusinessEvent,
+} from "../src/attention/events";
+import { retainLatest, type ScopedEvent } from "../src/attention/journal";
 
 const snapshot = (seq: number): SnapshotEvidence => ({
   seq,
   revision: seq,
   path: "/api/groups/a/messages",
+});
+
+const groupChange = (seq: number, changedFields: string[]): ScopedEvent => ({
+  event: {
+    seq,
+    type: "group_changed",
+    payload: { groupId: "group-a", changedFields },
+  },
+  backgroundSeq: seq,
+});
+
+test("confirming a group name then changing a setting cannot revive profile attention", () => {
+  const profile = new AttentionCandidates();
+  let journal = retainLatest([], groupChange(11, ["name"]));
+  const receiveProfile = () => {
+    for (const entry of journal) {
+      if ((entry.event.payload.changedFields as string[]).includes("name"))
+        profile.receive("profile", entry.event.seq, 10, true, "old", true);
+    }
+  };
+  receiveProfile();
+  assert.equal(profile.confirm("profile", snapshot(11), 11), true);
+  journal = retainLatest(journal, groupChange(12, ["agentEnabled"]));
+  receiveProfile();
+  assert.equal(profile.pending.size, 0);
+  assert.deepEqual(
+    journal.map((entry) => [
+      entry.event.seq,
+      entry.event.payload.changedFields,
+    ]),
+    [
+      [11, ["name"]],
+      [12, ["agentEnabled"]],
+    ],
+  );
+});
+
+test("late-mounted profile and settings retain separate original field sequences", () => {
+  let journal = retainLatest([], groupChange(11, ["name", "description"]));
+  journal = retainLatest(journal, groupChange(12, ["agentEnabled"]));
+  journal = retainLatest(journal, groupChange(13, ["name"]));
+  assert.deepEqual(
+    journal.map((entry) => [
+      entry.event.seq,
+      entry.event.payload.changedFields,
+    ]),
+    [
+      [11, ["description"]],
+      [12, ["agentEnabled"]],
+      [13, ["name"]],
+    ],
+  );
+  const profile = new AttentionCandidates();
+  const settings = new AttentionCandidates();
+  for (const entry of journal) {
+    const fields = entry.event.payload.changedFields as string[];
+    if (fields.some((field) => ["name", "description"].includes(field)))
+      profile.receive("profile", entry.event.seq, 10, true, undefined, true);
+    if (fields.includes("agentEnabled"))
+      settings.receive("settings", entry.event.seq, 10, true, undefined, true);
+  }
+  assert.equal(profile.pending.get("profile")?.seq, 13);
+  assert.equal(settings.pending.get("settings")?.seq, 12);
+});
+
+test("a definitive field upgrades the same pending event after an ambiguous field without reopening confirmed work", () => {
+  const state = new AttentionCandidates();
+  assert.equal(state.receive("group-a", 22, 10, true, "active", false), true);
+  assert.equal(state.receive("group-a", 22, 10, true, "active", true), true);
+  assert.equal(state.pending.get("group-a")?.definitive, true);
+  assert.equal(state.pending.size, 1);
+  assert.equal(state.reconcile({ "group-a": "active" }, snapshot(22)), false);
+  assert.equal(state.confirm("group-a", snapshot(22), 22), true);
+  assert.equal(state.receive("group-a", 22, 10, true, "active", true), false);
+  assert.equal(state.pending.size, 0);
 });
 
 test("group message marker excludes history; duplicate created event stays one candidate", () => {
@@ -20,6 +99,67 @@ test("group message marker excludes history; duplicate created event stays one c
   assert.equal(state.receive("message-a", 11, 10, true), false);
   assert.equal(state.pending.size, 1);
   assert.equal(state.tabPending, true);
+});
+
+test("late identity confirmation cannot turn a pre-scope pending message into a new update", () => {
+  const state = new AttentionCandidates();
+  const oldMessage = {
+    seq: 30,
+    type: "message",
+    payload: { changeKind: "created", attentionCreatedSeq: 9 },
+  };
+  assert.equal(
+    state.receive(
+      "old-message",
+      oldMessage.seq,
+      10,
+      true,
+      undefined,
+      true,
+      attentionOriginSequence(oldMessage),
+    ),
+    false,
+  );
+  assert.equal(state.pending.size, 0);
+  const newMessage = {
+    seq: 31,
+    type: "message",
+    payload: { changeKind: "created", attentionCreatedSeq: 11 },
+  };
+  assert.equal(
+    state.receive(
+      "new-message",
+      newMessage.seq,
+      10,
+      true,
+      undefined,
+      true,
+      attentionOriginSequence(newMessage),
+    ),
+    true,
+  );
+  assert.equal(state.confirm("new-message", snapshot(11), 31), false);
+  assert.equal(state.confirm("new-message", snapshot(30), 31), false);
+  assert.equal(state.confirm("new-message", snapshot(31), 31), true);
+});
+
+test("ordinary created messages use their event sequence without inventing an older origin", () => {
+  assert.equal(
+    attentionOriginSequence({
+      seq: 31,
+      type: "message",
+      payload: { changeKind: "created" },
+    }),
+    31,
+  );
+  assert.equal(
+    attentionOriginSequence({
+      seq: 31,
+      type: "message",
+      payload: { changeKind: "created", attentionCreatedSeq: 40 },
+    }),
+    31,
+  );
 });
 
 test("foreground is quiet; leaving pending content promotes a static reminder and focus cannot clear it", () => {

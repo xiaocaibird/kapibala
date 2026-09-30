@@ -47,7 +47,16 @@ export async function resolveMessageAttention(
       "UPDATE messages SET metadata=metadata-'attentionPendingClientMsgIds' WHERE id=$1",
       [inbound.id],
     );
+    // Identity resolution is a new synchronization event, not a new creation.
+    // Preserve the original committed boundary so newly opened scopes ignore it.
+    const original = (
+      await tx.query<{ seq: string }>(
+        "SELECT seq FROM events WHERE type='message' AND payload->>'id'=$1 AND payload->>'changeKind'='created' ORDER BY seq LIMIT 1",
+        [inbound.id],
+      )
+    ).rows[0];
     await emit(tx, "message", {
+      ...(original ? { attentionCreatedSeq: Number(original.seq) } : {}),
       changeKind: "created",
       attentionIdentity: "confirmed",
       source: "gateway",

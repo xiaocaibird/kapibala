@@ -339,6 +339,16 @@ test("attention: authoritative distinct message IDs release only fully resolved 
     ["pending", "confirmed"],
   );
   assert.equal(related[1]!.payload.changeKind, "created");
+  assert.equal(related[1]!.payload.attentionCreatedSeq, Number(original.seq));
+  assert.ok(
+    Number(related[1]!.seq) > Number(original.seq),
+    "resolution keeps a new synchronization sequence while retaining the original creation boundary",
+  );
+  assert.equal(
+    original.payload.attentionCreatedSeq,
+    undefined,
+    "ordinary creation retains the existing shape",
+  );
   assert.equal(
     (await f.db.query("SELECT * FROM messages WHERE msg_id='independent'"))
       .rowCount,

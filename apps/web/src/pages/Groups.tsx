@@ -265,7 +265,14 @@ function GroupDirectoryView({
       return id;
     },
     definitiveEvent: (event) =>
-      event.type === "group_changed" && isDefinitiveBusinessEvent(event),
+      event.type === "group_changed" &&
+      isDefinitiveBusinessEvent(event) &&
+      Array.isArray(event.payload.changedFields) &&
+      event.payload.changedFields.some((field) =>
+        ["name", "description", "status", "agentEnabled", "created"].includes(
+          String(field),
+        ),
+      ),
     renderRangeSummary: () => (
       <div>
         <strong>当前查询的最新结果</strong>

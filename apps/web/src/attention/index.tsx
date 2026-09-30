@@ -13,7 +13,8 @@ import {
 import type { PlatformEvent } from "../api/schemas";
 import { useLive } from "../state/live";
 import { AttentionCandidates, type SnapshotEvidence } from "./model";
-import { isDefinitiveBusinessEvent } from "./events";
+import { attentionOriginSequence, isDefinitiveBusinessEvent } from "./events";
+import { retainLatest, type ScopedEvent } from "./journal";
 import {
   canFullyFitViewport,
   isPresented,
@@ -23,50 +24,6 @@ import {
 export type { SnapshotEvidence } from "./model";
 export { isDefinitiveBusinessEvent } from "./events";
 
-interface ScopedEvent {
-  event: PlatformEvent;
-  backgroundSeq: number;
-}
-function retainLatest(items: ScopedEvent[], next: ScopedEvent): ScopedEvent[] {
-  const identity = (event: PlatformEvent) =>
-    JSON.stringify([
-      event.type,
-      event.payload.id ??
-        event.payload.accountId ??
-        event.payload.jobId ??
-        event.payload.runId ??
-        event.payload.sequenceId ??
-        event.payload.groupId ??
-        event.seq,
-      event.payload.ordinal ?? event.payload.stepIndex ?? "",
-      event.payload.changeKind ?? "",
-    ]);
-  const key = identity(next.event);
-  const index = items.findIndex((item) => identity(item.event) === key);
-  if (index < 0) return [...items, next];
-  const previous = items[index]!;
-  const changedFields = [
-    ...new Set([
-      ...(Array.isArray(previous.event.payload.changedFields)
-        ? previous.event.payload.changedFields
-        : []),
-      ...(Array.isArray(next.event.payload.changedFields)
-        ? next.event.payload.changedFields
-        : []),
-    ]),
-  ];
-  const merged = {
-    event: {
-      ...next.event,
-      payload: {
-        ...next.event.payload,
-        ...(changedFields.length ? { changedFields } : {}),
-      },
-    },
-    backgroundSeq: Math.max(previous.backgroundSeq, next.backgroundSeq),
-  };
-  return [...items.slice(0, index), ...items.slice(index + 1), merged];
-}
 interface ScopeState {
   events: readonly ScopedEvent[];
   startSeq: number | null;
@@ -267,6 +224,7 @@ export function useAttentionCollection(options: CollectionOptions) {
               Math.max(scope.startSeq, model.current.seenThrough(key)),
             previousVersions.current[key],
             (options.definitiveEvent ?? isDefinitiveBusinessEvent)(item.event),
+            attentionOriginSequence(item.event),
           ) || changed;
     }
     if (options.ready) {
