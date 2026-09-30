@@ -157,6 +157,7 @@ async function fixture(t: TestContext) {
     "004_message_event_order.sql",
     "005_group_metadata.sql",
     "006_group_directory.sql",
+    "007_message_sent_observation.sql",
   ])
     await db.query(
       await readFile(resolve(migrationRoot, "db/migrations", file), "utf8"),

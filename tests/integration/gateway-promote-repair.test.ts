@@ -82,7 +82,7 @@ test("KG03 first explicit promote 503 retries after backoff and finishes within 
   assert.equal(f.calls(), 2);
   assert.equal(
     (await f.db.query("SELECT role FROM members WHERE account_id='account-2'"))
-      .rows[0].role,
+      .rows[0]!.role,
     "admin",
   );
 });
