@@ -9,6 +9,8 @@
 | 开始逐项评审：先看实际机制和用例，再看执行结果 | [A0-1 数据库迁移与启动保护](acceptance.md#review-a0-migration)；[完整A/B评审卡](acceptance.md#mechanism-review)，工程侧准备材料，负责人判断充分性 |
 | 定位已有证据、版本及尚未执行的反例 | [核心验收证据索引与补验证清单](acceptance-evidence-index.md)；本轮为文档草案，不是新一轮测试通过报告；方法修订见[决策D032](decisions.md) |
 | 区分原始要求未闭合与额外产品增强 | [核心缺口与证据复核](core-requirements-gap-review.md)；[额外增强建议](product-enhancement-proposal.md)；[旧PI提案映射](product-improvement-proposal.md) |
+| 关联最新独立审查、区分重复发现与新增场景 | [独立审查关联索引](independent-review-mapping.md)；两份清单沿用CG/PI编号，不重复登记 |
+| 跟踪本轮核心修复，人工验收暂缓 | [第二轮修复与验证](core-repair-round-two.md)；额外增强继续暂缓 |
 | 跟踪已授权核心修复、补证和协议待决事项 | [本轮核心质量收口](core-quality-closeout.md)；修复与开发验证不自动代表用户验收 |
 | 快速了解当前能力、来源、实现与用户验收状态 | [当前功能总表与需求追踪](feature-matrix.md) |
 | 先体验和验收功能 | [分批验收与运行说明](acceptance.md) |
