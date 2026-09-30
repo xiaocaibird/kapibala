@@ -277,7 +277,11 @@ before(async () => {
       "utf8",
     ),
   );
-  for (const file of ["004_message_event_order.sql", "005_group_metadata.sql"])
+  for (const file of [
+    "004_message_event_order.sql",
+    "005_group_metadata.sql",
+    "006_group_directory.sql",
+  ])
     await db.query(
       await readFile(
         new URL(`../../db/migrations/${file}`, import.meta.url),

@@ -13,6 +13,7 @@ import { Accounts, accountStatusSchema } from "./accounts.js";
 import { GatewayEvents } from "./events.js";
 import { Jobs } from "./jobs.js";
 import { groupDescriptionSchema, groupNameSchema } from "./group-profile.js";
+import { registerGroupDirectory } from "./group-directory.js";
 import { Messages } from "./messages.js";
 import { type GroupRow, type MessageRow, messageDto } from "./models.js";
 
@@ -107,6 +108,7 @@ export function createGatewayModule(
     };
   }
   async function register(app: FastifyInstance): Promise<void> {
+    registerGroupDirectory(app, ctx);
     app.get("/api/accounts", () => accounts.list());
     app.post("/api/accounts/:id/connect", (request) =>
       accounts.connect(parse(idParams, request.params).id),
