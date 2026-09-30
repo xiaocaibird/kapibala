@@ -1,0 +1,102 @@
+{
+  "recordedAt": "2026-10-01T03:24:41+08:00",
+  "scope": "A0 / V-MIG-01..03; strict startup equality retained; development verification only",
+  "baseCommit": "fa1baa7d7524bf16f379c9c2837fa8cc9ef0bcac",
+  "migrationImplementationCommit": "81b0433",
+  "baselineAndRegressionCommit": "9e89a45c4562a5626c1fb4e5d1bd107becdedaea",
+  "integrationOverlay": {
+    "sourceCommit": "9300a8a",
+    "path": "db/migrations/007_message_sent_observation.sql",
+    "sha256": "51117419e21aa060d15e7a38d8b5b49668d7ba5c9d2568d1bb5256090793706d",
+    "committedByThisWorkstream": false,
+    "purpose": "Verify legacy six -> baseline -> migration seven, including running-sequence refusal"
+  },
+  "environment": {
+    "node": "v24.21.0",
+    "npm": "12.1.0",
+    "postgres": "PostgreSQL 17.11 on aarch64-unknown-linux-musl",
+    "image": "postgres:17-alpine",
+    "imageId": "sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24",
+    "container": "kapibala-a0-integrity-20261001-0309",
+    "host": "127.0.0.1",
+    "randomPort": 62212,
+    "storage": "tmpfs /var/lib/postgresql/data; no host volume",
+    "databaseIsolation": "Every test creates and drops kapibala_test_<UUID>; baseline creates and drops kapibala_migration_reference_<UUID>",
+    "demoDatabaseOrServicesTouched": false
+  },
+  "commands": [
+    {
+      "command": "DATABASE_URL=<isolated-test-server>/postgres npx tsx --test tests/integration/migration-integrity.test.ts",
+      "exitCode": 0,
+      "pass": 26,
+      "fail": 0,
+      "skip": 0,
+      "durationMs": 8456.85575,
+      "log": "core-migration-integrity-tests.log"
+    },
+    {
+      "command": "DATABASE_URL=<isolated-test-server>/postgres npx tsx --test --test-name-pattern='migration|schema lag|PostgreSQL sessions' tests/integration/group-metadata.test.ts tests/integration/platform.test.ts tests/integration/auth.test.ts",
+      "exitCode": 0,
+      "pass": 3,
+      "fail": 0,
+      "skip": 0,
+      "log": "core-migration-integrity-consumers.log"
+    },
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "coverage": "root/server/simulator/scripts/tests plus web TypeScript checks"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "observations": {
+    "explicitVersions": [1, 2, 10],
+    "explicitExpectedVersion": 10,
+    "sameCountHistoryChange": "Old integer schema refused by checksum, fresh database accepts changed text schema",
+    "batchRollback": "Version 2 SQL/ledger and version 3 DDL/data all rollback when version 3 ledger INSERT fails",
+    "actualProcessLocks": [
+      {"application_name": "a0_migration_first", "lock_key": "913456", "granted": true},
+      {"application_name": "a0_migration_first", "lock_key": "913458", "granted": false},
+      {"application_name": "a0_migration_second", "lock_key": "913456", "granted": false}
+    ],
+    "concurrencyFinalBusinessValue": 2,
+    "concurrencyAppliedVersion2Rows": 1,
+    "laggingProductionProcess": {"installed": 6, "required": 7, "exitCode": 1, "refusedPort": 49490, "healthyAfterMigrationPort": 49493},
+    "legacyBaseline": {
+      "source": "git:fa1baa7d7524bf16f379c9c2837fa8cc9ef0bcac",
+      "schemaChecksum": "8dcbd355bde9d283034612c00f5f819a209adb588cd3ea18f33cf0d43f0a16bd",
+      "verifiedAt": "2026-09-30T19:23:46.417Z",
+      "referenceDatabase": "kapibala_migration_reference_6300c25c5ea24115b1edc3ed76c445ee",
+      "referenceRemoved": true,
+      "pastExecutionBytesProven": false,
+      "currentVersionAfterSeparateMigration": 7
+    },
+    "baselineFailuresVerified": ["middle ledger hole", "filename mismatch", "missing index", "changed column default", "extra function", "disabled internal FK triggers", "altered sequence definition", "modified release SQL bytes", "table lock timeout", "missing CREATEDB permission"],
+    "postCommitCleanupFailure": "Changed reference DB owner during a gated baseline; DROP denied after target commit. Specialized error retained committed baseline evidence and exact reference name; test then removed reference and role explicitly.",
+    "migration7Gate": "Running sequence prevented SQL/ledger changes; completed-run fixture permitted migration; historical observation timestamp stayed NULL"
+  },
+  "cleanupReadback": {
+    "remainingKapibalaTestDatabases": 0,
+    "remainingMigrationReferenceDatabases": 0,
+    "remainingTemporaryA0Roles": 0,
+    "readbackQueries": [
+      "SELECT datname FROM pg_database WHERE datname LIKE 'kapibala_test_%' OR datname LIKE 'kapibala_migration_reference_%'",
+      "SELECT rolname FROM pg_roles WHERE rolname LIKE 'a0_%'"
+    ]
+  },
+  "preserved": {
+    "originalRequirementsSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+    "existingMigrations001To006Unchanged": true,
+    "higherDatabaseStillRefused": true
+  },
+  "limits": [
+    "Legacy baseline proves observed supported public catalog definitions match the pinned release; it cannot prove historical SQL bytes or business data correctness.",
+    "Operator must stop old service and exclude non-cooperative DDL during baseline; table and advisory locks do not block every possible new schema object.",
+    "Runtime startup validates files and ledger, not all physical schema definitions on every startup.",
+    "Target commit followed by cleanup failure is reported as committed; process kill or an unknown COMMIT outcome requires inspecting actual state.",
+    "No demonstration deployment, full-project regression suite, or owner acceptance was performed by this workstream."
+  ]
+}
