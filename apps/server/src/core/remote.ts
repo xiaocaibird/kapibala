@@ -1,4 +1,8 @@
 import { RemoteError } from "./errors.js";
+import { currentOperationSignal } from "./db.js";
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 export class RemoteClient {
   constructor(readonly baseUrl: string) {}
   async request<T>(
@@ -6,25 +10,32 @@ export class RemoteClient {
     body?: unknown,
     timeoutMs = 15000,
   ): Promise<T> {
+    const operationSignal = currentOperationSignal();
+    operationSignal?.throwIfAborted();
+    const timeout = AbortSignal.timeout(timeoutMs);
     const response = await fetch(`${this.baseUrl}${path}`, {
       method: body === undefined ? "GET" : "POST",
       headers: { "content-type": "application/json" },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-      signal: AbortSignal.timeout(timeoutMs),
+      signal: operationSignal ? AbortSignal.any([timeout, operationSignal]) : timeout,
     });
     const raw = await response.text();
-    let data: Record<string, unknown>;
+    let data: unknown;
     try {
-      data = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
+      data = raw ? JSON.parse(raw) as unknown : {};
     } catch {
       throw new RemoteError(response.status, "BAD_JSON", { raw });
     }
+    operationSignal?.throwIfAborted();
     if (!response.ok) {
-      const nested = data.error as Record<string, unknown> | undefined;
+      const envelope = isRecord(data) ? data : { raw };
+      const nested = isRecord(envelope.error) ? envelope.error : undefined;
+      const code = typeof envelope.code === "string" ? envelope.code
+        : typeof nested?.code === "string" ? nested.code : `HTTP_${response.status}`;
       throw new RemoteError(
         response.status,
-        String(data.code ?? nested?.code ?? `HTTP_${response.status}`),
-        data,
+        code,
+        envelope,
       );
     }
     return data as T;

@@ -1,4 +1,19 @@
 import pg, { type QueryResult, type QueryResultRow, type PoolClient } from "pg";
+import { AsyncLocalStorage } from "node:async_hooks";
+
+const operationSignals = new AsyncLocalStorage<AbortSignal>();
+export function currentOperationSignal(): AbortSignal | undefined {
+  return operationSignals.getStore();
+}
+function guardOperation(): void {
+  currentOperationSignal()?.throwIfAborted();
+}
+function scopedSignal(controller: AbortController): AbortSignal {
+  const parent = currentOperationSignal();
+  return parent
+    ? AbortSignal.any([parent, controller.signal])
+    : controller.signal;
+}
 export interface Queryable {
   query<R extends QueryResultRow = QueryResultRow>(
     sql: string,
@@ -26,50 +41,96 @@ export class Database implements Queryable {
     sql: string,
     values?: unknown[],
   ): Promise<QueryResult<R>> {
-    return this.pool.query<R>(sql, values);
+    guardOperation();
+    const result = await this.pool.query<R>(sql, values);
+    guardOperation();
+    return result;
   }
   async transaction<T>(fn: (tx: PoolClient) => Promise<T>): Promise<T> {
+    guardOperation();
     const tx = await this.pool.connect();
+    const controller = new AbortController();
+    const signal = scopedSignal(controller);
+    let connectionFailed = false;
+    const onError = (error: Error): void => {
+      connectionFailed = true;
+      controller.abort(error);
+    };
+    // Checked-out clients are not covered by pool.error while awaiting a remote service.
+    tx.on("error", onError);
     try {
-      await tx.query("BEGIN");
-      const result = await fn(tx);
-      await tx.query("COMMIT");
-      return result;
+      return await operationSignals.run(signal, async () => {
+        signal.throwIfAborted();
+        await tx.query("BEGIN");
+        const result = await fn(tx);
+        signal.throwIfAborted();
+        await tx.query("COMMIT");
+        return result;
+      });
     } catch (error) {
-      await tx.query("ROLLBACK");
+      // A rollback on a broken socket must not hide the original failure.
+      if (!connectionFailed) {
+        try { await tx.query("ROLLBACK"); }
+        catch { connectionFailed = true; }
+      }
       throw error;
     } finally {
-      tx.release();
+      tx.removeListener("error", onError);
+      tx.release(connectionFailed);
     }
   }
   // Session locks span remote calls. A lease alone cannot fence a still-running remote request.
   async withLock<T>(
     key: string,
-    fn: (connection: PoolClient) => Promise<T>,
+    fn: (connection: PoolClient, signal: AbortSignal) => Promise<T>,
   ): Promise<T | undefined> {
+    guardOperation();
     // Each lock holder may need a second connection for a transaction. Bound admission
     // so queued lock holders cannot occupy the entire pool and deadlock their own work.
     if (this.activeLocks >= 8) return undefined;
     this.activeLocks++;
     let client: PoolClient | undefined;
+    const controller = new AbortController();
+    const signal = scopedSignal(controller);
+    let connectionFailed = false;
+    let operationFailed = false;
+    let locked = false;
+    const onError = (error: Error): void => {
+      connectionFailed = true;
+      controller.abort(error);
+    };
     try {
       client = await this.pool.connect();
+      client.on("error", onError);
+      signal.throwIfAborted();
       const r = await client.query<{ locked: boolean }>(
         "SELECT pg_try_advisory_lock(hashtextextended($1, 0)) AS locked",
         [key],
       );
       if (!r.rows[0]?.locked) return undefined;
-      try {
-        return await fn(client);
-      } finally {
-        await client.query(
-          "SELECT pg_advisory_unlock(hashtextextended($1, 0))",
-          [key],
-        );
-      }
+      locked = true;
+      const connection = client;
+      const result = await operationSignals.run(signal, () => fn(connection, signal));
+      signal.throwIfAborted();
+      return result;
+    } catch (error) {
+      operationFailed = true;
+      throw error;
     } finally {
-      client?.release();
-      this.activeLocks--;
+      try {
+        if (client && locked && !connectionFailed) {
+          try {
+            await client.query("SELECT pg_advisory_unlock(hashtextextended($1, 0))", [key]);
+          } catch (error) {
+            connectionFailed = true;
+            if (!operationFailed) throw error;
+          }
+        }
+      } finally {
+        client?.removeListener("error", onError);
+        client?.release(connectionFailed);
+        this.activeLocks--;
+      }
     }
   }
   async close(): Promise<void> {
