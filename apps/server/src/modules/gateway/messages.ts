@@ -299,6 +299,11 @@ export class Messages implements MessagingService {
       });
       return true;
     } catch (error) {
+      const knownTimeout =
+        error instanceof RemoteError && error.code === "NETWORK_TIMEOUT";
+      // The gateway's convergence window starts when its 504 is received, not
+      // after local row-lock waits or a retry of result persistence completes.
+      const receivedTimeoutAt = knownTimeout ? new Date() : null;
       await this.persistRemoteResult(async (tx) => {
         await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
           row.group_id,
@@ -360,13 +365,11 @@ export class Messages implements MessagingService {
             [row.id, JSON.stringify({ nextAttemptAt: Date.now() + 500 })],
           );
         } else {
-          const knownTimeout =
-            error instanceof RemoteError && error.code === "NETWORK_TIMEOUT";
           await tx.query(
             "UPDATE messages SET delivery_status='unknown',dispatch_state='uncertain',timeout_at=$2,metadata=metadata || $3::jsonb,updated_at=now() WHERE id=$1 AND delivery_status NOT IN ('failed','cancelled')",
             [
               row.id,
-              knownTimeout ? new Date() : null,
+              receivedTimeoutAt,
               JSON.stringify({
                 recoveryNote: knownTimeout
                   ? null
