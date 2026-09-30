@@ -527,6 +527,11 @@ export class Messages implements MessagingService {
             });
         }
         await this.ctx.db.transaction(async (tx) => {
+          // Serialize the confirmed removal with group membership projections so
+          // an earlier snapshot cannot restore this member after local deletion.
+          await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
+            input.groupId,
+          ]);
           await tx.query(
             "DELETE FROM members WHERE group_id=$1 AND platform_user_id=$2",
             [input.groupId, input.targetPlatformUserId],

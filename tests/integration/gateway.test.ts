@@ -1055,6 +1055,69 @@ test("kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未
   }
 });
 
+test("kick已确认删除等待群投影事务，旧成员快照不能覆盖删除结果", async (t) => {
+  const f = await fixture(t);
+  await f.seedGroup();
+  await f.db.query(
+    "INSERT INTO members(group_id,platform_user_id,role) VALUES('g','external','member')",
+  );
+  f.gateway.remoteMembers.get("remote-g")!.add("external");
+  const observer = await f.db.pool.connect();
+  let committed = false;
+  let kicking: Promise<unknown> | undefined;
+  try {
+    const pid = (
+      await observer.query<{ pid: number }>("SELECT pg_backend_pid() AS pid")
+    ).rows[0]!.pid;
+    await observer.query("BEGIN");
+    await observer.query("SELECT id FROM groups WHERE id='g' FOR UPDATE");
+    kicking = f.messages.kick({
+      groupId: "g",
+      accountId: "account-2",
+      targetPlatformUserId: "external",
+    });
+    const deadline = Date.now() + 2000;
+    let blocked = false;
+    while (Date.now() < deadline) {
+      blocked = (
+        await f.db.query<{ blocked: boolean }>(
+          "SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE $1=ANY(pg_blocking_pids(pid))) AS blocked",
+          [pid],
+        )
+      ).rows[0]!.blocked;
+      if (blocked) break;
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    }
+    assert.ok(
+      blocked,
+      "local removal must wait for the preceding group projection",
+    );
+    assert.equal(
+      f.gateway.remoteMembers.get("remote-g")!.has("external"),
+      false,
+    );
+    // A membership reader that began before kick may still have this older view.
+    await observer.query(
+      "INSERT INTO members(group_id,platform_user_id,role) VALUES('g','external','member') ON CONFLICT(group_id,platform_user_id) DO UPDATE SET role='member'",
+    );
+    await observer.query("COMMIT");
+    committed = true;
+    assert.deepEqual(await kicking, { kicked: true });
+    assert.equal(
+      (
+        await f.db.query(
+          "SELECT * FROM members WHERE group_id='g' AND platform_user_id='external'",
+        )
+      ).rowCount,
+      0,
+    );
+  } finally {
+    if (!committed) await observer.query("ROLLBACK");
+    observer.release();
+    if (kicking) await kicking.catch(() => undefined);
+  }
+});
+
 test("真实PG双实例发送互斥，单个outbox只调用一次远端", async (t) => {
   const f = await fixture(t);
   await f.seedGroup();
