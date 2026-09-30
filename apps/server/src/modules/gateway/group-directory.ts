@@ -9,6 +9,7 @@ import { AppError } from "../../core/errors.js";
 
 const pageSizeSchema = z.number().int().min(1).max(50);
 const orderSchema = z.enum(["asc", "desc"]);
+const statusSchema = z.enum(["active", "unreachable", "left"]);
 const querySchema = z
   .object({
     pageSize: z
@@ -18,6 +19,11 @@ const querySchema = z
       .transform(Number)
       .pipe(pageSizeSchema),
     order: orderSchema.default("desc"),
+    status: statusSchema.optional(),
+    agentEnabled: z
+      .enum(["true", "false"])
+      .transform((value) => value === "true")
+      .optional(),
     q: z
       .string()
       .trim()
@@ -57,6 +63,8 @@ const cursorSchema = z
       .refine((value) => value === value.trim() && !value.includes("\0")),
     order: orderSchema,
     pageSize: pageSizeSchema,
+    status: statusSchema.optional(),
+    agentEnabled: z.boolean().optional(),
   })
   .strict();
 type Cursor = z.infer<typeof cursorSchema>;
@@ -81,7 +89,9 @@ function readCursor(query: DirectoryQuery): Cursor | undefined {
     if (
       cursor.q !== query.q ||
       cursor.order !== query.order ||
-      cursor.pageSize !== query.pageSize
+      cursor.pageSize !== query.pageSize ||
+      cursor.status !== query.status ||
+      cursor.agentEnabled !== query.agentEnabled
     )
       throw invalidQuery();
     // This is a validated navigation boundary, not a signed capability or a snapshot.
@@ -126,6 +136,14 @@ export function registerGroupDirectory(
           `(g.name ILIKE $1 ESCAPE '\\' OR g.description ILIKE $1 ESCAPE '\\' OR g.gateway_group_id ILIKE $1 ESCAPE '\\' OR g.id ILIKE $1 ESCAPE '\\')`,
         );
       }
+      if (query.status !== undefined) {
+        const statusParameter = values.push(query.status);
+        where.push(`g.status = $${statusParameter}`);
+      }
+      if (query.agentEnabled !== undefined) {
+        const agentParameter = values.push(query.agentEnabled);
+        where.push(`g.agent_enabled = $${agentParameter}::boolean`);
+      }
       if (cursor) {
         const timestampParameter = values.push(cursor.createdAt);
         const idParameter = values.push(cursor.id);
@@ -169,6 +187,10 @@ export function registerGroupDirectory(
                 q: query.q,
                 order: query.order,
                 pageSize: query.pageSize,
+                ...(query.status !== undefined ? { status: query.status } : {}),
+                ...(query.agentEnabled !== undefined
+                  ? { agentEnabled: query.agentEnabled }
+                  : {}),
               } satisfies Cursor),
             ).toString("base64url")
           : null;
