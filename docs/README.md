@@ -44,3 +44,5 @@
 ```sh
 shasum -a 256 docs/original-interview-question.md
 ```
+
+测试环境复查发现旧auth测试曾连接演示库并提前应用003/004、写入自身测试会话，业务行未被删除；不能声称冻结期间演示数据完全未变。隔离修复与专用基库复跑进行中，详见[决策D016](decisions.md)及验收记录。

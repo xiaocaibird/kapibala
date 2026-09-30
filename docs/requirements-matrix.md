@@ -23,13 +23,15 @@
 | 发布工作树 `.runtime/release-final-timing.log` | B21–B23同版本独立3/3通过，94.470秒；单项13.614/16.485/60.032秒 | `f52faec`；常规skip与独立执行分开计数 |
 | 上轮发布工作树 `.runtime/release-verification.log` | 126登记，123通过、3跳过、0失败，111.47秒；P01–P15、G01–G31、B01–B20/B24–B36、M01–M11、T01–T03、R01–R05、H01、D01、W01–W13均通过 | `32bd438`；Node计数包含10个嵌套子场景，与本表顶层名称数量不同 |
 | 上轮发布工作树 `.runtime/release-timing.log` | B21–B23同版本独立3/3通过，94.252秒；单项13.541/16.468/60.032秒，含观察等待 | `32bd438`；常规skip与独立实际执行分开计数 |
-| [已有数据迁移验证](evidence/migration-upgrade.json) | 001+002真实旧库升级至003+004，全部既有消息/run/events字段不变、active_ms保留12345；二次迁移幂等；独立库已清理 | `32bd438`；没有升级现有演示数据库 |
+| [已有数据迁移验证](evidence/migration-upgrade.json) | 001+002真实旧库升级至003+004，全部既有消息/run/events字段不变、active_ms保留12345；二次迁移幂等；独立库已清理 | `32bd438`专项使用独立库；另有旧auth测试提前迁移演示库，见D016 |
 | 构建与原文完整性 | `npm run build`、`npm run verify:original`通过 | `f52faec`；不替代业务断言或用户验收 |
 | 较早常规与长计时记录 | `verification-final.log`：87登记/84通过/3跳过；`verification-timing-final.log`：3/3；`verification-kick-accounts.log`：P13补充断言1/1 | 保留在旧实施工作树，适用5a35ce6/52e7dbd及当时被测树；本轮常规结论以上方release日志为准 |
 
 本轮日志位于 `/Users/zcm/.codex/worktrees/platform-gateway/kapibala/.runtime/`，历史日志位于旧实施工作树 `.runtime/`；原始日志属于忽略目录。R1–R11均已修复并通过最终候选常规回归，同版本独立长计时也通过；B37真实PG屏障修前失败、修后通过。新版B4的独立浏览器证据来自`32bd438`，与最终候选分别记录。[结构化测试记录](evidence/release-verification.json)保存上一轮`32bd438`源码和日志哈希，最终候选以本表两份`release-final-*`日志为准。逐项修复和复验见[可靠性复查](reliability-review.md)。
 
 **当前演示运行信息单独记录：**2026-09-30北京时间，`scripts/dev.ts`父进程PID `73373` 于18:46:02启动；后端PID `73376`、模拟器PID `73375` 于18:46:03启动，Vite为PID `73377`。后三者cwd均为 `/Users/zcm/.codex/worktrees/42fe/kapibala`。后端与当时 `34d9af2` 匹配，但未保存启动manifest，故仅为推断版本。后端和模拟器未watch、未重启。旧演示前端曾热更新，工作树 `apps/web` 与 `a8aac5f` 差异已确认为空；本轮R8等web修复只进入独立release，未热更新到5173。此前冻结安排已被D015替代：验证后可重启5173并保留数据，实际重启和运行manifest尚待记录；最新源码测试和独立浏览器验证不等于旧演示已加载修复。全部用户人工验收仍待进行。
+
+**测试环境边界修正：**测试隔离遗漏：冻结阶段的旧`auth.test.ts`直接连接默认`kapibala`数据库并执行两次迁移、创建测试会话。演示库已提前新增003/004（schema 4），并有该测试自己的会话记录；业务行未被删除。不能将此前运行写成“演示数据完全未变”或“所有测试均使用独立数据库”。修复auth/core/database测试的专用临时数据库及隔离基库最终复跑正在进行；保留当前数据和会话，不删除历史以掩盖影响。
 
 P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服务；其中 P09 使用真实 WebSocket，P10 对独立业务服务进程执行 SIGKILL。G 系列使用真实 PostgreSQL 与受控网关适配器，其中G29另使用真实HTTP断流/取消；B 系列使用真实 PostgreSQL 和 HTTP Agent，但发送适配器受控。R 系列使用真实PG连接终止与HTTP服务验证连接失效。W 系列是受控 fetch / 纯合并逻辑检查。模块测试不替代跨模块和浏览器证据；P09 的三秒断言只覆盖服务端重放，不能直接证明浏览器完成渲染的时限。
 
@@ -39,7 +41,7 @@ P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服
 
 | 要求 | 实现入口 | 场景、证据 | 状态与剩余验证 |
 |---|---|---|---|
-| 迁移可重复执行 | `scripts/migrate.ts` | H01连续调用migrate两次；升级证据从真实001+002旧库到003+004，保留字段及预算，二次迁移全部不变 | 自动通过：隔离迁移与幂等；未改变演示库 |
+| 迁移可重复执行 | `scripts/migrate.ts` | H01连续调用migrate两次；升级证据从真实001+002旧库到003+004，保留字段及预算，二次迁移全部不变 | 自动通过：专项迁移保留字段与幂等；旧auth测试触及演示库的隔离遗漏见D016 |
 | schema 落后拒绝启动 | `apps/server/src/app.ts` | P12 在真实PG移除最新版本记录，启动因Schema mismatch拒绝 | 自动通过 |
 | Node/TS/PG、环境变量、健康检查 | `apps/server/src/main.ts`、`app.ts`、`.env.example` | P 系列 fixture 使用真实 PG 和独立配置；构建通过 | 部分验证：环境变量路径已用，health 字段专项断言待补 |
 | API 错误统一 code/message/requestId，401/403 固定码 | `app.ts`、`core/errors.ts` | H01 覆盖状态码；W04 读取并保留错误码/requestId | 部分验证：所有错误来源及字段完整性未穷举 |
