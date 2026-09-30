@@ -341,6 +341,10 @@ export class Messages implements MessagingService {
         row.group_id,
       ])
     ).rows[0]!;
+    // A late 404 may describe an observation made before the gateway settled.
+    // Only a query initiated after the known 504 window can authorize a retry.
+    const queryStartedAt = Date.now();
+    const timeoutAt = row.timeout_at?.getTime();
     try {
       const result = landedSchema.parse(
         await this.ctx.gateway.request(
@@ -357,8 +361,8 @@ export class Messages implements MessagingService {
         !(error instanceof RemoteError) ||
         error.status !== 404 ||
         row.delivery_status !== "unknown" ||
-        !row.timeout_at ||
-        Date.now() - row.timeout_at.getTime() < 2100
+        timeoutAt === undefined ||
+        queryStartedAt - timeoutAt < 2100
       )
         return;
       await this.ctx.db.transaction(async (tx) => {
@@ -368,7 +372,12 @@ export class Messages implements MessagingService {
             [row.id],
           )
         ).rows[0]!;
-        if (current.delivery_status !== "unknown") return;
+        if (
+          current.delivery_status !== "unknown" ||
+          current.dispatch_state !== "uncertain" ||
+          current.timeout_at?.getTime() !== timeoutAt
+        )
+          return;
         const retries = Number(current.metadata.timeoutRetries ?? 0);
         if (retries >= 1) await this.fail(tx, row, "NETWORK_TIMEOUT");
         else

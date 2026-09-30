@@ -157,11 +157,9 @@ async function fixture(t: TestContext) {
   const app = Fastify();
   app.setErrorHandler((error, _request, reply) => {
     if (error instanceof AppError)
-      reply
-        .code(error.status)
-        .send({
-          error: { code: error.code, message: error.message, ...error.details },
-        });
+      reply.code(error.status).send({
+        error: { code: error.code, message: error.message, ...error.details },
+      });
     else reply.code(500).send({ error: String(error) });
   });
   const gateway = new FakeGateway();
@@ -662,6 +660,119 @@ test("真实时钟：两次504且均未落地，在5秒内确定失败并且只�
   );
   assert.equal(f.gateway.sends.length, 2);
   assert.ok(performance.now() - started < 5000);
+});
+
+test("真实HTTP：窗口内取得的404延迟返回后不得触发重发，后续查询确认原消息", async (t) => {
+  const f = await fixture(t);
+  await f.seedGroup();
+  const landed: { msgId: string; sentAt: string }[] = [];
+  const queries: { startedAt: number; respondedAt: number; found: boolean }[] =
+    [];
+  let sends = 0;
+  let landingTimer: ReturnType<typeof setTimeout> | undefined;
+  const server = createServer(async (request, response) => {
+    if (request.url!.endsWith("/send")) {
+      sends++;
+      if (sends === 1) {
+        landingTimer = setTimeout(() => {
+          landed.push({
+            msgId: "original-delivery",
+            sentAt: new Date().toISOString(),
+          });
+        }, 1600);
+        response.writeHead(504, { "content-type": "application/json" });
+        response.end('{"code":"NETWORK_TIMEOUT"}');
+      } else {
+        // The gateway deliberately does not deduplicate clientMsgId.
+        landed.push({
+          msgId: `duplicate-${sends}`,
+          sentAt: new Date().toISOString(),
+        });
+        response.writeHead(202, { "content-type": "application/json" });
+        response.end('{"accepted":true}');
+      }
+      return;
+    }
+    const snapshot = landed[0];
+    const query = {
+      startedAt: Date.now(),
+      respondedAt: 0,
+      found: Boolean(snapshot),
+    };
+    queries.push(query);
+    // Capture absence before convergence, but return that old observation after it.
+    if (queries.length === 1)
+      await new Promise((resolve) => setTimeout(resolve, 1550));
+    query.respondedAt = Date.now();
+    response.writeHead(snapshot ? 200 : 404, {
+      "content-type": "application/json",
+    });
+    response.end(JSON.stringify(snapshot ?? { code: "NOT_FOUND" }));
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const address = server.address();
+  assert.ok(address && typeof address !== "string");
+  f.ctx.gateway = new RemoteClient(`http://127.0.0.1:${address.port}`);
+  try {
+    const message = await f.messages.enqueueSend({
+      groupId: "g",
+      accountId: "account-2",
+      text: "confirm a delayed negative response",
+    });
+    await f.messages.accountWork("account-2");
+    const timeoutAt = (
+      await f.db.query<{ timeout_at: Date }>(
+        "SELECT timeout_at FROM messages WHERE id=$1",
+        [message.id],
+      )
+    ).rows[0]!.timeout_at.getTime();
+    await new Promise((resolve) => setTimeout(resolve, 700));
+    await f.messages.accountWork("account-2");
+    assert.equal(queries[0]!.found, false);
+    assert.ok(queries[0]!.startedAt - timeoutAt < 2000);
+    assert.ok(queries[0]!.respondedAt - timeoutAt >= 2100);
+    assert.equal(
+      landed.length,
+      1,
+      "the original delivery lands while the old negative response is in flight",
+    );
+    const pending = (
+      await f.db.query<{
+        dispatch_state: string;
+        metadata: Record<string, unknown>;
+      }>("SELECT dispatch_state,metadata FROM messages WHERE id=$1", [
+        message.id,
+      ])
+    ).rows[0]!;
+    assert.equal(pending.dispatch_state, "uncertain");
+    assert.equal(pending.metadata.timeoutRetries, undefined);
+    // No SSE event is delivered; confirmation must come from a fresh query.
+    await f.messages.accountWork("account-2");
+    await f.messages.accountWork("account-2");
+    assert.equal(
+      (await f.messages.getMessage(message.clientMsgId!))?.deliveryStatus,
+      "sent",
+    );
+    assert.equal(
+      sends,
+      1,
+      "an old negative observation must never authorize another POST",
+    );
+    assert.equal(landed.length, 1);
+    assert.ok(queries[1]!.startedAt - timeoutAt >= 2100);
+    assert.equal(
+      (await f.messages.getMessage(message.clientMsgId!))?.msgId,
+      "original-delivery",
+    );
+    assert.equal(
+      (await f.db.query("SELECT * FROM gateway_events")).rowCount,
+      0,
+    );
+  } finally {
+    clearTimeout(landingTimer);
+    server.closeAllConnections();
+    await new Promise<void>((resolve) => server.close(() => resolve()));
+  }
 });
 
 test("崩溃发送意图恢复为unknown，没有已知504不得重发", async (t) => {
