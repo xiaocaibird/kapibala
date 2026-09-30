@@ -27,8 +27,16 @@ npm run build
 npm test
 ```
 
-测试说明与当前证据见后续需求矩阵。通过编译不代表全部业务通过；尚未人工验收的项目不标为已验收。
+测试创建独立数据库或 schema，并启动随机端口的模拟服务，不复用演示群数据。正常执行后清理测试环境。12 秒、15 秒、60 秒的真实等待专项单独运行：
 
+```sh
+AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern='timing:' tests/integration/automation.test.ts
+```
+
+通过编译不代表全部业务通过；尚未人工验收的项目不标为已验收。
+
+- [分批功能验收](docs/acceptance.md)
+- [逐条需求与验证证据](docs/requirements-matrix.md)
 - [工程要求](docs/engineering-requirements.md)
 - [决策与变更记录](docs/decisions.md)
 - [模块接口](docs/module-interfaces.md)

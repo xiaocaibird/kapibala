@@ -340,6 +340,13 @@ test("platform: Agent exactly-once key, bad responses, audit blocking and no sel
     ).body;
     assert.equal(details.steps?.[0]?.kind, "protocol_error");
     assert.ok(details.steps?.some((s) => s.errorCode === "UNKNOWN_TOOL"));
+    const repeatedSend = (
+      await f.db.query<{ result: { deliveryStatus: string } }>(
+        "SELECT result FROM agent_steps WHERE run_id=$1 AND tool_use_id='send2'",
+        [run[0]!.id],
+      )
+    ).rows[0]!;
+    assert.equal(repeatedSend.result.deliveryStatus, "sent");
     assert.equal((await f.control("agent", "")).audits instanceof Array, true);
     assert.equal(
       ((await f.control("agent", "")).audits as unknown[]).length,
@@ -405,6 +412,8 @@ test("platform: sequence preflight, variable inheritance and concurrent single r
       stepVars: {},
     });
     assert.equal(failed.status, 422);
+    assert.equal(failed.body.error.code, "UNRESOLVED_PLACEHOLDER");
+    assert.equal(failed.body.error.stepIndex, 2);
     assert.equal(failed.body.error.key, "place");
     const body = {
       sequenceId: seq.body.id,
