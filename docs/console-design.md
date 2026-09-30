@@ -1,5 +1,7 @@
 # 控制台设计与验收入口
 
+> 文档基线说明：当前 `main` 仅含文档。本文的代码入口、启动与测试命令均指 `agent/platform-integration` 实施分支；工作树位置和证据边界见[文档入口](README.md)。
+
 ## 模块与数据流
 
 控制台使用 React 18、TypeScript 与 Vite，REST 同源 `/api`，WebSocket `/ws`。Vite 将两者代理至 `127.0.0.1:3100`。页面不内置业务结果，展示均来自实际 API；原始需求只读。

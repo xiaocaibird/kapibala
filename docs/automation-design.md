@@ -1,5 +1,7 @@
 # Agent 与定时序列
 
+> 文档基线说明：当前 `main` 仅含文档。本文的代码入口、启动与测试命令均指 `agent/platform-integration` 实施分支；工作树位置和证据边界见[文档入口](README.md)。
+
 ## 模块与依赖
 
 `protocol.ts` 定义远端协议、运行时校验、工具描述和结果大小边界。`agent.ts` 编排触发、完整会话、运行互斥、预算和状态收口。`tool-execution.ts` 负责工具校验、审计、权限、发送 key 和副作用恢复，通过显式接口回写步骤和状态。`types.ts` 定义模块内部持久实体。`sequences.ts` 负责变量预检、角色选择、相对排期与进度。`index.ts` 只组合模块与路由。发送统一调用 `MessagingService`，不直接向网关发送消息；移除成员由相同网关适配层处理。

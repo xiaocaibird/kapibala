@@ -1,5 +1,7 @@
 # 模拟服务与故障复现
 
+> 文档基线说明：当前 `main` 仅含文档。本文的代码入口、启动与测试命令均指 `agent/platform-integration` 实施分支；工作树位置和证据边界见[文档入口](README.md)。
+
 网关与 Agent 独立监听 3101 / 3102，业务服务只依赖原协议。辅助 `/__control` 接口仅属于本地测试控制平面，不是业务协议扩展；未来真实 Agent 可以只替换 AGENT_URL。
 
 网关 `GET /__control` 返回模拟成员、消息、完整事件与请求日志；`POST /__control/config` 局部设置：

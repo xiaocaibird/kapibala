@@ -1,5 +1,7 @@
 # 模块协作接口
 
+> 文档基线说明：当前 `main` 仅含文档。本文的代码入口、启动与测试命令均指 `agent/platform-integration` 实施分支；工作树位置和证据边界见[文档入口](README.md)。
+
 共享基础由协调模块维护。领域行使用 PostgreSQL snake_case；公开 API 使用 contracts 中 camelCase。日期字段输出 ISO UTC。所有写 API 由入口统一校验管理员权限。错误抛 AppError(status,code,message,details)。远端 RemoteError 保留 status/code/body。
 
 网关模块 `apps/server/src/modules/gateway/index.ts` 导出 `createGatewayModule(ctx): PlatformModule & MessagingService`。负责账号、群、jobs、messages REST；SSE ingestion；统一发送 tick、群任务、kick。启动 register 后 tick 每 100ms（入口防止同模块 tick 重叠）；长任务应独立调度，避免一个等待阻塞整个队列。注册模块前数据库迁移必须齐全。

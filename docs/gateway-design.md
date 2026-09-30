@@ -1,5 +1,7 @@
 # 网关、账号与消息可靠性
 
+> 文档基线说明：当前 `main` 仅含文档。本文的代码入口、启动与测试命令均指 `agent/platform-integration` 实施分支；工作树位置和证据边界见[文档入口](README.md)。
+
 ## 模块职责
 
 `gateway/index.ts` 注册 REST 并独立调度账号发送、群任务、限流恢复及事件重试。`accounts.ts` 负责账号操作；`state.ts` 维护跨模块原子状态后果；`messages.ts` 是所有来源共用的发送与成员移除适配；`jobs.ts` 执行持久建群/退群步骤；`events.ts` 接收、校验、重放和去重网关事件。长远端请求只占所属后台任务，不阻塞全局 tick。
