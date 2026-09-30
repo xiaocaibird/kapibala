@@ -1,4 +1,15 @@
 import type { GroupDirectoryItem } from "../../../../packages/contracts/src/index";
+import type { DirectoryQuery } from "./controller";
+
+export function hasDirectoryConditions(
+  query: Pick<DirectoryQuery, "q" | "status" | "agentEnabled">,
+): boolean {
+  return (
+    query.q.trim() !== "" ||
+    query.status !== undefined ||
+    query.agentEnabled !== undefined
+  );
+}
 
 export function directoryMatch(
   item: GroupDirectoryItem,

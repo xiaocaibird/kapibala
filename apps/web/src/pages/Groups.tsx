@@ -8,12 +8,19 @@ import {
   Icon,
   Loading,
   PageHeader,
+  label,
 } from "../components/ui";
 import { CreateGroup } from "../components/CreateGroup";
 import { JobProgress } from "../components/JobProgress";
 import { useGroupDirectory } from "../directory/GroupDirectoryProvider";
-import { directoryMatch } from "../directory/presentation";
-import type { DirectoryPosition } from "../directory/controller";
+import {
+  directoryMatch,
+  hasDirectoryConditions,
+} from "../directory/presentation";
+import {
+  directoryQueryIdentity,
+  type DirectoryPosition,
+} from "../directory/controller";
 
 export function Groups() {
   const { user } = useAuth();
@@ -40,7 +47,10 @@ export function Groups() {
   const clickedPosition = useRef<DirectoryPosition | null>(null);
   const restored = useRef<string | null>(null);
   const composing = useRef(false);
-  const queryKey = JSON.stringify([state.q, state.order]);
+  const queryKey = directoryQueryIdentity(state);
+  const hasConditions = hasDirectoryConditions(state);
+  const canReset =
+    hasConditions || state.input !== "" || state.order !== "desc";
   const pendingQuery = state.composing || state.input.trim() !== state.q;
   const busy = state.loading !== null;
   useEffect(() => {
@@ -100,12 +110,16 @@ export function Groups() {
       window.scrollTo(0, 0);
       if (position)
         controller.setNotice(
-          "原群未出现在当前已加载结果中，可继续加载或调整搜索。",
+          "原群未出现在当前已加载结果中，可继续加载或调整条件。",
         );
     }
   }, [controller, queryKey, state.initialized, state.items, state.position]);
   const refresh = () => {
     void controller.refresh();
+  };
+  const resetConditions = () => {
+    composing.current = false;
+    controller.resetConditions();
   };
   return (
     <>
@@ -142,7 +156,10 @@ export function Groups() {
           />
         </div>
       )}
-      <section className="panel directory-tools" aria-label="群列表查找与排序">
+      <section
+        className="panel directory-tools"
+        aria-label="群列表查找、筛选与排序"
+      >
         <label className="directory-search">
           搜索群组
           <input
@@ -174,6 +191,46 @@ export function Groups() {
           清除搜索
         </button>
         <label>
+          群状态
+          <select
+            value={state.status ?? ""}
+            onChange={(event) => {
+              const value = event.target.value;
+              controller.setStatus(
+                value === "active" ||
+                  value === "unreachable" ||
+                  value === "left"
+                  ? value
+                  : undefined,
+              );
+            }}
+          >
+            <option value="">全部</option>
+            <option value="active">{label("active")}</option>
+            <option value="unreachable">{label("unreachable")}</option>
+            <option value="left">{label("left")}</option>
+          </select>
+        </label>
+        <label>
+          Agent 自动应答
+          <select
+            value={
+              state.agentEnabled === undefined ? "" : String(state.agentEnabled)
+            }
+            onChange={(event) =>
+              controller.setAgentEnabled(
+                event.target.value === ""
+                  ? undefined
+                  : event.target.value === "true",
+              )
+            }
+          >
+            <option value="">全部</option>
+            <option value="true">开启</option>
+            <option value="false">关闭</option>
+          </select>
+        </label>
+        <label>
           创建时间
           <select
             value={state.order}
@@ -187,6 +244,13 @@ export function Groups() {
         </label>
         <button
           className="button secondary"
+          disabled={!canReset}
+          onClick={resetConditions}
+        >
+          重置条件
+        </button>
+        <button
+          className="button secondary"
           disabled={busy || pendingQuery}
           onClick={refresh}
         >
@@ -194,7 +258,7 @@ export function Groups() {
           {state.loading === "refresh" ? "正在刷新…" : "刷新列表"}
         </button>
         <p className="muted small directory-help" id="directory-search-help">
-          搜索完整群目录；忽略首尾空白与英文大小写，按整段关键词匹配。
+          搜索与筛选完整群目录；关键词忽略首尾空白与英文大小写，按整段匹配。
         </p>
       </section>
       {state.stale && (
@@ -224,7 +288,7 @@ export function Groups() {
         </div>
       )}
       <div className="section-heading">
-        <h2>{state.q ? "搜索结果" : "所有群组"}</h2>
+        <h2>{hasConditions ? "匹配结果" : "所有群组"}</h2>
         <span className="muted small" aria-live="polite">
           {pendingQuery
             ? "正在应用搜索条件…"
@@ -246,20 +310,17 @@ export function Groups() {
         )
       ) : !state.items.length ? (
         <section className="panel">
-          <Empty title={state.q ? "没有匹配的群" : "从第一个群组开始"}>
-            {state.q
-              ? "试试名称、简介或完整群 ID，也可以清除搜索查看全部群。"
+          <Empty title={hasConditions ? "没有匹配的群" : "从第一个群组开始"}>
+            {hasConditions
+              ? "试试其他关键词或筛选条件，也可以重置条件查看全部群。"
               : user?.role === "admin"
                 ? "连接服务账号后，创建一个群组开始协作。"
                 : "暂时没有群组，请等待管理员创建。"}
           </Empty>
-          {state.q && (
+          {hasConditions && (
             <div className="directory-empty-action">
-              <button
-                className="button secondary"
-                onClick={() => controller.clearSearch()}
-              >
-                清除搜索
+              <button className="button secondary" onClick={resetConditions}>
+                重置条件
               </button>
             </div>
           )}
