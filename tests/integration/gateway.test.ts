@@ -30,6 +30,7 @@ class FakeGateway extends RemoteClient {
   sendBarrier?: Promise<void>;
   joinCount = 0;
   promoteCount = 0;
+  promoteFailures = 0;
   onJoined?: (groupId: string, platformUserId: string) => Promise<void>;
   constructor() { super('http://unused.invalid'); }
   override async request<T>(path: string, body?: unknown): Promise<T> {
@@ -50,7 +51,7 @@ class FakeGateway extends RemoteClient {
       }
       return { accepted: true } as T;
     }
-    if (path.endsWith('/promote')) { this.promoteCount++; return {} as T; }
+    if (path.endsWith('/promote')) { this.promoteCount++; if (this.promoteFailures-- > 0) throw new RemoteError(409, 'NOT_MEMBER_YET'); return {} as T; }
     if (path.endsWith('/members')) return [...(this.remoteMembers.get(groupId) ?? [])].map(platformUserId => ({ platformUserId })) as T;
     if (path.endsWith('/leave')) {
       if (input!.accountId === this.leaveFailure) throw new RemoteError(500, 'LEAVE_FAILED');
@@ -186,6 +187,19 @@ test('504明确未落地只重试一次，第二次仍未落地最终failed', as
   assert.equal((await f.messages.getMessage(message.clientMsgId!))?.deliveryStatus, 'failed'); assert.equal(f.gateway.sends.length, 2);
 });
 
+test('真实时钟：两次504且均未落地，在5秒内确定失败并且只重发一次', async t => {
+  const f = await fixture(t); await f.seedGroup(); f.gateway.sendModes = ['timeout-empty', 'timeout-empty'];
+  const message = await f.messages.enqueueSend({ groupId: 'g', accountId: 'account-2', text: 'real timer' });
+  const started = performance.now();
+  await f.messages.accountWork('account-2');
+  while ((await f.messages.getMessage(message.clientMsgId!))?.deliveryStatus !== 'failed' && performance.now() - started < 4900) {
+    await new Promise(resolve => setTimeout(resolve, 50));
+    await f.messages.accountWork('account-2');
+  }
+  assert.equal((await f.messages.getMessage(message.clientMsgId!))?.deliveryStatus, 'failed');
+  assert.equal(f.gateway.sends.length, 2); assert.ok(performance.now() - started < 5000);
+});
+
 test('崩溃发送意图恢复为unknown，没有已知504不得重发', async t => {
   const f = await fixture(t); await f.seedGroup();
   const message = await f.messages.enqueueSend({ groupId: 'g', accountId: 'account-2', text: 'uncertain' });
@@ -275,6 +289,27 @@ test('建群包括creator/admin，过期链接重申，promote仅一次', async 
   assert.equal((await f.jobs.get(jobId)).status, 'finished');
   const rows = (await f.db.query('SELECT account_id,role FROM members ORDER BY account_id')).rows;
   assert.deepEqual(rows.map(row => row.role), ['creator', 'admin', 'member']); assert.equal(f.gateway.promoteCount, 1);
+});
+
+test('邀请ready时间前不join，ALREADY_MEMBER无需等待事件，可重试一次promote', async t => {
+  const f = await fixture(t); for (const id of ['account-1', 'account-2']) await f.accounts.connect(id);
+  f.gateway.inviteReadyMs = 100; f.gateway.joinMode = 'already'; f.gateway.promoteFailures = 1;
+  const { jobId } = await f.jobs.createGroup('account-1', ['account-2']);
+  await f.jobs.advance(jobId); await f.jobs.advance(jobId); await f.jobs.advance(jobId);
+  assert.equal(f.gateway.joinCount, 0);
+  await new Promise(resolve => setTimeout(resolve, 120));
+  for (let i = 0; i < 8; i++) { await f.jobs.advance(jobId); await new Promise(resolve => setTimeout(resolve, 50)); }
+  assert.equal((await f.jobs.get(jobId)).status, 'finished'); assert.equal(f.gateway.promoteCount, 2);
+});
+
+test('建群远端成功但本地写失败时记录待确认，禁止重复创建', async t => {
+  const f = await fixture(t); for (const id of ['account-1', 'account-2']) await f.accounts.connect(id);
+  await f.db.query("CREATE FUNCTION reject_group() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'database write failed'; END $$; CREATE TRIGGER reject_group BEFORE INSERT ON groups FOR EACH ROW EXECUTE FUNCTION reject_group()");
+  const { jobId } = await f.jobs.createGroup('account-1', ['account-2']);
+  await f.jobs.advance(jobId); await f.db.query('DROP TRIGGER reject_group ON groups'); await f.jobs.advance(jobId);
+  assert.equal(f.gateway.calls.filter(call => call.path === '/groups').length, 1);
+  assert.equal((await f.jobs.get(jobId)).status, 'running'); assert.ok((await f.jobs.get(jobId)).recoveryNote);
+  assert.equal((await f.db.query('SELECT * FROM groups')).rowCount, 0);
 });
 
 test('join事件超过10秒未到，任务失败且不提前promote', async t => {
