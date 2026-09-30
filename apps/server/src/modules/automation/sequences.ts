@@ -12,6 +12,7 @@ import {
 import { AppError } from "../../core/errors.js";
 import type { MessagingService } from "../../core/messaging.js";
 import type { SequenceStep } from "../../../../../packages/contracts/src/index.js";
+import { schedulingTransaction } from "./scheduling-transaction.js";
 
 const definitionSchema = z
   .object({
@@ -160,6 +161,7 @@ async function notify(
 
 export class SequenceModule {
   private scheduler: SchedulerLease | null = null;
+  private readonly pendingRebases = new Set<string>();
   private closed = false;
   constructor(
     private readonly ctx: AppContext,
@@ -386,9 +388,14 @@ export class SequenceModule {
     // Transactions borrow separate sockets. Propagate ownership loss through ALS so
     // even an advance already blocked on a row lock must roll back before commit.
     try {
-      await withOperationSignal(lease.controller.signal, () =>
-        this.rebaseExpired(),
-      );
+      await withOperationSignal(lease.controller.signal, async () => {
+        this.pendingRebases.clear();
+        const runs = await this.ctx.db.query<{ id: string }>(
+          "SELECT id FROM sequence_runs WHERE status='running'",
+        );
+        for (const run of runs.rows) this.pendingRebases.add(run.id);
+        await this.rebaseExpired();
+      });
       return true;
     } catch (error) {
       lease.controller.abort(error);
@@ -407,7 +414,9 @@ export class SequenceModule {
       )
     ).rows;
     for (const run of runs) {
+      if (!this.pendingRebases.has(run.id)) continue;
       let previous = -1;
+      let busy = false;
       // A message confirmation may have committed before the old scheduler saved
       // step progress. Catch up known effects before choosing the one step to rebase.
       for (let i = 0; i <= 200; i++) {
@@ -424,10 +433,14 @@ export class SequenceModule {
         )
           break;
         previous = current.current_step_index;
-        await this.advance(run.id, true);
+        if (!(await this.advance(run.id, true))) {
+          busy = true;
+          break;
+        }
       }
+      if (busy) continue;
       // Only the earliest unresolved step has a schedule; accepted sends retain their identity.
-      await this.ctx.db.transaction(async (tx) => {
+      const complete = await schedulingTransaction(this.ctx.db, async (tx) => {
         const rebased = await tx.query<{ index: number }>(
           `UPDATE sequence_steps s SET scheduled_at=now()+s.delay_seconds*interval '1 second' FROM sequence_runs r WHERE s.run_id=r.id AND r.id=$1 AND r.status='running' AND s.index=r.current_step_index AND s.status='pending' AND s.client_msg_id IS NULL AND s.scheduled_at<now() RETURNING s.index`,
           [run.id],
@@ -440,6 +453,7 @@ export class SequenceModule {
             changedFields: ["scheduledAt"],
           });
       });
+      if (complete) this.pendingRebases.delete(run.id);
     }
   }
   async tick(): Promise<void> {
@@ -447,6 +461,9 @@ export class SequenceModule {
     const lease = this.scheduler;
     if (!lease) return;
     await withOperationSignal(lease.controller.signal, async () => {
+      // Busy runs keep their takeover obligation until recovery can commit. They
+      // must never fall through to normal dispatch with an expired old schedule.
+      if (this.pendingRebases.size) await this.rebaseExpired();
       const runs = (
         await this.ctx.db.query<RunRow>(
           "SELECT * FROM sequence_runs WHERE status='running'",
@@ -454,11 +471,12 @@ export class SequenceModule {
       ).rows;
       // These are short local transactions; bound lock connections independently of
       // the number of groups so connection capacity remains available to their work.
-      for (const run of runs) await this.advance(run.id);
+      for (const run of runs)
+        if (!this.pendingRebases.has(run.id)) await this.advance(run.id);
     });
   }
-  private async advance(id: string, recovering = false): Promise<void> {
-    await this.ctx.db.transaction(async (tx) => {
+  private async advance(id: string, recovering = false): Promise<boolean> {
+    return schedulingTransaction(this.ctx.db, async (tx) => {
       const initial = (
         await tx.query<RunRow>("SELECT * FROM sequence_runs WHERE id=$1", [id])
       ).rows[0];
@@ -510,15 +528,18 @@ export class SequenceModule {
           await tx.query<{
             delivery_status: string;
             fail_code: string | null;
-            updated_at: Date;
+            message_sent_observed_at: Date | null;
           }>(
-            "SELECT delivery_status,fail_code,updated_at FROM messages WHERE client_msg_id=$1",
+            "SELECT delivery_status,fail_code,message_sent_observed_at FROM messages WHERE client_msg_id=$1",
             [step.client_msg_id],
           )
         ).rows[0];
-        if (message?.delivery_status === "sent") {
+        if (
+          message?.delivery_status === "sent" &&
+          message.message_sent_observed_at
+        ) {
           step.status = "sent";
-          step.sent_at = message.updated_at;
+          step.sent_at = message.message_sent_observed_at;
         } else if (
           message?.delivery_status === "cancelled" &&
           message.fail_code === "ACCOUNT_TERMINAL"

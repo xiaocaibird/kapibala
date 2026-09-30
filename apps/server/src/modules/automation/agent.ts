@@ -20,6 +20,7 @@ import {
 import type { GroupRow, RecentRow, RunRow, StepRow } from "./types.js";
 import { AgentTools } from "./tool-execution.js";
 import { ActivityClock } from "./activity-clock.js";
+import { schedulingTransaction } from "./scheduling-transaction.js";
 
 function runPublic(run: RunRow): AgentRun {
   return {
@@ -171,12 +172,21 @@ export class AgentModule {
     await this.activityClock.start();
   }
   private async scan(): Promise<void> {
-    await this.ctx.db.query(
-      `INSERT INTO agent_pending(message_id,group_id,eligible) SELECT m.id,m.group_id,(g.agent_enabled AND g.status='active' AND (m.metadata->>'agentEligible') IS DISTINCT FROM 'false') FROM messages m JOIN groups g ON g.id=m.group_id WHERE NOT m.is_own ON CONFLICT(message_id) DO NOTHING`,
+    const groups = await this.ctx.db.query<{ group_id: string }>(
+      "SELECT DISTINCT m.group_id FROM messages m WHERE NOT m.is_own AND NOT EXISTS(SELECT 1 FROM agent_pending p WHERE p.message_id=m.id)",
     );
+    for (const group of groups.rows)
+      // Insertion also takes FK key-share locks on groups/messages. Isolate this
+      // earlier admission stage as well, not only the explicit startNext lock.
+      await schedulingTransaction(this.ctx.db, async (tx) => {
+        await tx.query(
+          `INSERT INTO agent_pending(message_id,group_id,eligible) SELECT m.id,m.group_id,(g.agent_enabled AND g.status='active' AND (m.metadata->>'agentEligible') IS DISTINCT FROM 'false') FROM messages m JOIN groups g ON g.id=m.group_id WHERE NOT m.is_own AND m.group_id=$1 ON CONFLICT(message_id) DO NOTHING`,
+          [group.group_id],
+        );
+      });
   }
   private async startNext(groupId: string): Promise<void> {
-    await this.ctx.db.transaction(async (tx) => {
+    await schedulingTransaction(this.ctx.db, async (tx) => {
       const group = (
         await tx.query<GroupRow>(
           "SELECT * FROM groups WHERE id=$1 FOR UPDATE",
