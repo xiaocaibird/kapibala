@@ -1,5 +1,11 @@
 # 核心验收证据索引与补验证清单
 
+## 本轮收口状态（2026-10-01）
+
+本轮六项处理方向均已确认，代码候选 `2318a11` 已通过完整416/416回归（零失败/跳过）、构建及原文校验；本轮实现和开发自测已完成。逐项结论及后续验证以[最终收口表](core-verification-closeout.md)为准；本文下方涉及 `3c071d2`、`56e320c` 及更早版本的“当前／待决／未补”等描述保留为**当时的历史事实**，不覆盖本轮结论。原始需求不变，不代填用户验收或独立 QA。
+
+本轮不重启/迁移演示，候选新增008接收记录。main代码更新与运行版本是两件事，不能直接用旧演示验新增机制。外部未知结果、硬崩溃时间尾差和长期容量边界继续明确保留；退群公开members保留外部成员是D042已确认的原文差异，不再待决。
+
 状态：**第二轮修复与开发验证已完成，人工验收暂停，未代填结论**。更新日期：2026-10-01；产品候选 `3c071d2`。D032评审方法继续保留，D034本轮结果见[第二轮记录](core-repair-round-two.md)；逐项机制见[验收方案](acceptance.md#mechanism-review)。E01–E08保留原执行版本，E09–E14补充本轮开发与切换结果，不跨批次累加通过数。
 
 ## 证据怎样使用
@@ -165,3 +171,14 @@
 ```
 
 本轮记录从机制追问、独立审查到已授权修复及实际验证的过程；已执行与未闭合边界均保留，未虚构人工通过。原始需求文件保持只读。
+
+
+<a id="e15"></a>
+### E15 — 最终六项方向与本轮开发收口
+
+- **当前候选**：`2318a11`；[报告](core-verification-closeout.md)、[机器索引](evidence/core-final-verification.json)、[完整416项原始输出](evidence/core-final-regression.tap)、[构建/原文校验](evidence/core-final-build.log)。全部416通过、零失败/跳过，114.523秒；三个真实计时开关均开启，独立QA未执行。
+- **专项映射**：[A2收敛](core-timeout-policy-closeout.md)、[成员事件隔离](core-event-isolation-verification.md)、[活动计量](core-activity-accounting-hardening.md)、[确认接收](core-confirmation-receipt-hardening.md)、[left成员](core-left-members.md)、[账号/职责/事件类型](core-account-contract-hardening.md)、[资源与观测](core-resource-observability.md)。专项有重叠，不加总。
+- **实际页面**：[恢复JSON](evidence/core-reconnect-browser-2026-09-30T22-47-41-185Z.json)、[截图](evidence/core-reconnect-browser-2026-09-30T22-47-41-185Z.png)：候选165行/4页、一次503、重复/旧帧/历史补投后454.37ms稳定呈现，计时误差界1.68ms。真实REST/WS，直接process注入、后台关闭；不冒充SSE网络全链路或任意规模承诺。
+- **已批准交互**：[8项补证](cr-browser-evidence-closeout.md)基于17b2d43，前端树与候选相同；实际放弃/遮罩、卸载迟到和存储异常通过。OS IME未测，存储无法持久时跨刷新跟踪/隐藏限制仍保留。
+- **处置**：D042外部成员语义差异已确认；D039四类外部未知结果、D040计量尾差、D041落盘前窗口、D043提交未知及较大容量改造继续明确限制/建议，不能标原文全部满足。没有新增待决事项，不代填人工/QA通过。
+- **运行**：本轮不重启演示、不迁移演示库；代码合入与运行升级分别处理。旧E14切换记录不作为本轮已上线依据。

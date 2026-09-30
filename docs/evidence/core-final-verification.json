@@ -1,0 +1,114 @@
+{
+  "recordedAt": "2026-09-30T22:54:27.076544+00:00",
+  "candidate": "2318a118f477c69e1049856c1f4126d8701ea17d",
+  "documentationBase": "efaff5091e33885b7fd75dd6a57dc9a788b982cb",
+  "trees": {
+    "apps": "88899de2bb35d1c74adce10743e1a9283d77d19e",
+    "packages": "1aef12da967a63ce18eee2c0a378fd4307991f0f",
+    "db": "97062ad3c27011435392f3b0e4a00727e66a0787",
+    "tests": "7f0b98ea08039fd267a268b3c57d18116d82e500"
+  },
+  "fullRegression": {
+    "command": "DATABASE_URL=<dedicated PostgreSQL :64550/postgres> AUTOMATION_TIMING_TESTS=1 CORE_AUTOMATION_TIMING_TESTS=1 SESSION_COOKIE_TIMING_TESTS=1 npm test",
+    "tests": 416,
+    "pass": 416,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 114523.002958,
+    "exitCode": 0,
+    "log": "core-final-regression.tap",
+    "format": "raw npm/Node default reporter output; file suffix does not imply TAP syntax",
+    "qaAcceptanceExecuted": false
+  },
+  "build": {
+    "command": "npm run build && npm run verify:original",
+    "exitCode": 0,
+    "log": "core-final-build.log",
+    "originalSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75"
+  },
+  "browserRecovery": {
+    "source": "2318a11",
+    "passed": true,
+    "rows": 165,
+    "pages": [
+      50,
+      50,
+      50,
+      15
+    ],
+    "transportAvailableToDOMMs": 454.370361328125,
+    "clockMaxOffsetBoundMs": 1.677490234375,
+    "navigationsDuringRecovery": 0,
+    "pageErrors": [],
+    "cleanupErrors": [],
+    "record": "core-reconnect-browser-2026-09-30T22-47-41-185Z.json",
+    "boundary": "Real REST/WS/production DOM; gateway events injected through GatewayEvents.process, background disabled. One 503, duplicate gateway events, old WS replay and historical backfills; not arbitrary scale or end-to-end gateway SSE SLA."
+  },
+  "approvedFormSupplement": {
+    "source": "17b2d431f36fbd727af031e51b5bb2a6f41ad10e",
+    "appsWebTree": "3482f253e2d198b9546eb85598cbcfa75ff4a602",
+    "sameFrontendAsCandidate": true,
+    "passed": 8,
+    "failed": 0,
+    "record": "cr-browser-closeout-2026-09-30T22-48-45-258Z.json",
+    "scope": "UI discard/backdrops, create unmount late results, injected Storage SecurityError and real Chromium quota exceeded; no OS IME; no remote create completion claim"
+  },
+  "cleanup": {
+    "dedicatedPostgresPort": 64550,
+    "remainingUserDatabases": [],
+    "remainingOtherClientSessions": [],
+    "observedAfterAllWorkers": true,
+    "containerStopped": true,
+    "containerId": "6a788e2a11e490f97febfb1e8260216b99dc844fbc85215b9e8119f2a535c3ce",
+    "completedAt": "2026-09-30T22:55:36.960643+00:00"
+  },
+  "integration": {
+    "authorizedBy": "D038/D046",
+    "mode": "local fast-forward main after evidence commit",
+    "mainPreservedQAThrough": "84179bfb8ff27c61b72eba77d0ecbbc6ecf1cee9",
+    "qaModifiedByThisTask": false,
+    "demoRestarted": false,
+    "demoMigrated": false,
+    "push": false
+  },
+  "retainedDiagnostics": [
+    "Full regression contains handled PostgreSQL idle connection termination diagnostics during fixture cleanup; original output retained.",
+    "Browser outage injection produced Vite websocket ECONNRESET logs; original output retained, actual recovery and pageerror separately asserted.",
+    "CR first run locator timed out before product assertion; original JSON/log/screenshot retained."
+  ],
+  "artifacts": {
+    "evidence/core-final-regression.tap": {
+      "bytes": 59429,
+      "sha256": "453eff57922b2bcce9002527f5f8b62535d45713dcdaea0def83cc82aac5b4e0"
+    },
+    "evidence/core-final-build.log": {
+      "bytes": 928,
+      "sha256": "879d0cc7670b2068a73660bc84aea6adb7dbfbdaafc53fedac71c9ec3185c60e"
+    },
+    "evidence/core-final-browser.log": {
+      "bytes": 2000,
+      "sha256": "aaa272a5581614fce29c02dc1860458461436b2da0a0fae2df01b5cff96f0d13"
+    },
+    "evidence/core-reconnect-browser-2026-09-30T22-47-41-185Z.json": {
+      "bytes": 179223,
+      "sha256": "615260517e4759b5174d057f8fd0172e6a66a35edfe08ae73b743a844aeae3bf"
+    },
+    "evidence/core-reconnect-browser-2026-09-30T22-47-41-185Z.png": {
+      "bytes": 160901,
+      "sha256": "2e3f5320bc392156ce53027e472f579fc576bc45b181f2592a439bacc1b876ff"
+    },
+    "evidence/core-verification-before-retry-policy.tap": {
+      "bytes": 48599,
+      "sha256": "a9486742c3771a37d45678e89a5a2e257e26b28ca839c2bfbcd064890b9d460e"
+    },
+    "evidence/cr-browser-closeout-2026-09-30T22-48-45-258Z.json": {
+      "bytes": 19480,
+      "sha256": "c32bcfb75942737f38a9ff6a2e05febe00786c2c9390ca8afa657ec0e6cf2dd2"
+    },
+    "evidence/cr-browser-closeout-second.log": {
+      "bytes": 403,
+      "sha256": "93876c1a176d893476f261a76c811416cffc990ce2b1cc0d44c6b7992b28c39d"
+    }
+  }
+}
