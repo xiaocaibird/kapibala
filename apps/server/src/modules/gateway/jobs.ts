@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import type { AppContext } from "../../core/context.js";
-import { emit } from "../../core/db.js";
+import { currentOperationSignal, emit } from "../../core/db.js";
 import { AppError, RemoteError } from "../../core/errors.js";
 import {
   type AccountRow,
@@ -392,28 +392,28 @@ export class Jobs {
     const index = state.index ?? 0;
     const accountId = state.leavingIds?.[index];
     if (!accountId) {
-      const gatewayMembers = membersSchema.parse(
-        await this.ctx.gateway.request(
-          `/groups/${encodeURIComponent(group.gateway_group_id)}/members`,
-        ),
-      );
-      const remainingServiceAccounts = (
-        await this.ctx.db.query<{ id: string }>(
-          "SELECT id FROM accounts WHERE platform_user_id=ANY($1::text[])",
-          [gatewayMembers.map((member) => member.platformUserId)],
-        )
-      ).rows;
-      const completionErrors = [
-        ...job.errors,
-        ...remainingServiceAccounts.map((account) => ({
-          step: `leave:${account.id}`,
-          code: "MEMBER_STILL_PRESENT",
-        })),
-      ];
       await this.ctx.db.transaction(async (tx) => {
         await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
           group.id,
         ]);
+        const gatewayMembers = membersSchema.parse(
+          await this.ctx.gateway.request(
+            `/groups/${encodeURIComponent(group.gateway_group_id)}/members`,
+          ),
+        );
+        const remainingServiceAccounts = (
+          await tx.query<{ id: string }>(
+            "SELECT id FROM accounts WHERE platform_user_id=ANY($1::text[])",
+            [gatewayMembers.map((member) => member.platformUserId)],
+          )
+        ).rows;
+        const completionErrors = [
+          ...job.errors,
+          ...remainingServiceAccounts.map((account) => ({
+            step: `leave:${account.id}`,
+            code: "MEMBER_STILL_PRESENT",
+          })),
+        ];
         if (!completionErrors.length) {
           await tx.query("DELETE FROM members WHERE group_id=$1", [group.id]);
           await tx.query("UPDATE groups SET status='left' WHERE id=$1", [
@@ -514,21 +514,72 @@ export class Jobs {
   }
   private async afterLeave(job: JobRow, accountId: string): Promise<void> {
     await this.ctx.db.transaction(async (tx) => {
-      await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
-        job.group_id,
-      ]);
+      const group = (
+        await tx.query<GroupRow>(
+          "SELECT * FROM groups WHERE id=$1 FOR UPDATE",
+          [job.group_id],
+        )
+      ).rows[0]!;
+      const account = (
+        await tx.query<AccountRow>(
+          "SELECT * FROM accounts WHERE id=$1 FOR SHARE",
+          [accountId],
+        )
+      ).rows[0]!;
+      const errors = [...job.errors];
+      let members: { platformUserId: string }[] | undefined;
+      try {
+        members = membersSchema.parse(
+          await this.ctx.gateway.request(
+            `/groups/${encodeURIComponent(group.gateway_group_id)}/members`,
+          ),
+        );
+      } catch (error) {
+        currentOperationSignal()?.throwIfAborted();
+        errors.push({
+          step: `leave:${accountId}`,
+          code: "MEMBERS_REFRESH_FAILED",
+        });
+        this.ctx.log.warn(
+          { err: error, groupId: group.id },
+          "已确认退出操作，当前成员列表刷新失败",
+        );
+        await emit(tx, "inconsistency", {
+          kind: "membership_refresh_failed",
+          groupId: group.id,
+          platformUserId: account.platform_user_id,
+          operation: "leave",
+          operationConfirmed: true,
+          message:
+            "退出操作已确认，当前成员列表暂无法刷新；保留本地状态并阻止群主退出，等待成员事件重试或重放。",
+        });
+      }
+      if (
+        members?.some(
+          (member) => member.platformUserId === account.platform_user_id,
+        )
+      )
+        errors.push({
+          step: `leave:${accountId}`,
+          code: "MEMBER_STILL_PRESENT",
+        });
+      else if (members)
+        await tx.query(
+          "DELETE FROM members WHERE group_id=$1 AND account_id=$2",
+          [job.group_id, accountId],
+        );
       await tx.query(
-        "DELETE FROM members WHERE group_id=$1 AND account_id=$2",
-        [job.group_id, accountId],
+        "UPDATE jobs SET state=$2,errors=$3,updated_at=now() WHERE id=$1",
+        [
+          job.id,
+          JSON.stringify({
+            ...job.state,
+            phase: "leave",
+            index: (job.state.index ?? 0) + 1,
+          }),
+          JSON.stringify(errors),
+        ],
       );
-      await tx.query("UPDATE jobs SET state=$2,updated_at=now() WHERE id=$1", [
-        job.id,
-        JSON.stringify({
-          ...job.state,
-          phase: "leave",
-          index: (job.state.index ?? 0) + 1,
-        }),
-      ]);
       await emit(tx, "group_changed", { groupId: job.group_id });
     });
   }

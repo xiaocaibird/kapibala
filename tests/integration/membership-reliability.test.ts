@@ -204,7 +204,10 @@ test(
     );
     const snapshotRead = deferred();
     const releaseRead = deferred();
+    let reads = 0;
     f.setReadMembers(async () => {
+      // Only the first response is stale. A post-leave refresh sees current absence.
+      if (++reads > 1) return [];
       snapshotRead.resolve();
       await releaseRead.promise;
       return [{ platformUserId: "member-2" }];

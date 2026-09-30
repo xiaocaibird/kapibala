@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
 import { z } from "zod";
 import type { AppContext } from "../../core/context.js";
-import { emit, type Queryable } from "../../core/db.js";
+import { currentOperationSignal, emit, type Queryable } from "../../core/db.js";
 import { AppError, RemoteError } from "../../core/errors.js";
 import type { MessagingService, SendInput } from "../../core/messaging.js";
 import type { Message } from "../../../../../packages/contracts/src/index.js";
@@ -546,15 +546,51 @@ export class Messages implements MessagingService {
             });
         }
         await this.ctx.db.transaction(async (tx) => {
-          // Serialize the confirmed removal with group membership projections so
-          // an earlier snapshot cannot restore this member after local deletion.
+          // The kick's confirmed effect is historical evidence. A later rejoin can
+          // already be visible, so project only a fresh snapshot under the group lock.
           await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
             input.groupId,
           ]);
-          await tx.query(
-            "DELETE FROM members WHERE group_id=$1 AND platform_user_id=$2",
-            [input.groupId, input.targetPlatformUserId],
-          );
+          let members: { platformUserId: string }[];
+          try {
+            members = z
+              .array(z.object({ platformUserId: z.string() }))
+              .parse(
+                await this.ctx.gateway.request(
+                  `/groups/${encodeURIComponent(group.gateway_group_id)}/members`,
+                  undefined,
+                  15000,
+                  signal,
+                ),
+              );
+          } catch (error) {
+            currentOperationSignal()?.throwIfAborted();
+            this.ctx.log.warn(
+              { err: error, groupId: input.groupId },
+              "已确认移除操作，当前成员列表刷新失败",
+            );
+            // The gateway guarantees member_left and retains its history. Existing
+            // event retry/replay will refresh the projection without repeating kick.
+            await emit(tx, "inconsistency", {
+              kind: "membership_refresh_failed",
+              groupId: input.groupId,
+              platformUserId: input.targetPlatformUserId,
+              operation: "kick",
+              operationConfirmed: true,
+              message:
+                "移除操作已成功，当前成员列表暂无法刷新；保留本地状态，等待网关成员事件重试或重放。",
+            });
+            return;
+          }
+          if (
+            !members.some(
+              (member) => member.platformUserId === input.targetPlatformUserId,
+            )
+          )
+            await tx.query(
+              "DELETE FROM members WHERE group_id=$1 AND platform_user_id=$2",
+              [input.groupId, input.targetPlatformUserId],
+            );
           await emit(tx, "group_changed", { groupId: input.groupId });
         });
         return { kicked: true as const };
