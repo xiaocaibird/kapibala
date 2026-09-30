@@ -179,10 +179,16 @@ export class SequenceModule {
           "Step indexes must be consecutive and start at 1",
         );
       const id = randomUUID();
-      await this.ctx.db.query(
-        "INSERT INTO sequences(id,name,steps) VALUES($1,$2,$3)",
-        [id, data.name, JSON.stringify(data.steps)],
-      );
+      await this.ctx.db.transaction(async (tx) => {
+        await tx.query(
+          "INSERT INTO sequences(id,name,steps) VALUES($1,$2,$3)",
+          [id, data.name, JSON.stringify(data.steps)],
+        );
+        await emit(tx, "sequence_definition_changed", {
+          sequenceId: id,
+          changedFields: ["created"],
+        });
+      });
       return { id };
     });
     app.post("/api/sequences/preview", async (request) => {
@@ -413,10 +419,17 @@ export class SequenceModule {
       }
       // Only the earliest unresolved step has a schedule; accepted sends retain their identity.
       await this.ctx.db.transaction(async (tx) => {
-        await tx.query(
-          `UPDATE sequence_steps s SET scheduled_at=now()+s.delay_seconds*interval '1 second' FROM sequence_runs r WHERE s.run_id=r.id AND r.id=$1 AND r.status='running' AND s.index=r.current_step_index AND s.status='pending' AND s.client_msg_id IS NULL AND s.scheduled_at<now()`,
+        const rebased = await tx.query<{ index: number }>(
+          `UPDATE sequence_steps s SET scheduled_at=now()+s.delay_seconds*interval '1 second' FROM sequence_runs r WHERE s.run_id=r.id AND r.id=$1 AND r.status='running' AND s.index=r.current_step_index AND s.status='pending' AND s.client_msg_id IS NULL AND s.scheduled_at<now() RETURNING s.index`,
           [run.id],
         );
+        for (const step of rebased.rows)
+          await emit(tx, "sequence_step_changed", {
+            runId: run.id,
+            groupId: run.group_id,
+            stepIndex: step.index,
+            changedFields: ["scheduledAt"],
+          });
       });
     }
   }
@@ -482,6 +495,8 @@ export class SequenceModule {
         step.client_msg_id &&
         (step.status === "pending" || step.status === "accepted")
       ) {
+        const beforeStatus = step.status;
+        const beforeSentAt = step.sent_at?.getTime();
         const message = (
           await tx.query<{
             delivery_status: string;
@@ -513,6 +528,17 @@ export class SequenceModule {
           "UPDATE sequence_steps SET status=$3,sent_at=$4 WHERE run_id=$1 AND index=$2",
           [id, step.index, step.status, step.sent_at],
         );
+        const changedFields = [
+          ...(beforeStatus !== step.status ? ["status"] : []),
+          ...(beforeSentAt !== step.sent_at?.getTime() ? ["sentAt"] : []),
+        ];
+        if (changedFields.length)
+          await emit(tx, "sequence_step_changed", {
+            runId: id,
+            groupId: run.group_id,
+            stepIndex: step.index,
+            changedFields,
+          });
       }
       if (["sent", "skipped", "failed"].includes(step.status)) {
         await this.progress(tx, run, step);
@@ -542,6 +568,12 @@ export class SequenceModule {
           "UPDATE sequence_steps SET status='skipped',sent_at=$3 WHERE run_id=$1 AND index=$2",
           [id, step.index, step.sent_at],
         );
+        await emit(tx, "sequence_step_changed", {
+          runId: id,
+          groupId: run.group_id,
+          stepIndex: step.index,
+          changedFields: ["status", "sentAt"],
+        });
         await this.progress(tx, run, step);
         return;
       }
@@ -562,6 +594,12 @@ export class SequenceModule {
           "UPDATE sequence_steps SET client_msg_id=$3 WHERE run_id=$1 AND index=$2",
           [id, step.index, message.clientMsgId],
         );
+        await emit(tx, "sequence_step_changed", {
+          runId: id,
+          groupId: run.group_id,
+          stepIndex: step.index,
+          changedFields: ["clientMsgId"],
+        });
       } catch (error) {
         if (
           error instanceof AppError &&
@@ -585,8 +623,15 @@ export class SequenceModule {
           [run.id, step.index + 1, step.sent_at ?? new Date()],
         )
       ).rows[0];
-      if (next) run.current_step_index = next.index;
-      else run.status = "finished";
+      if (next) {
+        run.current_step_index = next.index;
+        await emit(tx, "sequence_step_changed", {
+          runId: run.id,
+          groupId: run.group_id,
+          stepIndex: next.index,
+          changedFields: ["scheduledAt"],
+        });
+      } else run.status = "finished";
     }
     await tx.query(
       "UPDATE sequence_runs SET status=$2,current_step_index=$3,updated_at=now() WHERE id=$1",

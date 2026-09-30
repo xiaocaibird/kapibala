@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import type { AppContext } from "../../core/context.js";
-import { currentOperationSignal, emit } from "../../core/db.js";
+import { currentOperationSignal, emit, type Queryable } from "../../core/db.js";
 import { AppError, RemoteError } from "../../core/errors.js";
 import {
   type AccountRow,
@@ -13,6 +13,33 @@ import {
 } from "./models.js";
 import { changeAccount } from "./state.js";
 
+async function notifyJob(tx: Queryable, before: JobRow): Promise<void> {
+  const after = (
+    await tx.query<JobRow>("SELECT * FROM jobs WHERE id=$1", [before.id])
+  ).rows[0];
+  if (!after) return;
+  const projection = (job: JobRow) => ({
+    status: job.errors.length ? "failed" : job.status,
+    processing: job.status === "running",
+    errors: job.errors,
+    groupId: job.group_id,
+    recoveryNote: job.state.recoveryNote ?? null,
+  });
+  const oldValue = projection(before);
+  const nextValue = projection(after);
+  const changedFields = (
+    Object.keys(nextValue) as (keyof typeof nextValue)[]
+  ).filter(
+    (key) => JSON.stringify(oldValue[key]) !== JSON.stringify(nextValue[key]),
+  );
+  if (changedFields.length)
+    await emit(tx, "job_changed", {
+      jobId: after.id,
+      groupId: after.group_id,
+      status: nextValue.status,
+      changedFields,
+    });
+}
 const membersSchema = z.array(z.object({ platformUserId: z.string() }));
 export class Jobs {
   constructor(private readonly ctx: AppContext) {}
@@ -125,10 +152,18 @@ export class Jobs {
     errors = job.errors,
     status: JobRow["status"] = job.status,
   ): Promise<void> {
-    await this.ctx.db.query(
-      "UPDATE jobs SET state=$2,errors=$3,status=$4,updated_at=now() WHERE id=$1",
-      [job.id, JSON.stringify(state), JSON.stringify(errors), status],
-    );
+    await this.ctx.db.transaction(async (tx) => {
+      const before = (
+        await tx.query<JobRow>("SELECT * FROM jobs WHERE id=$1 FOR UPDATE", [
+          job.id,
+        ])
+      ).rows[0]!;
+      await tx.query(
+        "UPDATE jobs SET state=$2,errors=$3,status=$4,updated_at=now() WHERE id=$1",
+        [job.id, JSON.stringify(state), JSON.stringify(errors), status],
+      );
+      await notifyJob(tx, before);
+    });
   }
   private async fail(job: JobRow, step: string, code: string): Promise<void> {
     await this.save(job, job.state, [...job.errors, { step, code }], "failed");
@@ -139,6 +174,7 @@ export class Jobs {
         "UPDATE jobs SET state=state || $2::jsonb,updated_at=now() WHERE id=$1",
         [job.id, JSON.stringify({ recoveryNote: message })],
       );
+      await notifyJob(tx, job);
       await emit(tx, "inconsistency", {
         kind: "job_result_unknown",
         ref: job.id,
@@ -201,7 +237,11 @@ export class Jobs {
               JSON.stringify({ ...state, phase: "invite" }),
             ],
           );
-          await emit(tx, "group_changed", { groupId: state.localGroupId });
+          await emit(tx, "group_changed", {
+            groupId: state.localGroupId,
+            changedFields: ["created"],
+          });
+          await notifyJob(tx, job);
         });
       } catch (error) {
         await this.remoteFailure(
@@ -301,11 +341,17 @@ export class Jobs {
               members.some(
                 (member) => member.platformUserId === account.platform_user_id,
               )
-            )
-              await tx.query(
+            ) {
+              const added = await tx.query(
                 "INSERT INTO members(group_id,account_id,platform_user_id,role) VALUES($1,$2,$3,'member') ON CONFLICT DO NOTHING",
                 [group.id, accountId, account.platform_user_id],
               );
+              if (added.rowCount)
+                await emit(tx, "group_changed", {
+                  groupId: group.id,
+                  changedFields: ["members"],
+                });
+            }
           });
         } else
           await this.remoteFailure(
@@ -363,15 +409,20 @@ export class Jobs {
           },
         );
         await this.ctx.db.transaction(async (tx) => {
-          await tx.query(
-            "UPDATE members SET role='admin' WHERE group_id=$1 AND account_id=$2",
+          const promoted = await tx.query(
+            "UPDATE members SET role='admin' WHERE group_id=$1 AND account_id=$2 AND role<>'admin'",
             [group.id, state.memberAccountIds![0]],
           );
           await tx.query(
             "UPDATE jobs SET status='finished',state=$2,updated_at=now() WHERE id=$1",
             [job.id, JSON.stringify({ ...promoting, phase: "done" })],
           );
-          await emit(tx, "group_changed", { groupId: group.id });
+          if (promoted.rowCount)
+            await emit(tx, "group_changed", {
+              groupId: group.id,
+              changedFields: ["members"],
+            });
+          await notifyJob(tx, job);
         });
       } catch (error) {
         if (
@@ -422,11 +473,18 @@ export class Jobs {
             code: "MEMBER_STILL_PRESENT",
           })),
         ];
+        const changedFields: string[] = [];
         if (!completionErrors.length) {
-          await tx.query("DELETE FROM members WHERE group_id=$1", [group.id]);
-          await tx.query("UPDATE groups SET status='left' WHERE id=$1", [
-            group.id,
-          ]);
+          const removed = await tx.query(
+            "DELETE FROM members WHERE group_id=$1",
+            [group.id],
+          );
+          const left = await tx.query(
+            "UPDATE groups SET status='left' WHERE id=$1 AND status<>'left'",
+            [group.id],
+          );
+          if (removed.rowCount) changedFields.push("members");
+          if (left.rowCount) changedFields.push("status");
           await tx.query(
             "UPDATE agent_runs SET cancel_requested=true WHERE group_id=$1 AND status='running'",
             [group.id],
@@ -445,10 +503,13 @@ export class Jobs {
             JSON.stringify(completionErrors),
           ],
         );
-        await emit(tx, "group_changed", {
-          groupId: group.id,
-          status: completionErrors.length ? group.status : "left",
-        });
+        if (changedFields.length)
+          await emit(tx, "group_changed", {
+            groupId: group.id,
+            status: "left",
+            changedFields,
+          });
+        await notifyJob(tx, job);
       });
       return;
     }
@@ -571,10 +632,20 @@ export class Jobs {
           step: `leave:${accountId}`,
           code: "MEMBER_STILL_PRESENT",
         });
-      else if (members)
-        await tx.query(
-          "DELETE FROM members WHERE group_id=$1 AND account_id=$2",
-          [job.group_id, accountId],
+      let removed = false;
+      if (
+        members &&
+        !members.some(
+          (member) => member.platformUserId === account.platform_user_id,
+        )
+      )
+        removed = Boolean(
+          (
+            await tx.query(
+              "DELETE FROM members WHERE group_id=$1 AND account_id=$2",
+              [job.group_id, accountId],
+            )
+          ).rowCount,
         );
       await tx.query(
         "UPDATE jobs SET state=$2,errors=$3,updated_at=now() WHERE id=$1",
@@ -588,7 +659,12 @@ export class Jobs {
           JSON.stringify(errors),
         ],
       );
-      await emit(tx, "group_changed", { groupId: job.group_id });
+      if (removed)
+        await emit(tx, "group_changed", {
+          groupId: job.group_id,
+          changedFields: ["members"],
+        });
+      await notifyJob(tx, job);
     });
   }
   private async remoteFailure(

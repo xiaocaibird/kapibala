@@ -42,15 +42,37 @@ export async function changeAccount(
     )
   ).rows[0]!;
   if (isTerminal(to)) {
-    await tx.query("DELETE FROM members WHERE account_id=$1", [accountId]);
+    const affectedGroups = await tx.query<{ group_id: string }>(
+      "DELETE FROM members WHERE account_id=$1 RETURNING group_id",
+      [accountId],
+    );
+    for (const group of affectedGroups.rows)
+      await emit(tx, "group_changed", {
+        groupId: group.group_id,
+        changedFields: ["members"],
+      });
     await tx.query(
       "UPDATE messages SET delivery_status='cancelled',fail_code='ACCOUNT_TERMINAL',dispatch_state='done',updated_at=now() WHERE account_id=$1 AND delivery_status='queued'",
       [accountId],
     );
-    await tx.query(
-      "UPDATE sequence_steps SET status='skipped',sent_at=now() WHERE client_msg_id IN (SELECT client_msg_id FROM messages WHERE account_id=$1 AND delivery_status='cancelled' AND fail_code='ACCOUNT_TERMINAL') AND status IN ('pending','accepted')",
+    const skipped = await tx.query<{ run_id: string; index: number }>(
+      "UPDATE sequence_steps SET status='skipped',sent_at=now() WHERE client_msg_id IN (SELECT client_msg_id FROM messages WHERE account_id=$1 AND delivery_status='cancelled' AND fail_code='ACCOUNT_TERMINAL') AND status IN ('pending','accepted') RETURNING run_id,index",
       [accountId],
     );
+    for (const step of skipped.rows) {
+      const run = (
+        await tx.query<{ group_id: string }>(
+          "SELECT group_id FROM sequence_runs WHERE id=$1",
+          [step.run_id],
+        )
+      ).rows[0]!;
+      await emit(tx, "sequence_step_changed", {
+        runId: step.run_id,
+        groupId: run.group_id,
+        stepIndex: step.index,
+        changedFields: ["status", "sentAt"],
+      });
+    }
     await emit(tx, "account_terminal", { accountId, status: to });
   }
   if (account.status !== to)
@@ -58,6 +80,15 @@ export async function changeAccount(
       accountId,
       from: account.status,
       to,
+    });
+  if (
+    account.status === to &&
+    account.rate_limited_until?.getTime() !==
+      updated.rate_limited_until?.getTime()
+  )
+    await emit(tx, "account_changed", {
+      accountId,
+      changedFields: ["rateLimitedUntil"],
     });
   return updated;
 }
@@ -90,5 +121,9 @@ export async function markGroupUnreachable(
       status: "stopped",
       currentStepIndex: run.current_step_index,
     });
-  await emit(tx, "group_changed", { groupId, status: "unreachable" });
+  await emit(tx, "group_changed", {
+    groupId,
+    status: "unreachable",
+    changedFields: ["status"],
+  });
 }

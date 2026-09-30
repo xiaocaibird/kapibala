@@ -227,6 +227,18 @@ export class GatewayEvents {
                 )
               ).rowCount,
             );
+            // An uncorrelated service-account echo can still be the outstanding
+            // outbox row. Defer only attention classification, never persistence.
+            const identityPending =
+              own &&
+              Boolean(
+                (
+                  await tx.query(
+                    "SELECT 1 FROM messages WHERE group_id=$1 AND sender_platform_user_id=$2 AND client_msg_id IS NOT NULL AND msg_id IS NULL AND delivery_status IN ('queued','accepted','unknown') LIMIT 1",
+                    [group.id, event.senderPlatformUserId],
+                  )
+                ).rowCount,
+              );
             const insertedMessage = await tx.query<{ id: string }>(
               "INSERT INTO messages(id,group_id,msg_id,sender_platform_user_id,is_own,text,sent_at,metadata) VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT(group_id,msg_id) DO NOTHING RETURNING id",
               [
@@ -247,6 +259,9 @@ export class GatewayEvents {
             if (insertedMessage.rows[0])
               await emit(tx, "message", {
                 groupId: group.id,
+                changeKind: "created",
+                attentionIdentity: identityPending ? "pending" : "confirmed",
+                source: "gateway",
                 msgId: event.msgId,
                 id: insertedMessage.rows[0].id,
                 isOwn: own,
@@ -269,6 +284,12 @@ export class GatewayEvents {
                 `/groups/${encodeURIComponent(event.groupId)}/members`,
               ),
             );
+            const beforeMembers = (
+              await tx.query(
+                "SELECT platform_user_id,account_id,role FROM members WHERE group_id=$1 ORDER BY platform_user_id",
+                [group.id],
+              )
+            ).rows;
             const present = gatewayMembers.some(
               (member) => member.platformUserId === event.platformUserId,
             );
@@ -279,7 +300,17 @@ export class GatewayEvents {
               );
             else if (event.type === "member_joined")
               await this.upsertMember(tx, group, event.platformUserId);
-            await emit(tx, "group_changed", { groupId: group.id });
+            const afterMembers = (
+              await tx.query(
+                "SELECT platform_user_id,account_id,role FROM members WHERE group_id=$1 ORDER BY platform_user_id",
+                [group.id],
+              )
+            ).rows;
+            if (JSON.stringify(beforeMembers) !== JSON.stringify(afterMembers))
+              await emit(tx, "group_changed", {
+                groupId: group.id,
+                changedFields: ["members"],
+              });
             break;
           }
         }

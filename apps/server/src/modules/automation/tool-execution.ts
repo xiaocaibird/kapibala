@@ -1,5 +1,5 @@
 import type { AppContext } from "../../core/context.js";
-import { currentOperationSignal, type Queryable } from "../../core/db.js";
+import { emit, currentOperationSignal, type Queryable } from "../../core/db.js";
 import { AppError, RemoteError } from "../../core/errors.js";
 import type { MessagingService } from "../../core/messaging.js";
 import type {
@@ -154,10 +154,19 @@ export class AgentTools {
       }
       operation?.throwIfAborted();
       if (verdict) {
-        await this.ctx.db.query(
-          "UPDATE agent_steps SET audit_verdict=$3,state='ready' WHERE run_id=$1 AND ordinal=$2",
-          [run.id, step.ordinal, verdict],
-        );
+        await this.ctx.db.transaction(async (tx) => {
+          await tx.query(
+            "UPDATE agent_steps SET audit_verdict=$3,state='ready' WHERE run_id=$1 AND ordinal=$2",
+            [run.id, step.ordinal, verdict],
+          );
+          if (step.audit_verdict !== verdict)
+            await emit(tx, "agent_step_changed", {
+              runId: run.id,
+              groupId: run.group_id,
+              ordinal: step.ordinal,
+              changedFields: ["auditVerdict"],
+            });
+        });
         return verdict;
       }
     }
@@ -434,14 +443,22 @@ export class AgentTools {
       if (deadline.aborted) {
         // Budget exhaustion ends the run, not the uncertain external effect. Keep
         // its intent as executing so a later process can never replay this kick.
-        await this.ctx.db.query(
-          "UPDATE agent_steps SET result_summary=$3 WHERE run_id=$1 AND ordinal=$2",
-          [
-            run.id,
-            step.ordinal,
-            "Activity budget ended while the kick outcome remained unknown; this intent is not replayed.",
-          ],
-        );
+        await this.ctx.db.transaction(async (tx) => {
+          await tx.query(
+            "UPDATE agent_steps SET result_summary=$3 WHERE run_id=$1 AND ordinal=$2",
+            [
+              run.id,
+              step.ordinal,
+              "Activity budget ended while the kick outcome remained unknown; this intent is not replayed.",
+            ],
+          );
+          await emit(tx, "agent_step_changed", {
+            runId: run.id,
+            groupId: run.group_id,
+            ordinal: step.ordinal,
+            changedFields: ["resultSummary"],
+          });
+        });
         await this.host.pause(
           run,
           "The activity budget expired during a kick. Its external result remains unknown and the saved intent will not be replayed.",

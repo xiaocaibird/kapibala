@@ -171,6 +171,25 @@ export function createGatewayModule(
         request.body,
       );
       await ctx.db.transaction(async (tx) => {
+        const before = (
+          await tx.query<GroupRow>(
+            "SELECT * FROM groups WHERE id=$1 FOR UPDATE",
+            [id],
+          )
+        ).rows[0];
+        if (!before) throw new AppError(404, "GROUP_NOT_FOUND", "群不存在");
+        const changedFields = (
+          Object.entries({
+            name: before.name,
+            description: before.description,
+            agentEnabled: before.agent_enabled,
+            autoKickEnabled: before.auto_kick_enabled,
+          }) as [keyof typeof input, unknown][]
+        )
+          .filter(
+            ([key, value]) => input[key] !== undefined && input[key] !== value,
+          )
+          .map(([key]) => key);
         const updated = await tx.query(
           "UPDATE groups SET name=COALESCE($2,name),description=CASE WHEN $3::boolean THEN $4::text ELSE description END,agent_enabled=COALESCE($5,agent_enabled),auto_kick_enabled=COALESCE($6,auto_kick_enabled) WHERE id=$1 RETURNING id",
           [
@@ -189,7 +208,8 @@ export function createGatewayModule(
             "UPDATE agent_runs SET cancel_requested=true WHERE group_id=$1 AND status='running'",
             [id],
           );
-        await emit(tx, "group_changed", { groupId: id });
+        if (changedFields.length)
+          await emit(tx, "group_changed", { groupId: id, changedFields });
       });
       return getGroup(id);
     });
@@ -198,6 +218,10 @@ export function createGatewayModule(
         z.object({
           accountId: z.string().min(1),
           text: z.string().min(1).max(100000),
+          clientMsgId: z
+            .string()
+            .regex(/^[A-Za-z0-9_-]{1,128}$/)
+            .optional(),
         }),
         request.body,
       );

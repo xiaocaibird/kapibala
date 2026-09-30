@@ -16,7 +16,45 @@ export async function registerRealtime(
       if (!token) socket.close(4401, "Authentication required");
     }, 5000);
     socket.on("message", async (raw) => {
-      if (token || authenticating) return;
+      if (token) {
+        let input: unknown;
+        try {
+          input = JSON.parse(raw.toString()) as unknown;
+        } catch {
+          // Authenticated legacy clients could send ignored non-control frames.
+          return;
+        }
+        const marker = z
+          .object({
+            type: z.literal("scope_marker"),
+            requestId: z.string().min(1).max(128),
+          })
+          .safeParse(input);
+        if (!marker.success) return;
+        try {
+          await authenticate(db, token);
+          const startSeq = Number(
+            (
+              await db.query<{ seq: string }>(
+                "SELECT COALESCE(max(seq),0) AS seq FROM events",
+              )
+            ).rows[0]?.seq ?? 0,
+          );
+          // Control acknowledgements never advance the durable event replay cursor.
+          if (!stopped && socket.readyState === 1)
+            socket.send(
+              JSON.stringify({
+                type: "scope_ready",
+                requestId: marker.data.requestId,
+                startSeq,
+              }),
+            );
+        } catch {
+          socket.close(4401, "Session or connection unavailable");
+        }
+        return;
+      }
+      if (authenticating) return;
       authenticating = true;
       try {
         const auth = z

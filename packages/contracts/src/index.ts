@@ -77,6 +77,7 @@ export interface Sequence {
   steps: SequenceStep[];
 }
 export interface RunStep {
+  ordinal?: number;
   kind: "tool_use" | "final" | "protocol_error";
   toolUseId: string | null;
   name: string | null;

@@ -37,6 +37,8 @@ async function notify(tx: Queryable, run: RunRow): Promise<void> {
     groupId: run.group_id,
     status: run.status,
     endReason: run.end_reason,
+    summary: run.summary,
+    recoveryNote: run.recovery_note,
   });
 }
 
@@ -82,6 +84,7 @@ export class AgentModule {
         return {
           ...runPublic(run),
           steps: steps.map((step) => ({
+            ordinal: step.ordinal,
             kind: step.kind,
             toolUseId: step.tool_use_id,
             name: step.name,
@@ -248,6 +251,8 @@ export class AgentModule {
         "UPDATE agent_runs SET recovery_note=$2,updated_at=now() WHERE id=$1",
         [run.id, reason],
       );
+      if (run.recovery_note !== reason)
+        await notify(tx, { ...run, recovery_note: reason });
       await emit(tx, "inconsistency", {
         kind: "agent_recovery_unknown",
         ref: run.id,
@@ -442,6 +447,12 @@ export class AgentModule {
           "UPDATE agent_runs SET history=$2,step_count=step_count+1,protocol_errors=0,inflight_turn=false WHERE id=$1",
           [run.id, JSON.stringify(history)],
         );
+        await emit(tx, "agent_step_changed", {
+          runId: run.id,
+          groupId: run.group_id,
+          ordinal: run.step_count + 1,
+          changedFields: ["created"],
+        });
       });
       await this.finishAfterStep(run, text);
       return;
@@ -483,6 +494,12 @@ export class AgentModule {
           validationCode ? run.protocol_errors + 1 : 0,
         ],
       );
+      await emit(tx, "agent_step_changed", {
+        runId: run.id,
+        groupId: run.group_id,
+        ordinal: run.step_count + 1,
+        changedFields: ["created"],
+      });
     });
     if (validationCode) {
       const updatedRun = (await this.readRun(run.id))!;
@@ -537,6 +554,12 @@ export class AgentModule {
         "UPDATE agent_runs SET history=$2,step_count=step_count+1,protocol_errors=protocol_errors+1,inflight_turn=false WHERE id=$1",
         [run.id, JSON.stringify(history)],
       );
+      await emit(tx, "agent_step_changed", {
+        runId: run.id,
+        groupId: run.group_id,
+        ordinal: run.step_count + 1,
+        changedFields: ["created"],
+      });
     });
   }
   private async completeStep(
@@ -580,6 +603,12 @@ export class AgentModule {
         "UPDATE agent_runs SET history=$2,updated_at=now() WHERE id=$1",
         [run.id, JSON.stringify(history)],
       );
+      await emit(tx, "agent_step_changed", {
+        runId: run.id,
+        groupId: run.group_id,
+        ordinal: step.ordinal,
+        changedFields: ["resultSummary", "isError", "errorCode"],
+      });
       if (endReason) {
         // The complete tool result and terminal conclusion are one durable fact.
         const blocked = (

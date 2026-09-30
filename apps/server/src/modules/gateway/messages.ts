@@ -51,6 +51,8 @@ export async function recordSent(
     [row.id, msgId, sentAt],
   );
   await emit(tx, "message", {
+    changeKind: "delivery",
+    source: row.metadata.source ?? "manual",
     groupId: row.group_id,
     msgId,
     clientMsgId,
@@ -91,6 +93,20 @@ export class Messages implements MessagingService {
       ).rowCount
     )
       throw new AppError(409, "ACCOUNT_NOT_IN_GROUP", "账号不在群内");
+    if (input.clientMsgId) {
+      // Correlation is optional; a reused key is rejected, never treated as a retry.
+      await tx.query("SELECT pg_advisory_xact_lock(hashtextextended($1,0))", [
+        `client-message:${input.clientMsgId}`,
+      ]);
+      if (
+        (
+          await tx.query("SELECT 1 FROM messages WHERE client_msg_id=$1", [
+            input.clientMsgId,
+          ])
+        ).rowCount
+      )
+        throw new AppError(409, "CLIENT_MSG_ID_CONFLICT", "发送标识已经使用");
+    }
     const row = (
       await tx.query<MessageRow>(
         "INSERT INTO messages(id,group_id,client_msg_id,account_id,sender_platform_user_id,is_own,text,delivery_status,metadata) VALUES($1,$2,$3,$4,$5,true,$6,'queued',$7) RETURNING *",
@@ -109,6 +125,8 @@ export class Messages implements MessagingService {
       )
     ).rows[0]!;
     await emit(tx, "message", {
+      changeKind: "created",
+      source: row.metadata.source ?? "manual",
       groupId: row.group_id,
       msgId: null,
       clientMsgId: row.client_msg_id,
@@ -252,6 +270,8 @@ export class Messages implements MessagingService {
         );
         if (updated.rowCount)
           await emit(tx, "message", {
+            changeKind: "delivery",
+            source: row.metadata.source ?? "manual",
             groupId: row.group_id,
             msgId: null,
             id: row.id,
@@ -337,6 +357,8 @@ export class Messages implements MessagingService {
             ],
           );
           await emit(tx, "message", {
+            changeKind: "delivery",
+            source: row.metadata.source ?? "manual",
             groupId: row.group_id,
             id: row.id,
             clientMsgId: row.client_msg_id,
@@ -418,6 +440,8 @@ export class Messages implements MessagingService {
       [row.id, status, code],
     );
     await emit(tx, "message", {
+      changeKind: "delivery",
+      source: row.metadata.source ?? "manual",
       groupId: row.group_id,
       id: row.id,
       msgId: row.msg_id,
@@ -586,12 +610,17 @@ export class Messages implements MessagingService {
             !members.some(
               (member) => member.platformUserId === input.targetPlatformUserId,
             )
-          )
-            await tx.query(
+          ) {
+            const removed = await tx.query(
               "DELETE FROM members WHERE group_id=$1 AND platform_user_id=$2",
               [input.groupId, input.targetPlatformUserId],
             );
-          await emit(tx, "group_changed", { groupId: input.groupId });
+            if (removed.rowCount)
+              await emit(tx, "group_changed", {
+                groupId: input.groupId,
+                changedFields: ["members"],
+              });
+          }
         });
         return { kicked: true as const };
       },
