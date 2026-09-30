@@ -327,7 +327,6 @@ test("leaving and returning retains multi-page query, anchor and stale contents 
   const h = await twoPages(t);
   const position = { groupId: "d", offset: 125, scrollY: 700 };
   h.controller.rememberPosition(position);
-  h.controller.setJobId("created-job");
   h.controller.setVisible(false);
   h.controller.invalidate();
   const before = h.requests.length;
@@ -340,7 +339,6 @@ test("leaving and returning retains multi-page query, anchor and stale contents 
     ["a", "b", "c", "d"],
   );
   assert.equal(h.state().pages, 2);
-  assert.equal(h.state().jobId, "created-job");
   void h.controller.refresh();
   await setImmediate();
   await h.reply(page(["new first page"], "next"));
@@ -391,7 +389,6 @@ test("a stopped session cancels pending debounce and late responses; a new sessi
   const h = harness(t);
   await setImmediate();
   h.controller.setInput("private query");
-  h.controller.setJobId("private-job");
   h.controller.rememberPosition({
     groupId: "private-group",
     offset: 8,
@@ -406,7 +403,6 @@ test("a stopped session cancels pending debounce and late responses; a new sessi
   await setImmediate();
   assert.deepEqual(next.requests[0]!.query, { q: "", order: "desc" });
   assert.equal(next.state().position, null);
-  assert.equal(next.state().jobId, null);
   assert.equal(next.state().input, "");
   assert.deepEqual(next.state().items, []);
 });

@@ -29,7 +29,6 @@ export interface DirectoryState {
   error: { kind: "initial" | "refresh" | "more"; value: unknown } | null;
   position: DirectoryPosition | null;
   notice: string | null;
-  jobId: string | null;
 }
 export interface DirectoryScheduler {
   set(callback: () => void, delay: number): unknown;
@@ -53,7 +52,6 @@ const initialState = (): DirectoryState => ({
   error: null,
   position: null,
   notice: null,
-  jobId: null,
 });
 function signature(page: GroupDirectoryPage): string {
   // Opaque cursors need not have a stable encoding. Compare their presence and
@@ -294,9 +292,6 @@ export function createGroupDirectoryController(
     },
     setNotice(notice: string | null) {
       update({ notice });
-    },
-    setJobId(jobId: string | null) {
-      update({ jobId });
     },
   };
 }

@@ -19,6 +19,23 @@ export function Groups() {
   const { user } = useAuth();
   const { controller, state } = useGroupDirectory();
   const [createOpen, setCreateOpen] = useState(false);
+  const [jobId, setJobId] = useState<string | null>(() => {
+    try {
+      return sessionStorage.getItem("kapibala:createJob");
+    } catch {
+      return null;
+    }
+  });
+  const rememberJob = (id: string | null) => {
+    setJobId(id);
+    try {
+      if (id) sessionStorage.setItem("kapibala:createJob", id);
+      else sessionStorage.removeItem("kapibala:createJob");
+    } catch {
+      // Storage may be unavailable. A completed create request must never be
+      // presented as a failed submission that the user should send again.
+    }
+  };
   const grid = useRef<HTMLDivElement>(null);
   const clickedPosition = useRef<DirectoryPosition | null>(null);
   const restored = useRef<string | null>(null);
@@ -108,17 +125,17 @@ export function Groups() {
           )
         }
       />
-      {state.jobId && (
+      {jobId && (
         <div className="panel job-panel">
           <button
             className="icon-button dismiss"
             aria-label="隐藏任务"
-            onClick={() => controller.setJobId(null)}
+            onClick={() => rememberJob(null)}
           >
             ×
           </button>
           <JobProgress
-            id={state.jobId}
+            id={jobId}
             onComplete={() => {
               controller.invalidate();
             }}
@@ -354,7 +371,7 @@ export function Groups() {
         <CreateGroup
           onClose={() => setCreateOpen(false)}
           onCreated={(id) => {
-            controller.setJobId(id);
+            rememberJob(id);
             setCreateOpen(false);
             controller.invalidate();
           }}
