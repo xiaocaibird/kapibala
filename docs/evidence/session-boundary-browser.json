@@ -1,0 +1,838 @@
+{
+  "sourceHead": "d270057b3e23161ab4df536fb48b61453006e58a",
+  "sourceFiles": {
+    "apps/web/src/api/client.ts": "96aae9656dbb9fd1f4ee470b26d0aec43d18a1fac07add36e06c4846a95fa8a0",
+    "apps/web/src/state/live.tsx": "3d758c1ab5eab3f2e4e5d7f2ff81399b6925df835fe285320b2209ca13445652",
+    "scripts/core-console-qa.ts": "9edd065ace628b99c3bbad424fa5fec6c27fad90f9f32c1e761666b4672e97c5"
+  },
+  "fixture": {
+    "pid": 92785,
+    "dbName": "core_console_qa_682aba663085407ca2fb7601d275db3a",
+    "sourceHead": "d270057b3e23161ab4df536fb48b61453006e58a",
+    "status": "ready",
+    "startedAt": "2026-09-30T19:16:58.343Z",
+    "url": "http://127.0.0.1:63960",
+    "serverURL": "http://127.0.0.1:63953",
+    "gatewayURL": "http://127.0.0.1:63948",
+    "agentURL": "http://127.0.0.1:63949",
+    "temporaryDirectory": "/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-core-console-qa-EZYTgp",
+    "groupId": "835c3de1-ba8b-4ebe-803a-82d016e77fc3",
+    "initialMessages": 125,
+    "controls": [
+      "control",
+      "reset-metrics",
+      "expire-access",
+      "publish",
+      "group-setting",
+      "sender",
+      "agent-scenario"
+    ]
+  },
+  "observedAt": "2026-09-30T19:23:29.498Z",
+  "scenario": "Hold old admin WebSocket-triggered refresh; logout admin; login viewer; release old refresh; inspect then reload page.",
+  "observations": [
+    "Viewer remained signed in in memory after old refresh 401, with readonly controls and live connection.",
+    "A full browser reload then returned to login: cookie boundary remains defective."
+  ],
+  "conclusion": "Partial memory-session fix passed; overall same-page cookie switching failed and requires additional repair.",
+  "raw": {
+    "controls": {
+      "outage": false,
+      "holdRefresh": false,
+      "holdNextEarlier": false,
+      "releaseEarlier": true,
+      "failTimelineCount": 0
+    },
+    "counters": {
+      "refreshCount": 2,
+      "heldRefresh": 1,
+      "heldEarlier": 0,
+      "timelineFailures": 0
+    },
+    "http": [
+      {
+        "method": "POST",
+        "path": "/api/auth/refresh",
+        "startedAt": 1790795855124,
+        "finishedAt": 1790795874707,
+        "status": 401
+      },
+      {
+        "method": "POST",
+        "path": "/api/auth/logout",
+        "startedAt": 1790795858727,
+        "finishedAt": 1790795858730,
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/auth/login",
+        "startedAt": 1790795863325,
+        "finishedAt": 1790795863330,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/auth/me",
+        "startedAt": 1790795863332,
+        "finishedAt": 1790795863333,
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/auth/refresh",
+        "startedAt": 1790796173700,
+        "finishedAt": 1790796173701,
+        "status": 401
+      }
+    ],
+    "writes": [],
+    "ws": [
+      {
+        "type": "closed",
+        "at": 1790795854721,
+        "code": 4401
+      },
+      {
+        "type": "connected",
+        "at": 1790795863337
+      },
+      {
+        "type": "closed",
+        "at": 1790795863340,
+        "code": 1001
+      },
+      {
+        "type": "connected",
+        "at": 1790795863350
+      },
+      {
+        "type": "auth-received",
+        "at": 1790795863350,
+        "sinceSeq": 0
+      },
+      {
+        "type": "auth",
+        "at": 1790795863352
+      },
+      {
+        "type": "scope_ready",
+        "at": 1790795863354
+      },
+      {
+        "type": "account_status_changed",
+        "at": 1790795863453,
+        "seq": 1
+      },
+      {
+        "type": "account_status_changed",
+        "at": 1790795863453,
+        "seq": 2
+      },
+      {
+        "type": "account_status_changed",
+        "at": 1790795863453,
+        "seq": 3
+      },
+      {
+        "type": "account_status_changed",
+        "at": 1790795863453,
+        "seq": 4
+      },
+      {
+        "type": "group_changed",
+        "at": 1790795863453,
+        "seq": 5
+      },
+      {
+        "type": "job_changed",
+        "at": 1790795863453,
+        "seq": 6
+      },
+      {
+        "type": "group_changed",
+        "at": 1790795863453,
+        "seq": 7
+      },
+      {
+        "type": "group_changed",
+        "at": 1790795863453,
+        "seq": 8
+      },
+      {
+        "type": "group_changed",
+        "at": 1790795863453,
+        "seq": 9
+      },
+      {
+        "type": "group_changed",
+        "at": 1790795863453,
+        "seq": 10
+      },
+      {
+        "type": "job_changed",
+        "at": 1790795863453,
+        "seq": 11
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 12
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 13
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 14
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 15
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 16
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 17
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 18
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 19
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 20
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 21
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 22
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 23
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 24
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 25
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 26
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 27
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 28
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 29
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 30
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 31
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 32
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 33
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 34
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 35
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 36
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 37
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 38
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 39
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 40
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 41
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 42
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 43
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 44
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 45
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 46
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 47
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 48
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 49
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 50
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 51
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 52
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 53
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 54
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 55
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 56
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 57
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 58
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 59
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 60
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 61
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 62
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 63
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 64
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 65
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 66
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 67
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 68
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 69
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 70
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 71
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 72
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 73
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 74
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 75
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 76
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 77
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 78
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 79
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 80
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 81
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 82
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 83
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 84
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 85
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 86
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 87
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 88
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 89
+      },
+      {
+        "type": "message",
+        "at": 1790795863453,
+        "seq": 90
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 91
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 92
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 93
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 94
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 95
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 96
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 97
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 98
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 99
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 100
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 101
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 102
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 103
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 104
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 105
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 106
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 107
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 108
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 109
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 110
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 111
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 112
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 113
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 114
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 115
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 116
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 117
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 118
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 119
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 120
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 121
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 122
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 123
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 124
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 125
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 126
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 127
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 128
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 129
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 130
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 131
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 132
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 133
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 134
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 135
+      },
+      {
+        "type": "message",
+        "at": 1790795863454,
+        "seq": 136
+      },
+      {
+        "type": "closed",
+        "at": 1790796173665,
+        "code": 1001
+      }
+    ]
+  },
+  "screenshots": [
+    "session-boundary-viewer-before-reload.jpg",
+    "session-boundary-cookie-before.jpg"
+  ],
+  "cleanup": {
+    "pid": 92785,
+    "dbName": "core_console_qa_682aba663085407ca2fb7601d275db3a",
+    "sourceHead": "d270057b3e23161ab4df536fb48b61453006e58a",
+    "status": "stopped",
+    "startedAt": "2026-09-30T19:16:58.343Z",
+    "url": "http://127.0.0.1:63960",
+    "serverURL": "http://127.0.0.1:63953",
+    "gatewayURL": "http://127.0.0.1:63948",
+    "agentURL": "http://127.0.0.1:63949",
+    "temporaryDirectory": "/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-core-console-qa-EZYTgp",
+    "groupId": "835c3de1-ba8b-4ebe-803a-82d016e77fc3",
+    "initialMessages": 125,
+    "controls": [
+      "control",
+      "reset-metrics",
+      "expire-access",
+      "publish",
+      "group-setting",
+      "sender",
+      "agent-scenario"
+    ],
+    "stoppedAt": "2026-09-30T19:23:47.009Z",
+    "cleanupErrors": []
+  }
+}
