@@ -68,3 +68,7 @@ WS 异常后约400ms开始重连；凭据被拒绝时先共享续期。快照同
 上一轮main统一演示于2026-09-30 19:57:51从9befc8a启动（产品源与f52faec一致）。开发者在新复验群实际完成登录、异步建群及角色、手动sent、Agent三步及audit pass、缺变量预检阻断/来源展开/两步sent和viewer只读；原Chrome账号页刷新后仍登录且4账号在线。见[运行证据](evidence/demo-verification.json)。用户完整人工验收尚未完成；已反馈的账号与一次建群观察单独留存，正常流程检查不替代完整Playwright扩展。
 
 本批群资料前端新增7项检查，前端共20项通过；当次main于20:57:22切换7efdbf3（产品源2d67500），该运行已由22:18:35的群目录版本替换，见[运行记录](evidence/group-metadata-rollout.json)。用户对单条手动消息刷新保留、无重复及发送者的确认见UO-004，不扩展为完整消息或新资料功能验收。
+
+## 群资料冲突处理（CR-013）
+
+编辑表单使用打开时资料快照，仅给实际修改字段附加expected原值；轮询/WS不修改该基线。409时保留提交字段的raw草稿并展示全部未保存字段，未编辑字段同步服务器快照，明确再次确认才发下一请求；同值可无PATCH完成。冲突catch继续抛给表单guard，避免被误判为提交完成；所有迟到结果先判断isCurrent，卸载后不污染新表单。协议、兼容及实测范围见[专项](group-profile-conflict-review.md)与[GC01–GC06](acceptance.md#group-profile-conflict-acceptance)，本次没有扩展序列表单或全站持久草稿。

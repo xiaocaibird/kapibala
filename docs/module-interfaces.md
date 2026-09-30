@@ -24,3 +24,9 @@ MessagingService.enqueueSend(input,tx?) 返回公开 Message（包含稳定 id�
 共享`GroupDirectoryItem`及`GroupDirectoryPage`已由`c4831e0`定义：新 `GET /api/group-directory?pageSize&order&q&cursor` 返回 `{items,nextCursor}`。`pageSize`为1–50整数、默认20，`order`为asc/desc、默认desc；q首尾trim、内部空白保留、最多500并拒NUL，按名称/简介/两个ID不敏感字面包含搜索。原 `GET /api/groups` 数组及详情/写接口不变。
 
 目录摘要提供成员数及活动run ID，不返回完整成员数组；服务端按created_at方向、id始终ASC，用UTC六位微秒边界续页。cursor v1严格校验字段和值，绑定保留原大小写的trim后q、order、pageSize；每次请求仍鉴权，编码不是安全签名。正常活数据分页不是消息快照分页，不提供total或随机跳页。接口及客户端刷新/过期规则以[批准方案](group-directory-profile-proposal.md#2-目录接口与查询语义)为准；f7045d0实现已由真实PG相关场景验证，前端3486a11的控制器及独立浏览器证据见[GD01–GD12](acceptance.md#group-directory-acceptance)；未验细项保留。22:18:35已从main 9bc34fd启动schema6演示，实际保留与只读冒烟见[运行记录](evidence/group-directory-rollout.json)；用户验收仍待进行。
+
+## 群资料条件更新（CR-013）
+
+`PATCH /api/groups/:id`新增可选`expected: { name?: string|null, description?: string|null }`。提供时必须非空且键与本次提交的资料字段完全对应，原值不归一化；事务内使用字段条件UPDATE，任一不符返回409 `GROUP_PROFILE_CONFLICT`，错误业务字段为`current:{name,description}`及`conflictingFields`。整请求无资料/开关写入、无事件及Agent取消副作用，重新确认仍带条件。
+
+不带expected的旧调用继续原有语义，单独开关请求不要求资料条件。输入长度、清空方式、权限及原始创建/API约定保留，无新迁移；完整兼容限制见[字段并发保护](group-profile-conflict-review.md)。

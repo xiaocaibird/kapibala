@@ -15,6 +15,7 @@
 | 查看已批准实施的群目录排序、搜索、分页与表单保护 | [群列表与资料完善方案](group-directory-profile-proposal.md)；[验证范围与待验项GD01–GD12](acceptance.md#group-directory-acceptance) |
 | 核对PI-01账号操作及群管理员文案的实际范围与验收 | [账号操作与群内角色文案](account-operation-copy.md) |
 | 核对PI-02群状态与Agent开关筛选的范围、兼容及验收 | [群目录筛选记录](group-directory-filter-review.md) |
+| 核对PI-03第三项群资料并发保护的条件、旧调用边界和验收 | [字段并发保护](group-profile-conflict-review.md)；[GC01–GC06](acceptance.md#group-profile-conflict-acceptance) |
 | 区分用户已确认决定与暂定技术选择 | [决策与变更记录](decisions.md) |
 | 理解后端及控制台的接口依赖 | [模块协作接口](module-interfaces.md) |
 | 理解状态、发送、群任务和消息恢复 | [网关设计](gateway-design.md) |
@@ -28,27 +29,27 @@
 <a id="代码与命令执行位置"></a>
 ## 当前演示与代码位置
 
-当前演示已于**2026-09-30 23:19:29（北京时间）**从main的`e1c890c`统一启动模拟器/API/Vite，schemaVersion为6，控制台HTTP200，无新增迁移。父进程69990、模拟69992、API69993、Vite69994；入口[本地控制台](http://127.0.0.1:5173)，管理员`admin/admin`，只读账号`viewer/viewer`。启动源码、产品树及进程以[提醒运行证据](evidence/page-attention-rollout.json)和main `.runtime/runtime-manifest.json`为准，文档提交不会自动重启服务。
+当前演示已于 **2026-10-01 00:02:35（北京时间）** 从main产品提交 `7e83191` 统一启动模拟器/API/Vite，schemaVersion仍为6，没有新迁移。入口：[本地控制台](http://127.0.0.1:5173)，管理员`admin/admin`，只读账号`viewer/viewer`。父进程21643、模拟21646、API21647、Vite21648；脱离启动shell运行（PPID1），未设置开机自启。源码、进程和运行检查以main `.runtime/runtime-manifest.json`与[本次运行证据](evidence/group-profile-conflict-rollout.json)为准；后续文档提交不自动重启服务。
 
-当前版本包含既有目录、资料和筛选能力，以及已批准的当前页更新提醒。实现方在产品源码`ee2a0d9`完成构建/双方TS、原文SHA、完整234项登记/231通过/3既有计时跳过、24项浏览器检查且pageerror为0；集成候选`e1c890c`的apps/packages/db/tests与该测试源相同。统一集成方只读核对证据及两个具名验证库已删除，没有冒称重新运行这些动态检查。范围及限制见[提醒实施记录](page-update-notification-implementation.md)，[PA01–PA08](acceptance.md#page-attention-acceptance)仍为用户待验。
+本次增加PI-03获准的群资料同字段冲突保护：当前表单只为本次修改字段携带原值条件；冲突整次不写入，保留草稿、展示服务器快照，明确重新确认后再次比较。不同字段编辑可共存；无expected旧调用方仍按最后写入生效。仅第三项获准，序列表单及PI-03其余建议不在本批。PI-01文案、PI-02目录完善和本项均已交付待人工复验；PI-04–23暂缓，提醒维持已交付范围，下一步按D029优先验收原始核心能力及处理发现的问题。
 
-22:47:25的b6d7743筛选版本及22:18:35的9bc34fd API/后续028a2e8、f1257c1前端均为历史，分别见[筛选运行记录](evidence/group-directory-filters-rollout.json)、[分页运行记录](evidence/group-directory-rollout.json)和[文案记录](account-operation-copy.md)。本次main由78d7f55 ff-only到e1c890c后统一重启，既有证据保持各自版本与场景范围。
+`7e83191`通过构建/前后端TS/原文SHA、定向 **138/138**（前端92、5个PG文件46；0失败/跳过）和16项双IAB观察。测试覆盖原值条件、真实行锁并发、整请求原子性、草稿/二次确认、空值、503、关闭/迟到和只读权限；详情见[专项](group-profile-conflict-review.md)、[结构化验证](evidence/group-profile-conflict-verification.json)。本批未重跑全部后端或长计时套件，不扩大历史验证范围；用户仍待验。
+
+切换前四类在途任务均为0，67613字节PG归档通过archive-list核验，备份位于main `.runtime/backups/2026-10-01-before-group-profile-conflict`。重启后、viewer只读冒烟前，18表行数/哈希和2个模拟器文件完全一致，4群/15消息/6账号保留；未运行迁移/seed/reset。独立IAB viewer只读核对4群和资料页无编辑入口后关闭，未做业务写入或操作用户Chrome；登录正常生成认证记录。备份可读不等于灾难恢复演练，持久数据保留也不承诺浏览器未提交输入保留。
 
 | 用途 | 本地路径 | 版本与执行边界 |
 |---|---|---|
-| main及当前演示 | `/Users/zcm/Desktop/kapibala` | 当前e1c890c统一运行，验证产品源ee2a0d9；默认端口只从此目录启动 |
-| 提醒集成与文档 | `/Users/zcm/.codex/worktrees/42fe/kapibala` | 当前`agent/page-attention-release`，候选e1c890c已统一交付；不在此启动第二套默认端口 |
-| 历史群资料验证 | `/Users/zcm/.codex/worktrees/platform-gateway/kapibala` | 当时群资料集成记录保留；当前是否复用以对应工作树实际状态为准，不视为默认运行目录 |
+| main及当前演示 | `/Users/zcm/Desktop/kapibala` | 统一运行产品源7e83191；默认端口只从此目录启动 |
+| 本批集成与证据 | `/Users/zcm/.codex/worktrees/42fe/kapibala` | `agent/group-profile-conflict-release`；验证使用独立库/随机端口，资源已清理 |
+| 本批API与前端实现 | `group-directory-api`、`group-directory-web`托管工作树 | 原提交6834dd9、aa28ee9分别集成为9c81c96、7e83191；不是默认服务目录 |
 
-本轮停服前四类在途任务均为0；备份在main `.runtime/backups/2026-09-30-before-page-attention`，67260字节PG归档已通过archive-list检查。重启后、viewer冒烟前的18张表（含schema及auth）行数/哈希均与停服前一致，4个群和两个模拟器文件均保留；这是本次切换结果，不沿用上一筛选批次auth_tokens变化的结论。新独立IAB viewer默认4群，Agent关闭筛选1群、重置回4群，无创建入口；初始标题“群组工作台 · Kapibala”安静，未做业务写入或操作用户Chrome。[演示截图](evidence/page-attention-main.png)与运行证据记录具体范围，备份可读不等于完整灾难恢复演练。
+历史版本保持各自证据，不作为当前运行状态：
 
-历史筛选批次备份为66594字节，18表中17表哈希相同、auth_tokens正常生命周期变化另记[筛选运行记录](evidence/group-directory-filters-rollout.json)；分页批次65327字节备份及006重复迁移留在[分页运行记录](evidence/group-directory-rollout.json)。历史验证不改写为本次结果。
+- 提醒批次23:19:29的`e1c890c`（验证产品源`ee2a0d9`）见[提醒实施](page-update-notification-implementation.md)和[运行记录](evidence/page-attention-rollout.json)；234登记/231通过/3既有计时跳过、24项浏览器属于该批。23:35:20曾原样恢复至文档头`ef36195`、产品不变，后由本次替换。
+- 筛选22:47:25的`b6d7743`见[筛选记录](group-directory-filter-review.md)；目录22:18:35的`9bc34fd`及后续纯前端`028a2e8`、文案`f1257c1`分别见[分页运行](evidence/group-directory-rollout.json)和[文案记录](account-operation-copy.md)。
+- 群资料20:57:22的`7efdbf3`/schema5及基础19:57:51的`9befc8a`/schema4见[资料运行](evidence/group-metadata-rollout.json)、[基础运行](evidence/demo-verification.json)。各批备份大小、迁移和认证变化不得混用。
 
-所有`apps/`、`packages/`、`db/`、`scripts/`、`tests/`及根README路径相对完整仓库。执行命令前核对`git branch --show-current`、`git rev-parse HEAD`及运行manifest；安装和冷启动见[项目README](../README.md)，只有服务未运行时才启动，避免不同工作树争用默认端口。
-
-20:57:22的7efdbf3/schema5群资料版本及19:57:51的9befc8a/schema4均已成为历史，分别见[群资料运行证据](evidence/group-metadata-rollout.json)、[基础运行证据](evidence/demo-verification.json)。既有业务与用户验收记录保留，不将后续数据变化追溯为当时计数。
-
-提醒专项已通过独立开发检查并于23:19:29统一交付，见[实施与证据](page-update-notification-implementation.md)；用户验收待进行，不倒写为上一筛选批次已交付。PI-01仅文案已在独立f1257c1完成并启用，证据见[文案验收](account-operation-copy.md)；PI-02状态/Agent开关筛选已按CR-012独立集成，b6d7743构建含双方TS、定向65/65及列明隔离浏览器场景通过，演示已启用，见[专项记录](group-directory-filter-review.md)；不并入分页或PI-01的历史已测范围。其他未采纳产品/架构建议仍按各自记录评审。
+所有代码与命令路径均相对完整仓库。执行前核对当前分支、HEAD及运行manifest；安装和冷启动见[项目README](../README.md)，仅在服务未运行时启动，避免不同工作树争用默认端口。
 
 ## 来源与证据边界
 

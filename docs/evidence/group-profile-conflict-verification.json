@@ -1,0 +1,825 @@
+{
+  "recordedAt": "2026-09-30T16:00:48.765Z",
+  "sourceCommit": "7e83191fdbbc905cf975b28f101d5fe5d5128662",
+  "scope": "PI-03第三项；兼容条件请求，非整个PI-03；不是用户验收",
+  "build": {
+    "command": "npm run build && npm run verify:original",
+    "passed": true,
+    "typechecks": "server and web",
+    "originalSHA256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+    "log": ".runtime/group-profile-conflict-build.log"
+  },
+  "tests": {
+    "command": "DATABASE_URL=postgres://kapibala:kapibala@localhost:55432/postgres node --import tsx --test tests/integration/group-profile-conflict.test.ts tests/integration/group-metadata.test.ts tests/integration/group-directory.test.ts tests/integration/page-attention-events.test.ts tests/integration/transaction-events.test.ts apps/web/tests/*.test.ts",
+    "registered": 138,
+    "passed": 138,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 3158.832625,
+    "fullSuiteRerun": false,
+    "log": ".runtime/group-profile-conflict-tests.log"
+  },
+  "browser": {
+    "tool": "CUA hidden IAB, two administrator tabs; final viewer sign-in",
+    "fixture": {
+      "database": "group_profile_conflict_qa_7f023fd333a54fcfb8ce09f1599df669",
+      "url": "http://127.0.0.1:50260",
+      "startedAt": "2026-09-30T15:51:38.654Z",
+      "stoppedAt": "2026-09-30T15:59:19.645Z",
+      "cleanupErrors": []
+    },
+    "scenarios": [
+      {
+        "id": "GC01a",
+        "status": "passed",
+        "observation": "打开快照在另一标签成功保存并收到推送后保持；同名称提交409且raw草稿保留。"
+      },
+      {
+        "id": "GC01b",
+        "status": "passed",
+        "observation": "明确确认前他人再次改名，第二次仍409；第三次明确确认成功。"
+      },
+      {
+        "id": "GC02",
+        "status": "passed",
+        "observation": "同一旧快照分别修改名称和简介，两者保存并保留。"
+      },
+      {
+        "id": "GC03",
+        "status": "passed",
+        "observation": "多字段请求名称冲突，数据库简介仍null，界面展示两个字段均未保存。"
+      },
+      {
+        "id": "GC04a",
+        "status": "passed",
+        "observation": "空白简介冲突保留raw空白，明确确认清空为null。"
+      },
+      {
+        "id": "GC04b",
+        "status": "passed",
+        "observation": "旧群name和description为null，只改简介时只发送expected.description=null，名称仍null。"
+      },
+      {
+        "id": "GC04c",
+        "status": "passed",
+        "observation": "viewer读取正常且没有编辑入口；写403由PG测试覆盖。"
+      },
+      {
+        "id": "GC05a",
+        "status": "passed",
+        "observation": "首次冲突采用服务器独立简介；后续两次名称确认只发name和expected.name，不回滚简介。"
+      },
+      {
+        "id": "GC05b",
+        "status": "passed",
+        "observation": "冲突后撤回名称改动，下一请求只提交description和expected.description=null。"
+      },
+      {
+        "id": "GC05c",
+        "status": "passed",
+        "observation": "目标相同显示采用最新内容；点击关闭，PATCH计数15→15。"
+      },
+      {
+        "id": "GC06a",
+        "status": "passed",
+        "observation": "取消触发未保存确认，继续编辑保留；后续放弃关闭。"
+      },
+      {
+        "id": "GC06b",
+        "status": "passed",
+        "observation": "隔离503留稿，手动重试成功。"
+      },
+      {
+        "id": "GC06c",
+        "status": "passed",
+        "observation": "held request期间Escape及X不能关闭，取消和输入禁用。"
+      },
+      {
+        "id": "GC06d",
+        "status": "passed",
+        "observation": "旧冲突请求等待期间切群打开新草稿，释放后新草稿未被修改或关闭，旧库值未被覆盖。"
+      },
+      {
+        "id": "GC06e",
+        "status": "passed",
+        "observation": "旧成功请求等待期间切群打开新草稿，释放后旧群写入成功，新草稿仍保持。"
+      },
+      {
+        "id": "GC06f",
+        "status": "passed",
+        "observation": "500字符简介对照可滚动至操作区，按钮bottom657.21<viewport720，确认成功且DB长度500。"
+      }
+    ],
+    "logs": {
+      "a": [],
+      "b": []
+    },
+    "screenshots": [
+      "group-profile-conflict.png",
+      "group-profile-conflict-long.png"
+    ],
+    "requestAudit": {
+      "first-conflicts": {
+        "counters": {
+          "directory": 18,
+          "create": 0,
+          "patch": 5,
+          "heldWrites": 0
+        },
+        "groups": [
+          {
+            "id": "0bf8300f-4f03-4b9b-8c93-f5a31d03a396",
+            "name": null,
+            "description": null,
+            "agent_enabled": false,
+            "auto_kick_enabled": false
+          },
+          {
+            "id": "9695e782-b770-4c56-bc1d-409c3169f053",
+            "name": "保留的用户草稿",
+            "description": "服务器独立更新的简介",
+            "agent_enabled": true,
+            "auto_kick_enabled": false
+          },
+          {
+            "id": "5dbe73c5-09e4-4163-9c0c-c873d26c13a9",
+            "name": "并发验收 03",
+            "description": "初始简介 3",
+            "agent_enabled": false,
+            "auto_kick_enabled": false
+          }
+        ],
+        "eventCount": 3,
+        "lastWrite": {
+          "method": "PATCH",
+          "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+          "body": {
+            "name": "保留的用户草稿",
+            "expected": {
+              "name": "服务器名称 A2"
+            }
+          }
+        }
+      },
+      "multi-field": {
+        "counters": {
+          "directory": 18,
+          "create": 0,
+          "patch": 12,
+          "heldWrites": 0
+        },
+        "groups": [
+          {
+            "id": "0bf8300f-4f03-4b9b-8c93-f5a31d03a396",
+            "name": null,
+            "description": null,
+            "agent_enabled": false,
+            "auto_kick_enabled": false
+          },
+          {
+            "id": "9695e782-b770-4c56-bc1d-409c3169f053",
+            "name": "多字段服务器名称",
+            "description": null,
+            "agent_enabled": true,
+            "auto_kick_enabled": false
+          },
+          {
+            "id": "5dbe73c5-09e4-4163-9c0c-c873d26c13a9",
+            "name": "并发验收 03",
+            "description": "初始简介 3",
+            "agent_enabled": false,
+            "auto_kick_enabled": false
+          }
+        ],
+        "eventCount": 8,
+        "lastWrite": {
+          "method": "PATCH",
+          "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+          "body": {
+            "name": "多字段本地名称",
+            "description": "多字段本地简介",
+            "expected": {
+              "name": "独立修改名称",
+              "description": null
+            }
+          }
+        }
+      },
+      "adopt-before": {
+        "counters": {
+          "directory": 18,
+          "create": 0,
+          "patch": 15,
+          "heldWrites": 0
+        },
+        "groups": [
+          {
+            "id": "0bf8300f-4f03-4b9b-8c93-f5a31d03a396",
+            "name": null,
+            "description": null,
+            "agent_enabled": false,
+            "auto_kick_enabled": false
+          },
+          {
+            "id": "9695e782-b770-4c56-bc1d-409c3169f053",
+            "name": "双方同一个目标",
+            "description": "多字段本地简介",
+            "agent_enabled": true,
+            "auto_kick_enabled": false
+          },
+          {
+            "id": "5dbe73c5-09e4-4163-9c0c-c873d26c13a9",
+            "name": "并发验收 03",
+            "description": "初始简介 3",
+            "agent_enabled": false,
+            "auto_kick_enabled": false
+          }
+        ],
+        "eventCount": 10,
+        "lastWrite": {
+          "method": "PATCH",
+          "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+          "body": {
+            "name": "双方同一个目标",
+            "expected": {
+              "name": "多字段服务器名称"
+            }
+          }
+        }
+      },
+      "adopt-after": {
+        "counters": {
+          "directory": 18,
+          "create": 0,
+          "patch": 15,
+          "heldWrites": 0
+        },
+        "groups": [
+          {
+            "id": "0bf8300f-4f03-4b9b-8c93-f5a31d03a396",
+            "name": null,
+            "description": null,
+            "agent_enabled": false,
+            "auto_kick_enabled": false
+          },
+          {
+            "id": "9695e782-b770-4c56-bc1d-409c3169f053",
+            "name": "双方同一个目标",
+            "description": "多字段本地简介",
+            "agent_enabled": true,
+            "auto_kick_enabled": false
+          },
+          {
+            "id": "5dbe73c5-09e4-4163-9c0c-c873d26c13a9",
+            "name": "并发验收 03",
+            "description": "初始简介 3",
+            "agent_enabled": false,
+            "auto_kick_enabled": false
+          }
+        ],
+        "eventCount": 10,
+        "lastWrite": {
+          "method": "PATCH",
+          "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+          "body": {
+            "name": "双方同一个目标",
+            "expected": {
+              "name": "多字段服务器名称"
+            }
+          }
+        }
+      },
+      "late-conflict": {
+        "counters": {
+          "directory": 19,
+          "create": 0,
+          "patch": 19,
+          "heldWrites": 1
+        },
+        "groups": [
+          {
+            "id": "0bf8300f-4f03-4b9b-8c93-f5a31d03a396",
+            "name": null,
+            "description": null,
+            "agent_enabled": false,
+            "auto_kick_enabled": false
+          },
+          {
+            "id": "9695e782-b770-4c56-bc1d-409c3169f053",
+            "name": "迟到请求的服务器名称",
+            "description": "多字段本地简介",
+            "agent_enabled": true,
+            "auto_kick_enabled": false
+          },
+          {
+            "id": "5dbe73c5-09e4-4163-9c0c-c873d26c13a9",
+            "name": "并发验收 03",
+            "description": "初始简介 3",
+            "agent_enabled": false,
+            "auto_kick_enabled": false
+          }
+        ],
+        "eventCount": 12,
+        "lastWrite": {
+          "method": "PATCH",
+          "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+          "body": {
+            "name": "将被卸载的冲突草稿",
+            "expected": {
+              "name": "失败后保留草稿"
+            }
+          }
+        }
+      },
+      "late-success": {
+        "counters": {
+          "directory": 19,
+          "create": 0,
+          "patch": 20,
+          "heldWrites": 2
+        },
+        "groups": [
+          {
+            "id": "0bf8300f-4f03-4b9b-8c93-f5a31d03a396",
+            "name": null,
+            "description": null,
+            "agent_enabled": false,
+            "auto_kick_enabled": false
+          },
+          {
+            "id": "9695e782-b770-4c56-bc1d-409c3169f053",
+            "name": "迟到请求的服务器名称",
+            "description": "多字段本地简介",
+            "agent_enabled": true,
+            "auto_kick_enabled": false
+          },
+          {
+            "id": "5dbe73c5-09e4-4163-9c0c-c873d26c13a9",
+            "name": "迟到但已受理的成功写入",
+            "description": "初始简介 3",
+            "agent_enabled": false,
+            "auto_kick_enabled": false
+          }
+        ],
+        "eventCount": 13,
+        "lastWrite": {
+          "method": "PATCH",
+          "url": "/api/groups/5dbe73c5-09e4-4163-9c0c-c873d26c13a9",
+          "body": {
+            "name": "迟到但已受理的成功写入",
+            "expected": {
+              "name": "并发验收 03"
+            }
+          }
+        }
+      },
+      "final-state": {
+        "controls": {
+          "holdWrites": false,
+          "failPatch": false,
+          "failNextPage": false,
+          "failFirstPage": false
+        },
+        "counters": {
+          "directory": 19,
+          "create": 0,
+          "patch": 24,
+          "heldWrites": 2
+        },
+        "writes": [
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "name": "服务器名称 A",
+              "description": "服务器独立更新的简介",
+              "expected": {
+                "name": "并发验收 02",
+                "description": "初始简介 2"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "name": "保留的用户草稿",
+              "expected": {
+                "name": "并发验收 02"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "name": "服务器名称 A2",
+              "expected": {
+                "name": "服务器名称 A"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "name": "保留的用户草稿",
+              "expected": {
+                "name": "服务器名称 A"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "name": "保留的用户草稿",
+              "expected": {
+                "name": "服务器名称 A2"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "name": "独立修改名称",
+              "expected": {
+                "name": "保留的用户草稿"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "description": "独立修改简介",
+              "expected": {
+                "description": "服务器独立更新的简介"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "description": "他人新增简介",
+              "expected": {
+                "description": "独立修改简介"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "description": "",
+              "expected": {
+                "description": "独立修改简介"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "description": "",
+              "expected": {
+                "description": "他人新增简介"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "name": "多字段服务器名称",
+              "expected": {
+                "name": "独立修改名称"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "name": "多字段本地名称",
+              "description": "多字段本地简介",
+              "expected": {
+                "name": "独立修改名称",
+                "description": null
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "description": "多字段本地简介",
+              "expected": {
+                "description": null
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "name": "双方同一个目标",
+              "expected": {
+                "name": "多字段服务器名称"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "name": "双方同一个目标",
+              "expected": {
+                "name": "多字段服务器名称"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "name": "失败后保留草稿",
+              "expected": {
+                "name": "双方同一个目标"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "name": "迟到请求的服务器名称",
+              "expected": {
+                "name": "失败后保留草稿"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "name": "将被卸载的冲突草稿",
+              "expected": {
+                "name": "失败后保留草稿"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/5dbe73c5-09e4-4163-9c0c-c873d26c13a9",
+            "body": {
+              "name": "迟到但已受理的成功写入",
+              "expected": {
+                "name": "并发验收 03"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "description": "服务器长简介前的新变化",
+              "expected": {
+                "description": "多字段本地简介"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "description": "长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长",
+              "expected": {
+                "description": "多字段本地简介"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/9695e782-b770-4c56-bc1d-409c3169f053",
+            "body": {
+              "description": "长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长",
+              "expected": {
+                "description": "服务器长简介前的新变化"
+              }
+            }
+          },
+          {
+            "method": "PATCH",
+            "url": "/api/groups/0bf8300f-4f03-4b9b-8c93-f5a31d03a396",
+            "body": {
+              "description": "旧群首次简介",
+              "expected": {
+                "description": null
+              }
+            }
+          }
+        ],
+        "groups": [
+          {
+            "id": "0bf8300f-4f03-4b9b-8c93-f5a31d03a396",
+            "name": null,
+            "description": "旧群首次简介",
+            "agent_enabled": false,
+            "auto_kick_enabled": false
+          },
+          {
+            "id": "9695e782-b770-4c56-bc1d-409c3169f053",
+            "name": "迟到请求的服务器名称",
+            "description": "长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长长",
+            "agent_enabled": true,
+            "auto_kick_enabled": false
+          },
+          {
+            "id": "5dbe73c5-09e4-4163-9c0c-c873d26c13a9",
+            "name": "迟到但已受理的成功写入",
+            "description": "初始简介 3",
+            "agent_enabled": false,
+            "auto_kick_enabled": false
+          }
+        ],
+        "events": [
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "9695e782-b770-4c56-bc1d-409c3169f053",
+              "changedFields": [
+                "name",
+                "description"
+              ]
+            }
+          },
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "9695e782-b770-4c56-bc1d-409c3169f053",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "9695e782-b770-4c56-bc1d-409c3169f053",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "9695e782-b770-4c56-bc1d-409c3169f053",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "9695e782-b770-4c56-bc1d-409c3169f053",
+              "changedFields": [
+                "description"
+              ]
+            }
+          },
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "9695e782-b770-4c56-bc1d-409c3169f053",
+              "changedFields": [
+                "description"
+              ]
+            }
+          },
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "9695e782-b770-4c56-bc1d-409c3169f053",
+              "changedFields": [
+                "description"
+              ]
+            }
+          },
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "9695e782-b770-4c56-bc1d-409c3169f053",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "9695e782-b770-4c56-bc1d-409c3169f053",
+              "changedFields": [
+                "description"
+              ]
+            }
+          },
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "9695e782-b770-4c56-bc1d-409c3169f053",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "9695e782-b770-4c56-bc1d-409c3169f053",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "9695e782-b770-4c56-bc1d-409c3169f053",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "5dbe73c5-09e4-4163-9c0c-c873d26c13a9",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "9695e782-b770-4c56-bc1d-409c3169f053",
+              "changedFields": [
+                "description"
+              ]
+            }
+          },
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "9695e782-b770-4c56-bc1d-409c3169f053",
+              "changedFields": [
+                "description"
+              ]
+            }
+          },
+          {
+            "type": "group_changed",
+            "payload": {
+              "groupId": "0bf8300f-4f03-4b9b-8c93-f5a31d03a396",
+              "changedFields": [
+                "description"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  },
+  "cleanup": {
+    "namedDatabases": [
+      "kapibala_test_57791703814f4365b4ddbeabe33167b6",
+      "kapibala_test_bd1cf83e2c294e78964a10de60cecb38",
+      "kapibala_test_77935b21591a419dbe914afcc055e5a8",
+      "kapibala_test_490efe757c4244a58e689fabaedc724c",
+      "kapibala_test_6e081a95cbb844e584a4fdec8484c107",
+      "kapibala_test_490fc1d123a7478ba1edabbb1e18b4a5",
+      "kapibala_test_27b03a6bc1b94d42a4819a650f9f6280",
+      "group_profile_conflict_qa_7f023fd333a54fcfb8ce09f1599df669"
+    ],
+    "remaining": [],
+    "ownBrowserTabsClosed": true,
+    "userChromeTouched": false,
+    "demoDatabaseTested": false
+  },
+  "limitations": [
+    "旧请求不带expected仍可能覆盖；只保证条件请求",
+    "原值CAS不检测A→B→A历史",
+    "本次为定向回归，未重跑全部长计时套件",
+    "未建立全站导航拦截或持久草稿；离页不取消已受理请求",
+    "用户验收待进行"
+  ],
+  "logHashes": {
+    "group-profile-conflict-build.log": "ea2ae1c9a16810a1e75f12d3809aa7fe0aedc6b748421b541bc59885e7bbe9ff",
+    "group-profile-conflict-tests.log": "9f36c614b54eb5b1a1c6f9ec475b29f2672c2682c4bde1ec9be9d4ee327b4a0f"
+  }
+}
