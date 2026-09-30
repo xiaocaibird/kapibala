@@ -47,59 +47,51 @@ export async function createApp(options: AppOptions = {}) {
   app.setErrorHandler((error, request, reply) => {
     const err = error as Error;
     if (err instanceof AppError)
-      return reply
-        .code(err.status)
-        .send({
-          error: {
-            code:
-              err.status === 401
-                ? "UNAUTHORIZED"
-                : err.status === 403
-                  ? "FORBIDDEN"
-                  : err.code,
-            message: err.message,
-            requestId: request.id,
-            ...err.details,
-          },
-        });
+      return reply.code(err.status).send({
+        error: {
+          code:
+            err.status === 401
+              ? "UNAUTHORIZED"
+              : err.status === 403
+                ? "FORBIDDEN"
+                : err.code,
+          message: err.message,
+          requestId: request.id,
+          ...err.details,
+        },
+      });
     if (
       err instanceof ZodError ||
       ("statusCode" in err && err.statusCode === 400)
     )
-      return reply
-        .code(400)
-        .send({
-          error: {
-            code: "VALIDATION_ERROR",
-            message: "请求参数不合法",
-            requestId: request.id,
-            ...(err instanceof ZodError ? { issues: err.issues } : {}),
-          },
-        });
-    app.log.error({ err, requestId: request.id }, "Request failed");
-    return reply
-      .code(err instanceof RemoteError ? 502 : 500)
-      .send({
+      return reply.code(400).send({
         error: {
-          code: err instanceof RemoteError ? err.code : "INTERNAL_ERROR",
-          message:
-            err instanceof RemoteError
-              ? "外部服务暂时不可用"
-              : "请求未完成，请查看关联日志",
+          code: "VALIDATION_ERROR",
+          message: "请求参数不合法",
           requestId: request.id,
+          ...(err instanceof ZodError ? { issues: err.issues } : {}),
         },
       });
+    app.log.error({ err, requestId: request.id }, "Request failed");
+    return reply.code(err instanceof RemoteError ? 502 : 500).send({
+      error: {
+        code: err instanceof RemoteError ? err.code : "INTERNAL_ERROR",
+        message:
+          err instanceof RemoteError
+            ? "外部服务暂时不可用"
+            : "请求未完成，请查看关联日志",
+        requestId: request.id,
+      },
+    });
   });
   app.setNotFoundHandler((request, reply) =>
-    reply
-      .code(404)
-      .send({
-        error: {
-          code: "NOT_FOUND",
-          message: "接口不存在",
-          requestId: request.id,
-        },
-      }),
+    reply.code(404).send({
+      error: {
+        code: "NOT_FOUND",
+        message: "接口不存在",
+        requestId: request.id,
+      },
+    }),
   );
   await registerAuth(app, db);
   await registerRealtime(app, db);
@@ -115,6 +107,7 @@ export async function createApp(options: AppOptions = {}) {
   const modules = options.modules?.(ctx) ?? [];
   for (const module of modules) await module.register(app);
   const timers: NodeJS.Timeout[] = [];
+  const ticks = new Set<Promise<void>>();
   if (options.background !== false)
     for (const module of modules) {
       await module.recover?.();
@@ -123,17 +116,21 @@ export async function createApp(options: AppOptions = {}) {
         setInterval(() => {
           if (busy) return;
           busy = true;
-          void module
+          const tick = module
             .tick()
             .catch((err) => app.log.error({ err }, "Module tick failed"))
             .finally(() => {
               busy = false;
+              ticks.delete(tick);
             });
+          ticks.add(tick);
         }, 100),
       );
     }
   app.addHook("onClose", async () => {
     timers.forEach(clearInterval);
+    // Do not let an in-flight scheduler reopen resources after module shutdown.
+    await Promise.allSettled(ticks);
     for (const module of modules) await module.close?.();
     if (!options.db) await db.close();
   });

@@ -9,6 +9,17 @@ export class Database implements Queryable {
   readonly pool: pg.Pool;
   constructor(url: string) {
     this.pool = new pg.Pool({ connectionString: url, max: 20 });
+    // Idle sockets can fail during a database restart. Active operations reject normally;
+    // handling the pool event prevents a disconnected idle socket from crashing the process.
+    this.pool.on("error", (error: Error) => {
+      console.error(
+        JSON.stringify({
+          component: "postgres",
+          event: "idle_connection_error",
+          message: error.message,
+        }),
+      );
+    });
   }
   async query<R extends QueryResultRow = QueryResultRow>(
     sql: string,
