@@ -115,11 +115,6 @@ export class Messages implements MessagingService {
       id: row.id,
       isOwn: true,
     });
-    // created_at uses the transaction start time; a committed event sequence is the durable FIFO key.
-    await tx.query(
-      "UPDATE messages SET metadata=metadata || jsonb_build_object('queueOrder',currval(pg_get_serial_sequence('events','seq'))) WHERE id=$1",
-      [row.id],
-    );
     return messageDto(row);
   }
   async getMessage(clientMsgId: string): Promise<Message | null> {
@@ -136,7 +131,9 @@ export class Messages implements MessagingService {
       await this.recoverAccount(accountId);
       const candidates = (
         await this.ctx.db.query<MessageRow>(
-          "SELECT * FROM messages WHERE account_id=$1 AND delivery_status IN ('queued','unknown','accepted') ORDER BY (metadata->>'queueOrder')::bigint NULLS FIRST,created_at,id",
+          // Events are inserted at transaction completion. Their sequence preserves
+          // commit order even when an older transaction enqueues a message later.
+          "SELECT m.* FROM messages m LEFT JOIN LATERAL (SELECT seq FROM events WHERE type='message' AND payload->>'id'=m.id ORDER BY seq LIMIT 1) queued ON true WHERE m.account_id=$1 AND m.delivery_status IN ('queued','unknown','accepted') ORDER BY COALESCE(queued.seq,(m.metadata->>'queueOrder')::bigint) NULLS FIRST,m.created_at,m.id",
           [accountId],
         )
       ).rows;
@@ -164,6 +161,28 @@ export class Messages implements MessagingService {
         }
       }
     });
+  }
+  private async persistRemoteResult<T>(
+    apply: (tx: Queryable) => Promise<T>,
+  ): Promise<T> {
+    // Only local SQL is retried here. The remote request has already completed.
+    for (let attempt = 1; ; attempt++) {
+      try {
+        return await this.ctx.db.transaction(apply);
+      } catch (error) {
+        const retryable =
+          typeof error === "object" &&
+          error !== null &&
+          "code" in error &&
+          ["40P01", "40001"].includes(String(error.code));
+        if (!retryable || attempt >= 3) throw error;
+        this.ctx.log.warn(
+          { err: error, attempt },
+          "Retrying local persistence of a received gateway result",
+        );
+        await new Promise((resolve) => setTimeout(resolve, attempt * 25));
+      }
+    }
   }
   private async dispatch(row: MessageRow): Promise<boolean> {
     const canDispatch = await this.ctx.db.transaction(async (tx) => {
@@ -226,7 +245,7 @@ export class Messages implements MessagingService {
           },
         ),
       );
-      await this.ctx.db.transaction(async (tx) => {
+      await this.persistRemoteResult(async (tx) => {
         const updated = await tx.query(
           "UPDATE messages SET delivery_status='accepted',dispatch_state='waiting_event',timeout_at=null,updated_at=now() WHERE id=$1 AND delivery_status IN ('queued','unknown') RETURNING id",
           [row.id],
@@ -242,7 +261,7 @@ export class Messages implements MessagingService {
       });
       return true;
     } catch (error) {
-      await this.ctx.db.transaction(async (tx) => {
+      await this.persistRemoteResult(async (tx) => {
         await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
           row.group_id,
         ]);

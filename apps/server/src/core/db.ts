@@ -33,6 +33,26 @@ export interface Queryable {
     values?: unknown[],
   ): Promise<QueryResult<R>>;
 }
+interface PendingEvent {
+  type: string;
+  payload: string;
+}
+const transactionEvents = new AsyncLocalStorage<{
+  tx: Queryable;
+  events: PendingEvent[];
+}>();
+async function persistEvents(
+  tx: Queryable,
+  events: PendingEvent[],
+): Promise<void> {
+  if (!events.length) return;
+  await tx.query("SELECT pg_advisory_xact_lock(913457)");
+  for (const event of events)
+    await tx.query("INSERT INTO events(type,payload) VALUES($1,$2)", [
+      event.type,
+      event.payload,
+    ]);
+}
 export class Database implements Queryable {
   readonly pool: pg.Pool;
   private activeLocks = 0;
@@ -75,7 +95,14 @@ export class Database implements Queryable {
       return await operationSignals.run(signal, async () => {
         signal.throwIfAborted();
         await tx.query("BEGIN");
-        const result = await fn(tx);
+        const events: PendingEvent[] = [];
+        const result = await transactionEvents.run({ tx, events }, () =>
+          fn(tx),
+        );
+        signal.throwIfAborted();
+        // Acquire the global commit-order lock only after every domain row update.
+        // No transaction may hold this lock and then wait for another domain row.
+        await persistEvents(tx, events);
         signal.throwIfAborted();
         await tx.query("COMMIT");
         return result;
@@ -163,10 +190,8 @@ export async function emit(
   type: string,
   payload: unknown,
 ): Promise<void> {
-  // The transaction-level lock makes committed sequence order agree with allocation order.
-  await tx.query("SELECT pg_advisory_xact_lock(913457)");
-  await tx.query("INSERT INTO events(type,payload) VALUES($1,$2)", [
-    type,
-    JSON.stringify(payload),
-  ]);
+  const event = { type, payload: JSON.stringify(payload) };
+  const pending = transactionEvents.getStore();
+  if (pending?.tx === tx) pending.events.push(event);
+  else await persistEvents(tx, [event]);
 }
