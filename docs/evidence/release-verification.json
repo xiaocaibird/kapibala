@@ -1,28 +1,33 @@
 {
-  "sourceCommit": "f52faecc5eb543e347aee3536d8a6f0fd8bc0975",
+  "sourceCommit": "82312b905016cc3cca577aca267d795250d5d3a4",
   "workspace": "/Users/zcm/.codex/worktrees/platform-gateway/kapibala",
-  "verifiedAt": "2026-09-30T11:51:43.606Z",
+  "verifiedAt": "2026-09-30T12:05:39.628Z",
   "node": "24.21.0",
   "npm": "12.1.0",
   "checks": [
     {
       "command": "npm run build",
-      "result": "passed"
+      "result": "passed",
+      "sourceCommit": "82312b905016cc3cca577aca267d795250d5d3a4"
     },
     {
       "command": "npm run verify:original",
       "result": "passed",
-      "sha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75"
+      "sha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+      "sourceCommit": "82312b905016cc3cca577aca267d795250d5d3a4"
     },
     {
       "command": "npm test",
-      "tests": 127,
-      "passed": 124,
+      "sourceCommit": "82312b905016cc3cca577aca267d795250d5d3a4",
+      "environment": "DATABASE_URL points to a disposable verification base; test fixtures use independent temporary databases or schemas",
+      "tests": 128,
+      "passed": 125,
       "skipped": 3,
       "failed": 0,
-      "durationMs": 111588.945542,
-      "log": ".runtime/release-final-verification.log",
-      "logSha256": "39da57598254e18946b064a1ef1a4af23548f88eb023179b1983a70a6ae23864"
+      "durationMs": 112205.850458,
+      "log": ".runtime/release-isolated-verification.log",
+      "logSha256": "ec3be83889b2833a1e7c4787a63142f674d3839f1a4d5015a0a46d32d6ca7201",
+      "temporaryBaseDatabaseRemoved": true
     },
     {
       "command": "AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern='^timing:' tests/integration/automation.test.ts",
@@ -37,12 +42,20 @@
         60032.122458
       ],
       "log": ".runtime/release-final-timing.log",
-      "logSha256": "00f906d6adfbb03179a6dce44e6545f51c3fcb7073f17e5891e8b7f663955132"
+      "logSha256": "00f906d6adfbb03179a6dce44e6545f51c3fcb7073f17e5891e8b7f663955132",
+      "sourceCommit": "f52faecc5eb543e347aee3536d8a6f0fd8bc0975"
     }
   ],
   "limits": [
     "Developer regression evidence is not user acceptance.",
     "C1 media, C2 real model, and C3 complete Playwright suite remain unimplemented and outside this phase.",
-    "Browser reconnect+503 evidence uses 32bd438; apps/web is unchanged at this source commit. Live demo provenance is recorded separately."
-  ]
+    "Application source is unchanged since f52faec; later commits add test isolation, deterministic regression evidence and documentation. Browser reconnect+503 evidence uses identical frontend source at 32bd438. Live demo verification is recorded in demo-verification.json."
+  ],
+  "verifiedApplicationSourceCommit": "f52faecc5eb543e347aee3536d8a6f0fd8bc0975",
+  "testIsolationCorrection": {
+    "commit": "9befc8a580eb5dc034ed5771d3f3dfc3e756eb76",
+    "affectedPreviousTest": "tests/integration/auth.test.ts",
+    "previousEffect": "The earlier default-database auth test applied migrations 003/004 and added its own test sessions to the demo database. It did not revoke pre-existing user sessions or delete business records. Existing records were retained.",
+    "currentBehavior": "auth, core-reliability and database tests create and clean their own disposable databases, including initialization-failure cleanup."
+  }
 }
