@@ -1,0 +1,646 @@
+{
+  "runId": "2026-09-30T22-48-45-258Z",
+  "sourceHead": "17b2d431f36fbd727af031e51b5bb2a6f41ad10e",
+  "webTree": "3482f253e2d198b9546eb85598cbcfa75ff4a602",
+  "referenceWebTree": "3482f253e2d198b9546eb85598cbcfa75ff4a602",
+  "scriptSha256": "daf51b9846ab3cb1ff0bb2775183fe003922992de0fa98dbf00012f8e0d317e2",
+  "mode": "production build; real API/UUID PG; background disabled; independent headless Chromium",
+  "excluded": [
+    "real OS IME",
+    "native browser privacy-policy SecurityError",
+    "remote gateway group creation",
+    "user acceptance"
+  ],
+  "results": [
+    {
+      "name": "create-backdrop-and-discard",
+      "observed": {
+        "createBackdrop": {
+          "click": {
+            "trusted": true,
+            "x": 5,
+            "y": 5,
+            "target": "DIALOG"
+          },
+          "dialogBox": {
+            "x": 480,
+            "y": 134.109375,
+            "width": 480,
+            "height": 831.765625
+          }
+        },
+        "createPromptBackdrop": {
+          "click": {
+            "trusted": true,
+            "x": 5,
+            "y": 5,
+            "target": "DIALOG"
+          },
+          "dialogBox": {
+            "x": 480,
+            "y": 449.203125,
+            "width": 480,
+            "height": 201.59375
+          }
+        },
+        "draftClearedOnReopen": true,
+        "postCount": 0
+      },
+      "screenshot": "docs/evidence/cr-browser-closeout-2026-09-30T22-48-45-258Z-create-backdrop-and-discard.png"
+    },
+    {
+      "name": "edit-backdrop-and-discard",
+      "observed": {
+        "editBackdrop": {
+          "click": {
+            "trusted": true,
+            "x": 5,
+            "y": 5,
+            "target": "DIALOG"
+          },
+          "dialogBox": {
+            "x": 480,
+            "y": 313.421875,
+            "width": 480,
+            "height": 473.15625
+          }
+        },
+        "editPromptBackdrop": {
+          "click": {
+            "trusted": true,
+            "x": 5,
+            "y": 5,
+            "target": "DIALOG"
+          },
+          "dialogBox": {
+            "x": 480,
+            "y": 449.203125,
+            "width": 480,
+            "height": 201.59375
+          }
+        },
+        "persistedNameUnchanged": true,
+        "patchCount": 0
+      },
+      "screenshot": "docs/evidence/cr-browser-closeout-2026-09-30T22-48-45-258Z-edit-backdrop-and-discard.png"
+    },
+    {
+      "name": "create-unmount-late-success",
+      "observed": {
+        "navigation": "real browser history back, then sidebar forward and new form mount",
+        "response": "success",
+        "originalJobId": "917668ff-46f3-4945-bb81-9ee51ae91d97",
+        "oldAcceptedJobSurvives": true,
+        "newDraftUnchanged": true,
+        "storageJob": null,
+        "jobGetCount": 0,
+        "postCount": 1
+      },
+      "screenshot": "docs/evidence/cr-browser-closeout-2026-09-30T22-48-45-258Z-create-unmount-late-success.png"
+    },
+    {
+      "name": "create-unmount-late-failure",
+      "observed": {
+        "navigation": "real browser history back, then sidebar forward and new form mount",
+        "response": "failure",
+        "oldAcceptedJobSurvives": false,
+        "newDraftUnchanged": true,
+        "storageJob": null,
+        "jobGetCount": 0,
+        "postCount": 1
+      },
+      "screenshot": "docs/evidence/cr-browser-closeout-2026-09-30T22-48-45-258Z-create-unmount-late-failure.png"
+    },
+    {
+      "name": "storage-get-security-error",
+      "observed": {
+        "injection": "key-scoped Storage.getItem SecurityError; real React catch path",
+        "faults": [
+          {
+            "operation": "getItem",
+            "name": "SecurityError",
+            "at": 116.39999999850988
+          }
+        ],
+        "workspaceAndCreateFormVisible": true
+      },
+      "screenshot": "docs/evidence/cr-browser-closeout-2026-09-30T22-48-45-258Z-storage-get-security-error.png"
+    },
+    {
+      "name": "storage-set-security-error",
+      "observed": {
+        "injection": "key-scoped Storage.setItem SecurityError",
+        "faults": [
+          {
+            "operation": "setItem",
+            "name": "SecurityError",
+            "at": 249.80000000447035
+          }
+        ],
+        "jobId": "24bd0c25-f071-4d85-9cec-80b2778a5665",
+        "acceptedJobVisible": true,
+        "postCount": 1
+      },
+      "screenshot": "docs/evidence/cr-browser-closeout-2026-09-30T22-48-45-258Z-storage-set-security-error.png"
+    },
+    {
+      "name": "storage-remove-security-error",
+      "observed": {
+        "injection": "key-scoped Storage.removeItem SecurityError",
+        "faults": [
+          {
+            "operation": "removeItem",
+            "name": "SecurityError",
+            "at": 295.8999999985099
+          }
+        ],
+        "jobId": "37c040bb-f055-417e-9747-41d3838b6e8c",
+        "hiddenInCurrentMount": true,
+        "hiddenScreenshot": "docs/evidence/cr-browser-closeout-2026-09-30T22-48-45-258Z-storage-remove-hidden.png",
+        "retainedStorageRestoresJobAfterReload": true,
+        "postCount": 1
+      },
+      "screenshot": "docs/evidence/cr-browser-closeout-2026-09-30T22-48-45-258Z-storage-remove-security-error.png"
+    },
+    {
+      "name": "storage-native-quota-exceeded",
+      "observed": {
+        "nativeBrowserQuota": {
+          "paddingCharacters": 5242864,
+          "lastError": "QuotaExceededError",
+          "targetError": {
+            "name": "QuotaExceededError",
+            "code": 22,
+            "message": "Failed to execute 'setItem' on 'Storage': Setting the value of 'kapibala:createJob' exceeded the quota."
+          },
+          "targetValue": null
+        },
+        "jobId": "c0098854-92ae-46f6-bf7f-bf950b09aad4",
+        "acceptedJobVisibleBeforeReload": true,
+        "acceptedScreenshot": "docs/evidence/cr-browser-closeout-2026-09-30T22-48-45-258Z-storage-quota-accepted.png",
+        "persisted": false,
+        "absentAfterReload": true,
+        "postCount": 1,
+        "boundary": "job tracking cannot survive reload when native storage write is denied; accepted server job remains"
+      },
+      "screenshot": "docs/evidence/cr-browser-closeout-2026-09-30T22-48-45-258Z-storage-native-quota-exceeded.png"
+    }
+  ],
+  "requests": [
+    {
+      "case": "create-backdrop-and-discard",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/refresh"
+    },
+    {
+      "case": "create-backdrop-and-discard",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/login"
+    },
+    {
+      "case": "create-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/auth/me"
+    },
+    {
+      "case": "create-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "create-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "create-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "create-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "create-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "edit-backdrop-and-discard",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/refresh"
+    },
+    {
+      "case": "edit-backdrop-and-discard",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/login"
+    },
+    {
+      "case": "edit-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/auth/me"
+    },
+    {
+      "case": "edit-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "edit-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/groups/cr-browser-evidence-group"
+    },
+    {
+      "case": "edit-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "edit-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/groups/cr-browser-evidence-group/messages"
+    },
+    {
+      "case": "edit-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/groups/cr-browser-evidence-group/agent-runs"
+    },
+    {
+      "case": "edit-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/groups/cr-browser-evidence-group/messages?limit=50"
+    },
+    {
+      "case": "edit-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/groups/cr-browser-evidence-group/agent-runs"
+    },
+    {
+      "case": "edit-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/groups/cr-browser-evidence-group"
+    },
+    {
+      "case": "edit-backdrop-and-discard",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "create-unmount-late-success",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/refresh"
+    },
+    {
+      "case": "create-unmount-late-success",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/login"
+    },
+    {
+      "case": "create-unmount-late-success",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/auth/me"
+    },
+    {
+      "case": "create-unmount-late-success",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "create-unmount-late-success",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "create-unmount-late-success",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "create-unmount-late-success",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "create-unmount-late-success",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "create-unmount-late-success",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/groups"
+    },
+    {
+      "case": "create-unmount-late-success",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "create-unmount-late-success",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "create-unmount-late-success",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "create-unmount-late-failure",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/refresh"
+    },
+    {
+      "case": "create-unmount-late-failure",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/login"
+    },
+    {
+      "case": "create-unmount-late-failure",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/auth/me"
+    },
+    {
+      "case": "create-unmount-late-failure",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "create-unmount-late-failure",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "create-unmount-late-failure",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "create-unmount-late-failure",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "create-unmount-late-failure",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "create-unmount-late-failure",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/groups"
+    },
+    {
+      "case": "create-unmount-late-failure",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "create-unmount-late-failure",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "create-unmount-late-failure",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "storage-get-security-error",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/refresh"
+    },
+    {
+      "case": "storage-get-security-error",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/login"
+    },
+    {
+      "case": "storage-get-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/auth/me"
+    },
+    {
+      "case": "storage-get-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "storage-get-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "storage-get-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "storage-get-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "storage-set-security-error",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/refresh"
+    },
+    {
+      "case": "storage-set-security-error",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/login"
+    },
+    {
+      "case": "storage-set-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/auth/me"
+    },
+    {
+      "case": "storage-set-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "storage-set-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "storage-set-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "storage-set-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "storage-set-security-error",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/groups"
+    },
+    {
+      "case": "storage-set-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "storage-set-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/jobs/24bd0c25-f071-4d85-9cec-80b2778a5665"
+    },
+    {
+      "case": "storage-remove-security-error",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/refresh"
+    },
+    {
+      "case": "storage-remove-security-error",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/login"
+    },
+    {
+      "case": "storage-remove-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/auth/me"
+    },
+    {
+      "case": "storage-remove-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "storage-remove-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "storage-remove-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "storage-remove-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "storage-remove-security-error",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/groups"
+    },
+    {
+      "case": "storage-remove-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "storage-remove-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/jobs/37c040bb-f055-417e-9747-41d3838b6e8c"
+    },
+    {
+      "case": "storage-remove-security-error",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/refresh"
+    },
+    {
+      "case": "storage-remove-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/auth/me"
+    },
+    {
+      "case": "storage-remove-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/jobs/37c040bb-f055-417e-9747-41d3838b6e8c"
+    },
+    {
+      "case": "storage-remove-security-error",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "storage-native-quota-exceeded",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/refresh"
+    },
+    {
+      "case": "storage-native-quota-exceeded",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/login"
+    },
+    {
+      "case": "storage-native-quota-exceeded",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/auth/me"
+    },
+    {
+      "case": "storage-native-quota-exceeded",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "storage-native-quota-exceeded",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "storage-native-quota-exceeded",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/accounts"
+    },
+    {
+      "case": "storage-native-quota-exceeded",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/groups"
+    },
+    {
+      "case": "storage-native-quota-exceeded",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    },
+    {
+      "case": "storage-native-quota-exceeded",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/jobs/c0098854-92ae-46f6-bf7f-bf950b09aad4"
+    },
+    {
+      "case": "storage-native-quota-exceeded",
+      "method": "POST",
+      "url": "http://127.0.0.1:64436/api/auth/refresh"
+    },
+    {
+      "case": "storage-native-quota-exceeded",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/auth/me"
+    },
+    {
+      "case": "storage-native-quota-exceeded",
+      "method": "GET",
+      "url": "http://127.0.0.1:64436/api/group-directory?pageSize=20&order=desc&q="
+    }
+  ],
+  "pageErrors": [],
+  "cleanupErrors": [],
+  "buildAssets": [
+    {
+      "file": "index-D_PTbvD6.css",
+      "sha256": "e0d8ab745f0d8f2bd3d26d1095156e3d39fc1feb4f8a286025871d1e141a8556"
+    },
+    {
+      "file": "index-vDlW4rvq.js",
+      "sha256": "d2bc85add3d7aaab78d067ec83b999faaf7f17ffa699ce9d2d41070aa5864d47"
+    }
+  ],
+  "database": "kapibala_test_f69d50e4dad3491bb49ba255fe9d4767",
+  "databaseServerPort": "64550",
+  "apiPort": "64435",
+  "webPort": "64436",
+  "browserVersion": "151.0.7922.34",
+  "passed": true,
+  "cleaned": true,
+  "finishedAt": "2026-09-30T22:48:49.210Z"
+}
