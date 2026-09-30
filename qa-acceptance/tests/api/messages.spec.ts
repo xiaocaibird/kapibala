@@ -196,7 +196,7 @@ test('[MSG-004] 504 that lands within two seconds is reconciled without resendin
   );
 });
 
-test('[MSG-005] absent 504 is retried only once after the two-second uncertainty window', async ({
+test('[MSG-005] absent 504 permits at most one retry after the two-second uncertainty window', async ({
   qa,
 }) => {
   await qa.api.login();
@@ -226,12 +226,40 @@ test('[MSG-005] absent 504 is retried only once after the two-second uncertainty
   const observedAt = Date.now();
   expect(byClient(terminal.items, clientMsgId)!.failCode).toBe('NETWORK_TIMEOUT');
   const sends = qa.gateway.snapshot().requests.filter((request) => request.path.endsWith('/send'));
-  expect(sends).toHaveLength(2);
+  expect(sends.length).toBeGreaterThanOrEqual(1);
+  expect(sends.length).toBeLessThanOrEqual(2);
   expect((sends[0]!.body as { clientMsgId: string }).clientMsgId).toBe(clientMsgId);
-  expect((sends[1]!.body as { clientMsgId: string }).clientMsgId).toBe(clientMsgId);
-  expect(Date.parse(sends[1]!.at) - Date.parse(sends[0]!.completedAt!)).toBeGreaterThanOrEqual(
-    2_000,
-  );
+  const lastSend = sends.at(-1)!;
+  expect(lastSend.responseStatus).toBe(504);
+  expect(
+    qa.gateway
+      .snapshot()
+      .requests.some(
+        (request) =>
+          request.path === `/groups/${group.gatewayGroupId}/messages/by-client-id/${clientMsgId}` &&
+          request.responseStatus === 404 &&
+          Date.parse(request.at) > Date.parse(lastSend.completedAt!) + 2_000 &&
+          Date.parse(request.completedAt!) <= observedAt,
+      ),
+    'Failure requires definitive non-landing confirmation after the final 504, even without a retry',
+  ).toBe(true);
+  if (sends[1]) {
+    expect((sends[1].body as { clientMsgId: string }).clientMsgId).toBe(clientMsgId);
+    expect(Date.parse(sends[1].at) - Date.parse(sends[0]!.completedAt!)).toBeGreaterThan(2_000);
+    expect(
+      qa.gateway
+        .snapshot()
+        .requests.some(
+          (request) =>
+            request.path ===
+              `/groups/${group.gatewayGroupId}/messages/by-client-id/${clientMsgId}` &&
+            request.responseStatus === 404 &&
+            Date.parse(request.at) > Date.parse(sends[0]!.completedAt!) + 2_000 &&
+            Date.parse(request.completedAt!) <= Date.parse(sends[1]!.at),
+        ),
+      'An optional retry requires an observed definitive non-landing query first',
+    ).toBe(true);
+  }
   expect(qa.gateway.snapshot().messages).toHaveLength(0);
   await deadlineEvidence(
     qa,

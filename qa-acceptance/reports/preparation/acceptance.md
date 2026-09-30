@@ -4,10 +4,10 @@
 
 本报告是准备状态清单，未启动或连接被测系统，不能用于宣称产品验收通过。
 
-准备状态专项登记 24 条：脚本可进入后续授权试跑 10；仍缺工程/夹具接入 13；业务口径待决 1。这是准备状态，不是产品执行结果。自动化数量增加不能解释为这些依赖已解决。
+准备状态专项登记 24 条：脚本可进入后续授权试跑 11；仍缺工程/夹具接入 13；业务口径待决 0。这是准备状态，不是产品执行结果。自动化数量增加不能解释为这些依赖已解决。
 
 - 范围内用例：246；通过 0，失败 0，阻塞 0，未执行 246。
-- 方法登记（非就绪统计）：自动化 235，人工 10，尚缺完整执行方案 1，候选 5。
+- 方法登记（非就绪统计）：自动化 236，人工 10，尚缺完整执行方案 0，候选 5。
 - 有用例覆盖、实际执行和通过率分别统计；跳过、缺少浏览器项目、缺少环境均不作通过。JSON另列required/release/candidate各范围计数及已执行通过率；多范围用例分别计数，不可直接相加。
 
 ## 版本、环境与授权
@@ -18,7 +18,7 @@
   "sutExecutionAuthorized": false,
   "productTestsExecuted": 0,
   "qaTree": {
-    "sha256": "170035e3da5193ecd66fbcb105ede12c266fec6785b64acf39e2f725ae55770f",
+    "sha256": "3e3d831b5583e9b4abdd6a22f3c7b8946e8ad96c9d9311337e187a49c18ff154",
     "files": [
       {
         "path": ".gitignore",
@@ -46,7 +46,7 @@
       },
       {
         "path": "cases/backend.json",
-        "sha256": "0eacb1515e677ad888960b4d1c9c24fef4915df91b2504580be8ef7b70ece3ee"
+        "sha256": "f3651f02fc0b16efe3f8ad23c92d5879dada1bd233f6264ff830954699195b66"
       },
       {
         "path": "cases/candidates.json",
@@ -82,7 +82,7 @@
       },
       {
         "path": "cases/generated/backend.md",
-        "sha256": "932eaa12b9bd5802e98fc56f48d7008e23410fec86f748c01e13832437d1a9a8"
+        "sha256": "4351596f6ff315e0b605eea2143a0982e00878b2f7e19823b940f064df228bac"
       },
       {
         "path": "cases/generated/candidates.md",
@@ -102,7 +102,7 @@
       },
       {
         "path": "cases/generated/manual.md",
-        "sha256": "d75f1ea952f8f2a59fa6ff3d0047c45f9db954d2c2a2c4fc8e86a8ce31982449"
+        "sha256": "406f26b4f276afe1a8af9f3460d8d1a3d07b444e15bb5ab146bc481b42ac301b"
       },
       {
         "path": "cases/generated/protocol-boundaries.md",
@@ -111,6 +111,10 @@
       {
         "path": "cases/generated/release.md",
         "sha256": "837b108b673cde29a511b1731b21d55d3a1d8a37bdd076a7719ea0ead63d1539"
+      },
+      {
+        "path": "cases/generated/sequence-failure-policy.md",
+        "sha256": "ea4c088b3427cd70f04bb1f62b173bbcc2f1eca1150622550b1c636727a81460"
       },
       {
         "path": "cases/generated/spec-boundaries.md",
@@ -126,7 +130,7 @@
       },
       {
         "path": "cases/manual.json",
-        "sha256": "6b1338c9579271f5d6f7370e7bad3e0d87a59bd7cde9cd2ff37ca0e30f8c0c51"
+        "sha256": "c39ae9f01a41e2668dfca386d377cac1a9ae616d4c00aea1fda736a6c2b168de"
       },
       {
         "path": "cases/protocol-boundaries.json",
@@ -139,6 +143,10 @@
       {
         "path": "cases/release.json",
         "sha256": "222f7f0acc1e75306962898ee42d38fcc2d32edb65672a5fe16695c33bad77d5"
+      },
+      {
+        "path": "cases/sequence-failure-policy.json",
+        "sha256": "2f7c854c69baad8aa143b5e5f5f8c5cf8e7303bc9e5f56b2436b14aa9880d4bb"
       },
       {
         "path": "cases/spec-boundaries.json",
@@ -330,7 +338,7 @@
       },
       {
         "path": "README.md",
-        "sha256": "c908c81c978f21717a3b05a96344949e22d339dfef38d6a727671a6930481af7"
+        "sha256": "663eaf214f2c9477a453c54b449096ec89c42ba550b8da83c03ecf36633aef1d"
       },
       {
         "path": "requirements/architecture-impact.md",
@@ -338,15 +346,15 @@
       },
       {
         "path": "requirements/baseline.json",
-        "sha256": "af0e17de9bed3c6565b2b284f481c46212f1485a7aa822c78cd40b04be431aa5"
+        "sha256": "82428f1b7f3984d7fc4fd1d62f159276d9650cc5535d5925fe48e2b2fda47385"
       },
       {
         "path": "requirements/blocker-reassessment.md",
-        "sha256": "83b0f5fdc17be108dd6a653248924caf7d60d49fb3757ed38b0ee1e6fc40f060"
+        "sha256": "f2c901aa22aaa72448673245574ff06f5a591ab9f5ddf74d444761c4e92e7404"
       },
       {
         "path": "requirements/catalog.json",
-        "sha256": "0eecab330281c6ee174018b946e4a4660dda6a8fe684cbede6015d743b8ee0ca"
+        "sha256": "df1eeaa50440e9f735429b70808b3eef1ff00d7dd5f2aaa68602b49121d3816c"
       },
       {
         "path": "requirements/change-reviews.json",
@@ -354,7 +362,7 @@
       },
       {
         "path": "requirements/clarifications.md",
-        "sha256": "742687ebac3212ac0fe5850db13972ecf3a3c10e6edbfe2644a5cd5e1204ad48"
+        "sha256": "725381554a649b78b703cb8a4ec6c2b5d85144fa7135bbce3e192d2b21168bda"
       },
       {
         "path": "requirements/collaboration.md",
@@ -370,23 +378,27 @@
       },
       {
         "path": "requirements/risk-coverage-review.md",
-        "sha256": "6bfa879eda107d63c207c9590c748ae02f6be0ca0cef48663a3569a2078d18fe"
+        "sha256": "1f58a3f5e8d50779ac70073d1073a851a037298c75d7fbedeb00d0d9223f1c88"
+      },
+      {
+        "path": "requirements/sequence-failure-policy.md",
+        "sha256": "7198bf020dda26110e7104e5fc9d963695911c4e86b9adeafbd38c4ca8afb105"
       },
       {
         "path": "requirements/spec-boundaries-resolution.md",
-        "sha256": "d9009302fe22eb2bc43f38467a15b0647c8b0e63479c11a6a302d3048aa77d7b"
+        "sha256": "82de0ec1595d600033cd3a4661a89f6b508fa3067a3d823b7735334baab8e262"
       },
       {
         "path": "requirements/traceability.md",
-        "sha256": "1e45a7fd6778d1d0b2bea9c55e3f9b32e9147d249a19f356996a24509aa4eb54"
+        "sha256": "29fd189196b949c0415b9cb31dfce08738d587fcf25c008d2040b1e273a6908b"
       },
       {
         "path": "sharing/README.md",
-        "sha256": "03850c601b2e117be5a22dd785189129e0ee31ffb616e2f16a1e2c81a7a1d465"
+        "sha256": "6c90def8d1a51642a42bd2460635e57abfd0c9c6cf75aa212d49374b58403ee8"
       },
       {
         "path": "sharing/suites.json",
-        "sha256": "912c352bb41aa48b1f4a0de1e8f58e8f772ccb263f925601a72867ff45fae6d5"
+        "sha256": "bce28f1da283a44b579105a86e36d7017e35120f3f8689f84ac86e7852aac235"
       },
       {
         "path": "tests/api/accounts.spec.ts",
@@ -402,7 +414,7 @@
       },
       {
         "path": "tests/api/messages.spec.ts",
-        "sha256": "f7bc739c779c8803448bf4760e280768401cf8c0ac09350d92ff6375ba355b55"
+        "sha256": "d034ca319f4862fcbaf1a53b33487d7bb2a01f273c637531d13348001df617af"
       },
       {
         "path": "tests/api/realtime.spec.ts",
@@ -474,7 +486,11 @@
       },
       {
         "path": "tests/self/suites.test.ts",
-        "sha256": "54fbcb99a6985f8071edd1c09ffe3e9be74a80c0f4ad4cae6ad6dbd466892aa3"
+        "sha256": "5848bd23bc908ceea04a92229b10a710dd0a2f5c037709eaa5fe7db6a1264ec8"
+      },
+      {
+        "path": "tests/support/sequence-timeout-policy.ts",
+        "sha256": "c67626de6102f62ec16ac3c7d4973947d09b8fd3add128b200c7e59f2b4aeaf1"
       },
       {
         "path": "tests/system/agent.spec.ts",
@@ -499,6 +515,10 @@
       {
         "path": "tests/system/recovery.spec.ts",
         "sha256": "1911640e16571ad889f8899450c4b3f3975036683f2f83255e7ff2c1d0f347bf"
+      },
+      {
+        "path": "tests/system/sequence-failure-policy.spec.ts",
+        "sha256": "0938403559f31420f1a6b68144c76b49cc34a8510b054d2a66a4b3b9ed15de4d"
       },
       {
         "path": "tests/system/sequence.spec.ts",
@@ -636,6 +656,11 @@
         "id": "QA-D5",
         "source": "用户本次明确授权必要QA资产调整；D036/D037批准范围见docs/decisions.md:53–57",
         "decision": "补齐容量耗尽、触发停止、读写重试、取消/预算/政策交错等通用质量风险的QA设计；原遗漏属于QA覆盖不足，不以新增业务需求解释。仅调整QA资产并自检工具，产品执行仍须单独授权。"
+      },
+      {
+        "id": "QA-D6",
+        "source": "2026-10-01本会话：QA建议普通序列失败使整条run为failed且停止后续发送，用户明确回复“按你的建议执行”；详见qa-acceptance/requirements/sequence-failure-policy.md",
+        "decision": "补充原B1未规定的普通发送失败策略：步骤及run为failed，后续不发送，重启不恢复后续发送；保留原无匹配账号skipped继续、rate_limited等待、unknown确认流程和群不可写stopped。只授权QA资产更新，产品执行仍须单独授权。"
       }
     ],
     "requiredAdditions": [
@@ -650,7 +675,8 @@
       "CR-010",
       "CR-011",
       "CR-012",
-      "CR-013"
+      "CR-013",
+      "ADD-SEQ-FAIL-01"
     ],
     "additionNotes": {
       "CR-003": "排序方向最终由CR-007承接，不能把早期实现默认值冒充当时用户确认。",
@@ -731,6 +757,26 @@
         ],
         "impactReview": "qa-acceptance/requirements/architecture-impact.md",
         "riskReview": "qa-acceptance/requirements/risk-coverage-review.md",
+        "productTestingAuthorized": false
+      },
+      {
+        "id": "QA-REV-03",
+        "date": "2026-10-01",
+        "qaBaseCommit": "7cfa1743c71656d561419db75bb0c8f5583d466c",
+        "qaBranch": "agent/qa-sequence-failure-policy",
+        "classification": "用户批准原B1普通失败终止的补充口径；同步修正原A2可选重发的过约束断言",
+        "requirementIds": [
+          "ADD-SEQ-FAIL-01"
+        ],
+        "decisionIds": [
+          "QA-D6"
+        ],
+        "decisionRecord": "qa-acceptance/requirements/sequence-failure-policy.md",
+        "preserves": [
+          "原始需求内容和SHA-256、原baseCommit及sourceSnapshots",
+          "原跳过/限流等待/unknown确认/群不可写stopped规则",
+          "13项工程接入依赖及产品NOT_RUN状态"
+        ],
         "productTestingAuthorized": false
       }
     ]
@@ -840,7 +886,7 @@
 |MSG-002 rate limiting blocks all account sends until deadline and preserves FIFO|R-A2-09, R-A1-06|NOT_RUN|尚未执行||
 |MSG-003 terminal marking cancels queued sends and removes member atomically|R-A1-04|NOT_RUN|尚未执行||
 |MSG-004 504 that lands within two seconds is reconciled without resending|R-A2-03|NOT_RUN|尚未执行||
-|MSG-005 absent 504 is retried only once after the two-second uncertainty window|R-A2-03|NOT_RUN|尚未执行||
+|MSG-005 absent 504 permits at most one retry after the two-second uncertainty window|R-A2-03|NOT_RUN|尚未执行||
 |MSG-006 unavailable confirmation preserves unknown until recovery|R-A2-04|NOT_RUN|尚未执行||
 |MSG-007 synchronous ACCOUNT_SUSPENDED applies terminal consequences without relying on events|R-A2-10, R-A1-04|NOT_RUN|尚未执行||
 |MSG-008 synchronous SESSION_EXPIRED applies terminal consequences without relying on events|R-A2-10, R-A1-04|NOT_RUN|尚未执行||
@@ -935,7 +981,6 @@
 |MAN-UX-001 操作员能识别阻断、失败与账号/群角色含义|R-A6-03, ADD-COPY-01|NOT_RUN|尚未执行||
 |MAN-IME-001 真实操作系统中文输入法不触发中间查询|ADD-DIR-11|NOT_RUN|尚未执行||
 |MAN-FOCUS-001 真实失焦与浏览器标签标题favicon呈现|ADD-ATT-02, ADD-ATT-03|NOT_RUN|尚未执行||
-|BLK-SPEC-002 序列普通发送失败后的运行策略|R-B1-07, R-B1-08|NOT_RUN|CL-09：参见requirements/clarifications.md；没有已确认的唯一验收裁判||
 |MAN-DELIVERY-001 接收方核对仓库Git历史及版本对应|R-DELIVERY-01|NOT_RUN|尚未执行||
 |MAN-DELIVERY-002 接收方只依README在全新隔离环境复现启动|R-DELIVERY-02|NOT_RUN|尚未执行||
 |BLK-EXT-001 未收到响应的发送崩溃：相同前缀下落地/不落地两个分支|R-A2-01, R-A5-11|NOT_RUN|尚未执行||
@@ -951,6 +996,7 @@
 |OPS-MAN-003 监控与告警实际到达及恢复|REL-05, REL-03|NOT_RUN|尚未执行||
 |OPS-MAN-004 授权版本证据及清理复核|REL-01, REL-02, REL-04, REL-07|NOT_RUN|尚未执行||
 |DOC-MAN-001 追加需求台账来源与状态审核|ADD-DOC-01|NOT_RUN|尚未执行||
+|BLK-SPEC-002 普通序列发送失败终止整run且重启后不发送后续步骤|ADD-SEQ-FAIL-01, R-B1-07, R-B1-08, R-A2-12, R-A2-03, R-A2-04|NOT_RUN|尚未执行||
 |BLK-SPEC-001 序列在线候选过滤与已入队限流消息的账号及顺序保持|R-B1-01, R-A2-09|NOT_RUN|尚未执行||
 |BLK-SPEC-003 手动状态遵守CAS和已提交事件，离线目标产生明确disconnect效果|R-A1-01, R-A1-08|NOT_RUN|尚未执行||
 |BLK-SPEC-004 混合协议错误累计三次，合法工具业务错误清零连续计数|R-A5-04, R-A5-05|NOT_RUN|尚未执行||
@@ -1010,12 +1056,12 @@
 |CAP-010|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
 |ARC-UI-BLK-001|dependency-pending|QA|账号通用读取失败与提醒确认脚本已实现；尚需授权后确认候选真实页面定位及消费者关联，adapterConfirmed当前不代表已确认|
 |BLK-MIG-001|dependency-pending|QA与候选交付方|解析、恢复与断言已实现；真实版本化dump及独立manifest尚未提供；制品双哈希和对应版本/出处需按contracts/fixture-artifacts.md准备；授权后仅导入本轮新建专属库|
-|BLK-SPEC-002|decision-pending|用户决定业务策略，QA固化断言|普通failed后终止run，或继续并定义后续排期基准；已提出具体选项；当前原文只定义sent/skipped后排期，不按现实现自行决定|
 |BLK-EXT-001|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过；外部强恢复风险保留，明确违约FAIL、观察不足BLOCKED；不虚造协议幂等或恢复期限|
 |BLK-EXT-002|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过；外部强恢复风险保留，明确违约FAIL、观察不足BLOCKED；不虚造协议幂等或恢复期限|
 |BLK-EXT-003|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过；外部强恢复风险保留，明确违约FAIL、观察不足BLOCKED；不虚造协议幂等或恢复期限|
 |BLK-EXT-004|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过；外部强恢复风险保留，明确违约FAIL、观察不足BLOCKED；不虚造协议幂等或恢复期限|
 |BLK-EXT-005|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过；外部强恢复风险保留，明确违约FAIL、观察不足BLOCKED；不虚造协议幂等或恢复期限|
+|BLK-SPEC-002|script-ready|QA|QA-D6已记录用户批准的普通失败终止策略；脚本含六种同步故障位置/错误组合、两种重启检查，以及一个unknown确认后失败的组合场景；仅完成准备期校验，产品仍NOT_RUN；原13项工程/夹具接入待办未随本裁定关闭|
 |BLK-SPEC-001|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过|
 |BLK-SPEC-003|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过|
 |BLK-SPEC-004|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过|

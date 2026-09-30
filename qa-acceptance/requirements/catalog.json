@@ -712,9 +712,26 @@
       "section": "B1",
       "lines": [295, 295]
     },
-    "expectation": "skipped有时间戳并按跳过时刻视为前步发出；进度推进，run/步骤状态属于公开枚举。",
-    "scope": "required",
-    "clarification": "CL-09"
+    "expectation": "skipped有时间戳并按跳过时刻视为前步发出；进度推进，run/步骤状态属于公开枚举。普通发送失败的终止策略另见ADD-SEQ-FAIL-01，不把failed当作skipped。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-SEQ-FAIL-01",
+    "title": "普通序列发送失败终止后续步骤",
+    "source": {
+      "path": "qa-acceptance/requirements/sequence-failure-policy.md",
+      "section": "QA-D6/已确认行为与原有分支边界",
+      "approval": "2026-10-01本会话：用户明确回复“按你的建议执行”，批准普通失败使整条序列failed且停止后续发送；补充原B1未规定之处。",
+      "references": [
+        {
+          "path": "docs/original-interview-question.md",
+          "section": "B1原有sent/skipped排期与重启约束；本条为后续用户补充",
+          "lines": [288, 296]
+        }
+      ]
+    },
+    "expectation": "不属于原有跳过规则的普通发送失败使本步骤及本run为failed，后续步骤不再发送；保留此前成功和本次失败证据，重启不得恢复后续发送。适用ACCOUNT_OFFLINE/SENDER_NOT_IN_GROUP及按A2已确认failed的消息；不改变无匹配账号skipped继续、rate_limited等待、unknown确认流程或群不可写stopped。",
+    "scope": "required"
   },
   {
     "id": "R-B1-09",

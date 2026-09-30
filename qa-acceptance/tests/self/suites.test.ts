@@ -210,7 +210,7 @@ test('real shared manifests select only existing automation and keep smoke inten
   const { cases } = await readCatalog(qaRoot);
   assert.deepEqual(
     suites.map((suite) => suite.id),
-    ['developer-smoke', 'architecture-regression'],
+    ['developer-smoke', 'architecture-regression', 'sequence-failure-regression'],
   );
   const smoke = suites.find((suite) => suite.id === 'developer-smoke')!;
   assert.deepEqual(smoke.caseIds, [
@@ -237,6 +237,9 @@ test('real shared manifests select only existing automation and keep smoke inten
     false,
   );
   assert.deepEqual(architecture.projects, ['system', 'chromium']);
+  const sequence = suites.find((suite) => suite.id === 'sequence-failure-regression')!;
+  assert.deepEqual(sequence.caseIds, ['BLK-SPEC-002', 'SEQ-006', 'SEQ-007', 'SEQ-008', 'SEQ-010']);
+  assert.deepEqual(sequence.projects, ['system']);
   const raw = JSON.parse(await readFile(resolve(qaRoot, 'sharing/suites.json'), 'utf8'));
   assert.equal(raw.owner, 'QA');
 });

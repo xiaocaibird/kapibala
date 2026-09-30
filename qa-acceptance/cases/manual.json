@@ -84,43 +84,6 @@
     "cleanup": ["恢复基础标题后关闭QA窗口"]
   },
   {
-    "id": "BLK-SPEC-002",
-    "title": "序列普通发送失败后的运行策略",
-    "requirements": ["R-B1-07", "R-B1-08"],
-    "priority": "P1",
-    "mode": "blocked",
-    "preconditions": [
-      "当前仅设计，不执行产品",
-      "相应clarification完成裁定，故障控制能力和隔离SUT准备好后才可运行"
-    ],
-    "data": {
-      "steps": 3,
-      "failure": "第二步ACCOUNT_OFFLINE或SENDER_NOT_IN_GROUP"
-    },
-    "steps": [
-      "让第二步发送产生规定失败，前后步均可发送",
-      "观察run终态与第三步是否排期",
-      "待业务决定锁定后把场景转成自动化"
-    ],
-    "expected": [
-      "失败消息必须准确记录且不冒充sent",
-      "是否终止整run/继续后续、后续时间基准须明确后才能验收"
-    ],
-    "timing": ["时序以原条款为准，未规定的上限不由QA模拟器补造"],
-    "faults": ["按步骤所列故障；其他条件维持协议有效"],
-    "evidence": ["sequence-run详情与发送事件时间线"],
-    "cleanup": ["只清理本轮隔离资源；保留原始轨迹"],
-    "blocker": "CL-09：参见requirements/clarifications.md；没有已确认的唯一验收裁判",
-    "preparation": {
-      "state": "decision-pending",
-      "owner": "用户决定业务策略，QA固化断言",
-      "details": [
-        "普通failed后终止run，或继续并定义后续排期基准；已提出具体选项",
-        "当前原文只定义sent/skipped后排期，不按现实现自行决定"
-      ]
-    }
-  },
-  {
     "id": "MAN-DELIVERY-001",
     "title": "接收方核对仓库Git历史及版本对应",
     "requirements": ["R-DELIVERY-01"],

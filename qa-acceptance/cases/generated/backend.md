@@ -3105,7 +3105,7 @@
 
 <a id="MSG-005"></a>
 
-## MSG-005 · absent 504 is retried only once after the two-second uncertainty window
+## MSG-005 · absent 504 permits at most one retry after the two-second uncertainty window
 
 - 需求：R-A2-03
 - 优先级：P0；方法：automated
@@ -3119,12 +3119,12 @@
 
 **执行步骤**
 
-1. 第一次与唯一一次重发均504且不落地
+1. 首次504不落地；若产品选择重发，该次仍504且不落地，不强制选择可选重发
 2. 按automation中逐项断言读取公开REST/WS结果并对照独立外部事实账本
 
 **预期结果**
 
-1. 超过2秒确认未发才重发相同clientMsgId；总send=2；5秒内failed/NETWORK_TIMEOUT
+1. 首个504后超过2秒且查询404才能确认未发；如选择重发则保持相同clientMsgId且至多一次；进入failed前必须有针对最后一次504的超过2秒404确认；总send为1或2，5秒内failed/NETWORK_TIMEOUT
 
 **时序要求**
 
@@ -3133,7 +3133,7 @@
 
 **故障注入**
 
-1. 504不落地两次
+1. 首发504不落地；可选重发仍504不落地
 
 **取证**
 
