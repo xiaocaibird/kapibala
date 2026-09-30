@@ -18,6 +18,8 @@ export function boundedSocketSender(
   let stopped = false;
   let termination: NodeJS.Timeout | undefined;
   const pending = new Set<() => void>();
+  let serial = Promise.resolve(false);
+  let admitted = 0;
 
   function close(code: number, reason: string): void {
     if (stopped) return;
@@ -36,9 +38,9 @@ export function boundedSocketSender(
     for (const finish of pending) finish();
   });
 
-  async function send(value: unknown): Promise<boolean> {
+  async function transmit(value: unknown): Promise<boolean> {
     if (stopped || socket.readyState !== 1) return false;
-    // Callers serialize replay frames; small control responses can overlap once.
+    // Event and control frames share the same serialized writer.
     // A large single frame is allowed when drained, preventing a permanent
     // reconnect loop solely because one durable event exceeds the watermark.
     if (socket.bufferedAmount > maxBufferedBytes) {
@@ -70,6 +72,28 @@ export function boundedSocketSender(
         close(1011, "Stream interrupted; reconnect to resume");
       }
     });
+  }
+  function send(value: unknown): Promise<boolean> {
+    if (stopped || socket.readyState !== 1) return Promise.resolve(false);
+    // Replay, authentication and marker loops each await their send. Permit at
+    // most one frame on the wire plus two bounded control waiters; this also
+    // prevents a control reply from aborting an allowed oversized event frame.
+    if (admitted >= 3) {
+      close(1013, "Too many pending frames; reconnect to resume");
+      return Promise.resolve(false);
+    }
+    admitted++;
+    const result = serial
+      .then(() => transmit(value))
+      .catch(() => {
+        close(1011, "Stream interrupted; reconnect to resume");
+        return false;
+      })
+      .finally(() => {
+        admitted--;
+      });
+    serial = result;
+    return result;
   }
   return {
     send,

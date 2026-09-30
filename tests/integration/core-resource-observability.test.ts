@@ -51,8 +51,11 @@ test("slow socket: an in-flight oversized frame cannot authorize further buffers
     closeGraceMs: 20,
   });
   const first = sender.send({ text: "x".repeat(200) });
+  await Promise.resolve();
   assert.equal(socket.frames.length, 1);
-  assert.equal(await sender.send({ text: "more" }), false);
+  const next = sender.send({ text: "more" });
+  await delay(220);
+  assert.equal(await next, false);
   assert.equal(await first, false);
   assert.equal(socket.closed?.code, 1013);
   assert.equal(await sender.send({ text: "even later" }), false);
@@ -73,7 +76,9 @@ test("slow socket: callback starvation closes even below the buffer watermark; o
     sendTimeoutMs: 20,
     closeGraceMs: 100,
   });
-  assert.equal(await sender.send({ text: "small" }), false);
+  const waiting = sender.send({ text: "small" });
+  await delay(30);
+  assert.equal(await waiting, false);
   assert.equal(socket.closed?.code, 1013);
   socket.readyState = 3;
   socket.emit("close");
@@ -94,6 +99,54 @@ test("slow socket: a drained frame larger than the watermark still reaches an ab
   assert.equal(await sender.send({ text: "next" }), true);
   assert.equal(socket.closed, undefined);
   socket.emit("close");
+});
+
+test("slow socket: control replies wait for a permitted oversized frame instead of disconnecting it", async () => {
+  const socket = new SlowSocket();
+  let complete!: () => void;
+  socket.send = (value: string, ...args: unknown[]) => {
+    socket.frames.push(value);
+    socket.bufferedAmount += Buffer.byteLength(value);
+    complete = () => {
+      socket.bufferedAmount = 0;
+      (args[0] as (error?: Error) => void)();
+    };
+  };
+  const sender = boundedSocketSender(socket as unknown as WebSocket, {
+    maxBufferedBytes: 10,
+  });
+  const event = sender.send({ text: "x".repeat(200) });
+  await Promise.resolve();
+  const marker = sender.send({ type: "scope_ready" });
+  await Promise.resolve();
+  assert.equal(socket.frames.length, 1);
+  assert.equal(socket.closed, undefined);
+  complete();
+  assert.equal(await event, true);
+  await until(() => socket.frames.length === 2);
+  complete();
+  assert.equal(await marker, true);
+  assert.equal(socket.closed, undefined);
+  socket.emit("close");
+});
+
+test("slow socket: pending frame admission is bounded and all waiters finish when closed", async () => {
+  const socket = new SlowSocket();
+  const sender = boundedSocketSender(socket as unknown as WebSocket, {
+    closeGraceMs: 10,
+  });
+  const first = sender.send({ text: "first" });
+  await Promise.resolve();
+  const second = sender.send({ text: "second" });
+  const third = sender.send({ text: "third" });
+  assert.equal(await sender.send({ text: "fourth" }), false);
+  assert.deepEqual(await Promise.all([first, second, third]), [
+    false,
+    false,
+    false,
+  ]);
+  await until(() => socket.terminated === 1);
+  assert.equal(socket.frames.length, 1);
 });
 
 async function fixture(t: TestContext, options: Omit<AppOptions, "db"> = {}) {
