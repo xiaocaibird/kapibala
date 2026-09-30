@@ -1,3 +1,4 @@
+import React from "react";
 import type { SequenceRunStep } from "../../../../packages/contracts/src/index";
 import { DateTime } from "./ui";
 
@@ -26,4 +27,3 @@ export function SequenceStepTime({
     </span>
   );
 }
-import React from "react";

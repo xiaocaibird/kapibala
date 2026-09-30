@@ -22,7 +22,12 @@ const members: Group["members"] = accounts.map((account) => ({
 }));
 
 test("an unavailable selected sender stays selected until the user explicitly chooses another identity", () => {
-  for (const status of ["offline", "suspended", "session_expired"] as const) {
+  for (const status of [
+    "disconnected",
+    "idle",
+    "suspended",
+    "session_expired",
+  ] as const) {
     const changed = accounts.map((account) =>
       account.id === "account-2" ? { ...account, status } : account,
     );
