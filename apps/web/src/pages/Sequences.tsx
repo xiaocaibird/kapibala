@@ -11,6 +11,13 @@ import {
 } from "../attention/pageAdapters";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { z } from "zod";
+import {
+  sequenceDefinitionRequestSchema,
+  sequenceVariablesSchema,
+  sequenceStepVariablesSchema,
+  sequenceStartRequestSchema,
+  type SequenceStartRequest,
+} from "../../../../packages/contracts/src/sequence-requests";
 import { ApiError, post } from "../api/client";
 import {
   groupSchema,
@@ -36,29 +43,10 @@ import {
 import { SequenceProgress } from "../components/SequenceProgress";
 const groupsSchema = groupSchema.array();
 const sequencesSchema = sequenceSchema.array();
-const varsSchema = z.record(z.string(), z.string());
-const stepVarsSchema = z.record(z.string().regex(/^\d+$/), varsSchema);
-const definitionSchema = z.object({
-  name: z.string().trim().min(1),
-  steps: z
-    .array(
-      z.object({
-        index: z.number().int().positive(),
-        accountRole: z.enum(["admin", "member"]),
-        text: z.string().min(1),
-        delaySeconds: z.number().nonnegative(),
-      }),
-    )
-    .min(1),
-});
-interface StartPayload {
-  sequenceId: string;
-  vars: Record<string, string>;
-  stepVars: Record<string, Record<string, string>>;
-}
+const runIdsSchema = z.record(z.string(), z.string());
 interface PreviewState {
   groupId: string;
-  payload: StartPayload;
+  payload: SequenceStartRequest;
   result: Preview;
 }
 function parseInput<T>(text: string, schema: z.ZodType<T>, name: string): T {
@@ -97,7 +85,7 @@ export function Sequences({
       const raw: unknown = JSON.parse(
         sessionStorage.getItem("kapibala:sequenceRuns") ?? "{}",
       );
-      return varsSchema.parse(raw);
+      return runIdsSchema.parse(raw);
     } catch {
       return {};
     }
@@ -146,11 +134,15 @@ export function Sequences({
     setBusy(true);
     setError(null);
     try {
-      const payload: StartPayload = {
+      const payload = sequenceStartRequestSchema.parse({
         sequenceId,
-        vars: parseInput(varsText, varsSchema, "默认变量"),
-        stepVars: parseInput(stepVarsText, stepVarsSchema, "分步变量"),
-      };
+        vars: parseInput(varsText, sequenceVariablesSchema, "默认变量"),
+        stepVars: parseInput(
+          stepVarsText,
+          sequenceStepVariablesSchema,
+          "分步变量",
+        ),
+      });
       const result = await post(
         "/api/sequences/preview",
         previewSchema,
@@ -570,7 +562,11 @@ function CreateSequence({
     setBusy(true);
     setError(null);
     try {
-      const value = parseInput(text, definitionSchema, "序列定义");
+      const value = parseInput(
+        text,
+        sequenceDefinitionRequestSchema,
+        "序列定义",
+      );
       const result = await post("/api/sequences", idSchema, value);
       onCreated(result.id);
     } catch (value) {

@@ -32,6 +32,7 @@ function serializeCookieMutation<T>(work: () => Promise<T>): Promise<T> {
   return task;
 }
 export const getAccessToken = (): string | null => accessToken;
+export const getSessionGeneration = (): number => sessionGeneration;
 export function clearSession(): void {
   sessionGeneration++;
   accessToken = null;
