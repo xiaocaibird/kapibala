@@ -2,11 +2,13 @@
 
 本表回答“当前系统有哪些能力、来自哪里、实现到什么程度、验证到了哪里”。它是当前状态总表，包含原始能力、后续明确补充及必要工程支撑；不替代历史记录或验收步骤。
 
-核对日期：2026-09-30（北京时间）。当前模拟器/API/Vite从主项目`/Users/zcm/Desktop/kapibala`的main `b6d7743`于22:47:25统一启动，schema6且无新增迁移，见[运行证据](evidence/group-directory-filters-rollout.json)。前一批群目录产品包含契约c4831e0、表单d450359、后端f7045d0、前端3486a11及JobProgress文案9bc34fd；旧群资料与原始能力沿用各自历史证据，不写成重新全面验收。
+核对日期：2026-09-30（北京时间）。当前模拟器/API/Vite从主项目`/Users/zcm/Desktop/kapibala`的main `e1c890c`于23:19:29统一启动，schema6且无迁移，验证产品源ee2a0d9，见[运行证据](evidence/page-attention-rollout.json)。前一批群目录产品包含契约c4831e0、表单d450359、后端f7045d0、前端3486a11及JobProgress文案9bc34fd；旧群资料与原始能力沿用各自历史证据，不写成重新全面验收。
 
 完整套件3486a11启动、9bc34fd结束，期间仅JobProgress文案变化，未重启exact-head全套：169登记/166通过/3旧计时跳过/0失败，约112.306秒；build/typecheck在3486a11通过，后续9bc34fd仅文案。隔离开发者浏览器仅对[GD01–GD12](acceptance.md#group-directory-acceptance)列明场景通过，未验细项与用户验收继续单列。分页批次完成时main及Vite前端为028a2e8，另通过build/typecheck、前端38/38及独立创建任务刷新/隐藏找回验证；当时API为9bc34fd、schema6且未再次重启，manifest分列frontendSourceCommit。完整169项未在最终纯前端修正后重跑，不扩大版本覆盖。后续PI-01仅文案f1257c1已独立ff到main并由Vite实际提供，manifest已更新frontendSourceCommit；构建含两项TS及只读浏览器检查通过，API未重启，具体见CR-011。本次文档只回填协调者结果，未再次运行测试或操作环境。
 
-本轮PI-02筛选在独立`agent/group-directory-filters-release`集成后端0ad7cb7、前端b6d7743；build含双方TS、SHA、定向65/65（前端46、PG目录11/metadata8）及列明隔离浏览器场景通过；22:47:25演示已启用，非全套长回归，见[CR-012专项记录](group-directory-filter-review.md)。上述分页及文案结果不扩大为本轮筛选通过。
+上一批PI-02筛选在独立`agent/group-directory-filters-release`集成后端0ad7cb7、前端b6d7743；build含双方TS、SHA、定向65/65（前端46、PG目录11/metadata8）及列明隔离浏览器场景通过；22:47:25演示已启用，非全套长回归，见[CR-012专项记录](group-directory-filter-review.md)。上述分页及文案结果不扩大为本轮筛选通过。
+
+本轮提醒已统一交付：实现方在ee2a0d9完成234登记/231通过/3旧计时跳过、24项浏览器且pageerror为0、build/双方TS/SHA；集成方只读核对证据和候选产品树，没有重跑动态检查。e1c890c演示只读冒烟及保留结果见[提醒实施记录](page-update-notification-implementation.md)，PA用户验收仍待进行。
 
 ## 阅读方式与记录归属
 
@@ -40,7 +42,7 @@
 | [工程支撑与交付](#engineering) | F-ENG-01–03 | 3 |
 | [原始可选扩展](#extensions) | F-EXT-01–03 | 3 |
 
-共 9 组、36 条能力，包含目录及提醒候选新增的3条能力，不等于36条均已交付或验收；另有[已批准方案进度](#in-progress)及[待评审方案索引](#proposals)。
+共 9 组、36 条能力，包含目录及提醒新增的3条能力，不等于36条均已交付或验收；另有[已批准方案进度](#in-progress)及[待评审方案索引](#proposals)。
 
 <a id="access"></a>
 ## 登录、会话与权限
@@ -100,7 +102,7 @@
 
 | 编号 / 能力 | 来源 | 关键行为与当前边界 | 实现 | 自动 / 开发验证 | 用户验收 |
 |---|---|---|---|---|---|
-| F-ATT-01 当前页实时更新关注状态 | 补充CR-006、D-ATT-01；独立于既有全局异常提示 | 六类动态视图与已挂载任务；当前实体/选择/完整目录查询；静态标题/favicon；成功快照+相关操作确认，列表当前结果摘要二次确认，精确排除本人手动clientMsgId。无全站未读或系统推送 | 独立候选已实现；统一集成状态另记 | [实际测试/浏览器证据及协议限制](page-update-notification-implementation.md)；必要功能浏览器检查不代表C3完整扩展 | 待验；已验正常手动消息UO-004受可选发送标识影响，建议单点复验 |
+| F-ATT-01 当前页实时更新关注状态 | 补充CR-006、D-ATT-01；独立于既有全局异常提示 | 六类动态视图与已挂载任务；当前实体/选择/完整目录查询；静态标题/favicon；成功快照+相关操作确认，列表当前结果摘要二次确认，精确排除本人手动clientMsgId。无全站未读或系统推送 | 已实现、开发检查通过；e1c890c演示已启用 | [实际测试/浏览器证据及协议限制](page-update-notification-implementation.md)；必要功能浏览器检查不代表C3完整扩展 | 待验；已验正常手动消息UO-004受可选发送标识影响，建议单点复验 |
 
 <a id="agent"></a>
 ## Agent 与审计
@@ -158,7 +160,7 @@
 | 稳定索引 / 范围 | 来源及关联功能 | 当前状态 | 实施与证据入口 |
 |---|---|---|---|
 | P-01 群列表排序、搜索与新增服务端分页 | 本轮明确批准现在实施，含简介搜索/摘要及两处表单保护；CR-007–010、D024；F-GRP-01/03–08 | 候选9bc34fd已实现；隔离自动及已列浏览器场景通过，演示已切换、最终前端028a2e8补验完成；用户待验 | [方案与契约](group-directory-profile-proposal.md)，初稿0692193；[GD01–GD12](acceptance.md#group-directory-acceptance)分列实际证据/未验细项；[结构化记录](evidence/group-directory-verification.json) |
-| P-02 当前页实时更新提醒 | CR-006、D-ATT-01、F-ATT-01，后续明确批准 | 候选已实现，开发验证见专项证据；统一集成和用户验收独立记录 | [批准范围与实施](page-update-notification-implementation.md)、[PA01–PA08](acceptance.md#page-attention-acceptance) |
+| P-02 当前页实时更新提醒 | CR-006、D-ATT-01、F-ATT-01，后续明确批准 | 已实现，开发检查及统一演示交付见专项记录；用户验收待进行 | [批准范围与实施](page-update-notification-implementation.md)、[PA01–PA08](acceptance.md#page-attention-acceptance) |
 
 P-01具体批准包含服务端分页的新查询契约，已承接D023重新评估要求；不会自动批准其他产品、提醒或架构建议。
 

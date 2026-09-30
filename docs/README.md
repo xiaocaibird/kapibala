@@ -28,27 +28,27 @@
 <a id="代码与命令执行位置"></a>
 ## 当前演示与代码位置
 
-当前演示已于**2026-09-30 22:47:25（北京时间）**从main的`b6d7743`统一启动模拟器/API/Vite，schemaVersion为6，控制台HTTP200，无新增迁移。父进程10600、模拟10602、API10603、Vite10604；入口[本地控制台](http://127.0.0.1:5173)，管理员`admin/admin`，只读账号`viewer/viewer`。启动源码、产品树及进程以[筛选运行证据](evidence/group-directory-filters-rollout.json)和main `.runtime/runtime-manifest.json`为准，文档提交不会自动重启服务。
+当前演示已于**2026-09-30 23:19:29（北京时间）**从main的`e1c890c`统一启动模拟器/API/Vite，schemaVersion为6，控制台HTTP200，无新增迁移。父进程69990、模拟69992、API69993、Vite69994；入口[本地控制台](http://127.0.0.1:5173)，管理员`admin/admin`，只读账号`viewer/viewer`。启动源码、产品树及进程以[提醒运行证据](evidence/page-attention-rollout.json)和main `.runtime/runtime-manifest.json`为准，文档提交不会自动重启服务。
 
-当前版本包含既有群目录排序、四字段搜索、游标分页、两处表单保护、PI-01文案，以及PI-02群状态/Agent开关筛选。筛选构建含双方TS、定向65/65及列明开发者浏览器场景通过，详见[筛选验证](group-directory-filter-review.md)；用户验收待进行。原028a2e8的创建任务sessionStorage找回保持，目录关键词/方向/筛选/页仍只在本次登录内存保存；其独立38项前端及任务刷新/隐藏浏览器证据保持原版本范围，不改记为本轮重验。
+当前版本包含既有目录、资料和筛选能力，以及已批准的当前页更新提醒。实现方在产品源码`ee2a0d9`完成构建/双方TS、原文SHA、完整234项登记/231通过/3既有计时跳过、24项浏览器检查且pageerror为0；集成候选`e1c890c`的apps/packages/db/tests与该测试源相同。统一集成方只读核对证据及两个具名验证库已删除，没有冒称重新运行这些动态检查。范围及限制见[提醒实施记录](page-update-notification-implementation.md)，[PA01–PA08](acceptance.md#page-attention-acceptance)仍为用户待验。
 
-22:18:35启动9bc34fd的API及后来仅前端028a2e8/f1257c1热更新现已成为历史，见[上一批运行记录](evidence/group-directory-rollout.json)、[文案记录](account-operation-copy.md)。本次main从7990ddd ff到b6d7743后统一重启，消除了之前API与前端源码版本不同的运行状态。
+22:47:25的b6d7743筛选版本及22:18:35的9bc34fd API/后续028a2e8、f1257c1前端均为历史，分别见[筛选运行记录](evidence/group-directory-filters-rollout.json)、[分页运行记录](evidence/group-directory-rollout.json)和[文案记录](account-operation-copy.md)。本次main由78d7f55 ff-only到e1c890c后统一重启，既有证据保持各自版本与场景范围。
 
 | 用途 | 本地路径 | 版本与执行边界 |
 |---|---|---|
-| main及当前演示 | `/Users/zcm/Desktop/kapibala` | 当前b6d7743统一运行，含PI-01文案及PI-02筛选；默认端口只从此目录启动 |
-| 群目录集成与文档 | `/Users/zcm/.codex/worktrees/42fe/kapibala` | 当前`agent/group-directory-filters-release`，后端0ad7cb7/前端b6d7743；定向及列明隔离浏览器范围通过，已更新统一演示，不在此启动第二套默认端口 |
+| main及当前演示 | `/Users/zcm/Desktop/kapibala` | 当前e1c890c统一运行，验证产品源ee2a0d9；默认端口只从此目录启动 |
+| 提醒集成与文档 | `/Users/zcm/.codex/worktrees/42fe/kapibala` | 当前`agent/page-attention-release`，候选e1c890c已统一交付；不在此启动第二套默认端口 |
 | 历史群资料验证 | `/Users/zcm/.codex/worktrees/platform-gateway/kapibala` | 当时群资料集成记录保留；当前是否复用以对应工作树实际状态为准，不视为默认运行目录 |
 
-本轮停服前四类在途任务均为0；备份在main `.runtime/backups/2026-09-30-before-group-filters`，66594字节PG归档可列目录。业务数据、4群及两个模拟器文件保留；viewer冒烟前18表中17表哈希相同，仅auth_tokens变化。原154条token_hash均在，1旧行仅used_at变化，重启恢复阶段新增2行，随后viewer登录再新增2行；符合正常认证生命周期，具体浏览器来源未观测，不宣称所有业务和认证表完全相同。新IAB viewer默认看到4群，active+false为1群且无创建入口，未做业务写入；[本轮演示截图](evidence/group-directory-filters-main.png)已保存并关闭浏览器，用户Chrome未操作。备份可读不等于完整灾难恢复演练。
+本轮停服前四类在途任务均为0；备份在main `.runtime/backups/2026-09-30-before-page-attention`，67260字节PG归档已通过archive-list检查。重启后、viewer冒烟前的18张表（含schema及auth）行数/哈希均与停服前一致，4个群和两个模拟器文件均保留；这是本次切换结果，不沿用上一筛选批次auth_tokens变化的结论。新独立IAB viewer默认4群，Agent关闭筛选1群、重置回4群，无创建入口；初始标题“群组工作台 · Kapibala”安静，未做业务写入或操作用户Chrome。[演示截图](evidence/page-attention-main.png)与运行证据记录具体范围，备份可读不等于完整灾难恢复演练。
 
-历史22:18批次备份`.runtime/backups/2026-09-30-before-group-directory`为65327字节，006重复迁移与当时17表保留核对见[上一批运行记录](evidence/group-directory-rollout.json)；不将该历史结果用于声称本轮认证数据未变化。
+历史筛选批次备份为66594字节，18表中17表哈希相同、auth_tokens正常生命周期变化另记[筛选运行记录](evidence/group-directory-filters-rollout.json)；分页批次65327字节备份及006重复迁移留在[分页运行记录](evidence/group-directory-rollout.json)。历史验证不改写为本次结果。
 
 所有`apps/`、`packages/`、`db/`、`scripts/`、`tests/`及根README路径相对完整仓库。执行命令前核对`git branch --show-current`、`git rev-parse HEAD`及运行manifest；安装和冷启动见[项目README](../README.md)，只有服务未运行时才启动，避免不同工作树争用默认端口。
 
 20:57:22的7efdbf3/schema5群资料版本及19:57:51的9befc8a/schema4均已成为历史，分别见[群资料运行证据](evidence/group-metadata-rollout.json)、[基础运行证据](evidence/demo-verification.json)。既有业务与用户验收记录保留，不将后续数据变化追溯为当时计数。
 
-提醒专项已在独立候选实现，最终产品源码ee2a0d9通过234项登记/231通过/3既有跳过及24项浏览器检查，见[实施与证据](page-update-notification-implementation.md)；当前候选等待统一集成及演示切换，不倒写为上一筛选批次已交付。PI-01仅文案已在独立f1257c1完成并启用，证据见[文案验收](account-operation-copy.md)；PI-02状态/Agent开关筛选已按CR-012独立集成，b6d7743构建含双方TS、定向65/65及列明隔离浏览器场景通过，演示已启用，见[专项记录](group-directory-filter-review.md)；不并入分页或PI-01的历史已测范围。其他未采纳产品/架构建议仍按各自记录评审。
+提醒专项已通过独立开发检查并于23:19:29统一交付，见[实施与证据](page-update-notification-implementation.md)；用户验收待进行，不倒写为上一筛选批次已交付。PI-01仅文案已在独立f1257c1完成并启用，证据见[文案验收](account-operation-copy.md)；PI-02状态/Agent开关筛选已按CR-012独立集成，b6d7743构建含双方TS、定向65/65及列明隔离浏览器场景通过，演示已启用，见[专项记录](group-directory-filter-review.md)；不并入分页或PI-01的历史已测范围。其他未采纳产品/架构建议仍按各自记录评审。
 
 ## 来源与证据边界
 
