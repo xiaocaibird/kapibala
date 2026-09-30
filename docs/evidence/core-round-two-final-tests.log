@@ -1,0 +1,417 @@
+npm notice run kapibala-platform@0.1.0 test
+npm notice run tsx --test tests/integration/*.test.ts apps/web/tests/*.test.ts
+✔ an unavailable selected sender stays selected until the user explicitly chooses another identity (0.480084ms)
+✔ initial default and rate limited sender keep the existing queue policy (0.111292ms)
+✔ sequence timestamps distinguish confirmed delivery, skipped handling and failed handling (25.372875ms)
+✔ member count commit survives replay after REST and unrelated WS events already advanced the snapshot (0.475917ms)
+✔ active Agent and sequence identity commits survive REST-leading replay without treating steps as card changes (0.162542ms)
+✔ role-only membership, run recovery and step progression remain silent; polling alone creates no candidate (0.173584ms)
+✔ legacy coarse events retain uncertainty as a range target instead of claiming an unchanged or read card (0.204042ms)
+✔ direct visible group changes remain definitive even with a simultaneous role-only projection marker (0.105625ms)
+✔ directory requests use fixed page size and preserve literal search and opaque cursors (0.937125ms)
+✔ search debounce and order changes abort old requests and ignore late results (22.561959ms)
+✔ directory query identity includes all server conditions but excludes cursor and request lifecycle (1.412333ms)
+✔ filter URL combinations send explicit booleans and omit unselected conditions (0.435375ms)
+✔ changing filters abandons a loaded cursor and ignores both late page and prior-filter responses (0.7565ms)
+✔ clear search preserves filters and ordering while reset restores every default and cancels late results (0.537875ms)
+✔ choosing all in one filter preserves the other filter and the search (8.181ms)
+✔ IME composition defers combined filters until committed and sends them in one first-page query (4.427791ms)
+✔ filtered pagination retries and cached returns preserve conditions and stable location (5.297834ms)
+✔ filter-only empty results are recognized as no matches including Agent disabled (0.127292ms)
+✔ IME composition suppresses debounce, sort requests and polling until committed (1.786167ms)
+✔ initial errors remain distinct from a successful empty directory and can retry (3.608542ms)
+✔ next-page failure keeps items and cursor; exact-cursor retry merges stable IDs once (1.441167ms)
+✔ unchanged first-page probes preserve a failed next-page retry and never rotate its cursor (3.0405ms)
+✔ changed first-page probes invalidate all cached pages without splicing new rows (2.34025ms)
+✔ a relevant change aborts an in-flight next page and ignores its late response (1.099375ms)
+✔ a relevant change during first-page refresh discards that response and coalesces one fresh read (2.838542ms)
+✔ leaving and returning retains multi-page query, anchor and stale contents without automatic reset (4.239167ms)
+✔ off-page request completion is ignored and a one-page cache refreshes on return (1.811792ms)
+✔ condition changes reset pagination and position without clearing the search silently (9.61625ms)
+✔ a stopped session cancels pending debounce and late responses; a new session starts clean (2.997125ms)
+✔ an unchanged non-null next cursor fails visibly instead of repeating a page forever (1.166667ms)
+✔ synchronous loader failure cannot strand the flight or prevent manual retry (7.713708ms)
+✔ directory revision filters unrelated message traffic without changing directory-relevant events (0.243875ms)
+✔ directory runtime schema validates compact rows, dates, counts and cursor without a fake total (2.249125ms)
+✔ description and platform ID matches remain identifiable without HTML highlighting (0.171709ms)
+✔ creating a group omits untouched metadata but rejects an explicitly blank name (1.242542ms)
+✔ metadata limits apply after trimming and reject excess input instead of truncating it (0.240542ms)
+✔ profile patches preserve concurrently updated fields the user did not edit (0.094542ms)
+✔ an existing description can be cleared without clearing a group name (0.088291ms)
+✔ conditional profile writes include raw expected values only for semantically changed fields (0.182416ms)
+✔ profile conflict parsing requires the exact 409 contract and does not normalize server values (1.228833ms)
+✔ a name conflict rebases untouched description without losing the raw submitted draft (0.112625ms)
+✔ normalization-only untouched input follows the new snapshot instead of becoming a stale write (0.067167ms)
+✔ multi-field conflict keeps every submitted draft and a reverted field leaves the next conditional write (0.136708ms)
+✔ clearing a description keeps the raw empty draft and checks the newest description on reconfirmation (0.104584ms)
+✔ adopting a matching server snapshot needs no write and invalid drafts retain original validation (0.113666ms)
+✔ profile conflict comparison shows all submitted fields, their drafts and the atomic no-save boundary (2.278417ms)
+✔ profile conflict comparison distinguishes an empty server description from the draft clear intent (0.203667ms)
+✔ group responses require real metadata fields and a valid UTC creation timestamp (1.08025ms)
+✔ group profile shows the server date and read-only content without a viewer edit entry (45.756292ms)
+✔ group choices retain gateway identity when human names collide (0.132ms)
+✔ refresh completing after blur and refocus cannot confirm an old view intent (0.7465ms)
+✔ a frame paused while hidden remains invalid after refocus and cannot consume a newer action (0.097083ms)
+✔ same-batch member role changes preserve the original directory count evidence without reviving it after confirmation (0.595583ms)
+✔ run creation directory evidence survives same-batch run steps or recovery updates (0.129333ms)
+✔ directory projection classifications canonicalize fields and keep missing separate from known empty (0.112875ms)
+✔ confirming a group name then changing a setting cannot revive profile attention (0.103375ms)
+✔ late-mounted profile and settings retain separate original field sequences (0.105ms)
+✔ a definitive field upgrades the same pending event after an ambiguous field without reopening confirmed work (0.087666ms)
+✔ group message marker excludes history; duplicate created event stays one candidate (0.09825ms)
+✔ late identity confirmation cannot turn a pre-scope pending message into a new update (0.140041ms)
+✔ ordinary created messages use their event sequence without inventing an older origin (0.058917ms)
+✔ foreground is quiet; leaving pending content promotes a static reminder and focus cannot clear it (0.093709ms)
+✔ failed reload and snapshots started before the event cannot acknowledge it (0.055833ms)
+✔ an account row interaction cannot consume another row or a later update (0.036125ms)
+✔ same displayed status after a fresh snapshot does not create visible-change attention (0.0445ms)
+✔ real account transitions remain pending when online goes away and returns before snapshot (0.036542ms)
+✔ a definitive replay after REST already rendered its version still requires confirmation (0.039708ms)
+✔ current event classifier separates precise business changes from legacy invalidation (0.101916ms)
+✔ a precise update during first load survives absence of a comparison baseline (0.037ms)
+✔ coalesced run status keeps latest sequence and ignores out-of-order arrivals (0.045958ms)
+✔ a removed list row remains range-confirmable; one snapshot cannot clear a newer list change (0.029708ms)
+✔ new scope model discards old group candidates without mutating old async callbacks (0.028791ms)
+✔ a message taller than its 510px timeline needs a summary even inside a 1200px window (0.203916ms)
+✔ directory attention evidence advances only on applied refresh, never failed or stale reads (7.814583ms)
+✔ directory query change clears old presentation evidence and never reuses a cursor as a scope (1.423416ms)
+✔ directory attention resets successful evidence for actual status and Agent filters (3.209916ms)
+✔ group message attention distinguishes created content, delivery echoes and another group (0.45825ms)
+✔ only the mounted run and exact step identity receive step changes (0.101667ms)
+✔ account and group adapters reject unrelated page changes (0.087583ms)
+✔ business projections ignore identity-neutral polling and include visible changes (0.099417ms)
+✔ current page journals exclude messages and events from other selected groups (0.082042ms)
+✔ definitive changes follow the fields shown by each current-page summary (0.09775ms)
+✔ concurrent REST 401s and WS refresh share one token rotation (34.660125ms)
+✔ a delayed old-token 401 uses the already refreshed token (37.629333ms)
+✔ logout first renews expired access and then reaches the server (1.294958ms)
+✔ revoked refresh clears the access token and reports the server error (0.524875ms)
+✔ a login or logout cannot be overwritten by an older refresh response (0.243083ms)
+✔ own-message return and sentAt correction keep one stable row (0.131875ms)
+✔ old snapshot pagination cannot downgrade a row or lose backfilled history (5.271917ms)
+✔ equal timestamps are ordered consistently by stable identity (0.101458ms)
+✔ a delayed write 401 cannot replay under a newly logged-in identity (13.304083ms)
+✔ an old retried request cannot clear the new identity on its delayed 401 (0.828792ms)
+✔ a late successful result is not returned into a different session (0.2515ms)
+✔ a new session owns a new refresh flight and an old finalizer cannot release it (0.358333ms)
+✔ cookie serialization: an old refresh 200 finishes headers/body before logout and new login (18.761041ms)
+✔ cookie serialization: an old refresh 401 finishes headers/body before logout and new login (3.222208ms)
+✔ logout revokes the cookie even when an old successful refresh lost its generation before saving access (1.575833ms)
+✔ a TypeError refresh rejection releases the auth queue for a new login (1.142334ms)
+✔ a TimeoutError refresh rejection releases the auth queue for a new login (0.711292ms)
+✔ logout alone renews expired access inside its queue, then revokes without deadlock (0.500459ms)
+✔ a queued obsolete refresh is rejected before it can rotate a newly logged-in cookie (0.216541ms)
+✔ timing: the real twenty-second refresh abort releases a queued login (20023.436042ms)
+ℹ actual refresh timeout: 20002ms
+✔ a failed snapshot retains consumed invalidations and retries without a new event (3.874708ms)
+✔ events during a snapshot coalesce into one serial follow-up snapshot (15.708834ms)
+✔ snapshot retries use capped backoff and reset their delay after recovery (22.284125ms)
+✔ disposing a group clears retries and blocks late results from the old group (1.294083ms)
+✔ an invalidation at snapshot completion cannot get stranded behind the finishing promise (0.979833ms)
+✔ a complete snapshot defeats a late earlier-page cursor and a late earlier-page failure (12.601042ms)
+✔ normal earlier pages still merge, preserve a failed-page cursor and allow retry (1.681125ms)
+✔ switching group invalidates an earlier-page completion without requiring another snapshot (0.0855ms)
+✔ KA01 connect confirms remote connection but local rollback is visible without a second remote call (718.477209ms)
+✔ KA01 transition confirms remote connection but local rollback is visible without a second remote call (462.054791ms)
+✔ KA02 disconnect confirms remote offline but local rollback is visible without a compensation (407.837709ms)
+✔ KA03 warning persistence failure preserves the original error and logs both failures (269.732334ms)
+✔ KA04 public account API returns a failure and retains existing authorization on persistence mismatch (289.902125ms)
+✔ PostgreSQL sessions rotate, revoke on reuse, enforce viewer and logout (774.769ms)
+✔ tool definitions have all required arguments; invalid protocols are rejected (177.89475ms)
+✔ sequence variables persist overrides and report the first unresolved step (0.481792ms)
+✔ PostgreSQL serializes concurrent sequence starts and failed preflight creates no run (56.566792ms)
+✔ multiple workers create one agent run and same send key is audited and enqueued once (198.997333ms)
+✔ bad JSON, unknown tool, duplicate tool id are recorded without corrupting history (90.065958ms)
+▶ invalid finish inputs return INVALID_INPUT and allow a later valid completion
+  ✔ null followed by end_turn (83.115708ms)
+  ✔ null followed by finish (83.817166ms)
+  ✔ missing summary followed by end_turn (130.452875ms)
+  ✔ missing summary followed by finish (166.403834ms)
+  ✔ wrong summary type followed by end_turn (103.550375ms)
+  ✔ wrong summary type followed by finish (128.573542ms)
+✔ invalid finish inputs return INVALID_INPUT and allow a later valid completion (697.064625ms)
+▶ completed invalid finish recovery honors cancellation and execution limits
+  ✔ cancelled (64.181041ms)
+  ✔ wall_clock (66.225667ms)
+  ✔ budget_exhausted (68.762542ms)
+  ✔ protocol_errors (56.934583ms)
+✔ completed invalid finish recovery honors cancellation and execution limits (256.7715ms)
+✔ a successful persisted finish completes recovery without another remote turn (56.12075ms)
+✔ inconclusive audit blocks without side effects; rejection does not reserve a send key (139.311792ms)
+✔ messages arriving during a run become one next trigger and own messages never trigger (122.95625ms)
+✔ interrupted remote turn is visibly paused and never replayed (94.750541ms)
+✔ sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step (123.484125ms)
+✔ persisted final and prepared send recover without replaying prior external work (97.992125ms)
+✔ kick policy and persisted uncertain kick cannot produce a second side effect (155.2425ms)
+✔ repeated reads stop within twelve steps and result bytes remain bounded (674.3395ms)
+✔ disabling Agent during its current step cancels after that step, without another turn (122.109375ms)
+✔ activity budget interrupts a late turn and discards the eventual response (332.091042ms)
+✔ activity budget expires during audit without authorizing the prepared tool (313.801584ms)
+✔ an accepted send whose account becomes terminal yields SEND_FAILED without a resend (47.016625ms)
+✔ restart catches up a committed send before rebasing the next unscheduled step (56.682167ms)
+✔ kick permission errors remain tool errors and a confirmed kick succeeds (251.081917ms)
+✔ SEND_TIMEOUT retries with the same key read the eventual send without re-auditing (5148.179709ms)
+✔ sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp (68.770292ms)
+✔ loss of the advisory-lock connection aborts a turn without saving a false protocol error (187.87575ms)
+✔ loss of a run lock during audit prevents old-worker effects and permits safe audit recovery (224.19275ms)
+✔ kick budget exhaustion ends the run while retaining an uncertain non-replayable effect (135.826417ms)
+✔ a stale scheduler transaction cannot enqueue after its ownership connection is lost (62.709833ms)
+✔ closing and recreating modules preserves activity while excluding actual downtime (988.345042ms)
+✔ queued runs persist online activity across a real shutdown without counting downtime or a second clock (2770.627ms)
+✔ a follower cannot execute against a stale activity base while the new clock owner initializes (1358.524875ms)
+✔ an initialization follower takes over after the blocked clock owner connection is terminated (2019.036166ms)
+✔ frequent activity samples retain subinterval time instead of losing rounded milliseconds (31.347125ms)
+✔ activity clock survives loss of its own PostgreSQL session and only bills once after takeover (1519.523166ms)
+✔ inconclusive audit step and blocked run roll back together before recovery (91.616584ms)
+✔ persisted legacy audit-block window cannot resume another Agent turn (43.448167ms)
+✔ timing: the default twelve-second turn timeout discards the late response (13460.108458ms)
+✔ timing: three five-second inconclusive audit attempts block without sending (16476.481791ms)
+✔ timing: sixty seconds of activity ends the run even below the twelve-step cap (60057.431916ms)
+✔ CG13: legal turns reset consecutive errors and preserve exact history shapes and end_turn semantics (682.381542ms)
+ℹ Independent database: kapibala_test_8ff658d75a0543f29be50a89385db381
+✔ CG14: three audit responses without verdict block one step and publish the terminal fields without effects (460.311042ms)
+ℹ Independent database: kapibala_test_c77faf4e17fd4e1a830660a9a93c0a10
+✔ CG14: no online member for send and no online elevated member for kick are business errors (554.546542ms)
+ℹ Independent database: kapibala_test_6b72f488b92a4d659297f90e5b18bf04
+✔ CG14: disabling autoKick while the audit is pending prevents the authorized tool from executing (418.0545ms)
+ℹ Independent database: kapibala_test_a3b5a2739f7a4b01bfe43651eea8a227
+✔ CG15: a current run reads newly arrived messages in order and exposes Unicode and raw response bounds (403.638042ms)
+ℹ Independent database: kapibala_test_c050ed166e4c4fdc89ac7ce01e65c942
+✔ CG16: invalid indexes have no persistent effects and the next step starts from actual skip time (667.520208ms)
+ℹ Independent database: kapibala_test_6087bebe566e415291eae09dbacf668b
+✔ R09: echo confirmation uses only message_sent observation, preserves it after duplicate and restart (1728.045833ms)
+ℹ Independent database: kapibala_test_340c033b68dc4c0abb1a7dc458111eea
+✔ R09: query confirmation uses only message_sent observation, preserves it after duplicate and restart (1488.065708ms)
+ℹ Independent database: kapibala_test_9dbd3698b3da4e3fa4929a1667903783
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ R09: event confirmation uses only message_sent observation, preserves it after duplicate and restart (773.205833ms)
+ℹ Independent database: kapibala_test_e1e7f69abd564936bfb1178ef4a1e194
+✔ R05: a locked group cannot block another group's Agent or sequence; retry preserves one run and one enqueue (359.506167ms)
+ℹ Independent database: kapibala_test_a03079e06a14487fb8937f09609c53ff
+ℹ tick with group lock held: 161ms
+✔ R05: a real slow member reconciliation holds its group lock without stopping another group (403.210375ms)
+ℹ Independent database: kapibala_test_67b58c9708b848f0a0402b44cbe37940
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ R05: busy takeover defers only that run and must rebase it before dispatch after unlock (639.371083ms)
+ℹ Independent database: kapibala_test_98b48858808e4abf9bef2464973beb34
+✔ R09: skipped step still schedules from the actual skip time (173.25875ms)
+ℹ Independent database: kapibala_test_3a91724c5fbf4e70a2f94d725e1ff4fd
+✔ R09: observation precedes row-lock wait and survives a failed transaction retry (360.934083ms)
+ℹ Independent database: kapibala_test_b47d0838a7164b9bb84af692a235595f
+✔ R09: migration refuses active old sequences and never fabricates historical observations (108.627916ms)
+✔ CG08 timing: configured 10000ms turn timeout rejects a genuinely late HTTP response (10691.754541ms)
+ℹ Independent database: kapibala_test_7e5d12e48f7d44eab8275544fe3c2ead
+ℹ {"configuredTimeoutMs":10000,"observedTimeoutMs":9996.368625,"lateResponseObserved":true}
+✔ CG08 timing: configured 15000ms turn timeout rejects a genuinely late HTTP response (15441.908666ms)
+ℹ Independent database: kapibala_test_0735cd3c070f453e92701912884670b8
+ℹ {"configuredTimeoutMs":15000,"observedTimeoutMs":15007.48625,"lateResponseObserved":true}
+✔ CG08: hard termination preserves sampled activity, excludes downtime, and exposes a tail beyond one sampling interval (3251.191209ms)
+ℹ Independent database: kapibala_test_f6c03213414e4217a31b60db5662f586
+ℹ {"sampledActiveMs":490,"unbilledOnlineTailMs":1168,"actualDowntimeMs":707,"billedOnRestoreMs":1,"resumedActiveMs":978}
+✔ CG09: HTTP seed, reconnect identity, transition preconditions and actual gateway disconnect (4467.982667ms)
+ℹ isolated database: kapibala_test_a83661d3458d46668c3cfa9aeac29572
+✔ CG09: refreshing a rate-limit deadline emits no self transition; offline expiry stays offline (5315.72075ms)
+ℹ isolated database: kapibala_test_7ea47d3fa48141a6a7e5ec31cb5cfddd
+✔ CG11: rejected create has no job or gateway effects; defaults and terminal run references match API (5257.501ms)
+ℹ isolated database: kapibala_test_96cd0936f0144bf2b7e88eb250283d61
+✔ CG11: real HTTP job failures expose fixed create/invite/join/promote/leave step names (6826.9ms)
+ℹ isolated database: kapibala_test_2589eeb64d924b969328dffe64da220b
+✔ CG10: stopped business process replays every external SSE event once, including history and duplicates (2760.071958ms)
+ℹ isolated database: kapibala_test_8244fec9c837452dbec9a4c77fee6047
+✔ CG10: real GROUP_WRITE_FORBIDDEN commits group/sequence cancellation before WS, then finishes current Agent step (5986.976417ms)
+ℹ isolated database: kapibala_test_036ab4038759488b8d66b7c35694b618
+✔ checked-out advisory connection loss rejects safely, fences subsequent DB work, and releases capacity (363.911041ms)
+✔ advisory lock loss aborts an in-flight HTTP request and blocks later remote calls (480.77925ms)
+✔ transaction client loss during HTTP wait aborts safely and does not poison later transactions (412.822916ms)
+✔ cleanup on a disconnected advisory connection preserves the callback error (81.878333ms)
+✔ RemoteClient preserves HTTP errors for null, primitive, malformed nested envelopes and valid arrays (7.817916ms)
+✔ R05 cancellation: a paused run with a locked group preserves cancellation while another group's Agent and sequence advance (635.528459ms)
+ℹ Independent database: kapibala_test_8f119c65804740449f011f77fa6ce718
+ℹ tick with paused cancellation locked: 120ms
+✔ R05 cancellation: non-lock persistence errors propagate and preserve the cancellation intent (461.074791ms)
+ℹ Independent database: kapibala_test_823dc557cff34cf79d74b0799f570145
+✔ PostgreSQL lock admission preserves connection capacity for nested transactions (804.51275ms)
+✔ KM01 a slow member query rolls back and retries while a later group's SSE message proceeds (2470.774917ms)
+ℹ later group's message persisted after 2063 ms
+✔ R09 combination: failed receipt and a later eventId for the same message retain the first observation (563.734709ms)
+ℹ Independent database: kapibala_test_0f3f87a3eade40ef9ff3ef09c2d52689
+✔ R09 combination: a failed acknowledgement for a different msgId cannot occupy the valid message's observation (460.7735ms)
+ℹ Independent database: kapibala_test_b4bf2e56bad94612a748b21c362c8dad
+✔ KG03 first explicit promote 503 retries after backoff and finishes within two calls (576.407125ms)
+✔ KG04 promote 503 then 503 ends as explicit failure without a third call (461.278125ms)
+✔ KG04 promote not_member then 503 ends as explicit failure without a third call (551.016292ms)
+✔ KG04 promote 503 then not_member ends as explicit failure without a third call (419.732167ms)
+✔ KG05 promote unknown response or persisted dispatch never silently retries (401.557167ms)
+✔ KG01 SSE CRLF split across three chunks preserves both frames (515.830833ms)
+✔ KG02 SSE every byte boundary preserves UTF-8, comments and multiline data (502.564125ms)
+✔ 真实PG：并发账号CAS只有一个成功，非法边优先于状态冲突 (188.926625ms)
+✔ 账号完整36种状态组合严格遵循允许转移表，终态无出边 (222.094666ms)
+✔ 限流到期前已手动离线，不得被过期调度恢复为online (77.866166ms)
+✔ ACCOUNT_OFFLINE及SENDER_NOT_IN_GROUP只失败当前消息，账号和群不变 (186.028709ms)
+✔ 同步SESSION_EXPIRED与异步account_status都执行相同终态后果 (306.156833ms)
+✔ 异步message_failed按错误传播账号终态或群不可写，不能混淆范围 (383.715708ms)
+✔ 真实PG：终态后果原子提交；步骤写失败整笔回滚 (117.8145ms)
+✔ 限流期间所有来源共用账号队列且恢复保持顺序 (171.048334ms)
+✔ 503退避不能让同账号后续消息越过队首 (191.874958ms)
+✔ 504已落地查询收敛为sent，不重发；自身回流去重且不触发Agent (117.3825ms)
+✔ 504明确未落地只重试一次，第二次仍未落地最终failed (249.357ms)
+✔ 真实时钟：两次504且均未落地，在5秒内确定失败并且只重发一次 (4406.362541ms)
+✔ 真实HTTP：窗口内取得的404延迟返回后不得触发重发，后续查询确认原消息 (2378.905875ms)
+✔ 崩溃发送意图恢复为unknown，没有已知504不得重发 (93.756458ms)
+✔ 发送持锁连接丢失后新worker就地接管，旧worker不能写accepted或重发 (132.37725ms)
+✔ 第二实例启动不能把活跃worker的发送标记为恢复未知 (109.172084ms)
+✔ 504查询不可用期间保持unknown，恢复后确认不会重复发出 (116.962334ms)
+✔ 已sent补投和重复确认不会重写首次确认时间 (109.516083ms)
+✔ kick同步终态错误也执行成员清理与取消，群错误只改变群 (127.70475ms)
+✔ kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未知时不删除成员 (2457.04825ms)
+✔ kick已确认删除等待群投影事务，旧成员快照不能覆盖删除结果 (100.042125ms)
+✔ 真实PG双实例发送互斥，单个outbox只调用一次远端 (90.36075ms)
+✔ 群不可写原子停止序列并取消Agent，不改变账号 (83.134167ms)
+✔ 真实PG事件写失败后重放，乱序eventId与任意历史补投均保留 (102.051709ms)
+✔ 建群包括creator/admin，过期链接重申，promote仅一次 (129.289333ms)
+✔ 邀请ready时间前不join，ALREADY_MEMBER无需等待事件，可重试一次promote (652.120583ms)
+✔ 建群远端成功但本地写失败时记录待确认，禁止重复创建 (85.331583ms)
+✔ join事件超过10秒未到，任务失败且不提前promote (91.958125ms)
+✔ 非群主退出失败继续其他成员，群主不退出 (93.735875ms)
+✔ leave-all服务账号全部退出但保留外部用户，left公开视图为空并保存远端证据 (109.615375ms)
+✔ 时间线快照在历史补投和queued.sentAt改写时保持原始分页无重漏 (89.813ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ group directory: bounded summaries, defaults, and unchanged legacy groups (529.96175ms)
+ℹ isolated database: kapibala_test_dbdca968847a456a83c5321ebf6f4da3
+✔ group directory: microsecond boundaries and equal-time IDs have no gaps in either order (460.681208ms)
+ℹ isolated database: kapibala_test_ed02a20da68c409781401195f185cc71
+✔ group directory: search filters before pagination across all four nullable fields (570.001458ms)
+ℹ isolated database: kapibala_test_e7a6cb31db6f44d4afd447cb2318ed56
+✔ group directory: percent underscore backslash SQL text and Chinese are literal search terms (386.200916ms)
+ℹ isolated database: kapibala_test_5049d9ab9e0c4cf58394ddea57a9298f
+✔ group directory: rejects malformed query and cursor boundaries or changed conditions (419.620667ms)
+ℹ isolated database: kapibala_test_7f36a53c1c0f42bb9e23599cc05b6753
+✔ group directory: authenticated viewer reads, cursor grants no authority, and writes stay forbidden (377.001917ms)
+ℹ isolated database: kapibala_test_8087922ac878455aa6084af824c34f66
+✔ group directory: live cursor survives boundary deletion and exposes later inserts (289.606ms)
+ℹ isolated database: kapibala_test_baa19773867c4607b107ab7c11fece8e
+✔ group directory: migration is repeatable and preserves legacy values and microseconds (320.564667ms)
+ℹ isolated database: kapibala_test_4dd3a23957004f24b628bf2fcad62b03
+✔ group directory filters: complete-set intersection precedes pagination in both orders (385.150125ms)
+ℹ isolated database: kapibala_test_98c9247630e9450c8c1cde3da24f0512
+✔ group directory filters: v1 cursors bind optional normalized filters and preserve old defaults (221.163625ms)
+ℹ isolated database: kapibala_test_dc7bed372f2246ed94a1b68d415c6e39
+✔ group directory filters: strict query values and viewer access (202.606042ms)
+ℹ isolated database: kapibala_test_f76d3133638140bd9bc6ad5ff8ec36cd
+▶ group metadata: omitted fields remain compatible and named jobs survive reconstruction
+  ✔ {} (314.276875ms)
+  ✔ {"name":"  项目群  ","description":"  用于交流项目进度。  "} (558.971458ms)
+  ✔ {"description":" \n "} (413.895541ms)
+✔ group metadata: omitted fields remain compatible and named jobs survive reconstruction (1288.027417ms)
+✔ group metadata: shared validation rejects bad input and accepts trimmed limits (404.810667ms)
+✔ group metadata: partial and concurrent edits preserve omitted values, creation time, and permissions (376.271208ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ group list remains ordered by creation time descending with stable IDs for ties (292.742625ms)
+✔ group metadata migration leaves legacy group creation timestamps unchanged (316.746541ms)
+✔ group profile conflict: same-field concurrent edits across instances have one winner (281.886292ms)
+ℹ Independent database: kapibala_test_6ce307e2920c4d63aadba3d0025842e0
+✔ group profile conflict: independent fields can commit concurrently (525.524417ms)
+ℹ Independent database: kapibala_test_93d3feffcec0423499e27828bf96a22b
+✔ group profile conflict: a stale field rolls back the whole patch without events or Agent cancellation (399.833916ms)
+ℹ Independent database: kapibala_test_1843f5cd133449da8024dab37fc40aa4
+✔ group profile conflict: null and raw original values are compared without normalization (417.787333ms)
+ℹ Independent database: kapibala_test_ac12e0c9c09a4a5c842ffdf2d731bda2
+✔ group profile conflict: expected is strict nonempty and matches precisely the supplied profile fields (378.663708ms)
+ℹ Independent database: kapibala_test_77d08c0a9d50416ca97e08c70fbd4fe7
+✔ group profile conflict: legacy requests and successful mixed settings retain existing behavior (292.039541ms)
+ℹ Independent database: kapibala_test_c76fde022a9344ff8c5c9b863e48d86f
+✔ group profile conflict: viewer and unauthenticated requests cannot mutate or inspect conflict details (316.394416ms)
+ℹ Independent database: kapibala_test_284b7c6b1d3e40a2b57eeb50eab5af0b
+✔ kick 200 arriving after a committed rejoin preserves current membership without kicking twice (462.19125ms)
+✔ leave 200 arriving after rejoin retains the member and prevents the creator from leaving (397.455834ms)
+✔ member refresh failure after confirmed kick remains success and converges through event retry (407.586334ms)
+✔ leave refresh failure preserves confirmed progress and prevents unsafe creator departure (376.672917ms)
+✔ leave completion reads current members after acquiring the group projection lock (289.904458ms)
+✔ a delayed member snapshot cannot overwrite a newer member removal from another event worker (372.602291ms)
+✔ member_joined rechecks terminal account state under the same lock as terminal cleanup (403.563167ms)
+✔ a delayed member snapshot cannot undo a successful leave job (418.4585ms)
+✔ member_joined cannot add a member after the group has atomically become left (377.433042ms)
+✔ ALREADY_MEMBER job reconciliation cannot reinsert an account after terminal cleanup (292.909208ms)
+✔ twenty persistent event failures cannot starve a later recoverable event (356.517959ms)
+✔ migration manifest uses explicit numeric identifiers and rejects invalid or duplicate versions (15.541667ms)
+✔ history content changes with the same file count are rejected, while a fresh database gets the changed schema (648.885292ms)
+ℹ Same count/version=1, old schema integer versus fresh schema text; old ledger rejected by checksum before writes
+▶ complete ledger comparison rejects middle holes, renamed/deleted/inserted history and a newer database
+  ✔ middle-hole (171.100833ms)
+  ✔ renamed-file (309.517ms)
+  ✔ deleted-file (378.029708ms)
+  ✔ inserted-file (291.199ms)
+  ✔ renumbered-file (299.184ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+  ✔ newer-database (154.533541ms)
+✔ complete ledger comparison rejects middle holes, renamed/deleted/inserted history and a newer database (1604.563959ms)
+✔ a failure after pending SQL and earlier ledger writes rolls the entire batch back before a successful retry (121.67175ms)
+ℹ Version 2 SQL/ledger plus version 3 DDL/data all rolled back when the version 3 ledger INSERT failed; retry and repeat passed
+✔ two migration processes wait on a real PostgreSQL advisory lock and apply a batch exactly once (332.433917ms)
+ℹ {"observedLocks":[{"application_name":"a0_migration_first","lock_key":"913456","granted":true},{"application_name":"a0_migration_first","lock_key":"913458","granted":false},{"application_name":"a0_migration_second","lock_key":"913456","granted":false}],"finalValue":2,"version2LedgerRows":1}
+✔ the production entry refuses an actually lagging database before listening, then migration permits a healthy server and repeat (422.150583ms)
+ℹ {"laggingVersion":6,"requiredVersion":7,"refusedProcessExit":1,"randomRefusedPort":52885,"healthyUrl":"http://127.0.0.1:52898"}
+✔ a real six-migration legacy ledger stays explicitly unverified and unchanged rather than gaining fabricated checksums (202.058917ms)
+ℹ Historical 001–006 SQL was executed into the old ledger shape; migrate/startup rejected with no checksum column, DDL, ledger or account changes
+✔ explicit legacy baseline compares a replayed release schema, records limited provenance, and permits subsequent migration (436.058667ms)
+ℹ {"source":"git:fa1baa7d7524bf16f379c9c2837fa8cc9ef0bcac","schemaChecksum":"8dcbd355bde9d283034612c00f5f819a209adb588cd3ea18f33cf0d43f0a16bd","verifiedAt":"2026-09-30T19:33:32.309Z","versions":[1,2,3,4,5,6],"referenceDatabase":"kapibala_migration_reference_8e5fb566c7dd4a95b3c6bd79ac70a363","referenceRemoved":true,"currentVersion":7,"pastExecutionBytesProven":false}
+▶ legacy baseline rejects damaged ledgers, structural drift and untrusted source bytes without changing the target
+  ✔ middle-hole (307.842125ms)
+  ✔ name-mismatch (321.75425ms)
+  ✔ missing-index (229.037666ms)
+  ✔ changed-default (227.906625ms)
+  ✔ extra-function (207.270125ms)
+  ✔ disabled-internal-constraint-triggers (197.108875ms)
+  ✔ altered-sequence (227.8125ms)
+  ✔ modified-source (76.133459ms)
+✔ legacy baseline rejects damaged ledgers, structural drift and untrusted source bytes without changing the target (1795.898916ms)
+✔ legacy baseline lock contention and missing CREATEDB permission fail without target changes or reference leaks (5232.180584ms)
+✔ legacy baseline and migration 007 preserve the running-sequence gate and leave historical observation time unknown (264.512042ms)
+ℹ Legacy 6 -> explicit baseline -> 007 rejects running sequence atomically -> completed-run fixture -> 007 succeeds; historical observed_at remains NULL
+✔ a reference cleanup failure reports that the target baseline already committed, with its exact evidence and reference name (273.372209ms)
+✔ attention: marker is authenticated, committed, request-only and never skips replay (507.697625ms)
+✔ attention: optional send correlation retains legacy response, rejects reuse and distinguishes delivery (385.490625ms)
+✔ attention: duplicate inbound and ambiguous own echo never invent a second logical creation (395.108208ms)
+✔ attention: an unrelated same-sender message with different text is confirmed immediately (346.001416ms)
+✔ attention: authoritative distinct message IDs release only fully resolved same-text candidates (345.085333ms)
+▶ attention: failed and cancelled outbox transitions resolve dependent inbound candidates
+  ✔ failed (145.2955ms)
+  ✔ account-terminal (116.459875ms)
+  ✔ group-unreachable (146.075542ms)
+✔ attention: failed and cancelled outbox transitions resolve dependent inbound candidates (408.533208ms)
+✔ attention: cancelling an attempted send does not prove its pending echo independent (197.215667ms)
+✔ attention: group and rate-limit no-ops are silent; terminal membership consequences are scoped (205.420792ms)
+✔ attention: sequence definitions and displayed step mutations emit once while idle scans remain silent (196.762667ms)
+✔ attention: job failure commits displayed outcome with its event (193.225583ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ attention: Agent persisted ordinary steps, audit result and final result carry stable ordinals (287.69975ms)
+✔ attention: directory member count evidence excludes role-only changes and repeated removals (105.844ms)
+✔ attention: Agent recovery note does not claim a directory active ID change (259.31525ms)
+✔ attention: group-terminal sequence cancellation carries the actual active-ID removal (129.440958ms)
+✔ platform: message dedup, own echo, delayed delivery and historical pagination (7849.356042ms)
+✔ platform: explicit 504 confirmation retries at most once and account-wide rate limit queues (12247.963625ms)
+✔ platform: Agent exactly-once key, bad responses, audit blocking and no self-trigger (7646.422ms)
+✔ platform: sequence preflight, variable inheritance and concurrent single running (6896.700333ms)
+✔ platform: account CAS, terminal atomic effects and owner-last failed leave (5924.119583ms)
+✔ platform: database write failure retains events, reports inconsistency and replays after outage (6908.160708ms)
+✔ platform: two instances enforce one Agent and share durable event replay (7876.744125ms)
+✔ platform: frozen pagination survives queued sentAt changes (7229.178209ms)
+✔ platform: authenticated WebSocket replays missed events and logout closes the stream (5901.229875ms)
+✔ platform: SIGKILL during remote send recovers by evidence without resending (5621.409917ms)
+✔ platform: S1 distinguishes accepted from sent and unknown survives query outage (9866.904792ms)
+✔ platform: schema lag refuses startup and viewer is denied all business write routes (95.925708ms)
+✔ platform: audited kick confirms 504 and propagates permission errors without account mutation (8175.292667ms)
+✔ platform: Agent SEND_TIMEOUT repeats the same key without re-auditing or duplicating delivery (11361.582458ms)
+✔ platform: Agent kick deadline cancels real HTTP confirmation without replaying an uncertain effect (7777.101833ms)
+✔ terminal send and concurrent member removal acquire event ordering only after domain writes (254.981542ms)
+✔ retrying a local terminal-result transaction never repeats the remote send (237.505917ms)
+✔ outgoing FIFO follows commit order when an older transaction enqueues first but commits last (320.717417ms)
+ℹ tests 335
+ℹ suites 0
+ℹ pass 335
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 114091.603916

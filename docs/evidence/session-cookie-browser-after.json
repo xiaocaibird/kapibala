@@ -1,0 +1,204 @@
+{
+  "source": "b3470720c547d8e307388598a1d0629213a474c2",
+  "backendSource": "c8b322c1360cd3cf4eafac0f8a3aaf1484a03c09",
+  "fixture": {
+    "pid": 22630,
+    "dbName": "core_console_qa_1c2e35d8a35649968446dc53cf21f7f2",
+    "sourceHead": "c8b322c1360cd3cf4eafac0f8a3aaf1484a03c09",
+    "status": "ready",
+    "startedAt": "2026-09-30T19:30:45.954Z",
+    "url": "http://127.0.0.1:51722",
+    "serverURL": "http://127.0.0.1:51716",
+    "gatewayURL": "http://127.0.0.1:51711",
+    "agentURL": "http://127.0.0.1:51712",
+    "temporaryDirectory": "/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-core-console-qa-yZzzV0",
+    "groupId": "0dd79ec9-e3d3-4c75-8ce4-c63d9e7e33e9",
+    "initialMessages": 125,
+    "controls": [
+      "control",
+      "reset-metrics",
+      "expire-access",
+      "publish",
+      "group-setting",
+      "sender",
+      "agent-scenario"
+    ]
+  },
+  "scenario": "hold old refresh 200; click logout; confirm only refresh dispatched; release; login viewer; full page reload",
+  "queued": {
+    "at": "2026-09-30T19:31:40.782Z",
+    "counters": {
+      "refreshCount": 1,
+      "heldRefresh": 1,
+      "heldEarlier": 0,
+      "timelineFailures": 0
+    },
+    "http": [
+      {
+        "method": "POST",
+        "path": "/api/auth/refresh",
+        "startedAt": 1790796685103
+      }
+    ]
+  },
+  "auth": [
+    {
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "startedAt": 1790796685103,
+      "finishedAt": 1790796700798,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "startedAt": 1790796700800,
+      "finishedAt": 1790796700802,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "startedAt": 1790796712245,
+      "finishedAt": 1790796712249,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/me",
+      "startedAt": 1790796712251,
+      "finishedAt": 1790796712252,
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "startedAt": 1790796717863,
+      "finishedAt": 1790796717870,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/me",
+      "startedAt": 1790796717871,
+      "finishedAt": 1790796717873,
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/me",
+      "startedAt": 1790796717874,
+      "finishedAt": 1790796717875,
+      "status": 200
+    }
+  ],
+  "counters": {
+    "refreshCount": 2,
+    "heldRefresh": 1,
+    "heldEarlier": 0,
+    "timelineFailures": 0
+  },
+  "observations": [
+    "While held: logout disabled and no logout/login network request.",
+    "After release: old refresh 200 then logout 200.",
+    "Viewer login succeeds, full reload refresh 200 and me 200; visible viewer readonly and live."
+  ],
+  "screenshot": "session-boundary-cookie-after.jpg",
+  "failureScenario": {
+    "setup": "Hold viewer refresh, revoke this fixture viewer session in the isolated database, click logout, release 401, then login admin and reload.",
+    "auth": [
+      {
+        "method": "POST",
+        "path": "/api/auth/refresh",
+        "startedAt": 1790796752658,
+        "finishedAt": 1790796765603,
+        "status": 401
+      },
+      {
+        "method": "POST",
+        "path": "/api/auth/logout",
+        "startedAt": 1790796765605,
+        "finishedAt": 1790796765606,
+        "status": 401
+      },
+      {
+        "method": "POST",
+        "path": "/api/auth/refresh",
+        "startedAt": 1790796765609,
+        "finishedAt": 1790796765609,
+        "status": 401
+      },
+      {
+        "method": "POST",
+        "path": "/api/auth/login",
+        "startedAt": 1790796776037,
+        "finishedAt": 1790796776042,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/auth/me",
+        "startedAt": 1790796776043,
+        "finishedAt": 1790796776045,
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/api/auth/refresh",
+        "startedAt": 1790796776387,
+        "finishedAt": 1790796776393,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/auth/me",
+        "startedAt": 1790796776395,
+        "finishedAt": 1790796776396,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/auth/me",
+        "startedAt": 1790796776397,
+        "finishedAt": 1790796776399,
+        "status": 200
+      }
+    ],
+    "observations": [
+      "Old refresh returned 401 before subsequent login.",
+      "Logout completed without a deadlock.",
+      "Admin login succeeds; full reload refresh/me 200 and visible admin identity retained."
+    ],
+    "screenshot": "session-boundary-cookie-401-after.jpg"
+  },
+  "cleanup": {
+    "pid": 22630,
+    "dbName": "core_console_qa_1c2e35d8a35649968446dc53cf21f7f2",
+    "sourceHead": "c8b322c1360cd3cf4eafac0f8a3aaf1484a03c09",
+    "status": "stopped",
+    "startedAt": "2026-09-30T19:30:45.954Z",
+    "url": "http://127.0.0.1:51722",
+    "serverURL": "http://127.0.0.1:51716",
+    "gatewayURL": "http://127.0.0.1:51711",
+    "agentURL": "http://127.0.0.1:51712",
+    "temporaryDirectory": "/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-core-console-qa-yZzzV0",
+    "groupId": "0dd79ec9-e3d3-4c75-8ce4-c63d9e7e33e9",
+    "initialMessages": 125,
+    "controls": [
+      "control",
+      "reset-metrics",
+      "expire-access",
+      "publish",
+      "group-setting",
+      "sender",
+      "agent-scenario"
+    ],
+    "stoppedAt": "2026-09-30T19:33:37.054Z",
+    "cleanupErrors": []
+  },
+  "frontendFiles": {
+    "apps/web/src/api/client.ts": "66b7fb315367a056b41ff8cd0513929ca7c875108720a44dce988dd7da7d0fd2",
+    "apps/web/src/state/auth.tsx": "3306f05658a4a3464c7aecbbd27407d81ce41d240e0f15227eacc64e87efc740",
+    "apps/web/src/state/live.tsx": "3d758c1ab5eab3f2e4e5d7f2ff81399b6925df835fe285320b2209ca13445652"
+  }
+}

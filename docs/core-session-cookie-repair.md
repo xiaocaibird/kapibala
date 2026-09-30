@@ -36,3 +36,7 @@ node --import tsx --test \
 结果 **20 passed / 0 failed / 0 skipped，20.140 秒**。原四个代次测试未修改。全部 web 测试另跑 **109 passed / 0 failed / 1 skipped**，唯一 skip 是上述显式启用的 20 秒测试。`npm run typecheck`、格式、diff 与原文 SHA 检查通过。
 
 这些是受控 fetch、cookie 模型与真实超时证据，不冒充浏览器 HttpOnly 实验。根任务另做实际浏览器验证，应检查旧响应释放后再整页刷新或再次续期；仅看到当前页面仍为 viewer 不足以验收。本分支没有启动服务、接触数据库或演示环境。
+
+## 集成后的真实浏览器复验
+
+根任务在独立 UUID PostgreSQL 数据库、随机端口、真实服务器与隐藏浏览器中补跑旧续期200及401两条路径。旧请求未结束时点击退出，界面等待且网络尚未发送退出/新登录；释放旧请求后退出完成，新身份登录后整页刷新仍正确恢复身份与权限。401场景通过仅撤销隔离库中旧会话命中，不影响演示会话。完整请求顺序、前后端版本与截图见[浏览器证据](evidence/session-cookie-browser-after.json)。测试服务/临时库已清理。此前刷新掉登录的反例保留在[失败记录](evidence/session-boundary-browser.json)，不删除失败历史。

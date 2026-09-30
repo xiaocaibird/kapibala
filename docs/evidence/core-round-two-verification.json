@@ -1,0 +1,106 @@
+{
+  "source": "3c071d24712a99b56544573f6cf21e7d8b2fd32c",
+  "startedAt": "2026-09-30T19:33:26.943Z",
+  "finishedAt": "2026-09-30T19:35:21.181Z",
+  "exitCode": 0,
+  "container": "kapibala-round-two-385dcc91-be2",
+  "log": "docs/evidence/core-round-two-final-tests.log",
+  "env": {
+    "AUTOMATION_TIMING_TESTS": "1",
+    "CORE_AUTOMATION_TIMING_TESTS": "1",
+    "SESSION_COOKIE_TIMING_TESTS": "1"
+  },
+  "tests": {
+    "registered": 335,
+    "passed": 335,
+    "failed": 0,
+    "skipped": 0,
+    "durationMs": 114091.603916
+  },
+  "command": "npm test",
+  "build": {
+    "exitCode": 0,
+    "log": "docs/evidence/core-round-two-final-build.log",
+    "includes": "server and web typecheck; Vite production build"
+  },
+  "originalSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+  "historicalRuns": [
+    {
+      "source": "b36334428e6c51264f81c55f7c766c6e21804c70",
+      "log": "docs/evidence/core-round-two-tests.log",
+      "registered": 323,
+      "passed": 319,
+      "failed": 1,
+      "skipped": 3,
+      "reason": "Sequence attention fixture treated by-client-id confirmation as a message_sent observation. Fixture corrected in c8b322c; no production behavior reverted."
+    },
+    {
+      "source": "c8b322c1360cd3cf4eafac0f8a3aaf1484a03c09",
+      "log": "docs/evidence/core-round-two-attention-tests.log",
+      "passed": 17,
+      "failed": 0
+    },
+    {
+      "source": "c8b322c1360cd3cf4eafac0f8a3aaf1484a03c09",
+      "log": "docs/evidence/core-round-two-long-tests.log",
+      "passed": 3,
+      "failed": 0,
+      "reason": "Original real timeout/audit/60-second tests explicitly enabled before final unified run."
+    }
+  ],
+  "browser": {
+    "session": "docs/evidence/session-cookie-browser-after.json",
+    "timeline": "docs/evidence/core-round-two-timeline-browser.json",
+    "latencyLimit": "154 messages fully match persisted identities, texts and order; current run does NOT establish DOM presentation within 3 seconds."
+  },
+  "cleanup": {
+    "browserFixture": {
+      "pid": 28725,
+      "dbName": "core_console_qa_8d63690e6b6642f492ef423d07935fba",
+      "sourceHead": "3c071d24712a99b56544573f6cf21e7d8b2fd32c",
+      "status": "stopped",
+      "startedAt": "2026-09-30T19:34:00.325Z",
+      "url": "http://127.0.0.1:53397",
+      "serverURL": "http://127.0.0.1:53384",
+      "gatewayURL": "http://127.0.0.1:53379",
+      "agentURL": "http://127.0.0.1:53380",
+      "temporaryDirectory": "/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-core-console-qa-ilpTB3",
+      "groupId": "4b0e8b0f-b386-4e6a-8961-63bfc23718b8",
+      "initialMessages": 125,
+      "controls": [
+        "control",
+        "reset-metrics",
+        "expire-access",
+        "publish",
+        "group-setting",
+        "sender",
+        "agent-scenario"
+      ],
+      "stoppedAt": "2026-09-30T19:43:16.814Z",
+      "cleanupErrors": []
+    },
+    "postgresRemainingBeforeStop": [
+      "kapibala",
+      "postgres"
+    ],
+    "containerStoppedAndRemoved": true,
+    "demoTouched": false
+  },
+  "humanAcceptance": "paused; no automatic acceptance",
+  "remaining": [
+    "CG03-06 unknown remote effects and lost Agent turns",
+    "CG07 member projection interpretation",
+    "CG08 arbitrary hard-kill active-time tail",
+    "V-ACC01 remote/local account inconsistency (diagnostic mitigation only)",
+    "first observation killed before persistence or global earliest across instances",
+    "strict schema version compatibility policy",
+    "current DOM 3-second measurement and unbounded timeline capacity"
+  ],
+  "logSha256": {
+    "docs/evidence/core-round-two-final-tests.log": "8af3395d0d1df3472a671109bf873c5ec497ecb6666a2da306f570d00cdd1fac",
+    "docs/evidence/core-round-two-final-build.log": "9ba1b7f5dce59fd4e95e14cf87df12913685de6845bd08dd4d32ba5d5c2e98c7",
+    "docs/evidence/core-round-two-tests.log": "bd1c3670f8cf61e42c4e8fd22f3f553523fd76a50df0d1fe0bc18653e24bcabb",
+    "docs/evidence/core-round-two-attention-tests.log": "63ba8a3644147691aa322d2fd027beba608d5924dd681bd5e908d1bcfee07ad3",
+    "docs/evidence/core-round-two-long-tests.log": "80dd35f09ee53355421e2db04a877787048d863faec93ed994aca8d4a992aea6"
+  }
+}

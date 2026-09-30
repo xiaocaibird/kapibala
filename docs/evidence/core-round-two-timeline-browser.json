@@ -1,0 +1,336 @@
+{
+  "source": "3c071d24712a99b56544573f6cf21e7d8b2fd32c",
+  "environment": "isolated UUID database and test-only HTTP controls; real browser",
+  "fixture": "scripts/core-console-qa.ts",
+  "setup": "125 initial messages; history fully loaded via two Load Earlier clicks; temporary outage, duplicated events, late historical events, group-setting change; one forced timeline read failure per recovery",
+  "result": {
+    "sameOrder": true,
+    "sameIdentityAndText": true,
+    "count": 154,
+    "unique": 154
+  },
+  "finalSwitches": [
+    {
+      "checked": "false",
+      "name": "Agent 自动应答"
+    },
+    {
+      "checked": "true",
+      "name": "允许自动移除成员"
+    }
+  ],
+  "latestRecovery": {
+    "marks": {
+      "outageStartedAt": 1790797290573,
+      "publishStartedAt": 1790797290575,
+      "eventsCommittedBy": 1790797290630,
+      "latestPublish": [
+        {
+          "groupId": "b567df2d-e73f-4ef8-9d09-4c186dce3ddd",
+          "senderPlatformUserId": "qa-external",
+          "text": "Round2-observed-001",
+          "sentAt": "2026-09-30T19:41:30.575Z",
+          "msgId": "93481517-7c3f-4c66-b0ae-b2486003fc77"
+        }
+      ],
+      "latestEvent": {
+        "seq": "169",
+        "type": "message",
+        "created_at": "2026-09-30T19:41:30.575Z"
+      },
+      "groupChangedCommittedBy": 1790797290638,
+      "restoreScheduledAt": 1790797290640,
+      "restoreAfterMs": 15000,
+      "transportRestoredAt": 1790797305642,
+      "lastTimelineFailureAt": 1790797307543
+    },
+    "timelineFailures": 1,
+    "http": [
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8",
+        "startedAt": 1790797291723,
+        "finishedAt": 1790797291724,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/accounts",
+        "startedAt": 1790797291724,
+        "finishedAt": 1790797291725,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8/agent-runs",
+        "startedAt": 1790797291753,
+        "finishedAt": 1790797291754,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8",
+        "startedAt": 1790797293723,
+        "finishedAt": 1790797293723,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8/agent-runs",
+        "startedAt": 1790797293746,
+        "finishedAt": 1790797293746,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8",
+        "startedAt": 1790797295724,
+        "finishedAt": 1790797295724,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8/agent-runs",
+        "startedAt": 1790797295745,
+        "finishedAt": 1790797295745,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/accounts",
+        "startedAt": 1790797296722,
+        "finishedAt": 1790797296722,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8",
+        "startedAt": 1790797297725,
+        "finishedAt": 1790797297726,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8/agent-runs",
+        "startedAt": 1790797297746,
+        "finishedAt": 1790797297746,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8",
+        "startedAt": 1790797299723,
+        "finishedAt": 1790797299723,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8/agent-runs",
+        "startedAt": 1790797299746,
+        "finishedAt": 1790797299746,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8",
+        "startedAt": 1790797301724,
+        "finishedAt": 1790797301724,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/accounts",
+        "startedAt": 1790797301724,
+        "finishedAt": 1790797301724,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8/agent-runs",
+        "startedAt": 1790797301748,
+        "finishedAt": 1790797301748,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8",
+        "startedAt": 1790797303725,
+        "finishedAt": 1790797303725,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8/agent-runs",
+        "startedAt": 1790797303747,
+        "finishedAt": 1790797303747,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8",
+        "startedAt": 1790797305724,
+        "finishedAt": 1790797305732,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8/agent-runs",
+        "startedAt": 1790797305757,
+        "finishedAt": 1790797305760,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/accounts",
+        "startedAt": 1790797306724,
+        "finishedAt": 1790797306728,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8/messages?limit=50",
+        "startedAt": 1790797307543,
+        "finishedAt": 1790797307543,
+        "status": 503
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8/agent-runs",
+        "startedAt": 1790797307543,
+        "finishedAt": 1790797307547,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8",
+        "startedAt": 1790797307544,
+        "finishedAt": 1790797307549,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/accounts",
+        "startedAt": 1790797307544,
+        "finishedAt": 1790797307547,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8/agent-runs",
+        "startedAt": 1790797307640,
+        "finishedAt": 1790797307642,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8",
+        "startedAt": 1790797307640,
+        "finishedAt": 1790797307644,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/accounts",
+        "startedAt": 1790797307640,
+        "finishedAt": 1790797307642,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8",
+        "startedAt": 1790797307723,
+        "finishedAt": 1790797307726,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8/agent-runs",
+        "startedAt": 1790797307745,
+        "finishedAt": 1790797307748,
+        "status": 200
+      },
+      {
+        "method": "GET",
+        "path": "/api/groups/4b0e8b0f-b386-4e6a-8961-63bfc23718b8/messages?limit=50",
+        "startedAt": 1790797307807,
+        "finishedAt": 1790797307814,
+        "status": 200
+      }
+    ],
+    "ws": [
+      {
+        "type": "closed",
+        "at": 1790797290573,
+        "code": 1012
+      },
+      {
+        "type": "connected",
+        "at": 1790797307462
+      },
+      {
+        "type": "auth-received",
+        "at": 1790797307463,
+        "sinceSeq": 168
+      },
+      {
+        "type": "auth",
+        "at": 1790797307465
+      },
+      {
+        "type": "message",
+        "at": 1790797307566,
+        "seq": 169
+      },
+      {
+        "type": "group_changed",
+        "at": 1790797307566,
+        "seq": 170
+      }
+    ]
+  },
+  "latencyObservation": {
+    "transportRestoredAt": 1790797244376,
+    "fourPageReadCompleteAt": 1790797245000,
+    "readCompleteElapsedMs": 624,
+    "domObservedAt": 1790797251879,
+    "domObservedElapsedMs": 7503,
+    "verdict": "data/read recovery passed; render within 3 seconds is NOT established by this run",
+    "limitations": "CUA observation arrived after page update; locator waits have a short backend deadline, an attempted unawaited wait lost its REPL binding, and MutationObserver is unavailable in read-only DOM evaluation. These are measurement limitations, not evidence of a rendering regression."
+  },
+  "screenshot": "docs/evidence/core-round-two-timeline-browser.jpg",
+  "humanAcceptance": "pending",
+  "remaining": "finite 154-message case only; not a large-history capacity guarantee; historical 144-message timing evidence remains scoped to its original source",
+  "cleanup": {
+    "browserFixture": {
+      "pid": 28725,
+      "dbName": "core_console_qa_8d63690e6b6642f492ef423d07935fba",
+      "sourceHead": "3c071d24712a99b56544573f6cf21e7d8b2fd32c",
+      "status": "stopped",
+      "startedAt": "2026-09-30T19:34:00.325Z",
+      "url": "http://127.0.0.1:53397",
+      "serverURL": "http://127.0.0.1:53384",
+      "gatewayURL": "http://127.0.0.1:53379",
+      "agentURL": "http://127.0.0.1:53380",
+      "temporaryDirectory": "/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-core-console-qa-ilpTB3",
+      "groupId": "4b0e8b0f-b386-4e6a-8961-63bfc23718b8",
+      "initialMessages": 125,
+      "controls": [
+        "control",
+        "reset-metrics",
+        "expire-access",
+        "publish",
+        "group-setting",
+        "sender",
+        "agent-scenario"
+      ],
+      "stoppedAt": "2026-09-30T19:43:16.814Z",
+      "cleanupErrors": []
+    },
+    "postgresRemainingBeforeStop": [
+      "kapibala",
+      "postgres"
+    ],
+    "containerStoppedAndRemoved": true,
+    "demoTouched": false
+  }
+}
