@@ -1,0 +1,127 @@
+{
+  "date": "2026-10-01",
+  "sourceAndTestsCommit": "62128437ebaf7ae7a20d1dc0fa11e354cfc4d4d3",
+  "previousCommit": "df7cecb",
+  "policy": "Implementation-selected within original A2: confirm absence using fresh authoritative evidence, then fail without optional automatic 504 retry.",
+  "node": "24.21.0",
+  "pg": {
+    "host": "127.0.0.1",
+    "port": 64550,
+    "isolation": "UUID temporary databases, formal migrations; no demo or qa-acceptance changes"
+  },
+  "beforeTB05AndTB08": [
+    {
+      "case": "TB05",
+      "first504ToFailedMs": 5909.667957999998,
+      "second504ToFailedMs": 2205.686290999998,
+      "first504FiveSecondRequirementMet": false,
+      "boundary": "open: first versus each 504 clock; no forced failure before authoritative absence"
+    },
+    {
+      "case": "TB08",
+      "availabilityToFailedMs": 2354.527374999998,
+      "second504ToFailedMs": 2114.253583999998,
+      "recoveryTwoSecondRequirementMet": false,
+      "boundary": "open: recovery deadline versus a safely authorized retry receiving another 504"
+    }
+  ],
+  "after": [
+    {
+      "case": "TB01",
+      "localLockWaitMs": 750,
+      "anchorShiftMs": 0
+    },
+    {
+      "case": "TB02",
+      "sendStartToAcceptedMs": 1925.915709
+    },
+    {
+      "case": "TB03",
+      "first504ToFailedMs": 2108.591959,
+      "sends": 1
+    },
+    {
+      "case": "TB04",
+      "first504ToFailedMs": 2124.307584,
+      "sends": 1
+    },
+    {
+      "case": "TB05",
+      "first504ToFailedMs": 2201.6713339999997,
+      "first504FiveSecondRequirementMet": true,
+      "sends": 1
+    },
+    {
+      "case": "TB06",
+      "first504ToSentMs": 6733.388999999999,
+      "availabilityToSentMs": 1523.796457999999
+    },
+    {
+      "case": "TB07",
+      "queryElapsedMs": 2009.9163750000007,
+      "fastQueryAvailabilityToSentMs": 112.37595900000088
+    },
+    {
+      "case": "TB08",
+      "availabilityToFailedMs": 113.992291999999,
+      "recoveryTwoSecondRequirementMet": true,
+      "sends": 1
+    }
+  ],
+  "results": {
+    "focused": {
+      "file": "core-timeout-policy-focused.tap",
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skipped": 0
+    },
+    "gateway": {
+      "file": "core-timeout-policy-gateway.tap",
+      "tests": 31,
+      "pass": 31,
+      "fail": 0,
+      "skipped": 0
+    },
+    "platform": {
+      "file": "core-timeout-policy-platform.tap",
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0
+    },
+    "agent": {
+      "file": "core-timeout-policy-agent.tap",
+      "tests": 4,
+      "pass": 4,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "totalTargetedChecks": 53,
+  "S5": {
+    "test": "platform: Agent exactly-once key, bad responses, audit blocking and no self-trigger",
+    "remoteLandingMs": 1500,
+    "repeatedKeyStatus": "sent",
+    "remoteMessages": 1,
+    "audits": 1,
+    "runStatus": "finished"
+  },
+  "legacy": [
+    "Reserved unknown/pending retry re-queries before failure, including prior explicit 503 attempts",
+    "sending recovery clears the old anchor; unknown retry results need positive evidence",
+    "A saved second 504 uses only its own current anchor",
+    "queued after clear 429/503 preserves original queue behavior, including legacy markers"
+  ],
+  "checks": [
+    "tsc --noEmit: exit 0",
+    "prettier --check on four changed source/test files: exit 0",
+    "git diff --check: exit 0"
+  ],
+  "boundaries": [
+    "External query latency has no contractual response-time upper bound; timeout is not absence proof",
+    "Existing initial failures and TB05/TB08 pre-policy evidence preserved unchanged",
+    "No new external capability, no full-suite or qa-acceptance run, no main merge or demo switch",
+    "Handled PostgreSQL cleanup error logs retained; no cleanup fixture changes"
+  ]
+}

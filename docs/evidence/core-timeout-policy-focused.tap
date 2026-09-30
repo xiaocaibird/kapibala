@@ -1,0 +1,116 @@
+TAP version 13
+# Subtest: TB01 known 504 clock starts at receipt, before local result-persistence lock wait
+ok 1 - TB01 known 504 clock starts at receipt, before local result-persistence lock wait
+  ---
+  duration_ms: 934.908292
+  type: 'test'
+  ...
+# isolated database: kapibala_test_bbcf740f0e4641c587f4e7412a634b87
+# {"case":"TB01","localLockWaitMs":750,"anchorShiftMs":0}
+# Subtest: TB02 a 1900ms initial 202 is accepted only after its real response
+ok 2 - TB02 a 1900ms initial 202 is accepted only after its real response
+  ---
+  duration_ms: 2017.811084
+  type: 'test'
+  ...
+# isolated database: kapibala_test_43bd738598ba4864b382aa305fe712f3
+# {"case":"TB02","sendStartToAcceptedMs":1925.915709}
+# Subtest: TB03 authoritative absence fails without the optional 1800ms retry 202
+ok 3 - TB03 authoritative absence fails without the optional 1800ms retry 202
+  ---
+  duration_ms: 2209.010208
+  type: 'test'
+  ...
+# isolated database: kapibala_test_bf56cf5ec182415eb2882741ec75dce7
+# {"case":"TB03","first504ToFailedMs":2108.591959,"sends":1}
+# Subtest: TB04 known absent HTTP 504 converges within five seconds without another POST
+ok 4 - TB04 known absent HTTP 504 converges within five seconds without another POST
+  ---
+  duration_ms: 2226.824667
+  type: 'test'
+  ...
+# isolated database: kapibala_test_cbcdb6f6d57c4fc6b964ef3441908b03
+# {"case":"TB04","first504ToFailedMs":2124.307584,"sends":1}
+# Subtest: TB05 the former delayed-second-504 counterexample now closes within the first five seconds
+ok 5 - TB05 the former delayed-second-504 counterexample now closes within the first five seconds
+  ---
+  duration_ms: 2306.403084
+  type: 'test'
+  ...
+# isolated database: kapibala_test_850cb69671384f6ea07efce7fbff1a76
+# {"case":"TB05","first504ToFailedMs":2201.6713339999997,"first504FiveSecondRequirementMet":true,"sends":1}
+# Subtest: TB06 query 503 beyond five seconds stays unknown; a 1400ms positive query recovers within two seconds
+ok 6 - TB06 query 503 beyond five seconds stays unknown; a 1400ms positive query recovers within two seconds
+  ---
+  duration_ms: 6831.4985
+  type: 'test'
+  ...
+# isolated database: kapibala_test_60861a39918244e98a2dbf87144435a1
+# {"case":"TB06","first504ToSentMs":6733.388999999999,"availabilityToSentMs":1523.796457999999}
+# Subtest: TB07 a query exceeding the two-second HTTP timeout does not authorize retry or failure
+ok 7 - TB07 a query exceeding the two-second HTTP timeout does not authorize retry or failure
+  ---
+  duration_ms: 2330.513583
+  type: 'test'
+  ...
+# isolated database: kapibala_test_2b560ab0ece54e7c86e456b8e66ce67c
+# {"case":"TB07","queryElapsedMs":2009.9163750000007,"fastQueryAvailabilityToSentMs":112.37595900000088}
+# Subtest: TB08 the former recovery-then-second-504 counterexample closes within two seconds
+ok 8 - TB08 the former recovery-then-second-504 counterexample closes within two seconds
+  ---
+  duration_ms: 5488.930084
+  type: 'test'
+  ...
+# isolated database: kapibala_test_98b306757e6742eaa85548ed890ba272
+# {"case":"TB08","availabilityToFailedMs":113.992291999999,"recoveryTwoSecondRequirementMet":true,"sends":1}
+# Subtest: TB09 legacy reserved retry (1 attempts) is queried again without dispatch
+ok 9 - TB09 legacy reserved retry (1 attempts) is queried again without dispatch
+  ---
+  duration_ms: 99.784
+  type: 'test'
+  ...
+# isolated database: kapibala_test_20a5fe136e3d4b598c60886350ca9be1
+# Subtest: TB09 legacy reserved retry (3 attempts) is queried again without dispatch
+ok 10 - TB09 legacy reserved retry (3 attempts) is queried again without dispatch
+  ---
+  duration_ms: 81.997291
+  type: 'test'
+  ...
+# isolated database: kapibala_test_20d99e5b2af04056804668e38080e27f
+# Subtest: TB10 legacy sending retry with unknown result never uses the first 504 clock
+ok 11 - TB10 legacy sending retry with unknown result never uses the first 504 clock
+  ---
+  duration_ms: 83.956584
+  type: 'test'
+  ...
+# isolated database: kapibala_test_0b6f971602424d528530a06469712e08
+# Subtest: TB10 legacy uncertain retry with unknown result never uses the first 504 clock
+ok 12 - TB10 legacy uncertain retry with unknown result never uses the first 504 clock
+  ---
+  duration_ms: 83.763958
+  type: 'test'
+  ...
+# isolated database: kapibala_test_843a1ec9c7bd46c2a30d67ea92e27145
+# Subtest: TB11 a legacy retry with its own recorded 504 waits for that latest window
+ok 13 - TB11 a legacy retry with its own recorded 504 waits for that latest window
+  ---
+  duration_ms: 2222.957458
+  type: 'test'
+  ...
+# isolated database: kapibala_test_ea0c751718ee46eb859facb09bdd68d7
+# Subtest: TB12 an old retry marker does not cancel an ordinary queued send after rate-limit recovery
+ok 14 - TB12 an old retry marker does not cancel an ordinary queued send after rate-limit recovery
+  ---
+  duration_ms: 83.757083
+  type: 'test'
+  ...
+# isolated database: kapibala_test_e82308b9da5e428a987c822a7cfd0b2a
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 27149.061042
