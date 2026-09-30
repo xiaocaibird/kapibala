@@ -3,34 +3,32 @@ import type { FastifyInstance } from 'fastify';
 import type { PoolClient } from 'pg';
 import type { AppContext } from '../../core/context.js';
 import { emit, type Queryable } from '../../core/db.js';
-import { AppError, RemoteError } from '../../core/errors.js';
+import { AppError } from '../../core/errors.js';
 import type { MessagingService } from '../../core/messaging.js';
-import type { AgentRun, Message } from '../../../../../packages/contracts/src/index.js';
-import { auditSchema, parseTurn, resultContent, summary, toolError, tools, truncateUtf8, validateTool, type ConversationMessage, type ToolOutcome, type ToolUse } from './protocol.js';
+import type { AgentRun } from '../../../../../packages/contracts/src/index.js';
+import { parseTurn, resultContent, summary, toolError, tools, truncateUtf8, validateTool, type ConversationMessage, type ToolOutcome, type ToolUse } from './protocol.js';
+import type { GroupRow, RecentRow, RunRow, StepRow } from './types.js';
+import { AgentTools } from './tool-execution.js';
 
-interface RunRow {
-  id: string; group_id: string; status: AgentRun['status']; end_reason: string | null; summary: string | null;
-  history: ConversationMessage[]; step_count: number; protocol_errors: number; active_ms: string;
-  cancel_requested: boolean; inflight_turn: boolean; recovery_note: string | null;
-}
-interface StepRow {
-  run_id: string; ordinal: number; kind: 'tool_use' | 'final' | 'protocol_error'; tool_use_id: string | null;
-  name: string | null; input: unknown; result_summary: string; is_error: boolean; error_code: string | null;
-  audit_verdict: string | null; raw_response: string; state: string; result: Record<string, unknown> | null;
-  audit_attempts: number; intent: { accountId?: string; targetPlatformUserId?: string } | null;
-}
-interface GroupRow { id: string; status: string; agent_enabled: boolean; auto_kick_enabled: boolean; }
-interface RecentRow { msg_id: string | null; sender_platform_user_id: string | null; is_own: boolean; text: string; sent_at: Date; }
-const sleep = async (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
 function runPublic(run: RunRow): AgentRun { return { id: run.id, groupId: run.group_id, status: run.status, endReason: run.end_reason, summary: run.summary, recoveryNote: run.recovery_note }; }
 async function notify(tx: Queryable, run: RunRow): Promise<void> { await emit(tx, 'agent_run', { runId: run.id, groupId: run.group_id, status: run.status, endReason: run.end_reason }); }
 
 export class AgentModule {
   private readonly running = new Map<string, Promise<void>>();
   private readonly deadlines = new Map<string, number>();
+  private readonly startedAt = new Date();
   private closing = false;
   private readonly turnTimeoutMs: number;
-  constructor(private readonly ctx: AppContext, private readonly messaging: MessagingService) {
+  private readonly toolRunner: AgentTools;
+  constructor(private readonly ctx: AppContext, messaging: MessagingService) {
+    this.toolRunner = new AgentTools(ctx, messaging, {
+      completeStep: (run, step, outcome) => this.completeStep(run, step, outcome),
+      finishAfterStep: (run, text) => this.finishAfterStep(run, text),
+      remaining: run => this.remaining(run),
+      finish: (run, status, reason) => this.finish(run, status, reason),
+      pause: (run, reason) => this.pause(run, reason),
+      readRun: id => this.readRun(id),
+    });
     const configured = Number(process.env.AGENT_TURN_TIMEOUT_MS ?? 12000);
     this.turnTimeoutMs = Number.isFinite(configured) ? Math.min(15000, Math.max(10000, configured)) : 12000;
   }
@@ -104,6 +102,9 @@ export class AgentModule {
   private async run(id: string, connection: PoolClient): Promise<void> {
     let run = await this.readRun(id); if (!run || run.status !== 'running' || run.recovery_note) return;
     if (run.inflight_turn) { await this.pause(run, 'An Agent turn was sent before interruption; the protocol cannot safely replay an unrecorded response.'); return; }
+    // Include waiting for a local execution slot. On process recovery, the new
+    // instance's start time excludes the unavailable period from this increment.
+    run = (await this.ctx.db.query<RunRow>(`UPDATE agent_runs SET active_ms=active_ms+GREATEST(0,floor(extract(epoch FROM (now()-GREATEST(updated_at,$2::timestamptz)))*1000))::bigint,updated_at=now() WHERE id=$1 RETURNING *`, [id, this.startedAt])).rows[0]!;
     this.deadlines.set(id, Date.now() + Math.max(0, 60000 - Number(run.active_ms)));
     let lastHeartbeat = Date.now(); let heartbeatFailure: unknown;
     let heartbeatWork = Promise.resolve();
@@ -128,13 +129,13 @@ export class AgentModule {
         // A prepared tool is the current step. Cancellation is observed after it is completed.
         if (pending) {
           if (this.remaining(run) <= 0) { await this.finish(run, 'failed', 'wall_clock'); return; }
-          await this.executeStep(run, pending); continue;
+          await this.toolRunner.executeStep(run, pending); continue;
         }
         const group = (await this.ctx.db.query<GroupRow>('SELECT * FROM groups WHERE id=$1', [run.group_id])).rows[0];
         if (run.cancel_requested || !group?.agent_enabled || group.status !== 'active') { await this.finish(run, 'cancelled', 'cancelled'); return; }
         if (this.remaining(run) <= 0) { await this.finish(run, 'failed', 'wall_clock'); return; }
-        if (run.step_count >= 12) { await this.finish(run, 'failed', 'budget_exhausted'); return; }
         if (run.protocol_errors >= 3) { await this.finish(run, 'failed', 'protocol_errors'); return; }
+        if (run.step_count >= 12) { await this.finish(run, 'failed', 'budget_exhausted'); return; }
         await this.turn(run, Math.min(this.turnTimeoutMs, this.remaining(run)));
       }
     } finally { clearInterval(timer); await persistTime(); this.deadlines.delete(id); }
@@ -193,108 +194,5 @@ export class AgentModule {
     if (fresh.cancel_requested || !group?.agent_enabled || group.status !== 'active') await this.finish(fresh, 'cancelled', 'cancelled');
     else if (this.remaining(fresh) <= 0) await this.finish(fresh, 'failed', 'wall_clock');
     else await this.finish(fresh, 'finished', 'final', text);
-  }
-  private async executeStep(run: RunRow, step: StepRow): Promise<void> {
-    const tool: ToolUse = { type: 'tool_use', id: step.tool_use_id!, name: step.name!, input: step.input };
-    const validationCode = validateTool(tool);
-    if (validationCode) { await this.completeStep(run, step, toolError(validationCode, 'Tool input or name is invalid.')); return; }
-    if (step.name === 'finish') { const input = step.input as { summary: string }; await this.completeStep(run, step, { value: { ok: true } }); await this.finishAfterStep(run, input.summary); return; }
-    if (step.name === 'get_recent_messages') { await this.completeStep(run, step, await this.recent(run, step.input as { limit: number })); return; }
-    if (step.name === 'send_message') { await this.send(run, step); return; }
-    await this.kick(run, step);
-  }
-  private async recent(run: RunRow, input: { limit: number }): Promise<ToolOutcome> {
-    const rows = (await this.ctx.db.query<RecentRow>('SELECT msg_id,sender_platform_user_id,is_own,text,sent_at FROM messages WHERE group_id=$1 ORDER BY sent_at DESC,id DESC LIMIT $2', [run.group_id, Math.min(input.limit, 50)])).rows.reverse();
-    let truncated = false;
-    const messages = rows.map(row => { const chars = [...row.text]; if (chars.length > 500) truncated = true; return { msgId: row.msg_id, senderPlatformUserId: row.sender_platform_user_id, isOwn: row.is_own, text: chars.slice(0, 500).join(''), sentAt: row.sent_at.toISOString() }; });
-    while (Buffer.byteLength(JSON.stringify({ messages, truncated })) > 8192) { truncated = true; const longest = messages.reduce((a, b) => a.text.length > b.text.length ? a : b); if (longest.text.length > 20) longest.text = longest.text.slice(0, Math.floor(longest.text.length / 2)); else messages.shift(); }
-    return { value: { messages, truncated } };
-  }
-  private async audit(run: RunRow, step: StepRow, text: string): Promise<'pass' | 'fail' | 'blocked' | 'expired'> {
-    if (step.audit_verdict === 'pass' || step.audit_verdict === 'fail') return step.audit_verdict;
-    let attempts = step.audit_attempts;
-    while (attempts < 3) {
-      const current = (await this.readRun(run.id))!;
-      const left = this.remaining(current); if (left <= 0) { await this.finish(current, 'failed', 'wall_clock'); return 'expired'; }
-      attempts++;
-      await this.ctx.db.query('UPDATE agent_steps SET state=\'auditing\',audit_attempts=$3 WHERE run_id=$1 AND ordinal=$2', [run.id, step.ordinal, attempts]);
-      let verdict: 'pass' | 'fail' | undefined;
-      try {
-        const response = await fetch(`${this.ctx.agent.baseUrl}/agent/audit`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text, groupId: run.group_id }), signal: AbortSignal.timeout(Math.min(5000, Math.max(1, left))) });
-        const raw = await response.text(); const parsed = response.ok ? auditSchema.safeParse(JSON.parse(raw) as unknown) : null;
-        if (parsed?.success) verdict = parsed.data.verdict;
-      } catch { /* An uncertain audit response grants no permission. */ }
-      if (verdict) { await this.ctx.db.query('UPDATE agent_steps SET audit_verdict=$3,state=\'ready\' WHERE run_id=$1 AND ordinal=$2', [run.id, step.ordinal, verdict]); return verdict; }
-    }
-    await this.completeStep(run, step, toolError('AUDIT_REJECTED', 'Audit service returned no conclusive verdict after three attempts.', 'The run is blocked; no side effect was executed.'));
-    await this.finish(run, 'blocked', 'audit_blocked'); return 'blocked';
-  }
-  private async send(run: RunRow, step: StepRow): Promise<void> {
-    const input = step.input as { text: string; idempotency_key: string };
-    const existing = (await this.ctx.db.query<{ client_msg_id: string }>('SELECT client_msg_id FROM agent_send_keys WHERE run_id=$1 AND idempotency_key=$2', [run.id, input.idempotency_key])).rows[0];
-    if (existing) { await this.completeStep(run, step, await this.delivery(existing.client_msg_id, run)); return; }
-    const verdict = await this.audit(run, step, input.text);
-    if (verdict === 'blocked' || verdict === 'expired') return;
-    if (verdict === 'fail') { await this.completeStep(run, step, toolError('AUDIT_REJECTED', 'Message was rejected by audit.')); return; }
-    if (this.remaining(run) <= 0) { await this.finish(run, 'failed', 'wall_clock'); return; }
-    let outcome: ToolOutcome | undefined; let clientMsgId: string | undefined;
-    await this.ctx.db.transaction(async tx => {
-      const group = (await tx.query<GroupRow>('SELECT * FROM groups WHERE id=$1 FOR UPDATE', [run.group_id])).rows[0];
-      if (group?.status !== 'active') { outcome = toolError('GROUP_UNREACHABLE', 'Group is not writable.'); return; }
-      const account = await this.account(run.group_id, false, tx);
-      if (!account) { outcome = toolError('NO_AVAILABLE_ACCOUNT', 'No online group member can send.'); return; }
-      try {
-        const message = await this.messaging.enqueueSend({ groupId: run.group_id, accountId: account, text: input.text, source: 'agent', sourceRef: `${run.id}:${step.ordinal}` }, tx);
-        clientMsgId = message.clientMsgId!;
-        await tx.query('INSERT INTO agent_send_keys(run_id,idempotency_key,client_msg_id) VALUES($1,$2,$3)', [run.id, input.idempotency_key, clientMsgId]);
-        await tx.query('UPDATE agent_steps SET state=\'executing\',intent=$3 WHERE run_id=$1 AND ordinal=$2', [run.id, step.ordinal, JSON.stringify({ accountId: account })]);
-      } catch (error) { if (error instanceof AppError && ['ACCOUNT_UNAVAILABLE', 'ACCOUNT_NOT_IN_GROUP'].includes(error.code)) outcome = toolError('SEND_FAILED', 'Selected account became unavailable.'); else throw error; }
-    });
-    await this.completeStep(run, step, outcome ?? await this.delivery(clientMsgId!, run));
-  }
-  private async delivery(clientMsgId: string, run: RunRow): Promise<ToolOutcome> {
-    const deadline = Date.now() + Math.min(5000, this.remaining(run));
-    let message: Message | null = null;
-    do {
-      message = await this.messaging.getMessage(clientMsgId);
-      const account = (await this.ctx.db.query<{ status: string }>('SELECT a.status FROM messages m JOIN accounts a ON a.id=m.account_id WHERE m.client_msg_id=$1', [clientMsgId])).rows[0];
-      if (message?.deliveryStatus !== 'sent' && account && ['suspended', 'session_expired'].includes(account.status)) return toolError('SEND_FAILED', 'The sending account entered a terminal state before delivery completed.');
-      if (message && ['accepted', 'sent'].includes(message.deliveryStatus ?? '')) return { value: { clientMsgId, deliveryStatus: message.deliveryStatus } };
-      if (message && ['failed', 'cancelled'].includes(message.deliveryStatus ?? '')) return toolError(message.failCode === 'GROUP_UNREACHABLE' || message.failCode === 'GROUP_WRITE_FORBIDDEN' ? 'GROUP_UNREACHABLE' : 'SEND_FAILED', message.failCode ?? 'Message could not be sent.');
-      await sleep(100);
-    } while (Date.now() < deadline);
-    return toolError('SEND_TIMEOUT', 'Delivery could not be confirmed within five seconds.', 'Retrying this idempotency key reads the same outbound message.');
-  }
-  private async account(groupId: string, elevated: boolean, tx: Queryable = this.ctx.db): Promise<string | undefined> {
-    return (await tx.query<{ id: string }>(`SELECT a.id FROM members m JOIN accounts a ON a.id=m.account_id WHERE m.group_id=$1 AND a.status='online' AND (NOT $2::boolean OR m.role IN ('creator','admin')) ORDER BY CASE WHEN m.role='admin' THEN 0 WHEN m.role='creator' THEN 1 ELSE 2 END,a.id LIMIT 1`, [groupId, elevated])).rows[0]?.id;
-  }
-  private async kick(run: RunRow, step: StepRow): Promise<void> {
-    const input = step.input as { platform_user_id: string; reason: string };
-    if (step.state === 'executing') { await this.pause(run, 'A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.'); return; }
-    const group = (await this.ctx.db.query<GroupRow>('SELECT * FROM groups WHERE id=$1', [run.group_id])).rows[0];
-    if (group?.status !== 'active') { await this.completeStep(run, step, toolError('GROUP_UNREACHABLE', 'Group is not writable.')); return; }
-    if (!group.auto_kick_enabled) { await this.completeStep(run, step, toolError('POLICY_DENIED', 'Automatic member removal is disabled.')); return; }
-    const verdict = await this.audit(run, step, JSON.stringify({ action: 'kick', platform_user_id: input.platform_user_id, reason: input.reason }));
-    if (verdict === 'blocked' || verdict === 'expired') return;
-    if (verdict === 'fail') { await this.completeStep(run, step, toolError('AUDIT_REJECTED', 'Member removal was rejected by audit.')); return; }
-    if (this.remaining(run) <= 0) { await this.finish(run, 'failed', 'wall_clock'); return; }
-    let accountId: string | undefined; let denied: ToolOutcome | undefined;
-    await this.ctx.db.transaction(async tx => {
-      const currentGroup = (await tx.query<GroupRow>('SELECT * FROM groups WHERE id=$1 FOR UPDATE', [run.group_id])).rows[0];
-      if (currentGroup?.status !== 'active') { denied = toolError('GROUP_UNREACHABLE', 'Group is not writable.'); return; }
-      if (!currentGroup.auto_kick_enabled) { denied = toolError('POLICY_DENIED', 'Automatic member removal was disabled.'); return; }
-      accountId = await this.account(run.group_id, true, tx);
-      if (!accountId) { denied = toolError('NO_AVAILABLE_ACCOUNT', 'No online administrator is available.'); return; }
-      await tx.query('UPDATE agent_steps SET state=\'executing\',intent=$3 WHERE run_id=$1 AND ordinal=$2', [run.id, step.ordinal, JSON.stringify({ accountId, targetPlatformUserId: input.platform_user_id })]);
-    });
-    if (denied) { await this.completeStep(run, step, denied); return; }
-    try { await this.messaging.kick({ groupId: run.group_id, accountId: accountId!, targetPlatformUserId: input.platform_user_id }); }
-    catch (error) {
-      const code = error instanceof RemoteError || error instanceof AppError ? error.code : 'UNKNOWN';
-      if ((error instanceof RemoteError && error.status === 503) || ['NETWORK_TIMEOUT', 'UNKNOWN', 'KICK_UNKNOWN', 'HTTP_503', 'SERVICE_UNAVAILABLE'].includes(code)) { await this.pause(run, 'The dispatched kick has no provable outcome; automatic replay is paused.'); return; }
-      const mapped = ['OWNER_LEFT', 'NO_PERMISSION', 'GROUP_UNREACHABLE'].includes(code) ? code : 'SEND_FAILED';
-      await this.completeStep(run, step, toolError(mapped, code)); return;
-    }
-    await this.completeStep(run, step, { value: { kicked: true } });
   }
 }

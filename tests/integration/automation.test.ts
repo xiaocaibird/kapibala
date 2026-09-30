@@ -77,6 +77,7 @@ test('tool definitions have all required arguments; invalid protocols are reject
   assert.equal(parseTurn('```json\n{}\n```'), null);
   assert.equal(parseTurn(JSON.stringify({ stop_reason: 'end_turn', content: [{ type: 'text', text: 'one' }, { type: 'text', text: 'two' }] })), null);
   assert.equal(validateTool({ type: 'tool_use', id: 't', name: 'send_message', input: { text: 'hello' } }), 'INVALID_INPUT');
+  assert.equal(validateTool({ type: 'tool_use', id: 't', name: '__proto__', input: {} }), 'UNKNOWN_TOOL');
   assert.ok(Buffer.byteLength(resultContent({ text: '中'.repeat(10000) })) <= 8192);
 });
 test('sequence variables persist overrides and report the first unresolved step', () => {
@@ -243,4 +244,17 @@ test('activity budget expires during audit without authorizing the prepared tool
   await waitFor(async () => (await latestRun())?.status === 'failed');
   assert.equal((await latestRun()).end_reason, 'wall_clock'); assert.equal(auditCalls, 1); assert.equal(enqueueCalls, 0);
   await delay(220); assert.equal(enqueueCalls, 0);
+});
+
+test('an accepted send whose account becomes terminal yields SEND_FAILED without a resend', async () => {
+  await reset();
+  const id = randomUUID(); const input = { text: 'accepted before terminal', idempotency_key: 'terminal-key' };
+  await db.query('INSERT INTO agent_runs(id,group_id,step_count,history) VALUES($1,$2,1,$3)', [id, groupId, JSON.stringify([{ role: 'user', content: [{ type: 'text', text: '{}' }] }, { role: 'assistant', content: [{ type: 'tool_use', id: 'terminal-send', name: 'send_message', input }] }])]);
+  const message = await messaging.enqueueSend({ groupId, accountId: 'account-2', text: input.text });
+  await db.query('INSERT INTO agent_send_keys(run_id,idempotency_key,client_msg_id) VALUES($1,$2,$3)', [id, input.idempotency_key, message.clientMsgId]);
+  await db.query(`INSERT INTO agent_steps(run_id,ordinal,kind,tool_use_id,name,input,state,audit_verdict) VALUES($1,1,'tool_use','terminal-send','send_message',$2,'executing','pass')`, [id, JSON.stringify(input)]);
+  await db.query('UPDATE accounts SET status=\'suspended\' WHERE id=\'account-2\'');
+  await waitFor(async () => (await latestRun())?.status === 'finished');
+  assert.equal(enqueueCalls, 1); assert.equal(auditCalls, 0);
+  assert.equal((await db.query<{ error_code: string }>('SELECT error_code FROM agent_steps WHERE run_id=$1 AND ordinal=1', [id])).rows[0]!.error_code, 'SEND_FAILED');
 });

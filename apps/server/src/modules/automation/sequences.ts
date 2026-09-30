@@ -22,15 +22,12 @@ export function resolveSteps(steps: SequenceStep[], vars: Record<string,string>,
   for (const [key, value] of Object.entries(vars)) if (value !== '') { values[key] = value; sources[key] = 'default'; }
   return steps.map(step => {
     for (const [key, value] of Object.entries(stepVars[String(step.index)] ?? {})) if (value !== '') { values[key] = value; sources[key] = `step:${step.index}`; }
-    const used: Record<string,string> = {}; const usedSources: Record<string,string> = {};
     const text = step.text.replace(/\{([A-Za-z0-9_]+)\}/g, (_match, key: string) => {
       if (!Object.hasOwn(values, key)) throw new AppError(422, 'UNRESOLVED_PLACEHOLDER', `Step ${step.index} requires ${key}`, { stepIndex: step.index, key });
-      Object.defineProperty(used, key, { value: values[key]!, enumerable: true, configurable: true });
-      Object.defineProperty(usedSources, key, { value: sources[key]!, enumerable: true, configurable: true });
       return values[key]!;
     });
     if (text.length > 20000) throw new AppError(400, 'VALIDATION_ERROR', `Resolved step ${step.index} exceeds 20000 characters`);
-    return { index: step.index, text, resolvedVars: used, varSources: usedSources };
+    return { index: step.index, text, resolvedVars: { ...values }, varSources: { ...sources } };
   });
 }
 function parse<T>(schema: z.ZodType<T>, body: unknown): T {
