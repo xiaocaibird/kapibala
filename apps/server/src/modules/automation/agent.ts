@@ -27,6 +27,7 @@ async function notify(tx: Queryable, run: RunRow): Promise<void> { await emit(tx
 
 export class AgentModule {
   private readonly running = new Map<string, Promise<void>>();
+  private readonly deadlines = new Map<string, number>();
   private closing = false;
   private readonly turnTimeoutMs: number;
   constructor(private readonly ctx: AppContext, private readonly messaging: MessagingService) {
@@ -52,6 +53,9 @@ export class AgentModule {
     const runs = (await this.ctx.db.query<{ id: string }>('SELECT id FROM agent_runs WHERE status=\'running\' AND recovery_note IS NULL')).rows;
     for (const run of runs) {
       if (this.running.has(run.id)) continue;
+      // Leave pool capacity for heartbeats, API transactions, gateway workers and
+      // other runs' final commits instead of consuming every connection with locks.
+      if (this.running.size >= 4) break;
       const task = this.ctx.db.withLock(`agent:${run.id}`, async connection => this.run(run.id, connection)).then(() => undefined).catch(error => {
         this.ctx.log.error({ err: error, runId: run.id }, 'Agent execution paused after an infrastructure failure');
       }).finally(() => { this.running.delete(run.id); });
@@ -100,6 +104,7 @@ export class AgentModule {
   private async run(id: string, connection: PoolClient): Promise<void> {
     let run = await this.readRun(id); if (!run || run.status !== 'running' || run.recovery_note) return;
     if (run.inflight_turn) { await this.pause(run, 'An Agent turn was sent before interruption; the protocol cannot safely replay an unrecorded response.'); return; }
+    this.deadlines.set(id, Date.now() + Math.max(0, 60000 - Number(run.active_ms)));
     let lastHeartbeat = Date.now(); let heartbeatFailure: unknown;
     let heartbeatWork = Promise.resolve();
     const persistTime = (): Promise<void> => {
@@ -112,18 +117,29 @@ export class AgentModule {
       while (!this.closing) {
         await persistTime(); if (heartbeatFailure) throw heartbeatFailure;
         run = await this.readRun(id); if (!run || run.status !== 'running' || run.recovery_note) return;
+        const finalStep = (await this.ctx.db.query<StepRow>(`SELECT * FROM agent_steps WHERE run_id=$1 AND state='complete' AND (kind='final' OR name='finish') ORDER BY ordinal DESC LIMIT 1`, [id])).rows[0];
+        // Final history and public run status are separate commits. Recovery must not
+        // issue another remote turn if the final history already reached durable storage.
+        if (finalStep) {
+          const text = finalStep.kind === 'final' ? String(finalStep.result?.summary ?? '') : String((finalStep.input as { summary: string }).summary);
+          await this.finishAfterStep(run, text); return;
+        }
         const pending = (await this.ctx.db.query<StepRow>('SELECT * FROM agent_steps WHERE run_id=$1 AND state<>\'complete\' ORDER BY ordinal LIMIT 1', [id])).rows[0];
         // A prepared tool is the current step. Cancellation is observed after it is completed.
-        if (pending) { await this.executeStep(run, pending); continue; }
+        if (pending) {
+          if (this.remaining(run) <= 0) { await this.finish(run, 'failed', 'wall_clock'); return; }
+          await this.executeStep(run, pending); continue;
+        }
         const group = (await this.ctx.db.query<GroupRow>('SELECT * FROM groups WHERE id=$1', [run.group_id])).rows[0];
         if (run.cancel_requested || !group?.agent_enabled || group.status !== 'active') { await this.finish(run, 'cancelled', 'cancelled'); return; }
-        if (Number(run.active_ms) >= 60000) { await this.finish(run, 'failed', 'wall_clock'); return; }
+        if (this.remaining(run) <= 0) { await this.finish(run, 'failed', 'wall_clock'); return; }
         if (run.step_count >= 12) { await this.finish(run, 'failed', 'budget_exhausted'); return; }
         if (run.protocol_errors >= 3) { await this.finish(run, 'failed', 'protocol_errors'); return; }
-        await this.turn(run, Math.min(this.turnTimeoutMs, 60000 - Number(run.active_ms)));
+        await this.turn(run, Math.min(this.turnTimeoutMs, this.remaining(run)));
       }
-    } finally { clearInterval(timer); await persistTime(); }
+    } finally { clearInterval(timer); await persistTime(); this.deadlines.delete(id); }
   }
+  private remaining(run: RunRow): number { return Math.max(0, (this.deadlines.get(run.id) ?? (Date.now() + 60000 - Number(run.active_ms))) - Date.now()); }
   private async turn(run: RunRow, timeoutMs: number): Promise<void> {
     await this.ctx.db.query('UPDATE agent_runs SET inflight_turn=true WHERE id=$1', [run.id]);
     let raw = ''; let code: 'BAD_JSON' | 'TURN_TIMEOUT' | null = null;
@@ -175,6 +191,7 @@ export class AgentModule {
     const fresh = (await this.readRun(run.id))!;
     const group = (await this.ctx.db.query<GroupRow>('SELECT * FROM groups WHERE id=$1', [run.group_id])).rows[0];
     if (fresh.cancel_requested || !group?.agent_enabled || group.status !== 'active') await this.finish(fresh, 'cancelled', 'cancelled');
+    else if (this.remaining(fresh) <= 0) await this.finish(fresh, 'failed', 'wall_clock');
     else await this.finish(fresh, 'finished', 'final', text);
   }
   private async executeStep(run: RunRow, step: StepRow): Promise<void> {
@@ -198,7 +215,7 @@ export class AgentModule {
     let attempts = step.audit_attempts;
     while (attempts < 3) {
       const current = (await this.readRun(run.id))!;
-      const left = 60000 - Number(current.active_ms); if (left <= 0) { await this.finish(current, 'failed', 'wall_clock'); return 'expired'; }
+      const left = this.remaining(current); if (left <= 0) { await this.finish(current, 'failed', 'wall_clock'); return 'expired'; }
       attempts++;
       await this.ctx.db.query('UPDATE agent_steps SET state=\'auditing\',audit_attempts=$3 WHERE run_id=$1 AND ordinal=$2', [run.id, step.ordinal, attempts]);
       let verdict: 'pass' | 'fail' | undefined;
@@ -215,10 +232,11 @@ export class AgentModule {
   private async send(run: RunRow, step: StepRow): Promise<void> {
     const input = step.input as { text: string; idempotency_key: string };
     const existing = (await this.ctx.db.query<{ client_msg_id: string }>('SELECT client_msg_id FROM agent_send_keys WHERE run_id=$1 AND idempotency_key=$2', [run.id, input.idempotency_key])).rows[0];
-    if (existing) { await this.completeStep(run, step, await this.delivery(existing.client_msg_id)); return; }
+    if (existing) { await this.completeStep(run, step, await this.delivery(existing.client_msg_id, run)); return; }
     const verdict = await this.audit(run, step, input.text);
     if (verdict === 'blocked' || verdict === 'expired') return;
     if (verdict === 'fail') { await this.completeStep(run, step, toolError('AUDIT_REJECTED', 'Message was rejected by audit.')); return; }
+    if (this.remaining(run) <= 0) { await this.finish(run, 'failed', 'wall_clock'); return; }
     let outcome: ToolOutcome | undefined; let clientMsgId: string | undefined;
     await this.ctx.db.transaction(async tx => {
       const group = (await tx.query<GroupRow>('SELECT * FROM groups WHERE id=$1 FOR UPDATE', [run.group_id])).rows[0];
@@ -232,13 +250,15 @@ export class AgentModule {
         await tx.query('UPDATE agent_steps SET state=\'executing\',intent=$3 WHERE run_id=$1 AND ordinal=$2', [run.id, step.ordinal, JSON.stringify({ accountId: account })]);
       } catch (error) { if (error instanceof AppError && ['ACCOUNT_UNAVAILABLE', 'ACCOUNT_NOT_IN_GROUP'].includes(error.code)) outcome = toolError('SEND_FAILED', 'Selected account became unavailable.'); else throw error; }
     });
-    await this.completeStep(run, step, outcome ?? await this.delivery(clientMsgId!));
+    await this.completeStep(run, step, outcome ?? await this.delivery(clientMsgId!, run));
   }
-  private async delivery(clientMsgId: string): Promise<ToolOutcome> {
-    const deadline = Date.now() + 5000;
+  private async delivery(clientMsgId: string, run: RunRow): Promise<ToolOutcome> {
+    const deadline = Date.now() + Math.min(5000, this.remaining(run));
     let message: Message | null = null;
     do {
       message = await this.messaging.getMessage(clientMsgId);
+      const account = (await this.ctx.db.query<{ status: string }>('SELECT a.status FROM messages m JOIN accounts a ON a.id=m.account_id WHERE m.client_msg_id=$1', [clientMsgId])).rows[0];
+      if (message?.deliveryStatus !== 'sent' && account && ['suspended', 'session_expired'].includes(account.status)) return toolError('SEND_FAILED', 'The sending account entered a terminal state before delivery completed.');
       if (message && ['accepted', 'sent'].includes(message.deliveryStatus ?? '')) return { value: { clientMsgId, deliveryStatus: message.deliveryStatus } };
       if (message && ['failed', 'cancelled'].includes(message.deliveryStatus ?? '')) return toolError(message.failCode === 'GROUP_UNREACHABLE' || message.failCode === 'GROUP_WRITE_FORBIDDEN' ? 'GROUP_UNREACHABLE' : 'SEND_FAILED', message.failCode ?? 'Message could not be sent.');
       await sleep(100);
@@ -257,6 +277,7 @@ export class AgentModule {
     const verdict = await this.audit(run, step, JSON.stringify({ action: 'kick', platform_user_id: input.platform_user_id, reason: input.reason }));
     if (verdict === 'blocked' || verdict === 'expired') return;
     if (verdict === 'fail') { await this.completeStep(run, step, toolError('AUDIT_REJECTED', 'Member removal was rejected by audit.')); return; }
+    if (this.remaining(run) <= 0) { await this.finish(run, 'failed', 'wall_clock'); return; }
     let accountId: string | undefined; let denied: ToolOutcome | undefined;
     await this.ctx.db.transaction(async tx => {
       const currentGroup = (await tx.query<GroupRow>('SELECT * FROM groups WHERE id=$1 FOR UPDATE', [run.group_id])).rows[0];

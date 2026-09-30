@@ -161,7 +161,86 @@ test('sequence rate limit defers, sent event schedules next step, and restart on
   const steps = (await db.query<{ index: number; status: string; scheduled_at: Date; sent_at: Date }>('SELECT * FROM sequence_steps WHERE run_id=$1 ORDER BY index', [runId])).rows;
   assert.equal(steps[0]!.status, 'sent'); assert.equal(steps[1]!.scheduled_at.getTime() - steps[0]!.sent_at.getTime(), 10000);
   await db.query('UPDATE sequence_steps SET scheduled_at=now()-interval \'1 hour\' WHERE run_id=$1 AND index=2', [runId]);
-  const before = Date.now(); await module.recover!();
+  const expired = (await db.query<{ scheduled_at: Date }>('SELECT scheduled_at FROM sequence_steps WHERE run_id=$1 AND index=2', [runId])).rows[0]!.scheduled_at.getTime();
+  await second.recover!();
+  assert.equal((await db.query<{ scheduled_at: Date }>('SELECT scheduled_at FROM sequence_steps WHERE run_id=$1 AND index=2', [runId])).rows[0]!.scheduled_at.getTime(), expired, 'a joining instance must not rebase the active scheduler');
+  await module.close!();
+  const before = Date.now(); await second.recover!();
   const scheduled = (await db.query<{ scheduled_at: Date }>('SELECT scheduled_at FROM sequence_steps WHERE run_id=$1 AND index=2', [runId])).rows[0]!.scheduled_at.getTime();
   assert.ok(scheduled >= before + 9900); assert.equal(enqueueCalls, 1);
+});
+
+test('persisted final and prepared send recover without replaying prior external work', async () => {
+  await reset(); let calls = 0; agentReply = () => { calls++; return end(); };
+  const finalId = randomUUID();
+  await db.query('INSERT INTO agent_runs(id,group_id,step_count) VALUES($1,$2,1)', [finalId, groupId]);
+  await db.query(`INSERT INTO agent_steps(run_id,ordinal,kind,state,result) VALUES($1,1,'final','complete',$2)`, [finalId, JSON.stringify({ summary: 'saved final' })]);
+  await waitFor(async () => (await latestRun())?.status === 'finished');
+  assert.equal(calls, 0);
+  assert.equal((await api.inject(`/api/agent-runs/${finalId}`)).json<{ summary: string }>().summary, 'saved final');
+  await reset();
+  const runId = randomUUID(); const tool = { type: 'tool_use', id: 'saved-send', name: 'send_message', input: { text: 'already enqueued', idempotency_key: 'saved-key' } };
+  await db.query('INSERT INTO agent_runs(id,group_id,step_count,history) VALUES($1,$2,1,$3)', [runId, groupId, JSON.stringify([{ role: 'user', content: [{ type: 'text', text: '{}' }] }, { role: 'assistant', content: [tool] }])]);
+  const message = await messaging.enqueueSend({ groupId, accountId: 'account-2', text: 'already enqueued' });
+  await db.query('INSERT INTO agent_send_keys(run_id,idempotency_key,client_msg_id) VALUES($1,\'saved-key\',$2)', [runId, message.clientMsgId]);
+  await db.query(`INSERT INTO agent_steps(run_id,ordinal,kind,tool_use_id,name,input,state,audit_verdict) VALUES($1,1,'tool_use','saved-send','send_message',$2,'executing','pass')`, [runId, JSON.stringify(tool.input)]);
+  await waitFor(async () => (await latestRun())?.status === 'finished');
+  assert.equal(enqueueCalls, 1); assert.equal(auditCalls, 0);
+  const history = (await latestRun()).history; assert.equal(history[2]!.content[0]!.type, 'tool_result');
+});
+test('kick policy and persisted uncertain kick cannot produce a second side effect', async () => {
+  await reset(); let calls = 0;
+  agentReply = () => ++calls === 1 ? use('kick-policy', 'kick_user', { platform_user_id: 'external', reason: 'policy test' }) : end();
+  await inbound(); await waitFor(async () => (await latestRun())?.status === 'finished');
+  assert.equal(kickCalls, 0); assert.equal(auditCalls, 0);
+  assert.equal((await db.query<{ error_code: string }>('SELECT error_code FROM agent_steps WHERE ordinal=1')).rows[0]!.error_code, 'POLICY_DENIED');
+  await reset();
+  const id = randomUUID(); await db.query('INSERT INTO agent_runs(id,group_id,step_count) VALUES($1,$2,1)', [id, groupId]);
+  await db.query(`INSERT INTO agent_steps(run_id,ordinal,kind,tool_use_id,name,input,state,audit_verdict) VALUES($1,1,'tool_use','kick-saved','kick_user',$2,'executing','pass')`, [id, JSON.stringify({ platform_user_id: 'external', reason: 'saved' })]);
+  await waitFor(async () => Boolean((await db.query<{ recovery_note: string }>('SELECT recovery_note FROM agent_runs WHERE id=$1', [id])).rows[0]?.recovery_note));
+  assert.equal(kickCalls, 0); assert.equal((await latestRun()).status, 'running');
+});
+test('repeated reads stop within twelve steps and result bytes remain bounded', async () => {
+  await reset(); let turns = 0;
+  agentReply = () => use(`read-${++turns}`, 'get_recent_messages', { limit: 100000 });
+  for (let i = 0; i < 55; i++) await inbound('文'.repeat(2000));
+  await waitFor(async () => (await latestRun())?.status === 'failed');
+  const run = await latestRun(); assert.equal(run.end_reason, 'budget_exhausted'); assert.equal(turns, 12);
+  const results = run.history.flatMap(m => m.content).filter(c => c.type === 'tool_result');
+  for (const result of results) {
+    assert.ok(Buffer.byteLength(result.content!) <= 8192);
+    const content = JSON.parse(result.content!) as { messages: unknown[]; truncated: boolean };
+    assert.ok(content.messages.length <= 50); assert.equal(content.truncated, true);
+  }
+});
+test('disabling Agent during its current step cancels after that step, without another turn', async () => {
+  await reset(); let release: (() => void) | undefined; let turns = 0;
+  agentReply = async () => { turns++; await new Promise<void>(resolve => { release = resolve; }); return use('current-step', 'get_recent_messages', { limit: 10 }); };
+  await inbound(); await waitFor(async () => Boolean(release));
+  await db.query('UPDATE groups SET agent_enabled=false WHERE id=$1', [groupId]);
+  await db.query('UPDATE agent_runs SET cancel_requested=true WHERE group_id=$1', [groupId]); release!();
+  await waitFor(async () => (await latestRun())?.status === 'cancelled');
+  assert.equal(turns, 1); assert.equal((await latestRun()).end_reason, 'cancelled');
+  assert.equal((await db.query<{ state: string }>('SELECT state FROM agent_steps')).rows[0]!.state, 'complete');
+});
+
+test('activity budget interrupts a late turn and discards the eventual response', async () => {
+  await reset(); let turns = 0;
+  agentReply = async () => { turns++; await delay(200); return end('too late'); };
+  const id = randomUUID(); await db.query('INSERT INTO agent_runs(id,group_id,active_ms) VALUES($1,$2,59930)', [id, groupId]);
+  await waitFor(async () => (await latestRun())?.status === 'failed');
+  assert.equal((await latestRun()).end_reason, 'wall_clock'); assert.equal(turns, 1);
+  await delay(220);
+  const steps = (await db.query<{ kind: string; error_code: string }>('SELECT kind,error_code FROM agent_steps WHERE run_id=$1', [id])).rows;
+  assert.deepEqual(steps.map(step => step.error_code), ['TURN_TIMEOUT']);
+  assert.equal((await latestRun()).status, 'failed');
+});
+test('activity budget expires during audit without authorizing the prepared tool', async () => {
+  await reset(); auditReply = async () => { await delay(200); return { verdict: 'pass', reason: 'late' }; };
+  const id = randomUUID(); const input = { text: 'must not send', idempotency_key: 'late-audit' };
+  await db.query('INSERT INTO agent_runs(id,group_id,active_ms,step_count) VALUES($1,$2,59930,1)', [id, groupId]);
+  await db.query(`INSERT INTO agent_steps(run_id,ordinal,kind,tool_use_id,name,input) VALUES($1,1,'tool_use','late-audit','send_message',$2)`, [id, JSON.stringify(input)]);
+  await waitFor(async () => (await latestRun())?.status === 'failed');
+  assert.equal((await latestRun()).end_reason, 'wall_clock'); assert.equal(auditCalls, 1); assert.equal(enqueueCalls, 0);
+  await delay(220); assert.equal(enqueueCalls, 0);
 });

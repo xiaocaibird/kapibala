@@ -10,6 +10,6 @@ export function createAutomationModule(ctx: AppContext, messaging: MessagingServ
     async register(app) { await agent.register(app); await sequences.register(app); },
     async recover() { await agent.recover(); await sequences.recover(); },
     async tick() { await agent.tick(); await sequences.tick(); },
-    async close() { await agent.close(); },
+    async close() { await agent.close(); await sequences.close(); },
   };
 }

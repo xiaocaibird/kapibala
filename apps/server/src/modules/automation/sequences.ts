@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
+import type { PoolClient } from 'pg';
 import type { AppContext } from '../../core/context.js';
 import { emit, type Queryable } from '../../core/db.js';
 import { AppError } from '../../core/errors.js';
@@ -38,6 +39,8 @@ function parse<T>(schema: z.ZodType<T>, body: unknown): T {
 async function notify(tx: Queryable, run: RunRow): Promise<void> { await emit(tx, 'sequence_run', { runId: run.id, groupId: run.group_id, status: run.status, currentStepIndex: run.current_step_index }); }
 
 export class SequenceModule {
+  private scheduler: PoolClient | null = null;
+  private closed = false;
   constructor(private readonly ctx: AppContext, private readonly messaging: MessagingService) {}
   async register(app: FastifyInstance): Promise<void> {
     app.get('/api/sequences', async () => (await this.ctx.db.query<SequenceRow>('SELECT id,name,steps FROM sequences ORDER BY created_at,id')).rows);
@@ -76,7 +79,27 @@ export class SequenceModule {
     });
   }
   private async definition(id: string): Promise<SequenceRow> { const row = (await this.ctx.db.query<SequenceRow>('SELECT id,name,steps FROM sequences WHERE id=$1', [id])).rows[0]; if (!row) throw new AppError(404, 'SEQUENCE_NOT_FOUND', 'Sequence not found'); return row; }
-  async recover(): Promise<void> {
+  async recover(): Promise<void> { await this.ensureScheduler(); }
+  async close(): Promise<void> {
+    this.closed = true;
+    if (this.scheduler) { const connection = this.scheduler; this.scheduler = null; try { await connection.query("SELECT pg_advisory_unlock(hashtextextended(current_schema()||':automation:sequence-scheduler',0))"); } finally { connection.release(); } }
+  }
+  private async ensureScheduler(): Promise<boolean> {
+    if (this.closed) return false;
+    if (this.scheduler) return true;
+    const connection = await this.ctx.db.pool.connect();
+    let acquired: boolean | undefined;
+    try { acquired = (await connection.query<{ locked: boolean }>("SELECT pg_try_advisory_lock(hashtextextended(current_schema()||':automation:sequence-scheduler',0)) AS locked")).rows[0]?.locked; }
+    catch (error) { connection.release(true); throw error; }
+    if (!acquired) { connection.release(); return false; }
+    // A session-wide scheduler lock distinguishes takeover after downtime from an
+    // additional healthy instance. Joining instances never rebase a live schedule.
+    this.scheduler = connection;
+    connection.once('error', error => { this.ctx.log.error({ err: error }, 'Sequence scheduler connection lost'); if (this.scheduler === connection) { this.scheduler = null; connection.release(true); } });
+    try { await this.rebaseExpired(); return true; }
+    catch (error) { if (this.scheduler === connection) { this.scheduler = null; connection.release(true); } throw error; }
+  }
+  private async rebaseExpired(): Promise<void> {
     const runs = (await this.ctx.db.query<RunRow>('SELECT * FROM sequence_runs WHERE status=\'running\'')).rows;
     for (const run of runs) await this.ctx.db.withLock(`sequence:${run.id}`, async () => {
       // Only the earliest unresolved step has a schedule; accepted sends retain their identity.
@@ -84,6 +107,7 @@ export class SequenceModule {
     });
   }
   async tick(): Promise<void> {
+    if (!await this.ensureScheduler()) return;
     const runs = (await this.ctx.db.query<RunRow>('SELECT * FROM sequence_runs WHERE status=\'running\'')).rows;
     await Promise.all(runs.map(run => this.ctx.db.withLock(`sequence:${run.id}`, async () => this.advance(run.id))));
   }
