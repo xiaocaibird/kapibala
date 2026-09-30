@@ -16,12 +16,16 @@ const environment = { ...process.env };
 delete environment.QA_TARGET_CONFIG;
 delete environment.QA_EXECUTION_AUTHORIZATION;
 delete environment.QA_RUN_DIRECTORY;
+delete environment.QA_EXECUTION_KIND;
+delete environment.QA_EXECUTION_SUITE_ID;
+delete environment.QA_EXECUTION_SUITE_SHA256;
 const stages: Record<string, unknown>[] = [];
 for (const script of [
   'typecheck',
   'test:self',
   'check:catalog',
   'check:impact',
+  'check:suites',
   'render:cases',
   'prepare:report',
 ]) {

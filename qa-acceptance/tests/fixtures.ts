@@ -1,3 +1,4 @@
+import { currentExecutionPlan, assertSelectedCase } from '../harness/execution-plan.js';
 import { test as base, expect, chromium, firefox, webkit } from '@playwright/test';
 import { access } from 'node:fs/promises';
 import { constants } from 'node:fs';
@@ -85,6 +86,7 @@ export const test = base.extend<
     await use(context);
   },
   qa: async ({ target, cluster }, use, info) => {
+    assertSelectedCase(await currentExecutionPlan(qaRoot), info.title, info.project.name);
     const qa = new QaEnvironment(target, cluster, info.outputPath('evidence'));
     try {
       await qa.initialize();

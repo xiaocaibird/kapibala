@@ -1,0 +1,326 @@
+npm notice run kapibala-independent-qa@0.1.0 check:suites
+npm notice run tsx harness/suites-check.ts
+{
+  "productExecuted": false,
+  "purpose": "仅解析共享用例ID并核对Playwright --list；不启动fixture或产品",
+  "reportBoundary": "开发预跑结果不得转为正式验收；未执行用例继续NOT_RUN",
+  "suites": [
+    {
+      "id": "developer-smoke",
+      "title": "开发提测前基础流程检查",
+      "purpose": "用现有QA标准检查健康、登录与权限、注销、基本消息投递和合法序列流程。",
+      "caseIds": [
+        "AUTH-001",
+        "AUTH-002",
+        "AUTH-003",
+        "AUTH-006",
+        "MSG-001",
+        "SEQ-001"
+      ],
+      "projects": [
+        "system"
+      ],
+      "riskBoundaries": [
+        "仅选短流程；不含15分钟token到期、60秒预算、故障杀进程、重启恢复、OPS或blocked用例。",
+        "每条仍使用隔离进程、数据库和协议桩；短流程不是无副作用dry-run，实际执行仍须有效预跑授权。",
+        "不覆盖完整异常矩阵、UI兼容、生产性能或外部协议强保证；通过不能替代正式验收。"
+      ],
+      "grep": "(?:^|\\s)\\[(?:AUTH-001|AUTH-002|AUTH-003|AUTH-006|MSG-001|SEQ-001)\\](?=\\s|$)",
+      "cases": [
+        {
+          "id": "AUTH-001",
+          "title": "health, login and UTC account contract",
+          "automation": "tests/api/auth.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "AUTH-002",
+          "title": "protected reads reject missing and invalid credentials",
+          "automation": "tests/api/auth.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "AUTH-003",
+          "title": "viewer cannot execute any original business write endpoint",
+          "automation": "tests/api/auth.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "AUTH-006",
+          "title": "logout invalidates the existing access token immediately",
+          "automation": "tests/api/auth.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "MSG-001",
+          "title": "accepted is observable until message_sent and own echo stays one row",
+          "automation": "tests/api/messages.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "SEQ-001",
+          "title": "variables inherit latest nonempty override with original source",
+          "automation": "tests/system/sequence.spec.ts",
+          "projects": [
+            "system"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "architecture-regression",
+      "title": "架构局部改进公开行为回归",
+      "purpose": "引用已登记的序列API/UI契约、暂时读取恢复和公开并发/审计交错专项。",
+      "caseIds": [
+        "ARC-API-001",
+        "ARC-API-002",
+        "ARC-API-003",
+        "ARC-UI-001",
+        "ARC-UI-002",
+        "ARC-UI-003",
+        "ARC-UI-004",
+        "ARC-UI-005",
+        "ARC-UI-006",
+        "ARC-UI-007",
+        "ARC-UI-008",
+        "ARC-UI-009",
+        "ARC-UI-010",
+        "ARC-UI-011",
+        "ARC-UI-012",
+        "ARC-UI-013",
+        "ARC-UI-014",
+        "ARC-UI-015",
+        "ARC-UI-016",
+        "ARC-UI-017",
+        "ARC-UI-018",
+        "CAP-REG-001",
+        "CAP-REG-002",
+        "CAP-REG-003",
+        "CAP-REG-004"
+      ],
+      "projects": [
+        "system",
+        "chromium"
+      ],
+      "riskBoundaries": [
+        "只选择当前mode=automated的用例；自动化用例仍可能因缺浏览器、公开策略或适配前提而真实BLOCKED。",
+        "CAP-REG仅证明公开并发和审计前后边界，不证明触达容量拒绝；CAP-001..010的观测阻塞不因本子集通过而关闭。",
+        "当前只选Chromium，不宣称Firefox/WebKit或跨标签认证均已验证。",
+        "不含产品私有helper测试、生产负载或任意崩溃强恢复；实现参数不变成原始硬性业务指标。"
+      ],
+      "grep": "(?:^|\\s)\\[(?:ARC-API-001|ARC-API-002|ARC-API-003|ARC-UI-001|ARC-UI-002|ARC-UI-003|ARC-UI-004|ARC-UI-005|ARC-UI-006|ARC-UI-007|ARC-UI-008|ARC-UI-009|ARC-UI-010|ARC-UI-011|ARC-UI-012|ARC-UI-013|ARC-UI-014|ARC-UI-015|ARC-UI-016|ARC-UI-017|ARC-UI-018|CAP-REG-001|CAP-REG-002|CAP-REG-003|CAP-REG-004)\\](?=\\s|$)",
+      "cases": [
+        {
+          "id": "ARC-API-001",
+          "title": "序列定义的独立严格输入矩阵",
+          "automation": "tests/api/sequence-contracts.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "ARC-API-002",
+          "title": "序列启动的键类型边界与失败后可重试",
+          "automation": "tests/api/sequence-contracts.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "ARC-API-003",
+          "title": "序列启动缺省变量对象兼容",
+          "automation": "tests/api/sequence-contracts.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "ARC-UI-001",
+          "title": "序列定义额外字段明确拒绝而非静默剥离",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-002",
+          "title": "非连续或重复步号在浏览器阻止提交",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-003",
+          "title": "已登记序列尺寸边界在浏览器明确拒绝",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-004",
+          "title": "vars和stepVars非法键值不发预检或启动请求",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-005",
+          "title": "合法序列一次保存并保留公开输入行为",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-006",
+          "title": "序列写请求503失败不自动重放",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-007",
+          "title": "无后续事件或轮询时两次503后自动呈现",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-008",
+          "title": "权限403不形成资源请求风暴",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-009",
+          "title": "429不无视限流进行通用重试",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-010",
+          "title": "请求校验400不自动重试",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-011",
+          "title": "成功HTTP的非法响应格式不按502临时错误重试",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-012",
+          "title": "持续暂时失败耗尽后停止自动读取",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-013",
+          "title": "切页取消旧读取及后续退避",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-014",
+          "title": "换身份期间旧读取迟到不能覆盖新会话",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-015",
+          "title": "耗尽后显式同页刷新可开始新一轮",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-016",
+          "title": "错误后离页取消退避期间的后续读取",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-017",
+          "title": "在途读取期间多个实时失效合并且不能延长失败预算",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "ARC-UI-018",
+          "title": "网络失败及其他已登记暂时HTTP错误均可自动恢复",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "CAP-REG-001",
+          "title": "不同群同名目标的重叠 kick 保持各自审计、步骤和副作用唯一",
+          "automation": "tests/system/capacity.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "CAP-REG-002",
+          "title": "审计等待期间关闭 autoKick 后不得继续派发",
+          "automation": "tests/system/capacity.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "CAP-REG-003",
+          "title": "审计等待后重新检查执行账号在线状态",
+          "automation": "tests/system/capacity.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "CAP-REG-004",
+          "title": "审计等待后成员身份和管理员角色均重新检查",
+          "automation": "tests/system/capacity.spec.ts",
+          "projects": [
+            "system"
+          ]
+        }
+      ]
+    }
+  ]
+}

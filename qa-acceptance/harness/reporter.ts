@@ -1,3 +1,4 @@
+import { currentExecutionPlan, validatePlanManifest } from './execution-plan.js';
 import type {
   Reporter,
   TestCase,
@@ -66,6 +67,11 @@ export default class QaReporter implements Reporter {
       metadata = JSON.parse(await readFile(resolve(out, 'manifest.json'), 'utf8'));
     } catch (e) {
       this.errors.push(`缺少或损坏manifest: ${String(e)}`);
+    }
+    try {
+      validatePlanManifest(await currentExecutionPlan(root), metadata);
+    } catch (e) {
+      this.errors.push(`执行用途或子集完整性异常: ${String(e)}`);
     }
     const qaTreeAfter = await snapshotQaTree(root);
     const before = metadata.qaTree as { sha256?: string } | undefined;

@@ -4,6 +4,7 @@
 
 ## 阅读入口
 
+- [共享用例与开发提测入口](sharing/README.md)：QA 维护一份标准，开发只读选取预跑，报告与正式验收隔离。
 - [本轮方案影响评估](requirements/architecture-impact.md)、[横向风险覆盖复核](requirements/risk-coverage-review.md)、[跨职责交接流程](requirements/collaboration.md)。
 - [需求基线与来源](requirements/baseline.json)、[逐项需求](requirements/catalog.json)、[需求—用例追踪](requirements/traceability.md)。
 - [用例格式与分组](cases/README.md)，人工可阅读 `cases/generated/` 中各分组 Markdown；JSON 是维护源。
@@ -21,7 +22,7 @@
 
 验收阶段须先取得你的**另一次明确执行授权**，固定完成开发的候选提交。授权 JSON 只是记录和防误操作闸门，不会验证授权人身份，也不能替代你的实际授权。当前示例的 REQUIRED 字段无效，不能用来执行产品。
 
-全部 QA 资产和运行报告留在本目录。产品源码和原始需求不因测试准备而改变。QA 分支独立交付，未自动集成或推送。
+全部 QA 资产和运行报告留在本目录。产品源码和原始需求不因测试准备而改变。QA 分支独立提交，按明确授权合回 main；不自动推送。
 
 ## 准备期复核命令
 
@@ -32,7 +33,7 @@ npm ci --workspaces=false
 npm run verify:tools
 ```
 
-`verify:tools` 依次执行类型检查、QA 工具自身测试、用例注册检查、变更评审登记检查、可读用例生成和准备报告生成，并将日志与摘要保存在 `reports/preparation/tooling/` 和 `tooling-verification.json`。也可以分别运行 `typecheck`、`test:self`、`check:catalog`、`check:impact`、`render:cases`、`prepare:report`。
+`verify:tools` 依次执行类型检查、QA 工具自身测试、用例注册检查、变更评审登记检查、共享子集登记检查、可读用例生成和准备报告生成，并将日志与摘要保存在 `reports/preparation/tooling/` 和 `tooling-verification.json`。也可以分别运行 `typecheck`、`test:self`、`check:catalog`、`check:impact`、`check:suites`、`render:cases`、`prepare:report`。
 
 `check:catalog` 会使用 Playwright 的 `--list` 检查已注册用例与项目映射，**不执行测试 fixture**。`prepare:report` 只生成 NOT_RUN 状态清单，不能用于产品验收签署。依赖安装安全策略提示被禁用的 install scripts 时，先验证现有工具能否正常运行，不通过开启全部脚本绕过。
 
@@ -56,6 +57,26 @@ npm run hash:target -- --target config/target.local.json
 ```
 
 复制示例仅是开始填写配置，不构成授权。真实 key／生产网关／真实 Agent URL 不属于本次模拟器验收路径；C2 与外部费用仍需另行明确。
+
+## 开发预跑（共享标准）
+
+开发先完成自己的单元/集成测试，再按变更选择 QA 的短冒烟或相关回归。预跑需另行获得产品执行授权，不能以本次资产建设授权代替。当前未执行任何预跑。标准由 QA 维护，开发按入口读取；问题反馈与交接见 [共享说明](sharing/README.md) 和 [协作流程](requirements/collaboration.md)。
+
+以下两步只读 QA 资产，不启动产品，可在准备期使用：
+
+```sh
+npm run check:suites -- developer-smoke
+npm run hash:suite -- --suite developer-smoke
+```
+
+实际预跑沿用上面的独立 SUT、冻结配置及资源归属要求。取得对应执行授权后，填写 `config/preflight-authorization.local.json`（[示例](config/preflight-authorization.example.json)）；scope 为 `developer-preflight`，suiteId 与 suiteSha256 绑定具体子集，targetSha256 仍绑定完整目标配置。正式验收授权与预跑授权不互换，子集/配置变更须更新对应授权记录。授权文件只是防误操作记录，不是身份验证。
+
+```sh
+npm run preflight -- --suite developer-smoke --target config/target.local.json --authorization config/preflight-authorization.local.json
+# 本轮变更回归使用 architecture-regression，并填写与它匹配的独立授权记录。
+```
+
+预跑仅引用既有用例和断言，不接收额外 grep 或任意命令。结果写入 `reports/preflight/<run-id>/`：冻结子集、所选项目、选择参数和摘要；未选用例在全量 JSON 中继续 NOT_RUN。退出码 0 仅表示该子集每个要求的用例/项目组合均通过且无完整性错误；缺项、阻塞、失败或执行器错误为非零。开发报告明确标为预跑，正式需求符合性与上线准备度不作通过结论，不能导入正式验收作为已执行证据。正式验收入口始终完整执行。报告再生成同样核对用途、冻结子集摘要和批准记录，须使用该运行对应的 QA 资产；不会因为改名、删去缺跑项目或覆盖执行器摘要而升级结论。
 
 ## 执行及取证
 

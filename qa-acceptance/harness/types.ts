@@ -91,5 +91,10 @@ export interface Authorization {
   sutDirectory: string;
   targetSha256: string;
   allowedActions: string[];
-  scope: 'all-required';
+  scope: 'all-required' | 'developer-preflight';
+  suiteId?: string;
+  suiteSha256?: string;
 }
+
+export type ExecutionPurpose =
+  { phase: 'execution' } | { phase: 'developer-preflight'; suiteId: string; suiteSha256: string };

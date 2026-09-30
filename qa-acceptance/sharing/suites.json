@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "owner": "QA",
+  "suites": [
+    {
+      "id": "developer-smoke",
+      "title": "开发提测前基础流程检查",
+      "purpose": "用现有QA标准检查健康、登录与权限、注销、基本消息投递和合法序列流程。",
+      "caseIds": ["AUTH-001", "AUTH-002", "AUTH-003", "AUTH-006", "MSG-001", "SEQ-001"],
+      "projects": ["system"],
+      "riskBoundaries": [
+        "仅选短流程；不含15分钟token到期、60秒预算、故障杀进程、重启恢复、OPS或blocked用例。",
+        "每条仍使用隔离进程、数据库和协议桩；短流程不是无副作用dry-run，实际执行仍须有效预跑授权。",
+        "不覆盖完整异常矩阵、UI兼容、生产性能或外部协议强保证；通过不能替代正式验收。"
+      ]
+    },
+    {
+      "id": "architecture-regression",
+      "title": "架构局部改进公开行为回归",
+      "purpose": "引用已登记的序列API/UI契约、暂时读取恢复和公开并发/审计交错专项。",
+      "caseIds": [
+        "ARC-API-001",
+        "ARC-API-002",
+        "ARC-API-003",
+        "ARC-UI-001",
+        "ARC-UI-002",
+        "ARC-UI-003",
+        "ARC-UI-004",
+        "ARC-UI-005",
+        "ARC-UI-006",
+        "ARC-UI-007",
+        "ARC-UI-008",
+        "ARC-UI-009",
+        "ARC-UI-010",
+        "ARC-UI-011",
+        "ARC-UI-012",
+        "ARC-UI-013",
+        "ARC-UI-014",
+        "ARC-UI-015",
+        "ARC-UI-016",
+        "ARC-UI-017",
+        "ARC-UI-018",
+        "CAP-REG-001",
+        "CAP-REG-002",
+        "CAP-REG-003",
+        "CAP-REG-004"
+      ],
+      "projects": ["system", "chromium"],
+      "riskBoundaries": [
+        "只选择当前mode=automated的用例；自动化用例仍可能因缺浏览器、公开策略或适配前提而真实BLOCKED。",
+        "CAP-REG仅证明公开并发和审计前后边界，不证明触达容量拒绝；CAP-001..010的观测阻塞不因本子集通过而关闭。",
+        "当前只选Chromium，不宣称Firefox/WebKit或跨标签认证均已验证。",
+        "不含产品私有helper测试、生产负载或任意崩溃强恢复；实现参数不变成原始硬性业务指标。"
+      ]
+    }
+  ]
+}
