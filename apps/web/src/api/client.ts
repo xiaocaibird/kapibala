@@ -19,6 +19,18 @@ let refreshFlight: {
   promise: Promise<string>;
 } | null = null;
 let sessionGeneration = 0;
+let cookieWork: Promise<unknown> | null = null;
+function serializeCookieMutation<T>(work: () => Promise<T>): Promise<T> {
+  // Set-Cookie is applied by the browser before JavaScript can reject a stale
+  // response. Finish each cookie-changing request before starting the next one.
+  const task = cookieWork ? cookieWork.then(work, work) : work();
+  cookieWork = task;
+  const release = () => {
+    if (cookieWork === task) cookieWork = null;
+  };
+  void task.then(release, release);
+  return task;
+}
 export const getAccessToken = (): string | null => accessToken;
 export function clearSession(): void {
   sessionGeneration++;
@@ -99,33 +111,89 @@ async function exchange(
   return body;
 }
 
+async function refreshWithinCookieMutation(
+  generation: number,
+): Promise<string> {
+  // A queued refresh for the previous identity must not touch the new cookie.
+  requireSession(generation);
+  try {
+    const body = await exchange("/api/auth/refresh", { method: "POST" }, null);
+    const result = tokenSchema.parse(body);
+    requireSession(generation);
+    accessToken = result.accessToken;
+    return result.accessToken;
+  } catch (error) {
+    if (
+      generation === sessionGeneration &&
+      error instanceof ApiError &&
+      error.status === 401
+    )
+      clearSession();
+    throw error;
+  }
+}
+
 export function refreshAccessToken(): Promise<string> {
   // A refresh token is one-use. Every request and the WebSocket share this flight.
   if (refreshFlight?.generation === sessionGeneration)
     return refreshFlight.promise;
   const generation = sessionGeneration;
-  const promise = exchange("/api/auth/refresh", { method: "POST" }, null)
-    .then((body) => {
-      const result = tokenSchema.parse(body);
-      requireSession(generation);
-      accessToken = result.accessToken;
-      return result.accessToken;
-    })
-    .catch((error: unknown) => {
-      if (
-        generation === sessionGeneration &&
-        error instanceof ApiError &&
-        error.status === 401
-      )
-        clearSession();
-      throw error;
-    })
-    .finally(() => {
-      // A previous session's late response must not release the current flight.
-      if (refreshFlight?.promise === promise) refreshFlight = null;
-    });
+  const promise = serializeCookieMutation(() =>
+    refreshWithinCookieMutation(generation),
+  ).finally(() => {
+    // A previous session's late response must not release the current flight.
+    if (refreshFlight?.promise === promise) refreshFlight = null;
+  });
   refreshFlight = { generation, promise };
   return promise;
+}
+
+export function loginSession(
+  username: string,
+  password: string,
+): Promise<void> {
+  return serializeCookieMutation(async () => {
+    // Start a new identity boundary only after earlier auth responses settled.
+    // Old REST errors must not clear this login while its response is pending.
+    const generation = ++sessionGeneration;
+    accessToken = null;
+    const result = tokenSchema.parse(
+      await exchange(
+        "/api/auth/login",
+        { method: "POST", body: JSON.stringify({ username, password }) },
+        null,
+      ),
+    );
+    requireSession(generation);
+    accessToken = result.accessToken;
+  });
+}
+
+export function logoutSession(): Promise<void> {
+  const tokenAtRequest = accessToken;
+  return serializeCookieMutation(async () => {
+    // A preceding refresh may have renewed access or already invalidated it.
+    // Keep the originally requested token as a fallback to revoke that session.
+    let token = accessToken ?? tokenAtRequest;
+    try {
+      const renewedBeforeLogout = !token;
+      if (!token) token = await refreshWithinCookieMutation(sessionGeneration);
+      try {
+        await exchange("/api/auth/logout", { method: "POST" }, token);
+      } catch (error) {
+        if (!(error instanceof ApiError) || error.status !== 401) throw error;
+        if (renewedBeforeLogout) throw error;
+        // Already inside the queue: do not enqueue a refresh behind ourselves.
+        // The cookie may have rotated even if an old generation discarded access.
+        token = await refreshWithinCookieMutation(sessionGeneration);
+        await exchange("/api/auth/logout", { method: "POST" }, token);
+      }
+    } catch (error) {
+      // Missing/revoked refresh or access means logout has already taken effect.
+      if (!(error instanceof ApiError) || error.status !== 401) throw error;
+    }
+    clearSession();
+  });
 }
 
 export async function request<T>(

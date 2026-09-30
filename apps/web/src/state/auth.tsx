@@ -6,19 +6,13 @@ import {
   type ReactNode,
 } from "react";
 import {
-  clearSession,
-  post,
+  loginSession,
+  logoutSession,
   refreshAccessToken,
   request,
-  setAccessToken,
   ApiError,
 } from "../api/client";
-import {
-  tokenSchema,
-  unknownSchema,
-  userSchema,
-  type User,
-} from "../api/schemas";
+import { userSchema, type User } from "../api/schemas";
 interface AuthState {
   user: User | null;
   restoring: boolean;
@@ -53,18 +47,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
   const login = async (username: string, password: string): Promise<void> => {
-    const { accessToken } = await post("/api/auth/login", tokenSchema, {
-      username,
-      password,
-    });
-    setAccessToken(accessToken);
+    await loginSession(username, password);
     setUser(await request("/api/auth/me", userSchema));
     setRestoreError(null);
   };
   const logout = async (): Promise<void> => {
-    await post("/api/auth/logout", unknownSchema);
-    clearSession();
-    setUser(null);
+    await logoutSession();
   };
   return (
     <AuthContext.Provider
