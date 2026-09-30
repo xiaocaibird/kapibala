@@ -1,3 +1,4 @@
+import { requireServiceAccountId } from '../../contracts/public-api.js';
 import { test, expect } from '../fixtures.js';
 import { BlockedError } from '../../harness/security.js';
 import { eventually, type AgentRun } from '../../harness/platform-client.js';
@@ -176,7 +177,8 @@ test('[CAP-REG-003] offline actors are rechecked after a pending audit instead o
   const { group } = await qa.api.createGroup();
   const kick = await prepareKickAtAudit(qa, group, 'offline');
   try {
-    for (const member of group.members) await disconnectAccount(qa, member.accountId);
+    for (const member of group.members)
+      await disconnectAccount(qa, requireServiceAccountId(member));
     expect((await qa.api.group(group.id)).status).toBe('active');
     await captureKickEvidence(qa, 'actors-offline-before-audit-response', [kick]);
     await assertDenied(qa, kick, 'NO_AVAILABLE_ACCOUNT');
@@ -198,7 +200,7 @@ test('[CAP-REG-004] an online removed administrator and an online ordinary membe
   expect(ordinary).toBeDefined();
   const kick = await prepareKickAtAudit(qa, group, 'membership');
   try {
-    await disconnectAccount(qa, creator!.accountId);
+    await disconnectAccount(qa, requireServiceAccountId(creator!));
     qa.gateway.setMembership(group.gatewayGroupId, administrator!.platformUserId, false);
     const current = await eventually(
       () => qa.api.group(group.id),

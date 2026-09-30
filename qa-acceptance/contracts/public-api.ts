@@ -1,7 +1,8 @@
 import { Ajv } from 'ajv';
 import assert from 'node:assert/strict';
+import type { Account, Group } from '../harness/platform-client.js';
 
-/** 独立依据原始§2.3维护；允许额外字段，不导入产品类型或验证器。 */
+/** 独立依据原始§2.3及已确认D042维护；允许额外字段，不导入产品类型或验证器。 */
 const text = { type: 'string' };
 const nullableText = { type: ['string', 'null'] };
 const time = { anyOf: [{ type: 'null' }, { type: 'string', format: 'utc-time' }] };
@@ -33,13 +34,16 @@ const group = object({
   creatorAccountId: text,
   agentEnabled: { type: 'boolean' },
   autoKickEnabled: { type: 'boolean' },
-  members: array(
-    object({
-      accountId: text,
+  members: array({
+    ...object({
+      accountId: nullableText,
       platformUserId: text,
       role: enumeration(['creator', 'admin', 'member']),
     }),
-  ),
+    // D042 permits external members without a managed account mapping. The
+    // relational check below still requires exact IDs for managed identities.
+    required: ['platformUserId', 'role'],
+  }),
   activeSequenceRunId: nullableText,
   activeAgentRunId: nullableText,
 });
@@ -138,5 +142,34 @@ const validators = Object.fromEntries(
 );
 export function assertContract(name: keyof typeof schemas, value: unknown): void {
   const validate = validators[name]!;
-  assert.ok(validate(value), `${name} 不符合原始公开契约: ${ajv.errorsText(validate.errors)}`);
+  assert.ok(validate(value), `${name} 不符合验收公开契约: ${ajv.errorsText(validate.errors)}`);
+}
+
+/** D042 does not prescribe a null/omitted/non-managed placeholder encoding. */
+export function assertGroupMemberIdentities(group: Group, accounts: Account[]): void {
+  const ids = new Set(accounts.map((account) => account.id));
+  for (const member of group.members) {
+    const managed = accounts.find(
+      (account) =>
+        account.platformUserId !== null && account.platformUserId === member.platformUserId,
+    );
+    if (managed)
+      assert.equal(
+        member.accountId,
+        managed.id,
+        'Managed member must map to its own service account',
+      );
+    else
+      assert.ok(
+        !ids.has(member.accountId ?? ''),
+        'External member must not impersonate a service account',
+      );
+  }
+}
+
+/** Seed-only scenarios must establish an actual service identity before use. */
+export function requireServiceAccountId(member: Group['members'][number]): string {
+  assert.equal(typeof member.accountId, 'string', 'Scenario requires a mapped service member');
+  assert.ok(member.accountId, 'Scenario requires a nonempty service account ID');
+  return member.accountId;
 }

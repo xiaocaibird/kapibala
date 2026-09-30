@@ -785,7 +785,7 @@
       "section": "B2",
       "lines": [301, 302]
     },
-    "expectation": "所有服务账号退出且creator最后；非群主失败记errors、继续其他人、保留creator；失败账号两端仍为成员；完成后left、members=[]；一致性只比较服务账号投影。",
+    "expectation": "所有服务账号退出且creator最后；非群主失败记errors、继续其他人、保留creator；失败账号两端仍为成员；完成后left、托管服务账号投影为空。D042已明确取代原2.3的公开members=[]部分：公开列表/详情保留外部成员，详见ADD-LEFT-MEMBERS-01。",
     "scope": "required",
     "clarification": "QA-D3"
   },
@@ -1423,6 +1423,29 @@
       "lines": [34, 34]
     },
     "expectation": "自动恢复限于读取；失败写操作不能因通用读取恢复而自动重放。请求与退避保持单飞；切页、取消或会话改变后旧请求/等待不得覆盖新页面或另一身份数据；失败不生成成功快照、不冒充已呈现或已确认。前端既有401单次续期与退出立即失效语义保持。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-LEFT-MEMBERS-01",
+    "title": "退群完成后公开保留外部成员",
+    "source": {
+      "path": "qa-acceptance/requirements/left-members-decision.md",
+      "approval": "docs/decisions.md D042最终确认@993f758：仅退出托管成员，公开members保留外部成员；明确记录与原2.3差异"
+    },
+    "expectation": "leave-all完成后托管成员投影为空，外部成员继续存在于网关及公开群列表/详情；不恢复群可写性或自动化，群主最后和失败保护不变。原始文件不改。",
+    "scope": "required"
+  },
+  {
+    "id": "ENG-DIAG-01",
+    "title": "已交付后台诊断的管理员权限与脱敏边界",
+    "source": {
+      "path": "docs/core-resource-observability.md",
+      "section": "诊断权限与含义",
+      "lines": [31, 35],
+      "atCommit": "993f7588c1105894e0543554209a8c085423589f",
+      "approval": "D045批准必要运行诊断；本条将工程公开说明作为该候选的版本化接口profile，不视为原始接口已有要求"
+    },
+    "expectation": "GET /api/diagnostics/background匿名401、viewer403、admin可读；仅进程级调度状态时间计数，不返回凭据/连接信息/业务内容/异常正文堆栈。tick不代表业务完成、外部健康或集群保证。DIAG-001只验证权限与有限泄漏样本，生命周期故障待专项接入。",
     "scope": "required"
   }
 ]

@@ -2680,7 +2680,7 @@
 
 **预期结果**
 
-1. 每个服务账号一次leave、creator最后；job完成，群left且服务成员为空
+1. 每个服务账号一次leave、creator最后；job完成，群left且服务成员为空；本场景没有外部成员，因此公开members为空仍符合D042
 
 **时序要求**
 
@@ -2704,7 +2704,9 @@
 **数据**
 
 ```json
-{}
+{
+  "membership": "仅托管服务账号，无外部成员"
+}
 ```
 
 <a id="GROUP-007"></a>
@@ -2855,9 +2857,9 @@
 
 <a id="GROUP-010"></a>
 
-## GROUP-010 · leave-all consistency excludes external users
+## GROUP-010 · leave-all preserves public external members and keeps left groups inactive
 
-- 需求：R-B2-04
+- 需求：R-B2-04、ADD-LEFT-MEMBERS-01
 - 优先级：P1；方法：automated
 - 自动化入口：tests/api/groups.spec.ts
 
@@ -2869,26 +2871,34 @@
 
 **执行步骤**
 
-1. 加入外部用户后leave-all
-2. 按automation中逐项断言读取公开REST/WS结果并对照独立外部事实账本
+1. 创建含群主、管理员、普通成员的群并加入两名外部用户，等待公开成员已包含外部身份
+2. 启动尚未到期的序列；开启Agent并用外部消息触发，将当前只读turn响应停在屏障
+3. leave-all完成后释放当前turn响应，读取详情、目录、序列和Agent运行，并对照网关真实成员及请求账本
+4. 在服务重启前和重启后各尝试手动发送及启动新序列，并投递外部消息；逐样本断言不可写、自动化不恢复、外部成员仍保留
 
 **预期结果**
 
-1. 服务成员全部退出，外部用户保留，未调用kick
+1. 托管服务账号全部退出，每个一次且群主最后；不kick外部成员，外部platformUserId在网关、公开详情和列表精确一致且不重复
+2. 群保持left、托管成员投影为空；托管身份必须映射自身accountId，外部成员不可冒用托管accountId
+3. 正在运行的Agent/序列结束且active指针清空；不要求D042未明确的新状态名或endReason，但没有后续turn、发送或新run
+4. left后新发送与新序列得到带错误结构的4xx，网关无发送或踢人副作用；重启及后续外部消息不恢复自动化
 
 **时序要求**
 
-1. 轮询仅用于等待已约定异步结果；默认15秒诊断上限不替代原文时间边界
+1. 序列排期3600秒以确保准备阶段尚未到期；此值仅为用例数据
+2. 15秒是终止观察预算，未完整观察记BLOCKED而非自创产品SLA；重启前后各1500ms负向采样保留有限实验边界
+3. Agent响应屏障须在10秒最短turn超时之前释放；若联调环境造成保持超过9秒，记前提不足，不把超时误判为停止规则失败
 
 **故障注入**
 
-1. 无注入；真实公开接口与隔离PostgreSQL
+1. 当前Agent只读turn响应屏障；SUT重启保留数据库、Gateway及Agent桩状态
 
 **取证**
 
 1. 脱敏HTTP请求/响应与时间戳
 2. 网关请求/实际副作用/事件历史与Agent原始协议记录
 3. 断言结果、进程日志和故障屏障/重启时间线（适用时）
+4. left-members-and-automation-terminal、left-remains-inactive-before-restart、left-remains-inactive-after-restart
 
 **清理**
 
@@ -2898,7 +2908,14 @@
 **数据**
 
 ```json
-{}
+{
+  "decision": "requirements/left-members-decision.md#d042",
+  "externalPlatformUserIds": [
+    "external-stays-1",
+    "external-stays-2"
+  ],
+  "sequenceDelaySeconds": 3600
+}
 ```
 
 <a id="MSG-001"></a>
@@ -6077,26 +6094,33 @@
 
 **执行步骤**
 
-1. 两步delay1秒且网关实际发送延迟1.5秒
-2. 按automation中逐项断言读取公开REST/WS结果并对照独立外部事实账本
+1. 启动两步delay1秒的序列；首步真实202和落地，但暂不创建message_sent及回流事件，避免SSE重连提前重放
+2. 真实落地后继续观察1500ms，每次读取都检查未收到确认的首步不为sent，且没有第二次发送
+3. 记录QA递送下界后首次创建并推送message_sent；公开首步sent响应构成接收上界，再补相同身份回流
+4. 核对两条真实副作用及最终finished；以接收区间和网关请求毫秒区间判断后续delay，保存完整证据
 
 **预期结果**
 
-1. 首步按启动后delay；第二步按message_sent后delay，非202受理时刻
+1. 202受理、远端已落地及网关sentAt均不能代替message_sent接收；释放确认前不安排后续发送
+2. 首步按启动后delay，第二步按message_sent接收后delay；没有额外发送，两步最终sent且run finished
+3. 每次采样已经证明的提前发送直接FAIL；时间区间跨1000ms边界或观察未完成记BLOCKED，不用重试掩盖首次违反
 
 **时序要求**
 
-1. 首步启动后至少1000ms；后步message_sent后至少1000ms；不增加隐式容差
+1. delay1000ms来自本用例的公开序列参数；1500ms只用于区分已落地与尚未递送，不是产品SLA
+2. 启动由POST前后夹定，接收由首次递送前与公开sent响应夹定；网关毫秒戳按1ms区间处理，不增加隐式容差
+3. 各阶段15秒仅为有限诊断预算；缺少完成或精确区间记BLOCKED，不创造新的业务完成时限
 
 **故障注入**
 
-1. 无注入；真实公开接口与隔离PostgreSQL
+1. 首步保留真实202与落地，受控延后确认/回流；不新增网关幂等或重放保证
 
 **取证**
 
-1. 脱敏HTTP请求/响应与时间戳
-2. 网关请求/实际副作用/事件历史与Agent原始协议记录
-3. 断言结果、进程日志和故障屏障/重启时间线（适用时）
+1. sequence-held-confirmation及sequence-confirmation-time-bounds：远端sentAt、确认事件、接收上下界、请求毫秒精度和逐阶段公开结果
+2. 脱敏HTTP请求/响应与时间戳
+3. 网关请求/实际副作用/事件历史与Agent原始协议记录
+4. 断言结果、进程日志和故障屏障/重启时间线（适用时）
 
 **清理**
 
@@ -6106,7 +6130,12 @@
 **数据**
 
 ```json
-{}
+{
+  "stepDelayMs": 1000,
+  "confirmationHoldMs": 1500,
+  "observationBudgetMs": 15000,
+  "boundary": "受控正常递送；接收记录保存前后窗口、多实例物理首次观察及重启复用另行取证"
+}
 ```
 
 <a id="SEQ-006"></a>

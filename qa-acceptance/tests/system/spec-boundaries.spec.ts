@@ -1,3 +1,4 @@
+import { requireServiceAccountId } from '../../contracts/public-api.js';
 import { Ajv } from 'ajv';
 import WebSocket from 'ws';
 import { test, expect } from '../fixtures.js';
@@ -140,11 +141,11 @@ test('[BLK-SPEC-001] selection filters online candidates while an already queued
   const admin = group.members.find((member) => member.role === 'admin')!;
   const members = group.members
     .filter((member) => member.role === 'member')
-    .sort((a, b) => (a.accountId < b.accountId ? -1 : 1));
+    .sort((a, b) => (requireServiceAccountId(a) < requireServiceAccountId(b) ? -1 : 1));
   expect(members).toHaveLength(2);
 
   await test.step('before selection, an online creator remains eligible beside a limited admin', async () => {
-    await transition(qa, admin.accountId, 'online', 'rate_limited');
+    await transition(qa, requireServiceAccountId(admin), 'online', 'rate_limited');
     const { runId } = await startSequence(qa, group, 'spec-online-creator', 'admin');
     const run = await sequenceDone(qa, runId);
     expect(run.status).toBe('finished');
@@ -152,11 +153,11 @@ test('[BLK-SPEC-001] selection filters online candidates while an already queued
     expect(
       qa.gateway.snapshot().messages.filter((message) => message.text === 'spec-online-creator'),
     ).toMatchObject([{ accountId: creator.accountId }]);
-    await transition(qa, admin.accountId, 'rate_limited', 'online');
+    await transition(qa, requireServiceAccountId(admin), 'rate_limited', 'online');
   });
 
   await test.step('member lexical order is applied to the online candidate set', async () => {
-    await transition(qa, members[0]!.accountId, 'online', 'rate_limited');
+    await transition(qa, requireServiceAccountId(members[0]!), 'online', 'rate_limited');
     const { runId } = await startSequence(qa, group, 'spec-online-member', 'member');
     const run = await sequenceDone(qa, runId);
     expect(run.status).toBe('finished');
@@ -164,7 +165,7 @@ test('[BLK-SPEC-001] selection filters online candidates while an already queued
     expect(
       qa.gateway.snapshot().messages.filter((message) => message.text === 'spec-online-member'),
     ).toMatchObject([{ accountId: members[1]!.accountId }]);
-    await transition(qa, members[0]!.accountId, 'rate_limited', 'online');
+    await transition(qa, requireServiceAccountId(members[0]!), 'rate_limited', 'online');
   });
 
   await test.step('after selection, a 429 retains the queued message and FIFO instead of switching to the creator', async () => {
@@ -193,7 +194,11 @@ test('[BLK-SPEC-001] selection filters online candidates while an already queued
       accountId: admin.accountId,
       text: 'spec-queued-before-429',
     });
-    const following = await qa.api.send(group.id, admin.accountId, 'spec-later-same-account');
+    const following = await qa.api.send(
+      group.id,
+      requireServiceAccountId(admin),
+      'spec-later-same-account',
+    );
     const page = await qa.api.messages(group.id);
     expect(
       page.items.find((message) => message.clientMsgId === following.clientMsgId)?.deliveryStatus,
@@ -372,7 +377,7 @@ test('[BLK-SPEC-004] mixed protocol errors accumulate while a legal business err
 
   const second = (await qa.api.createGroup()).group;
   for (const member of second.members)
-    await transition(qa, member.accountId, 'online', 'disconnected');
+    await transition(qa, requireServiceAccountId(member), 'online', 'disconnected');
   const resetId = await startRun(qa, second, 'business-resets', { rawBody: 'not-json' }, [
     tool('unknown-before-reset', 'not_a_tool', {}),
     tool('valid-business-error', 'send_message', {

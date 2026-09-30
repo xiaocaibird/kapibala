@@ -1,6 +1,6 @@
 import { test, expect } from '../fixtures.js';
-import { assertContract } from '../../contracts/public-api.js';
-import type { AgentRun } from '../../harness/platform-client.js';
+import { assertContract, assertGroupMemberIdentities } from '../../contracts/public-api.js';
+import type { AgentRun, Group } from '../../harness/platform-client.js';
 
 test('[API-001] 原始主要读取接口必需字段和类型符合独立契约', async ({ qa }) => {
   assertContract('health', await qa.api.require(qa.api.get('/api/health')));
@@ -11,7 +11,11 @@ test('[API-001] 原始主要读取接口必需字段和类型符合独立契约'
   assertContract('accounts', await qa.api.accounts());
   const { group, jobId } = await qa.api.createGroup();
   assertContract('group', group);
-  assertContract('groups', await qa.api.require(qa.api.get('/api/groups')));
+  const accounts = await qa.api.accounts();
+  assertGroupMemberIdentities(group, accounts);
+  const groups = await qa.api.require(qa.api.get<Group[]>('/api/groups'));
+  assertContract('groups', groups);
+  for (const value of groups) assertGroupMemberIdentities(value, accounts);
   assertContract('job', await qa.api.waitJob(jobId));
   await qa.api.send(group.id, group.creatorAccountId, 'contract-message');
   assertContract('messages', await qa.api.messages(group.id));

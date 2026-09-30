@@ -21,7 +21,11 @@ export interface Group {
   creatorAccountId: string;
   agentEnabled: boolean;
   autoKickEnabled: boolean;
-  members: { accountId: string; platformUserId: string; role: 'creator' | 'admin' | 'member' }[];
+  members: {
+    accountId?: string | null;
+    platformUserId: string;
+    role: 'creator' | 'admin' | 'member';
+  }[];
   activeAgentRunId: string | null;
   activeSequenceRunId: string | null;
 }

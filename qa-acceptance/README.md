@@ -4,6 +4,8 @@
 
 ## 阅读入口
 
+- [开发交接接收与首轮联调](requirements/integration-intake-20261001.md)、[候选风险与剩余覆盖准备](requirements/integration-risk-review-20261001.md)：固定993f758；只准备六条system冒烟，原13项接入与新评审专项仍待完成，尚未执行产品。
+
 - [原24条设计阻塞复核](requirements/blocker-reassessment.md)：24条均有脚本，13条工程/夹具依赖未接入，11条script-ready，0条业务决策待定；不以 automated 数量冒充就绪度。
 - [普通序列失败裁定](requirements/sequence-failure-policy.md)：用户已批准普通发送失败使整条运行failed、后续不发送；保留原跳过、限流等待、结果确认及群不可写停止规则。
 - [共享用例与开发提测入口](sharing/README.md)：QA 维护一份标准，开发只读选取预跑，报告与正式验收隔离。
@@ -62,6 +64,8 @@ npm run hash:target -- --target config/target.local.json
 复制示例仅是开始填写配置，不构成授权。真实 key／生产网关／真实 Agent URL 不属于本次模拟器验收路径；C2 与外部费用仍需另行明确。
 
 ## 开发预跑（共享标准）
+
+`developer-smoke` 只用system，不要求安装浏览器、确认UI定位或填写上线profile。经登记确认仅含system的预跑无需browser-automation授权；它仍需独立启动、专属数据库、QA桩延迟/重复故障和自有进程清理权限。项目选择与摘要由入口复核，不能靠环境变量声明来缩小授权。
 
 开发先完成自己的单元/集成测试，再按变更选择 QA 的短冒烟或相关回归。预跑需另行获得产品执行授权，不能以本次资产建设授权代替。当前未执行任何预跑。标准由 QA 维护，开发按入口读取；问题反馈与交接见 [共享说明](sharing/README.md) 和 [协作流程](requirements/collaboration.md)。
 

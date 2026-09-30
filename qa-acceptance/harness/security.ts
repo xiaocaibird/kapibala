@@ -3,6 +3,7 @@ import { resolve, relative, isAbsolute } from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { createHash } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 import type { Authorization, TargetConfig, ExecutionPurpose } from './types.js';
 
 const exec = promisify(execFile);
@@ -194,6 +195,7 @@ export function validateAuthorization(
   target: TargetConfig,
   now = Date.now(),
   purpose: ExecutionPurpose = { phase: 'execution' },
+  verifiedProjects?: readonly string[],
 ): void {
   if (
     a.version !== 1 ||
@@ -229,16 +231,26 @@ export function validateAuthorization(
     throw new BlockedError('授权与目标提交/目录不一致');
   if (a.targetSha256 !== targetFingerprint(target))
     throw new BlockedError('授权未绑定当前完整目标配置，或启动命令/环境/路由/门槛已改变');
-  for (const action of [
+  const requiredActions = [
     'start-isolated-sut',
     'create-owned-database',
     'fault-injection',
     'kill-owned-process',
-    'browser-automation',
-  ]) {
-    if (!Array.isArray(a.allowedActions) || !a.allowedActions.includes(action))
-      throw new BlockedError(`授权范围缺少 ${action}`);
-  }
+  ];
+  // Only an exact, verified system-only preflight can omit browser permission.
+  // Missing/unknown projects and formal acceptance retain the full requirement.
+  if (
+    purpose.phase !== 'developer-preflight' ||
+    !Array.isArray(verifiedProjects) ||
+    verifiedProjects.length !== 1 ||
+    verifiedProjects[0] !== 'system'
+  )
+    requiredActions.push('browser-automation');
+  for (const action of requiredActions) assertAuthorizedAction(a, action);
+}
+export function assertAuthorizedAction(a: Authorization, action: string): void {
+  if (!Array.isArray(a.allowedActions) || !a.allowedActions.includes(action))
+    throw new BlockedError(`授权范围缺少 ${action}`);
 }
 export async function requireAuthorization(target: TargetConfig): Promise<Authorization> {
   const file = process.env.QA_EXECUTION_AUTHORIZATION;
@@ -246,7 +258,16 @@ export async function requireAuthorization(target: TargetConfig): Promise<Author
     throw new BlockedError('尚未授权执行产品验收；仅可运行 test:self/typecheck/check:catalog');
   const a = JSON.parse(await readFile(file, 'utf8')) as Authorization;
   a.sutDirectory = await realpath(a.sutDirectory);
-  validateAuthorization(a, target, Date.now(), executionPurpose());
+  const purpose = executionPurpose();
+  let verifiedProjects: readonly string[] | undefined;
+  if (purpose.phase === 'developer-preflight') {
+    // Resolve QA metadata and recheck the selected digest on every authorization
+    // check, including fixture/restart calls. Never trust an environment project list.
+    const { currentExecutionPlan } = await import('./execution-plan.js');
+    const plan = await currentExecutionPlan(fileURLToPath(new URL('../', import.meta.url)));
+    verifiedProjects = plan.suite?.projects;
+  }
+  validateAuthorization(a, target, Date.now(), purpose, verifiedProjects);
   const workspace = (
     await exec('git', ['rev-parse', '--show-toplevel'], { cwd: target.sut.cwd })
   ).stdout.trim();

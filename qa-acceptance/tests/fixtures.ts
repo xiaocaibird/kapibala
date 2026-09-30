@@ -6,7 +6,12 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { QaEnvironment } from '../harness/environment.js';
 import { OwnedDatabaseCluster } from '../harness/database.js';
-import { loadTarget, requireAuthorization, BlockedError } from '../harness/security.js';
+import {
+  loadTarget,
+  requireAuthorization,
+  assertAuthorizedAction,
+  BlockedError,
+} from '../harness/security.js';
 import type { TargetConfig } from '../harness/types.js';
 
 export const qaRoot = fileURLToPath(new URL('../', import.meta.url));
@@ -16,7 +21,8 @@ export const test = base.extend<
 >({
   browser: [
     async ({ target, browserName, launchOptions }, use) => {
-      await requireAuthorization(target);
+      const authorization = await requireAuthorization(target);
+      assertAuthorizedAction(authorization, 'browser-automation');
       const type = { chromium, firefox, webkit }[browserName];
       const segments = type.executablePath().split(/[\\/]/);
       const index = segments.findIndex((segment) =>

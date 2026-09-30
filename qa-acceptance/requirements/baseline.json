@@ -67,6 +67,27 @@
       "atCommit": "48adfd96f470532cc78c2d3c559414a09434eeff",
       "revision": "QA-REV-02",
       "usage": "仅用于变更影响识别和版本化技术参数分类；实现机制及开发测试结果不作为独立QA裁判、不代替新验收"
+    },
+    {
+      "path": "docs/decisions.md",
+      "sha256": "e4189c2af1c3933346ac5d296d7ac6dd954f8c4785cc29cae9faef870c5cfa6f",
+      "atCommit": "993f7588c1105894e0543554209a8c085423589f",
+      "revision": "QA-REV-04",
+      "usage": "只采用明确决策、版本化公开契约和交付配置；开发自测/实现不作为QA通过或原始预期来源"
+    },
+    {
+      "path": "docs/qa-integration-handoff.md",
+      "sha256": "e10a433edcb6a33387ca7c132a707224617983b07c38f6d83406368a6c81ac4f",
+      "atCommit": "bdf27432ed35cabcf998a8dc0dd8110d63725a02",
+      "revision": "QA-REV-04",
+      "usage": "只采用明确决策、版本化公开契约和交付配置；开发自测/实现不作为QA通过或原始预期来源"
+    },
+    {
+      "path": "docs/core-resource-observability.md",
+      "sha256": "24b12c3eb3d88471eef0cb3b427457e7769f8e1086a97e4cb4f536466886d3d9",
+      "atCommit": "993f7588c1105894e0543554209a8c085423589f",
+      "revision": "QA-REV-04",
+      "usage": "只采用明确决策、版本化公开契约和交付配置；开发自测/实现不作为QA通过或原始预期来源"
     }
   ],
   "authorityOrder": [
@@ -105,6 +126,11 @@
       "id": "QA-D6",
       "source": "2026-10-01本会话：QA建议普通序列失败使整条run为failed且停止后续发送，用户明确回复“按你的建议执行”；详见qa-acceptance/requirements/sequence-failure-policy.md",
       "decision": "补充原B1未规定的普通发送失败策略：步骤及run为failed，后续不发送，重启不恢复后续发送；保留原无匹配账号skipped继续、rate_limited等待、unknown确认流程和群不可写stopped。只授权QA资产更新，产品执行仍须单独授权。"
+    },
+    {
+      "id": "QA-D7",
+      "source": "docs/decisions.md D042最终确认@993f7588c1105894e0543554209a8c085423589f；交接DEV-QA-20261001-01",
+      "decision": "采用已单独确认的退群公开成员语义：只退出托管成员，left群公开members保留外部成员。明确取代原2.3 members=[]部分；QA-D3托管投影与原群不可写/停止自动化/失败保护不变。不代填验收通过。"
     }
   ],
   "requiredAdditions": [
@@ -120,7 +146,9 @@
     "CR-011",
     "CR-012",
     "CR-013",
-    "ADD-SEQ-FAIL-01"
+    "ADD-SEQ-FAIL-01",
+    "ADD-LEFT-MEMBERS-01",
+    "ENG-DIAG-01"
   ],
   "additionNotes": {
     "CR-003": "排序方向最终由CR-007承接，不能把早期实现默认值冒充当时用户确认。",
@@ -191,6 +219,20 @@
         "原跳过/限流等待/unknown确认/群不可写stopped规则",
         "13项工程接入依赖及产品NOT_RUN状态"
       ],
+      "productTestingAuthorized": false
+    },
+    {
+      "id": "QA-REV-04",
+      "date": "2026-10-01",
+      "qaBranch": "agent/qa-integration-intake",
+      "reviewedRange": {
+        "from": "48adfd96f470532cc78c2d3c559414a09434eeff",
+        "to": "993f7588c1105894e0543554209a8c085423589f"
+      },
+      "classification": "接收开发提测；D042明确需求差异与D045诊断公开profile纳入；其余保留原要求、补强弱断言并登记接入/覆盖缺口",
+      "requirementIds": ["ADD-LEFT-MEMBERS-01", "ENG-DIAG-01"],
+      "impactReview": "qa-acceptance/requirements/integration-intake-20261001.md",
+      "riskReview": "qa-acceptance/requirements/integration-risk-review-20261001.md",
       "productTestingAuthorized": false
     }
   ]

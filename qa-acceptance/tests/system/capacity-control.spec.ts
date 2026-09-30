@@ -1,3 +1,4 @@
+import { requireServiceAccountId } from '../../contracts/public-api.js';
 import { test, expect } from '../fixtures.js';
 import type { QaEnvironment } from '../../harness/environment.js';
 import { eventually, type AgentRun } from '../../harness/platform-client.js';
@@ -380,7 +381,7 @@ test('[CAP-006] deferred execution rechecks online membership and administrator 
   for (const variant of ['creator-remains', 'no-qualified-actor'] as const) {
     await deferred(qa, `capacity-actor-${variant}`, async (kick, lease) => {
       const admin = kick.group.members.find((member) => member.role === 'admin')!;
-      await disconnectAccount(qa, admin.accountId);
+      await disconnectAccount(qa, requireServiceAccountId(admin));
       if (variant === 'no-qualified-actor') {
         await disconnectAccount(qa, kick.group.creatorAccountId);
         qa.gateway.setMembership(kick.group.gatewayGroupId, admin.platformUserId, false);
