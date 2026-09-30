@@ -9,8 +9,12 @@ import { RemoteError } from "../../apps/server/src/core/errors.js";
 async function resources(t: TestContext) {
   const temporary = await temporaryDatabase(t);
   const { db, url } = temporary;
-  const observer = new pg.Pool({ connectionString: url });
+  // A dedicated Client.end waits for the socket to close. Pool.end can resolve
+  // while idle sockets are still closing, allowing DROP DATABASE FORCE to kill
+  // an observer during cleanup and emit an unrelated, unhandled pool error.
+  const observer = new pg.Client({ connectionString: url });
   temporary.onCleanup(() => observer.end());
+  await observer.connect();
   return { db, observer };
 }
 async function listen(t: TestContext, server: Server): Promise<string> {
