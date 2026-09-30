@@ -341,13 +341,23 @@ export class AgentModule {
         if (!run || run.status !== "running" || run.recovery_note) return;
         const finalStep = (
           await this.ctx.db.query<StepRow>(
-            `SELECT * FROM agent_steps WHERE run_id=$1 AND state='complete' AND (kind='final' OR name='finish') ORDER BY ordinal DESC LIMIT 1`,
+            `SELECT * FROM agent_steps WHERE run_id=$1 AND state='complete' AND is_error=false AND (kind='final' OR (kind='tool_use' AND name='finish')) ORDER BY ordinal DESC LIMIT 1`,
             [id],
           )
         ).rows[0];
-        // Final history and public run status are separate commits. Recovery must not
-        // issue another remote turn if the final history already reached durable storage.
-        if (finalStep) {
+        // Final history and public run status are separate commits. Only a successful,
+        // valid completion can finish recovery; an invalid finish is a tool error and
+        // must still reach cancellation, budget checks, and the next remote turn.
+        if (
+          finalStep &&
+          (finalStep.kind === "final" ||
+            validateTool({
+              type: "tool_use",
+              id: finalStep.tool_use_id ?? "",
+              name: "finish",
+              input: finalStep.input,
+            }) === null)
+        ) {
           const text =
             finalStep.kind === "final"
               ? String(finalStep.result?.summary ?? "")

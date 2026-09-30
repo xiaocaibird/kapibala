@@ -429,6 +429,128 @@ test("bad JSON, unknown tool, duplicate tool id are recorded without corrupting 
   );
   assert.ok(steps.every((s) => s.raw_response.length > 0));
 });
+test("invalid finish inputs return INVALID_INPUT and allow a later valid completion", async (t) => {
+  for (const [label, input] of [
+    ["null", null],
+    ["missing summary", {}],
+    ["wrong summary type", { summary: 42 }],
+  ] as const) {
+    for (const completion of ["end_turn", "finish"] as const) {
+      await t.test(`${label} followed by ${completion}`, async () => {
+        await reset();
+        let turns = 0;
+        let resumedHistory: TurnBody["messages"] = [];
+        agentReply = (body) => {
+          turns++;
+          if (turns === 1) return use("invalid-finish", "finish", input);
+          resumedHistory = body.messages;
+          return completion === "end_turn"
+            ? end("valid completion")
+            : use("valid-finish", "finish", { summary: "valid completion" });
+        };
+        await inbound();
+        await waitFor(
+          async () => (await latestRun())?.status === "finished",
+          1500,
+        );
+        assert.equal(turns, 2);
+        const result = resumedHistory.at(-1)!.content[0]!;
+        assert.equal(result.type, "tool_result");
+        assert.equal(result.is_error, true);
+        assert.equal(JSON.parse(result.content!).code, "INVALID_INPUT");
+        const run = await latestRun();
+        const detail = (await api.inject(`/api/agent-runs/${run.id}`)).json<{
+          summary: string;
+          steps: {
+            kind: string;
+            name: string;
+            isError: boolean;
+            errorCode: string;
+          }[];
+        }>();
+        assert.equal(detail.summary, "valid completion");
+        assert.equal(detail.steps.length, 2);
+        assert.equal(detail.steps[0]!.kind, "tool_use");
+        assert.equal(detail.steps[0]!.name, "finish");
+        assert.equal(detail.steps[0]!.isError, true);
+        assert.equal(detail.steps[0]!.errorCode, "INVALID_INPUT");
+        assert.equal(enqueueCalls, 0);
+        agentReply = () => end("next group run");
+        await inbound("another message after invalid finish");
+        await waitFor(async () => {
+          const next = await latestRun();
+          return next.id !== run.id && next.status === "finished";
+        });
+      });
+    }
+  }
+});
+
+test("completed invalid finish recovery honors cancellation and execution limits", async (t) => {
+  for (const [reason, status, activeMs, stepCount, protocolErrors, cancel] of [
+    ["cancelled", "cancelled", 0, 1, 0, true],
+    ["wall_clock", "failed", 60000, 1, 0, false],
+    ["budget_exhausted", "failed", 0, 12, 0, false],
+    ["protocol_errors", "failed", 0, 1, 3, false],
+  ] as const) {
+    await t.test(reason, async () => {
+      await reset();
+      let turns = 0;
+      agentReply = () => {
+        turns++;
+        return end("must not run");
+      };
+      const id = randomUUID();
+      await db.query(
+        "INSERT INTO agent_runs(id,group_id,active_ms,step_count,protocol_errors,cancel_requested) VALUES($1,$2,$3,$4,$5,$6)",
+        [id, groupId, activeMs, stepCount, protocolErrors, cancel],
+      );
+      await db.query(
+        `INSERT INTO agent_steps(run_id,ordinal,kind,tool_use_id,name,input,state,is_error,error_code,result) VALUES($1,1,'tool_use','invalid-finish','finish','null'::jsonb,'complete',true,'INVALID_INPUT','{"code":"INVALID_INPUT"}'::jsonb)`,
+        [id],
+      );
+      await waitFor(
+        async () => (await latestRun())?.status !== "running",
+        1500,
+      );
+      const run = await latestRun();
+      assert.equal(run.status, status);
+      assert.equal(run.end_reason, reason);
+      assert.equal(turns, 0);
+      assert.equal(
+        (await db.query("SELECT * FROM agent_steps WHERE run_id=$1", [id]))
+          .rowCount,
+        1,
+      );
+    });
+  }
+});
+
+test("a successful persisted finish completes recovery without another remote turn", async () => {
+  await reset();
+  let turns = 0;
+  agentReply = () => {
+    turns++;
+    return end("must not run");
+  };
+  const id = randomUUID();
+  await db.query(
+    "INSERT INTO agent_runs(id,group_id,step_count) VALUES($1,$2,1)",
+    [id, groupId],
+  );
+  await db.query(
+    `INSERT INTO agent_steps(run_id,ordinal,kind,tool_use_id,name,input,state) VALUES($1,1,'tool_use','saved-finish','finish',$2,'complete')`,
+    [id, JSON.stringify({ summary: "durable completion" })],
+  );
+  await waitFor(async () => (await latestRun())?.status === "finished");
+  assert.equal(turns, 0);
+  assert.equal(
+    (await api.inject(`/api/agent-runs/${id}`)).json<{ summary: string }>()
+      .summary,
+    "durable completion",
+  );
+});
+
 test("inconclusive audit blocks without side effects; rejection does not reserve a send key", async () => {
   await reset();
   agentReply = () =>
