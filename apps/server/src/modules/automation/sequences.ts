@@ -3,7 +3,7 @@ import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import type { PoolClient } from 'pg';
 import type { AppContext } from '../../core/context.js';
-import { emit, type Queryable } from '../../core/db.js';
+import { currentOperationSignal, emit, withOperationSignal, type Queryable } from '../../core/db.js';
 import { AppError } from '../../core/errors.js';
 import type { MessagingService } from '../../core/messaging.js';
 import type { SequenceStep } from '../../../../../packages/contracts/src/index.js';
@@ -15,6 +15,7 @@ export interface ResolvedStep { index: number; text: string; resolvedVars: Recor
 interface SequenceRow { id: string; name: string; steps: SequenceStep[]; }
 interface RunRow { id: string; group_id: string; status: string; current_step_index: number; }
 interface StepRow { run_id: string; index: number; status: string; scheduled_at: Date | null; sent_at: Date | null; client_msg_id: string | null; account_role: 'admin' | 'member'; text: string; delay_seconds: number; resolved_vars: Record<string,string>; var_sources: Record<string,string>; }
+interface SchedulerLease { connection: PoolClient; controller: AbortController; failed: boolean; onError(error: Error): void; }
 
 export function resolveSteps(steps: SequenceStep[], vars: Record<string,string>, stepVars: Record<string,Record<string,string>>): ResolvedStep[] {
   const values: Record<string,string> = Object.create(null) as Record<string,string>;
@@ -36,7 +37,7 @@ function parse<T>(schema: z.ZodType<T>, body: unknown): T {
 async function notify(tx: Queryable, run: RunRow): Promise<void> { await emit(tx, 'sequence_run', { runId: run.id, groupId: run.group_id, status: run.status, currentStepIndex: run.current_step_index }); }
 
 export class SequenceModule {
-  private scheduler: PoolClient | null = null;
+  private scheduler: SchedulerLease | null = null;
   private closed = false;
   constructor(private readonly ctx: AppContext, private readonly messaging: MessagingService) {}
   async register(app: FastifyInstance): Promise<void> {
@@ -79,7 +80,11 @@ export class SequenceModule {
   async recover(): Promise<void> { await this.ensureScheduler(); }
   async close(): Promise<void> {
     this.closed = true;
-    if (this.scheduler) { const connection = this.scheduler; this.scheduler = null; try { await connection.query("SELECT pg_advisory_unlock(hashtextextended(current_schema()||':automation:sequence-scheduler',0))"); } finally { connection.release(); } }
+    const lease = this.scheduler; if (!lease) return;
+    this.scheduler = null; lease.controller.abort(new Error('Sequence scheduler closed'));
+    try { await lease.connection.query("SELECT pg_advisory_unlock(hashtextextended(current_schema()||':automation:sequence-scheduler',0))"); }
+    catch (error) { lease.failed = true; throw error; }
+    finally { lease.connection.removeListener('error', lease.onError); lease.connection.release(lease.failed); }
   }
   private async ensureScheduler(): Promise<boolean> {
     if (this.closed) return false;
@@ -91,10 +96,20 @@ export class SequenceModule {
     if (!acquired) { connection.release(); return false; }
     // A session-wide scheduler lock distinguishes takeover after downtime from an
     // additional healthy instance. Joining instances never rebase a live schedule.
-    this.scheduler = connection;
-    connection.once('error', error => { this.ctx.log.error({ err: error }, 'Sequence scheduler connection lost'); if (this.scheduler === connection) { this.scheduler = null; connection.release(true); } });
-    try { await this.rebaseExpired(); return true; }
-    catch (error) { if (this.scheduler === connection) { this.scheduler = null; connection.release(true); } throw error; }
+    const lease: SchedulerLease = { connection, controller: new AbortController(), failed: false, onError: error => {
+      lease.failed = true; lease.controller.abort(error);
+      this.ctx.log.error({ err: error }, 'Sequence scheduler connection lost');
+      if (this.scheduler === lease) { this.scheduler = null; connection.removeListener('error', lease.onError); connection.release(true); }
+    } };
+    this.scheduler = lease; connection.on('error', lease.onError);
+    // Transactions borrow separate sockets. Propagate ownership loss through ALS so
+    // even an advance already blocked on a row lock must roll back before commit.
+    try { await withOperationSignal(lease.controller.signal, () => this.rebaseExpired()); return true; }
+    catch (error) {
+      lease.controller.abort(error);
+      if (this.scheduler === lease) { this.scheduler = null; connection.removeListener('error', lease.onError); connection.release(true); }
+      throw error;
+    }
   }
   private async rebaseExpired(): Promise<void> {
     const runs = (await this.ctx.db.query<RunRow>('SELECT * FROM sequence_runs WHERE status=\'running\'')).rows;
@@ -108,21 +123,27 @@ export class SequenceModule {
         previous = current.current_step_index; await this.advance(run.id, true);
       }
       // Only the earliest unresolved step has a schedule; accepted sends retain their identity.
-      await this.ctx.db.query(`UPDATE sequence_steps s SET scheduled_at=now()+s.delay_seconds*interval '1 second' FROM sequence_runs r WHERE s.run_id=r.id AND r.id=$1 AND r.status='running' AND s.index=r.current_step_index AND s.status='pending' AND s.client_msg_id IS NULL AND s.scheduled_at<now()`, [run.id]);
+      await this.ctx.db.transaction(async tx => {
+        await tx.query(`UPDATE sequence_steps s SET scheduled_at=now()+s.delay_seconds*interval '1 second' FROM sequence_runs r WHERE s.run_id=r.id AND r.id=$1 AND r.status='running' AND s.index=r.current_step_index AND s.status='pending' AND s.client_msg_id IS NULL AND s.scheduled_at<now()`, [run.id]);
+      });
     }
   }
   async tick(): Promise<void> {
     if (!await this.ensureScheduler()) return;
-    const runs = (await this.ctx.db.query<RunRow>('SELECT * FROM sequence_runs WHERE status=\'running\'')).rows;
-    // These are short local transactions; bound lock connections independently of
-    // the number of groups so connection capacity remains available to their work.
-    for (const run of runs) { if (!this.scheduler) return; await this.advance(run.id); }
+    const lease = this.scheduler; if (!lease) return;
+    await withOperationSignal(lease.controller.signal, async () => {
+      const runs = (await this.ctx.db.query<RunRow>('SELECT * FROM sequence_runs WHERE status=\'running\'')).rows;
+      // These are short local transactions; bound lock connections independently of
+      // the number of groups so connection capacity remains available to their work.
+      for (const run of runs) await this.advance(run.id);
+    });
   }
   private async advance(id: string, recovering = false): Promise<void> {
     await this.ctx.db.transaction(async tx => {
       const initial = (await tx.query<RunRow>('SELECT * FROM sequence_runs WHERE id=$1', [id])).rows[0]; if (!initial) return;
       // Match gateway lock order: group -> run -> messages/steps.
       const group = (await tx.query<{ status: string }>('SELECT status FROM groups WHERE id=$1 FOR UPDATE', [initial.group_id])).rows[0];
+      currentOperationSignal()?.throwIfAborted();
       const run = (await tx.query<RunRow>('SELECT * FROM sequence_runs WHERE id=$1 FOR UPDATE', [id])).rows[0];
       if (!run || run.status !== 'running') return;
       if (group?.status !== 'active') { run.status = 'stopped'; await tx.query('UPDATE sequence_runs SET status=$2 WHERE id=$1', [id, run.status]); await notify(tx, run); return; }
@@ -144,6 +165,7 @@ export class SequenceModule {
       const account = (await tx.query<{ id: string; status: string; rate_limited_until: Date | null }>(`SELECT a.id,a.status,a.rate_limited_until FROM members m JOIN accounts a ON a.id=m.account_id WHERE m.group_id=$1 AND a.status IN ('online','rate_limited') AND (CASE WHEN $2='admin' THEN m.role IN ('creator','admin') ELSE m.role='member' END) ORDER BY CASE WHEN a.status='online' THEN 0 ELSE 1 END,CASE WHEN m.role='admin' THEN 0 ELSE 1 END,a.id LIMIT 1`, [run.group_id, step.account_role])).rows[0];
       if (!account) { step.status = 'skipped'; step.sent_at = new Date(); await tx.query('UPDATE sequence_steps SET status=\'skipped\',sent_at=$3 WHERE run_id=$1 AND index=$2', [id, step.index, step.sent_at]); await this.progress(tx, run, step); return; }
       if (account.status === 'rate_limited') return;
+      currentOperationSignal()?.throwIfAborted();
       try {
         const message = await this.messaging.enqueueSend({ groupId: run.group_id, accountId: account.id, text: step.text, source: 'sequence', sourceRef: `${id}:${step.index}` }, tx);
         await tx.query('UPDATE sequence_steps SET client_msg_id=$3 WHERE run_id=$1 AND index=$2', [id, step.index, message.clientMsgId]);

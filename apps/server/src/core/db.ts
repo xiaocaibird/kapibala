@@ -5,6 +5,19 @@ const operationSignals = new AsyncLocalStorage<AbortSignal>();
 export function currentOperationSignal(): AbortSignal | undefined {
   return operationSignals.getStore();
 }
+export async function withOperationSignal<T>(
+  signal: AbortSignal,
+  operation: () => Promise<T>,
+): Promise<T> {
+  const parent = currentOperationSignal();
+  const combined = parent ? AbortSignal.any([parent, signal]) : signal;
+  return operationSignals.run(combined, async () => {
+    combined.throwIfAborted();
+    const result = await operation();
+    combined.throwIfAborted();
+    return result;
+  });
+}
 function guardOperation(): void {
   currentOperationSignal()?.throwIfAborted();
 }

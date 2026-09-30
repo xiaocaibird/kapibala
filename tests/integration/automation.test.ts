@@ -65,7 +65,7 @@ const messaging: MessagingService = {
 before(async () => {
   const base = process.env.DATABASE_URL ?? 'postgres://kapibala:kapibala@localhost:55432/kapibala';
   admin = new Database(base); await admin.query(`CREATE SCHEMA ${schema}`);
-  const url = new URL(base); url.searchParams.set('options', `-csearch_path=${schema}`); db = new Database(url.toString());
+  const url = new URL(base); url.searchParams.set('options', `-csearch_path=${schema}`); url.searchParams.set('application_name', schema); db = new Database(url.toString());
   await db.query(await readFile(new URL('../../db/migrations/001_core.sql', import.meta.url), 'utf8'));
   await db.query(await readFile(new URL('../../db/migrations/002_automation.sql', import.meta.url), 'utf8'));
   await db.query('UPDATE accounts SET status=\'online\',platform_user_id=id');
@@ -101,7 +101,9 @@ test('PostgreSQL serializes concurrent sequence starts and failed preflight crea
   const created = await api.inject({ method: 'POST', url: '/api/sequences', payload: { name: 'announcements', steps: [1, 2, 3].map(index => ({ index, accountRole: 'admin', text: index === 3 ? '{missing}' : 'hello', delaySeconds: 0 })) } });
   const sequenceId = created.json<{ id: string }>().id;
   const invalid = await api.inject({ method: 'POST', url: `/api/groups/${groupId}/sequence-runs`, payload: { sequenceId } });
-  assert.equal(invalid.statusCode, 422); assert.equal(invalid.json<{ error: { stepIndex: number } }>().error.stepIndex, 3);
+  assert.equal(invalid.statusCode, 422);
+  const preflightError = invalid.json<{ error: { code: string; stepIndex: number; key: string } }>().error;
+  assert.equal(preflightError.code, 'UNRESOLVED_PLACEHOLDER'); assert.equal(preflightError.stepIndex, 3); assert.equal(preflightError.key, 'missing');
   assert.equal((await db.query('SELECT id FROM sequence_runs')).rowCount, 0); assert.equal(enqueueCalls, 0);
   const calls = await Promise.all([1, 2].map(() => api.inject({ method: 'POST', url: `/api/groups/${groupId}/sequence-runs`, payload: { sequenceId, vars: { missing: 'resolved' } } })));
   assert.deepEqual(calls.map(r => r.statusCode).sort(), [201, 409]);
@@ -350,6 +352,63 @@ test('kick budget exhaustion ends the run while retaining an uncertain non-repla
   assert.equal(step.state, 'executing'); assert.equal(step.is_error, false); assert.equal(step.error_code, null); assert.match(step.result_summary, /unknown/);
   assert.match((await api.inject(`/api/agent-runs/${id}`)).json<{ recoveryNote: string }>().recoveryNote, /unknown/);
   await second.tick(); assert.equal(kickCalls, 1);
+});
+
+test('a stale scheduler transaction cannot enqueue after its ownership connection is lost', async () => {
+  await reset(); await db.query('UPDATE groups SET agent_enabled=false');
+  await module.recover!();
+  const definition = await api.inject({ method: 'POST', url: '/api/sequences', payload: { name: 'ownership loss', steps: [{ index: 1, accountRole: 'admin', text: 'must wait after takeover', delaySeconds: 10 }] } });
+  const start = await api.inject({ method: 'POST', url: `/api/groups/${groupId}/sequence-runs`, payload: { sequenceId: definition.json<{ id: string }>().id } });
+  const id = start.json<{ runId: string }>().runId;
+  await db.query('UPDATE sequence_steps SET scheduled_at=now()-interval \'1 hour\' WHERE run_id=$1', [id]);
+  const blocker = await db.pool.connect(); let released = false;
+  const waitForBlocked = async (count: number): Promise<void> => {
+    const deadline = Date.now() + 3000;
+    while (Date.now() < deadline) {
+      const active = (await db.query<{ count: number }>(`SELECT count(*)::integer AS count FROM pg_stat_activity WHERE application_name=$1 AND wait_event_type='Lock' AND state='active'`, [schema])).rows[0]!.count;
+      if (active >= count) return;
+      await delay(10);
+    }
+    throw new Error(`Expected ${count} transactions blocked behind this test's group row`);
+  };
+  let oldTick: Promise<unknown> | undefined; let newRecovery: Promise<unknown> | undefined;
+  try {
+    await blocker.query('BEGIN'); await blocker.query('SELECT id FROM groups WHERE id=$1 FOR UPDATE', [groupId]);
+    oldTick = module.tick().then(() => null, (error: unknown) => error);
+    await waitForBlocked(1);
+    const killed = await db.query(`SELECT pg_terminate_backend(pid) FROM pg_locks WHERE locktype='advisory' AND database=(SELECT oid FROM pg_database WHERE datname=current_database()) AND classid::bigint=((hashtextextended($1,0)>>32)&4294967295) AND objid::bigint=(hashtextextended($1,0)&4294967295) AND granted`, [`${schema}:automation:sequence-scheduler`]);
+    assert.equal(killed.rowCount, 1, 'only this schema scheduler is terminated');
+    newRecovery = second.recover!().then(() => null, (error: unknown) => error);
+    await waitForBlocked(2);
+    const resumedAt = Date.now(); await blocker.query('COMMIT'); released = true;
+    const [staleResult, takeoverResult] = await Promise.all([oldTick, newRecovery]);
+    assert.equal(takeoverResult, null); assert.ok(staleResult instanceof Error, 'the stale transaction must reject');
+    const step = (await db.query<{ client_msg_id: string | null; scheduled_at: Date }>('SELECT * FROM sequence_steps WHERE run_id=$1', [id])).rows[0]!;
+    assert.equal(step.client_msg_id, null); assert.equal((await db.query('SELECT * FROM messages')).rowCount, 0); assert.equal(enqueueCalls, 0);
+    assert.ok(step.scheduled_at.getTime() >= resumedAt + 9900, 'takeover must rebase the pending step by its full delay');
+  } finally {
+    if (!released) await blocker.query('ROLLBACK'); blocker.release();
+    await Promise.allSettled([oldTick, newRecovery].filter((work): work is Promise<unknown> => Boolean(work)));
+  }
+});
+
+test('closing and recreating modules preserves activity while excluding actual downtime', async () => {
+  await reset(); let release: (() => void) | undefined; let turns = 0;
+  agentReply = async () => { if (++turns === 1) { await new Promise<void>(resolve => { release = resolve; }); return use('before-shutdown', 'get_recent_messages', { limit: 1 }); } return end('resumed'); };
+  await inbound();
+  for (let i = 0; i < 100 && !release; i++) { await module.tick(); await delay(10); }
+  assert.ok(release); await delay(200);
+  const closing = module.close!(); release(); await closing; await second.close!();
+  const before = (await db.query<{ id: string; active_ms: string; status: string }>('SELECT id,active_ms,status FROM agent_runs')).rows[0]!;
+  assert.equal(before.status, 'running'); assert.ok(Number(before.active_ms) >= 190);
+  await delay(700);
+  const context = { db, agent: new RemoteClient(remote.listeningOrigin), gateway: new RemoteClient(remote.listeningOrigin), log: api.log };
+  module = createAutomationModule(context, messaging); second = createAutomationModule(context, messaging);
+  await module.recover!(); await waitFor(async () => (await latestRun())?.status === 'finished');
+  const after = (await db.query<{ id: string; active_ms: string; status: string }>('SELECT id,active_ms,status FROM agent_runs')).rows[0]!;
+  assert.equal(after.id, before.id); assert.equal(turns, 2);
+  const resumedActivity = Number(after.active_ms) - Number(before.active_ms);
+  assert.ok(resumedActivity >= 0 && resumedActivity < 350, `downtime leaked into activity: ${resumedActivity}ms`);
 });
 
 const realTiming = process.env.AUTOMATION_TIMING_TESTS === '1';
