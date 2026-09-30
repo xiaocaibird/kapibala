@@ -695,14 +695,17 @@ test("legacy baseline and migration 007 preserve the running-sequence gate and l
       .rows[0]!.status,
     "running",
   );
-  await assert.rejects(assertSchemaCurrent(db), /installed=6, required=7/);
+  await assert.rejects(
+    assertSchemaCurrent(db),
+    new RegExp(`installed=6, required=${await expectedVersion()}`),
+  );
   // Fixture represents the old application having completed the run. The
   // baseline/migration implementation must never stop or finish it itself.
   await db.query(
     "UPDATE sequence_runs SET status='finished' WHERE id='legacy-run'",
   );
   await migrate(db);
-  assert.equal(await assertSchemaCurrent(db), 7);
+  assert.equal(await assertSchemaCurrent(db), await expectedVersion());
   assert.equal(
     (
       await db.query(

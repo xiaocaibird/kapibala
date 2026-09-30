@@ -1,0 +1,453 @@
+TAP version 13
+# Subtest: R09: echo confirmation uses only message_sent observation, preserves it after duplicate and restart
+ok 1 - R09: echo confirmation uses only message_sent observation, preserves it after duplicate and restart
+  ---
+  duration_ms: 1378.80475
+  type: 'test'
+  ...
+# Independent database: kapibala_test_2c1a5e53ccb44b38b214536d7ef7fead
+# Subtest: R09: query confirmation uses only message_sent observation, preserves it after duplicate and restart
+ok 2 - R09: query confirmation uses only message_sent observation, preserves it after duplicate and restart
+  ---
+  duration_ms: 1252.299625
+  type: 'test'
+  ...
+# Independent database: kapibala_test_c29100a869614675ae10382e46ced564
+# Subtest: R09: event confirmation uses only message_sent observation, preserves it after duplicate and restart
+ok 3 - R09: event confirmation uses only message_sent observation, preserves it after duplicate and restart
+  ---
+  duration_ms: 660.088875
+  type: 'test'
+  ...
+# Independent database: kapibala_test_40581a390e044ea893c9f71d65cf9d8f
+# Subtest: R05: a locked group cannot block another group's Agent or sequence; retry preserves one run and one enqueue
+ok 4 - R05: a locked group cannot block another group's Agent or sequence; retry preserves one run and one enqueue
+  ---
+  duration_ms: 309.609167
+  type: 'test'
+  ...
+# Independent database: kapibala_test_91a59363f925413180a02599f9736c01
+# tick with group lock held: 132ms
+# Subtest: R05: a real slow member reconciliation holds its group lock without stopping another group
+ok 5 - R05: a real slow member reconciliation holds its group lock without stopping another group
+  ---
+  duration_ms: 309.947208
+  type: 'test'
+  ...
+# Independent database: kapibala_test_dc3a3b0f1a264b4e8d15989f100db952
+# Subtest: R05: busy takeover defers only that run and must rebase it before dispatch after unlock
+ok 6 - R05: busy takeover defers only that run and must rebase it before dispatch after unlock
+  ---
+  duration_ms: 552.784917
+  type: 'test'
+  ...
+# Independent database: kapibala_test_075ac5e13383425f9255fb69d1adfdff
+# Subtest: R09: skipped step still schedules from the actual skip time
+ok 7 - R09: skipped step still schedules from the actual skip time
+  ---
+  duration_ms: 199.71525
+  type: 'test'
+  ...
+# Independent database: kapibala_test_276b9b1c8c3249a68b7e405ec56b455f
+# Subtest: R09: observation precedes row-lock wait and survives a failed transaction retry
+ok 8 - R09: observation precedes row-lock wait and survives a failed transaction retry
+  ---
+  duration_ms: 313.024667
+  type: 'test'
+  ...
+# Independent database: kapibala_test_99e0c0e508514f18996944aa3b07262b
+# Subtest: R09: migration refuses active old sequences and never fabricates historical observations
+ok 9 - R09: migration refuses active old sequences and never fabricates historical observations
+  ---
+  duration_ms: 75.614542
+  type: 'test'
+  ...
+# Subtest: R09 combination: failed receipt and a later eventId for the same message retain the first observation
+ok 10 - R09 combination: failed receipt and a later eventId for the same message retain the first observation
+  ---
+  duration_ms: 362.140208
+  type: 'test'
+  ...
+# Independent database: kapibala_test_a987ad56ccfe45cfa4729cdc9587fea9
+# Subtest: R09 combination: a failed acknowledgement for a different msgId cannot occupy the valid message's observation
+ok 11 - R09 combination: a failed acknowledgement for a different msgId cannot occupy the valid message's observation
+  ---
+  duration_ms: 218.055708
+  type: 'test'
+  ...
+# Independent database: kapibala_test_06f25cc226c74a018e30e47fa7531bd7
+# Subtest: KG01 SSE CRLF split across three chunks preserves both frames
+ok 12 - KG01 SSE CRLF split across three chunks preserves both frames
+  ---
+  duration_ms: 516.105583
+  type: 'test'
+  ...
+# Subtest: KG02 SSE every byte boundary preserves UTF-8, comments and multiline data
+ok 13 - KG02 SSE every byte boundary preserves UTF-8, comments and multiline data
+  ---
+  duration_ms: 502.560792
+  type: 'test'
+  ...
+# Subtest: 真实PG：并发账号CAS只有一个成功，非法边优先于状态冲突
+ok 14 - 真实PG：并发账号CAS只有一个成功，非法边优先于状态冲突
+  ---
+  duration_ms: 258.166833
+  type: 'test'
+  ...
+# Subtest: 账号完整36种状态组合严格遵循允许转移表，终态无出边
+ok 15 - 账号完整36种状态组合严格遵循允许转移表，终态无出边
+  ---
+  duration_ms: 216.218375
+  type: 'test'
+  ...
+# Subtest: 限流到期前已手动离线，不得被过期调度恢复为online
+ok 16 - 限流到期前已手动离线，不得被过期调度恢复为online
+  ---
+  duration_ms: 132.877792
+  type: 'test'
+  ...
+# Subtest: ACCOUNT_OFFLINE及SENDER_NOT_IN_GROUP只失败当前消息，账号和群不变
+ok 17 - ACCOUNT_OFFLINE及SENDER_NOT_IN_GROUP只失败当前消息，账号和群不变
+  ---
+  duration_ms: 112.720083
+  type: 'test'
+  ...
+# Subtest: 同步SESSION_EXPIRED与异步account_status都执行相同终态后果
+ok 18 - 同步SESSION_EXPIRED与异步account_status都执行相同终态后果
+  ---
+  duration_ms: 261.179209
+  type: 'test'
+  ...
+# Subtest: 异步message_failed按错误传播账号终态或群不可写，不能混淆范围
+ok 19 - 异步message_failed按错误传播账号终态或群不可写，不能混淆范围
+  ---
+  duration_ms: 328.234583
+  type: 'test'
+  ...
+# Subtest: 真实PG：终态后果原子提交；步骤写失败整笔回滚
+ok 20 - 真实PG：终态后果原子提交；步骤写失败整笔回滚
+  ---
+  duration_ms: 104.098708
+  type: 'test'
+  ...
+# Subtest: 限流期间所有来源共用账号队列且恢复保持顺序
+ok 21 - 限流期间所有来源共用账号队列且恢复保持顺序
+  ---
+  duration_ms: 164.697083
+  type: 'test'
+  ...
+# Subtest: 503退避不能让同账号后续消息越过队首
+ok 22 - 503退避不能让同账号后续消息越过队首
+  ---
+  duration_ms: 180.397417
+  type: 'test'
+  ...
+# Subtest: 504已落地查询收敛为sent，不重发；自身回流去重且不触发Agent
+ok 23 - 504已落地查询收敛为sent，不重发；自身回流去重且不触发Agent
+  ---
+  duration_ms: 177.80225
+  type: 'test'
+  ...
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: 504安全窗口后新查询明确未落地则failed，不采用可选重发
+ok 24 - 504安全窗口后新查询明确未落地则failed，不采用可选重发
+  ---
+  duration_ms: 145.4275
+  type: 'test'
+  ...
+# Subtest: 真实时钟：504后明确未落地，在5秒内确定失败并且不重发
+ok 25 - 真实时钟：504后明确未落地，在5秒内确定失败并且不重发
+  ---
+  duration_ms: 2296.003625
+  type: 'test'
+  ...
+# Subtest: 真实HTTP：窗口内取得的404延迟返回后不得触发重发，后续查询确认原消息
+ok 26 - 真实HTTP：窗口内取得的404延迟返回后不得触发重发，后续查询确认原消息
+  ---
+  duration_ms: 2384.508458
+  type: 'test'
+  ...
+# Subtest: 崩溃发送意图恢复为unknown，没有已知504不得重发
+ok 27 - 崩溃发送意图恢复为unknown，没有已知504不得重发
+  ---
+  duration_ms: 89.436916
+  type: 'test'
+  ...
+# Subtest: 发送持锁连接丢失后新worker就地接管，旧worker不能写accepted或重发
+ok 28 - 发送持锁连接丢失后新worker就地接管，旧worker不能写accepted或重发
+  ---
+  duration_ms: 108.307666
+  type: 'test'
+  ...
+# Subtest: 第二实例启动不能把活跃worker的发送标记为恢复未知
+ok 29 - 第二实例启动不能把活跃worker的发送标记为恢复未知
+  ---
+  duration_ms: 189.996042
+  type: 'test'
+  ...
+# Subtest: 504查询不可用期间保持unknown，恢复后确认不会重复发出
+ok 30 - 504查询不可用期间保持unknown，恢复后确认不会重复发出
+  ---
+  duration_ms: 100.470917
+  type: 'test'
+  ...
+# Subtest: 已sent补投和重复确认不会重写首次确认时间
+ok 31 - 已sent补投和重复确认不会重写首次确认时间
+  ---
+  duration_ms: 87.064542
+  type: 'test'
+  ...
+# Subtest: kick同步终态错误也执行成员清理与取消，群错误只改变群
+ok 32 - kick同步终态错误也执行成员清理与取消，群错误只改变群
+  ---
+  duration_ms: 195.487875
+  type: 'test'
+  ...
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未知时不删除成员
+ok 33 - kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未知时不删除成员
+  ---
+  duration_ms: 2622.554709
+  type: 'test'
+  ...
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: kick已确认删除等待群投影事务，旧成员快照不能覆盖删除结果
+ok 34 - kick已确认删除等待群投影事务，旧成员快照不能覆盖删除结果
+  ---
+  duration_ms: 199.445834
+  type: 'test'
+  ...
+# Subtest: 真实PG双实例发送互斥，单个outbox只调用一次远端
+ok 35 - 真实PG双实例发送互斥，单个outbox只调用一次远端
+  ---
+  duration_ms: 219.540958
+  type: 'test'
+  ...
+# Subtest: 群不可写原子停止序列并取消Agent，不改变账号
+ok 36 - 群不可写原子停止序列并取消Agent，不改变账号
+  ---
+  duration_ms: 89.745375
+  type: 'test'
+  ...
+# Subtest: 真实PG事件写失败后重放，乱序eventId与任意历史补投均保留
+ok 37 - 真实PG事件写失败后重放，乱序eventId与任意历史补投均保留
+  ---
+  duration_ms: 88.163333
+  type: 'test'
+  ...
+# Subtest: 建群包括creator/admin，过期链接重申，promote仅一次
+ok 38 - 建群包括creator/admin，过期链接重申，promote仅一次
+  ---
+  duration_ms: 121.849417
+  type: 'test'
+  ...
+# Subtest: 邀请ready时间前不join，ALREADY_MEMBER无需等待事件，可重试一次promote
+ok 39 - 邀请ready时间前不join，ALREADY_MEMBER无需等待事件，可重试一次promote
+  ---
+  duration_ms: 647.453708
+  type: 'test'
+  ...
+# Subtest: 建群远端成功但本地写失败时记录待确认，禁止重复创建
+ok 40 - 建群远端成功但本地写失败时记录待确认，禁止重复创建
+  ---
+  duration_ms: 198.247667
+  type: 'test'
+  ...
+# Subtest: join事件超过10秒未到，任务失败且不提前promote
+ok 41 - join事件超过10秒未到，任务失败且不提前promote
+  ---
+  duration_ms: 94.779958
+  type: 'test'
+  ...
+# Subtest: 非群主退出失败继续其他成员，群主不退出
+ok 42 - 非群主退出失败继续其他成员，群主不退出
+  ---
+  duration_ms: 93.634833
+  type: 'test'
+  ...
+# Subtest: leave-all服务账号全部退出但保留外部用户，left公开视图为空并保存远端证据
+ok 43 - leave-all服务账号全部退出但保留外部用户，left公开视图为空并保存远端证据
+  ---
+  duration_ms: 108.922083
+  type: 'test'
+  ...
+# Subtest: 时间线快照在历史补投和queued.sentAt改写时保持原始分页无重漏
+ok 44 - 时间线快照在历史补投和queued.sentAt改写时保持原始分页无重漏
+  ---
+  duration_ms: 85.644459
+  type: 'test'
+  ...
+# Subtest: migration manifest uses explicit numeric identifiers and rejects invalid or duplicate versions
+ok 45 - migration manifest uses explicit numeric identifiers and rejects invalid or duplicate versions
+  ---
+  duration_ms: 15.084708
+  type: 'test'
+  ...
+# Subtest: history content changes with the same file count are rejected, while a fresh database gets the changed schema
+ok 46 - history content changes with the same file count are rejected, while a fresh database gets the changed schema
+  ---
+  duration_ms: 272.237333
+  type: 'test'
+  ...
+# Same count/version=1, old schema integer versus fresh schema text; old ledger rejected by checksum before writes
+# Subtest: complete ledger comparison rejects middle holes, renamed/deleted/inserted history and a newer database
+    # Subtest: middle-hole
+    ok 1 - middle-hole
+      ---
+      duration_ms: 92.849125
+      type: 'test'
+      ...
+    # Subtest: renamed-file
+    ok 2 - renamed-file
+      ---
+      duration_ms: 93.67925
+      type: 'test'
+      ...
+    # Subtest: deleted-file
+    ok 3 - deleted-file
+      ---
+      duration_ms: 126.367292
+      type: 'test'
+      ...
+    # Subtest: inserted-file
+    ok 4 - inserted-file
+      ---
+      duration_ms: 93.858959
+      type: 'test'
+      ...
+    # Subtest: renumbered-file
+    ok 5 - renumbered-file
+      ---
+      duration_ms: 97.3435
+      type: 'test'
+      ...
+    # Subtest: newer-database
+    ok 6 - newer-database
+      ---
+      duration_ms: 102.618583
+      type: 'test'
+      ...
+    1..6
+ok 47 - complete ledger comparison rejects middle holes, renamed/deleted/inserted history and a newer database
+  ---
+  duration_ms: 607.539125
+  type: 'test'
+  ...
+# Subtest: a failure after pending SQL and earlier ledger writes rolls the entire batch back before a successful retry
+ok 48 - a failure after pending SQL and earlier ledger writes rolls the entire batch back before a successful retry
+  ---
+  duration_ms: 64.054417
+  type: 'test'
+  ...
+# Version 2 SQL/ledger plus version 3 DDL/data all rolled back when the version 3 ledger INSERT failed; retry and repeat passed
+# Subtest: two migration processes wait on a real PostgreSQL advisory lock and apply a batch exactly once
+ok 49 - two migration processes wait on a real PostgreSQL advisory lock and apply a batch exactly once
+  ---
+  duration_ms: 290.489916
+  type: 'test'
+  ...
+# {"observedLocks":[{"application_name":"a0_migration_first","lock_key":"913456","granted":true},{"application_name":"a0_migration_first","lock_key":"913458","granted":false},{"application_name":"a0_migration_second","lock_key":"913456","granted":false}],"finalValue":2,"version2LedgerRows":1}
+# Subtest: the production entry refuses an actually lagging database before listening, then migration permits a healthy server and repeat
+ok 50 - the production entry refuses an actually lagging database before listening, then migration permits a healthy server and repeat
+  ---
+  duration_ms: 407.957083
+  type: 'test'
+  ...
+# {"laggingVersion":7,"requiredVersion":8,"refusedProcessExit":1,"randomRefusedPort":58327,"healthyUrl":"http://127.0.0.1:58342"}
+# Subtest: a real six-migration legacy ledger stays explicitly unverified and unchanged rather than gaining fabricated checksums
+ok 51 - a real six-migration legacy ledger stays explicitly unverified and unchanged rather than gaining fabricated checksums
+  ---
+  duration_ms: 84.861834
+  type: 'test'
+  ...
+# Historical 001–006 SQL was executed into the old ledger shape; migrate/startup rejected with no checksum column, DDL, ledger or account changes
+# Subtest: explicit legacy baseline compares a replayed release schema, records limited provenance, and permits subsequent migration
+ok 52 - explicit legacy baseline compares a replayed release schema, records limited provenance, and permits subsequent migration
+  ---
+  duration_ms: 424.414792
+  type: 'test'
+  ...
+# {"source":"git:fa1baa7d7524bf16f379c9c2837fa8cc9ef0bcac","schemaChecksum":"8dcbd355bde9d283034612c00f5f819a209adb588cd3ea18f33cf0d43f0a16bd","verifiedAt":"2026-09-30T22:33:04.076Z","versions":[1,2,3,4,5,6],"referenceDatabase":"kapibala_migration_reference_05bf0e662261410485de368ae5457905","referenceRemoved":true,"currentVersion":8,"pastExecutionBytesProven":false}
+# Subtest: legacy baseline rejects damaged ledgers, structural drift and untrusted source bytes without changing the target
+    # Subtest: middle-hole
+    ok 1 - middle-hole
+      ---
+      duration_ms: 187.435041
+      type: 'test'
+      ...
+    # Subtest: name-mismatch
+    ok 2 - name-mismatch
+      ---
+      duration_ms: 305.138458
+      type: 'test'
+      ...
+    # Subtest: missing-index
+    ok 3 - missing-index
+      ---
+      duration_ms: 237.028833
+      type: 'test'
+      ...
+    # Subtest: changed-default
+    ok 4 - changed-default
+      ---
+      duration_ms: 199.684709
+      type: 'test'
+      ...
+    # Subtest: extra-function
+    ok 5 - extra-function
+      ---
+      duration_ms: 225.263709
+      type: 'test'
+      ...
+    # Subtest: disabled-internal-constraint-triggers
+    ok 6 - disabled-internal-constraint-triggers
+      ---
+      duration_ms: 305.358291
+      type: 'test'
+      ...
+    # Subtest: altered-sequence
+    ok 7 - altered-sequence
+      ---
+      duration_ms: 231.889708
+      type: 'test'
+      ...
+    # Subtest: modified-source
+    ok 8 - modified-source
+      ---
+      duration_ms: 175.8255
+      type: 'test'
+      ...
+    1..8
+ok 53 - legacy baseline rejects damaged ledgers, structural drift and untrusted source bytes without changing the target
+  ---
+  duration_ms: 1868.560875
+  type: 'test'
+  ...
+# Subtest: legacy baseline lock contention and missing CREATEDB permission fail without target changes or reference leaks
+ok 54 - legacy baseline lock contention and missing CREATEDB permission fail without target changes or reference leaks
+  ---
+  duration_ms: 5287.234125
+  type: 'test'
+  ...
+# Subtest: legacy baseline and migration 007 preserve the running-sequence gate and leave historical observation time unknown
+ok 55 - legacy baseline and migration 007 preserve the running-sequence gate and leave historical observation time unknown
+  ---
+  duration_ms: 321.947125
+  type: 'test'
+  ...
+# Legacy 6 -> explicit baseline -> 007 rejects running sequence atomically -> completed-run fixture -> 007 succeeds; historical observed_at remains NULL
+# Subtest: a reference cleanup failure reports that the target baseline already committed, with its exact evidence and reference name
+ok 56 - a reference cleanup failure reports that the target baseline already committed, with its exact evidence and reference name
+  ---
+  duration_ms: 272.794042
+  type: 'test'
+  ...
+1..56
+# tests 70
+# suites 0
+# pass 70
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 12269.820125

@@ -1,0 +1,55 @@
+TAP version 13
+# Subtest: CR01 migration 008 is atomic and repeatable, preserving actual old clocks and unknown historical receipts
+ok 1 - CR01 migration 008 is atomic and repeatable, preserving actual old clocks and unknown historical receipts
+  ---
+  duration_ms: 173.0105
+  type: 'test'
+  ...
+# isolated database: kapibala_test_361182d958d24e3f926ec11d6d9d6645
+# Subtest: CR02 business rollback leaves a reliable receipt, and a new event handler reuses its stable identity
+ok 2 - CR02 business rollback leaves a reliable receipt, and a new event handler reuses its stable identity
+  ---
+  duration_ms: 128.597
+  type: 'test'
+  ...
+# isolated database: kapibala_test_09813ed3dc7b42b8bd5e0f62fe5c3cb9
+# Subtest: CR03 receipt-write failure prevents business application and a surviving process retains its first clock
+ok 3 - CR03 receipt-write failure prevents business application and a surviving process retains its first clock
+  ---
+  duration_ms: 146.776541
+  type: 'test'
+  ...
+# isolated database: kapibala_test_0fa0aa54d78c48fbac4827f33bef5d8f
+# Subtest: CR04 SIGKILL after independent receipt commit preserves the clock through a new process and sequence recovery
+ok 4 - CR04 SIGKILL after independent receipt commit preserves the clock through a new process and sequence recovery
+  ---
+  duration_ms: 621.525208
+  type: 'test'
+  ...
+# isolated database: kapibala_test_055aa216b780443c9cbdb5700e646613
+# {"case":"CR04","signal":"SIGKILL","savedObservedAt":1790807613362,"replayStartedAt":1790807613623,"recoveredObservedAt":1790807613362,"nextScheduledAt":1790807673362}
+# Subtest: CR05 two processes keep the first reliable record, not a later writer's earlier physical observation
+ok 5 - CR05 two processes keep the first reliable record, not a later writer's earlier physical observation
+  ---
+  duration_ms: 496.874833
+  type: 'test'
+  ...
+# isolated database: kapibala_test_55c9ed1cfa164e1d854df6c2a126e318
+# {"case":"CR05","earlierProcessStartedAt":1790807613981,"winningProcessStartedAt":1790807614229,"firstReliableObservedAt":1790807614229,"unchangedAfterEarlierObserverContinued":true}
+# Subtest: CR06 SIGKILL before receipt persistence demonstrates the unrecoverable observation window
+ok 6 - CR06 SIGKILL before receipt persistence demonstrates the unrecoverable observation window
+  ---
+  duration_ms: 478.523458
+  type: 'test'
+  ...
+# isolated database: kapibala_test_568ced8907684a35a5ab0b1be7802bc4
+# {"case":"CR06","lostProcessStartedAt":1790807614472,"replayStartedAt":1790807614722,"firstReliableObservedAt":1790807614722,"originalPhysicalObservationRecovered":false,"faultInjection":"process paused before receipt SQL submission, then SIGKILL","boundary":"Only the new reliable observation survives; this is not reconstruction of the lost receipt."}
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2166.094541

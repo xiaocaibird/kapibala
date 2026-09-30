@@ -11,6 +11,7 @@ import {
 } from "./models.js";
 import { changeAccount, markGroupUnreachable } from "./state.js";
 import { Messages, recordSent } from "./messages.js";
+import { recordConfirmationReceipt } from "./confirmation-receipts.js";
 
 const gatewayEventSchema = z.discriminatedUnion("type", [
   z.object({
@@ -186,6 +187,18 @@ export class GatewayEvents {
       }
       const echoClientId =
         event.type === "message" ? await this.findEcho(event) : null;
+      // Save the receipt independently before any dedup/business transaction.
+      // Replay after a failed transaction or process death reuses this clock.
+      const reliableObservedAt =
+        event.type === "message_sent"
+          ? await recordConfirmationReceipt(
+              this.ctx.db,
+              event.clientMsgId,
+              event.msgId,
+              ref,
+              observedAt!,
+            )
+          : undefined;
       await this.ctx.db.transaction(async (tx) => {
         // Membership reads current remote facts under the group lock. Defer a
         // busy transaction through the existing retry path instead of holding
@@ -207,7 +220,7 @@ export class GatewayEvents {
               event.clientMsgId,
               event.msgId,
               event.sentAt,
-              observedAt,
+              reliableObservedAt,
             );
             break;
           case "message_failed": {
