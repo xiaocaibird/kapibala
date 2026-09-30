@@ -33,9 +33,13 @@
 | 查看固定的完整原始要求 | [原始需求（只读）](original-interview-question.md) |
 
 <a id="代码与命令执行位置"></a>
-## 当前候选与运行记录
+## 当前演示与验收入口
 
-第二轮产品候选`3c071d2`已完成完整335/335、生产构建和有限真实浏览器复验，见[第二轮修复与验证](core-repair-round-two.md)及[统一证据](evidence/core-round-two-verification.json)。迁移与旧库数据升级先经[备份副本演练](core-upgrade-preflight.md)，实际演示切换完成后在本节补记；尚未把候选验证当成人工验收。
+[本地控制台](http://127.0.0.1:5173)已统一更新，main启动提交`56e320c`、实际产品候选`3c071d2`、schema7。后续纯文档提交不改变运行产品树；实际PID和启动时刻见main `.runtime/runtime-manifest.json`及[本轮运行记录](evidence/core-round-two-rollout.json)。原18表数据/旧迁移时间、4群/15消息/6账号及两个模拟器状态保留，新观察时间不伪造历史值。
+
+本轮完整335/335、0跳过、生产构建和有限真实浏览器复验通过，见[第二轮修复与验证](core-repair-round-two.md)及[统一证据](evidence/core-round-two-verification.json)。升级先经过[真实备份副本演练](core-upgrade-preflight.md)，再停旧服务重新备份、显式基线化及007。测试与演示环境分开，真实演示只检查入口/health，未重跑故障注入。
+
+现在可从[A0迁移评审卡](acceptance.md#review-a0-migration)继续，先看实际机制和假设，再看反例、执行证据与未关闭范围。用户验收尚未完成；协议恢复窗口、账号结果未知、硬终止计量及本候选3秒DOM呈现证据等限制仍明确保留。增强项不新增实施。
 
 ## 上一轮演示与代码位置（历史）
 
