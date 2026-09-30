@@ -352,6 +352,8 @@ export function createGatewaySimulator(path = ".runtime/gateway.json") {
       return fail(reply, 403, "NO_PERMISSION");
     const fault = s.config.kickFaults.shift();
     store.save();
+    if (fault === "NO_PERMISSION") return fail(reply, 403, "NO_PERMISSION");
+    if (fault === "OWNER_LEFT") return fail(reply, 409, "OWNER_LEFT");
     if (fault === "NETWORK_TIMEOUT_NO_EFFECT")
       return fail(reply, 504, "NETWORK_TIMEOUT");
     if (fault === "NETWORK_TIMEOUT") {
@@ -408,6 +410,14 @@ export function createGatewaySimulator(path = ".runtime/gateway.json") {
       a.terminal =
         fault === "ACCOUNT_SUSPENDED" ? "suspended" : "session_expired";
       a.online = false;
+      for (const [groupId, memberGroup] of Object.entries(s.groups)) {
+        if (memberGroup.members.includes(a.platformUserId)) {
+          memberGroup.members = memberGroup.members.filter(
+            (id) => id !== a.platformUserId,
+          );
+          publish("member_left", { groupId, platformUserId: a.platformUserId });
+        }
+      }
       store.save();
       return fail(reply, fault === "ACCOUNT_SUSPENDED" ? 403 : 401, fault);
     }

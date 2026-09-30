@@ -835,3 +835,369 @@ test("platform: SIGKILL during remote send recovers by evidence without resendin
     await f.close();
   }
 });
+
+test("platform: S1 distinguishes accepted from sent and unknown survives query outage", async () => {
+  const f = await fixture();
+  try {
+    const g = await f.group();
+    await f.control("gateway", "/config", { sendDelayMs: 1200 });
+    const first = await f.api<{ clientMsgId: string }>(
+      "POST",
+      `/api/groups/${g.id}/send`,
+      { accountId: "account-2", text: "accepted window" },
+    );
+    await until(
+      () => f.messages(g.id),
+      (m) =>
+        m.some(
+          (x) =>
+            x.clientMsgId === first.body.clientMsgId &&
+            x.deliveryStatus === "accepted",
+        ),
+      1000,
+    );
+    assert.equal(
+      ((await f.control("gateway", "")).messages as unknown[]).length,
+      0,
+    );
+    await until(
+      () => f.messages(g.id),
+      (m) =>
+        m.some(
+          (x) =>
+            x.clientMsgId === first.body.clientMsgId &&
+            x.deliveryStatus === "sent",
+        ),
+    );
+    await f.control("gateway", "/config", {
+      sendDelayMs: 100,
+      sendFaults: ["NETWORK_TIMEOUT_NO_EFFECT"],
+      queryUnavailable: true,
+    });
+    const second = await f.api<{ clientMsgId: string }>(
+      "POST",
+      `/api/groups/${g.id}/send`,
+      { accountId: "account-2", text: "wait for evidence" },
+    );
+    await until(
+      () => f.messages(g.id),
+      (m) =>
+        m.some(
+          (x) =>
+            x.clientMsgId === second.body.clientMsgId &&
+            x.deliveryStatus === "unknown",
+        ),
+    );
+    await new Promise((r) => setTimeout(r, 2400));
+    assert.equal(
+      (await f.messages(g.id)).find(
+        (x) => x.clientMsgId === second.body.clientMsgId,
+      )!.deliveryStatus,
+      "unknown",
+    );
+    await f.control("gateway", "/config", { queryUnavailable: false });
+    const start = Date.now();
+    await until(
+      () => f.messages(g.id),
+      (m) =>
+        m.some(
+          (x) =>
+            x.clientMsgId === second.body.clientMsgId &&
+            x.deliveryStatus === "sent",
+        ),
+      2000,
+    );
+    assert.ok(Date.now() - start < 2000);
+  } finally {
+    await f.close();
+  }
+});
+
+test("platform: schema lag refuses startup and viewer is denied all business write routes", async () => {
+  const f = await fixture();
+  try {
+    const login = await f.app.inject({
+      method: "POST",
+      url: "/api/auth/login",
+      payload: { username: "viewer", password: "viewer" },
+    });
+    const token = login.json<{ accessToken: string }>().accessToken;
+    const writes: [string, "POST" | "PATCH"][] = [
+      ["/api/accounts/account-1/connect", "POST"],
+      ["/api/accounts/account-1/transition", "POST"],
+      ["/api/groups", "POST"],
+      ["/api/groups/missing", "PATCH"],
+      ["/api/groups/missing/send", "POST"],
+      ["/api/groups/missing/leave-all", "POST"],
+      ["/api/sequences", "POST"],
+      ["/api/groups/missing/sequence-runs", "POST"],
+    ];
+    for (const [url, method] of writes) {
+      const response = await f.app.inject({
+        url,
+        method,
+        headers: { authorization: `Bearer ${token}` },
+        payload: {},
+      });
+      assert.equal(response.statusCode, 403, url);
+      assert.equal(
+        response.json<{ error: { code: string } }>().error.code,
+        "FORBIDDEN",
+      );
+    }
+    const latest = (
+      await f.db.query<{ version: number; name: string }>(
+        "SELECT version,name FROM schema_migrations ORDER BY version DESC LIMIT 1",
+      )
+    ).rows[0]!;
+    await f.db.query("DELETE FROM schema_migrations WHERE version=$1", [
+      latest.version,
+    ]);
+    await assert.rejects(
+      createApp({ db: f.db, logger: false, background: false }),
+      /Schema mismatch/,
+    );
+    await f.db.query(
+      "INSERT INTO schema_migrations(version,name) VALUES($1,$2)",
+      [latest.version, latest.name],
+    );
+  } finally {
+    await f.close();
+  }
+});
+
+test("platform: audited kick confirms 504 and propagates permission errors without account mutation", async () => {
+  const f = await fixture();
+  try {
+    const g = await f.group();
+    await f.api("PATCH", `/api/groups/${g.id}`, {
+      agentEnabled: true,
+      autoKickEnabled: true,
+    });
+    const script = [
+      {
+        body: {
+          stop_reason: "tool_use",
+          content: [
+            {
+              type: "tool_use",
+              id: "kick",
+              name: "kick_user",
+              input: {
+                platform_user_id: "moderated-user",
+                reason: "group policy",
+              },
+            },
+          ],
+        },
+      },
+      {
+        body: {
+          stop_reason: "end_turn",
+          content: [{ type: "text", text: "done" }],
+        },
+      },
+    ];
+    await f.control("agent", "/config", { turnScript: script });
+    for (const [index, fault] of [
+      "NETWORK_TIMEOUT",
+      "OWNER_LEFT",
+      "NO_PERMISSION",
+    ].entries()) {
+      await f.control("gateway", "/member", {
+        groupId: g.gatewayGroupId,
+        platformUserId: "moderated-user",
+        joined: true,
+      });
+      await f.control("gateway", "/config", { kickFaults: [fault] });
+      await f.control("gateway", "/message", {
+        groupId: g.gatewayGroupId,
+        text: `kick-${fault}`,
+      });
+      const runs = await until(
+        async () =>
+          (await f.api<AgentRun[]>("GET", `/api/groups/${g.id}/agent-runs`))
+            .body,
+        (r) => r.length === index + 1 && r.every((x) => x.status !== "running"),
+        10000,
+      );
+      const newest = (
+        await f.api<AgentRun>("GET", `/api/agent-runs/${runs[0]!.id}`)
+      ).body;
+      assert.equal(newest.status, "finished");
+      if (fault === "NETWORK_TIMEOUT")
+        assert.equal(newest.steps![0]!.isError, false);
+      else assert.equal(newest.steps![0]!.errorCode, fault);
+      assert.equal(
+        (await f.api<Group>("GET", `/api/groups/${g.id}`)).body.status,
+        "active",
+      );
+    }
+    const remote = await f.control("gateway", "");
+    assert.equal(
+      (remote.requests as { path: string }[]).filter((r) =>
+        r.path.endsWith("/kick"),
+      ).length,
+      3,
+    );
+    const audits = (await f.control("agent", "")).audits as { text: string }[];
+    assert.equal(audits.length, 3);
+    assert.deepEqual(JSON.parse(audits[0]!.text), {
+      action: "kick",
+      platform_user_id: "moderated-user",
+      reason: "group policy",
+    });
+  } finally {
+    await f.close();
+  }
+});
+
+test("platform: Agent SEND_TIMEOUT repeats the same key without re-auditing or duplicating delivery", async () => {
+  const f = await fixture();
+  try {
+    const g = await f.group();
+    await f.api("PATCH", `/api/groups/${g.id}`, { agentEnabled: true });
+    const send = (id: string) => ({
+      body: {
+        stop_reason: "tool_use",
+        content: [
+          {
+            type: "tool_use",
+            id,
+            name: "send_message",
+            input: { text: "same timeout key", idempotency_key: "stable" },
+          },
+        ],
+      },
+    });
+    await f.control("agent", "/config", {
+      turnScript: [
+        send("first"),
+        send("again"),
+        {
+          body: {
+            stop_reason: "end_turn",
+            content: [{ type: "text", text: "done" }],
+          },
+        },
+      ],
+    });
+    await f.control("gateway", "/config", {
+      sendFaults: ["NETWORK_TIMEOUT_NO_EFFECT"],
+      queryUnavailable: true,
+    });
+    await f.control("gateway", "/message", {
+      groupId: g.gatewayGroupId,
+      text: "trigger timeout",
+    });
+    await until(
+      async () =>
+        (
+          await f.db.query(
+            "SELECT 1 FROM agent_steps WHERE error_code='SEND_TIMEOUT'",
+          )
+        ).rowCount,
+      (n) => Boolean(n),
+      8000,
+    );
+    await f.control("gateway", "/config", { queryUnavailable: false });
+    const runs = await until(
+      async () =>
+        (await f.api<AgentRun[]>("GET", `/api/groups/${g.id}/agent-runs`)).body,
+      (r) => r.length === 1 && r[0]!.status === "finished",
+      7000,
+    );
+    const run = (await f.api<AgentRun>("GET", `/api/agent-runs/${runs[0]!.id}`))
+      .body;
+    assert.equal(run.steps![0]!.errorCode, "SEND_TIMEOUT");
+    assert.equal(run.steps![1]!.isError, false);
+    await until(
+      () => f.messages(g.id),
+      (m) => m.some((x) => x.isOwn && x.deliveryStatus === "sent"),
+    );
+    assert.equal(
+      ((await f.control("agent", "")).audits as unknown[]).length,
+      1,
+    );
+    assert.equal(
+      ((await f.control("gateway", "")).messages as unknown[]).length,
+      1,
+    );
+  } finally {
+    await f.close();
+  }
+});
+
+test("platform: Agent kick deadline cancels real HTTP confirmation without replaying an uncertain effect", async () => {
+  const f = await fixture();
+  try {
+    const g = await f.group();
+    await f.control("gateway", "/member", {
+      groupId: g.gatewayGroupId,
+      platformUserId: "deadline-target",
+      joined: true,
+    });
+    const id = randomUUID();
+    const started = Date.now();
+    await f.db.transaction(async (tx) => {
+      await tx.query(
+        "UPDATE groups SET agent_enabled=true,auto_kick_enabled=true WHERE id=$1",
+        [g.id],
+      );
+      await tx.query(
+        "INSERT INTO agent_runs(id,group_id,active_ms,step_count) VALUES($1,$2,59500,1)",
+        [id, g.id],
+      );
+      await tx.query(
+        "INSERT INTO agent_steps(run_id,ordinal,kind,tool_use_id,name,input,state,audit_verdict) VALUES($1,1,'tool_use','deadline-kick','kick_user',$2,'ready','pass')",
+        [
+          id,
+          JSON.stringify({
+            platform_user_id: "deadline-target",
+            reason: "deadline test",
+          }),
+        ],
+      );
+    });
+    const run = await until(
+      async () => (await f.api<AgentRun>("GET", `/api/agent-runs/${id}`)).body,
+      (run) => run.status === "failed",
+      2000,
+    );
+    assert.equal(run.endReason, "wall_clock");
+    assert.ok(
+      Date.now() - started < 950,
+      "run must stop before the simulator's one-second kick response",
+    );
+    assert.match(run.recoveryNote ?? "", /unknown/);
+    const step = (
+      await f.db.query<{
+        state: string;
+        is_error: boolean;
+        error_code: string | null;
+      }>("SELECT * FROM agent_steps WHERE run_id=$1", [id])
+    ).rows[0]!;
+    assert.equal(step.state, "executing");
+    assert.equal(step.is_error, false);
+    assert.equal(step.error_code, null);
+    // A disconnected HTTP caller cannot undo the already dispatched side effect.
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+    const second = await f.build();
+    f.apps.push(second);
+    await second.ready();
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    const remote = await f.control("gateway", "");
+    assert.equal(
+      (remote.requests as { path: string }[]).filter((r) =>
+        r.path.endsWith("/kick"),
+      ).length,
+      1,
+    );
+    assert.equal(
+      (await f.api<AgentRun>("GET", `/api/agent-runs/${id}`)).body.status,
+      "failed",
+    );
+  } finally {
+    await f.close();
+  }
+});

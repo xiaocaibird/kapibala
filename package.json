@@ -14,7 +14,7 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "typecheck": "tsc --noEmit && npm run typecheck -w apps/web",
     "build": "npm run typecheck && npm run build -w apps/web",
-    "test": "tsx --test tests/**/*.test.ts",
+    "test": "tsx --test tests/integration/*.test.ts apps/web/tests/*.test.ts",
     "verify:original": "tsx scripts/verify-original.ts"
   },
   "dependencies": {
