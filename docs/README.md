@@ -12,6 +12,7 @@
 | 核对十一项可靠性缺陷的修复与回归 | [可靠性复查记录](reliability-review.md) |
 | 核对目标、固定约束、阶段与协作要求 | [工程要求](engineering-requirements.md) |
 | 追踪用户新增功能、实施状态与本轮单点反馈 | [需求变更记录](change-requests.md) |
+| 查看已批准实施的群目录排序、搜索、分页与表单保护 | [群列表与资料完善方案](group-directory-profile-proposal.md)；[待验证场景GD01–GD12](acceptance.md#group-directory-acceptance) |
 | 区分用户已确认决定与暂定技术选择 | [决策与变更记录](decisions.md) |
 | 理解后端及控制台的接口依赖 | [模块协作接口](module-interfaces.md) |
 | 理解状态、发送、群任务和消息恢复 | [网关设计](gateway-design.md) |
@@ -38,6 +39,8 @@
 19:57:51启动的9befc8a、父6107/API6110等属于上一轮运行，见[历史统一演示证据](evidence/demo-verification.json)。此前开发者新增的复验群及用户数据均保留，不回删历史数据。
 
 原始目录的文档入口为 `/Users/zcm/Desktop/kapibala/docs/README.md`。后续本地启动默认使用此main目录；只有服务未运行时才执行冷启动命令，不要同时从两个工作树启动默认端口。
+
+后续群目录批次正在 `agent/group-directory-release`（`/Users/zcm/.codex/worktrees/42fe/kapibala`）实施，起点`324486b`、契约`c4831e0`。CR-007–010已批准实施，验证与演示切换尚待单独留证；本段不把旧20:57:22运行记录更新成新功能已上线。提醒、其他产品及架构方案仍按各自待审索引保留。
 
 ## 来源与证据边界
 
