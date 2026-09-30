@@ -1,0 +1,63 @@
+✔ AR02 a group row lock defers its member events while later SSE messages commit, then retry recovers exactly once (501.237583ms)
+ℹ independent database: kapibala_test_7729ce35aae04e028619c36f1addf071
+ℹ B messages while A remains locked: advanced=true, elapsed=88ms, member HTTP requests=0
+ℹ after A release: ledger=4, A member=1, member change=1, B messages=2; locked retry=103ms
+✔ AR02 non-lock member failure retains replay and a delayed joined event cannot undo a newer authoritative leave (149.179791ms)
+ℹ independent database: kapibala_test_ae8b1bd3b78e4a80833813dd721487c9
+ℹ non-lock failure recovered: ledger=3, final A members=0, committed member changes=1, inconsistency=1; member HTTP requests=3
+✔ AR02 a rebuilt event handler recovers a deferred member event from real SSE history without duplicating committed messages (244.565625ms)
+ℹ independent database: kapibala_test_5be6395bcb024775a87685dc78a9de6e
+ℹ fresh GatewayEvents recovered from since=0 history: ledger=2, A member=1, B message=1, message notification=1
+✔ R05 cancellation: a paused run with a locked group preserves cancellation while another group's Agent and sequence advance (328.62875ms)
+ℹ Independent database: kapibala_test_cdba9adda4e74b618e8e5144f12888aa
+ℹ tick with paused cancellation locked: 92ms
+✔ R05 cancellation: non-lock persistence errors propagate and preserve the cancellation intent (191.919792ms)
+ℹ Independent database: kapibala_test_d256f5c0d71e4f20912fa633672ae2e7
+✔ KM01 a slow member query rolls back and retries while a later group's SSE message proceeds (2207.191ms)
+ℹ later group's message persisted after 2044 ms
+✔ R09 combination: failed receipt and a later eventId for the same message retain the first observation (327.151625ms)
+ℹ Independent database: kapibala_test_4c2c9cda0fbf4c14b8d4a40ab8a07d74
+✔ R09 combination: a failed acknowledgement for a different msgId cannot occupy the valid message's observation (281.93825ms)
+ℹ Independent database: kapibala_test_d2cf8b84d71d430eb23846f6dc5b9f3b
+✔ KG01 SSE CRLF split across three chunks preserves both frames (514.002625ms)
+✔ KG02 SSE every byte boundary preserves UTF-8, comments and multiline data (501.782667ms)
+✔ 真实PG：并发账号CAS只有一个成功，非法边优先于状态冲突 (333.388916ms)
+✔ 账号完整36种状态组合严格遵循允许转移表，终态无出边 (252.339583ms)
+✔ 限流到期前已手动离线，不得被过期调度恢复为online (78.766959ms)
+✔ ACCOUNT_OFFLINE及SENDER_NOT_IN_GROUP只失败当前消息，账号和群不变 (140.803ms)
+✔ 同步SESSION_EXPIRED与异步account_status都执行相同终态后果 (248.586166ms)
+✔ 异步message_failed按错误传播账号终态或群不可写，不能混淆范围 (259.988416ms)
+✔ 真实PG：终态后果原子提交；步骤写失败整笔回滚 (189.335417ms)
+✔ 限流期间所有来源共用账号队列且恢复保持顺序 (114.064125ms)
+✔ 503退避不能让同账号后续消息越过队首 (201.701292ms)
+✔ 504已落地查询收敛为sent，不重发；自身回流去重且不触发Agent (97.558084ms)
+✔ 504明确未落地只重试一次，第二次仍未落地最终failed (104.400209ms)
+✔ 真实时钟：两次504且均未落地，在5秒内确定失败并且只重发一次 (4449.080083ms)
+✔ 真实HTTP：窗口内取得的404延迟返回后不得触发重发，后续查询确认原消息 (2395.328875ms)
+✔ 崩溃发送意图恢复为unknown，没有已知504不得重发 (90.138917ms)
+✔ 发送持锁连接丢失后新worker就地接管，旧worker不能写accepted或重发 (106.093ms)
+✔ 第二实例启动不能把活跃worker的发送标记为恢复未知 (83.458417ms)
+✔ 504查询不可用期间保持unknown，恢复后确认不会重复发出 (93.066792ms)
+✔ 已sent补投和重复确认不会重写首次确认时间 (90.931208ms)
+✔ kick同步终态错误也执行成员清理与取消，群错误只改变群 (100.063583ms)
+✔ kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未知时不删除成员 (2463.836625ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ kick已确认删除等待群投影事务，旧成员快照不能覆盖删除结果 (201.171458ms)
+✔ 真实PG双实例发送互斥，单个outbox只调用一次远端 (84.266708ms)
+✔ 群不可写原子停止序列并取消Agent，不改变账号 (81.007ms)
+✔ 真实PG事件写失败后重放，乱序eventId与任意历史补投均保留 (183.545042ms)
+✔ 建群包括creator/admin，过期链接重申，promote仅一次 (127.914083ms)
+✔ 邀请ready时间前不join，ALREADY_MEMBER无需等待事件，可重试一次promote (679.464125ms)
+✔ 建群远端成功但本地写失败时记录待确认，禁止重复创建 (102.230042ms)
+✔ join事件超过10秒未到，任务失败且不提前promote (195.954375ms)
+✔ 非群主退出失败继续其他成员，群主不退出 (108.11875ms)
+✔ leave-all服务账号全部退出但保留外部用户，left公开视图为空并保存远端证据 (110.362417ms)
+✔ 时间线快照在历史补投和queued.sentAt改写时保持原始分页无重漏 (82.62ms)
+ℹ tests 41
+ℹ suites 0
+ℹ pass 41
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14016.058959

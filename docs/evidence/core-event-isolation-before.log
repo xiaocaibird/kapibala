@@ -1,0 +1,35 @@
+✖ AR02 a group row lock defers its member events while later SSE messages commit, then retry recovers exactly once (2493.495708ms)
+ℹ independent database: kapibala_test_48debb364c29459b8fba193c07dff72f
+ℹ B messages while A remains locked: advanced=false, elapsed=2328ms, member HTTP requests=0
+ℹ after A release: ledger=4, A member=1, member change=1, B messages=2; locked retry=not reachedms
+✔ AR02 non-lock member failure retains replay and a delayed joined event cannot undo a newer authoritative leave (114.839334ms)
+ℹ independent database: kapibala_test_ac6a912b3a9b42a6a52b398179d905a6
+ℹ non-lock failure recovered: ledger=3, final A members=0, committed member changes=1, inconsistency=1; member HTTP requests=3
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2752.46025
+
+✖ failing tests:
+
+test at tests/integration/core-event-isolation.test.ts:114:1
+✖ AR02 a group row lock defers its member events while later SSE messages commit, then retry recovers exactly once (2493.495708ms)
+  AssertionError [ERR_ASSERTION]: B did not advance while A stayed locked for 2328ms
+  
+  false !== true
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/integration/core-event-isolation.test.ts:242:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

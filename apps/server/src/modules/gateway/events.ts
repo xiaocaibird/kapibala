@@ -187,6 +187,11 @@ export class GatewayEvents {
       const echoClientId =
         event.type === "message" ? await this.findEcho(event) : null;
       await this.ctx.db.transaction(async (tx) => {
+        // Membership reads current remote facts under the group lock. Defer a
+        // busy transaction through the existing retry path instead of holding
+        // later SSE frames; rollback also removes its dedup ledger entry.
+        if (event.type === "member_joined" || event.type === "member_left")
+          await tx.query("SET LOCAL lock_timeout = '50ms'");
         const inserted = await tx.query(
           "INSERT INTO gateway_events(event_id,type,data) VALUES($1,$2,$3) ON CONFLICT DO NOTHING RETURNING event_id",
           [ref, event.type, JSON.stringify(event)],
