@@ -2,20 +2,15 @@ import assert from "node:assert/strict";
 import { createServer, type Server } from "node:http";
 import { test, type TestContext } from "node:test";
 import pg from "pg";
-import { Database } from "../../apps/server/src/core/db.js";
+import { temporaryDatabase } from "../support/temporary-database.js";
 import { RemoteClient } from "../../apps/server/src/core/remote.js";
 import { RemoteError } from "../../apps/server/src/core/errors.js";
 
-const databaseUrl =
-  process.env.DATABASE_URL ??
-  "postgres://kapibala:kapibala@localhost:55432/kapibala";
 async function resources(t: TestContext) {
-  const db = new Database(databaseUrl);
-  const observer = new pg.Pool({ connectionString: databaseUrl });
-  t.after(async () => {
-    await db.close();
-    await observer.end();
-  });
+  const temporary = await temporaryDatabase(t);
+  const { db, url } = temporary;
+  const observer = new pg.Pool({ connectionString: url });
+  temporary.onCleanup(() => observer.end());
   return { db, observer };
 }
 async function listen(t: TestContext, server: Server): Promise<string> {
