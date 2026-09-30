@@ -1,20 +1,150 @@
-import { z } from 'zod';
-import type { Account, Group, Message, Job, AgentRun, Sequence, SequenceRun, PlatformEvent } from '../../../../packages/contracts/src/index';
-export type { Account, Group, Message, Job, AgentRun, Sequence, SequenceRun, PlatformEvent };
+import { z } from "zod";
+import type {
+  Account,
+  Group,
+  Message,
+  Job,
+  AgentRun,
+  Sequence,
+  SequenceRun,
+  PlatformEvent,
+} from "../../../../packages/contracts/src/index";
+export type {
+  Account,
+  Group,
+  Message,
+  Job,
+  AgentRun,
+  Sequence,
+  SequenceRun,
+  PlatformEvent,
+};
 const nullableText = z.string().nullable();
-export const accountSchema: z.ZodType<Account> = z.object({ id: z.string(), status: z.enum(['idle','online','rate_limited','disconnected','suspended','session_expired']), platformUserId: nullableText, rateLimitedUntil: nullableText });
-export const groupSchema: z.ZodType<Group> = z.object({ id: z.string(), gatewayGroupId: z.string(), status: z.enum(['active','unreachable','left']), creatorAccountId: z.string(), agentEnabled: z.boolean(), autoKickEnabled: z.boolean(), members: z.array(z.object({ accountId: nullableText, platformUserId: z.string(), role: z.enum(['creator','admin','member']) })), activeSequenceRunId: nullableText, activeAgentRunId: nullableText });
-export const messageSchema: z.ZodType<Message> = z.object({ id: z.string(), msgId: nullableText, clientMsgId: nullableText, senderPlatformUserId: nullableText, isOwn: z.boolean(), text: z.string(), sentAt: z.string(), deliveryStatus: z.enum(['queued','accepted','sent','failed','unknown','cancelled']).nullable(), failCode: nullableText });
-export const messagesSchema = z.object({ items: z.array(messageSchema), nextCursor: nullableText });
-export const jobSchema: z.ZodType<Job> = z.object({ id: z.string().optional(), status: z.enum(['running','finished','failed']), errors: z.array(z.object({ step: z.string(), code: z.string() })), recoveryNote: nullableText.optional() });
-export const agentRunSchema: z.ZodType<AgentRun> = z.object({ id: z.string(), groupId: z.string(), status: z.enum(['running','finished','failed','blocked','cancelled']), endReason: nullableText, summary: nullableText, recoveryNote: nullableText.optional(), steps: z.array(z.object({ kind: z.enum(['tool_use','final','protocol_error']), toolUseId: nullableText, name: nullableText, input: z.unknown(), resultSummary: z.string(), isError: z.boolean(), errorCode: nullableText, auditVerdict: nullableText, rawResponse: z.string() })).optional() });
-export const sequenceSchema: z.ZodType<Sequence> = z.object({ id: z.string(), name: z.string(), steps: z.array(z.object({ index: z.number(), accountRole: z.enum(['admin','member']), text: z.string(), delaySeconds: z.number() })) });
-export const sequenceRunSchema: z.ZodType<SequenceRun> = z.object({ id: z.string().optional(), status: z.enum(['running','finished','failed','stopped']), currentStepIndex: z.number(), steps: z.array(z.object({ index: z.number(), status: z.enum(['pending','accepted','sent','skipped','failed']), scheduledAt: nullableText, sentAt: nullableText, clientMsgId: nullableText, resolvedVars: z.record(z.string(),z.string()), varSources: z.record(z.string(),z.string()) })) });
-export const previewSchema = z.object({ steps: z.array(z.object({ index: z.number(), text: z.string(), resolvedVars: z.record(z.string(),z.string()), varSources: z.record(z.string(),z.string()) })) });
+export const accountSchema: z.ZodType<Account> = z.object({
+  id: z.string(),
+  status: z.enum([
+    "idle",
+    "online",
+    "rate_limited",
+    "disconnected",
+    "suspended",
+    "session_expired",
+  ]),
+  platformUserId: nullableText,
+  rateLimitedUntil: nullableText,
+});
+export const groupSchema: z.ZodType<Group> = z.object({
+  id: z.string(),
+  gatewayGroupId: z.string(),
+  status: z.enum(["active", "unreachable", "left"]),
+  creatorAccountId: z.string(),
+  agentEnabled: z.boolean(),
+  autoKickEnabled: z.boolean(),
+  members: z.array(
+    z.object({
+      accountId: nullableText,
+      platformUserId: z.string(),
+      role: z.enum(["creator", "admin", "member"]),
+    }),
+  ),
+  activeSequenceRunId: nullableText,
+  activeAgentRunId: nullableText,
+});
+export const messageSchema: z.ZodType<Message> = z.object({
+  id: z.string(),
+  msgId: nullableText,
+  clientMsgId: nullableText,
+  senderPlatformUserId: nullableText,
+  isOwn: z.boolean(),
+  text: z.string(),
+  sentAt: z.string(),
+  deliveryStatus: z
+    .enum(["queued", "accepted", "sent", "failed", "unknown", "cancelled"])
+    .nullable(),
+  failCode: nullableText,
+});
+export const messagesSchema = z.object({
+  items: z.array(messageSchema),
+  nextCursor: nullableText,
+});
+export const jobSchema: z.ZodType<Job> = z.object({
+  id: z.string().optional(),
+  status: z.enum(["running", "finished", "failed"]),
+  errors: z.array(z.object({ step: z.string(), code: z.string() })),
+  recoveryNote: nullableText.optional(),
+});
+export const agentRunSchema: z.ZodType<AgentRun> = z.object({
+  id: z.string(),
+  groupId: z.string(),
+  status: z.enum(["running", "finished", "failed", "blocked", "cancelled"]),
+  endReason: nullableText,
+  summary: nullableText,
+  recoveryNote: nullableText.optional(),
+  steps: z
+    .array(
+      z.object({
+        kind: z.enum(["tool_use", "final", "protocol_error"]),
+        toolUseId: nullableText,
+        name: nullableText,
+        input: z.unknown(),
+        resultSummary: z.string(),
+        isError: z.boolean(),
+        errorCode: nullableText,
+        auditVerdict: nullableText,
+        rawResponse: z.string(),
+      }),
+    )
+    .optional(),
+});
+export const sequenceSchema: z.ZodType<Sequence> = z.object({
+  id: z.string(),
+  name: z.string(),
+  steps: z.array(
+    z.object({
+      index: z.number(),
+      accountRole: z.enum(["admin", "member"]),
+      text: z.string(),
+      delaySeconds: z.number(),
+    }),
+  ),
+});
+export const sequenceRunSchema: z.ZodType<SequenceRun> = z.object({
+  id: z.string().optional(),
+  status: z.enum(["running", "finished", "failed", "stopped"]),
+  currentStepIndex: z.number(),
+  steps: z.array(
+    z.object({
+      index: z.number(),
+      status: z.enum(["pending", "accepted", "sent", "skipped", "failed"]),
+      scheduledAt: nullableText,
+      sentAt: nullableText,
+      clientMsgId: nullableText,
+      resolvedVars: z.record(z.string(), z.string()),
+      varSources: z.record(z.string(), z.string()),
+    }),
+  ),
+});
+export const previewSchema = z.object({
+  steps: z.array(
+    z.object({
+      index: z.number(),
+      text: z.string(),
+      resolvedVars: z.record(z.string(), z.string()),
+      varSources: z.record(z.string(), z.string()),
+    }),
+  ),
+});
 export type Preview = z.infer<typeof previewSchema>;
-export const userSchema = z.object({ username: z.string(), role: z.enum(['admin','viewer']) });
+export const userSchema = z.object({
+  username: z.string(),
+  role: z.enum(["admin", "viewer"]),
+});
 export type User = z.infer<typeof userSchema>;
-export const eventSchema: z.ZodType<PlatformEvent> = z.object({ seq: z.number().int().nonnegative(), type: z.string(), payload: z.record(z.string(),z.unknown()) });
+export const eventSchema: z.ZodType<PlatformEvent> = z.object({
+  seq: z.number().int().nonnegative(),
+  type: z.string(),
+  payload: z.record(z.string(), z.unknown()),
+});
 export const tokenSchema = z.object({ accessToken: z.string().min(1) });
 export const idSchema = z.object({ id: z.string() });
 export const jobIdSchema = z.object({ jobId: z.string() });

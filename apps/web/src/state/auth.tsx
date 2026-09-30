@@ -1,7 +1,31 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { clearSession, post, refreshAccessToken, request, setAccessToken, ApiError } from '../api/client';
-import { tokenSchema, unknownSchema, userSchema, type User } from '../api/schemas';
-interface AuthState { user: User | null; restoring: boolean; restoreError: string | null; login: (username: string, password: string) => Promise<void>; logout: () => Promise<void>; }
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+import {
+  clearSession,
+  post,
+  refreshAccessToken,
+  request,
+  setAccessToken,
+  ApiError,
+} from "../api/client";
+import {
+  tokenSchema,
+  unknownSchema,
+  userSchema,
+  type User,
+} from "../api/schemas";
+interface AuthState {
+  user: User | null;
+  restoring: boolean;
+  restoreError: string | null;
+  login: (username: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+}
 const AuthContext = createContext<AuthState | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -10,19 +34,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let active = true;
     const expired = () => setUser(null);
-    window.addEventListener('session-expired', expired);
-    void refreshAccessToken().then(() => request('/api/auth/me', userSchema)).then(value => { if (active) setUser(value); }).catch((error: unknown) => {
-      if (active && !(error instanceof ApiError && error.status === 401)) setRestoreError('暂时无法恢复会话，请确认服务可用后登录。');
-    }).finally(() => { if (active) setRestoring(false); });
-    return () => { active = false; window.removeEventListener('session-expired', expired); };
+    window.addEventListener("session-expired", expired);
+    void refreshAccessToken()
+      .then(() => request("/api/auth/me", userSchema))
+      .then((value) => {
+        if (active) setUser(value);
+      })
+      .catch((error: unknown) => {
+        if (active && !(error instanceof ApiError && error.status === 401))
+          setRestoreError("暂时无法恢复会话，请确认服务可用后登录。");
+      })
+      .finally(() => {
+        if (active) setRestoring(false);
+      });
+    return () => {
+      active = false;
+      window.removeEventListener("session-expired", expired);
+    };
   }, []);
   const login = async (username: string, password: string): Promise<void> => {
-    const { accessToken } = await post('/api/auth/login', tokenSchema, { username, password });
+    const { accessToken } = await post("/api/auth/login", tokenSchema, {
+      username,
+      password,
+    });
     setAccessToken(accessToken);
-    setUser(await request('/api/auth/me', userSchema));
+    setUser(await request("/api/auth/me", userSchema));
     setRestoreError(null);
   };
-  const logout = async (): Promise<void> => { await post('/api/auth/logout', unknownSchema); clearSession(); setUser(null); };
-  return <AuthContext.Provider value={{ user, restoring, restoreError, login, logout }}>{children}</AuthContext.Provider>;
+  const logout = async (): Promise<void> => {
+    await post("/api/auth/logout", unknownSchema);
+    clearSession();
+    setUser(null);
+  };
+  return (
+    <AuthContext.Provider
+      value={{ user, restoring, restoreError, login, logout }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
-export function useAuth(): AuthState { const value = useContext(AuthContext); if (!value) throw new Error('AuthProvider is required'); return value; }
+export function useAuth(): AuthState {
+  const value = useContext(AuthContext);
+  if (!value) throw new Error("AuthProvider is required");
+  return value;
+}
