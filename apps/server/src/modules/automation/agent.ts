@@ -48,6 +48,12 @@ export class AgentModule {
     await this.scan();
     const groups = (await this.ctx.db.query<{ group_id: string }>('SELECT DISTINCT group_id FROM agent_pending WHERE run_id IS NULL AND eligible')).rows;
     for (const group of groups) await this.startNext(group.group_id);
+    const pausedCancellations = (await this.ctx.db.query<RunRow>(`SELECT r.* FROM agent_runs r JOIN groups g ON g.id=r.group_id WHERE r.status='running' AND r.recovery_note IS NOT NULL AND (r.cancel_requested OR NOT g.agent_enabled OR g.status<>'active')`)).rows;
+    for (const run of pausedCancellations) await this.ctx.db.withLock(`agent:${run.id}`, async () => {
+      // Cancellation ends orchestration without declaring the uncertain external
+      // effect failed or clearing its recovery evidence.
+      await this.finish(run, 'cancelled', 'cancelled');
+    });
     const runs = (await this.ctx.db.query<{ id: string }>('SELECT id FROM agent_runs WHERE status=\'running\' AND recovery_note IS NULL')).rows;
     for (const run of runs) {
       if (this.running.has(run.id)) continue;

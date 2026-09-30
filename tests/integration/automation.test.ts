@@ -159,6 +159,10 @@ test('interrupted remote turn is visibly paused and never replayed', async () =>
   await waitFor(async () => Boolean((await db.query<{ recovery_note: string }>('SELECT recovery_note FROM agent_runs WHERE id=$1', [runId])).rows[0]?.recovery_note));
   assert.equal(calls, 0); assert.equal((await latestRun()).status, 'running');
   assert.equal((await db.query('SELECT * FROM events WHERE type=\'inconsistency\'')).rowCount, 1);
+  await db.query('UPDATE groups SET agent_enabled=false WHERE id=$1', [groupId]);
+  await waitFor(async () => (await latestRun())?.status === 'cancelled');
+  assert.equal(calls, 0);
+  assert.ok((await api.inject(`/api/agent-runs/${runId}`)).json<{ recoveryNote: string }>().recoveryNote);
 });
 test('sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step', async () => {
   await reset(); await db.query('UPDATE groups SET agent_enabled=false');
