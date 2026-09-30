@@ -7,7 +7,7 @@
 | 目的 | 文档 |
 |---|---|
 | 开始逐项评审：先看实际机制和用例，再看执行结果 | [A0-1 数据库迁移与启动保护](acceptance.md#review-a0-migration)；[完整A/B评审卡](acceptance.md#mechanism-review)，工程侧准备材料，负责人判断充分性 |
-| 定位已有证据、版本及尚未执行的反例 | [核心验收证据索引与补验证清单](acceptance-evidence-index.md)；本轮为文档草案，不是新一轮测试通过报告；方法修订见[决策D032](decisions.md) |
+| 定位已有证据、版本及尚未执行的反例 | [核心验收证据索引与补验证清单](acceptance-evidence-index.md)；现已加入第二轮机制和执行证据，用户验收仍独立；方法修订见[决策D032](decisions.md) |
 | 区分原始要求未闭合与额外产品增强 | [核心缺口与证据复核](core-requirements-gap-review.md)；[额外增强建议](product-enhancement-proposal.md)；[旧PI提案映射](product-improvement-proposal.md) |
 | 关联最新独立审查、区分重复发现与新增场景 | [独立审查关联索引](independent-review-mapping.md)；两份清单沿用CG/PI编号，不重复登记 |
 | 跟踪本轮核心修复，人工验收暂缓 | [第二轮修复与验证](core-repair-round-two.md)；额外增强继续暂缓 |
@@ -33,7 +33,11 @@
 | 查看固定的完整原始要求 | [原始需求（只读）](original-interview-question.md) |
 
 <a id="代码与命令执行位置"></a>
-## 当前演示与代码位置
+## 当前候选与运行记录
+
+第二轮产品候选`3c071d2`已完成完整335/335、生产构建和有限真实浏览器复验，见[第二轮修复与验证](core-repair-round-two.md)及[统一证据](evidence/core-round-two-verification.json)。迁移与旧库数据升级先经[备份副本演练](core-upgrade-preflight.md)，实际演示切换完成后在本节补记；尚未把候选验证当成人工验收。
+
+## 上一轮演示与代码位置（历史）
 
 当前演示前端已更新为产品提交 **`393d43e`**，于 **2026-10-01 01:27:42（北京时间）** 完成只读运行核验；模拟器/API仍从`7e83191`于00:02:35启动，schemaVersion=6，无新迁移或重启。入口：[本地控制台](http://127.0.0.1:5173)，管理员`admin/admin`，只读账号`viewer/viewer`。父进程21643、模拟21646、API21647、Vite21648及启动时间未变；脱离启动shell运行（PPID1），未设置开机自启。源码与运行检查以main `.runtime/runtime-manifest.json`和[本轮运行证据](evidence/core-quality-closeout-rollout.json)为准，后端启动源与前端更新源分列。
 
