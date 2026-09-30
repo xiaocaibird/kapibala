@@ -106,7 +106,9 @@ export class SequenceModule {
   async tick(): Promise<void> {
     if (!await this.ensureScheduler()) return;
     const runs = (await this.ctx.db.query<RunRow>('SELECT * FROM sequence_runs WHERE status=\'running\'')).rows;
-    await Promise.all(runs.map(run => this.ctx.db.withLock(`sequence:${run.id}`, async () => this.advance(run.id))));
+    // These are short local transactions; bound lock connections independently of
+    // the number of groups so connection capacity remains available to their work.
+    for (const run of runs) await this.ctx.db.withLock(`sequence:${run.id}`, async () => this.advance(run.id));
   }
   private async advance(id: string): Promise<void> {
     await this.ctx.db.transaction(async tx => {
