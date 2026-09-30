@@ -23,6 +23,11 @@ export interface CaseDefinition {
   cleanup: string[];
   automation?: string;
   blocker?: string;
+  preparation?: {
+    state: 'script-ready' | 'dependency-pending' | 'decision-pending';
+    owner: string;
+    details: string[];
+  };
 }
 export interface CaseResult {
   id: string;
@@ -59,6 +64,10 @@ export interface TargetConfig {
     web: Command;
     env: Record<string, string>;
     startupTimeoutMs: number;
+  };
+  adapters?: {
+    capacityControl?: { url: string; contractReference: string };
+    fixtureArtifacts?: { configPath: string; sha256: string };
   };
   database: { image: string };
   ui: {

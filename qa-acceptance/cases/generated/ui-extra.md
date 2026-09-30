@@ -709,18 +709,25 @@
 ## UI-037 · 目录微秒及同时间ID跨页边界的确定性数据夹具
 
 - 需求：ADD-DIR-01、ADD-DIR-05
-- 优先级：P1；方法：blocked
-- 自动化入口：按下面步骤人工执行或先解决阻塞
-- 阻塞：待可复现、经审核的外部数据库快照/数据夹具；禁止用随机创建宣称覆盖
+- 优先级：P1；方法：automated
+- 自动化入口：tests/system/fixture-boundaries.spec.ts
+
+**准备状态：dependency-pending；责任方：QA与候选交付方**
+
+1. 解析、恢复与断言已实现；真实版本化dump及独立manifest尚未提供
+2. 制品双哈希和对应版本/出处需按contracts/fixture-artifacts.md准备；授权后仅导入本轮新建专属库
 
 **前置条件**
 
-1. 提供并审核可复現的外部数据库快照/数据夹具及已知API期望manifest
-2. 只能导入独立验收数据库，不读当前业务表反向产生期望
+1. 取得候选版本执行授权，仅运行独占PG及候选服务
+2. 目标adapters.fixtureArtifacts绑定配置路径与SHA256，提供双哈希校验的pg_dump custom archive与审核manifest；源数据为合成、无待运行任务；实际制品尚未提供则runtime BLOCKED
+3. manifest六位微秒时间及公开期望独立于SUT，必须让两种边界在升/降序都跨页；不读取业务表反向造期望
 
 **执行步骤**
 
-1. 审核快照来源和预期manifest；在授权隔离环境导入；两种排序完整分页比较稳定ID全集及次序
+1. 验证制品类型、大小、dump/manifest哈希、审核信息与候选SHA；仅恢复到新建空的OwnedDatabaseCluster库，不运行迁移
+2. 启动独占候选并登录；用manifest指定q/pageSize，以两种排序完整遍历真实目录API
+3. 逐页检查游标不循环、页大小与终页；比较精确预期ID顺序、总数、唯一性及公开投影；保存完整分页链
 
 **预期结果**
 
@@ -746,6 +753,16 @@
 
 ```json
 {
-  "required": "同毫秒不同微秒、严格相同createdAt不同ID、跨分页边界；两个排序方向均有已知精确预期"
+  "required": "同毫秒不同微秒、严格相同createdAt不同ID、跨分页边界；两个排序方向均有已知精确预期",
+  "projects": [
+    "system"
+  ],
+  "readiness": {
+    "script": "implemented",
+    "realArtifact": "not-provided",
+    "sutExecuted": false
+  },
+  "config": "config/fixtures.example.json",
+  "contract": "contracts/fixture-artifacts.md"
 }
 ```

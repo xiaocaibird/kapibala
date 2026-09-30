@@ -19,6 +19,14 @@ for (const name of (await readdir(resolve(root, 'cases')))
     locations.set(c.id, file);
     markdown += `\n<a id="${c.id}"></a>\n\n## ${c.id} · ${c.title}\n\n- 需求：${c.requirements.join('、')}\n- 优先级：${c.priority}；方法：${c.mode}\n- 自动化入口：${c.automation ?? '按下面步骤人工执行或先解决阻塞'}\n${c.blocker ? `- 阻塞：${c.blocker}\n` : ''}`;
     for (const [label, items] of [
+      ...(c.preparation
+        ? [
+            [
+              `准备状态：${c.preparation.state}；责任方：${c.preparation.owner}`,
+              c.preparation.details,
+            ],
+          ]
+        : []),
       ['前置条件', c.preconditions],
       ['执行步骤', c.steps],
       ['预期结果', c.expected],

@@ -154,6 +154,16 @@ export async function checkCatalog(root: string): Promise<string[]> {
       errors.push(String(e));
     }
     if (c.mode === 'blocked' && !c.blocker) errors.push(`${c.id}: 缺少阻塞原因`);
+    if (c.preparation) {
+      if (
+        !['script-ready', 'dependency-pending', 'decision-pending'].includes(c.preparation.state) ||
+        !c.preparation.owner?.trim() ||
+        !strings(c.preparation.details, true)
+      )
+        errors.push(`${c.id}: 准备状态需包含有效分类、责任方及具体说明`);
+      if (c.preparation.state !== 'decision-pending' && c.mode !== 'automated')
+        errors.push(`${c.id}: 脚本准备状态必须有真实自动化入口`);
+    }
     if (c.mode === 'automated') {
       if (
         !c.automation ||

@@ -13,14 +13,14 @@ export class BlockedError extends Error {
   }
 }
 const secretKey =
-  /(?:password|passwd|cookie|authorization|access[_-]?token|refresh[_-]?token|api[_-]?key|secret|credential)/i;
+  /(?:password|passwd|cookie|authorization|access[_-]?token|refresh[_-]?token|owner[_-]?token|resource[_-]?token|api[_-]?key|secret|credential)/i;
 function redactText(raw: string): string {
   return String(raw)
     .replace(/(postgres(?:ql)?:\/\/[^:\s]+:)[^@\s]+@/gi, '$1[REDACTED]@')
     .replace(/Bearer\s+[^\s"',;]+/gi, 'Bearer [REDACTED]')
     .replace(/\beyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\b/g, '[REDACTED_JWT]')
     .replace(
-      /("[^"\n]*(?:password|passwd|cookie|authorization|access[_-]?token|refresh[_-]?token|api[_-]?key|secret|credential)[^"\n]*"\s*:\s*")[^"\n]*/gi,
+      /("[^"\n]*(?:password|passwd|cookie|authorization|access[_-]?token|refresh[_-]?token|owner[_-]?token|resource[_-]?token|api[_-]?key|secret|credential)[^"\n]*"\s*:\s*")[^"\n]*/gi,
       '$1[REDACTED]',
     )
     .replace(
@@ -73,6 +73,21 @@ export function isWithin(root: string, target: string): boolean {
       !isAbsolute(rel))
   );
 }
+export function validateFixtureArtifactBinding(
+  value: unknown,
+): asserts value is NonNullable<NonNullable<TargetConfig['adapters']>['fixtureArtifacts']> {
+  if (
+    !record(value) ||
+    typeof value.configPath !== 'string' ||
+    !value.configPath.trim() ||
+    isAbsolute(value.configPath) ||
+    value.configPath.split(/[\\/]/).includes('..') ||
+    /[\r\n\0]/.test(value.configPath) ||
+    typeof value.sha256 !== 'string' ||
+    !/^[a-f0-9]{64}$/.test(value.sha256)
+  )
+    throw new BlockedError('夹具配置必须绑定QA根内相对路径与完整SHA256');
+}
 export async function loadTarget(path: string, qaRoot: string): Promise<TargetConfig> {
   const c = JSON.parse(await readFile(path, 'utf8')) as TargetConfig;
   if (c.version !== 1 || !c.sut || !/^[a-f0-9]{40}$/.test(c.sut.revision))
@@ -112,11 +127,37 @@ export async function loadTarget(path: string, qaRoot: string): Promise<TargetCo
     throw new BlockedError('env 必须为合法字符串环境变量');
   for (const k of Object.keys(c.sut.env))
     if (
-      /^(DATABASE_URL|GATEWAY_URL|AGENT_URL|PORT|PG.*|DOCKER.*|NODE_OPTIONS|NODE_PATH|LD_.*|DYLD_.*|HTTP_PROXY|HTTPS_PROXY|ALL_PROXY|NO_PROXY|HOME|PATH)$/i.test(
+      /^(QA_.*|DATABASE_URL|GATEWAY_URL|AGENT_URL|PORT|PG.*|DOCKER.*|NODE_OPTIONS|NODE_PATH|LD_.*|DYLD_.*|HTTP_PROXY|HTTPS_PROXY|ALL_PROXY|NO_PROXY|HOME|PATH)$/i.test(
         k,
       )
     )
       throw new BlockedError(`${k} 必须由隔离环境控制`);
+  if (c.adapters?.capacityControl !== undefined) {
+    const control = c.adapters.capacityControl;
+    let url: URL;
+    try {
+      if (!record(control) || typeof control.url !== 'string') throw new Error('invalid control');
+      url = new URL(control.url);
+    } catch {
+      throw new BlockedError('容量控制器URL无效');
+    }
+    if (
+      url.protocol !== 'http:' ||
+      url.hostname !== '127.0.0.1' ||
+      !url.port ||
+      url.username ||
+      url.password ||
+      url.search ||
+      url.hash ||
+      url.pathname !== '/' ||
+      typeof control.contractReference !== 'string' ||
+      !control.contractReference.trim() ||
+      /REQUIRED/.test(control.contractReference)
+    )
+      throw new BlockedError('容量控制器需显式loopback origin及已确认契约引用');
+  }
+  if (c.adapters?.fixtureArtifacts !== undefined)
+    validateFixtureArtifactBinding(c.adapters.fixtureArtifacts);
   if (!record(c.ui.routes) || !record(c.ui.selectors)) throw new BlockedError('UI适配器格式无效');
   for (const route of Object.values(c.ui.routes))
     if (
