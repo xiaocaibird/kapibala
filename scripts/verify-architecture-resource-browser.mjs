@@ -4,8 +4,7 @@ import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
-import { createServer } from "vite";
-import react from "@vitejs/plugin-react";
+import { preview } from "vite";
 import { Database } from "../apps/server/src/core/db.js";
 import { migrate } from "../apps/server/src/core/migrations.js";
 import { createApp } from "../apps/server/src/app.js";
@@ -32,6 +31,7 @@ const report = {
   startedAt: new Date().toISOString(),
   database: name,
   background: false,
+  webMode: "production build",
   results: [],
   pageErrors: [],
   cleanupErrors: [],
@@ -71,22 +71,18 @@ try {
     },
   });
   const api = await app.listen({ host: "127.0.0.1", port: 0 });
-  vite = await createServer({
+  vite = await preview({
     configFile: false,
     root: new URL("../apps/web", import.meta.url).pathname,
-    plugins: [react()],
-    server: {
+    preview: {
       host: "127.0.0.1",
       port: 0,
-      hmr: false,
-      watch: null,
       proxy: {
         "/api": { target: api },
         "/ws": { target: api.replace("http:", "ws:"), ws: true },
       },
     },
   });
-  await vite.listen();
   browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
     viewport: { width: 1440, height: 1100 },
@@ -124,6 +120,10 @@ try {
   await page.getByLabel("密码", { exact: true }).fill("admin");
   await page.getByRole("button", { name: "进入工作台" }).click();
   await page.getByRole("link", { name: "定时序列", exact: true }).waitFor();
+  // The authenticated WS handshake itself schedules a 60ms invalidation, even
+  // with an empty events table. Settle it before counting failure/retry requests.
+  await page.getByText("实时同步中", { exact: true }).waitFor();
+  await pause(200);
   const enter = async () => {
     await page.getByRole("link", { name: "服务账号", exact: true }).click();
     await page
@@ -269,6 +269,7 @@ try {
     }
   }
   report.completedAt = new Date().toISOString();
+  report.passed = report.passed === true && report.cleanupErrors.length === 0;
   await mkdir("docs/evidence", { recursive: true });
   await writeFile(
     "docs/evidence/architecture-resource-browser.json",
