@@ -33,6 +33,18 @@ export interface Queryable {
     values?: unknown[],
   ): Promise<QueryResult<R>>;
 }
+export type LockAttempt<T> =
+  | { status: "executed"; value: T }
+  | { status: "capacity_unavailable" }
+  | { status: "lock_busy" };
+
+// Internal admission failure: the protected callback and its remote effects never ran.
+export class LockCapacityUnavailableError extends Error {
+  constructor() {
+    super("Local execution capacity is temporarily unavailable");
+    this.name = "LockCapacityUnavailableError";
+  }
+}
 interface PendingEvent {
   type: string;
   payload: string;
@@ -127,10 +139,19 @@ export class Database implements Queryable {
     key: string,
     fn: (connection: PoolClient, signal: AbortSignal) => Promise<T>,
   ): Promise<T | undefined> {
+    const result = await this.tryWithLock(key, fn);
+    return result.status === "executed" ? result.value : undefined;
+  }
+  // Background workers may defer either admission failure via withLock. Callers
+  // interpreting a result must distinguish capacity from an already-owned entity.
+  async tryWithLock<T>(
+    key: string,
+    fn: (connection: PoolClient, signal: AbortSignal) => Promise<T>,
+  ): Promise<LockAttempt<T>> {
     guardOperation();
     // Each lock holder may need a second connection for a transaction. Bound admission
     // so queued lock holders cannot occupy the entire pool and deadlock their own work.
-    if (this.activeLocks >= 8) return undefined;
+    if (this.activeLocks >= 8) return { status: "capacity_unavailable" };
     this.activeLocks++;
     let client: PoolClient | undefined;
     const controller = new AbortController();
@@ -150,14 +171,14 @@ export class Database implements Queryable {
         "SELECT pg_try_advisory_lock(hashtextextended($1, 0)) AS locked",
         [key],
       );
-      if (!r.rows[0]?.locked) return undefined;
+      if (!r.rows[0]?.locked) return { status: "lock_busy" };
       locked = true;
       const connection = client;
       const result = await operationSignals.run(signal, () =>
         fn(connection, signal),
       );
       signal.throwIfAborted();
-      return result;
+      return { status: "executed", value: result };
     } catch (error) {
       operationFailed = true;
       throw error;

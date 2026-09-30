@@ -1,5 +1,11 @@
+import { setTimeout as delay } from "node:timers/promises";
 import type { AppContext } from "../../core/context.js";
-import { emit, currentOperationSignal, type Queryable } from "../../core/db.js";
+import {
+  emit,
+  currentOperationSignal,
+  LockCapacityUnavailableError,
+  type Queryable,
+} from "../../core/db.js";
 import { AppError, RemoteError } from "../../core/errors.js";
 import type { MessagingService } from "../../core/messaging.js";
 import type {
@@ -440,6 +446,19 @@ export class AgentTools {
       );
     } catch (error) {
       currentOperationSignal()?.throwIfAborted();
+      if (error instanceof LockCapacityUnavailableError) {
+        // Admission failed before the gateway callback ran. Keep the same audited
+        // step pending; only this proven no-effect path can discard an executing
+        // intent. Unknown remote outcomes below must remain non-replayable.
+        await this.ctx.db.query(
+          "UPDATE agent_steps SET state='ready',intent=null WHERE run_id=$1 AND ordinal=$2 AND state='executing'",
+          [run.id, step.ordinal],
+        );
+        await delay(Math.min(50, this.host.remaining(run)), undefined, {
+          signal: currentOperationSignal(),
+        });
+        return;
+      }
       if (deadline.aborted) {
         // Budget exhaustion ends the run, not the uncertain external effect. Keep
         // its intent as executing so a later process can never replay this kick.

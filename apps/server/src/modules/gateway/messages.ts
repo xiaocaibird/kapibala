@@ -2,7 +2,12 @@ import { randomUUID } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
 import { z } from "zod";
 import type { AppContext } from "../../core/context.js";
-import { currentOperationSignal, emit, type Queryable } from "../../core/db.js";
+import {
+  currentOperationSignal,
+  emit,
+  LockCapacityUnavailableError,
+  type Queryable,
+} from "../../core/db.js";
 import { AppError, RemoteError } from "../../core/errors.js";
 import type { MessagingService, SendInput } from "../../core/messaging.js";
 import type { Message } from "../../../../../packages/contracts/src/index.js";
@@ -498,7 +503,7 @@ export class Messages implements MessagingService {
     options?: { signal?: AbortSignal },
   ): Promise<{ kicked: true }> {
     options?.signal?.throwIfAborted();
-    const result = await this.ctx.db.withLock(
+    const result = await this.ctx.db.tryWithLock(
       `kick:${input.groupId}:${input.targetPlatformUserId}`,
       async (_connection, lockSignal) => {
         const signal = options?.signal
@@ -640,7 +645,10 @@ export class Messages implements MessagingService {
         return { kicked: true as const };
       },
     );
-    if (!result) throw new AppError(409, "SEND_TIMEOUT", "该成员正在被处理");
-    return result;
+    if (result.status === "capacity_unavailable")
+      throw new LockCapacityUnavailableError();
+    if (result.status === "lock_busy")
+      throw new AppError(409, "SEND_TIMEOUT", "该成员正在被处理");
+    return result.value;
   }
 }
