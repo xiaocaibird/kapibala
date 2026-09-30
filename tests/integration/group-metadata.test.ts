@@ -9,6 +9,10 @@ import { RemoteClient } from "../../apps/server/src/core/remote.js";
 import { createGatewayModule } from "../../apps/server/src/modules/gateway/index.js";
 import { Jobs } from "../../apps/server/src/modules/gateway/jobs.js";
 import { migrate } from "../../scripts/migrate.js";
+import {
+  loadMigrations,
+  expectedVersion,
+} from "../../apps/server/src/core/migrations.js";
 import { temporaryDatabase } from "../support/temporary-database.js";
 import type { Group } from "../../packages/contracts/src/index.js";
 
@@ -342,7 +346,7 @@ test("group list remains ordered by creation time descending with stable IDs for
 test("group metadata migration leaves legacy group creation timestamps unchanged", async (t) => {
   const { db } = await temporaryDatabase(t);
   await db.query(
-    "CREATE TABLE schema_migrations(version integer PRIMARY KEY,name text NOT NULL,applied_at timestamptz NOT NULL DEFAULT now())",
+    "CREATE TABLE schema_migrations(version integer PRIMARY KEY,name text NOT NULL,checksum text NOT NULL,applied_at timestamptz NOT NULL DEFAULT now())",
   );
   const files = [
     "001_core.sql",
@@ -350,7 +354,9 @@ test("group metadata migration leaves legacy group creation timestamps unchanged
     "003_agent_activity.sql",
     "004_message_event_order.sql",
   ];
-  for (const [index, file] of files.entries()) {
+  const manifest = await loadMigrations();
+  for (const file of files) {
+    const migration = manifest.find((row) => row.name === file)!;
     await db.query(
       await readFile(
         new URL(`../../db/migrations/${file}`, import.meta.url),
@@ -358,8 +364,8 @@ test("group metadata migration leaves legacy group creation timestamps unchanged
       ),
     );
     await db.query(
-      "INSERT INTO schema_migrations(version,name) VALUES($1,$2)",
-      [index + 1, file],
+      "INSERT INTO schema_migrations(version,name,checksum) VALUES($1,$2,$3)",
+      [migration.version, file, migration.checksum],
     );
   }
   const createdAt = "2019-01-02T03:04:05.678Z";
@@ -380,6 +386,6 @@ test("group metadata migration leaves legacy group creation timestamps unchanged
   assert.equal(
     (await db.query("SELECT max(version) AS version FROM schema_migrations"))
       .rows[0]!.version,
-    6,
+    await expectedVersion(),
   );
 });
