@@ -21,6 +21,7 @@ for (const script of [
   'typecheck',
   'test:self',
   'check:catalog',
+  'check:impact',
   'render:cases',
   'prepare:report',
 ]) {

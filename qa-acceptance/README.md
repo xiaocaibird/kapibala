@@ -4,6 +4,7 @@
 
 ## 阅读入口
 
+- [本轮方案影响评估](requirements/architecture-impact.md)、[横向风险覆盖复核](requirements/risk-coverage-review.md)、[跨职责交接流程](requirements/collaboration.md)。
 - [需求基线与来源](requirements/baseline.json)、[逐项需求](requirements/catalog.json)、[需求—用例追踪](requirements/traceability.md)。
 - [用例格式与分组](cases/README.md)，人工可阅读 `cases/generated/` 中各分组 Markdown；JSON 是维护源。
 - [已确认与待澄清口径](requirements/clarifications.md)、[上线门禁](requirements/release-gates.md)。
@@ -31,13 +32,13 @@ npm ci --workspaces=false
 npm run verify:tools
 ```
 
-`verify:tools` 依次执行类型检查、QA 工具自身测试、用例注册检查、可读用例生成和准备报告生成，并将日志与摘要保存在 `reports/preparation/tooling/` 和 `tooling-verification.json`。也可以分别运行 `typecheck`、`test:self`、`check:catalog`、`render:cases`、`prepare:report`。
+`verify:tools` 依次执行类型检查、QA 工具自身测试、用例注册检查、变更评审登记检查、可读用例生成和准备报告生成，并将日志与摘要保存在 `reports/preparation/tooling/` 和 `tooling-verification.json`。也可以分别运行 `typecheck`、`test:self`、`check:catalog`、`check:impact`、`render:cases`、`prepare:report`。
 
 `check:catalog` 会使用 Playwright 的 `--list` 检查已注册用例与项目映射，**不执行测试 fixture**。`prepare:report` 只生成 NOT_RUN 状态清单，不能用于产品验收签署。依赖安装安全策略提示被禁用的 install scripts 时，先验证现有工具能否正常运行，不通过开启全部脚本绕过。
 
 ## 授权后的环境准备
 
-1. 从开发完成的候选提交建立专用 SUT 工作树，保持产品文件干净。不要使用主演示 checkout、其 `.runtime`、数据库或用户浏览器。配置 `sut.cwd` 指向该独立目录，`sut.revision` 为完整 SHA。QA 脚本位于本目录，SUT 版本与 QA 版本分别记录。
+1. 先完成变更影响评估并登记到 `requirements/change-reviews.json`。验收入口会比较候选与已评审版本；涉及产品、契约、启动或关键需求文档的未评审变化会在启动前记为 BLOCKED。检查通过仅表示变化已被审阅，不证明用例充分或产品通过。然后从开发完成的候选提交建立专用 SUT 工作树，保持产品文件干净。不要使用主演示 checkout、其 `.runtime`、数据库或用户浏览器。配置 `sut.cwd` 指向该独立目录，`sut.revision` 为完整 SHA。QA 脚本位于本目录，SUT 版本与 QA 版本分别记录。
 2. 开发方提供可直接运行的依赖／构建、迁移和启动命令。配置中的默认命令仅来自 main 的启动清单；实际发布构建若不同，需使用候选自身的启动命令。不会自动安装到或重写产品工作树。启动命令和环境须由交付者确认；这里的资源归属检查不构成针对任意恶意产品代码的操作系统网络沙箱。
 3. 在 `config/target.local.json` 中填写目标配置，至少提供四个初始服务账号以执行多成员选择场景。账号数量是测试数据前提，数量不足记 BLOCKED，不修改原文“数量自定”的约定。
 4. 安装测试浏览器到 QA 临时目录，并确认本机 Docker、`lsof`、`ps` 可用。数据库用原工程声明的 PostgreSQL 17 镜像；专用容器随机 loopback 端口，不使用默认数据库连接。

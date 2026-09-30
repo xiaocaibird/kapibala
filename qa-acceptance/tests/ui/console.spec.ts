@@ -625,11 +625,11 @@ test('[UI-017] 多页过期禁止旧游标，失败保留列表，成功整体�
   await page.route('**/api/group-directory**', async (r) => {
     if (fail)
       await r.fulfill({
-        status: 503,
+        status: 403,
         contentType: 'application/json',
         body: JSON.stringify({
           error: {
-            code: 'SERVICE_UNAVAILABLE',
+            code: 'FORBIDDEN',
             message: 'QA refresh failure',
             requestId: 'refresh',
           },
@@ -673,11 +673,11 @@ test('[UI-019] 初次失败可重试，成功空搜索不冒充加载错误', as
   await page.route('**/api/group-directory**', async (r) => {
     if (fail)
       await r.fulfill({
-        status: 503,
+        status: 403,
         contentType: 'application/json',
         body: JSON.stringify({
           error: {
-            code: 'SERVICE_UNAVAILABLE',
+            code: 'FORBIDDEN',
             message: 'QA first load failure',
             requestId: 'first',
           },
@@ -1045,11 +1045,11 @@ test('[UI-029] 内容加载失败不能确认，成功呈现后相关操作才�
     if (fail && route.request().method() === 'GET') {
       failures++;
       await route.fulfill({
-        status: 503,
+        status: 403,
         contentType: 'application/json',
         body: JSON.stringify({
           error: {
-            code: 'SERVICE_UNAVAILABLE',
+            code: 'FORBIDDEN',
             message: 'QA content load unavailable',
             requestId: 'qa-render-failure',
           },

@@ -881,7 +881,7 @@
 
 **故障注入**
 
-1. 按脚本拦截真实网络错误或网关事件，不伪造成功业务数据
+1. 持续注入403只读失败，使该人工重试/失败保留场景不与自动退避竞态；暂时503的自动恢复由ARC-UI专项单独覆盖
 
 **取证**
 
@@ -900,7 +900,8 @@
   "projects": [
     "chromium"
   ],
-  "visibilityContract": "断言对话框/提示不可见，不要求产品卸载隐藏DOM"
+  "visibilityContract": "断言对话框/提示不可见，不要求产品卸载隐藏DOM",
+  "failureClass": "403 permanent read failure for deterministic manual recovery"
 }
 ```
 
@@ -986,7 +987,7 @@
 
 **故障注入**
 
-1. 按脚本拦截真实网络错误或网关事件，不伪造成功业务数据
+1. 持续注入403只读失败，使该人工重试/失败保留场景不与自动退避竞态；暂时503的自动恢复由ARC-UI专项单独覆盖
 
 **取证**
 
@@ -1005,7 +1006,8 @@
   "projects": [
     "chromium"
   ],
-  "visibilityContract": "断言对话框/提示不可见，不要求产品卸载隐藏DOM"
+  "visibilityContract": "断言对话框/提示不可见，不要求产品卸载隐藏DOM",
+  "failureClass": "403 permanent read failure for deterministic manual recovery"
 }
 ```
 

@@ -211,7 +211,8 @@
     ],
     "data": {
       "source": "tests/ui/console.spec.ts内各ID显式数据",
-      "adaptation": "仅可见定位和公开HTTP契约；不导入业务实现"
+      "adaptation": "仅可见定位和公开HTTP契约；不导入业务实现",
+      "failureClass": "403 permanent read failure for deterministic manual recovery"
     },
     "steps": [
       "针对实际内容读取返回503；在后台注入变化；恢复焦点并操作错误区域；成功重试后点击新内容"
@@ -223,7 +224,9 @@
       "UI-024周期为原约定5秒；消息断线补齐另由UI-006验3秒",
       "负向行为持续观察1至3秒，记录真实请求与屏障时间；不把瞬时无结果当通过"
     ],
-    "faults": ["仅对应场景使用独立Gateway/Agent屏障或浏览器HTTP响应拦截；不改变业务数据库内部状态"],
+    "faults": [
+      "持续注入403只读失败，使该人工重试/失败保留场景不与自动退避竞态；暂时503的自动恢复由ARC-UI专项单独覆盖"
+    ],
     "evidence": [
       "所有结果最终截图、URL/title/可见异常摘要",
       "浏览器请求、Gateway/Agent事实、相关布局或输入法事件记录",

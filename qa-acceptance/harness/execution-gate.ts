@@ -1,3 +1,4 @@
+import { reviewTargetChanges } from './change-review.js';
 import { realpath, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,6 +17,7 @@ export default async function executionGate(): Promise<void> {
     throw new BlockedError('产品测试必须通过已授权的acceptance CLI创建运行清单；不使用默认目标');
   const target = await loadTarget(process.env.QA_TARGET_CONFIG, root);
   await requireAuthorization(target);
+  await reviewTargetChanges(root, target);
   const out = await realpath(process.env.QA_RUN_DIRECTORY);
   const allowed = await realpath(resolve(root, 'reports/runs'));
   if (!isWithin(allowed, out) || out === allowed)

@@ -332,7 +332,7 @@
 
 **故障注入**
 
-1. 仅对应场景使用独立Gateway/Agent屏障或浏览器HTTP响应拦截；不改变业务数据库内部状态
+1. 持续注入403只读失败，使该人工重试/失败保留场景不与自动退避竞态；暂时503的自动恢复由ARC-UI专项单独覆盖
 
 **取证**
 
@@ -349,7 +349,8 @@
 ```json
 {
   "source": "tests/ui/console.spec.ts内各ID显式数据",
-  "adaptation": "仅可见定位和公开HTTP契约；不导入业务实现"
+  "adaptation": "仅可见定位和公开HTTP契约；不导入业务实现",
+  "failureClass": "403 permanent read failure for deterministic manual recovery"
 }
 ```
 

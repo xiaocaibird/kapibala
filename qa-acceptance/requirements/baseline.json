@@ -46,6 +46,27 @@
       "path": "docs/page-update-notification-proposal.md",
       "sha256": "2c31b688b67d31b2454a2ee4f3e1445f5bae50a93071eeb17cdc11f712d6f21b",
       "usage": "仅用户已选择原则及后续已批准范围对应语义；未采纳实现接入点、旧验证清单和未批准建议"
+    },
+    {
+      "path": "docs/decisions.md",
+      "sha256": "d9566e00c35705a9adcbb1b94aae1d5fd3447cc2975e7bee2ef8da7a17e4837e",
+      "atCommit": "48adfd96f470532cc78c2d3c559414a09434eeff",
+      "revision": "QA-REV-02",
+      "usage": "仅采用D036/D037的实际批准范围、实施选择与合并边界；不采用开发验证通过或人工验收结论"
+    },
+    {
+      "path": "docs/architecture-reviews/2026-10-01-baseline.md",
+      "sha256": "476a579465dd8a1f01498e1c6fe5d3b3d6696d664b5370c3061e536cdd8e1b94",
+      "atCommit": "48adfd96f470532cc78c2d3c559414a09434eeff",
+      "revision": "QA-REV-02",
+      "usage": "仅采用D036明确批准的AR-04/08/09/10质量行为及未授权范围边界；源码事实、建议和旧通过数均不作为独立QA期望"
+    },
+    {
+      "path": "docs/architecture-quality-closeout.md",
+      "sha256": "ae4ec49e7c54382640f2103b5d06f193cf285c087d2eed5228caf8a80faeb9f4",
+      "atCommit": "48adfd96f470532cc78c2d3c559414a09434eeff",
+      "revision": "QA-REV-02",
+      "usage": "仅用于变更影响识别和版本化技术参数分类；实现机制及开发测试结果不作为独立QA裁判、不代替新验收"
     }
   ],
   "authorityOrder": [
@@ -74,6 +95,11 @@
       "id": "QA-D4",
       "source": "用户批准的《独立 QA 验收体系建设计划》（当前会话）",
       "decision": "创建独立QA资产并只自检QA工具；实际产品测试须在开发及自测完成后获得用户单独授权。"
+    },
+    {
+      "id": "QA-D5",
+      "source": "用户本次明确授权必要QA资产调整；D036/D037批准范围见docs/decisions.md:53–57",
+      "decision": "补齐容量耗尽、触发停止、读写重试、取消/预算/政策交错等通用质量风险的QA设计；原遗漏属于QA覆盖不足，不以新增业务需求解释。仅调整QA资产并自检工具，产品执行仍须单独授权。"
     }
   ],
   "requiredAdditions": [
@@ -123,5 +149,27 @@
     "S8": ["R-B1-04"]
   },
   "openClarifications": "qa-acceptance/requirements/clarifications.md",
-  "releaseGates": "qa-acceptance/requirements/release-gates.md"
+  "releaseGates": "qa-acceptance/requirements/release-gates.md",
+  "revisions": [
+    {
+      "id": "QA-REV-02",
+      "date": "2026-10-01",
+      "reviewedRange": {
+        "from": "cc5d3d2",
+        "to": "48adfd96f470532cc78c2d3c559414a09434eeff"
+      },
+      "qaBranch": "agent/qa-architecture-impact",
+      "classification": "已有工程质量具体化与QA风险覆盖修正；无新增业务域/外部服务协议",
+      "requirementIds": ["ENG-ADMISSION-01", "ENG-CONTRACT-01", "ENG-READ-01", "ENG-READ-02"],
+      "preserves": [
+        "原始需求内容和SHA-256",
+        "原baseCommit、原sourceSnapshots与QA-D1至QA-D4",
+        "A/B硬性行为和既有待澄清强保证",
+        "产品未执行状态"
+      ],
+      "impactReview": "qa-acceptance/requirements/architecture-impact.md",
+      "riskReview": "qa-acceptance/requirements/risk-coverage-review.md",
+      "productTestingAuthorized": false
+    }
+  ]
 }

@@ -1363,5 +1363,49 @@
     },
     "expectation": "交付README说明依赖、配置、迁移和启动入口；接收方在隔离环境依说明可启动交付候选并完成登录/健康和基本浏览，不依赖作者口头补全。",
     "scope": "required"
+  },
+  {
+    "id": "ENG-ADMISSION-01",
+    "title": "容量拒绝与实体冲突的正确语义",
+    "source": {
+      "path": "docs/architecture-reviews/2026-10-01-baseline.md",
+      "section": "AR-04；D036批准的既有工程质量具体化，授权和原要求关联见requirements/architecture-impact.md",
+      "lines": [29, 29]
+    },
+    "expectation": "容量不足不能伪报实体正在处理或未发生的远端失败；仅确证尚未调用远端的工具执行可安全等待。容量释放后同一run/工具步骤继续，不因等待重复审计、增加turn或重复副作用；等待仍受原活动预算、取消、账号资格和操作政策约束。真实实体竞争与已发生但未知的远端效果分别处理。容量大小与等待间隔不是业务验收硬指标。",
+    "scope": "required"
+  },
+  {
+    "id": "ENG-CONTRACT-01",
+    "title": "序列请求契约在前后端一致且兼容",
+    "source": {
+      "path": "docs/architecture-reviews/2026-10-01-baseline.md",
+      "section": "AR-08；D036批准的既有契约质量具体化，公开输入边界见requirements/architecture-impact.md",
+      "lines": [33, 33]
+    },
+    "expectation": "序列定义及运行变量的前端校验与服务端公开输入规则一致；已确定非法的字段或结构明确拒绝，不能由前端静默剥离成另一请求；绕过前端仍校验。合法输入、默认值、路由和原B1运行语义兼容。原文未明确的长度、数量、延迟上限和步号约束须标注为公开契约待锁定或版本化兼容观察，不能由既有实现自动升级为用户硬性业务规则。",
+    "scope": "required"
+  },
+  {
+    "id": "ENG-READ-01",
+    "title": "缺少后续触发时暂时读取失败可有界恢复",
+    "source": {
+      "path": "docs/architecture-reviews/2026-10-01-baseline.md",
+      "section": "AR-09；D036批准的既有恢复质量具体化",
+      "lines": [34, 34]
+    },
+    "expectation": "暂时读取失败在没有后续事件、轮询或人工操作时仍有有界自动恢复；永久、权限及校验错误停止自动重试，不能产生请求风暴。预算耗尽后仍可由明确的新刷新或有效失效通知启动新一轮有界读取。具体状态码分类、次数和退避毫秒属于需注明版本的技术策略；不改变原B4及目录刷新等已有时序要求。",
+    "scope": "required"
+  },
+  {
+    "id": "ENG-READ-02",
+    "title": "读取恢复保持取消、会话隔离和读写边界",
+    "source": {
+      "path": "docs/architecture-reviews/2026-10-01-baseline.md",
+      "section": "AR-09；D036批准的既有会话与恢复质量具体化",
+      "lines": [34, 34]
+    },
+    "expectation": "自动恢复限于读取；失败写操作不能因通用读取恢复而自动重放。请求与退避保持单飞；切页、取消或会话改变后旧请求/等待不得覆盖新页面或另一身份数据；失败不生成成功快照、不冒充已呈现或已确认。前端既有401单次续期与退出立即失效语义保持。",
+    "scope": "required"
   }
 ]

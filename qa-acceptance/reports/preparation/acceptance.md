@@ -4,8 +4,8 @@
 
 本报告是准备状态清单，未启动或连接被测系统，不能用于宣称产品验收通过。
 
-- 范围内用例：210；通过 0，失败 0，阻塞 0，未执行 210。
-- 自动化 187，人工 10，设计阻塞 13，候选 5。
+- 范围内用例：246；通过 0，失败 0，阻塞 0，未执行 246。
+- 自动化 212，人工 10，设计阻塞 24，候选 5。
 - 有用例覆盖、实际执行和通过率分别统计；跳过、缺少浏览器项目、缺少环境均不作通过。JSON另列required/release/candidate各范围计数及已执行通过率；多范围用例分别计数，不可直接相加。
 
 ## 版本、环境与授权
@@ -16,7 +16,7 @@
   "sutExecutionAuthorized": false,
   "productTestsExecuted": 0,
   "qaTree": {
-    "sha256": "4cce2d869fd58531a5273cd006b47c7bb22c1394eb2fd50f64a9b2b9aaab1240",
+    "sha256": "c391cb479c3e9b9f411a021ca98d5858f101a6286e6dae94bfac467e53df74a1",
     "files": [
       {
         "path": ".gitignore",
@@ -25,6 +25,22 @@
       {
         "path": ".prettierrc.json",
         "sha256": "8123eeaf657f177f4617a71e78584ac602b6ca7b4fa7e1e6c24e59c2dee1a2b7"
+      },
+      {
+        "path": "cases/architecture-capacity.json",
+        "sha256": "8df519a49c35ee5688449e0f362110b99fdd4ab912918bc289bb107285305e3b"
+      },
+      {
+        "path": "cases/architecture-contract.json",
+        "sha256": "2664fe797b4a38c81df3a7054015b2a04a2a6c5bbcea7043573dcfd41e39adb0"
+      },
+      {
+        "path": "cases/architecture-observation.json",
+        "sha256": "076d91735aa641dff48feb832b67f0cd6e031e938095a3e01032aa66169e16ee"
+      },
+      {
+        "path": "cases/architecture-ui.json",
+        "sha256": "bec51c6d708dc28167dd69be15505225a91915bb7428e2e9d4ddd0395c12a9a3"
       },
       {
         "path": "cases/backend.json",
@@ -41,6 +57,22 @@
       {
         "path": "cases/foundation.json",
         "sha256": "56e39ef944c862aa0439c96bae47e5fa5ee834068123e144ea4494100c720a74"
+      },
+      {
+        "path": "cases/generated/architecture-capacity.md",
+        "sha256": "e1a5084ded20a0221b0c742359d8099c0eb9fff73be5503e0b1a90938fbb9c43"
+      },
+      {
+        "path": "cases/generated/architecture-contract.md",
+        "sha256": "b4724c249fe3b35b66d246c200ddfea71d48f339afa20fe72b19fd4e6bb8e2a7"
+      },
+      {
+        "path": "cases/generated/architecture-observation.md",
+        "sha256": "09aa45386eae0a445eca944c4aa8eba2bc8e1b5f0fe34d13f92f2492a302d96c"
+      },
+      {
+        "path": "cases/generated/architecture-ui.md",
+        "sha256": "554d33f9804e43493326edf301fc6f4e9198cc8a54e6d0749c3f6d8c39aaa5ec"
       },
       {
         "path": "cases/generated/backend.md",
@@ -68,11 +100,11 @@
       },
       {
         "path": "cases/generated/ui-extra.md",
-        "sha256": "0ed285df0cb659b04336187efb696824caf54efeda959336c2b32a6f75c60fe5"
+        "sha256": "d72356c35bd3057d0ed973699cec0374f0c35706bb048bbf292d0461b359e069"
       },
       {
         "path": "cases/generated/ui.md",
-        "sha256": "6307e30dfc00ceb8ff5a0d2928cab1f42e9ce1260c46b17d83474a4ca40e9bdd"
+        "sha256": "29e54a2c48e04893c3f7b515761b8d2b299df9c81d9a311fd0b946dee5b93331"
       },
       {
         "path": "cases/manual.json",
@@ -88,11 +120,11 @@
       },
       {
         "path": "cases/ui-extra.json",
-        "sha256": "d48b694024f15a3353cc706c7d75ccfff347029b7d02ca6876a9912461f291af"
+        "sha256": "01e72cf243dd44c496ed4ec32690936d36867bab2547678345970fd97507b7e3"
       },
       {
         "path": "cases/ui.json",
-        "sha256": "1a86a23d4f310516d0c1d05e111e27c13a4e52dd6713d941bee9561bb42e0df2"
+        "sha256": "e14d75c609c9bae18f05b9ee84a530f6844a83f6a572fb1b7f4b2ad646358fb1"
       },
       {
         "path": "config/authorization.example.json",
@@ -104,7 +136,11 @@
       },
       {
         "path": "config/target.example.json",
-        "sha256": "ce5c6aa0b0b134388bc6f8a592fb35b246e2705ca16979b989e014e5cf96618c"
+        "sha256": "f0cfc7ff8cf3d372e1fa5578fa7cbdb41cb87b2082c68062b68fe1660b0475ba"
+      },
+      {
+        "path": "contracts/capacity-observation.md",
+        "sha256": "66717bc7ad2684f4c20737f99208dcbdb227215c05aa7040f13df5b37666fc63"
       },
       {
         "path": "contracts/public-api.ts",
@@ -123,6 +159,10 @@
         "sha256": "3c7b7636bc2c8488bc28a4bd7068171a521d71ac0c256c938a65c8f022b4b177"
       },
       {
+        "path": "harness/capacity-probe.ts",
+        "sha256": "25febe9b6233d72c7d939e76539111f657ddf6be10a6c471a9f9ce48bbb21548"
+      },
+      {
         "path": "harness/catalog-check.ts",
         "sha256": "239e57aa09c2e95162cedc2bdc4a86e5b7298a634d6951c45257a785dc5fe434"
       },
@@ -131,8 +171,16 @@
         "sha256": "aaa1bb8749dec08006c0e75607953e5be3379035af005f4693b88c52c598ede5"
       },
       {
+        "path": "harness/change-review-check.ts",
+        "sha256": "5458c44daf92dc9806d836a2e63ab75e0ab31502d85b552e8fd52ddf63735950"
+      },
+      {
+        "path": "harness/change-review.ts",
+        "sha256": "866bb98382624aedb931e01b0547830a87b26a941082e20b9fcd44a1651e4316"
+      },
+      {
         "path": "harness/cli.ts",
-        "sha256": "338fb79d116c43c1d6210e34d13ee4068c360b9dd4cc87c05b909c6e7e1f35a7"
+        "sha256": "3d9ae5eea1bfd944c6b6a6c0c59cbe66cf7c4e4ae067e7f2dab362f8b436ca4e"
       },
       {
         "path": "harness/database.ts",
@@ -144,7 +192,7 @@
       },
       {
         "path": "harness/execution-gate.ts",
-        "sha256": "da28e2719b92838c5dea21ba3e914163746b2c48826417fd72ec0a1381a47d9c"
+        "sha256": "d79a51486f3e90204cde9a6bf663c1130baa92cdb37954922de1a57f20b84b16"
       },
       {
         "path": "harness/gateway.ts",
@@ -200,7 +248,7 @@
       },
       {
         "path": "harness/verify-tools.ts",
-        "sha256": "f156508cb99a05f1d20b54269d9c6e680154a5d29e79c200e14bd009b2919f03"
+        "sha256": "59306a9e1c2acd5c1335e5f6d29bcb7f03f1d616c10d811d4b2fe5a0dbe46af2"
       },
       {
         "path": "package-lock.json",
@@ -208,7 +256,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "52d400792e0a083c62e587f7c42b1af3174b8ba0ce685ad2a68db4ee140ae869"
+        "sha256": "61d91924ba64ac726d55cb03e54701c703e8fd661d63bb499a9bddad28d83fed"
       },
       {
         "path": "playwright.config.ts",
@@ -216,19 +264,31 @@
       },
       {
         "path": "README.md",
-        "sha256": "bbb1ab62ebd03e80782c8be3ea2d6d1ca9701b4e00ac97c01a420c2a60d48c28"
+        "sha256": "d4d6a8ebc76eaac7f9116230279cc7ec77f633afb8639eae16ea3ec2df83b5cf"
+      },
+      {
+        "path": "requirements/architecture-impact.md",
+        "sha256": "ec902de904d0c1d53327e13a27ea67808c0bf64c5bcdeb49293b0bc8ea9b0c58"
       },
       {
         "path": "requirements/baseline.json",
-        "sha256": "d29073902adfee41c22245c0e74d6091d2653a5f376d00ef876201a06e48668e"
+        "sha256": "af0e17de9bed3c6565b2b284f481c46212f1485a7aa822c78cd40b04be431aa5"
       },
       {
         "path": "requirements/catalog.json",
-        "sha256": "ce6d38d4cb597fd28cb9fa28ab6dc987f50c635485440be726c23846317eba27"
+        "sha256": "0eecab330281c6ee174018b946e4a4660dda6a8fe684cbede6015d743b8ee0ca"
+      },
+      {
+        "path": "requirements/change-reviews.json",
+        "sha256": "9c7c0fbdcbe5aadc615627bac402a45c6a5e78f7c6dc2a7686b4af05493ca0c4"
       },
       {
         "path": "requirements/clarifications.md",
         "sha256": "fc01df5fe9a0588d6601c59dd760f877afbd106a0186f2cdc821957a742f1fce"
+      },
+      {
+        "path": "requirements/collaboration.md",
+        "sha256": "5bd518dda0c35fe037aafa9c26a57cf97cd44cf0ad434ecdbc8f2f38d0022073"
       },
       {
         "path": "requirements/coverage.md",
@@ -239,8 +299,12 @@
         "sha256": "0757bbe778819225ca5106cade3bd13ae70e2458dfe5ea2d3501682771f19a40"
       },
       {
+        "path": "requirements/risk-coverage-review.md",
+        "sha256": "618c2c921ef3668344e65bb2eb8e662402e3cb305957f0b8dfe0425216d2735b"
+      },
+      {
         "path": "requirements/traceability.md",
-        "sha256": "cdb477d6bc33960c6d281572a22a10e5335506e6703ebb3b20dbb46133d98abe"
+        "sha256": "7055dc6b0bbef0b69bdc628916fd4cc38a595666add604066385922a22f5e368"
       },
       {
         "path": "tests/api/accounts.spec.ts",
@@ -263,6 +327,10 @@
         "sha256": "9ec54083fb257fe2de805ec803943ad93aaf4ade0526244841f7355fb38d3a37"
       },
       {
+        "path": "tests/api/sequence-contracts.spec.ts",
+        "sha256": "82ccf634ea4b37fda481766773e66e6e899ae11f055b4d0a8bfe6d329cd8d5c7"
+      },
+      {
         "path": "tests/extensions/api.spec.ts",
         "sha256": "0f67b5af5b25803ce679128f38adf48392799b61f75abc8588e6886d66e974a3"
       },
@@ -281,6 +349,10 @@
       {
         "path": "tests/release/operations.spec.ts",
         "sha256": "418ce615bb184bcdc0ee461354a8adce44c8dd726e288e9232effef67aff293b"
+      },
+      {
+        "path": "tests/self/change-review.test.ts",
+        "sha256": "66d74355d476cca2f5a5abb17d5108c5e4e824f39b81f3df1c3517f70b5e8010"
       },
       {
         "path": "tests/self/contracts.test.ts",
@@ -303,6 +375,10 @@
         "sha256": "5550fa7a986332300cca2a6224f3de8bb2f8fa2213a4da660f8e5a374a9a4613"
       },
       {
+        "path": "tests/system/capacity.spec.ts",
+        "sha256": "d00e016ad311749cc54db52bf63f28d26b694914ef457352afe76604b4489808"
+      },
+      {
         "path": "tests/system/recovery.spec.ts",
         "sha256": "1911640e16571ad889f8899450c4b3f3975036683f2f83255e7ff2c1d0f347bf"
       },
@@ -311,8 +387,12 @@
         "sha256": "e8e0162a3fad5f99464ab41875cf296a959bd064bbdad6b2c8e0d8238a555a1d"
       },
       {
+        "path": "tests/ui/architecture.spec.ts",
+        "sha256": "f258875b7d7582433e7deaee05c8e2d1172c1122319080d40947a31cb6151ea4"
+      },
+      {
         "path": "tests/ui/console.spec.ts",
-        "sha256": "06ad239798d3990b5b586efafee7dfbec3762b96d6387db0310fdc6cb54e9002"
+        "sha256": "b318f886a43ed028e2d62a1b4b3208698849bbfa1d2862639111e3ad2fb2e936"
       },
       {
         "path": "tsconfig.json",
@@ -376,6 +456,27 @@
         "path": "docs/page-update-notification-proposal.md",
         "sha256": "2c31b688b67d31b2454a2ee4f3e1445f5bae50a93071eeb17cdc11f712d6f21b",
         "usage": "仅用户已选择原则及后续已批准范围对应语义；未采纳实现接入点、旧验证清单和未批准建议"
+      },
+      {
+        "path": "docs/decisions.md",
+        "sha256": "d9566e00c35705a9adcbb1b94aae1d5fd3447cc2975e7bee2ef8da7a17e4837e",
+        "atCommit": "48adfd96f470532cc78c2d3c559414a09434eeff",
+        "revision": "QA-REV-02",
+        "usage": "仅采用D036/D037的实际批准范围、实施选择与合并边界；不采用开发验证通过或人工验收结论"
+      },
+      {
+        "path": "docs/architecture-reviews/2026-10-01-baseline.md",
+        "sha256": "476a579465dd8a1f01498e1c6fe5d3b3d6696d664b5370c3061e536cdd8e1b94",
+        "atCommit": "48adfd96f470532cc78c2d3c559414a09434eeff",
+        "revision": "QA-REV-02",
+        "usage": "仅采用D036明确批准的AR-04/08/09/10质量行为及未授权范围边界；源码事实、建议和旧通过数均不作为独立QA期望"
+      },
+      {
+        "path": "docs/architecture-quality-closeout.md",
+        "sha256": "ae4ec49e7c54382640f2103b5d06f193cf285c087d2eed5228caf8a80faeb9f4",
+        "atCommit": "48adfd96f470532cc78c2d3c559414a09434eeff",
+        "revision": "QA-REV-02",
+        "usage": "仅用于变更影响识别和版本化技术参数分类；实现机制及开发测试结果不作为独立QA裁判、不代替新验收"
       }
     ],
     "authorityOrder": [
@@ -404,6 +505,11 @@
         "id": "QA-D4",
         "source": "用户批准的《独立 QA 验收体系建设计划》（当前会话）",
         "decision": "创建独立QA资产并只自检QA工具；实际产品测试须在开发及自测完成后获得用户单独授权。"
+      },
+      {
+        "id": "QA-D5",
+        "source": "用户本次明确授权必要QA资产调整；D036/D037批准范围见docs/decisions.md:53–57",
+        "decision": "补齐容量耗尽、触发停止、读写重试、取消/预算/政策交错等通用质量风险的QA设计；原遗漏属于QA覆盖不足，不以新增业务需求解释。仅调整QA资产并自检工具，产品执行仍须单独授权。"
       }
     ],
     "requiredAdditions": [
@@ -474,7 +580,34 @@
       ]
     },
     "openClarifications": "qa-acceptance/requirements/clarifications.md",
-    "releaseGates": "qa-acceptance/requirements/release-gates.md"
+    "releaseGates": "qa-acceptance/requirements/release-gates.md",
+    "revisions": [
+      {
+        "id": "QA-REV-02",
+        "date": "2026-10-01",
+        "reviewedRange": {
+          "from": "cc5d3d2",
+          "to": "48adfd96f470532cc78c2d3c559414a09434eeff"
+        },
+        "qaBranch": "agent/qa-architecture-impact",
+        "classification": "已有工程质量具体化与QA风险覆盖修正；无新增业务域/外部服务协议",
+        "requirementIds": [
+          "ENG-ADMISSION-01",
+          "ENG-CONTRACT-01",
+          "ENG-READ-01",
+          "ENG-READ-02"
+        ],
+        "preserves": [
+          "原始需求内容和SHA-256",
+          "原baseCommit、原sourceSnapshots与QA-D1至QA-D4",
+          "A/B硬性行为和既有待澄清强保证",
+          "产品未执行状态"
+        ],
+        "impactReview": "qa-acceptance/requirements/architecture-impact.md",
+        "riskReview": "qa-acceptance/requirements/risk-coverage-review.md",
+        "productTestingAuthorized": false
+      }
+    ]
   }
 }
 ```
@@ -483,6 +616,42 @@
 
 |用例|需求|结果|说明|证据|
 |---|---|---|---|---|
+|CAP-REG-001 不同群同名目标的重叠 kick 保持各自审计、步骤和副作用唯一|R-A5-01, R-A5-07, R-A5-08, R-A5-09|NOT_RUN|尚未执行||
+|CAP-REG-002 审计等待期间关闭 autoKick 后不得继续派发|R-A5-07, R-A5-09|NOT_RUN|尚未执行||
+|CAP-REG-003 审计等待后重新检查执行账号在线状态|R-A5-07, R-A5-08|NOT_RUN|尚未执行||
+|CAP-REG-004 审计等待后成员身份和管理员角色均重新检查|R-A5-07, R-A5-08|NOT_RUN|尚未执行||
+|CAP-001 确证容量拒绝后零远端且释放后同一步只审计/踢人一次|ENG-ADMISSION-01, R-A5-05, R-A5-07, R-A5-09|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。||
+|CAP-002 容量等待期间关闭 Agent 的取消边界|ENG-ADMISSION-01, R-A5-13|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。||
+|CAP-003 持续容量拒绝计入原 60 秒活动预算|ENG-ADMISSION-01, R-A5-05, R-A5-06|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。||
+|CAP-004 容量等待期间关闭踢人政策再次检查|ENG-ADMISSION-01, R-A5-07, R-A5-09|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。||
+|CAP-005 容量等待期间群变不可写阻止迟发踢人|ENG-ADMISSION-01, R-A1-04, R-A5-13|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。||
+|CAP-006 容量等待期间执行账号终态/离线/离群后重新选择|ENG-ADMISSION-01, R-A1-04, R-A5-08|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。||
+|CAP-007 容量等待期间目标成员退出或退出后重新加入|ENG-ADMISSION-01, R-A5-09, R-A5-11|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。此外原协议未明确未派发 kick 的目标自行退出/重入时的工具结果，须在执行前确认，不能按当前实现倒推。||
+|CAP-008 真实同一实体锁竞争与容量不足保持不同判定|ENG-ADMISSION-01, R-A5-09|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。同群单活跃 run 使两条公开 Agent kick 无法直接竞争；需先说明合法可达入口及外部错误映射，禁止伪造手动 kick API。||
+|CAP-009 容量已拒绝但 ready 持久化之前崩溃的恢复|ENG-ADMISSION-01, R-A5-11|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。缺少拒绝后但 ready 尚未保存的可控外部边界；关联 CL-01/CG-05 强恢复限制，审计或网关屏障不能替代。||
+|CAP-010 已派发且效果未知的 kick 不得因为后续容量压力重置重放|ENG-ADMISSION-01, R-A5-09, R-A5-11|NOT_RUN|缺少经过确认、关联 runId/toolUseId 的容量/实体拒绝诊断与确定性占用释放控制；当前公开 API 和网关屏障不能证明容量拒绝。见 contracts/capacity-observation.md。本组合额外要求确定性容量压力；普通 504 和崩溃恢复仍分别执行既有 AGENT-029/REC-007，不能复用其通过来关闭本组合。||
+|ARC-API-001 序列定义的独立严格输入矩阵|ENG-CONTRACT-01, R-B1-02, R-A0-03|NOT_RUN|尚未执行||
+|ARC-API-002 序列启动的键类型边界与失败后可重试|ENG-CONTRACT-01, R-B1-02, R-A0-03|NOT_RUN|尚未执行||
+|ARC-API-003 序列启动缺省变量对象兼容|ENG-CONTRACT-01, R-B1-02, R-A0-03|NOT_RUN|尚未执行||
+|ARC-UI-BLK-001 通用资源读取失败不能提交成功快照或提前确认未呈现提醒|ENG-READ-02, ADD-ATT-03|NOT_RUN|现有UI适配尚不能证明具体通用资源消费者与提醒成功版本的关联；需在获准接入时确认公开页面和观测入口。不直接调用内部helper，不把消息时间线用例替代该场景。||
+|ARC-UI-001 序列定义额外字段明确拒绝而非静默剥离|ENG-CONTRACT-01|NOT_RUN|尚未执行||
+|ARC-UI-002 非连续或重复步号在浏览器阻止提交|ENG-CONTRACT-01|NOT_RUN|尚未执行||
+|ARC-UI-003 已登记序列尺寸边界在浏览器明确拒绝|ENG-CONTRACT-01|NOT_RUN|尚未执行||
+|ARC-UI-004 vars和stepVars非法键值不发预检或启动请求|ENG-CONTRACT-01|NOT_RUN|尚未执行||
+|ARC-UI-005 合法序列一次保存并保留公开输入行为|ENG-CONTRACT-01|NOT_RUN|尚未执行||
+|ARC-UI-006 序列写请求503失败不自动重放|ENG-READ-02|NOT_RUN|尚未执行||
+|ARC-UI-007 无后续事件或轮询时两次503后自动呈现|ENG-READ-01|NOT_RUN|尚未执行||
+|ARC-UI-008 权限403不形成资源请求风暴|ENG-READ-01|NOT_RUN|尚未执行||
+|ARC-UI-009 429不无视限流进行通用重试|ENG-READ-01|NOT_RUN|尚未执行||
+|ARC-UI-010 请求校验400不自动重试|ENG-READ-01|NOT_RUN|尚未执行||
+|ARC-UI-011 成功HTTP的非法响应格式不按502临时错误重试|ENG-READ-01|NOT_RUN|尚未执行||
+|ARC-UI-012 持续暂时失败耗尽后停止自动读取|ENG-READ-01|NOT_RUN|尚未执行||
+|ARC-UI-013 切页取消旧读取及后续退避|ENG-READ-02|NOT_RUN|尚未执行||
+|ARC-UI-014 换身份期间旧读取迟到不能覆盖新会话|ENG-READ-02|NOT_RUN|尚未执行||
+|ARC-UI-015 耗尽后显式同页刷新可开始新一轮|ENG-READ-01|NOT_RUN|尚未执行||
+|ARC-UI-016 错误后离页取消退避期间的后续读取|ENG-READ-02|NOT_RUN|尚未执行||
+|ARC-UI-017 在途读取期间多个实时失效合并且不能延长失败预算|ENG-READ-02|NOT_RUN|尚未执行||
+|ARC-UI-018 网络失败及其他已登记暂时HTTP错误均可自动恢复|ENG-READ-01|NOT_RUN|尚未执行||
 |STATE-11 state transition idle to idle|R-A1-01|NOT_RUN|尚未执行||
 |STATE-12 state transition idle to online|R-A1-01|NOT_RUN|尚未执行||
 |STATE-13 state transition idle to rate_limited|R-A1-01|NOT_RUN|尚未执行||

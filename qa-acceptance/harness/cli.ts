@@ -9,6 +9,7 @@ import { loadTarget, requireAuthorization, redact, targetFingerprint } from './s
 import { snapshotQaTree, reportDirectory } from './provenance.js';
 import { recordManual, readManualEvents, type ManualReview } from './manual.js';
 import { exec } from './process.js';
+import { reviewTargetChanges } from './change-review.js';
 import type { CaseResult } from './types.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -78,6 +79,7 @@ if (action === 'hash-target') {
   process.env.QA_TARGET_CONFIG = resolve(root, targetPath);
   const target = await loadTarget(process.env.QA_TARGET_CONFIG, root);
   const authorization = await requireAuthorization(target);
+  const changeReview = await reviewTargetChanges(root, target);
   const errors = await checkCatalog(root);
   if (errors.length) throw new Error(errors.join('\n'));
   const baseline = JSON.parse(await readFile(resolve(root, 'requirements/baseline.json'), 'utf8'));
@@ -109,6 +111,7 @@ if (action === 'hash-target') {
       targetSha256: targetFingerprint(target),
       target,
       authorization,
+      changeReview,
       originalSha256: hash,
       dependencyLockSha256: createHash('sha256').update(lock).digest('hex'),
       node: process.version,
