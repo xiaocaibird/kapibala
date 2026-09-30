@@ -1,0 +1,469 @@
+[
+  {
+    "id": "MAN-UX-001",
+    "title": "操作员能识别阻断、失败与账号/群角色含义",
+    "requirements": ["R-A6-03", "ADD-COPY-01"],
+    "priority": "P2",
+    "mode": "manual",
+    "preconditions": [
+      "产品执行已授权且对应自动化已准备状态夹具",
+      "全新隔离浏览器，操作员不先阅读实现说明"
+    ],
+    "data": {
+      "states": ["blocked", "failed", "cancelled", "unknown"],
+      "roles": ["控制台admin", "群creator", "群admin", "群member"]
+    },
+    "steps": [
+      "让操作员查看包含正常和blocked运行的群详情，描述当前可操作状态",
+      "查看账号断开/释放说明及群成员角色，说明它们分别控制什么",
+      "记录看不懂、误读和需要指导才能完成的具体位置"
+    ],
+    "expected": [
+      "blocked提示可被正常阅读识别，不仅靠难辨颜色",
+      "文案使控制台管理权限与群内账号角色可区分，释放不暗示删除历史",
+      "只记录实际观察，不把主观偏好自动升级成未约定UI设计要求"
+    ],
+    "timing": [],
+    "faults": [],
+    "evidence": ["截图与操作者观察记录", "页面版本与视口/浏览器"],
+    "cleanup": ["关闭本轮浏览器上下文；清理专属夹具"]
+  },
+  {
+    "id": "MAN-IME-001",
+    "title": "真实操作系统中文输入法不触发中间查询",
+    "requirements": ["ADD-DIR-11"],
+    "priority": "P1",
+    "mode": "manual",
+    "preconditions": [
+      "产品执行已授权",
+      "选定目标浏览器与操作系统中文输入法；自动化composition场景另有覆盖"
+    ],
+    "data": {
+      "queries": ["测试", "群资料", "空 格"],
+      "inputMethods": ["执行时记录实际使用的系统输入法"]
+    },
+    "steps": [
+      "使用真实键盘在目录搜索框输入拼音并切换候选，不提交组合",
+      "选择最终中文候选，等待延迟查询",
+      "组合期间触发无关刷新，继续键入并查看焦点和最终结果"
+    ],
+    "expected": [
+      "组合中不提交中间拼音查询",
+      "确认后按最终关键词查询，旧结果不覆盖最终条件",
+      "光标/输入焦点和已输入内容不被轮询抢走"
+    ],
+    "timing": ["延迟查询时长仅记录，不发明未约定debounce阈值"],
+    "faults": [],
+    "evidence": ["网络录屏/请求时间线", "实际系统输入法、浏览器版本、最终查询值"],
+    "cleanup": ["清空测试查询并关闭隔离页面"]
+  },
+  {
+    "id": "MAN-FOCUS-001",
+    "title": "真实失焦与浏览器标签标题favicon呈现",
+    "requirements": ["ADD-ATT-02", "ADD-ATT-03"],
+    "priority": "P1",
+    "mode": "manual",
+    "preconditions": ["产品执行已授权", "目标浏览器已确定，独立QA窗口与专属scope提醒已建立"],
+    "data": {
+      "focusModes": ["切其他标签", "切其他应用", "窗口失焦但页面可见"]
+    },
+    "steps": [
+      "分别用系统操作失焦后注入与当前scope相关的更新",
+      "查看浏览器真实标签标题及favicon，再仅恢复焦点",
+      "成功呈现相关内容并执行真实相关操作",
+      "记录固定标签或浏览器主题导致的呈现差异"
+    ],
+    "expected": [
+      "失焦显示静态标题/favicon提示，不能只验证DOM值而宣称实际标签呈现",
+      "仅聚焦不清除，正确呈现和操作后清除对应变化",
+      "不弹系统通知权限、不播放声音；浏览器冻结不承诺不可实现的即时显示"
+    ],
+    "timing": ["恢复执行后的业务断线补齐仍遵循R-B4-01；记录浏览器实际冻结情况"],
+    "faults": [],
+    "evidence": ["含浏览器标签栏的屏幕证据", "焦点切换/注入/呈现/确认时间记录"],
+    "cleanup": ["恢复基础标题后关闭QA窗口"]
+  },
+  {
+    "id": "BLK-EXT-001",
+    "title": "send响应前崩溃的未决远端副作用",
+    "requirements": ["R-A2-01", "R-A5-11"],
+    "priority": "P0",
+    "mode": "blocked",
+    "preconditions": [
+      "当前仅设计，不执行产品",
+      "相应clarification完成裁定，故障控制能力和隔离SUT准备好后才可运行"
+    ],
+    "data": {
+      "clientMsgId": "unique",
+      "gateway": "不提供收到504以外的处理完成时限"
+    },
+    "steps": [
+      "持久发送意图后发出请求，在服务读取响应前终止进程；保持远端请求在途",
+      "重启并让查询短暂返回404，随后原请求可能落地",
+      "分别保留“最终落地”和“最终未执行”两份不可区分前缀轨迹"
+    ],
+    "expected": [
+      "QA不得用首次404判定未发送或给原请求偷偷加2秒上限",
+      "原要求既不能重复效果也要正确恢复；协议未补足前该强场景保持阻塞，不虚报失败/成功"
+    ],
+    "timing": ["时序以原条款为准，未规定的上限不由QA模拟器补造"],
+    "faults": ["按步骤所列故障；其他条件维持协议有效"],
+    "evidence": ["请求前后屏障与查询/落地完整轨迹"],
+    "cleanup": ["只清理本轮隔离资源；保留原始轨迹"],
+    "blocker": "CL-01：参见requirements/clarifications.md；没有已确认的唯一验收裁判"
+  },
+  {
+    "id": "BLK-EXT-002",
+    "title": "create成功但groupId尚未保存的恢复",
+    "requirements": ["R-A3-02", "R-A2-01"],
+    "priority": "P0",
+    "mode": "blocked",
+    "preconditions": [
+      "当前仅设计，不执行产品",
+      "相应clarification完成裁定，故障控制能力和隔离SUT准备好后才可运行"
+    ],
+    "data": {
+      "gateway": "create无客户端操作标识/按操作查询"
+    },
+    "steps": [
+      "网关创建成功后屏蔽响应，在SUT保存groupId前停止",
+      "恢复后记录系统是否能证明原群身份；禁止fixture直接泄露私有groupId"
+    ],
+    "expected": [
+      "不允许二次创建来假装恢复同一个群",
+      "缺外部可查询身份时明确保留需求阻塞；已知失败的普通创建仍独立验收"
+    ],
+    "timing": ["时序以原条款为准，未规定的上限不由QA模拟器补造"],
+    "faults": ["按步骤所列故障；其他条件维持协议有效"],
+    "evidence": ["远端群创建账本", "请求/崩溃边界与本地公开job结果"],
+    "cleanup": ["只清理本轮隔离资源；保留原始轨迹"],
+    "blocker": "CL-01：参见requirements/clarifications.md；没有已确认的唯一验收裁判"
+  },
+  {
+    "id": "BLK-EXT-003",
+    "title": "promote响应丢失且角色无查询能力",
+    "requirements": ["R-A3-02", "R-A3-04"],
+    "priority": "P0",
+    "mode": "blocked",
+    "preconditions": [
+      "当前仅设计，不执行产品",
+      "相应clarification完成裁定，故障控制能力和隔离SUT准备好后才可运行"
+    ],
+    "data": {
+      "promoteCallLimit": 2
+    },
+    "steps": [
+      "使promote已生效但响应未写入服务时崩溃",
+      "恢复并再次在确认阶段崩溃；仅开放原成员列表接口",
+      "要求在≤2次调用内同时证明最终管理员角色与任务成功"
+    ],
+    "expected": [
+      "不得利用mock角色私有接口作为产品可用协议",
+      "不能以普通member存在性当管理员角色证据；需要角色可查询或幂等结果保证"
+    ],
+    "timing": ["时序以原条款为准，未规定的上限不由QA模拟器补造"],
+    "faults": ["按步骤所列故障；其他条件维持协议有效"],
+    "evidence": ["promote调用次数/远端角色副作用", "成员接口可见信息与恢复轨迹"],
+    "cleanup": ["只清理本轮隔离资源；保留原始轨迹"],
+    "blocker": "CL-01：参见requirements/clarifications.md；没有已确认的唯一验收裁判"
+  },
+  {
+    "id": "BLK-EXT-004",
+    "title": "kick已经生效后目标重新加入",
+    "requirements": ["R-A5-09", "R-A5-11"],
+    "priority": "P0",
+    "mode": "blocked",
+    "preconditions": [
+      "当前仅设计，不执行产品",
+      "相应clarification完成裁定，故障控制能力和隔离SUT准备好后才可运行"
+    ],
+    "data": {
+      "target": "外部platformUserId"
+    },
+    "steps": [
+      "kick生效而本地未确认时崩溃",
+      "目标再次加入后恢复；成员列表再次包含同目标",
+      "对比最初kick根本未生效但成员存在的轨迹"
+    ],
+    "expected": [
+      "不能把当前存在等同此前未踢出并再踢一次",
+      "需要操作结果身份/目标成员世代或明确限制重入；未裁定前强保证阻塞"
+    ],
+    "timing": ["时序以原条款为准，未规定的上限不由QA模拟器补造"],
+    "faults": ["按步骤所列故障；其他条件维持协议有效"],
+    "evidence": ["member事件及远端kick账本", "成员查询结果与进程边界"],
+    "cleanup": ["只清理本轮隔离资源；保留原始轨迹"],
+    "blocker": "CL-01：参见requirements/clarifications.md；没有已确认的唯一验收裁判"
+  },
+  {
+    "id": "BLK-EXT-005",
+    "title": "有状态Agent轮次响应丢失重放",
+    "requirements": ["R-A5-02", "R-A5-11"],
+    "priority": "P0",
+    "mode": "blocked",
+    "preconditions": [
+      "当前仅设计，不执行产品",
+      "相应clarification完成裁定，故障控制能力和隔离SUT准备好后才可运行"
+    ],
+    "data": {
+      "runId": "same",
+      "turnIdentity": "原协议未规定"
+    },
+    "steps": [
+      "Agent按runId推进一轮但SUT未保存响应时崩溃",
+      "恢复后发送相同历史，Agent可能重新推进或重放旧结果",
+      "对两种原协议均未禁止的行为尝试判定精确续跑"
+    ],
+    "expected": [
+      "不能假设相同runId即幂等轮次",
+      "需明确同历史重放/turn操作标识或持久恢复查询；不得mock固定重放后声称原协议已证明"
+    ],
+    "timing": ["时序以原条款为准，未规定的上限不由QA模拟器补造"],
+    "faults": ["按步骤所列故障；其他条件维持协议有效"],
+    "evidence": ["所有Agent原请求/响应及会话推进账本"],
+    "cleanup": ["只清理本轮隔离资源；保留原始轨迹"],
+    "blocker": "CL-01：参见requirements/clarifications.md；没有已确认的唯一验收裁判"
+  },
+  {
+    "id": "BLK-SPEC-001",
+    "title": "混合在线和限流序列候选选择",
+    "requirements": ["R-B1-01"],
+    "priority": "P1",
+    "mode": "blocked",
+    "preconditions": [
+      "当前仅设计，不执行产品",
+      "相应clarification完成裁定，故障控制能力和隔离SUT准备好后才可运行"
+    ],
+    "data": {
+      "cases": ["admin限流且creator在线", "较小member限流且较大member在线"]
+    },
+    "steps": [
+      "配置给定角色和在线/限流状态并启动相应序列",
+      "观察是否等待优先账号或选择其他在线账号",
+      "在原限流到期后核对发送账号和步骤次数"
+    ],
+    "expected": [
+      "两种选择都有条款依据，先锁定角色优先与限流顺延的优先级",
+      "未裁定前不以现有实现作为唯一预期"
+    ],
+    "timing": ["时序以原条款为准，未规定的上限不由QA模拟器补造"],
+    "faults": ["按步骤所列故障；其他条件维持协议有效"],
+    "evidence": ["候选状态、选择结果、独立send账本"],
+    "cleanup": ["只清理本轮隔离资源；保留原始轨迹"],
+    "blocker": "CL-08：参见requirements/clarifications.md；没有已确认的唯一验收裁判"
+  },
+  {
+    "id": "BLK-SPEC-002",
+    "title": "序列普通发送失败后的运行策略",
+    "requirements": ["R-B1-07", "R-B1-08"],
+    "priority": "P1",
+    "mode": "blocked",
+    "preconditions": [
+      "当前仅设计，不执行产品",
+      "相应clarification完成裁定，故障控制能力和隔离SUT准备好后才可运行"
+    ],
+    "data": {
+      "steps": 3,
+      "failure": "第二步ACCOUNT_OFFLINE或SENDER_NOT_IN_GROUP"
+    },
+    "steps": [
+      "让第二步发送产生规定失败，前后步均可发送",
+      "观察run终态与第三步是否排期",
+      "待业务决定锁定后把场景转成自动化"
+    ],
+    "expected": [
+      "失败消息必须准确记录且不冒充sent",
+      "是否终止整run/继续后续、后续时间基准须明确后才能验收"
+    ],
+    "timing": ["时序以原条款为准，未规定的上限不由QA模拟器补造"],
+    "faults": ["按步骤所列故障；其他条件维持协议有效"],
+    "evidence": ["sequence-run详情与发送事件时间线"],
+    "cleanup": ["只清理本轮隔离资源；保留原始轨迹"],
+    "blocker": "CL-09：参见requirements/clarifications.md；没有已确认的唯一验收裁判"
+  },
+  {
+    "id": "BLK-SPEC-003",
+    "title": "手动online或rate_limited状态的外部含义",
+    "requirements": ["R-A1-01", "R-A1-08"],
+    "priority": "P1",
+    "mode": "blocked",
+    "preconditions": [
+      "当前仅设计，不执行产品",
+      "相应clarification完成裁定，故障控制能力和隔离SUT准备好后才可运行"
+    ],
+    "data": {
+      "targets": ["online", "rate_limited"]
+    },
+    "steps": [
+      "按状态表提交含expectedFrom的手动转换",
+      "观察网关连接动作与限流截止来源",
+      "核对UI和API对这些目标的允许范围"
+    ],
+    "expected": [
+      "需先确认允许手动目标、连接动作和限流时长契约",
+      "不自行增加transition请求字段或接受无期限限流"
+    ],
+    "timing": ["时序以原条款为准，未规定的上限不由QA模拟器补造"],
+    "faults": ["按步骤所列故障；其他条件维持协议有效"],
+    "evidence": ["API契约裁定记录及预定外部调用断言"],
+    "cleanup": ["只清理本轮隔离资源；保留原始轨迹"],
+    "blocker": "CL-05：参见requirements/clarifications.md；没有已确认的唯一验收裁判"
+  },
+  {
+    "id": "BLK-SPEC-004",
+    "title": "未知工具和非法参数是否重置协议错误计数",
+    "requirements": ["R-A5-04", "R-A5-05"],
+    "priority": "P1",
+    "mode": "blocked",
+    "preconditions": [
+      "当前仅设计，不执行产品",
+      "相应clarification完成裁定，故障控制能力和隔离SUT准备好后才可运行"
+    ],
+    "data": {
+      "responses": ["BAD_JSON", "UNKNOWN_TOOL", "INVALID_INPUT", "end_turn"]
+    },
+    "steps": ["用上述序列使结构合法与工具合法两个含义分离", "按裁定计算连续协议错误并确定哪轮结束"],
+    "expected": [
+      "原响应/历史结构/错误码无歧义部分继续自动验证",
+      "具体结束轮次需先明确“合法响应”的含义，不能只接受任意终态掩盖错误"
+    ],
+    "timing": ["时序以原条款为准，未规定的上限不由QA模拟器补造"],
+    "faults": ["按步骤所列故障；其他条件维持协议有效"],
+    "evidence": ["裁定记录及每轮计数预期表"],
+    "cleanup": ["只清理本轮隔离资源；保留原始轨迹"],
+    "blocker": "CL-06：参见requirements/clarifications.md；没有已确认的唯一验收裁判"
+  },
+  {
+    "id": "BLK-SPEC-005",
+    "title": "审计预算和取消同时发生的终态优先级",
+    "requirements": ["R-A5-06", "R-A5-07", "R-A5-13"],
+    "priority": "P1",
+    "mode": "blocked",
+    "preconditions": [
+      "当前仅设计，不执行产品",
+      "相应clarification完成裁定，故障控制能力和隔离SUT准备好后才可运行"
+    ],
+    "data": {
+      "coincident": ["第三次审计未知", "累计60秒", "agentEnabled关闭"]
+    },
+    "steps": [
+      "在可控屏障制造三种结束条件同刻出现",
+      "分别平移一个条件确保单独场景正确，再回到真正重叠场景"
+    ],
+    "expected": [
+      "单独结束规则必须成立",
+      "重叠场景endReason优先级需要产品裁定，不能容忍多次互相覆盖终态"
+    ],
+    "timing": ["时序以原条款为准，未规定的上限不由QA模拟器补造"],
+    "faults": ["按步骤所列故障；其他条件维持协议有效"],
+    "evidence": ["单调时钟边界及终态变更轨迹"],
+    "cleanup": ["只清理本轮隔离资源；保留原始轨迹"],
+    "blocker": "CL-07：参见requirements/clarifications.md；没有已确认的唯一验收裁判"
+  },
+  {
+    "id": "BLK-SPEC-006",
+    "title": "资料与工具输入未定边界",
+    "requirements": ["ADD-META-04", "R-A5-12", "R-A5-15"],
+    "priority": "P1",
+    "mode": "blocked",
+    "preconditions": [
+      "当前仅设计，不执行产品",
+      "相应clarification完成裁定，故障控制能力和隔离SUT准备好后才可运行"
+    ],
+    "data": {
+      "inputs": [
+        "name空白/清空/81个emoji",
+        "description=null或空串",
+        "limit=0/-1/1.5",
+        "多字节8KB边界"
+      ]
+    },
+    "steps": [
+      "分别列出用户明确业务规则与仅技术建议的阈值",
+      "固定最终公开schema、字符/字节计量及合法清空表达后转自动化边界表"
+    ],
+    "expected": [
+      "不能把技术建议偷换成永久业务约束",
+      "必须保留已明确简介可清空、工具上限50和content字节上限"
+    ],
+    "timing": ["时序以原条款为准，未规定的上限不由QA模拟器补造"],
+    "faults": ["按步骤所列故障；其他条件维持协议有效"],
+    "evidence": ["输入契约签定版本及边界预期矩阵"],
+    "cleanup": ["只清理本轮隔离资源；保留原始轨迹"],
+    "blocker": "CL-10/CL-11：参见requirements/clarifications.md；没有已确认的唯一验收裁判"
+  },
+  {
+    "id": "MAN-DELIVERY-001",
+    "title": "接收方核对仓库Git历史及版本对应",
+    "requirements": ["R-DELIVERY-01"],
+    "priority": "P1",
+    "mode": "manual",
+    "preconditions": ["取得产品验收执行授权", "只有指定隔离环境允许启动服务；不操作用户演示或生产"],
+    "data": {
+      "candidate": "本轮冻结交付版本"
+    },
+    "steps": [
+      "由非实现者接收交付物，确认可以访问Git历史及候选提交",
+      "核对交付源码/README所标版本与验收候选一致",
+      "记录缺失历史、无法定位提交或额外未说明文件"
+    ],
+    "expected": [
+      "可以独立识别候选版本及其Git历史",
+      "交付不是仅有package声明或未版本化截图，验收报告对应实际交付"
+    ],
+    "timing": [],
+    "faults": [],
+    "evidence": ["候选版本和接收方实际操作记录", "文档缺项/补充步骤/最终结果；敏感配置脱敏"],
+    "cleanup": ["停止并清理仅本轮创建的隔离资源，保存交付复现证据"]
+  },
+  {
+    "id": "MAN-DELIVERY-002",
+    "title": "接收方只依README在全新隔离环境复现启动",
+    "requirements": ["R-DELIVERY-02"],
+    "priority": "P1",
+    "mode": "manual",
+    "preconditions": ["取得产品验收执行授权", "只有指定隔离环境允许启动服务；不操作用户演示或生产"],
+    "data": {
+      "candidate": "本轮冻结交付版本"
+    },
+    "steps": [
+      "先把README命令与隔离环境端口/数据库/模拟服务契约对应，存在默认演示地址则停止该步骤并记录阻塞",
+      "由接收方按文档完成必要依赖、配置、迁移、启动；记录所有必须额外询问作者的步骤",
+      "确认实际候选健康、两角色可登录并浏览账号/群入口"
+    ],
+    "expected": [
+      "文档足以启动所交付工程及其约定外部服务",
+      "不能把README存在/关键词检查/作者已搭好环境等同可复现启动",
+      "缺项和实际失败如实入报告，不边修说明边把原版本标通过"
+    ],
+    "timing": [],
+    "faults": [],
+    "evidence": ["候选版本和接收方实际操作记录", "文档缺项/补充步骤/最终结果；敏感配置脱敏"],
+    "cleanup": ["停止并清理仅本轮创建的隔离资源，保存交付复现证据"]
+  },
+  {
+    "id": "BLK-MIG-001",
+    "title": "已有历史schema低于候选的拒启",
+    "requirements": ["R-A0-02"],
+    "priority": "P1",
+    "mode": "blocked",
+    "preconditions": ["取得产品验收执行授权", "只有指定隔离环境允许启动服务；不操作用户演示或生产"],
+    "data": {
+      "candidate": "本轮冻结交付版本"
+    },
+    "steps": [
+      "提供由发布负责人导出的不透明旧版pg_dump及版本标识、预期公开API数据夹具；QA不解析产品私有表设计",
+      "仅恢复到本轮OwnedDatabaseCluster新库，尝试直接启动新候选而不迁移",
+      "观察拒绝可用启动，并核对已有数据未被启动时隐式破坏"
+    ],
+    "expected": [
+      "已有旧版schema拒绝服务与空schema测试分别成立",
+      "不能只凭空库拒启即宣称完整覆盖旧版本升级边界"
+    ],
+    "timing": [],
+    "faults": [],
+    "evidence": ["候选版本和接收方实际操作记录", "文档缺项/补充步骤/最终结果；敏感配置脱敏"],
+    "cleanup": ["停止并清理仅本轮创建的隔离资源，保存交付复现证据"],
+    "blocker": "尚缺经确认的旧版本不透明数据库快照与预期公开API夹具；root BASE用例仅覆盖空schema，不能读取产品迁移实现来构造符合实现的期望"
+  }
+]

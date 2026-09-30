@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "name": "多账号群组消息平台独立QA验收基线",
+  "createdDate": "2026-10-01",
+  "timeZone": "Asia/Shanghai",
+  "baseRef": "main",
+  "baseCommit": "9087630de475a91fc6244c39cd08c6bc4dadb278",
+  "qaBranch": "agent/independent-qa-acceptance",
+  "originalRequirement": {
+    "path": "docs/original-interview-question.md",
+    "sha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+    "immutable": true
+  },
+  "sourceSnapshots": [
+    {
+      "path": "docs/original-interview-question.md",
+      "sha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+      "usage": "只采用需求、已批准范围和公开契约；不采用实现入口、旧测试、修复结论、运行证据或旧通过状态"
+    },
+    {
+      "path": "docs/engineering-requirements.md",
+      "sha256": "3a8ed32ba6d6086cd253d420dc058c21530afcdb3b7375c4c3272e610114e56d",
+      "usage": "只采用需求、已批准范围和公开契约；不采用实现入口、旧测试、修复结论、运行证据或旧通过状态"
+    },
+    {
+      "path": "docs/change-requests.md",
+      "sha256": "5c3bec0fbb00d0ea5145974227e7956185d44b921f4c1cc4fc874cedc13334f4",
+      "usage": "只采用需求、已批准范围和公开契约；不采用实现入口、旧测试、修复结论、运行证据或旧通过状态"
+    },
+    {
+      "path": "docs/group-directory-profile-proposal.md",
+      "sha256": "c38470a4d68e6a84ab9dc94c09a4952f55dad875146eb30540577b884e2164f1",
+      "usage": "只采用需求、已批准范围和公开契约；不采用实现入口、旧测试、修复结论、运行证据或旧通过状态"
+    },
+    {
+      "path": "docs/group-profile-conflict-review.md",
+      "sha256": "81c47b552a5f76292816de3409443e2334018a5846534aba1b655cb702ab7ba7",
+      "usage": "只采用需求、已批准范围和公开契约；不采用实现入口、旧测试、修复结论、运行证据或旧通过状态"
+    },
+    {
+      "path": "docs/page-update-notification-implementation.md",
+      "sha256": "5afe8d29b3c2a292046e79fcf8c3af844aa09a61d4b54aee4b7aa96fc3e98a19",
+      "usage": "只采用需求、已批准范围和公开契约；不采用实现入口、旧测试、修复结论、运行证据或旧通过状态"
+    },
+    {
+      "path": "docs/page-update-notification-proposal.md",
+      "sha256": "2c31b688b67d31b2454a2ee4f3e1445f5bae50a93071eeb17cdc11f712d6f21b",
+      "usage": "仅用户已选择原则及后续已批准范围对应语义；未采纳实现接入点、旧验证清单和未批准建议"
+    }
+  ],
+  "authorityOrder": [
+    "本次用户明确确认",
+    "原始A/B要求与对其明确批准的补充",
+    "已批准CR要求与公开契约",
+    "仅作为待澄清项的技术建议"
+  ],
+  "confirmedDecisions": [
+    {
+      "id": "QA-D1",
+      "source": "用户批准的《独立 QA 验收体系建设计划》（当前会话）",
+      "decision": "本轮最终功能验收覆盖A/B及已批准追加需求；C1/C2只建候选；忽略面试/笔试/限时/选做语境。"
+    },
+    {
+      "id": "QA-D2",
+      "source": "用户批准的《独立 QA 验收体系建设计划》（当前会话）",
+      "decision": "消息分页以首次分页时已有记录为固定遍历集合；新到及变更消息实时按身份合并、重新排序。该语义不套用群目录活数据分页。"
+    },
+    {
+      "id": "QA-D3",
+      "source": "用户批准的《独立 QA 验收体系建设计划》（当前会话）",
+      "decision": "leave-all后本地与网关成员一致性比较服务账号投影，外部用户可继续在群。"
+    },
+    {
+      "id": "QA-D4",
+      "source": "用户批准的《独立 QA 验收体系建设计划》（当前会话）",
+      "decision": "创建独立QA资产并只自检QA工具；实际产品测试须在开发及自测完成后获得用户单独授权。"
+    }
+  ],
+  "requiredAdditions": [
+    "CR-001",
+    "CR-002",
+    "CR-004",
+    "CR-005",
+    "CR-006",
+    "CR-007",
+    "CR-008",
+    "CR-009",
+    "CR-010",
+    "CR-011",
+    "CR-012",
+    "CR-013"
+  ],
+  "additionNotes": {
+    "CR-003": "排序方向最终由CR-007承接，不能把早期实现默认值冒充当时用户确认。",
+    "CR-014": "原始核心质量修复仍映射A/B，不增加独立业务能力或把旧修复证据当验收。",
+    "C3": "本次QA交付包含Playwright端到端旅程，作为A/B及已批准追加需求的验证手段。"
+  },
+  "excludedOrDeferred": [
+    "C1/C2产品执行和生产凭据使用，待明确批准",
+    "i18n/主题切换/响应式不属于基础承诺",
+    "未批准PI-03剩余部分及PI-04～23等新功能",
+    "公开部署/推送/操作用户演示或生产数据"
+  ],
+  "independence": {
+    "ignored": "业务实现、既有测试、旧缺陷修复及验收报告不作为期望值来源",
+    "systemUnderTest": "后续明确交付的候选构建，经HTTP/SSE/WS与浏览器观察；隔离故障控制和副作用账本用于独立裁判",
+    "forbiddenShortcut": "不得从源码结果生成期望值；不得改QA mock以迁就实现；不得省略强保证换取通过"
+  },
+  "executionPolicy": {
+    "productTestingAuthorized": false,
+    "initialResult": "NOT_RUN",
+    "testPreparation": "只生成用例、自动化及报告模板并自检自身；不得启动SUT或连接其数据库",
+    "reportAuthority": "根报告统一生成所有用例状态；用例文件不预填通过"
+  },
+  "typicalScenarioMapping": {
+    "S1": ["R-A2-02"],
+    "S2": ["R-A2-05", "R-A5-01"],
+    "S3": ["R-A2-06"],
+    "S4": ["R-A1-06", "R-A2-09"],
+    "S5": ["R-A2-03", "R-A5-10"],
+    "S6": ["R-A5-03", "R-A5-04", "R-A5-05"],
+    "S7": ["R-B1-06"],
+    "S8": ["R-B1-04"]
+  },
+  "openClarifications": "qa-acceptance/requirements/clarifications.md",
+  "releaseGates": "qa-acceptance/requirements/release-gates.md"
+}
