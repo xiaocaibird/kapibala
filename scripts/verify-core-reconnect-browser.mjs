@@ -5,7 +5,7 @@ import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { performance } from "node:perf_hooks";
-import { preview } from "vite";
+import { createLogger, preview } from "vite";
 import { temporaryDatabase } from "../tests/support/temporary-database.js";
 import { migrate } from "../apps/server/src/core/migrations.js";
 import { createApp } from "../apps/server/src/app.js";
@@ -52,6 +52,7 @@ const report = {
   requests: [],
   sockets: [],
   pageErrors: [],
+  proxyLogs: [],
   cleanupErrors: [],
 };
 let cleanup, fixture, app, vite, browser, page, ingestion;
@@ -232,8 +233,15 @@ try {
   });
   assert.equal(login.statusCode, 200);
   const accessToken = login.json().accessToken;
+  const proxyLogger = createLogger();
+  const logProxyError = proxyLogger.error.bind(proxyLogger);
+  proxyLogger.error = (message, options) => {
+    report.proxyLogs.push({ at: now(), message });
+    logProxyError(message, options);
+  };
   vite = await preview({
     configFile: false,
+    customLogger: proxyLogger,
     root: new URL("../apps/web", import.meta.url).pathname,
     preview: {
       host: "127.0.0.1",
@@ -358,8 +366,12 @@ try {
     .waitFor({ timeout: 5000 });
   await pause(650);
   const newest = await publish("offline-new-1", "断线新消息 1", 161);
-  await publish("offline-new-2", "断线新消息 2", 162);
-  await publish("offline-new-3", "断线新消息 3", 163);
+  await publish("offline-new-2", "断线新消息 2", 162, {
+    senderPlatformUserId: "external-core-second-user",
+  });
+  await publish("offline-new-3", "断线新消息 3", 163, {
+    senderPlatformUserId: "core-account-1",
+  });
   await publish("late-history-oldest", "晚到历史：早于所有可见消息", -30);
   await publish("late-history-middle", "晚到历史：插入中间同时间排序", 75);
   await ingestion.process(newest); // Same gateway event id replay.
@@ -392,12 +404,14 @@ try {
       (a, b) => a.sentAt.localeCompare(b.sentAt) || a.id.localeCompare(b.id),
     );
   assert.equal(expected.length, 165);
+  assert.equal(expected.filter((row) => row.own).length, 1);
   report.fixture = {
     initialMessages: 160,
     offlineNewMessages: 3,
     historicalBackfills: 2,
     gatewayDuplicateDeliveries: 2,
     oldWsReplayCopies: 6,
+    distinctSenderIdentities: [...new Set(expected.map((row) => row.sender))],
     expectedRows: expected.length,
     expected,
   };
@@ -425,11 +439,54 @@ try {
       );
       const stateMatches =
         switchElement?.getAttribute("aria-checked") === "true";
+      const scroller = document
+        .querySelector(".timeline-scroll")
+        .getBoundingClientRect();
+      const inViewport = (element, clip) => {
+        if (!element) return false;
+        const rect = element.getBoundingClientRect();
+        return (
+          rect.height > 0 &&
+          rect.width > 0 &&
+          rect.top >= Math.max(0, clip.top) &&
+          rect.bottom <= Math.min(innerHeight, clip.bottom) &&
+          rect.left >= 0 &&
+          rect.right <= innerWidth
+        );
+      };
+      const newMessagesVisible =
+        rows.filter((row) =>
+          row
+            .querySelector(".message-id")
+            ?.getAttribute("title")
+            ?.startsWith("offline-new-"),
+        ).length === 3 &&
+        rows
+          .filter((row) =>
+            row
+              .querySelector(".message-id")
+              ?.getAttribute("title")
+              ?.startsWith("offline-new-"),
+          )
+          .every((row) => inViewport(row, scroller));
+      const stateVisible = inViewport(switchElement, {
+        top: 0,
+        bottom: innerHeight,
+      });
       const syncFinished = document
         .querySelector(".timeline .panel-header")
         ?.textContent.includes(`${expected.length} 条已加载`);
       const live = document.body.textContent.includes("实时同步中");
-      return { matches, allLaidOut, stateMatches, syncFinished, live, actual };
+      return {
+        matches,
+        allLaidOut,
+        newMessagesVisible,
+        stateVisible,
+        stateMatches,
+        syncFinished,
+        live,
+        actual,
+      };
     };
     qa.inspect = inspect;
     let pending = false;
@@ -439,6 +496,8 @@ try {
       if (
         !result.matches ||
         !result.allLaidOut ||
+        !result.newMessagesVisible ||
+        !result.stateVisible ||
         !result.stateMatches ||
         !result.syncFinished ||
         !result.live
@@ -453,6 +512,8 @@ try {
           if (
             confirmed.matches &&
             confirmed.allLaidOut &&
+            confirmed.newMessagesVisible &&
+            confirmed.stateVisible &&
             confirmed.stateMatches &&
             confirmed.syncFinished &&
             confirmed.live
