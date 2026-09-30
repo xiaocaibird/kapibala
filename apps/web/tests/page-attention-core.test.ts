@@ -5,6 +5,7 @@ import {
   type SnapshotEvidence,
 } from "../src/attention/model";
 import { canFullyFitViewport } from "../src/attention/browser";
+import { isDefinitiveBusinessEvent } from "../src/attention/events";
 
 const snapshot = (seq: number): SnapshotEvidence => ({
   seq,
@@ -63,6 +64,70 @@ test("same displayed status after a fresh snapshot does not create visible-chang
   assert.equal(state.pending.size, 0);
   // Consumed events must not reappear on the next same-value polling render.
   assert.equal(state.receive("run-a", 21, 10, true, "running"), false);
+});
+
+test("real account transitions remain pending when online goes away and returns before snapshot", () => {
+  const state = new AttentionCandidates();
+  state.receive("account-a", 21, 10, true, "online", true);
+  state.receive("account-a", 22, 10, true, "online", true);
+  assert.equal(state.reconcile({ "account-a": "online" }, snapshot(22)), false);
+  assert.equal(state.pending.get("account-a")?.seq, 22);
+  assert.equal(state.tabPending, true);
+  assert.equal(state.confirm("account-a", snapshot(22), 22), true);
+});
+
+test("a definitive replay after REST already rendered its version still requires confirmation", () => {
+  const state = new AttentionCandidates();
+  state.receive("run-a", 25, 10, true, "finished", true);
+  assert.equal(state.reconcile({ "run-a": "finished" }, snapshot(25)), false);
+  // A later ambiguous invalidation cannot erase that real transition evidence.
+  state.receive("run-a", 26, 10, false, "finished");
+  assert.equal(state.reconcile({ "run-a": "finished" }, snapshot(26)), false);
+  assert.equal(state.confirm("run-a", snapshot(26), 26), true);
+});
+
+test("current event classifier separates precise business changes from legacy invalidation", () => {
+  const event = (type: string, payload: Record<string, unknown>) => ({
+    seq: 10,
+    type,
+    payload,
+  });
+  assert.equal(
+    isDefinitiveBusinessEvent(event("group_changed", { groupId: "a" })),
+    false,
+  );
+  assert.equal(
+    isDefinitiveBusinessEvent(
+      event("group_changed", { groupId: "a", changedFields: ["members"] }),
+    ),
+    true,
+  );
+  assert.equal(
+    isDefinitiveBusinessEvent(
+      event("account_status_changed", { from: "online", to: "online" }),
+    ),
+    false,
+  );
+  assert.equal(
+    isDefinitiveBusinessEvent(
+      event("account_status_changed", { from: "online", to: "disconnected" }),
+    ),
+    true,
+  );
+  assert.equal(
+    isDefinitiveBusinessEvent(event("message", { changeKind: "delivery" })),
+    false,
+  );
+  assert.equal(
+    isDefinitiveBusinessEvent(
+      event("message", { changeKind: "created", attentionIdentity: "pending" }),
+    ),
+    false,
+  );
+  assert.equal(
+    isDefinitiveBusinessEvent(event("message", { changeKind: "created" })),
+    true,
+  );
 });
 
 test("a precise update during first load survives absence of a comparison baseline", () => {

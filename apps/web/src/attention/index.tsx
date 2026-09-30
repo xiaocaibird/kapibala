@@ -13,6 +13,7 @@ import {
 import type { PlatformEvent } from "../api/schemas";
 import { useLive } from "../state/live";
 import { AttentionCandidates, type SnapshotEvidence } from "./model";
+import { isDefinitiveBusinessEvent } from "./events";
 import {
   canFullyFitViewport,
   isPresented,
@@ -20,6 +21,7 @@ import {
   pageHasAttention,
 } from "./browser";
 export type { SnapshotEvidence } from "./model";
+export { isDefinitiveBusinessEvent } from "./events";
 
 interface ScopedEvent {
   event: PlatformEvent;
@@ -194,6 +196,7 @@ interface CollectionOptions {
   targetId: string;
   label: string;
   eventKey: (event: PlatformEvent) => string | null;
+  definitiveEvent?: (event: PlatformEvent) => boolean;
   versions: Readonly<Record<string, string>>;
   evidence: SnapshotEvidence | null;
   ready: boolean;
@@ -201,6 +204,7 @@ interface CollectionOptions {
   /** Removed/filtered records can be confirmed as a RANGE update after a fresh
    * successful result and its visible summary, never as individual records read. */
   rangeFallback?: boolean;
+  renderRangeSummary?: () => ReactNode;
   /** A finite summary for oversized current content. It needs a SECOND explicit
    * confirmation after rendering; it never claims the whole text was read. */
   renderSummary?: (key: string) => ReactNode;
@@ -222,6 +226,7 @@ export function useAttentionCollection(options: CollectionOptions) {
     new Map<string, (element: HTMLElement | null) => void>(),
   );
   const summary = useRef<HTMLDivElement>(null);
+  const rangeSummary = useRef<HTMLDivElement>(null);
   const current = useRef(options);
   current.current = options;
   const [revision, render] = useState(0);
@@ -230,6 +235,12 @@ export function useAttentionCollection(options: CollectionOptions) {
   const [preview, setPreview] = useState<{ key: string; seq: number } | null>(
     null,
   );
+  const [rangePreview, setRangePreview] = useState<{
+    seq: number;
+    revision: number;
+    path: string;
+    keys: string[];
+  } | null>(null);
   const alive = useRef(true);
   const visibility = useRef("");
   const previousVersions = useRef<Readonly<Record<string, string>>>({});
@@ -255,6 +266,7 @@ export function useAttentionCollection(options: CollectionOptions) {
             item.backgroundSeq >
               Math.max(scope.startSeq, model.current.seenThrough(key)),
             previousVersions.current[key],
+            (options.definitiveEvent ?? isDefinitiveBusinessEvent)(item.event),
           ) || changed;
     }
     if (options.ready) {
@@ -267,6 +279,7 @@ export function useAttentionCollection(options: CollectionOptions) {
     scope.events,
     scope.startSeq,
     options.eventKey,
+    options.definitiveEvent,
     options.ready,
     options.versions,
     options.evidence,
@@ -432,7 +445,11 @@ export function useAttentionCollection(options: CollectionOptions) {
         return;
       }
       let changed = false;
-      if (key && isPresented(elements.current.get(key))) {
+      if (
+        key &&
+        !(options.rangeFallback && key === options.targetId) &&
+        isPresented(elements.current.get(key))
+      ) {
         changed = model.current.confirm(
           key,
           current.current.evidence,
@@ -454,18 +471,28 @@ export function useAttentionCollection(options: CollectionOptions) {
       if (
         options.rangeFallback &&
         intent.refreshed &&
-        isPresented(summary.current)
+        options.renderRangeSummary
       ) {
-        for (const key of model.current.pending.keys()) {
-          // Existing offscreen rows still require their own presentation. Missing
-          // rows can be acknowledged only as the refreshed range summary.
-          if (!elements.current.has(key) || key === options.targetId)
-            changed =
-              model.current.confirm(
-                key,
-                current.current.evidence,
-                intent.seq,
-              ) || changed;
+        const keys = [...model.current.pending.values()]
+          .filter(
+            (value) =>
+              value.seq <= intent.seq &&
+              value.seq <= current.current.evidence!.seq &&
+              (!elements.current.has(value.key) ||
+                value.key === options.targetId),
+          )
+          .map((value) => value.key);
+        if (keys.length) {
+          setRangePreview({
+            seq: intent.seq,
+            revision: current.current.evidence.revision,
+            path: current.current.evidence.path,
+            keys,
+          });
+          summary.current?.scrollIntoView({
+            block: "center",
+            behavior: "instant",
+          });
         }
       }
       if (changed) notify();
@@ -478,6 +505,7 @@ export function useAttentionCollection(options: CollectionOptions) {
     options.evidence,
     options.rangeFallback,
     options.renderSummary,
+    options.renderRangeSummary,
     options.targetId,
     notify,
   ]);
@@ -494,6 +522,8 @@ export function useAttentionCollection(options: CollectionOptions) {
           options.evidence.seq < value.seq ||
           !isPresented(elements.current.get(value.key)),
       ));
+  const previewContent = preview ? options.renderSummary?.(preview.key) : null;
+  const rangeContent = rangePreview ? options.renderRangeSummary?.() : null;
   const notice = needsEntry ? (
     <div
       className="attention-notice"
@@ -519,10 +549,11 @@ export function useAttentionCollection(options: CollectionOptions) {
         {busy ? "正在核对…" : options.refresh ? "刷新并查看更新" : "查看更新"}
       </button>
       {preview &&
-        options.renderSummary &&
+        previewContent != null &&
+        previewContent !== false &&
         model.current.pending.has(preview.key) && (
           <div className="attention-summary">
-            {options.renderSummary(preview.key)}
+            {previewContent}
             <button
               type="button"
               onClick={(event) => {
@@ -545,6 +576,41 @@ export function useAttentionCollection(options: CollectionOptions) {
             </button>
           </div>
         )}
+      {rangePreview &&
+        rangeContent != null &&
+        rangeContent !== false &&
+        rangePreview.keys.some((key) => model.current.pending.has(key)) && (
+          <div className="attention-summary" ref={rangeSummary}>
+            {rangeContent}
+            <button
+              type="button"
+              disabled={!options.ready}
+              onClick={(event) => {
+                const evidence = current.current.evidence;
+                if (
+                  !event.nativeEvent.isTrusted ||
+                  !current.current.ready ||
+                  !evidence ||
+                  evidence.path !== rangePreview.path ||
+                  evidence.revision < rangePreview.revision ||
+                  !isPresented(rangeSummary.current)
+                )
+                  return;
+                let changed = false;
+                for (const key of rangePreview.keys)
+                  changed =
+                    model.current.confirm(key, evidence, rangePreview.seq) ||
+                    changed;
+                if (changed) {
+                  setRangePreview(null);
+                  notify();
+                }
+              }}
+            >
+              确认当前范围更新
+            </button>
+          </div>
+        )}
     </div>
   ) : null;
   // Reading revision keeps model mutations tied to the React render that owns DOM.
@@ -556,11 +622,13 @@ export interface AttentionRegionProps {
   targetId: string;
   label: string;
   matchEvent: (event: PlatformEvent) => boolean;
+  definitiveEvent?: (event: PlatformEvent) => boolean;
   version: string;
   evidence: SnapshotEvidence | null;
   ready: boolean;
   refresh?: () => Promise<void>;
   rangeFallback?: boolean;
+  renderRangeSummary?: () => ReactNode;
   children: ReactNode;
 }
 

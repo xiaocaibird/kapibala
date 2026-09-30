@@ -11,6 +11,7 @@ export interface AttentionCandidate {
   seq: number;
   tab: boolean;
   baseline?: string;
+  definitive: boolean;
 }
 
 /** One current page target. Business adapters decide which events are changes;
@@ -29,6 +30,7 @@ export class AttentionCandidates {
     startSeq: number,
     background: boolean,
     baseline?: string,
+    definitive = false,
   ): boolean {
     if (seq <= startSeq || seq <= (this.consumed.get(key) ?? -1)) return false;
     this.consumed.set(key, seq);
@@ -40,6 +42,7 @@ export class AttentionCandidates {
       seq,
       tab: background || (previous?.tab ?? false),
       baseline: previous ? previous.baseline : baseline,
+      definitive: definitive || (previous?.definitive ?? false),
     });
     return true;
   }
@@ -63,6 +66,7 @@ export class AttentionCandidates {
     if (!evidence) return changed;
     for (const [key, value] of this.pending) {
       if (
+        !value.definitive &&
         value.seq <= evidence.seq &&
         value.baseline !== undefined &&
         versions[key] === value.baseline
