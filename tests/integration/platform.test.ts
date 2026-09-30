@@ -979,6 +979,7 @@ test("platform: audited kick confirms 504 and propagates permission errors witho
   const f = await fixture();
   try {
     const g = await f.group();
+    const initialAccounts = (await f.api("GET", "/api/accounts")).body;
     await f.api("PATCH", `/api/groups/${g.id}`, {
       agentEnabled: true,
       autoKickEnabled: true,
@@ -1040,6 +1041,11 @@ test("platform: audited kick confirms 504 and propagates permission errors witho
       assert.equal(
         (await f.api<Group>("GET", `/api/groups/${g.id}`)).body.status,
         "active",
+      );
+      assert.deepEqual(
+        (await f.api("GET", "/api/accounts")).body,
+        initialAccounts,
+        `kick ${fault} must not change any account state`,
       );
     }
     const remote = await f.control("gateway", "");
