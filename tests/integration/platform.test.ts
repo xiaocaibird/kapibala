@@ -3,11 +3,14 @@ import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
+import { Server } from "node:net";
 import { join } from "node:path";
 import type { FastifyInstance } from "fastify";
-import { createApp } from "../../apps/server/src/app.js";
+import type { PoolClient } from "pg";
 import { Database } from "../../apps/server/src/core/db.js";
-import { migrate } from "../../scripts/migrate.js";
+import { createApp } from "../../apps/server/src/app.js";
+import { migrate } from "../../apps/server/src/core/migrations.js";
+import { temporaryDatabase } from "../support/temporary-database.js";
 import { createGatewayModule } from "../../apps/server/src/modules/gateway/index.js";
 import { createAutomationModule } from "../../apps/server/src/modules/automation/index.js";
 import { createGatewaySimulator } from "../../apps/simulator/src/gateway.js";
@@ -33,26 +36,30 @@ async function until<T>(
   } while (Date.now() < end);
   throw new Error(`Timed out: ${JSON.stringify(value)}`);
 }
-async function fixture() {
-  const base =
-    process.env.DATABASE_URL ??
-    "postgres://kapibala:kapibala@localhost:55432/kapibala";
-  const admin = new Database(base);
-  const name = `test_${randomUUID().replaceAll("-", "")}`;
-  await admin.query(`CREATE DATABASE ${name}`);
-  const url = new URL(base);
-  url.pathname = `/${name}`;
-  const db = new Database(url.toString());
+async function fixture(t: Parameters<typeof temporaryDatabase>[0]) {
+  const temporary = await temporaryDatabase(t);
+  const { db } = temporary;
   await migrate(db);
   const dir = await mkdtemp(join(tmpdir(), "kapibala-"));
+  temporary.onCleanup(() => rm(dir, { recursive: true, force: true }));
   const gateway = createGatewaySimulator(join(dir, "gateway.json"));
+  temporary.onCleanup(() => gateway.close());
   const agent = createAgentSimulator(join(dir, "agent.json"));
+  temporary.onCleanup(() => agent.close());
   const gatewayUrl = await gateway.listen({ host: "127.0.0.1", port: 0 });
   const agentUrl = await agent.listen({ host: "127.0.0.1", port: 0 });
+  const previousGatewayUrl = process.env.GATEWAY_URL;
+  const previousAgentUrl = process.env.AGENT_URL;
+  temporary.onCleanup(async () => {
+    if (previousGatewayUrl === undefined) delete process.env.GATEWAY_URL;
+    else process.env.GATEWAY_URL = previousGatewayUrl;
+    if (previousAgentUrl === undefined) delete process.env.AGENT_URL;
+    else process.env.AGENT_URL = previousAgentUrl;
+  });
   process.env.GATEWAY_URL = gatewayUrl;
   process.env.AGENT_URL = agentUrl;
-  const build = () =>
-    createApp({
+  const build = async () => {
+    const app = await createApp({
       db,
       logger: false,
       modules: (ctx) => {
@@ -60,9 +67,11 @@ async function fixture() {
         return [messaging, createAutomationModule(ctx, messaging)];
       },
     });
+    temporary.onCleanup(() => app.close());
+    return app;
+  };
   const app = await build();
   await app.ready();
-  const apps = [app];
   const login = await app.inject({
     method: "POST",
     url: "/api/auth/login",
@@ -124,7 +133,7 @@ async function fixture() {
     app,
     db,
     accessToken,
-    databaseUrl: url.toString(),
+    databaseUrl: temporary.url,
     gatewayUrl,
     agentUrl,
     api,
@@ -132,20 +141,108 @@ async function fixture() {
     group,
     messages,
     build,
-    apps,
-    async close() {
-      for (const a of apps) await a.close();
-      await gateway.close();
-      await agent.close();
-      await db.close();
-      await admin.query(`DROP DATABASE ${name}`);
-      await admin.close();
-      await rm(dir, { recursive: true, force: true });
-    },
+    close: temporary.close,
   };
 }
-test("platform: message dedup, own echo, delayed delivery and historical pagination", async () => {
-  const f = await fixture();
+for (const [stage, failOnTransaction] of [
+  ["migration", 1],
+  ["simulator startup", null],
+  ["app startup", 2],
+] as const) {
+  test(`platform fixture: ${stage} failure still releases acquired resources`, async (t) => {
+    const observer = await temporaryDatabase(t);
+    const previousGatewayUrl = process.env.GATEWAY_URL;
+    const previousAgentUrl = process.env.AGENT_URL;
+    const cleanups: (() => Promise<void>)[] = [];
+    let failedDb: Database | undefined;
+    let transactions = 0;
+    const failure = new Error(`Injected ${stage} failure`);
+    const transaction = Database.prototype.transaction;
+    const injected = t.mock.method(Database.prototype, "transaction", function <
+      T,
+    >(this: Database, work: (tx: PoolClient) => Promise<T>): Promise<T> {
+      failedDb = this;
+      if (++transactions === failOnTransaction) {
+        return Promise.reject(failure);
+      }
+      return transaction.call(this, work) as Promise<T>;
+    });
+    const servers: Server[] = [];
+    const listen = Server.prototype.listen;
+    const injectedListen = t.mock.method(
+      Server.prototype,
+      "listen",
+      function (this: Server, ...args: Parameters<Server["listen"]>) {
+        servers.push(this);
+        if (stage === "simulator startup" && servers.length === 2)
+          throw failure;
+        return listen.apply(this, args);
+      },
+    );
+    try {
+      await assert.rejects(
+        fixture({
+          after(cleanup) {
+            cleanups.push(cleanup);
+            t.after(cleanup);
+          },
+        }),
+        failure,
+      );
+    } finally {
+      injected.mock.restore();
+      injectedListen.mock.restore();
+    }
+    if (stage === "simulator startup") {
+      assert.equal(servers[0]!.listening, true, "the first simulator started");
+      assert.equal(
+        servers[1]!.listening,
+        false,
+        "the second simulator failed to start",
+      );
+    }
+    assert.equal(
+      cleanups.length,
+      1,
+      "cleanup is registered before initialization",
+    );
+    assert.ok(failedDb);
+    const name = (
+      await failedDb.query<{ name: string }>(
+        "SELECT current_database() AS name",
+      )
+    ).rows[0]!.name;
+    const gatewayUrl = process.env.GATEWAY_URL;
+    const agentUrl = process.env.AGENT_URL;
+    if (stage === "app startup") {
+      assert.notEqual(gatewayUrl, previousGatewayUrl);
+      assert.notEqual(agentUrl, previousAgentUrl);
+      await fetch(gatewayUrl!);
+      await fetch(agentUrl!);
+    }
+    await cleanups[0]!();
+    await cleanups[0]!();
+    assert.ok(servers.every((server) => !server.listening));
+    assert.equal(process.env.GATEWAY_URL, previousGatewayUrl);
+    assert.equal(process.env.AGENT_URL, previousAgentUrl);
+    assert.equal(
+      (
+        await observer.db.query("SELECT 1 FROM pg_database WHERE datname=$1", [
+          name,
+        ])
+      ).rowCount,
+      0,
+    );
+    await assert.rejects(failedDb.query("SELECT 1"), /pool after calling end/);
+    if (stage === "app startup") {
+      await assert.rejects(fetch(gatewayUrl!));
+      await assert.rejects(fetch(agentUrl!));
+    }
+  });
+}
+
+test("platform: message dedup, own echo, delayed delivery and historical pagination", async (t) => {
+  const f = await fixture(t);
   try {
     const g = await f.group();
     assert.deepEqual(g.members.map((m) => m.role).sort(), [
@@ -218,8 +315,8 @@ test("platform: message dedup, own echo, delayed delivery and historical paginat
     await f.close();
   }
 });
-test("platform: explicit 504 confirmation retries at most once and account-wide rate limit queues", async () => {
-  const f = await fixture();
+test("platform: explicit 504 confirmation retries at most once and account-wide rate limit queues", async (t) => {
+  const f = await fixture(t);
   try {
     const g = await f.group();
     await f.control("gateway", "/config", { sendFaults: ["NETWORK_TIMEOUT"] });
@@ -294,8 +391,8 @@ test("platform: explicit 504 confirmation retries at most once and account-wide 
     await f.close();
   }
 });
-test("platform: Agent exactly-once key, bad responses, audit blocking and no self-trigger", async () => {
-  const f = await fixture();
+test("platform: Agent exactly-once key, bad responses, audit blocking and no self-trigger", async (t) => {
+  const f = await fixture(t);
   try {
     const g = await f.group();
     await f.api("PATCH", `/api/groups/${g.id}`, { agentEnabled: true });
@@ -387,8 +484,8 @@ test("platform: Agent exactly-once key, bad responses, audit blocking and no sel
     await f.close();
   }
 });
-test("platform: sequence preflight, variable inheritance and concurrent single running", async () => {
-  const f = await fixture();
+test("platform: sequence preflight, variable inheritance and concurrent single running", async (t) => {
+  const f = await fixture(t);
   try {
     const g = await f.group();
     const seq = await f.api<{ id: string }>("POST", "/api/sequences", {
@@ -451,8 +548,8 @@ test("platform: sequence preflight, variable inheritance and concurrent single r
     await f.close();
   }
 });
-test("platform: account CAS, terminal atomic effects and owner-last failed leave", async () => {
-  const f = await fixture();
+test("platform: account CAS, terminal atomic effects and owner-last failed leave", async (t) => {
+  const f = await fixture(t);
   try {
     const g = await f.group();
     await f.control("gateway", "/config", { leaveFailures: ["account-3"] });
@@ -495,8 +592,8 @@ test("platform: account CAS, terminal atomic effects and owner-last failed leave
   }
 });
 
-test("platform: database write failure retains events, reports inconsistency and replays after outage", async () => {
-  const f = await fixture();
+test("platform: database write failure retains events, reports inconsistency and replays after outage", async (t) => {
+  const f = await fixture(t);
   try {
     const g = await f.group();
     await f.db.query(
@@ -554,12 +651,11 @@ test("platform: database write failure retains events, reports inconsistency and
   }
 });
 
-test("platform: two instances enforce one Agent and share durable event replay", async () => {
-  const f = await fixture();
+test("platform: two instances enforce one Agent and share durable event replay", async (t) => {
+  const f = await fixture(t);
   try {
     const g = await f.group();
     const second = await f.build();
-    f.apps.push(second);
     await second.ready();
     await f.api("PATCH", `/api/groups/${g.id}`, { agentEnabled: true });
     await f.control("agent", "/config", { turnDelayMs: 300 });
@@ -616,8 +712,8 @@ test("platform: two instances enforce one Agent and share durable event replay",
   }
 });
 
-test("platform: frozen pagination survives queued sentAt changes", async () => {
-  const f = await fixture();
+test("platform: frozen pagination survives queued sentAt changes", async (t) => {
+  const f = await fixture(t);
   try {
     const g = await f.group();
     await f.control("gateway", "/config", { sendDelayMs: 1300 });
@@ -666,9 +762,9 @@ test("platform: frozen pagination survives queued sentAt changes", async () => {
   }
 });
 
-test("platform: authenticated WebSocket replays missed events and logout closes the stream", async () => {
+test("platform: authenticated WebSocket replays missed events and logout closes the stream", async (t) => {
   const { WebSocket } = await import("ws");
-  const f = await fixture();
+  const f = await fixture(t);
   try {
     const g = await f.group();
     const address = await f.app.listen({ host: "127.0.0.1", port: 0 });
@@ -730,9 +826,9 @@ test("platform: authenticated WebSocket replays missed events and logout closes 
   }
 });
 
-test("platform: SIGKILL during remote send recovers by evidence without resending", async () => {
+test("platform: SIGKILL during remote send recovers by evidence without resending", async (t) => {
   const { spawn } = await import("node:child_process");
-  const f = await fixture();
+  const f = await fixture(t);
   const children: import("node:child_process").ChildProcess[] = [];
   async function boot(): Promise<{
     child: import("node:child_process").ChildProcess;
@@ -845,8 +941,8 @@ test("platform: SIGKILL during remote send recovers by evidence without resendin
   }
 });
 
-test("platform: S1 distinguishes accepted from sent and unknown survives query outage", async () => {
-  const f = await fixture();
+test("platform: S1 distinguishes accepted from sent and unknown survives query outage", async (t) => {
+  const f = await fixture(t);
   try {
     const g = await f.group();
     await f.control("gateway", "/config", { sendDelayMs: 1200 });
@@ -922,8 +1018,8 @@ test("platform: S1 distinguishes accepted from sent and unknown survives query o
   }
 });
 
-test("platform: schema lag refuses startup and viewer is denied all business write routes", async () => {
-  const f = await fixture();
+test("platform: schema lag refuses startup and viewer is denied all business write routes", async (t) => {
+  const f = await fixture(t);
   try {
     const login = await f.app.inject({
       method: "POST",
@@ -975,8 +1071,8 @@ test("platform: schema lag refuses startup and viewer is denied all business wri
   }
 });
 
-test("platform: audited kick confirms 504 and propagates permission errors without account mutation", async () => {
-  const f = await fixture();
+test("platform: audited kick confirms 504 and propagates permission errors without account mutation", async (t) => {
+  const f = await fixture(t);
   try {
     const g = await f.group();
     const initialAccounts = (await f.api("GET", "/api/accounts")).body;
@@ -1067,8 +1163,8 @@ test("platform: audited kick confirms 504 and propagates permission errors witho
   }
 });
 
-test("platform: Agent SEND_TIMEOUT repeats the same key without re-auditing or duplicating delivery", async () => {
-  const f = await fixture();
+test("platform: Agent SEND_TIMEOUT repeats the same key without re-auditing or duplicating delivery", async (t) => {
+  const f = await fixture(t);
   try {
     const g = await f.group();
     await f.api("PATCH", `/api/groups/${g.id}`, { agentEnabled: true });
@@ -1143,8 +1239,8 @@ test("platform: Agent SEND_TIMEOUT repeats the same key without re-auditing or d
   }
 });
 
-test("platform: Agent kick deadline cancels real HTTP confirmation without replaying an uncertain effect", async () => {
-  const f = await fixture();
+test("platform: Agent kick deadline cancels real HTTP confirmation without replaying an uncertain effect", async (t) => {
+  const f = await fixture(t);
   try {
     const g = await f.group();
     await f.control("gateway", "/member", {
@@ -1198,7 +1294,6 @@ test("platform: Agent kick deadline cancels real HTTP confirmation without repla
     // A disconnected HTTP caller cannot undo the already dispatched side effect.
     await new Promise((resolve) => setTimeout(resolve, 1200));
     const second = await f.build();
-    f.apps.push(second);
     await second.ready();
     await new Promise((resolve) => setTimeout(resolve, 250));
     const remote = await f.control("gateway", "");

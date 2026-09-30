@@ -1,12 +1,11 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { createServer } from "node:http";
-import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
 import { test, type TestContext } from "node:test";
 import Fastify from "fastify";
-import pg from "pg";
-import { Database } from "../../apps/server/src/core/db.js";
+import type pg from "pg";
+import { migrate } from "../../apps/server/src/core/migrations.js";
+import { temporaryDatabase } from "../support/temporary-database.js";
 import { AppError, RemoteError } from "../../apps/server/src/core/errors.js";
 import { RemoteClient } from "../../apps/server/src/core/remote.js";
 import type { AppContext } from "../../apps/server/src/core/context.js";
@@ -140,29 +139,11 @@ class FakeGateway extends RemoteClient {
 }
 
 async function fixture(t: TestContext) {
-  const connectionString =
-    process.env.DATABASE_URL ??
-    "postgres://kapibala:kapibala@localhost:55432/kapibala";
-  const admin = new pg.Pool({ connectionString });
-  const schema = `gateway_test_${randomUUID().replaceAll("-", "")}`;
-  await admin.query(`CREATE SCHEMA ${schema}`);
-  const url = new URL(connectionString);
-  url.searchParams.set("options", `-c search_path=${schema}`);
-  const db = new Database(url.toString());
-  const migrationRoot = process.env.TEST_MIGRATIONS_ROOT ?? process.cwd();
-  for (const file of [
-    "001_core.sql",
-    "002_automation.sql",
-    "003_agent_activity.sql",
-    "004_message_event_order.sql",
-    "005_group_metadata.sql",
-    "006_group_directory.sql",
-    "007_message_sent_observation.sql",
-  ])
-    await db.query(
-      await readFile(resolve(migrationRoot, "db/migrations", file), "utf8"),
-    );
+  const temporary = await temporaryDatabase(t);
+  const { db } = temporary;
+  await migrate(db);
   const app = Fastify();
+  temporary.onCleanup(() => app.close());
   app.setErrorHandler((error, _request, reply) => {
     if (error instanceof AppError)
       reply.code(error.status).send({
@@ -189,12 +170,6 @@ async function fixture(t: TestContext) {
       groupId,
       platformUserId,
     });
-  t.after(async () => {
-    await app.close();
-    await db.close();
-    await admin.query(`DROP SCHEMA ${schema} CASCADE`);
-    await admin.end();
-  });
   async function seedGroup() {
     for (const id of ["account-1", "account-2", "account-3"])
       await accounts.connect(id);

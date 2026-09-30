@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-import { readFile } from "node:fs/promises";
 import { after, before, test } from "node:test";
 import Fastify, { type FastifyInstance } from "fastify";
 import { Database, type Queryable } from "../../apps/server/src/core/db.js";
+import { migrate } from "../../apps/server/src/core/migrations.js";
+import { temporaryDatabase } from "../support/temporary-database.js";
 import { AppError, RemoteError } from "../../apps/server/src/core/errors.js";
 import { RemoteClient } from "../../apps/server/src/core/remote.js";
 import type {
@@ -36,7 +37,6 @@ interface TurnBody {
 }
 type AgentReply = (body: TurnBody) => unknown;
 let db: Database;
-let admin: Database;
 let api: FastifyInstance;
 let remote: FastifyInstance;
 let module: ReturnType<typeof createAutomationModule>;
@@ -49,7 +49,8 @@ let kickCalls = 0;
 let sendState: Message["deliveryStatus"] = "accepted";
 let kickFailure: string | null = null;
 let kickWaitForAbort = false;
-const schema = `automation_${randomUUID().replaceAll("-", "")}`;
+const schema = "public";
+let applicationName: string;
 const groupId = "g-automation";
 const delay = async (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -120,7 +121,7 @@ async function waitForInitializingClockOwner(
        AND l.locktype='advisory' AND l.database=(SELECT oid FROM pg_database WHERE datname=current_database())
        AND l.classid::bigint=((hashtextextended(current_schema()||':automation:activity-clock',0)>>32)&4294967295)
        AND l.objid::bigint=(hashtextextended(current_schema()||':automation:activity-clock',0)&4294967295) AND l.granted`,
-        [schema, blockerPid],
+        [applicationName, blockerPid],
       )
     ).rows[0];
     if (owner) return owner.pid;
@@ -142,7 +143,7 @@ async function waitForClockInitializationFollower(
        AND l.locktype='advisory' AND l.database=(SELECT oid FROM pg_database WHERE datname=current_database())
        AND l.classid::bigint=((hashtextextended(current_schema()||':automation:activity-clock:init',0)>>32)&4294967295)
        AND l.objid::bigint=(hashtextextended(current_schema()||':automation:activity-clock:init',0)&4294967295) AND NOT l.granted`,
-        [schema, ownerPid],
+        [applicationName, ownerPid],
       )
     ).rows[0];
     if (follower) return follower.pid;
@@ -249,46 +250,22 @@ const messaging: MessagingService = {
     return { kicked: true };
   },
 };
+let closeFixture: (() => Promise<void>) | undefined;
+// Keep this hook at suite scope: after() inside before() can bind to the first test.
+after(async () => {
+  await closeFixture?.();
+});
 before(async () => {
-  const base =
-    process.env.DATABASE_URL ??
-    "postgres://kapibala:kapibala@localhost:55432/kapibala";
-  admin = new Database(base);
-  await admin.query(`CREATE SCHEMA ${schema}`);
-  const url = new URL(base);
-  url.searchParams.set("options", `-csearch_path=${schema}`);
-  url.searchParams.set("application_name", schema);
-  db = new Database(url.toString());
-  await db.query(
-    await readFile(
-      new URL("../../db/migrations/001_core.sql", import.meta.url),
-      "utf8",
-    ),
-  );
-  await db.query(
-    await readFile(
-      new URL("../../db/migrations/002_automation.sql", import.meta.url),
-      "utf8",
-    ),
-  );
-  await db.query(
-    await readFile(
-      new URL("../../db/migrations/003_agent_activity.sql", import.meta.url),
-      "utf8",
-    ),
-  );
-  for (const file of [
-    "004_message_event_order.sql",
-    "005_group_metadata.sql",
-    "006_group_directory.sql",
-    "007_message_sent_observation.sql",
-  ])
-    await db.query(
-      await readFile(
-        new URL(`../../db/migrations/${file}`, import.meta.url),
-        "utf8",
-      ),
-    );
+  const temporary = await temporaryDatabase({
+    after(cleanup) {
+      closeFixture = cleanup;
+    },
+  });
+  db = temporary.db;
+  applicationName = new URL(temporary.url).searchParams.get(
+    "application_name",
+  )!;
+  await migrate(db);
   await db.query("UPDATE accounts SET status='online',platform_user_id=id");
   await db.query(
     `INSERT INTO groups(id,gateway_group_id,creator_account_id,agent_enabled) VALUES($1,'remote-group','account-1',true)`,
@@ -299,6 +276,7 @@ before(async () => {
     [groupId],
   );
   remote = Fastify({ forceCloseConnections: true });
+  temporary.onCleanup(() => remote.close());
   remote.post("/agent/turn", async (request) =>
     agentReply(request.body as TurnBody),
   );
@@ -308,6 +286,7 @@ before(async () => {
   });
   await remote.listen({ host: "127.0.0.1", port: 0 });
   api = Fastify();
+  temporary.onCleanup(() => api.close());
   api.setErrorHandler((error, _request, reply) => {
     if (error instanceof AppError)
       return reply.code(error.status).send({
@@ -324,17 +303,14 @@ before(async () => {
     log: api.log,
   };
   module = createAutomationModule(context, messaging);
+  temporary.onCleanup(async () => {
+    await module.close?.();
+  });
   second = createAutomationModule(context, messaging);
+  temporary.onCleanup(async () => {
+    await second.close?.();
+  });
   await module.register(api);
-});
-after(async () => {
-  await module?.close?.();
-  await second?.close?.();
-  await api?.close();
-  await remote?.close();
-  await db?.close();
-  await admin?.query(`DROP SCHEMA ${schema} CASCADE`);
-  await admin?.close();
 });
 
 test("tool definitions have all required arguments; invalid protocols are rejected", () => {
@@ -1383,7 +1359,7 @@ test("a stale scheduler transaction cannot enqueue after its ownership connectio
       const active = (
         await db.query<{ count: number }>(
           `SELECT count(*)::integer AS count FROM pg_stat_activity WHERE application_name=$1 AND wait_event_type='Lock' AND state='active'`,
-          [schema],
+          [applicationName],
         )
       ).rows[0]!.count;
       if (active >= count) return;
