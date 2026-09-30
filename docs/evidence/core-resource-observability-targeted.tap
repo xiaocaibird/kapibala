@@ -1,0 +1,80 @@
+✔ slow socket: an in-flight oversized frame cannot authorize further buffers, and stalled close is terminated (451.353834ms)
+✔ slow socket: callback starvation closes even below the buffer watermark; ordinary close cancels the fallback (160.8745ms)
+✔ slow socket: a drained frame larger than the watermark still reaches an able consumer (0.352583ms)
+✔ slow socket: control replies wait for a permitted oversized frame instead of disconnecting it (0.196458ms)
+✔ slow socket: pending frame admission is bounded and all waiters finish when closed (11.893709ms)
+✔ realtime: a stopped TCP reader is disconnected without blocking a healthy peer; client cursor replays all remaining durable events (1875.975125ms)
+ℹ Independent database: kapibala_test_be4dcf9baabd44a9a73720da1126d275
+ℹ Paused TCP reader removed; 80 durable events reached healthy peer and reconnect in exact order
+✔ realtime: marker bursts batch one database request at a time without dropping admitted scope replies or skipping durable replay (187.053334ms)
+ℹ Independent database: kapibala_test_72b1f57e79a444a8818299be84f697ce
+✔ realtime: overflowing pending marker capacity closes without launching unbounded database work (257.410417ms)
+ℹ Independent database: kapibala_test_d37bacd2a2fe4044a1e0c0268ee71448
+✔ timeline: continuation transfers only its slice and preserves old frozen cursors across writes, page sizes and large offsets (290.154417ms)
+ℹ Independent database: kapibala_test_f858dad65eda4a2484322ab33a25fe90
+ℹ Frozen snapshot 1252279 bytes; continuation database transfer maximum 91661 bytes for at most 9 items
+✔ diagnostics: only admin sees disabled process-local scheduler data; public health stays unchanged (73.133375ms)
+ℹ Independent database: kapibala_test_557dec1d1c1a448aa784a77b29c7bbd6
+✔ diagnostics: failures, hung ticks and later recovery are distinguishable without leaking error bodies or claiming business completion (410.042292ms)
+ℹ Independent database: kapibala_test_dee688a983434ac1badb63e9cf4189af
+✔ 真实PG：并发账号CAS只有一个成功，非法边优先于状态冲突 (157.253166ms)
+✔ 账号完整36种状态组合严格遵循允许转移表，终态无出边 (195.269875ms)
+✔ 限流到期前已手动离线，不得被过期调度恢复为online (74.398292ms)
+✔ ACCOUNT_OFFLINE及SENDER_NOT_IN_GROUP只失败当前消息，账号和群不变 (129.523625ms)
+✔ 同步SESSION_EXPIRED与异步account_status都执行相同终态后果 (289.774625ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ 异步message_failed按错误传播账号终态或群不可写，不能混淆范围 (306.494375ms)
+✔ 真实PG：终态后果原子提交；步骤写失败整笔回滚 (93.183958ms)
+✔ 限流期间所有来源共用账号队列且恢复保持顺序 (145.143625ms)
+✔ 503退避不能让同账号后续消息越过队首 (114.219375ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ 504已落地查询收敛为sent，不重发；自身回流去重且不触发Agent (130.7355ms)
+✔ 504安全窗口后新查询明确未落地则failed，不采用可选重发 (138.761709ms)
+✔ 真实时钟：504后明确未落地，在5秒内确定失败并且不重发 (2218.773166ms)
+✔ 真实HTTP：窗口内取得的404延迟返回后不得触发重发，后续查询确认原消息 (2388.839917ms)
+✔ 崩溃发送意图恢复为unknown，没有已知504不得重发 (85.67375ms)
+✔ 发送持锁连接丢失后新worker就地接管，旧worker不能写accepted或重发 (211.646167ms)
+✔ 第二实例启动不能把活跃worker的发送标记为恢复未知 (99.890125ms)
+✔ 504查询不可用期间保持unknown，恢复后确认不会重复发出 (97.060333ms)
+✔ 已sent补投和重复确认不会重写首次确认时间 (83.908166ms)
+✔ kick同步终态错误也执行成员清理与取消，群错误只改变群 (87.227125ms)
+✔ kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未知时不删除成员 (2591.308791ms)
+✔ kick已确认删除等待群投影事务，旧成员快照不能覆盖删除结果 (204.256417ms)
+✔ 真实PG双实例发送互斥，单个outbox只调用一次远端 (87.068958ms)
+✔ 群不可写原子停止序列并取消Agent，不改变账号 (76.826917ms)
+✔ 真实PG事件写失败后重放，乱序eventId与任意历史补投均保留 (82.243334ms)
+✔ 建群包括creator/admin，过期链接重申，promote仅一次 (120.878166ms)
+✔ 邀请ready时间前不join，ALREADY_MEMBER无需等待事件，可重试一次promote (647.860208ms)
+✔ 建群远端成功但本地写失败时记录待确认，禁止重复创建 (84.844167ms)
+✔ join事件超过10秒未到，任务失败且不提前promote (92.209833ms)
+✔ 非群主退出失败继续其他成员，群主不退出 (99.459333ms)
+✔ leave-all服务账号全部退出但保留外部用户，left公开视图为空并保存远端证据 (111.706666ms)
+✔ 时间线快照在历史补投和queued.sentAt改写时保持原始分页无重漏 (87.815458ms)
+✔ attention: marker is authenticated, committed, request-only and never skips replay (285.171416ms)
+✔ attention: optional send correlation retains legacy response, rejects reuse and distinguishes delivery (128.355375ms)
+✔ attention: duplicate inbound and ambiguous own echo never invent a second logical creation (128.573041ms)
+✔ attention: an unrelated same-sender message with different text is confirmed immediately (123.307ms)
+✔ attention: authoritative distinct message IDs release only fully resolved same-text candidates (164.789041ms)
+▶ attention: failed and cancelled outbox transitions resolve dependent inbound candidates
+  ✔ failed (244.742958ms)
+  ✔ account-terminal (157.003709ms)
+  ✔ group-unreachable (151.333916ms)
+✔ attention: failed and cancelled outbox transitions resolve dependent inbound candidates (553.585167ms)
+✔ attention: cancelling an attempted send does not prove its pending echo independent (108.021875ms)
+✔ attention: group and rate-limit no-ops are silent; terminal membership consequences are scoped (129.762333ms)
+✔ attention: sequence definitions and displayed step mutations emit once while idle scans remain silent (238.423125ms)
+✔ attention: job failure commits displayed outcome with its event (82.03525ms)
+✔ attention: Agent persisted ordinary steps, audit result and final result carry stable ordinals (159.991042ms)
+✔ attention: directory member count evidence excludes role-only changes and repeated removals (210.740875ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ attention: Agent recovery note does not claim a directory active ID change (210.406333ms)
+✔ attention: group-terminal sequence cancellation carries the actual active-ID removal (127.064666ms)
+ℹ tests 59
+ℹ suites 0
+ℹ pass 59
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 11479.639583
