@@ -4,9 +4,10 @@ Node.js / TypeScript / PostgreSQL 后端，React 18 控制台，独立消息网�
 
 ## 本地启动
 
-要求 Node 24.21.0、npm 12.1.0、Docker Desktop。项目使用唯一的 npm lock 文件。
+要求 Node 24.21.0、npm 12.1.0、Docker Desktop。项目使用唯一的 npm lock 文件。本机当前演示已从原始目录的main启动；直接访问下方控制台即可体验。只有服务未运行时才执行启动命令，避免从其他工作树重复占用端口。
 
 ```sh
+cd /Users/zcm/Desktop/kapibala
 nvm use
 npm ci
 docker compose up -d --wait
@@ -27,13 +28,13 @@ npm run build
 npm test
 ```
 
-测试创建独立数据库或 schema，并启动随机端口的模拟服务，不复用演示群数据。正常执行后清理测试环境。12 秒、15 秒、60 秒的真实等待专项单独运行：
+当前测试创建独立数据库或schema，并启动随机端口的模拟服务，不复用演示群数据，正常结束后清理测试资源。认证、连接及容量三个测试文件另覆盖初始化失败清理。旧认证测试曾连接默认演示库，已由`9befc8a`修正，历史影响和验证记录见[决策D016](docs/decisions.md)。12 秒、15 秒、60 秒的真实等待专项单独运行：
 
 ```sh
 AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern='timing:' tests/integration/automation.test.ts
 ```
 
-通过编译不代表全部业务通过；尚未人工验收的项目不标为已验收。
+当前演示于2026-09-30 19:57:51从main的`9befc8a`统一启动，产品源码与已验证的`f52faec`完全一致；具体进程、备份、数据保留及浏览器结果见[运行证据](docs/evidence/demo-verification.json)。原数据保留，额外创建的开发者复验群也有明确记录。通过编译或开发者浏览器检查不代表用户已完成人工验收。
 
 - [分批功能验收](docs/acceptance.md)
 - [逐条需求与验证证据](docs/requirements-matrix.md)

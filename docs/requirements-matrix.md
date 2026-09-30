@@ -6,7 +6,7 @@
 
 ## 证据口径与版本
 
-本轮依据候选发布源码 `f52faecc5eb543e347aee3536d8a6f0fd8bc0975` 及下述测试日志，记录时间 2026-09-30 晚间（北京时间）。测试名称与路径见文末索引；后续修订需更新版本及受影响条目。**全部用户人工验收仍待进行**；开发者浏览器检查、自动验证均不等于用户已验收。
+本轮依据最终源码与测试提交 `82312b905016cc3cca577aca267d795250d5d3a4` 及下述日志；产品源码与 `f52faec` 一致，记录时间 2026-09-30 晚间（北京时间）。测试名称与路径见文末索引；后续修订需更新版本及受影响条目。**全部用户人工验收仍待进行**；开发者浏览器检查、自动验证均不等于用户已验收。
 
 - **自动通过**：已实际执行且断言覆盖本行描述的场景，不扩大到未测分支。
 - **部分验证**：已有实现和部分证据，列出的分支或时限仍待验证。
@@ -19,19 +19,20 @@
 
 | 证据 | 执行结果与覆盖 | 版本边界 |
 |---|---|---|
-| 发布工作树 `.runtime/release-final-verification.log` | 127登记，124通过、3跳过、0失败，111.589秒；含B37，R1–R11修复均进入常规回归 | `f52faec`；Node计数包含10个嵌套子场景 |
-| 发布工作树 `.runtime/release-final-timing.log` | B21–B23同版本独立3/3通过，94.470秒；单项13.614/16.485/60.032秒 | `f52faec`；常规skip与独立执行分开计数 |
+| 发布工作树 `.runtime/release-isolated-verification.log` | 128登记，125通过、3跳过、0失败，112.206秒；R1–R11及B38通过；额外临时base库与测试隔离资源已清理 | `82312b9`，相对f52faec仅测试和文档变化；Node计数含10个嵌套子场景 |
+| 上轮发布工作树 `.runtime/release-final-verification.log` | 127登记，124通过、3跳过、0失败，111.589秒；含B37，R1–R11修复均进入常规回归 | `f52faec`；Node计数包含10个嵌套子场景 |
+| 发布工作树 `.runtime/release-final-timing.log` | B21–B23同产品源码独立3/3通过，94.470秒；单项13.614/16.485/60.032秒 | `f52faec`；与最终产品源一致，未因纯测试/文档变化重复长等待；常规skip与独立执行分开计数 |
 | 上轮发布工作树 `.runtime/release-verification.log` | 126登记，123通过、3跳过、0失败，111.47秒；P01–P15、G01–G31、B01–B20/B24–B36、M01–M11、T01–T03、R01–R05、H01、D01、W01–W13均通过 | `32bd438`；Node计数包含10个嵌套子场景，与本表顶层名称数量不同 |
 | 上轮发布工作树 `.runtime/release-timing.log` | B21–B23同版本独立3/3通过，94.252秒；单项13.541/16.468/60.032秒，含观察等待 | `32bd438`；常规skip与独立实际执行分开计数 |
 | [已有数据迁移验证](evidence/migration-upgrade.json) | 001+002真实旧库升级至003+004，全部既有消息/run/events字段不变、active_ms保留12345；二次迁移幂等；独立库已清理 | `32bd438`专项使用独立库；另有旧auth测试提前迁移演示库，见D016 |
-| 构建与原文完整性 | `npm run build`、`npm run verify:original`通过 | `f52faec`；不替代业务断言或用户验收 |
+| 构建与原文完整性 | `npm run build`、`npm run verify:original`通过 | `82312b9`；不替代业务断言或用户验收 |
 | 较早常规与长计时记录 | `verification-final.log`：87登记/84通过/3跳过；`verification-timing-final.log`：3/3；`verification-kick-accounts.log`：P13补充断言1/1 | 保留在旧实施工作树，适用5a35ce6/52e7dbd及当时被测树；本轮常规结论以上方release日志为准 |
 
-本轮日志位于 `/Users/zcm/.codex/worktrees/platform-gateway/kapibala/.runtime/`，历史日志位于旧实施工作树 `.runtime/`；原始日志属于忽略目录。R1–R11均已修复并通过最终候选常规回归，同版本独立长计时也通过；B37真实PG屏障修前失败、修后通过。新版B4的独立浏览器证据来自`32bd438`，与最终候选分别记录。[结构化测试记录](evidence/release-verification.json)保存上一轮`32bd438`源码和日志哈希，最终候选以本表两份`release-final-*`日志为准。逐项修复和复验见[可靠性复查](reliability-review.md)。
+本轮日志位于 `/Users/zcm/.codex/worktrees/platform-gateway/kapibala/.runtime/`，历史日志位于旧实施工作树 `.runtime/`；原始日志属于忽略目录。R1–R11均已修复并通过82312b9最终常规回归，相同产品源码的独立长计时也通过；B37真实PG屏障修前失败、修后通过；82312b9补充真实PG锁状态证明follower正在等待，并新增B38初始化owner连接终止后的接管，2/2专项通过。新版B4的独立浏览器证据来自`32bd438`，与最终候选分别记录。[结构化测试记录](evidence/release-verification.json)保存最终128项常规测试与三项长计时各自的源码、日志哈希及测试隔离纠正记录。逐项修复和复验见[可靠性复查](reliability-review.md)。
 
-**当前演示运行信息单独记录：**2026-09-30北京时间，`scripts/dev.ts`父进程PID `73373` 于18:46:02启动；后端PID `73376`、模拟器PID `73375` 于18:46:03启动，Vite为PID `73377`。后三者cwd均为 `/Users/zcm/.codex/worktrees/42fe/kapibala`。后端与当时 `34d9af2` 匹配，但未保存启动manifest，故仅为推断版本。后端和模拟器未watch、未重启。旧演示前端曾热更新，工作树 `apps/web` 与 `a8aac5f` 差异已确认为空；本轮R8等web修复只进入独立release，未热更新到5173。此前冻结安排已被D015替代：验证后可重启5173并保留数据，实际重启和运行manifest尚待记录；最新源码测试和独立浏览器验证不等于旧演示已加载修复。全部用户人工验收仍待进行。
+**当前统一演示：**main目录`/Users/zcm/Desktop/kapibala`，2026-09-30 19:57:51北京时间从`9befc8a580eb5dc034ed5771d3f3dfc3e756eb76`启动；父6107、模拟6109、API6110、Vite6111，health schemaVersion=4。manifest保存源码树哈希，产品源与`f52faec`完全一致。原PG容器卷保留，PG dump及两个模拟器JSON已备份校验，本次迁移前后17张表规范化JSON全一致。旧群4成员/5消息/1Agent/1序列保留；新开发者复验群`4e1fa8c5-ea29-40a6-b432-1490d4dfaa5b`明确新增并保留。正常关键流程已复验，原Chrome账号页仍登录且4账号online，待处理jobs/Agent/sequence/outgoing均0。具体见[运行与复验证据](evidence/demo-verification.json)，全部用户人工验收仍待进行。
 
-**测试环境边界修正：**测试隔离遗漏：冻结阶段的旧`auth.test.ts`直接连接默认`kapibala`数据库并执行两次迁移、创建测试会话。演示库已提前新增003/004（schema 4），并有该测试自己的会话记录；业务行未被删除。不能将此前运行写成“演示数据完全未变”或“所有测试均使用独立数据库”。修复auth/core/database测试的专用临时数据库及隔离基库最终复跑正在进行；保留当前数据和会话，不删除历史以掩盖影响。
+**测试环境历史修正：**冻结阶段旧auth测试连接默认演示kapibala库并执行两次迁移、写入测试会话，使其提前达到schema 4；业务行未被删除。`9befc8a`改auth/core/database为专用临时库，7项针对性检查及初始化失败清理通过；完整隔离基库复跑128登记/125通过/3跳过已单列，不以新修复抹去此前影响。原数据和会话保留。旧42fe进程已停止，历史后端34d9af2仅为推断版本，当前演示以manifest为准。
 
 P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服务；其中 P09 使用真实 WebSocket，P10 对独立业务服务进程执行 SIGKILL。G 系列使用真实 PostgreSQL 与受控网关适配器，其中G29另使用真实HTTP断流/取消；B 系列使用真实 PostgreSQL 和 HTTP Agent，但发送适配器受控。R 系列使用真实PG连接终止与HTTP服务验证连接失效。W 系列是受控 fetch / 纯合并逻辑检查。模块测试不替代跨模块和浏览器证据；P09 的三秒断言只覆盖服务端重放，不能直接证明浏览器完成渲染的时限。
 
@@ -98,7 +99,7 @@ P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服
 |---|---|---|---|
 | A5.1 非自身消息触发；同群单 running；期间消息聚合下一 run | `automation/agent.ts:scan/startNext/finish`、`002_automation.sql` | B04/B07；P07 双实例、重复事件、两个run触发数1+2、每run3轮 | 自动通过 |
 | A5.2 完整历史循环、12步、连续3协议错、合法响应清零 | `automation/agent.ts:run/turn/protocolError` | B05 连续3错误；B12 恰12轮；P03 错误后合法工具完成 | 自动通过：这些断言；“合法后重置再累计”反例序列待补 |
-| A5.2 60秒活动预算、停机不计、等待容量计入 | `automation/agent.ts`、`automation/activity-clock.ts`、`003_agent_activity.sql` | B14/B15迟到turn/audit丢弃；B23真实60秒未满12步即wall_clock；B26/P15 kick预算中止且未知不重放 | 自动证据：B34–B36与32bd438真实60秒通过；R11在f52faec增加B37初始化栅栏回归，修前失败、修后通过，已进入f52faec最终完整回归通过 |
+| A5.2 60秒活动预算、停机不计、等待容量计入 | `automation/agent.ts`、`automation/activity-clock.ts`、`003_agent_activity.sql` | B14/B15迟到turn/audit丢弃；B23真实60秒未满12步即wall_clock；B26/P15 kick预算中止且未知不重放 | 自动证据：B34–B36与32bd438真实60秒通过；R11在f52faec增加B37初始化栅栏回归，修前失败、修后通过；82312b9补PG实际锁等待与B38初始化owner终止接管，最终全套通过 |
 | A5.2 每turn 10–15秒可配，超时计协议错、迟到丢弃 | `automation/agent.ts:constructor/turn` | B21实际默认12秒后TURN_TIMEOUT，下一合法轮结束，迟到响应不新增步骤 | 部分验证：真实12秒已通过；10/15秒配置边界专项待补 |
 | A5.3 工具未知/入参错历史形状；坏JSON/重复ID/超时不追加assistant | `automation/protocol.ts`、`agent.ts:turn/protocolError` | B01/B05；P03 坏JSON→未知工具→正常完成 | 部分验证：B29已核对null/缺summary/错类型finish的INVALID_INPUT工具结果并继续合法end/finish；B30/B31验证恢复与限额；其他工具非2xx/缺字段等完整组合未穷举 |
 | A5.4 send/kick执行前审计；明确pass才允许；fail拒绝 | `automation/tool-execution.ts:audit/send/kick` | B06 fail不占key；P03发送审计；B18/P13 kick合法成功、3次调用各有审计且文本字段正确 | 自动通过：已测send/kick审计流程 |
@@ -161,8 +162,8 @@ P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服
 | L4 | Agent服务维护runId会话，相同历史请求不保证幂等 | 未记录响应的inflight_turn暂停并推inconsistency；B08。既不虚报失败，也不能标为自动恢复正常结束 |
 | L5 | 无法覆盖全部瞬间的崩溃注入 | 已测持久final、prepared send、调度接管和业务SIGKILL窗口；其余不能由一项测试外推 |
 | L6 | 时间线新快照完整遍历、SSE全历史重放 | 正确性优先，成本随历史增长；新版59行两页含一次503恢复1872ms通过，任意大历史量仍未证明 |
-| L7 | 已修复的序列调度锁失效 | 853629b修复旧调度事务在锁连接失效后仍可提交的问题；B27最终套通过，旧事务拒绝、消息/入队为0、接管完整重排延迟；当前旧演示尚未加载此修复 |
-| L8 | 已修复的504延迟旧404时序 | d50fd7b按查询发起时刻判断否定证据并在事务内复核持久状态；G30修前重复发送、修后一条原发送。候选32bd438常规全套通过；当前旧演示未加载此修复 |
+| L7 | 已修复的序列调度锁失效 | 853629b修复旧调度事务在锁连接失效后仍可提交的问题；B27最终套通过，旧事务拒绝、消息/入队为0、接管完整重排延迟；当前统一演示已加载该产品修复 |
+| L8 | 已修复的504延迟旧404时序 | d50fd7b按查询发起时刻判断否定证据并在事务内复核持久状态；G30修前重复发送、修后一条原发送。候选32bd438常规全套通过；当前统一演示已加载该产品修复 |
 | C1/C2/C3 | 媒体归档/真实模型/完整Playwright | 未实现；首阶段保留接入边界。当前必要自动验证与开发者浏览器检查已独立开展 |
 
 ## 测试名称索引
@@ -268,6 +269,7 @@ P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服
 | B35 | frequent activity samples retain subinterval time instead of losing rounded milliseconds |
 | B36 | activity clock survives loss of its own PostgreSQL session and only bills once after takeover |
 | B37 | a follower cannot execute against a stale activity base while the new clock owner initializes |
+| B38 | an initialization follower takes over after the blocked clock owner connection is terminated |
 
 ### 成员并发与事件公平：`tests/integration/membership-reliability.test.ts`
 
@@ -332,8 +334,8 @@ D01 在当前集成工作树中已执行，其文件随基础容量修复提交�
 
 ## 本轮后续验证登记
 
-候选常规套已覆盖B17–B36恢复/协议/审计/时钟、G23–G31状态/错误/失锁/旧404、M01–M11成员并发/重入、T01–T03事务锁/本地重试/提交FIFO，以及P13–P15真实HTTP链和W09–W13快照恢复。B21–B23长计时在相同32bd438独立通过。上述已有执行证据的条目不再保留“测试待补”；仍未覆盖的细分断言按各行明确列出。
+最终82312b9常规套已覆盖B17–B38恢复/协议/审计/时钟、G23–G31状态/错误/失锁/旧404、M01–M11成员并发/重入、T01–T03事务锁/本地重试/提交FIFO，以及P13–P15真实HTTP链和W09–W13快照恢复。B21–B23长计时在产品源码相同的f52faec独立通过。上述已有执行证据的条目不再保留“测试待补”；仍未覆盖的细分断言按各行明确列出。
 
-剩余验收与证据边界：旧404已修复且G30专项通过；R1–R10及同版本长计时/新版B4均有通过证据；新增R11已修复且进入f52faec最终全套，同版本长计时通过；表内其他未覆盖细分分支与全部用户人工验收仍待进行。当前旧演示未加载最新后端修复，后续重新启动时须另记实际运行版本。长时序复现命令：`AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern="timing:" tests/integration/automation.test.ts`。
+剩余验收与证据边界：旧404已修复且G30专项通过；R1–R10及同版本长计时/新版B4均有通过证据；新增R11及B38已进入82312b9最终全套，相同产品源码长计时通过；表内其他未覆盖细分分支与全部用户人工验收仍待进行。当前统一演示已记录9befc8a源码manifest并完成开发者关键流程复验，用户需按当前版本重新验收。长时序复现命令：`AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern="timing:" tests/integration/automation.test.ts`。
 
-开发者浏览器补充：序列缺location报step2/key→补stepVars→预检来源→两步sent；viewer登录后序列无新建/启动、accounts无操作列、group无发送/设置开关/退群。证据：[序列](evidence/console-sequence.png)、[只读账号](evidence/console-viewer.png)。这些不是用户人工验收结果。
+当前统一演示开发者浏览器补充：缺变量预检阻断→补stepVars→查看展开文本和来源→两步sent；Agent审计pass、3步final；viewer页面无写入口。证据：[运行清单](evidence/demo-verification.json)、[Agent](evidence/demo-agent.png)、[序列](evidence/demo-sequence.png)、[只读账号](evidence/demo-viewer.png)。这些不是用户人工验收结果。

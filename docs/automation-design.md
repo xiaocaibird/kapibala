@@ -50,3 +50,5 @@ AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern='timing:' tests/int
 完成恢复只接受无错误且输入合法的 `finish`，非法输入作为 `INVALID_INPUT` 反馈后仍经过取消、预算和协议错误限制。合法持久final/finish可直接收口，不重复调用远端turn。第三次审计无法判定时，工具结果、会话历史、blocked/audit_blocked和通知在同一事务提交；兼容处理旧版“步骤已完成、run仍running”中间态，恢复后不会再调用下一turn。
 
 R11在`f52faec`修复，无需新增迁移；B37覆盖初始化屏障。该候选常规全套与同版本真实长计时均通过，具体计数和覆盖边界见需求矩阵。
+
+`82312b9`补强初始化验证：B37通过实际PostgreSQL锁等待关系证明follower在初始化栅栏阻塞；B38终止尚在初始化的owner连接，验证事务锁释放、已等待的follower接管并仅执行一次Agent，且停机不消耗预算。两项真实PG专项通过，未改产品代码。
