@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { AppContext } from "../../core/context.js";
-import { emit } from "../../core/db.js";
+import { emit, withSavepoint, type Queryable } from "../../core/db.js";
 import { AppError, RemoteError } from "../../core/errors.js";
 import type { AccountStatus } from "../../../../../packages/contracts/src/index.js";
 import {
@@ -47,11 +47,13 @@ export class Accounts {
         const response = z
           .object({ platformUserId: z.string().min(1) })
           .parse(result);
-        await tx.query("UPDATE accounts SET platform_user_id=$2 WHERE id=$1", [
-          id,
-          response.platformUserId,
-        ]);
-        return accountDto(await changeAccount(tx, id, "online", row.status));
+        return this.saveRemoteResult(tx, id, async () => {
+          await tx.query(
+            "UPDATE accounts SET platform_user_id=$2 WHERE id=$1",
+            [id, response.platformUserId],
+          );
+          return accountDto(await changeAccount(tx, id, "online", row.status));
+        });
       });
     } catch (error) {
       if (remoteSucceeded)
@@ -83,6 +85,7 @@ export class Accounts {
           );
           remoteSucceeded = "disconnect";
         }
+        let platformUserId: string | undefined;
         if (to === "online" && !isTerminal(account.status)) {
           const result = await this.ctx.gateway.request(
             `/accounts/${encodeURIComponent(id)}/connect`,
@@ -92,20 +95,57 @@ export class Accounts {
           const response = z
             .object({ platformUserId: z.string().min(1) })
             .parse(result);
-          await tx.query(
-            "UPDATE accounts SET platform_user_id=$2 WHERE id=$1",
-            [id, response.platformUserId],
-          );
+          platformUserId = response.platformUserId;
         }
-        return {
-          status: (await changeAccount(tx, id, to, expectedFrom)).status,
+        const persist = async () => {
+          if (platformUserId !== undefined)
+            await tx.query(
+              "UPDATE accounts SET platform_user_id=$2 WHERE id=$1",
+              [id, platformUserId],
+            );
+          return {
+            status: (await changeAccount(tx, id, to, expectedFrom)).status,
+          };
         };
+        return remoteSucceeded
+          ? this.saveRemoteResult(tx, id, persist)
+          : persist();
       });
     } catch (error) {
       if (remoteSucceeded)
         await this.reportUnconfirmedSave(id, remoteSucceeded, error);
       await this.handleTerminal(id, error);
       throw error;
+    }
+  }
+  private async saveRemoteResult<T>(
+    tx: Queryable,
+    accountId: string,
+    persist: () => Promise<T>,
+  ): Promise<T> {
+    // The account lock predates the savepoint: later connect/disconnect requests
+    // cannot overtake this known result. No new transaction or remote retry is
+    // allowed, including after an unknown COMMIT or a lost connection.
+    for (let attempt = 1; ; attempt++) {
+      try {
+        return await withSavepoint(tx, persist);
+      } catch (error) {
+        const code =
+          error && typeof error === "object" && "code" in error
+            ? error.code
+            : undefined;
+        if (
+          attempt >= 3 ||
+          typeof code !== "string" ||
+          !["40001", "40P01", "55P03"].includes(code)
+        )
+          throw error;
+        this.ctx.log.warn(
+          { accountId, attempt, code },
+          "Retrying local account persistence under the original account lock",
+        );
+        await new Promise((resolve) => setTimeout(resolve, attempt * 25));
+      }
     }
   }
   private async reportUnconfirmedSave(

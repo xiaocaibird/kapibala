@@ -199,6 +199,7 @@ export class Jobs {
       return;
     }
     if (state.phase === "create") {
+      const localGroupId = z.string().min(1).parse(state.localGroupId);
       await this.save(job, { ...state, phase: "create_dispatch" });
       try {
         const result = z.object({ groupId: z.string().min(1) }).parse(
@@ -238,7 +239,7 @@ export class Jobs {
             ],
           );
           await emit(tx, "group_changed", {
-            groupId: state.localGroupId,
+            groupId: localGroupId,
             changedFields: ["created"],
           });
           await notifyJob(tx, job);
@@ -690,7 +691,7 @@ export class Jobs {
       );
       if (removed)
         await emit(tx, "group_changed", {
-          groupId: job.group_id,
+          groupId: z.string().parse(job.group_id),
           changedFields: ["members"],
           directoryChangedFields: ["memberCount"],
         });

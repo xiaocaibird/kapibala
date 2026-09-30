@@ -1,0 +1,40 @@
+✔ KA01 connect confirms remote connection but local rollback is visible without a second remote call (175.068833ms)
+✔ KA01 transition confirms remote connection but local rollback is visible without a second remote call (111.662375ms)
+✔ KA02 disconnect confirms remote offline but local rollback is visible without a compensation (104.702292ms)
+✔ KA03 warning persistence failure preserves the original error and logs both failures (179.821334ms)
+✔ KA04 public account API returns a failure and retains existing authorization on persistence mismatch (123.012125ms)
+✔ KA05 transient local save retries retain the known remote result without reconnecting (134.521958ms)
+✔ KA06 local retry does not turn a disconnect into a reconnect (201.522209ms)
+✔ KA07 exhausted local attempts preserve failure and do not replay the external operation (164.966333ms)
+✔ KA08 a newer disconnect waits for local recovery and wins after the connect (380.00425ms)
+✔ KA09 savepoint rollback discards staged events and SQL while retaining the parent transaction (110.41775ms)
+✔ attention: marker is authenticated, committed, request-only and never skips replay (275.572625ms)
+✔ attention: optional send correlation retains legacy response, rejects reuse and distinguishes delivery (101.452709ms)
+✔ attention: duplicate inbound and ambiguous own echo never invent a second logical creation (176.940959ms)
+✔ attention: an unrelated same-sender message with different text is confirmed immediately (129.664292ms)
+✔ attention: authoritative distinct message IDs release only fully resolved same-text candidates (134.34375ms)
+▶ attention: failed and cancelled outbox transitions resolve dependent inbound candidates
+  ✔ failed (130.128541ms)
+  ✔ account-terminal (120.918417ms)
+  ✔ group-unreachable (108.764375ms)
+✔ attention: failed and cancelled outbox transitions resolve dependent inbound candidates (360.333666ms)
+✔ attention: cancelling an attempted send does not prove its pending echo independent (149.061583ms)
+✔ attention: group and rate-limit no-ops are silent; terminal membership consequences are scoped (89.866875ms)
+✔ attention: sequence definitions and displayed step mutations emit once while idle scans remain silent (140.004417ms)
+✔ attention: job failure commits displayed outcome with its event (117.975917ms)
+✔ attention: Agent persisted ordinary steps, audit result and final result carry stable ordinals (131.760583ms)
+✔ attention: directory member count evidence excludes role-only changes and repeated removals (89.689125ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ attention: Agent recovery note does not claim a directory active ID change (214.808167ms)
+✔ attention: group-terminal sequence cancellation carries the actual active-ID removal (88.881375ms)
+✔ terminal send and concurrent member removal acquire event ordering only after domain writes (199.554375ms)
+✔ retrying a local terminal-result transaction never repeats the remote send (210.603666ms)
+✔ outgoing FIFO follows commit order when an older transaction enqueues first but commits last (175.481ms)
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2399.518375

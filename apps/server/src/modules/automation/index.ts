@@ -10,6 +10,7 @@ export function createAutomationModule(
   const agent = new AgentModule(ctx, messaging);
   const sequences = new SequenceModule(ctx, messaging);
   return {
+    name: "automation",
     async register(app) {
       await agent.register(app);
       await sequences.register(app);

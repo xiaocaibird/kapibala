@@ -7,6 +7,10 @@ import {
   isTerminal,
   transitions,
 } from "./models.js";
+import {
+  skipCancelledAccountSequenceSteps,
+  stopGroupAutomation,
+} from "../automation/lifecycle.js";
 import { resolveMessageAttention } from "./message-attention.js";
 
 /** All terminal consequences commit together. Events never describe an uncommitted state. */
@@ -62,24 +66,7 @@ export async function changeAccount(
       "UPDATE messages SET delivery_status='cancelled',fail_code='ACCOUNT_TERMINAL',dispatch_state='done',updated_at=now() WHERE account_id=$1 AND delivery_status='queued' RETURNING *",
       [accountId],
     );
-    const skipped = await tx.query<{ run_id: string; index: number }>(
-      "UPDATE sequence_steps SET status='skipped',sent_at=now() WHERE client_msg_id IN (SELECT client_msg_id FROM messages WHERE account_id=$1 AND delivery_status='cancelled' AND fail_code='ACCOUNT_TERMINAL') AND status IN ('pending','accepted') RETURNING run_id,index",
-      [accountId],
-    );
-    for (const step of skipped.rows) {
-      const run = (
-        await tx.query<{ group_id: string }>(
-          "SELECT group_id FROM sequence_runs WHERE id=$1",
-          [step.run_id],
-        )
-      ).rows[0]!;
-      await emit(tx, "sequence_step_changed", {
-        runId: step.run_id,
-        groupId: run.group_id,
-        stepIndex: step.index,
-        changedFields: ["status", "sentAt"],
-      });
-    }
+    await skipCancelledAccountSequenceSteps(tx, accountId);
     for (const message of cancelled.rows)
       await resolveMessageAttention(tx, message);
     await emit(tx, "account_terminal", { accountId, status: to });
@@ -115,22 +102,7 @@ export async function markGroupUnreachable(
     "UPDATE messages SET delivery_status='cancelled',fail_code='GROUP_UNREACHABLE',dispatch_state='done',updated_at=now() WHERE group_id=$1 AND delivery_status='queued' RETURNING *",
     [groupId],
   );
-  await tx.query(
-    "UPDATE agent_runs SET cancel_requested=true WHERE group_id=$1 AND status='running'",
-    [groupId],
-  );
-  const runs = await tx.query<{ id: string; current_step_index: number }>(
-    "UPDATE sequence_runs SET status='stopped' WHERE group_id=$1 AND status='running' RETURNING id,current_step_index",
-    [groupId],
-  );
-  for (const run of runs.rows)
-    await emit(tx, "sequence_run", {
-      runId: run.id,
-      groupId,
-      status: "stopped",
-      directoryChangedFields: ["activeSequenceRunId"],
-      currentStepIndex: run.current_step_index,
-    });
+  await stopGroupAutomation(tx, groupId);
   for (const message of cancelled.rows)
     await resolveMessageAttention(tx, message);
   await emit(tx, "group_changed", {

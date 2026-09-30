@@ -118,7 +118,11 @@ async function until(predicate: () => Promise<boolean>, timeout = 4000) {
 
 test("attention: marker is authenticated, committed, request-only and never skips replay", async (t) => {
   const f = await fixture(t);
-  await f.db.transaction((tx) => emit(tx, "before-marker", {}));
+  // Deliberate historical/unknown envelope fixture, not a typed producer.
+  await f.db.query("INSERT INTO events(type,payload) VALUES($1,$2)", [
+    "before-marker",
+    {},
+  ]);
   const address = await f.app.listen({ host: "127.0.0.1", port: 0 });
   const socket = new WebSocket(address.replace("http:", "ws:") + "/ws");
   f.onCleanup(async () => {
@@ -149,7 +153,10 @@ test("attention: marker is authenticated, committed, request-only and never skip
   assert.equal(marker.requestId, "page-1");
   assert.equal(marker.startSeq, Number((await f.events()).at(-1)!.seq));
   assert.equal(marker.seq, undefined);
-  await f.db.transaction((tx) => emit(tx, "after-marker", {}));
+  await f.db.query("INSERT INTO events(type,payload) VALUES($1,$2)", [
+    "after-marker",
+    {},
+  ]);
   await until(
     async () =>
       received.some((event) => event.type === "before-marker") &&

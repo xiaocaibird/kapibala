@@ -82,7 +82,8 @@ export async function recordSent(
   );
   await emit(tx, "message", {
     changeKind: "delivery",
-    source: row.metadata.source ?? "manual",
+    source:
+      typeof row.metadata.source === "string" ? row.metadata.source : "manual",
     groupId: row.group_id,
     msgId,
     clientMsgId,
@@ -157,7 +158,10 @@ export class Messages implements MessagingService {
     ).rows[0]!;
     await emit(tx, "message", {
       changeKind: "created",
-      source: row.metadata.source ?? "manual",
+      source:
+        typeof row.metadata.source === "string"
+          ? row.metadata.source
+          : "manual",
       groupId: row.group_id,
       msgId: null,
       clientMsgId: row.client_msg_id,
@@ -299,7 +303,10 @@ export class Messages implements MessagingService {
         if (updated.rowCount)
           await emit(tx, "message", {
             changeKind: "delivery",
-            source: row.metadata.source ?? "manual",
+            source:
+              typeof row.metadata.source === "string"
+                ? row.metadata.source
+                : "manual",
             groupId: row.group_id,
             msgId: null,
             id: row.id,
@@ -389,7 +396,10 @@ export class Messages implements MessagingService {
           );
           await emit(tx, "message", {
             changeKind: "delivery",
-            source: row.metadata.source ?? "manual",
+            source:
+              typeof row.metadata.source === "string"
+                ? row.metadata.source
+                : "manual",
             groupId: row.group_id,
             id: row.id,
             clientMsgId: row.client_msg_id,
@@ -473,7 +483,10 @@ export class Messages implements MessagingService {
     );
     await emit(tx, "message", {
       changeKind: "delivery",
-      source: row.metadata.source ?? "manual",
+      source:
+        typeof row.metadata.source === "string"
+          ? row.metadata.source
+          : "manual",
       groupId: row.group_id,
       id: row.id,
       msgId: row.msg_id,
@@ -508,7 +521,10 @@ export class Messages implements MessagingService {
         await emit(tx, "inconsistency", {
           kind: "send_result_unknown",
           ref: row.client_msg_id,
-          message: row.metadata.recoveryNote,
+          message:
+            typeof row.metadata.recoveryNote === "string"
+              ? row.metadata.recoveryNote
+              : "发送意图已持久化，但进程未记录远端响应；不自动重发。",
         });
     });
   }

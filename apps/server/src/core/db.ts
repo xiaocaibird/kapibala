@@ -1,5 +1,6 @@
 import pg, { type QueryResult, type QueryResultRow, type PoolClient } from "pg";
 import { AsyncLocalStorage } from "node:async_hooks";
+import type { PlatformEventArguments } from "../../../../packages/contracts/src/index.js";
 
 const operationSignals = new AsyncLocalStorage<AbortSignal>();
 export function currentOperationSignal(): AbortSignal | undefined {
@@ -53,6 +54,35 @@ const transactionEvents = new AsyncLocalStorage<{
   tx: Queryable;
   events: PendingEvent[];
 }>();
+let savepointCounter = 0;
+
+/** Retryable local writes keep locks acquired by the parent transaction. Never
+ * include an external side effect: PostgreSQL cannot roll that effect back. */
+export async function withSavepoint<T>(
+  tx: Queryable,
+  write: () => Promise<T>,
+): Promise<T> {
+  const parent = transactionEvents.getStore();
+  if (parent?.tx !== tx)
+    throw new Error("Savepoints require the active Database transaction");
+  guardOperation();
+  const name = `local_write_${++savepointCounter}`;
+  await tx.query(`SAVEPOINT ${name}`);
+  const events: PendingEvent[] = [];
+  try {
+    const result = await transactionEvents.run({ tx, events }, write);
+    guardOperation();
+    await tx.query(`RELEASE SAVEPOINT ${name}`);
+    parent.events.push(...events);
+    return result;
+  } catch (error) {
+    // The child event buffer is discarded with its SQL. A failed rollback must
+    // escape as a connection/transaction failure, never a retryable write error.
+    await tx.query(`ROLLBACK TO SAVEPOINT ${name}`);
+    await tx.query(`RELEASE SAVEPOINT ${name}`);
+    throw error;
+  }
+}
 async function persistEvents(
   tx: Queryable,
   events: PendingEvent[],
@@ -208,8 +238,7 @@ export class Database implements Queryable {
 }
 export async function emit(
   tx: Queryable,
-  type: string,
-  payload: unknown,
+  ...[type, payload]: PlatformEventArguments
 ): Promise<void> {
   const event = { type, payload: JSON.stringify(payload) };
   const pending = transactionEvents.getStore();

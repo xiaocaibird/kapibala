@@ -22,6 +22,7 @@ export interface MessagingService {
   ): Promise<{ kicked: true }>;
 }
 export interface PlatformModule {
+  readonly name?: string;
   register(app: FastifyInstance): Promise<void>;
   tick(): Promise<void>;
   recover?(): Promise<void>;

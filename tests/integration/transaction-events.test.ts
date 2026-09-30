@@ -134,7 +134,10 @@ test("terminal send and concurrent member removal acquire event ordering only af
     ]);
     held.release();
     await emitAllowed.promise;
-    await emit(tx, "group_changed", { groupId: f.groups[1] });
+    await emit(tx, "group_changed", {
+      groupId: f.groups[1]!,
+      changedFields: ["members"],
+    });
   });
   await held.promise;
   const sending = f.messages.accountWork("account-2");

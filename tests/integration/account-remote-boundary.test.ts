@@ -8,6 +8,7 @@ import { Accounts } from "../../apps/server/src/modules/gateway/accounts.js";
 import { createGatewayModule } from "../../apps/server/src/modules/gateway/index.js";
 import { migrate } from "../../scripts/migrate.js";
 import { temporaryDatabase } from "../support/temporary-database.js";
+import { emit, withSavepoint } from "../../apps/server/src/core/db.js";
 
 async function fixture(t: TestContext) {
   const temporary = await temporaryDatabase(t);
@@ -189,5 +190,147 @@ test("KA04 public account API returns a failure and retains existing authorizati
   assert.ok(
     !JSON.stringify(event).includes("injected"),
     "public warning must omit database diagnostics",
+  );
+});
+
+async function transientStatusFailures(
+  f: Awaited<ReturnType<typeof fixture>>,
+  failures: number,
+  pause = false,
+) {
+  await f.db.query(`CREATE SEQUENCE save_attempts;
+    CREATE FUNCTION transient_account_save() RETURNS trigger LANGUAGE plpgsql AS $$
+    BEGIN
+      IF nextval('save_attempts') <= ${failures} THEN
+        ${pause ? "PERFORM pg_sleep(0.2);" : ""}
+        RAISE EXCEPTION 'temporary local account write failure' USING ERRCODE='40001';
+      END IF;
+      RETURN NEW;
+    END $$;
+    CREATE TRIGGER transient_account_save BEFORE UPDATE OF status ON accounts
+    FOR EACH ROW EXECUTE FUNCTION transient_account_save()`);
+}
+
+test("KA05 transient local save retries retain the known remote result without reconnecting", async (t) => {
+  const f = await fixture(t);
+  await transientStatusFailures(f, 1);
+  assert.equal((await f.accounts.connect("account-1")).status, "online");
+  assert.deepEqual(f.actions, ["connect"]);
+  assert.equal((await f.read()).platform_user_id, "p-account-1");
+  assert.equal(
+    Number(
+      (await f.db.query("SELECT last_value FROM save_attempts")).rows[0]!
+        .last_value,
+    ),
+    2,
+  );
+  const events = (await f.db.query("SELECT type FROM events")).rows;
+  assert.deepEqual(
+    events.map((e) => e.type),
+    ["account_status_changed"],
+  );
+});
+
+test("KA06 local retry does not turn a disconnect into a reconnect", async (t) => {
+  const f = await fixture(t);
+  await f.accounts.connect("account-1");
+  await transientStatusFailures(f, 2);
+  assert.equal(
+    (await f.accounts.transition("account-1", "disconnected", "online")).status,
+    "disconnected",
+  );
+  assert.deepEqual(f.actions, ["connect", "disconnect"]);
+  assert.equal(f.remoteOnline(), false);
+  assert.equal((await f.read()).status, "disconnected");
+});
+
+test("KA07 exhausted local attempts preserve failure and do not replay the external operation", async (t) => {
+  const f = await fixture(t);
+  await transientStatusFailures(f, 10);
+  await assert.rejects(
+    f.accounts.connect("account-1"),
+    /temporary local account write failure/,
+  );
+  assert.equal(
+    Number(
+      (await f.db.query("SELECT last_value FROM save_attempts")).rows[0]!
+        .last_value,
+    ),
+    3,
+  );
+  assert.deepEqual(f.actions, ["connect"]);
+  assert.equal((await f.read()).status, "idle");
+  assert.equal((await f.read()).platform_user_id, null);
+  assert.equal(
+    (await f.db.query("SELECT type FROM events")).rows[0]!.type,
+    "inconsistency",
+  );
+});
+
+test("KA08 a newer disconnect waits for local recovery and wins after the connect", async (t) => {
+  const f = await fixture(t);
+  await transientStatusFailures(f, 1, true);
+  const connecting = f.accounts.connect("account-1");
+  const deadline = Date.now() + 3000;
+  while (!f.actions.includes("connect")) {
+    assert.ok(Date.now() < deadline, "connect request reached remote");
+    await new Promise((r) => setTimeout(r, 5));
+  }
+  const disconnecting = f.accounts.transition(
+    "account-1",
+    "disconnected",
+    "online",
+  );
+  await Promise.all([connecting, disconnecting]);
+  assert.deepEqual(f.actions, ["connect", "disconnect"]);
+  assert.equal(f.remoteOnline(), false);
+  assert.equal((await f.read()).status, "disconnected");
+  assert.deepEqual(
+    (
+      await f.db.query(
+        "SELECT payload->>'to' AS state FROM events WHERE type='account_status_changed' ORDER BY seq",
+      )
+    ).rows.map((r) => r.state),
+    ["online", "disconnected"],
+  );
+});
+
+test("KA09 savepoint rollback discards staged events and SQL while retaining the parent transaction", async (t) => {
+  const f = await fixture(t);
+  await f.db.transaction(async (tx) => {
+    await tx.query("SELECT id FROM accounts WHERE id='account-1' FOR UPDATE");
+    await emit(tx, "account_changed", {
+      accountId: "account-1",
+      changedFields: ["before"],
+    });
+    await assert.rejects(
+      withSavepoint(tx, async () => {
+        await tx.query(
+          "UPDATE accounts SET platform_user_id='rolled-back' WHERE id='account-1'",
+        );
+        await emit(tx, "account_changed", {
+          accountId: "account-1",
+          changedFields: ["rolled-back"],
+        });
+        throw new Error("rollback child");
+      }),
+      /rollback child/,
+    );
+    await withSavepoint(tx, async () => {
+      await tx.query(
+        "UPDATE accounts SET platform_user_id='kept' WHERE id='account-1'",
+      );
+      await emit(tx, "account_changed", {
+        accountId: "account-1",
+        changedFields: ["kept"],
+      });
+    });
+  });
+  assert.equal((await f.read()).platform_user_id, "kept");
+  assert.deepEqual(
+    (await f.db.query("SELECT payload FROM events ORDER BY seq")).rows.map(
+      (r) => r.payload.changedFields,
+    ),
+    [["before"], ["kept"]],
   );
 });

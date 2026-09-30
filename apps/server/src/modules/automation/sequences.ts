@@ -11,7 +11,10 @@ import {
 } from "../../core/db.js";
 import { AppError } from "../../core/errors.js";
 import type { MessagingService } from "../../core/messaging.js";
-import type { SequenceStep } from "../../../../../packages/contracts/src/index.js";
+import type {
+  SequenceStep,
+  SequenceRun,
+} from "../../../../../packages/contracts/src/index.js";
 import {
   sequenceDefinitionRequestSchema,
   sequenceStartRequestSchema,
@@ -31,7 +34,7 @@ interface SequenceRow {
 interface RunRow {
   id: string;
   group_id: string;
-  status: string;
+  status: SequenceRun["status"];
   current_step_index: number;
 }
 interface StepRow {
@@ -468,7 +471,7 @@ export class SequenceModule {
           id,
           run.status,
         ]);
-        await notify(tx, run, run.status !== "running");
+        await notify(tx, run, true);
         return;
       }
       // Terminal account transitions lock account -> messages -> steps. Lock accounts before

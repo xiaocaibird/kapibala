@@ -112,11 +112,107 @@ export interface SequenceRun {
   currentStepIndex: number;
   steps: SequenceRunStep[];
 }
+/** Persisted/wire history stays open for legacy event names and payloads. New
+ * producers must use PlatformEventArguments; do not cast history to that type. */
 export interface PlatformEvent {
   seq: number;
   type: string;
   payload: Record<string, unknown>;
 }
+export interface PlatformEventPayloads {
+  account_status_changed: {
+    accountId: string;
+    from: AccountStatus;
+    to: AccountStatus;
+  };
+  account_terminal: { accountId: string; status: AccountStatus };
+  account_changed: { accountId: string; changedFields: string[] };
+  group_changed: {
+    groupId: string;
+    status?: GroupStatus;
+    changedFields: string[];
+    directoryChangedFields?: string[];
+  };
+  message: {
+    groupId: string;
+    id: string;
+    msgId: string | null;
+    clientMsgId?: string | null;
+    isOwn: boolean;
+    source: string;
+    changeKind: "created" | "delivery";
+    attentionIdentity?: "pending" | "confirmed";
+    attentionCreatedSeq?: number;
+  };
+  job_changed: {
+    jobId: string;
+    groupId: string | null;
+    status: string;
+    changedFields: string[];
+  };
+  agent_run: {
+    runId: string;
+    groupId: string;
+    status: AgentRun["status"];
+    endReason: string | null;
+    summary: string | null;
+    recoveryNote: string | null;
+    directoryChangedFields: string[];
+  };
+  agent_step_changed: {
+    runId: string;
+    groupId: string;
+    ordinal: number;
+    changedFields: string[];
+  };
+  sequence_run: {
+    runId: string;
+    groupId: string;
+    status: SequenceRun["status"];
+    currentStepIndex: number;
+    directoryChangedFields: string[];
+  };
+  sequence_step_changed: {
+    runId: string;
+    groupId: string;
+    stepIndex: number;
+    changedFields: string[];
+  };
+  sequence_definition_changed: { sequenceId: string; changedFields: string[] };
+  inconsistency:
+    | {
+        kind:
+          | "gateway_event"
+          | "account_result_unknown"
+          | "agent_recovery_unknown"
+          | "job_result_unknown"
+          | "duplicate_remote_delivery"
+          | "send_result_unknown";
+        ref: string | null;
+        message: string;
+      }
+    | {
+        kind: "membership_refresh_failed";
+        groupId: string;
+        platformUserId: string | null;
+        operation: "leave" | "kick";
+        operationConfirmed: true;
+        message: string;
+      };
+}
+export type PlatformEventArguments = {
+  [K in keyof PlatformEventPayloads]: [
+    type: K,
+    payload: PlatformEventPayloads[K],
+  ];
+}[keyof PlatformEventPayloads];
+export type KnownPlatformEvent = {
+  [K in keyof PlatformEventPayloads]: {
+    seq: number;
+    type: K;
+    payload: PlatformEventPayloads[K];
+  };
+}[keyof PlatformEventPayloads];
 export interface Job {
   id?: string;
   status: "running" | "finished" | "failed";
