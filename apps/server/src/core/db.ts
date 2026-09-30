@@ -7,6 +7,7 @@ export interface Queryable {
 }
 export class Database implements Queryable {
   readonly pool: pg.Pool;
+  private activeLocks = 0;
   constructor(url: string) {
     this.pool = new pg.Pool({ connectionString: url, max: 20 });
     // Idle sockets can fail during a database restart. Active operations reject normally;
@@ -46,8 +47,13 @@ export class Database implements Queryable {
     key: string,
     fn: (connection: PoolClient) => Promise<T>,
   ): Promise<T | undefined> {
-    const client = await this.pool.connect();
+    // Each lock holder may need a second connection for a transaction. Bound admission
+    // so queued lock holders cannot occupy the entire pool and deadlock their own work.
+    if (this.activeLocks >= 8) return undefined;
+    this.activeLocks++;
+    let client: PoolClient | undefined;
     try {
+      client = await this.pool.connect();
       const r = await client.query<{ locked: boolean }>(
         "SELECT pg_try_advisory_lock(hashtextextended($1, 0)) AS locked",
         [key],
@@ -62,7 +68,8 @@ export class Database implements Queryable {
         );
       }
     } finally {
-      client.release();
+      client?.release();
+      this.activeLocks--;
     }
   }
   async close(): Promise<void> {
