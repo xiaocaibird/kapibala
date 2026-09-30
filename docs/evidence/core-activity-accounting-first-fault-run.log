@@ -1,0 +1,85 @@
+✔ checkpoint connection-pool exhaustion rejects and late checkout returns without reviving the stage (1746.4135ms)
+ℹ Independent database: kapibala_test_c2044720b26640d2ab58541ba68b94cb
+ℹ {"poolWaitMs":1500.5291670000001}
+✖ blocked checkpoint query destroys its owning lease before another owner resumes (1755.817ms)
+ℹ Independent database: kapibala_test_602d28e5988f412ead4d0acdfe200db1
+✖ continuous targeted wakes leave periodic accounting available for queued runs (98.739625ms)
+ℹ Independent database: kapibala_test_351441493ab4439d895f53a48e4967b5
+✔ an unresponsive owner cannot acknowledge a follower checkpoint, then takeover excludes the outage (1909.868791ms)
+ℹ Independent database: kapibala_test_a94a75d9dc8848d988c7ea0a70cd75f8
+ℹ {"unresponsiveOwnerWaitMs":1516.2531250000002,"beforeActiveMs":1,"afterActiveMs":7,"caveat":"hard termination still loses the unpersisted online tail"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ activity checkpoints persist a completed model wait shorter than the sampling interval (334.776292ms)
+ℹ Independent database: kapibala_test_5158a639f84c4ad8918221a7d0150af9
+ℹ {"activeMs":178,"modelWaitMs":141.52424999999948}
+✔ activity checkpoints persist audit waiting and a follower wakes only the shared owner (444.551583ms)
+ℹ Independent database: kapibala_test_6306337f3d3e48b2869a860f6e99f9ad
+ℹ {"auditWaitMs":140.82499999999982,"elapsedMs":352.82524999999987,"activeMs":321,"writers":[1798],"ownerPid":1798}
+✔ activity checkpoint failure at model:before blocks the next remote or durable stage (217.493834ms)
+ℹ Independent database: kapibala_test_6f8915aacb2b458394faa7ac04a1abe6
+ℹ {"phase":"model:before","turns":0,"audits":0,"inflightTurn":false,"steps":0,"activeMs":0,"elapsedMs":1.0499589999999444}
+✔ activity checkpoint failure at model:after blocks the next remote or durable stage (232.421041ms)
+ℹ Independent database: kapibala_test_ab14d9948d34430a873b27526db7ac7c
+ℹ {"phase":"model:after","turns":1,"audits":0,"inflightTurn":true,"steps":0,"activeMs":16,"elapsedMs":1.1340000000000146}
+✔ activity checkpoint failure at audit:before blocks the next remote or durable stage (122.690334ms)
+ℹ Independent database: kapibala_test_5d50bb884a5a4799962ea792fd43031f
+ℹ {"phase":"audit:before","turns":1,"audits":0,"inflightTurn":false,"steps":1,"activeMs":18,"elapsedMs":0.9060840000001917}
+✔ activity checkpoint failure at audit:after blocks the next remote or durable stage (145.52675ms)
+ℹ Independent database: kapibala_test_2ca2f401a6a14457acbd5c3804c86c9d
+ℹ {"phase":"audit:after","turns":1,"audits":1,"inflightTurn":false,"steps":1,"activeMs":23,"elapsedMs":0.9095829999996567}
+ℹ tests 10
+ℹ suites 0
+ℹ pass 8
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7170.964583
+
+✖ failing tests:
+
+test at tests/integration/core-activity-accounting.test.ts:60:1
+✖ blocked checkpoint query destroys its owning lease before another owner resumes (1755.817ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/core-activity-accounting.test.ts:84:12)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/core-activity-accounting.test.ts:105:1
+✖ continuous targeted wakes leave periodic accounting available for queued runs (98.739625ms)
+  error: duplicate key value violates unique constraint "agent_one_running_per_group"
+      at /Users/zcm/Desktop/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/apps/server/src/core/db.ts:90:20)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/core-activity-accounting.test.ts:110:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    length: 225,
+    severity: 'ERROR',
+    code: '23505',
+    detail: 'Key (group_id)=(g) already exists.',
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: 'public',
+    table: 'agent_runs',
+    column: undefined,
+    dataType: undefined,
+    constraint: 'agent_one_running_per_group',
+    file: 'nbtinsert.c',
+    line: '666',
+    routine: '_bt_check_unique'
+  }

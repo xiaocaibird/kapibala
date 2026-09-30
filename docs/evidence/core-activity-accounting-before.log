@@ -1,0 +1,28 @@
+✖ activity checkpoints persist a completed model wait shorter than the sampling interval (321.754875ms)
+ℹ Independent database: kapibala_test_0078767111a84eea990f4235cfcd12fe
+ℹ {"activeMs":0,"modelWaitMs":141.06845800000002}
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 479.276833
+
+✖ failing tests:
+
+test at tests/integration/core-activity-accounting.test.ts:9:1
+✖ activity checkpoints persist a completed model wait shorter than the sampling interval (321.754875ms)
+  AssertionError [ERR_ASSERTION]: completed model wait was not persisted: 0ms for 141.06845800000002ms
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/core-activity-accounting.test.ts:26:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

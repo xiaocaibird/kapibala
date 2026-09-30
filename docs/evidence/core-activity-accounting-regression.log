@@ -1,0 +1,112 @@
+✔ Agent kick waits for local capacity without failing, repeating audit, or dispatching twice (397.692042ms)
+ℹ Independent database: kapibala_test_f04ec8dd850c47369d0849a158f3586b
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ Agent capacity wait keeps the original activity budget and does not invent an unknown kick (1373.547333ms)
+ℹ Independent database: kapibala_test_d79cb1c34803417eb6027171f5a8a944
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ Agent rechecks kick policy after capacity refusal and preserves the recorded audit (322.337625ms)
+ℹ Independent database: kapibala_test_ef915b52315a4d469a1e7f5f7bb740d9
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ Agent cancellation while waiting for capacity ends after the current step without another turn (278.462041ms)
+ℹ Independent database: kapibala_test_a8ea017c2abf480982d7a53401b79971
+✔ tool definitions have all required arguments; invalid protocols are rejected (114.814958ms)
+✔ sequence variables persist overrides and report the first unresolved step (0.380084ms)
+✔ PostgreSQL serializes concurrent sequence starts and failed preflight creates no run (34.942875ms)
+✔ multiple workers create one agent run and same send key is audited and enqueued once (306.448625ms)
+✔ bad JSON, unknown tool, duplicate tool id are recorded without corrupting history (72.907167ms)
+▶ invalid finish inputs return INVALID_INPUT and allow a later valid completion
+  ✔ null followed by end_turn (81.574208ms)
+  ✔ null followed by finish (117.262834ms)
+  ✔ missing summary followed by end_turn (206.218084ms)
+  ✔ missing summary followed by finish (202.903667ms)
+  ✔ wrong summary type followed by end_turn (209.778542ms)
+  ✔ wrong summary type followed by finish (108.878125ms)
+✔ invalid finish inputs return INVALID_INPUT and allow a later valid completion (927.405041ms)
+▶ completed invalid finish recovery honors cancellation and execution limits
+  ✔ cancelled (42.994833ms)
+  ✔ wall_clock (41.296667ms)
+  ✔ budget_exhausted (41.102ms)
+  ✔ protocol_errors (64.3345ms)
+✔ completed invalid finish recovery honors cancellation and execution limits (190.19825ms)
+✔ a successful persisted finish completes recovery without another remote turn (63.634958ms)
+✔ inconclusive audit blocks without side effects; rejection does not reserve a send key (138.299333ms)
+✔ messages arriving during a run become one next trigger and own messages never trigger (106.5515ms)
+✔ interrupted remote turn is visibly paused and never replayed (49.848417ms)
+✔ sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step (55.543209ms)
+✔ persisted final and prepared send recover without replaying prior external work (109.260708ms)
+✔ kick policy and persisted uncertain kick cannot produce a second side effect (117.641125ms)
+✔ repeated reads stop within twelve steps and result bytes remain bounded (971.337834ms)
+✔ disabling Agent during its current step cancels after that step, without another turn (74.941333ms)
+✔ activity budget interrupts a late turn and discards the eventual response (359.18325ms)
+✔ activity budget expires during audit without authorizing the prepared tool (379.461709ms)
+✔ an accepted send whose account becomes terminal yields SEND_FAILED without a resend (117.245167ms)
+✔ restart catches up a committed send before rebasing the next unscheduled step (44.438083ms)
+✔ kick permission errors remain tool errors and a confirmed kick succeeds (204.358792ms)
+✔ SEND_TIMEOUT retries with the same key read the eventual send without re-auditing (5160.2595ms)
+✔ sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp (62.06525ms)
+✔ loss of the advisory-lock connection aborts a turn without saving a false protocol error (175.257292ms)
+✔ loss of a run lock during audit prevents old-worker effects and permits safe audit recovery (222.421167ms)
+✔ kick budget exhaustion ends the run while retaining an uncertain non-replayable effect (147.436458ms)
+✔ a stale scheduler transaction cannot enqueue after its ownership connection is lost (54.209958ms)
+✔ closing and recreating modules preserves activity while excluding actual downtime (988.837875ms)
+✔ queued runs persist online activity across a real shutdown without counting downtime or a second clock (2844.515875ms)
+✔ a follower cannot execute against a stale activity base while the new clock owner initializes (1448.652167ms)
+✔ an initialization follower takes over after the blocked clock owner connection is terminated (2055.075917ms)
+✔ frequent activity samples retain subinterval time instead of losing rounded milliseconds (28.559083ms)
+✔ activity clock survives loss of its own PostgreSQL session and only bills once after takeover (1525.855042ms)
+✔ inconclusive audit step and blocked run roll back together before recovery (107.076459ms)
+✔ persisted legacy audit-block window cannot resume another Agent turn (43.59475ms)
+﹣ timing: the default twelve-second turn timeout discards the late response (0.1325ms) # SKIP
+﹣ timing: three five-second inconclusive audit attempts block without sending (0.111583ms) # SKIP
+﹣ timing: sixty seconds of activity ends the run even below the twelve-step cap (0.07825ms) # SKIP
+✔ CG13: legal turns reset consecutive errors and preserve exact history shapes and end_turn semantics (417.472458ms)
+ℹ Independent database: kapibala_test_e352790a0dd2409f91cb3eaa8f70a63c
+✔ CG14: three audit responses without verdict block one step and publish the terminal fields without effects (203.35525ms)
+ℹ Independent database: kapibala_test_0e51b6a346e448e7aec694b9bc82d1ea
+✔ CG14: no online member for send and no online elevated member for kick are business errors (212.742959ms)
+ℹ Independent database: kapibala_test_396e00cb3e8e4e60a0be3ad1e9c601e9
+✔ CG14: disabling autoKick while the audit is pending prevents the authorized tool from executing (150.614458ms)
+ℹ Independent database: kapibala_test_c328c168699744489acbc987a497590c
+✔ CG15: a current run reads newly arrived messages in order and exposes Unicode and raw response bounds (249.345916ms)
+ℹ Independent database: kapibala_test_320abbdf10794cec858cee760abc37b9
+✔ CG16: invalid indexes have no persistent effects and the next step starts from actual skip time (543.771625ms)
+ℹ Independent database: kapibala_test_3c10dc6ef4984684b53b5eb9c60d8c72
+✔ R09: echo confirmation uses only message_sent observation, preserves it after duplicate and restart (1344.894083ms)
+ℹ Independent database: kapibala_test_74d33fbd6b344713beda4539fe96a1fb
+✔ R09: query confirmation uses only message_sent observation, preserves it after duplicate and restart (1262.718166ms)
+ℹ Independent database: kapibala_test_3d08799d92d84cb2abed5655b034a1c3
+✔ R09: event confirmation uses only message_sent observation, preserves it after duplicate and restart (634.578958ms)
+ℹ Independent database: kapibala_test_f1281d5be3234ce5ad968d05cef6f7b2
+✔ R05: a locked group cannot block another group's Agent or sequence; retry preserves one run and one enqueue (276.811333ms)
+ℹ Independent database: kapibala_test_dc704f0e05d94759b2d5c546f9bf6a4c
+ℹ tick with group lock held: 130ms
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ R05: a real slow member reconciliation holds its group lock without stopping another group (382.840417ms)
+ℹ Independent database: kapibala_test_f408be784e444888bf2b0286f4c6979c
+✔ R05: busy takeover defers only that run and must rebase it before dispatch after unlock (702.304916ms)
+ℹ Independent database: kapibala_test_e61979a6f37042f1b912e7dde69508e4
+✔ R09: skipped step still schedules from the actual skip time (104.278834ms)
+ℹ Independent database: kapibala_test_daeb96516ecb4b84858e34761a69ecd8
+✔ R09: observation precedes row-lock wait and survives a failed transaction retry (439.009875ms)
+ℹ Independent database: kapibala_test_4dbdfa11116b4db8871e032e0a5f2564
+✔ R09: migration refuses active old sequences and never fabricates historical observations (217.528625ms)
+ℹ tests 67
+ℹ suites 0
+ℹ pass 64
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 3
+ℹ todo 0
+ℹ duration_ms 19504.750292
