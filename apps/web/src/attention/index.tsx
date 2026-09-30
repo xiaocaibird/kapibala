@@ -15,6 +15,7 @@ import { useLive } from "../state/live";
 import { AttentionCandidates, type SnapshotEvidence } from "./model";
 import { attentionOriginSequence, isDefinitiveBusinessEvent } from "./events";
 import { retainLatest, type ScopedEvent } from "./journal";
+import { AttentionInteractionEpoch } from "./interaction";
 import {
   canFullyFitViewport,
   isPresented,
@@ -168,6 +169,7 @@ interface CollectionOptions {
 }
 
 interface ViewIntent {
+  epoch: number;
   seq: number;
   revision: number;
   key: string | null;
@@ -189,16 +191,20 @@ export function useAttentionCollection(options: CollectionOptions) {
   const [revision, render] = useState(0);
   const [busy, setBusy] = useState(false);
   const [intent, setIntent] = useState<ViewIntent | null>(null);
-  const [preview, setPreview] = useState<{ key: string; seq: number } | null>(
-    null,
-  );
+  const [preview, setPreview] = useState<{
+    key: string;
+    seq: number;
+    epoch: number;
+  } | null>(null);
   const [rangePreview, setRangePreview] = useState<{
+    epoch: number;
     seq: number;
     revision: number;
     path: string;
     keys: string[];
   } | null>(null);
   const alive = useRef(true);
+  const interactionEpoch = useRef(new AttentionInteractionEpoch());
   const visibility = useRef("");
   const previousVersions = useRef<Readonly<Record<string, string>>>({});
   const notify = useCallback(() => render((value) => value + 1), []);
@@ -206,6 +212,7 @@ export function useAttentionCollection(options: CollectionOptions) {
     alive.current = true;
     return () => {
       alive.current = false;
+      interactionEpoch.current.invalidate();
     };
   }, []);
 
@@ -257,8 +264,17 @@ export function useAttentionCollection(options: CollectionOptions) {
   // focus, automatic scrolling and IntersectionObserver cannot consume a candidate.
   useEffect(() => {
     let frame = 0;
-    const check = () => {
-      if (!pageHasAttention() && model.current.promoteBackground()) notify();
+    const check = (event?: Event) => {
+      if (event?.type === "blur" || !pageHasAttention()) {
+        // Invalidate synchronously: hidden-page RAFs and refresh promises may not
+        // run until focus returns, when hasFocus alone would accept stale intent.
+        interactionEpoch.current.invalidate();
+        setIntent(null);
+        setPreview(null);
+        setRangePreview(null);
+        setBusy(false);
+        if (model.current.promoteBackground()) notify();
+      }
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         const signature = [...model.current.pending.keys()]
@@ -357,6 +373,7 @@ export function useAttentionCollection(options: CollectionOptions) {
     const key =
       candidates.find((value) => elements.current.has(value.key))?.key ?? null;
     const next: ViewIntent = {
+      epoch: interactionEpoch.current.begin(),
       seq: Math.max(...candidates.map((value) => value.seq)),
       revision: current.current.evidence?.revision ?? -1,
       key,
@@ -368,14 +385,29 @@ export function useAttentionCollection(options: CollectionOptions) {
         await current.current.refresh();
         next.refreshed = true;
       }
-      if (alive.current) setIntent(next);
+      if (
+        alive.current &&
+        interactionEpoch.current.isCurrent(next.epoch) &&
+        pageHasAttention()
+      )
+        setIntent(next);
     } finally {
-      if (alive.current) setBusy(false);
+      if (alive.current && interactionEpoch.current.isCurrent(next.epoch))
+        setBusy(false);
     }
   }, [busy]);
 
   useEffect(() => {
     if (!intent) return;
+    const clearThisIntent = () =>
+      setIntent((value) => (value?.epoch === intent.epoch ? null : value));
+    if (
+      !interactionEpoch.current.isCurrent(intent.epoch) ||
+      !pageHasAttention()
+    ) {
+      clearThisIntent();
+      return;
+    }
     let frame = 0;
     const key =
       intent.key ??
@@ -389,8 +421,11 @@ export function useAttentionCollection(options: CollectionOptions) {
       target?.scrollIntoView({ block: "center", behavior: "instant" });
     frame = requestAnimationFrame(() => {
       if (!alive.current) return;
-      if (!pageHasAttention()) {
-        setIntent(null);
+      if (
+        !interactionEpoch.current.isCurrent(intent.epoch) ||
+        !pageHasAttention()
+      ) {
+        clearThisIntent();
         return;
       }
       if (
@@ -399,7 +434,7 @@ export function useAttentionCollection(options: CollectionOptions) {
         (intent.refreshed &&
           current.current.evidence.revision <= intent.revision)
       ) {
-        setIntent(null);
+        clearThisIntent();
         return;
       }
       let changed = false;
@@ -420,7 +455,7 @@ export function useAttentionCollection(options: CollectionOptions) {
         current.current.evidence.seq >=
           (model.current.pending.get(key)?.seq ?? Infinity)
       ) {
-        setPreview({ key, seq: intent.seq });
+        setPreview({ key, seq: intent.seq, epoch: intent.epoch });
         summary.current?.scrollIntoView({
           block: "center",
           behavior: "instant",
@@ -442,6 +477,7 @@ export function useAttentionCollection(options: CollectionOptions) {
           .map((value) => value.key);
         if (keys.length) {
           setRangePreview({
+            epoch: intent.epoch,
             seq: intent.seq,
             revision: current.current.evidence.revision,
             path: current.current.evidence.path,
@@ -454,7 +490,7 @@ export function useAttentionCollection(options: CollectionOptions) {
         }
       }
       if (changed) notify();
-      setIntent(null);
+      clearThisIntent();
     });
     return () => cancelAnimationFrame(frame);
   }, [
@@ -518,6 +554,7 @@ export function useAttentionCollection(options: CollectionOptions) {
                 if (!event.nativeEvent.isTrusted) return;
                 if (
                   current.current.ready &&
+                  interactionEpoch.current.isCurrent(preview.epoch) &&
                   isPresented(summary.current) &&
                   model.current.confirm(
                     preview.key,
@@ -547,6 +584,7 @@ export function useAttentionCollection(options: CollectionOptions) {
                 const evidence = current.current.evidence;
                 if (
                   !event.nativeEvent.isTrusted ||
+                  !interactionEpoch.current.isCurrent(rangePreview.epoch) ||
                   !current.current.ready ||
                   !evidence ||
                   evidence.path !== rangePreview.path ||

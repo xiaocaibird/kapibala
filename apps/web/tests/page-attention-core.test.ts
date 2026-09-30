@@ -10,11 +10,48 @@ import {
   isDefinitiveBusinessEvent,
 } from "../src/attention/events";
 import { retainLatest, type ScopedEvent } from "../src/attention/journal";
+import { AttentionInteractionEpoch } from "../src/attention/interaction";
 
 const snapshot = (seq: number): SnapshotEvidence => ({
   seq,
   revision: seq,
   path: "/api/groups/a/messages",
+});
+
+test("refresh completing after blur and refocus cannot confirm an old view intent", async () => {
+  const epoch = new AttentionInteractionEpoch();
+  const state = new AttentionCandidates();
+  state.receive("message-a", 21, 10, true, undefined, true);
+  let resolveRefresh!: () => void;
+  const refresh = new Promise<void>((resolve) => {
+    resolveRefresh = resolve;
+  });
+  const started = epoch.begin();
+  const completed = refresh.then(() => {
+    if (epoch.isCurrent(started)) state.confirm("message-a", snapshot(21), 21);
+  });
+  epoch.invalidate(); // Synchronous blur/hidden handler; refocus creates no intent.
+  resolveRefresh();
+  await completed;
+  assert.equal(state.pending.has("message-a"), true);
+  const freshClick = epoch.begin();
+  assert.equal(epoch.isCurrent(started), false);
+  assert.equal(epoch.isCurrent(freshClick), true);
+  assert.equal(state.confirm("message-a", snapshot(21), 21), true);
+});
+
+test("a frame paused while hidden remains invalid after refocus and cannot consume a newer action", () => {
+  const epoch = new AttentionInteractionEpoch();
+  const state = new AttentionCandidates();
+  state.receive("account-a", 21, 10, true, undefined, true);
+  const queuedFrame = epoch.begin();
+  epoch.invalidate();
+  const currentClick = epoch.begin();
+  if (epoch.isCurrent(queuedFrame))
+    state.confirm("account-a", snapshot(21), 21);
+  assert.equal(state.pending.has("account-a"), true);
+  assert.equal(epoch.isCurrent(currentClick), true);
+  assert.equal(epoch.isCurrent(queuedFrame), false);
 });
 
 const groupChange = (seq: number, changedFields: string[]): ScopedEvent => ({
