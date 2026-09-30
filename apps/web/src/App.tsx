@@ -1,6 +1,7 @@
 import { Component, useState, type ErrorInfo, type ReactNode } from "react";
 import { AuthProvider, useAuth } from "./state/auth";
 import { LiveProvider, useLive } from "./state/live";
+import { GroupDirectoryProvider } from "./directory/GroupDirectoryProvider";
 import { useRoute } from "./hooks/useRoute";
 import { Login } from "./pages/Login";
 import { Accounts } from "./pages/Accounts";
@@ -28,8 +29,10 @@ function Session() {
       </div>
     );
   return user ? (
-    <LiveProvider>
-      <Workspace />
+    <LiveProvider key={`${user.username}:${user.role}`}>
+      <GroupDirectoryProvider>
+        <Workspace />
+      </GroupDirectoryProvider>
     </LiveProvider>
   ) : (
     <Login />

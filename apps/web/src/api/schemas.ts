@@ -6,6 +6,8 @@ import {
 import type {
   Account,
   Group,
+  GroupDirectoryItem,
+  GroupDirectoryPage,
   Message,
   Job,
   AgentRun,
@@ -16,6 +18,8 @@ import type {
 export type {
   Account,
   Group,
+  GroupDirectoryItem,
+  GroupDirectoryPage,
   Message,
   Job,
   AgentRun,
@@ -67,6 +71,36 @@ export const groupSchema: z.ZodType<Group> = z.object({
   activeSequenceRunId: nullableText,
   activeAgentRunId: nullableText,
 });
+export const groupDirectoryItemSchema: z.ZodType<GroupDirectoryItem> = z.object(
+  {
+    id: z.string(),
+    gatewayGroupId: z.string(),
+    name: z
+      .string()
+      .min(1)
+      .max(GROUP_NAME_MAX_LENGTH)
+      .refine((value) => value === value.trim())
+      .nullable(),
+    description: z
+      .string()
+      .min(1)
+      .max(GROUP_DESCRIPTION_MAX_LENGTH)
+      .refine((value) => value === value.trim())
+      .nullable(),
+    createdAt: z.iso.datetime(),
+    status: z.enum(["active", "unreachable", "left"]),
+    memberCount: z.number().int().nonnegative(),
+    agentEnabled: z.boolean(),
+    activeSequenceRunId: nullableText,
+    activeAgentRunId: nullableText,
+  },
+);
+export const groupDirectoryPageSchema: z.ZodType<GroupDirectoryPage> = z.object(
+  {
+    items: z.array(groupDirectoryItemSchema).max(50),
+    nextCursor: z.string().min(1).nullable(),
+  },
+);
 export const messageSchema: z.ZodType<Message> = z.object({
   id: z.string(),
   msgId: nullableText,
