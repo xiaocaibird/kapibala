@@ -1,0 +1,6225 @@
+{
+  "runId": "2026-09-30T21-56-01-127Z",
+  "sourceHead": "34fb1b1542793854de6987d01f2db0ae8b992cbf",
+  "appsTree": "227a3d3a500ecd76c280142431bf99daa97a5c3b",
+  "packagesTree": "7a0779814b5353928913f32eb2cc961998c99b21",
+  "scriptSha256": "033bc9796b4e1ca2b661495414f6d51b726865368659a492d1337989d088cf01",
+  "startedAt": "2026-09-30T21:56:01.144Z",
+  "mode": "production build; real API and WebSocket; fresh headless Chromium context",
+  "thresholdMs": 3000,
+  "boundary": "Browser REST/WS transport restored after outage; GatewayEvents.process injects gateway events without the SSE network parser; background workers disabled",
+  "timing": "Node and browser performance.timeOrigin + performance.now on one host; offset bounded by a browser round trip; DOM first exact match followed by two animation frames and a second exact match",
+  "results": [
+    {
+      "name": "165 exact ordered DOM rows, group state, >=4 pages, duplicate/history replay and one GET503 recover without user action within 3000ms",
+      "passed": true
+    }
+  ],
+  "requests": [
+    {
+      "id": "65cef27e-2b6d-43f2-8f88-dc802317e443",
+      "url": "/api/auth/refresh",
+      "method": "POST",
+      "startedAt": 1790805364477.8228,
+      "status": 401,
+      "finishedAt": 1790805364478.1108
+    },
+    {
+      "id": "80ea2f47-a4eb-43be-b5e1-3fb3dfb50dd2",
+      "url": "/api/auth/login",
+      "method": "POST",
+      "startedAt": 1790805364883.1428,
+      "status": 200,
+      "finishedAt": 1790805364887.0076
+    },
+    {
+      "id": "f6952910-afba-4d89-83d9-a957eeb1bc11",
+      "url": "/api/auth/me",
+      "method": "GET",
+      "startedAt": 1790805364891.2087,
+      "status": 200,
+      "finishedAt": 1790805364891.279
+    },
+    {
+      "id": "b7b3e665-efe1-4248-a606-39acaae2593c",
+      "url": "/api/groups/core-reconnect-group",
+      "method": "GET",
+      "startedAt": 1790805364898.2825,
+      "status": 200,
+      "finishedAt": 1790805364903.0715
+    },
+    {
+      "id": "2ffe3208-5337-4c44-bbef-3f8697df0323",
+      "url": "/ws",
+      "method": "GET",
+      "startedAt": 1790805364899.359
+    },
+    {
+      "id": "9bdc5a9f-af31-4b32-9364-f73e4436331e",
+      "url": "/api/accounts",
+      "method": "GET",
+      "startedAt": 1790805364906.6445,
+      "status": 200,
+      "finishedAt": 1790805364907.6804
+    },
+    {
+      "id": "210631e1-91d3-4c64-b912-a7824872cacd",
+      "url": "/api/groups/core-reconnect-group/messages",
+      "method": "GET",
+      "startedAt": 1790805364919.8506,
+      "status": 200,
+      "finishedAt": 1790805364927.1487,
+      "itemCount": 50,
+      "snapshotId": "147fe10e-b051-41e1-a07f-f1717d6ac8c8",
+      "hasNextCursor": true
+    },
+    {
+      "id": "eb917dba-3126-4655-9c9b-66d344801a01",
+      "url": "/api/groups/core-reconnect-group/agent-runs",
+      "method": "GET",
+      "startedAt": 1790805364920.5923,
+      "status": 200,
+      "finishedAt": 1790805364921.3948
+    },
+    {
+      "id": "7ccd8435-eac7-4c1c-b2c5-6a0d4694f560",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50",
+      "method": "GET",
+      "startedAt": 1790805364983.063,
+      "status": 200,
+      "finishedAt": 1790805364987.0913,
+      "itemCount": 50,
+      "snapshotId": "9a62f15f-ff87-4bf1-b061-747035d27584",
+      "hasNextCursor": true
+    },
+    {
+      "id": "9b009863-f90b-4d98-b4b9-fb873a495fa2",
+      "url": "/api/groups/core-reconnect-group/agent-runs",
+      "method": "GET",
+      "startedAt": 1790805364983.5269,
+      "status": 200,
+      "finishedAt": 1790805364983.987
+    },
+    {
+      "id": "fd874dac-e4db-4338-9727-18ade17f646a",
+      "url": "/api/groups/core-reconnect-group",
+      "method": "GET",
+      "startedAt": 1790805364983.5674,
+      "status": 200,
+      "finishedAt": 1790805364986.9026
+    },
+    {
+      "id": "060144b7-0c9e-459f-8ed3-c13481207097",
+      "url": "/api/accounts",
+      "method": "GET",
+      "startedAt": 1790805364989.1267,
+      "status": 200,
+      "finishedAt": 1790805364990.013
+    },
+    {
+      "id": "2c19c2b4-f0ed-446d-8acc-df6cf69322cc",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50&before=eyJzbmFwc2hvdElkIjoiOWE2MmYxNWYtZmY4Ny00YmYxLWIwNjEtNzQ3MDM1ZDI3NTg0Iiwib2Zmc2V0Ijo1MH0",
+      "method": "GET",
+      "startedAt": 1790805364991.3445,
+      "status": 200,
+      "finishedAt": 1790805364993.0415,
+      "itemCount": 50,
+      "snapshotId": "9a62f15f-ff87-4bf1-b061-747035d27584",
+      "hasNextCursor": true
+    },
+    {
+      "id": "2ce49335-eeee-47c7-886c-4f7bc7b739b0",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50&before=eyJzbmFwc2hvdElkIjoiOWE2MmYxNWYtZmY4Ny00YmYxLWIwNjEtNzQ3MDM1ZDI3NTg0Iiwib2Zmc2V0IjoxMDB9",
+      "method": "GET",
+      "startedAt": 1790805364995.1975,
+      "status": 200,
+      "finishedAt": 1790805364996.4248,
+      "itemCount": 50,
+      "snapshotId": "9a62f15f-ff87-4bf1-b061-747035d27584",
+      "hasNextCursor": true
+    },
+    {
+      "id": "835eb733-4324-4783-9e0d-434367c5fd8b",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50&before=eyJzbmFwc2hvdElkIjoiOWE2MmYxNWYtZmY4Ny00YmYxLWIwNjEtNzQ3MDM1ZDI3NTg0Iiwib2Zmc2V0IjoxNTB9",
+      "method": "GET",
+      "startedAt": 1790805364998.6387,
+      "status": 200,
+      "finishedAt": 1790805364999.575,
+      "itemCount": 10,
+      "snapshotId": "9a62f15f-ff87-4bf1-b061-747035d27584",
+      "hasNextCursor": false
+    },
+    {
+      "id": "51cf7ec1-22b8-44cc-85d3-29675b914f4e",
+      "url": "/api/groups/core-reconnect-group/agent-runs",
+      "method": "GET",
+      "startedAt": 1790805365075.903,
+      "status": 200,
+      "finishedAt": 1790805365077.1318
+    },
+    {
+      "id": "9207e3d7-4862-453b-802f-d024ea712254",
+      "url": "/api/groups/core-reconnect-group",
+      "method": "GET",
+      "startedAt": 1790805365075.9805,
+      "status": 200,
+      "finishedAt": 1790805365078.3613
+    },
+    {
+      "id": "a131a63b-6a12-43d8-a905-a6c712aaf716",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50",
+      "method": "GET",
+      "startedAt": 1790805365076.0427,
+      "status": 200,
+      "finishedAt": 1790805365082.172,
+      "itemCount": 50,
+      "snapshotId": "422d2552-7855-4010-bd05-5b73ed4d15be",
+      "hasNextCursor": true
+    },
+    {
+      "id": "3337763f-dc3e-4f3d-a8f5-ca126b9af05f",
+      "url": "/api/accounts",
+      "method": "GET",
+      "startedAt": 1790805365076.2449,
+      "status": 200,
+      "finishedAt": 1790805365077.0117
+    },
+    {
+      "id": "c325a000-90a9-4bb1-962b-b837ac840ecf",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50&before=eyJzbmFwc2hvdElkIjoiNDIyZDI1NTItNzg1NS00MDEwLWJkMDUtNWI3M2VkNGQxNWJlIiwib2Zmc2V0Ijo1MH0",
+      "method": "GET",
+      "startedAt": 1790805365086.5715,
+      "status": 200,
+      "finishedAt": 1790805365087.5288,
+      "itemCount": 50,
+      "snapshotId": "422d2552-7855-4010-bd05-5b73ed4d15be",
+      "hasNextCursor": true
+    },
+    {
+      "id": "cb33aa42-840e-429d-8666-4d79f56a9cb3",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50&before=eyJzbmFwc2hvdElkIjoiNDIyZDI1NTItNzg1NS00MDEwLWJkMDUtNWI3M2VkNGQxNWJlIiwib2Zmc2V0IjoxMDB9",
+      "method": "GET",
+      "startedAt": 1790805365089.336,
+      "status": 200,
+      "finishedAt": 1790805365090.279,
+      "itemCount": 50,
+      "snapshotId": "422d2552-7855-4010-bd05-5b73ed4d15be",
+      "hasNextCursor": true
+    },
+    {
+      "id": "3b647cfe-784a-4f0c-9451-e675354a6795",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50&before=eyJzbmFwc2hvdElkIjoiNDIyZDI1NTItNzg1NS00MDEwLWJkMDUtNWI3M2VkNGQxNWJlIiwib2Zmc2V0IjoxNTB9",
+      "method": "GET",
+      "startedAt": 1790805365092.3713,
+      "status": 200,
+      "finishedAt": 1790805365093.2808,
+      "itemCount": 10,
+      "snapshotId": "422d2552-7855-4010-bd05-5b73ed4d15be",
+      "hasNextCursor": false
+    },
+    {
+      "id": "48f04d5d-6933-44c1-b090-6e81e57781b1",
+      "url": "/ws",
+      "method": "GET",
+      "startedAt": 1790805365843.528,
+      "fault": "outage",
+      "status": 503,
+      "finishedAt": 1790805365843.6052
+    },
+    {
+      "id": "93e7b788-fb52-4001-8ea6-b3703a260817",
+      "url": "/ws",
+      "method": "GET",
+      "startedAt": 1790805366245.9783
+    },
+    {
+      "id": "43dc3499-20a3-4db9-953f-ebb61e3901ab",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50",
+      "method": "GET",
+      "startedAt": 1790805366317.586,
+      "fault": "one-restored-timeline-503",
+      "status": 503,
+      "finishedAt": 1790805366317.6313
+    },
+    {
+      "id": "43be5ceb-036e-4d2c-b6af-8cacb8fc2eb9",
+      "url": "/api/groups/core-reconnect-group/agent-runs",
+      "method": "GET",
+      "startedAt": 1790805366318.0046,
+      "status": 200,
+      "finishedAt": 1790805366319.318
+    },
+    {
+      "id": "eb0af29f-6ee8-4471-8c82-9506606d1ac4",
+      "url": "/api/groups/core-reconnect-group",
+      "method": "GET",
+      "startedAt": 1790805366318.1128,
+      "status": 200,
+      "finishedAt": 1790805366321.5496
+    },
+    {
+      "id": "defc8dde-7a06-4e7c-9e92-6cd6cb355ede",
+      "url": "/api/accounts",
+      "method": "GET",
+      "startedAt": 1790805366318.3137,
+      "status": 200,
+      "finishedAt": 1790805366319.07
+    },
+    {
+      "id": "6e097080-7cba-4848-96b4-715b3f5421ed",
+      "url": "/api/groups/core-reconnect-group/agent-runs",
+      "method": "GET",
+      "startedAt": 1790805366417.4954,
+      "status": 200,
+      "finishedAt": 1790805366418.1675
+    },
+    {
+      "id": "85bd1a2d-a313-4366-8815-a0fc9ba3b013",
+      "url": "/api/accounts",
+      "method": "GET",
+      "startedAt": 1790805366417.5718,
+      "status": 200,
+      "finishedAt": 1790805366418.035
+    },
+    {
+      "id": "125e672d-029f-4ec7-a022-bd393890ecc6",
+      "url": "/api/groups/core-reconnect-group",
+      "method": "GET",
+      "startedAt": 1790805366417.6062,
+      "status": 200,
+      "finishedAt": 1790805366419.4705
+    },
+    {
+      "id": "556c756b-496e-48f2-a8a5-3480a5bf15b5",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50",
+      "method": "GET",
+      "startedAt": 1790805366574.9644,
+      "status": 200,
+      "finishedAt": 1790805366581.6821,
+      "itemCount": 50,
+      "snapshotId": "8bdbd16e-2b73-4095-89aa-99af5225d308",
+      "hasNextCursor": true
+    },
+    {
+      "id": "d8edb644-c048-4486-b81d-366085eb6aaf",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50&before=eyJzbmFwc2hvdElkIjoiOGJkYmQxNmUtMmI3My00MDk1LTg5YWEtOTlhZjUyMjVkMzA4Iiwib2Zmc2V0Ijo1MH0",
+      "method": "GET",
+      "startedAt": 1790805366584.2993,
+      "status": 200,
+      "finishedAt": 1790805366585.8723,
+      "itemCount": 50,
+      "snapshotId": "8bdbd16e-2b73-4095-89aa-99af5225d308",
+      "hasNextCursor": true
+    },
+    {
+      "id": "1422a2d3-445b-4eac-8f1c-8cbb60512c1e",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50&before=eyJzbmFwc2hvdElkIjoiOGJkYmQxNmUtMmI3My00MDk1LTg5YWEtOTlhZjUyMjVkMzA4Iiwib2Zmc2V0IjoxMDB9",
+      "method": "GET",
+      "startedAt": 1790805366588.2466,
+      "status": 200,
+      "finishedAt": 1790805366589.5068,
+      "itemCount": 50,
+      "snapshotId": "8bdbd16e-2b73-4095-89aa-99af5225d308",
+      "hasNextCursor": true
+    },
+    {
+      "id": "7bcd31c7-0ce3-46f8-bd6a-7ee4c4228796",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50&before=eyJzbmFwc2hvdElkIjoiOGJkYmQxNmUtMmI3My00MDk1LTg5YWEtOTlhZjUyMjVkMzA4Iiwib2Zmc2V0IjoxNTB9",
+      "method": "GET",
+      "startedAt": 1790805366591.878,
+      "status": 200,
+      "finishedAt": 1790805366593.058,
+      "itemCount": 15,
+      "snapshotId": "8bdbd16e-2b73-4095-89aa-99af5225d308",
+      "hasNextCursor": false
+    },
+    {
+      "id": "73141a5a-c51d-4c28-930d-9fe55a345ee2",
+      "url": "/api/groups/core-reconnect-group",
+      "method": "GET",
+      "startedAt": 1790805366900.3767,
+      "status": 200,
+      "finishedAt": 1790805366902.963
+    },
+    {
+      "id": "11e0286b-20f0-47f2-9bd7-bd09c61cefe3",
+      "url": "/api/groups/core-reconnect-group/agent-runs",
+      "method": "GET",
+      "startedAt": 1790805366921.7483,
+      "status": 200,
+      "finishedAt": 1790805366922.7417
+    }
+  ],
+  "sockets": [
+    {
+      "openedAt": 1790805364899.7778,
+      "frames": [
+        {
+          "at": 1790805364908.069,
+          "type": "auth",
+          "success": true
+        },
+        {
+          "at": 1790805364919.7307,
+          "type": "scope_ready"
+        },
+        {
+          "at": 1790805365001.4958,
+          "type": "message",
+          "seq": 1
+        },
+        {
+          "at": 1790805365001.5403,
+          "type": "message",
+          "seq": 2
+        },
+        {
+          "at": 1790805365001.562,
+          "type": "message",
+          "seq": 3
+        },
+        {
+          "at": 1790805365001.5757,
+          "type": "message",
+          "seq": 4
+        },
+        {
+          "at": 1790805365001.591,
+          "type": "message",
+          "seq": 5
+        },
+        {
+          "at": 1790805365001.6023,
+          "type": "message",
+          "seq": 6
+        },
+        {
+          "at": 1790805365001.6143,
+          "type": "message",
+          "seq": 7
+        },
+        {
+          "at": 1790805365001.637,
+          "type": "message",
+          "seq": 8
+        },
+        {
+          "at": 1790805365001.6729,
+          "type": "message",
+          "seq": 9
+        },
+        {
+          "at": 1790805365001.689,
+          "type": "message",
+          "seq": 10
+        },
+        {
+          "at": 1790805365001.7114,
+          "type": "message",
+          "seq": 11
+        },
+        {
+          "at": 1790805365001.72,
+          "type": "message",
+          "seq": 12
+        },
+        {
+          "at": 1790805365001.729,
+          "type": "message",
+          "seq": 13
+        },
+        {
+          "at": 1790805365001.739,
+          "type": "message",
+          "seq": 14
+        },
+        {
+          "at": 1790805365001.7532,
+          "type": "message",
+          "seq": 15
+        },
+        {
+          "at": 1790805365001.7686,
+          "type": "message",
+          "seq": 16
+        },
+        {
+          "at": 1790805365001.778,
+          "type": "message",
+          "seq": 17
+        },
+        {
+          "at": 1790805365001.7961,
+          "type": "message",
+          "seq": 18
+        },
+        {
+          "at": 1790805365001.8086,
+          "type": "message",
+          "seq": 19
+        },
+        {
+          "at": 1790805365001.8164,
+          "type": "message",
+          "seq": 20
+        },
+        {
+          "at": 1790805365001.826,
+          "type": "message",
+          "seq": 21
+        },
+        {
+          "at": 1790805365001.8342,
+          "type": "message",
+          "seq": 22
+        },
+        {
+          "at": 1790805365001.8428,
+          "type": "message",
+          "seq": 23
+        },
+        {
+          "at": 1790805365001.8516,
+          "type": "message",
+          "seq": 24
+        },
+        {
+          "at": 1790805365001.8604,
+          "type": "message",
+          "seq": 25
+        },
+        {
+          "at": 1790805365001.8682,
+          "type": "message",
+          "seq": 26
+        },
+        {
+          "at": 1790805365001.8748,
+          "type": "message",
+          "seq": 27
+        },
+        {
+          "at": 1790805365001.882,
+          "type": "message",
+          "seq": 28
+        },
+        {
+          "at": 1790805365001.8872,
+          "type": "message",
+          "seq": 29
+        },
+        {
+          "at": 1790805365001.8948,
+          "type": "message",
+          "seq": 30
+        },
+        {
+          "at": 1790805365001.901,
+          "type": "message",
+          "seq": 31
+        },
+        {
+          "at": 1790805365001.908,
+          "type": "message",
+          "seq": 32
+        },
+        {
+          "at": 1790805365001.9143,
+          "type": "message",
+          "seq": 33
+        },
+        {
+          "at": 1790805365001.922,
+          "type": "message",
+          "seq": 34
+        },
+        {
+          "at": 1790805365001.9297,
+          "type": "message",
+          "seq": 35
+        },
+        {
+          "at": 1790805365001.9346,
+          "type": "message",
+          "seq": 36
+        },
+        {
+          "at": 1790805365001.942,
+          "type": "message",
+          "seq": 37
+        },
+        {
+          "at": 1790805365001.9468,
+          "type": "message",
+          "seq": 38
+        },
+        {
+          "at": 1790805365001.954,
+          "type": "message",
+          "seq": 39
+        },
+        {
+          "at": 1790805365001.959,
+          "type": "message",
+          "seq": 40
+        },
+        {
+          "at": 1790805365001.9663,
+          "type": "message",
+          "seq": 41
+        },
+        {
+          "at": 1790805365001.9778,
+          "type": "message",
+          "seq": 42
+        },
+        {
+          "at": 1790805365001.9841,
+          "type": "message",
+          "seq": 43
+        },
+        {
+          "at": 1790805365001.9912,
+          "type": "message",
+          "seq": 44
+        },
+        {
+          "at": 1790805365001.9973,
+          "type": "message",
+          "seq": 45
+        },
+        {
+          "at": 1790805365002.005,
+          "type": "message",
+          "seq": 46
+        },
+        {
+          "at": 1790805365002.0115,
+          "type": "message",
+          "seq": 47
+        },
+        {
+          "at": 1790805365002.0186,
+          "type": "message",
+          "seq": 48
+        },
+        {
+          "at": 1790805365002.0234,
+          "type": "message",
+          "seq": 49
+        },
+        {
+          "at": 1790805365002.0308,
+          "type": "message",
+          "seq": 50
+        },
+        {
+          "at": 1790805365002.036,
+          "type": "message",
+          "seq": 51
+        },
+        {
+          "at": 1790805365002.043,
+          "type": "message",
+          "seq": 52
+        },
+        {
+          "at": 1790805365002.0503,
+          "type": "message",
+          "seq": 53
+        },
+        {
+          "at": 1790805365002.0574,
+          "type": "message",
+          "seq": 54
+        },
+        {
+          "at": 1790805365002.0637,
+          "type": "message",
+          "seq": 55
+        },
+        {
+          "at": 1790805365002.0708,
+          "type": "message",
+          "seq": 56
+        },
+        {
+          "at": 1790805365002.0754,
+          "type": "message",
+          "seq": 57
+        },
+        {
+          "at": 1790805365002.0825,
+          "type": "message",
+          "seq": 58
+        },
+        {
+          "at": 1790805365002.087,
+          "type": "message",
+          "seq": 59
+        },
+        {
+          "at": 1790805365002.094,
+          "type": "message",
+          "seq": 60
+        },
+        {
+          "at": 1790805365002.1006,
+          "type": "message",
+          "seq": 61
+        },
+        {
+          "at": 1790805365002.1077,
+          "type": "message",
+          "seq": 62
+        },
+        {
+          "at": 1790805365002.1135,
+          "type": "message",
+          "seq": 63
+        },
+        {
+          "at": 1790805365002.1208,
+          "type": "message",
+          "seq": 64
+        },
+        {
+          "at": 1790805365002.127,
+          "type": "message",
+          "seq": 65
+        },
+        {
+          "at": 1790805365002.1343,
+          "type": "message",
+          "seq": 66
+        },
+        {
+          "at": 1790805365002.1526,
+          "type": "message",
+          "seq": 67
+        },
+        {
+          "at": 1790805365002.1602,
+          "type": "message",
+          "seq": 68
+        },
+        {
+          "at": 1790805365002.1682,
+          "type": "message",
+          "seq": 69
+        },
+        {
+          "at": 1790805365002.2317,
+          "type": "message",
+          "seq": 70
+        },
+        {
+          "at": 1790805365002.2742,
+          "type": "message",
+          "seq": 71
+        },
+        {
+          "at": 1790805365002.2856,
+          "type": "message",
+          "seq": 72
+        },
+        {
+          "at": 1790805365002.295,
+          "type": "message",
+          "seq": 73
+        },
+        {
+          "at": 1790805365002.3035,
+          "type": "message",
+          "seq": 74
+        },
+        {
+          "at": 1790805365002.3113,
+          "type": "message",
+          "seq": 75
+        },
+        {
+          "at": 1790805365002.3193,
+          "type": "message",
+          "seq": 76
+        },
+        {
+          "at": 1790805365002.327,
+          "type": "message",
+          "seq": 77
+        },
+        {
+          "at": 1790805365002.3347,
+          "type": "message",
+          "seq": 78
+        },
+        {
+          "at": 1790805365002.341,
+          "type": "message",
+          "seq": 79
+        },
+        {
+          "at": 1790805365002.3484,
+          "type": "message",
+          "seq": 80
+        },
+        {
+          "at": 1790805365002.3547,
+          "type": "message",
+          "seq": 81
+        },
+        {
+          "at": 1790805365002.362,
+          "type": "message",
+          "seq": 82
+        },
+        {
+          "at": 1790805365002.3684,
+          "type": "message",
+          "seq": 83
+        },
+        {
+          "at": 1790805365002.3755,
+          "type": "message",
+          "seq": 84
+        },
+        {
+          "at": 1790805365002.3818,
+          "type": "message",
+          "seq": 85
+        },
+        {
+          "at": 1790805365002.389,
+          "type": "message",
+          "seq": 86
+        },
+        {
+          "at": 1790805365002.3936,
+          "type": "message",
+          "seq": 87
+        },
+        {
+          "at": 1790805365002.401,
+          "type": "message",
+          "seq": 88
+        },
+        {
+          "at": 1790805365002.4055,
+          "type": "message",
+          "seq": 89
+        },
+        {
+          "at": 1790805365002.4126,
+          "type": "message",
+          "seq": 90
+        },
+        {
+          "at": 1790805365002.4172,
+          "type": "message",
+          "seq": 91
+        },
+        {
+          "at": 1790805365002.4243,
+          "type": "message",
+          "seq": 92
+        },
+        {
+          "at": 1790805365002.4302,
+          "type": "message",
+          "seq": 93
+        },
+        {
+          "at": 1790805365002.437,
+          "type": "message",
+          "seq": 94
+        },
+        {
+          "at": 1790805365002.443,
+          "type": "message",
+          "seq": 95
+        },
+        {
+          "at": 1790805365002.4502,
+          "type": "message",
+          "seq": 96
+        },
+        {
+          "at": 1790805365002.4548,
+          "type": "message",
+          "seq": 97
+        },
+        {
+          "at": 1790805365002.462,
+          "type": "message",
+          "seq": 98
+        },
+        {
+          "at": 1790805365002.4675,
+          "type": "message",
+          "seq": 99
+        },
+        {
+          "at": 1790805365002.4749,
+          "type": "message",
+          "seq": 100
+        },
+        {
+          "at": 1790805365002.4807,
+          "type": "message",
+          "seq": 101
+        },
+        {
+          "at": 1790805365002.4873,
+          "type": "message",
+          "seq": 102
+        },
+        {
+          "at": 1790805365002.4944,
+          "type": "message",
+          "seq": 103
+        },
+        {
+          "at": 1790805365002.499,
+          "type": "message",
+          "seq": 104
+        },
+        {
+          "at": 1790805365002.506,
+          "type": "message",
+          "seq": 105
+        },
+        {
+          "at": 1790805365002.5107,
+          "type": "message",
+          "seq": 106
+        },
+        {
+          "at": 1790805365002.5176,
+          "type": "message",
+          "seq": 107
+        },
+        {
+          "at": 1790805365002.522,
+          "type": "message",
+          "seq": 108
+        },
+        {
+          "at": 1790805365002.5293,
+          "type": "message",
+          "seq": 109
+        },
+        {
+          "at": 1790805365002.5344,
+          "type": "message",
+          "seq": 110
+        },
+        {
+          "at": 1790805365002.5413,
+          "type": "message",
+          "seq": 111
+        },
+        {
+          "at": 1790805365002.546,
+          "type": "message",
+          "seq": 112
+        },
+        {
+          "at": 1790805365002.553,
+          "type": "message",
+          "seq": 113
+        },
+        {
+          "at": 1790805365002.559,
+          "type": "message",
+          "seq": 114
+        },
+        {
+          "at": 1790805365002.5662,
+          "type": "message",
+          "seq": 115
+        },
+        {
+          "at": 1790805365002.5708,
+          "type": "message",
+          "seq": 116
+        },
+        {
+          "at": 1790805365002.5774,
+          "type": "message",
+          "seq": 117
+        },
+        {
+          "at": 1790805365002.5823,
+          "type": "message",
+          "seq": 118
+        },
+        {
+          "at": 1790805365002.5889,
+          "type": "message",
+          "seq": 119
+        },
+        {
+          "at": 1790805365002.5933,
+          "type": "message",
+          "seq": 120
+        },
+        {
+          "at": 1790805365002.6003,
+          "type": "message",
+          "seq": 121
+        },
+        {
+          "at": 1790805365002.605,
+          "type": "message",
+          "seq": 122
+        },
+        {
+          "at": 1790805365002.612,
+          "type": "message",
+          "seq": 123
+        },
+        {
+          "at": 1790805365002.6167,
+          "type": "message",
+          "seq": 124
+        },
+        {
+          "at": 1790805365002.6238,
+          "type": "message",
+          "seq": 125
+        },
+        {
+          "at": 1790805365002.6284,
+          "type": "message",
+          "seq": 126
+        },
+        {
+          "at": 1790805365002.6353,
+          "type": "message",
+          "seq": 127
+        },
+        {
+          "at": 1790805365002.64,
+          "type": "message",
+          "seq": 128
+        },
+        {
+          "at": 1790805365002.6445,
+          "type": "message",
+          "seq": 129
+        },
+        {
+          "at": 1790805365002.6523,
+          "type": "message",
+          "seq": 130
+        },
+        {
+          "at": 1790805365002.6655,
+          "type": "message",
+          "seq": 131
+        },
+        {
+          "at": 1790805365002.6736,
+          "type": "message",
+          "seq": 132
+        },
+        {
+          "at": 1790805365002.681,
+          "type": "message",
+          "seq": 133
+        },
+        {
+          "at": 1790805365002.688,
+          "type": "message",
+          "seq": 134
+        },
+        {
+          "at": 1790805365002.6934,
+          "type": "message",
+          "seq": 135
+        },
+        {
+          "at": 1790805365002.7,
+          "type": "message",
+          "seq": 136
+        },
+        {
+          "at": 1790805365002.7048,
+          "type": "message",
+          "seq": 137
+        },
+        {
+          "at": 1790805365002.712,
+          "type": "message",
+          "seq": 138
+        },
+        {
+          "at": 1790805365002.7222,
+          "type": "message",
+          "seq": 139
+        },
+        {
+          "at": 1790805365002.73,
+          "type": "message",
+          "seq": 140
+        },
+        {
+          "at": 1790805365002.7363,
+          "type": "message",
+          "seq": 141
+        },
+        {
+          "at": 1790805365002.7434,
+          "type": "message",
+          "seq": 142
+        },
+        {
+          "at": 1790805365002.7495,
+          "type": "message",
+          "seq": 143
+        },
+        {
+          "at": 1790805365002.7563,
+          "type": "message",
+          "seq": 144
+        },
+        {
+          "at": 1790805365002.761,
+          "type": "message",
+          "seq": 145
+        },
+        {
+          "at": 1790805365002.7747,
+          "type": "message",
+          "seq": 146
+        },
+        {
+          "at": 1790805365002.7825,
+          "type": "message",
+          "seq": 147
+        },
+        {
+          "at": 1790805365002.7878,
+          "type": "message",
+          "seq": 148
+        },
+        {
+          "at": 1790805365002.795,
+          "type": "message",
+          "seq": 149
+        },
+        {
+          "at": 1790805365002.7996,
+          "type": "message",
+          "seq": 150
+        },
+        {
+          "at": 1790805365002.8066,
+          "type": "message",
+          "seq": 151
+        },
+        {
+          "at": 1790805365002.812,
+          "type": "message",
+          "seq": 152
+        },
+        {
+          "at": 1790805365002.819,
+          "type": "message",
+          "seq": 153
+        },
+        {
+          "at": 1790805365002.824,
+          "type": "message",
+          "seq": 154
+        },
+        {
+          "at": 1790805365002.831,
+          "type": "message",
+          "seq": 155
+        },
+        {
+          "at": 1790805365002.8357,
+          "type": "message",
+          "seq": 156
+        },
+        {
+          "at": 1790805365002.8425,
+          "type": "message",
+          "seq": 157
+        },
+        {
+          "at": 1790805365002.8472,
+          "type": "message",
+          "seq": 158
+        },
+        {
+          "at": 1790805365002.8552,
+          "type": "message",
+          "seq": 159
+        },
+        {
+          "at": 1790805365002.8623,
+          "type": "message",
+          "seq": 160
+        }
+      ],
+      "authRequestedAt": 1790805364901.1301,
+      "sinceSeq": 0,
+      "closedAt": 1790805365439.3442,
+      "closeCode": 1012
+    },
+    {
+      "openedAt": 1790805366246.0962,
+      "frames": [
+        {
+          "at": 1790805366248.1484,
+          "type": "auth",
+          "success": true
+        },
+        {
+          "at": 1790805366348.9631,
+          "type": "message",
+          "seq": 161
+        },
+        {
+          "at": 1790805366348.997,
+          "type": "message",
+          "seq": 162
+        },
+        {
+          "at": 1790805366349.0308,
+          "type": "message",
+          "seq": 163
+        },
+        {
+          "at": 1790805366349.042,
+          "type": "message",
+          "seq": 164
+        },
+        {
+          "at": 1790805366349.06,
+          "type": "message",
+          "seq": 165
+        },
+        {
+          "at": 1790805366349.071,
+          "type": "group_changed",
+          "seq": 166
+        }
+      ],
+      "authRequestedAt": 1790805366247.01,
+      "sinceSeq": 160,
+      "injectedOldFrames": 6,
+      "closedAt": 1790805367573.1475,
+      "closeCode": 1001
+    }
+  ],
+  "pageErrors": [],
+  "cleanupErrors": [],
+  "buildAssets": [
+    {
+      "file": "index-D_PTbvD6.css",
+      "sha256": "e0d8ab745f0d8f2bd3d26d1095156e3d39fc1feb4f8a286025871d1e141a8556"
+    },
+    {
+      "file": "index-vDlW4rvq.js",
+      "sha256": "d2bc85add3d7aaab78d067ec83b999faaf7f17ffa699ce9d2d41070aa5864d47"
+    }
+  ],
+  "database": "kapibala_test_76e2b0b54b2348dd9bc8e63fe0b30972",
+  "databaseServerPort": "64550",
+  "apiPort": "49883",
+  "webPort": "49885",
+  "browserVersion": "153.0.8010.12",
+  "clockCalibration": {
+    "nodeBefore": 1790805365436.6008,
+    "browser": 1790805365437.4001,
+    "nodeAfter": 1790805365437.6343,
+    "maxOffsetBoundMs": 0.79931640625
+  },
+  "initial": {
+    "domRows": 160,
+    "navigations": 1,
+    "wsAuthenticated": true
+  },
+  "outageStartedAt": 1790805365438.442,
+  "fixture": {
+    "initialMessages": 160,
+    "offlineNewMessages": 3,
+    "historicalBackfills": 2,
+    "gatewayDuplicateDeliveries": 2,
+    "oldWsReplayCopies": 6,
+    "expectedRows": 165,
+    "expected": [
+      {
+        "id": "e93d4fdf-4758-401f-bd38-97c97992ce12",
+        "msgId": "late-history-oldest",
+        "text": "晚到历史：早于所有可见消息",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2025-12-31T23:30:00.000Z"
+      },
+      {
+        "id": "d1e90835-0c48-4338-9c98-dd2e2484e777",
+        "msgId": "initial-0",
+        "text": "初始消息 000",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:00:00.000Z"
+      },
+      {
+        "id": "c73edd25-a950-4542-8555-9ad5d851937f",
+        "msgId": "initial-1",
+        "text": "初始消息 001",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:01:00.000Z"
+      },
+      {
+        "id": "fdb5023b-e357-4fff-bb97-28f563d98a44",
+        "msgId": "initial-2",
+        "text": "初始消息 002",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:02:00.000Z"
+      },
+      {
+        "id": "786cf031-e361-4d32-a3ee-a77c3975e693",
+        "msgId": "initial-3",
+        "text": "初始消息 003",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:03:00.000Z"
+      },
+      {
+        "id": "b0973f67-d90f-4795-b0ba-2db6877931f8",
+        "msgId": "initial-4",
+        "text": "初始消息 004",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:04:00.000Z"
+      },
+      {
+        "id": "2b463a1e-cc87-483b-acd8-5d78c91bee5c",
+        "msgId": "initial-5",
+        "text": "初始消息 005",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:05:00.000Z"
+      },
+      {
+        "id": "41e02108-0b30-4d24-a378-6ad98b2c7f19",
+        "msgId": "initial-6",
+        "text": "初始消息 006",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:06:00.000Z"
+      },
+      {
+        "id": "ff7e0e13-416d-4e1a-8227-27eb31df9d1c",
+        "msgId": "initial-7",
+        "text": "初始消息 007",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:07:00.000Z"
+      },
+      {
+        "id": "41c87fc4-cabf-4c40-91d3-6e0f3992019e",
+        "msgId": "initial-8",
+        "text": "初始消息 008",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:08:00.000Z"
+      },
+      {
+        "id": "3f1717e6-e890-41cf-b7e7-c9a9c3594c46",
+        "msgId": "initial-9",
+        "text": "初始消息 009",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:09:00.000Z"
+      },
+      {
+        "id": "9b05dbb6-571a-49fc-8d66-8ac42bc9b171",
+        "msgId": "initial-10",
+        "text": "初始消息 010",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:10:00.000Z"
+      },
+      {
+        "id": "8a215eea-a922-4e1d-9f5b-5ee88d8be974",
+        "msgId": "initial-11",
+        "text": "初始消息 011",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:11:00.000Z"
+      },
+      {
+        "id": "e268f07b-c72b-4f4e-81ba-c83070dbb47c",
+        "msgId": "initial-12",
+        "text": "初始消息 012",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:12:00.000Z"
+      },
+      {
+        "id": "f2f89c4e-c70f-48e0-9ff3-0316a7a6f2bf",
+        "msgId": "initial-13",
+        "text": "初始消息 013",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:13:00.000Z"
+      },
+      {
+        "id": "5e2d7193-1372-4337-917f-438a62f0274e",
+        "msgId": "initial-14",
+        "text": "初始消息 014",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:14:00.000Z"
+      },
+      {
+        "id": "ce0389df-2cb1-445d-9a89-341df2a39ccb",
+        "msgId": "initial-15",
+        "text": "初始消息 015",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:15:00.000Z"
+      },
+      {
+        "id": "442f0157-5473-4dd0-b30c-47fae9d8607b",
+        "msgId": "initial-16",
+        "text": "初始消息 016",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:16:00.000Z"
+      },
+      {
+        "id": "211269b1-7428-4dbf-9d46-b24e00bfa9fa",
+        "msgId": "initial-17",
+        "text": "初始消息 017",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:17:00.000Z"
+      },
+      {
+        "id": "c8924fdd-80f7-4afe-b7af-9519f5894980",
+        "msgId": "initial-18",
+        "text": "初始消息 018",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:18:00.000Z"
+      },
+      {
+        "id": "85b42325-5272-49d7-b0fd-28dd64e97beb",
+        "msgId": "initial-19",
+        "text": "初始消息 019",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:19:00.000Z"
+      },
+      {
+        "id": "0d62057a-9f29-4606-9ff7-c4413274dba7",
+        "msgId": "initial-20",
+        "text": "初始消息 020",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:20:00.000Z"
+      },
+      {
+        "id": "1566a7d6-bbc8-4bc1-8f14-5a51aa4732d7",
+        "msgId": "initial-21",
+        "text": "初始消息 021",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:21:00.000Z"
+      },
+      {
+        "id": "4b2f6ebf-4b0d-4e5d-976c-b20a6a5b3c1f",
+        "msgId": "initial-22",
+        "text": "初始消息 022",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:22:00.000Z"
+      },
+      {
+        "id": "a2fe7663-b61f-4243-9f48-a341b6cc73fe",
+        "msgId": "initial-23",
+        "text": "初始消息 023",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:23:00.000Z"
+      },
+      {
+        "id": "3ae0901b-0f50-4b0a-8d09-07e5c9f1457b",
+        "msgId": "initial-24",
+        "text": "初始消息 024",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:24:00.000Z"
+      },
+      {
+        "id": "be573441-fcc0-474c-a6b1-c3f3862aa0b6",
+        "msgId": "initial-25",
+        "text": "初始消息 025",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:25:00.000Z"
+      },
+      {
+        "id": "9df6fb33-624a-4686-b3d3-5b1d6fbb2f6b",
+        "msgId": "initial-26",
+        "text": "初始消息 026",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:26:00.000Z"
+      },
+      {
+        "id": "54b018e0-7485-4429-a767-e74cf65116b4",
+        "msgId": "initial-27",
+        "text": "初始消息 027",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:27:00.000Z"
+      },
+      {
+        "id": "cfb41b95-f341-4db6-897a-77fae00c34c6",
+        "msgId": "initial-28",
+        "text": "初始消息 028",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:28:00.000Z"
+      },
+      {
+        "id": "9a466ef7-c09b-4b5c-9a48-742e5af93b75",
+        "msgId": "initial-29",
+        "text": "初始消息 029",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:29:00.000Z"
+      },
+      {
+        "id": "705fd721-405f-4347-ba59-1f4ece679cae",
+        "msgId": "initial-30",
+        "text": "初始消息 030",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:30:00.000Z"
+      },
+      {
+        "id": "7d7217a8-58a3-4835-a3f7-9395e5e2bae8",
+        "msgId": "initial-31",
+        "text": "初始消息 031",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:31:00.000Z"
+      },
+      {
+        "id": "451de5ce-d282-410b-a8eb-d0dce25f89cd",
+        "msgId": "initial-32",
+        "text": "初始消息 032",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:32:00.000Z"
+      },
+      {
+        "id": "6e34b419-d380-47e9-b158-861ae5ce9fbb",
+        "msgId": "initial-33",
+        "text": "初始消息 033",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:33:00.000Z"
+      },
+      {
+        "id": "970c9ff3-7099-4851-8ec4-bcd55e4191f3",
+        "msgId": "initial-34",
+        "text": "初始消息 034",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:34:00.000Z"
+      },
+      {
+        "id": "09069300-b602-4b45-a762-a34505273807",
+        "msgId": "initial-35",
+        "text": "初始消息 035",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:35:00.000Z"
+      },
+      {
+        "id": "76267daf-ca1b-456e-9a0c-a2adbde5e7e5",
+        "msgId": "initial-36",
+        "text": "初始消息 036",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:36:00.000Z"
+      },
+      {
+        "id": "b3902ecd-9181-4606-81b4-9bb8dfa25b2a",
+        "msgId": "initial-37",
+        "text": "初始消息 037",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:37:00.000Z"
+      },
+      {
+        "id": "86bc4ad0-a0ce-4b6d-a731-163dc942d529",
+        "msgId": "initial-38",
+        "text": "初始消息 038",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:38:00.000Z"
+      },
+      {
+        "id": "35573080-a26d-41e9-9e78-7c4dbc6f8dda",
+        "msgId": "initial-39",
+        "text": "初始消息 039",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:39:00.000Z"
+      },
+      {
+        "id": "eb409f17-19cc-4211-9861-7e8509763f78",
+        "msgId": "initial-40",
+        "text": "初始消息 040",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:40:00.000Z"
+      },
+      {
+        "id": "69cee345-2094-4378-8881-6251a4f5b725",
+        "msgId": "initial-41",
+        "text": "初始消息 041",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:41:00.000Z"
+      },
+      {
+        "id": "2451bcdc-e1a5-49f0-abb2-3f2a6a6d3b9a",
+        "msgId": "initial-42",
+        "text": "初始消息 042",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:42:00.000Z"
+      },
+      {
+        "id": "b789cfe6-9ba4-4b06-8435-342229c7eae9",
+        "msgId": "initial-43",
+        "text": "初始消息 043",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:43:00.000Z"
+      },
+      {
+        "id": "ca5fe45e-aab3-4679-8591-9a110d909b6f",
+        "msgId": "initial-44",
+        "text": "初始消息 044",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:44:00.000Z"
+      },
+      {
+        "id": "e079a03f-f42e-4d3d-a8cd-2c5d6a977a17",
+        "msgId": "initial-45",
+        "text": "初始消息 045",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:45:00.000Z"
+      },
+      {
+        "id": "5fac3461-f961-4d95-a844-81a77ec0719e",
+        "msgId": "initial-46",
+        "text": "初始消息 046",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:46:00.000Z"
+      },
+      {
+        "id": "c6438ddc-18a3-4e89-985e-55cb167d9d4e",
+        "msgId": "initial-47",
+        "text": "初始消息 047",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:47:00.000Z"
+      },
+      {
+        "id": "39f30e1c-63d1-4052-8e91-d433ba47255e",
+        "msgId": "initial-48",
+        "text": "初始消息 048",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:48:00.000Z"
+      },
+      {
+        "id": "72cf9ac1-2fd2-4ccb-baed-b244c9dd6404",
+        "msgId": "initial-49",
+        "text": "初始消息 049",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:49:00.000Z"
+      },
+      {
+        "id": "ff9a4b7b-1f56-4ab0-9f69-c52f7ad5c3b1",
+        "msgId": "initial-50",
+        "text": "初始消息 050",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:50:00.000Z"
+      },
+      {
+        "id": "5e0b50d4-8724-4a39-9dba-76855046a3bd",
+        "msgId": "initial-51",
+        "text": "初始消息 051",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:51:00.000Z"
+      },
+      {
+        "id": "e6ea0651-2ddf-4cad-8fd6-a5c0c6cf7f2f",
+        "msgId": "initial-52",
+        "text": "初始消息 052",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:52:00.000Z"
+      },
+      {
+        "id": "0f5fcd98-a85a-4f9e-89b3-1ac4fb6f74d3",
+        "msgId": "initial-53",
+        "text": "初始消息 053",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:53:00.000Z"
+      },
+      {
+        "id": "a8868abc-498a-46dd-83dd-5799debb70ec",
+        "msgId": "initial-54",
+        "text": "初始消息 054",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:54:00.000Z"
+      },
+      {
+        "id": "5ef886ac-8e22-4680-98e8-5da36e19df39",
+        "msgId": "initial-55",
+        "text": "初始消息 055",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:55:00.000Z"
+      },
+      {
+        "id": "87d4d0d3-78b3-4443-a274-e292f8b040fb",
+        "msgId": "initial-56",
+        "text": "初始消息 056",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:56:00.000Z"
+      },
+      {
+        "id": "8d19fb67-ba05-4234-ab39-51234922fbef",
+        "msgId": "initial-57",
+        "text": "初始消息 057",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:57:00.000Z"
+      },
+      {
+        "id": "b7f3fab2-8535-4b06-be32-92c4ee2ab028",
+        "msgId": "initial-58",
+        "text": "初始消息 058",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:58:00.000Z"
+      },
+      {
+        "id": "3114e591-a1fe-475e-8bf2-7ca99d3ecfcb",
+        "msgId": "initial-59",
+        "text": "初始消息 059",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:59:00.000Z"
+      },
+      {
+        "id": "9c2e3371-91d4-4eaa-bf10-3689abd5276e",
+        "msgId": "initial-60",
+        "text": "初始消息 060",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:00:00.000Z"
+      },
+      {
+        "id": "f369c479-7113-48c9-90c2-1e6b3d76ccbc",
+        "msgId": "initial-61",
+        "text": "初始消息 061",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:01:00.000Z"
+      },
+      {
+        "id": "ab7fd562-c23a-4628-96e2-ff9d28c6825f",
+        "msgId": "initial-62",
+        "text": "初始消息 062",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:02:00.000Z"
+      },
+      {
+        "id": "ab9cf697-b646-484a-92f6-65b9bf8060d4",
+        "msgId": "initial-63",
+        "text": "初始消息 063",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:03:00.000Z"
+      },
+      {
+        "id": "9fdc6380-7993-43ef-9134-f25669cbe994",
+        "msgId": "initial-64",
+        "text": "初始消息 064",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:04:00.000Z"
+      },
+      {
+        "id": "f7d3196b-4965-47a2-ab9d-7bec6b6547a9",
+        "msgId": "initial-65",
+        "text": "初始消息 065",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:05:00.000Z"
+      },
+      {
+        "id": "c744bbde-5734-44d7-8e11-7e1f352fa7e7",
+        "msgId": "initial-66",
+        "text": "初始消息 066",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:06:00.000Z"
+      },
+      {
+        "id": "a8748e41-3004-461b-9d41-e7c307344298",
+        "msgId": "initial-67",
+        "text": "初始消息 067",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:07:00.000Z"
+      },
+      {
+        "id": "706266a3-64b1-427e-8d93-6e10e8d54f8e",
+        "msgId": "initial-68",
+        "text": "初始消息 068",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:08:00.000Z"
+      },
+      {
+        "id": "37277b0c-944b-472f-a9a5-794f0ffee22f",
+        "msgId": "initial-69",
+        "text": "初始消息 069",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:09:00.000Z"
+      },
+      {
+        "id": "4b20dc7e-e976-41ee-adda-2607a9117d32",
+        "msgId": "initial-70",
+        "text": "初始消息 070",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:10:00.000Z"
+      },
+      {
+        "id": "c8dcd386-ba90-4bbe-888e-51f5f0d819c8",
+        "msgId": "initial-71",
+        "text": "初始消息 071",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:11:00.000Z"
+      },
+      {
+        "id": "8065c22c-4590-4783-b9b3-390143c7ce5b",
+        "msgId": "initial-72",
+        "text": "初始消息 072",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:12:00.000Z"
+      },
+      {
+        "id": "51a83096-0c3c-41eb-abc7-c7da0ca93bc5",
+        "msgId": "initial-73",
+        "text": "初始消息 073",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:13:00.000Z"
+      },
+      {
+        "id": "a7010e0a-2cff-4090-86b1-7066a0445f43",
+        "msgId": "initial-74",
+        "text": "初始消息 074",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:14:00.000Z"
+      },
+      {
+        "id": "1e3aef85-598d-493a-a398-3da8ce74201e",
+        "msgId": "initial-75",
+        "text": "初始消息 075",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:15:00.000Z"
+      },
+      {
+        "id": "6250bd99-7c15-4ba6-a890-0b3feee51cbc",
+        "msgId": "late-history-middle",
+        "text": "晚到历史：插入中间同时间排序",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:15:00.000Z"
+      },
+      {
+        "id": "b6872559-5f0e-43bf-a1cd-1fe528dd98a9",
+        "msgId": "initial-76",
+        "text": "初始消息 076",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:16:00.000Z"
+      },
+      {
+        "id": "a2db4a45-16d1-4451-ac76-0e1dc37c6c35",
+        "msgId": "initial-77",
+        "text": "初始消息 077",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:17:00.000Z"
+      },
+      {
+        "id": "e848a7bc-02ad-484b-8e45-a803da553ab2",
+        "msgId": "initial-78",
+        "text": "初始消息 078",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:18:00.000Z"
+      },
+      {
+        "id": "c871f3fe-4fb9-488f-9faf-b3c38cd4a13e",
+        "msgId": "initial-79",
+        "text": "初始消息 079",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:19:00.000Z"
+      },
+      {
+        "id": "dbc4b5d3-5203-4376-9f03-c3f357a0dbe4",
+        "msgId": "initial-80",
+        "text": "初始消息 080",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:20:00.000Z"
+      },
+      {
+        "id": "ee4b0e6a-3b8f-4dc2-a932-ecf8de389ec7",
+        "msgId": "initial-81",
+        "text": "初始消息 081",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:21:00.000Z"
+      },
+      {
+        "id": "49b8d3df-005f-47d0-87cc-c8570aafdfe8",
+        "msgId": "initial-82",
+        "text": "初始消息 082",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:22:00.000Z"
+      },
+      {
+        "id": "9d64f275-44d0-4cf6-b25e-14a3919e35e8",
+        "msgId": "initial-83",
+        "text": "初始消息 083",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:23:00.000Z"
+      },
+      {
+        "id": "016b0f5d-785f-42da-800f-0939148ff283",
+        "msgId": "initial-84",
+        "text": "初始消息 084",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:24:00.000Z"
+      },
+      {
+        "id": "1c4d7f09-de1b-4877-ac02-71e23d155181",
+        "msgId": "initial-85",
+        "text": "初始消息 085",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:25:00.000Z"
+      },
+      {
+        "id": "4e330a96-8d6f-4492-b03c-b659b9cdf11f",
+        "msgId": "initial-86",
+        "text": "初始消息 086",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:26:00.000Z"
+      },
+      {
+        "id": "515b35c7-60fa-4fb6-8952-f35860018a2c",
+        "msgId": "initial-87",
+        "text": "初始消息 087",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:27:00.000Z"
+      },
+      {
+        "id": "939b0f0e-9fc2-4dc9-bc82-785be0664292",
+        "msgId": "initial-88",
+        "text": "初始消息 088",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:28:00.000Z"
+      },
+      {
+        "id": "8a9a7de1-3f41-4451-ba8a-668bb4cccdd5",
+        "msgId": "initial-89",
+        "text": "初始消息 089",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:29:00.000Z"
+      },
+      {
+        "id": "3928aacd-ccd5-4113-83f1-ce690cabdb75",
+        "msgId": "initial-90",
+        "text": "初始消息 090",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:30:00.000Z"
+      },
+      {
+        "id": "0f4cc61a-e1cd-47b0-9909-fd6f690d3dc1",
+        "msgId": "initial-91",
+        "text": "初始消息 091",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:31:00.000Z"
+      },
+      {
+        "id": "4c9dc136-e322-4776-a126-fca9f5c7bdca",
+        "msgId": "initial-92",
+        "text": "初始消息 092",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:32:00.000Z"
+      },
+      {
+        "id": "2abeeb52-c756-4d06-a4d8-3c20074a7290",
+        "msgId": "initial-93",
+        "text": "初始消息 093",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:33:00.000Z"
+      },
+      {
+        "id": "5d4f3bf2-d434-4f67-83b4-2ebbf626cab3",
+        "msgId": "initial-94",
+        "text": "初始消息 094",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:34:00.000Z"
+      },
+      {
+        "id": "0ee8b9a6-9bb0-4677-a7f9-e1ac770667b0",
+        "msgId": "initial-95",
+        "text": "初始消息 095",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:35:00.000Z"
+      },
+      {
+        "id": "8f834509-34ac-43ea-9174-b91c5ddb4563",
+        "msgId": "initial-96",
+        "text": "初始消息 096",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:36:00.000Z"
+      },
+      {
+        "id": "3ec5a6d6-793a-409b-be40-59bfeff37f92",
+        "msgId": "initial-97",
+        "text": "初始消息 097",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:37:00.000Z"
+      },
+      {
+        "id": "a6669602-3447-4f14-b4d5-0284efa87b8d",
+        "msgId": "initial-98",
+        "text": "初始消息 098",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:38:00.000Z"
+      },
+      {
+        "id": "c64d1139-2469-437b-b8e0-0efaca8350e3",
+        "msgId": "initial-99",
+        "text": "初始消息 099",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:39:00.000Z"
+      },
+      {
+        "id": "676043aa-bd59-481f-9468-6027c5959a16",
+        "msgId": "initial-100",
+        "text": "初始消息 100",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:40:00.000Z"
+      },
+      {
+        "id": "f51fcc0d-c689-4937-bf86-5e548d423412",
+        "msgId": "initial-101",
+        "text": "初始消息 101",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:41:00.000Z"
+      },
+      {
+        "id": "ef99a749-d2f7-4352-8373-f13b3b8d29af",
+        "msgId": "initial-102",
+        "text": "初始消息 102",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:42:00.000Z"
+      },
+      {
+        "id": "2ef999ce-b8bc-4acb-99d8-a1a30c33b8d8",
+        "msgId": "initial-103",
+        "text": "初始消息 103",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:43:00.000Z"
+      },
+      {
+        "id": "52ed0701-4794-497d-914e-a025357a047e",
+        "msgId": "initial-104",
+        "text": "初始消息 104",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:44:00.000Z"
+      },
+      {
+        "id": "64f9ef53-c305-4441-aa8a-04d917e7fd75",
+        "msgId": "initial-105",
+        "text": "初始消息 105",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:45:00.000Z"
+      },
+      {
+        "id": "6499aecf-e227-40a0-8d68-4152f10baf26",
+        "msgId": "initial-106",
+        "text": "初始消息 106",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:46:00.000Z"
+      },
+      {
+        "id": "3d7a3060-1585-408c-89fc-bcf3bc773f08",
+        "msgId": "initial-107",
+        "text": "初始消息 107",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:47:00.000Z"
+      },
+      {
+        "id": "ef26218b-c318-4360-b20f-db7bcd27778e",
+        "msgId": "initial-108",
+        "text": "初始消息 108",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:48:00.000Z"
+      },
+      {
+        "id": "441fc471-154e-4d2f-904f-f33051ebb55b",
+        "msgId": "initial-109",
+        "text": "初始消息 109",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:49:00.000Z"
+      },
+      {
+        "id": "61710ec4-846e-474b-9908-2f2108b3b3b0",
+        "msgId": "initial-110",
+        "text": "初始消息 110",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:50:00.000Z"
+      },
+      {
+        "id": "4be8efd2-94a0-4027-bb3f-b5d503210a61",
+        "msgId": "initial-111",
+        "text": "初始消息 111",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:51:00.000Z"
+      },
+      {
+        "id": "227b753d-de1a-4206-bbb8-a99d633706d4",
+        "msgId": "initial-112",
+        "text": "初始消息 112",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:52:00.000Z"
+      },
+      {
+        "id": "a44e25c9-4234-467d-ab63-12c0827723ac",
+        "msgId": "initial-113",
+        "text": "初始消息 113",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:53:00.000Z"
+      },
+      {
+        "id": "8e7c1acd-1cb6-4c85-9497-c20d03a69056",
+        "msgId": "initial-114",
+        "text": "初始消息 114",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:54:00.000Z"
+      },
+      {
+        "id": "1f5ecaef-601f-4bcc-8ad5-1121a7b16162",
+        "msgId": "initial-115",
+        "text": "初始消息 115",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:55:00.000Z"
+      },
+      {
+        "id": "e3df7042-ba31-42c3-b975-083ba5305ba4",
+        "msgId": "initial-116",
+        "text": "初始消息 116",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:56:00.000Z"
+      },
+      {
+        "id": "c30eda24-38bc-4d0a-8230-484ae38eec3c",
+        "msgId": "initial-117",
+        "text": "初始消息 117",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:57:00.000Z"
+      },
+      {
+        "id": "ba5c78e7-6de1-44fb-82c2-6a278e4dd8f3",
+        "msgId": "initial-118",
+        "text": "初始消息 118",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:58:00.000Z"
+      },
+      {
+        "id": "552497bb-8792-413e-b455-f458266fe021",
+        "msgId": "initial-119",
+        "text": "初始消息 119",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:59:00.000Z"
+      },
+      {
+        "id": "ea80bfe7-d45b-4c6d-8754-7f79acc749f9",
+        "msgId": "initial-120",
+        "text": "初始消息 120",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:00:00.000Z"
+      },
+      {
+        "id": "4c4112eb-36cf-478a-9120-819b174fd83e",
+        "msgId": "initial-121",
+        "text": "初始消息 121",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:01:00.000Z"
+      },
+      {
+        "id": "3fd2a4a0-146f-4cfe-b227-c2585a46486d",
+        "msgId": "initial-122",
+        "text": "初始消息 122",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:02:00.000Z"
+      },
+      {
+        "id": "511d51de-eb71-4a34-af14-8974d2a30405",
+        "msgId": "initial-123",
+        "text": "初始消息 123",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:03:00.000Z"
+      },
+      {
+        "id": "0613f686-acf8-4014-8953-63cc9143bab0",
+        "msgId": "initial-124",
+        "text": "初始消息 124",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:04:00.000Z"
+      },
+      {
+        "id": "a38b2d3a-78d6-4da7-ad80-c4a0d3664c22",
+        "msgId": "initial-125",
+        "text": "初始消息 125",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:05:00.000Z"
+      },
+      {
+        "id": "1e72138b-ef4f-4aa6-b73b-8d98fcec09ca",
+        "msgId": "initial-126",
+        "text": "初始消息 126",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:06:00.000Z"
+      },
+      {
+        "id": "f43656c4-bbdb-41f5-87c9-f359c15c7b6a",
+        "msgId": "initial-127",
+        "text": "初始消息 127",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:07:00.000Z"
+      },
+      {
+        "id": "aab09f9f-9e6a-413a-ab06-76afa0f6c611",
+        "msgId": "initial-128",
+        "text": "初始消息 128",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:08:00.000Z"
+      },
+      {
+        "id": "08d3bb95-a9ab-493c-89e9-19277d6d8546",
+        "msgId": "initial-129",
+        "text": "初始消息 129",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:09:00.000Z"
+      },
+      {
+        "id": "bbdd7f32-1904-4824-8ac6-f1948074799d",
+        "msgId": "initial-130",
+        "text": "初始消息 130",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:10:00.000Z"
+      },
+      {
+        "id": "57968aec-3640-4ee7-996c-495024b8381e",
+        "msgId": "initial-131",
+        "text": "初始消息 131",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:11:00.000Z"
+      },
+      {
+        "id": "8dd909cf-8460-4a0b-9e69-c3e992c38564",
+        "msgId": "initial-132",
+        "text": "初始消息 132",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:12:00.000Z"
+      },
+      {
+        "id": "996b5aa3-632d-4dd6-9580-36cfc90cd3bf",
+        "msgId": "initial-133",
+        "text": "初始消息 133",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:13:00.000Z"
+      },
+      {
+        "id": "13c3ff6b-d9dc-4c41-a2e6-6ff427abd276",
+        "msgId": "initial-134",
+        "text": "初始消息 134",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:14:00.000Z"
+      },
+      {
+        "id": "6b87f951-25f7-4ad3-8f64-38c4689dacf1",
+        "msgId": "initial-135",
+        "text": "初始消息 135",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:15:00.000Z"
+      },
+      {
+        "id": "569aceea-5747-440b-a085-a44dd1966dad",
+        "msgId": "initial-136",
+        "text": "初始消息 136",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:16:00.000Z"
+      },
+      {
+        "id": "54439154-a0ff-45f8-bba1-6ca3cf4b364b",
+        "msgId": "initial-137",
+        "text": "初始消息 137",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:17:00.000Z"
+      },
+      {
+        "id": "93abd2aa-ef5a-4ca5-b6fc-a8dcdb403e20",
+        "msgId": "initial-138",
+        "text": "初始消息 138",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:18:00.000Z"
+      },
+      {
+        "id": "1584e0e7-6ec8-4c72-9fbb-eba4ea636a5b",
+        "msgId": "initial-139",
+        "text": "初始消息 139",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:19:00.000Z"
+      },
+      {
+        "id": "fd520f09-600e-4cdc-b8fb-4cf7e554a1bc",
+        "msgId": "initial-140",
+        "text": "初始消息 140",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:20:00.000Z"
+      },
+      {
+        "id": "c66f50cf-94cf-4265-b18a-e12b44bc847c",
+        "msgId": "initial-141",
+        "text": "初始消息 141",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:21:00.000Z"
+      },
+      {
+        "id": "93fb3f4a-6053-480a-8877-cfc02cd2e40b",
+        "msgId": "initial-142",
+        "text": "初始消息 142",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:22:00.000Z"
+      },
+      {
+        "id": "66658a59-9b61-4527-9b2b-87575292502a",
+        "msgId": "initial-143",
+        "text": "初始消息 143",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:23:00.000Z"
+      },
+      {
+        "id": "795b42d0-32b1-4ebd-ad91-5c2492a582ad",
+        "msgId": "initial-144",
+        "text": "初始消息 144",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:24:00.000Z"
+      },
+      {
+        "id": "9e84da2e-33f4-4281-9da4-8265185598df",
+        "msgId": "initial-145",
+        "text": "初始消息 145",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:25:00.000Z"
+      },
+      {
+        "id": "a7db4af5-ca49-4f39-a2eb-83bcb202154e",
+        "msgId": "initial-146",
+        "text": "初始消息 146",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:26:00.000Z"
+      },
+      {
+        "id": "9725d296-eea5-41b8-90bc-a51a9070eace",
+        "msgId": "initial-147",
+        "text": "初始消息 147",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:27:00.000Z"
+      },
+      {
+        "id": "2773705c-1544-4f10-ae11-2bc79ff78f69",
+        "msgId": "initial-148",
+        "text": "初始消息 148",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:28:00.000Z"
+      },
+      {
+        "id": "93d5c37f-34e1-4d45-a327-64cdbe27ed0e",
+        "msgId": "initial-149",
+        "text": "初始消息 149",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:29:00.000Z"
+      },
+      {
+        "id": "189d8bf0-340a-4b34-8c48-f86222337fba",
+        "msgId": "initial-150",
+        "text": "初始消息 150",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:30:00.000Z"
+      },
+      {
+        "id": "af751bfb-e02e-4c90-96c9-2614ae367f88",
+        "msgId": "initial-151",
+        "text": "初始消息 151",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:31:00.000Z"
+      },
+      {
+        "id": "dcad33a6-00f4-47a2-ac2f-8bab4131c68f",
+        "msgId": "initial-152",
+        "text": "初始消息 152",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:32:00.000Z"
+      },
+      {
+        "id": "ef1c276a-f1f7-4e9c-9712-5e968af914cb",
+        "msgId": "initial-153",
+        "text": "初始消息 153",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:33:00.000Z"
+      },
+      {
+        "id": "4a02c678-a504-4ee5-95dd-3e2536658b4b",
+        "msgId": "initial-154",
+        "text": "初始消息 154",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:34:00.000Z"
+      },
+      {
+        "id": "4e8988e1-d335-4319-89b5-fa93604aaae4",
+        "msgId": "initial-155",
+        "text": "初始消息 155",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:35:00.000Z"
+      },
+      {
+        "id": "d3094446-b33f-4a31-8c44-ade8bdc30ae4",
+        "msgId": "initial-156",
+        "text": "初始消息 156",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:36:00.000Z"
+      },
+      {
+        "id": "04cbb8c4-ddca-410d-bde4-0e0901aaf8f9",
+        "msgId": "initial-157",
+        "text": "初始消息 157",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:37:00.000Z"
+      },
+      {
+        "id": "2d769d42-5515-4999-9015-8575593dcedf",
+        "msgId": "initial-158",
+        "text": "初始消息 158",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:38:00.000Z"
+      },
+      {
+        "id": "b2e6cb11-0f9b-4ff7-9561-d4389fb7dc65",
+        "msgId": "initial-159",
+        "text": "初始消息 159",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:39:00.000Z"
+      },
+      {
+        "id": "655c5ab4-eab4-4539-8eb7-6e2a12e93a5b",
+        "msgId": "offline-new-1",
+        "text": "断线新消息 1",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:41:00.000Z"
+      },
+      {
+        "id": "40a23302-752f-49b4-ab8b-0c914f56d34d",
+        "msgId": "offline-new-2",
+        "text": "断线新消息 2",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:42:00.000Z"
+      },
+      {
+        "id": "c47b2a48-a633-4ad9-9f5d-cb90954ae00d",
+        "msgId": "offline-new-3",
+        "text": "断线新消息 3",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:43:00.000Z"
+      }
+    ]
+  },
+  "transportAvailableAt": 1790805366244.1765,
+  "browser": {
+    "socketEvents": [
+      {
+        "type": "construct",
+        "at": 1790805364895.2002
+      },
+      {
+        "type": "open",
+        "at": 1790805364900.7002
+      },
+      {
+        "type": "auth",
+        "at": 1790805364916.4001,
+        "success": true
+      },
+      {
+        "type": "scope_ready",
+        "at": 1790805364921.2002
+      },
+      {
+        "type": "message",
+        "at": 1790805365007,
+        "seq": 1
+      },
+      {
+        "type": "message",
+        "at": 1790805365007.5,
+        "seq": 2
+      },
+      {
+        "type": "message",
+        "at": 1790805365007.5,
+        "seq": 3
+      },
+      {
+        "type": "message",
+        "at": 1790805365007.6,
+        "seq": 4
+      },
+      {
+        "type": "message",
+        "at": 1790805365007.7002,
+        "seq": 5
+      },
+      {
+        "type": "message",
+        "at": 1790805365007.7002,
+        "seq": 6
+      },
+      {
+        "type": "message",
+        "at": 1790805365007.7002,
+        "seq": 7
+      },
+      {
+        "type": "message",
+        "at": 1790805365007.7002,
+        "seq": 8
+      },
+      {
+        "type": "message",
+        "at": 1790805365007.8,
+        "seq": 9
+      },
+      {
+        "type": "message",
+        "at": 1790805365007.8,
+        "seq": 10
+      },
+      {
+        "type": "message",
+        "at": 1790805365007.8,
+        "seq": 11
+      },
+      {
+        "type": "message",
+        "at": 1790805365007.8,
+        "seq": 12
+      },
+      {
+        "type": "message",
+        "at": 1790805365007.8,
+        "seq": 13
+      },
+      {
+        "type": "message",
+        "at": 1790805365007.8,
+        "seq": 14
+      },
+      {
+        "type": "message",
+        "at": 1790805365007.8,
+        "seq": 15
+      },
+      {
+        "type": "message",
+        "at": 1790805365007.8,
+        "seq": 16
+      },
+      {
+        "type": "message",
+        "at": 1790805365008,
+        "seq": 17
+      },
+      {
+        "type": "message",
+        "at": 1790805365008,
+        "seq": 18
+      },
+      {
+        "type": "message",
+        "at": 1790805365008,
+        "seq": 19
+      },
+      {
+        "type": "message",
+        "at": 1790805365008,
+        "seq": 20
+      },
+      {
+        "type": "message",
+        "at": 1790805365008,
+        "seq": 21
+      },
+      {
+        "type": "message",
+        "at": 1790805365008,
+        "seq": 22
+      },
+      {
+        "type": "message",
+        "at": 1790805365008,
+        "seq": 23
+      },
+      {
+        "type": "message",
+        "at": 1790805365008,
+        "seq": 24
+      },
+      {
+        "type": "message",
+        "at": 1790805365008,
+        "seq": 25
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.1,
+        "seq": 26
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.1,
+        "seq": 27
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.2002,
+        "seq": 28
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.2002,
+        "seq": 29
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.2002,
+        "seq": 30
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.2002,
+        "seq": 31
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.2002,
+        "seq": 32
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.2002,
+        "seq": 33
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.2002,
+        "seq": 34
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.2002,
+        "seq": 35
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.2002,
+        "seq": 36
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.3,
+        "seq": 37
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.3,
+        "seq": 38
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.3,
+        "seq": 39
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.3,
+        "seq": 40
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.3,
+        "seq": 41
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.3,
+        "seq": 42
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.4001,
+        "seq": 43
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.4001,
+        "seq": 44
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.4001,
+        "seq": 45
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.4001,
+        "seq": 46
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.4001,
+        "seq": 47
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.4001,
+        "seq": 48
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.4001,
+        "seq": 49
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.5,
+        "seq": 50
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.5,
+        "seq": 51
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.5,
+        "seq": 52
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.5,
+        "seq": 53
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.6,
+        "seq": 54
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.6,
+        "seq": 55
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.6,
+        "seq": 56
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.6,
+        "seq": 57
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.6,
+        "seq": 58
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.6,
+        "seq": 59
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.6,
+        "seq": 60
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.7002,
+        "seq": 61
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.7002,
+        "seq": 62
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.8,
+        "seq": 63
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.8,
+        "seq": 64
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.8,
+        "seq": 65
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.8,
+        "seq": 66
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.8,
+        "seq": 67
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.8,
+        "seq": 68
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.8,
+        "seq": 69
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.9001,
+        "seq": 70
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.9001,
+        "seq": 71
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.9001,
+        "seq": 72
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.9001,
+        "seq": 73
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.9001,
+        "seq": 74
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.9001,
+        "seq": 75
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.9001,
+        "seq": 76
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.9001,
+        "seq": 77
+      },
+      {
+        "type": "message",
+        "at": 1790805365008.9001,
+        "seq": 78
+      },
+      {
+        "type": "message",
+        "at": 1790805365009,
+        "seq": 79
+      },
+      {
+        "type": "message",
+        "at": 1790805365009,
+        "seq": 80
+      },
+      {
+        "type": "message",
+        "at": 1790805365009,
+        "seq": 81
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.1,
+        "seq": 82
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.1,
+        "seq": 83
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.1,
+        "seq": 84
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.1,
+        "seq": 85
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.1,
+        "seq": 86
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.1,
+        "seq": 87
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.1,
+        "seq": 88
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.1,
+        "seq": 89
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.1,
+        "seq": 90
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.2002,
+        "seq": 91
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.2002,
+        "seq": 92
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.2002,
+        "seq": 93
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.3,
+        "seq": 94
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.3,
+        "seq": 95
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.3,
+        "seq": 96
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.3,
+        "seq": 97
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.3,
+        "seq": 98
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.4001,
+        "seq": 99
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.4001,
+        "seq": 100
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.4001,
+        "seq": 101
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.4001,
+        "seq": 102
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.5,
+        "seq": 103
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.5,
+        "seq": 104
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.5,
+        "seq": 105
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.5,
+        "seq": 106
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.5,
+        "seq": 107
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.6,
+        "seq": 108
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.6,
+        "seq": 109
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.6,
+        "seq": 110
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.6,
+        "seq": 111
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.6,
+        "seq": 112
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.6,
+        "seq": 113
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.6,
+        "seq": 114
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.6,
+        "seq": 115
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.7002,
+        "seq": 116
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.7002,
+        "seq": 117
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.7002,
+        "seq": 118
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.7002,
+        "seq": 119
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.7002,
+        "seq": 120
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.8,
+        "seq": 121
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.8,
+        "seq": 122
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.8,
+        "seq": 123
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.8,
+        "seq": 124
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.8,
+        "seq": 125
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.8,
+        "seq": 126
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.8,
+        "seq": 127
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.8,
+        "seq": 128
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.8,
+        "seq": 129
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.9001,
+        "seq": 130
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.9001,
+        "seq": 131
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.9001,
+        "seq": 132
+      },
+      {
+        "type": "message",
+        "at": 1790805365009.9001,
+        "seq": 133
+      },
+      {
+        "type": "message",
+        "at": 1790805365010,
+        "seq": 134
+      },
+      {
+        "type": "message",
+        "at": 1790805365010,
+        "seq": 135
+      },
+      {
+        "type": "message",
+        "at": 1790805365010,
+        "seq": 136
+      },
+      {
+        "type": "message",
+        "at": 1790805365010,
+        "seq": 137
+      },
+      {
+        "type": "message",
+        "at": 1790805365010,
+        "seq": 138
+      },
+      {
+        "type": "message",
+        "at": 1790805365010,
+        "seq": 139
+      },
+      {
+        "type": "message",
+        "at": 1790805365010,
+        "seq": 140
+      },
+      {
+        "type": "message",
+        "at": 1790805365010,
+        "seq": 141
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.1,
+        "seq": 142
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.1,
+        "seq": 143
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.1,
+        "seq": 144
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.1,
+        "seq": 145
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.1,
+        "seq": 146
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.2002,
+        "seq": 147
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.2002,
+        "seq": 148
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.2002,
+        "seq": 149
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.2002,
+        "seq": 150
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.2002,
+        "seq": 151
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.2002,
+        "seq": 152
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.2002,
+        "seq": 153
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.2002,
+        "seq": 154
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.3,
+        "seq": 155
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.3,
+        "seq": 156
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.4001,
+        "seq": 157
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.4001,
+        "seq": 158
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.4001,
+        "seq": 159
+      },
+      {
+        "type": "message",
+        "at": 1790805365010.4001,
+        "seq": 160
+      },
+      {
+        "type": "close",
+        "at": 1790805365440.5,
+        "code": 1012
+      },
+      {
+        "type": "construct",
+        "at": 1790805365842.1
+      },
+      {
+        "type": "close",
+        "at": 1790805365844.6,
+        "code": 1006
+      },
+      {
+        "type": "construct",
+        "at": 1790805366245
+      },
+      {
+        "type": "open",
+        "at": 1790805366246.5
+      },
+      {
+        "type": "auth",
+        "at": 1790805366248.5,
+        "success": true
+      },
+      {
+        "type": "message",
+        "at": 1790805366253.2002,
+        "seq": 160
+      },
+      {
+        "type": "message",
+        "at": 1790805366253.3,
+        "seq": 160
+      },
+      {
+        "type": "message",
+        "at": 1790805366253.3,
+        "seq": 159
+      },
+      {
+        "type": "message",
+        "at": 1790805366253.3,
+        "seq": 159
+      },
+      {
+        "type": "message",
+        "at": 1790805366253.3,
+        "seq": 158
+      },
+      {
+        "type": "message",
+        "at": 1790805366253.4001,
+        "seq": 158
+      },
+      {
+        "type": "message",
+        "at": 1790805366349.4001,
+        "seq": 161
+      },
+      {
+        "type": "message",
+        "at": 1790805366358.5,
+        "seq": 162
+      },
+      {
+        "type": "message",
+        "at": 1790805366358.7002,
+        "seq": 163
+      },
+      {
+        "type": "message",
+        "at": 1790805366358.7002,
+        "seq": 164
+      },
+      {
+        "type": "message",
+        "at": 1790805366358.7002,
+        "seq": 165
+      },
+      {
+        "type": "group_changed",
+        "at": 1790805366358.7002,
+        "seq": 166
+      }
+    ],
+    "complete": {
+      "matchedAt": 1790805366600.1,
+      "domReadyAt": 1790805366617.3,
+      "matches": true,
+      "allLaidOut": true,
+      "stateMatches": true,
+      "syncFinished": true,
+      "live": true,
+      "actual": [
+        {
+          "id": "e93d4fdf-4758-401f-bd38-97c97992ce12",
+          "msgId": "late-history-oldest",
+          "text": "晚到历史：早于所有可见消息",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2025-12-31T23:30:00.000Z"
+        },
+        {
+          "id": "d1e90835-0c48-4338-9c98-dd2e2484e777",
+          "msgId": "initial-0",
+          "text": "初始消息 000",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:00:00.000Z"
+        },
+        {
+          "id": "c73edd25-a950-4542-8555-9ad5d851937f",
+          "msgId": "initial-1",
+          "text": "初始消息 001",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:01:00.000Z"
+        },
+        {
+          "id": "fdb5023b-e357-4fff-bb97-28f563d98a44",
+          "msgId": "initial-2",
+          "text": "初始消息 002",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:02:00.000Z"
+        },
+        {
+          "id": "786cf031-e361-4d32-a3ee-a77c3975e693",
+          "msgId": "initial-3",
+          "text": "初始消息 003",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:03:00.000Z"
+        },
+        {
+          "id": "b0973f67-d90f-4795-b0ba-2db6877931f8",
+          "msgId": "initial-4",
+          "text": "初始消息 004",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:04:00.000Z"
+        },
+        {
+          "id": "2b463a1e-cc87-483b-acd8-5d78c91bee5c",
+          "msgId": "initial-5",
+          "text": "初始消息 005",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:05:00.000Z"
+        },
+        {
+          "id": "41e02108-0b30-4d24-a378-6ad98b2c7f19",
+          "msgId": "initial-6",
+          "text": "初始消息 006",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:06:00.000Z"
+        },
+        {
+          "id": "ff7e0e13-416d-4e1a-8227-27eb31df9d1c",
+          "msgId": "initial-7",
+          "text": "初始消息 007",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:07:00.000Z"
+        },
+        {
+          "id": "41c87fc4-cabf-4c40-91d3-6e0f3992019e",
+          "msgId": "initial-8",
+          "text": "初始消息 008",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:08:00.000Z"
+        },
+        {
+          "id": "3f1717e6-e890-41cf-b7e7-c9a9c3594c46",
+          "msgId": "initial-9",
+          "text": "初始消息 009",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:09:00.000Z"
+        },
+        {
+          "id": "9b05dbb6-571a-49fc-8d66-8ac42bc9b171",
+          "msgId": "initial-10",
+          "text": "初始消息 010",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:10:00.000Z"
+        },
+        {
+          "id": "8a215eea-a922-4e1d-9f5b-5ee88d8be974",
+          "msgId": "initial-11",
+          "text": "初始消息 011",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:11:00.000Z"
+        },
+        {
+          "id": "e268f07b-c72b-4f4e-81ba-c83070dbb47c",
+          "msgId": "initial-12",
+          "text": "初始消息 012",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:12:00.000Z"
+        },
+        {
+          "id": "f2f89c4e-c70f-48e0-9ff3-0316a7a6f2bf",
+          "msgId": "initial-13",
+          "text": "初始消息 013",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:13:00.000Z"
+        },
+        {
+          "id": "5e2d7193-1372-4337-917f-438a62f0274e",
+          "msgId": "initial-14",
+          "text": "初始消息 014",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:14:00.000Z"
+        },
+        {
+          "id": "ce0389df-2cb1-445d-9a89-341df2a39ccb",
+          "msgId": "initial-15",
+          "text": "初始消息 015",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:15:00.000Z"
+        },
+        {
+          "id": "442f0157-5473-4dd0-b30c-47fae9d8607b",
+          "msgId": "initial-16",
+          "text": "初始消息 016",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:16:00.000Z"
+        },
+        {
+          "id": "211269b1-7428-4dbf-9d46-b24e00bfa9fa",
+          "msgId": "initial-17",
+          "text": "初始消息 017",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:17:00.000Z"
+        },
+        {
+          "id": "c8924fdd-80f7-4afe-b7af-9519f5894980",
+          "msgId": "initial-18",
+          "text": "初始消息 018",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:18:00.000Z"
+        },
+        {
+          "id": "85b42325-5272-49d7-b0fd-28dd64e97beb",
+          "msgId": "initial-19",
+          "text": "初始消息 019",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:19:00.000Z"
+        },
+        {
+          "id": "0d62057a-9f29-4606-9ff7-c4413274dba7",
+          "msgId": "initial-20",
+          "text": "初始消息 020",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:20:00.000Z"
+        },
+        {
+          "id": "1566a7d6-bbc8-4bc1-8f14-5a51aa4732d7",
+          "msgId": "initial-21",
+          "text": "初始消息 021",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:21:00.000Z"
+        },
+        {
+          "id": "4b2f6ebf-4b0d-4e5d-976c-b20a6a5b3c1f",
+          "msgId": "initial-22",
+          "text": "初始消息 022",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:22:00.000Z"
+        },
+        {
+          "id": "a2fe7663-b61f-4243-9f48-a341b6cc73fe",
+          "msgId": "initial-23",
+          "text": "初始消息 023",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:23:00.000Z"
+        },
+        {
+          "id": "3ae0901b-0f50-4b0a-8d09-07e5c9f1457b",
+          "msgId": "initial-24",
+          "text": "初始消息 024",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:24:00.000Z"
+        },
+        {
+          "id": "be573441-fcc0-474c-a6b1-c3f3862aa0b6",
+          "msgId": "initial-25",
+          "text": "初始消息 025",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:25:00.000Z"
+        },
+        {
+          "id": "9df6fb33-624a-4686-b3d3-5b1d6fbb2f6b",
+          "msgId": "initial-26",
+          "text": "初始消息 026",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:26:00.000Z"
+        },
+        {
+          "id": "54b018e0-7485-4429-a767-e74cf65116b4",
+          "msgId": "initial-27",
+          "text": "初始消息 027",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:27:00.000Z"
+        },
+        {
+          "id": "cfb41b95-f341-4db6-897a-77fae00c34c6",
+          "msgId": "initial-28",
+          "text": "初始消息 028",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:28:00.000Z"
+        },
+        {
+          "id": "9a466ef7-c09b-4b5c-9a48-742e5af93b75",
+          "msgId": "initial-29",
+          "text": "初始消息 029",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:29:00.000Z"
+        },
+        {
+          "id": "705fd721-405f-4347-ba59-1f4ece679cae",
+          "msgId": "initial-30",
+          "text": "初始消息 030",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:30:00.000Z"
+        },
+        {
+          "id": "7d7217a8-58a3-4835-a3f7-9395e5e2bae8",
+          "msgId": "initial-31",
+          "text": "初始消息 031",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:31:00.000Z"
+        },
+        {
+          "id": "451de5ce-d282-410b-a8eb-d0dce25f89cd",
+          "msgId": "initial-32",
+          "text": "初始消息 032",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:32:00.000Z"
+        },
+        {
+          "id": "6e34b419-d380-47e9-b158-861ae5ce9fbb",
+          "msgId": "initial-33",
+          "text": "初始消息 033",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:33:00.000Z"
+        },
+        {
+          "id": "970c9ff3-7099-4851-8ec4-bcd55e4191f3",
+          "msgId": "initial-34",
+          "text": "初始消息 034",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:34:00.000Z"
+        },
+        {
+          "id": "09069300-b602-4b45-a762-a34505273807",
+          "msgId": "initial-35",
+          "text": "初始消息 035",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:35:00.000Z"
+        },
+        {
+          "id": "76267daf-ca1b-456e-9a0c-a2adbde5e7e5",
+          "msgId": "initial-36",
+          "text": "初始消息 036",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:36:00.000Z"
+        },
+        {
+          "id": "b3902ecd-9181-4606-81b4-9bb8dfa25b2a",
+          "msgId": "initial-37",
+          "text": "初始消息 037",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:37:00.000Z"
+        },
+        {
+          "id": "86bc4ad0-a0ce-4b6d-a731-163dc942d529",
+          "msgId": "initial-38",
+          "text": "初始消息 038",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:38:00.000Z"
+        },
+        {
+          "id": "35573080-a26d-41e9-9e78-7c4dbc6f8dda",
+          "msgId": "initial-39",
+          "text": "初始消息 039",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:39:00.000Z"
+        },
+        {
+          "id": "eb409f17-19cc-4211-9861-7e8509763f78",
+          "msgId": "initial-40",
+          "text": "初始消息 040",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:40:00.000Z"
+        },
+        {
+          "id": "69cee345-2094-4378-8881-6251a4f5b725",
+          "msgId": "initial-41",
+          "text": "初始消息 041",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:41:00.000Z"
+        },
+        {
+          "id": "2451bcdc-e1a5-49f0-abb2-3f2a6a6d3b9a",
+          "msgId": "initial-42",
+          "text": "初始消息 042",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:42:00.000Z"
+        },
+        {
+          "id": "b789cfe6-9ba4-4b06-8435-342229c7eae9",
+          "msgId": "initial-43",
+          "text": "初始消息 043",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:43:00.000Z"
+        },
+        {
+          "id": "ca5fe45e-aab3-4679-8591-9a110d909b6f",
+          "msgId": "initial-44",
+          "text": "初始消息 044",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:44:00.000Z"
+        },
+        {
+          "id": "e079a03f-f42e-4d3d-a8cd-2c5d6a977a17",
+          "msgId": "initial-45",
+          "text": "初始消息 045",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:45:00.000Z"
+        },
+        {
+          "id": "5fac3461-f961-4d95-a844-81a77ec0719e",
+          "msgId": "initial-46",
+          "text": "初始消息 046",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:46:00.000Z"
+        },
+        {
+          "id": "c6438ddc-18a3-4e89-985e-55cb167d9d4e",
+          "msgId": "initial-47",
+          "text": "初始消息 047",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:47:00.000Z"
+        },
+        {
+          "id": "39f30e1c-63d1-4052-8e91-d433ba47255e",
+          "msgId": "initial-48",
+          "text": "初始消息 048",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:48:00.000Z"
+        },
+        {
+          "id": "72cf9ac1-2fd2-4ccb-baed-b244c9dd6404",
+          "msgId": "initial-49",
+          "text": "初始消息 049",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:49:00.000Z"
+        },
+        {
+          "id": "ff9a4b7b-1f56-4ab0-9f69-c52f7ad5c3b1",
+          "msgId": "initial-50",
+          "text": "初始消息 050",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:50:00.000Z"
+        },
+        {
+          "id": "5e0b50d4-8724-4a39-9dba-76855046a3bd",
+          "msgId": "initial-51",
+          "text": "初始消息 051",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:51:00.000Z"
+        },
+        {
+          "id": "e6ea0651-2ddf-4cad-8fd6-a5c0c6cf7f2f",
+          "msgId": "initial-52",
+          "text": "初始消息 052",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:52:00.000Z"
+        },
+        {
+          "id": "0f5fcd98-a85a-4f9e-89b3-1ac4fb6f74d3",
+          "msgId": "initial-53",
+          "text": "初始消息 053",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:53:00.000Z"
+        },
+        {
+          "id": "a8868abc-498a-46dd-83dd-5799debb70ec",
+          "msgId": "initial-54",
+          "text": "初始消息 054",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:54:00.000Z"
+        },
+        {
+          "id": "5ef886ac-8e22-4680-98e8-5da36e19df39",
+          "msgId": "initial-55",
+          "text": "初始消息 055",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:55:00.000Z"
+        },
+        {
+          "id": "87d4d0d3-78b3-4443-a274-e292f8b040fb",
+          "msgId": "initial-56",
+          "text": "初始消息 056",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:56:00.000Z"
+        },
+        {
+          "id": "8d19fb67-ba05-4234-ab39-51234922fbef",
+          "msgId": "initial-57",
+          "text": "初始消息 057",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:57:00.000Z"
+        },
+        {
+          "id": "b7f3fab2-8535-4b06-be32-92c4ee2ab028",
+          "msgId": "initial-58",
+          "text": "初始消息 058",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:58:00.000Z"
+        },
+        {
+          "id": "3114e591-a1fe-475e-8bf2-7ca99d3ecfcb",
+          "msgId": "initial-59",
+          "text": "初始消息 059",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T00:59:00.000Z"
+        },
+        {
+          "id": "9c2e3371-91d4-4eaa-bf10-3689abd5276e",
+          "msgId": "initial-60",
+          "text": "初始消息 060",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:00:00.000Z"
+        },
+        {
+          "id": "f369c479-7113-48c9-90c2-1e6b3d76ccbc",
+          "msgId": "initial-61",
+          "text": "初始消息 061",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:01:00.000Z"
+        },
+        {
+          "id": "ab7fd562-c23a-4628-96e2-ff9d28c6825f",
+          "msgId": "initial-62",
+          "text": "初始消息 062",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:02:00.000Z"
+        },
+        {
+          "id": "ab9cf697-b646-484a-92f6-65b9bf8060d4",
+          "msgId": "initial-63",
+          "text": "初始消息 063",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:03:00.000Z"
+        },
+        {
+          "id": "9fdc6380-7993-43ef-9134-f25669cbe994",
+          "msgId": "initial-64",
+          "text": "初始消息 064",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:04:00.000Z"
+        },
+        {
+          "id": "f7d3196b-4965-47a2-ab9d-7bec6b6547a9",
+          "msgId": "initial-65",
+          "text": "初始消息 065",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:05:00.000Z"
+        },
+        {
+          "id": "c744bbde-5734-44d7-8e11-7e1f352fa7e7",
+          "msgId": "initial-66",
+          "text": "初始消息 066",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:06:00.000Z"
+        },
+        {
+          "id": "a8748e41-3004-461b-9d41-e7c307344298",
+          "msgId": "initial-67",
+          "text": "初始消息 067",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:07:00.000Z"
+        },
+        {
+          "id": "706266a3-64b1-427e-8d93-6e10e8d54f8e",
+          "msgId": "initial-68",
+          "text": "初始消息 068",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:08:00.000Z"
+        },
+        {
+          "id": "37277b0c-944b-472f-a9a5-794f0ffee22f",
+          "msgId": "initial-69",
+          "text": "初始消息 069",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:09:00.000Z"
+        },
+        {
+          "id": "4b20dc7e-e976-41ee-adda-2607a9117d32",
+          "msgId": "initial-70",
+          "text": "初始消息 070",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:10:00.000Z"
+        },
+        {
+          "id": "c8dcd386-ba90-4bbe-888e-51f5f0d819c8",
+          "msgId": "initial-71",
+          "text": "初始消息 071",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:11:00.000Z"
+        },
+        {
+          "id": "8065c22c-4590-4783-b9b3-390143c7ce5b",
+          "msgId": "initial-72",
+          "text": "初始消息 072",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:12:00.000Z"
+        },
+        {
+          "id": "51a83096-0c3c-41eb-abc7-c7da0ca93bc5",
+          "msgId": "initial-73",
+          "text": "初始消息 073",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:13:00.000Z"
+        },
+        {
+          "id": "a7010e0a-2cff-4090-86b1-7066a0445f43",
+          "msgId": "initial-74",
+          "text": "初始消息 074",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:14:00.000Z"
+        },
+        {
+          "id": "1e3aef85-598d-493a-a398-3da8ce74201e",
+          "msgId": "initial-75",
+          "text": "初始消息 075",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:15:00.000Z"
+        },
+        {
+          "id": "6250bd99-7c15-4ba6-a890-0b3feee51cbc",
+          "msgId": "late-history-middle",
+          "text": "晚到历史：插入中间同时间排序",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:15:00.000Z"
+        },
+        {
+          "id": "b6872559-5f0e-43bf-a1cd-1fe528dd98a9",
+          "msgId": "initial-76",
+          "text": "初始消息 076",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:16:00.000Z"
+        },
+        {
+          "id": "a2db4a45-16d1-4451-ac76-0e1dc37c6c35",
+          "msgId": "initial-77",
+          "text": "初始消息 077",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:17:00.000Z"
+        },
+        {
+          "id": "e848a7bc-02ad-484b-8e45-a803da553ab2",
+          "msgId": "initial-78",
+          "text": "初始消息 078",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:18:00.000Z"
+        },
+        {
+          "id": "c871f3fe-4fb9-488f-9faf-b3c38cd4a13e",
+          "msgId": "initial-79",
+          "text": "初始消息 079",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:19:00.000Z"
+        },
+        {
+          "id": "dbc4b5d3-5203-4376-9f03-c3f357a0dbe4",
+          "msgId": "initial-80",
+          "text": "初始消息 080",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:20:00.000Z"
+        },
+        {
+          "id": "ee4b0e6a-3b8f-4dc2-a932-ecf8de389ec7",
+          "msgId": "initial-81",
+          "text": "初始消息 081",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:21:00.000Z"
+        },
+        {
+          "id": "49b8d3df-005f-47d0-87cc-c8570aafdfe8",
+          "msgId": "initial-82",
+          "text": "初始消息 082",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:22:00.000Z"
+        },
+        {
+          "id": "9d64f275-44d0-4cf6-b25e-14a3919e35e8",
+          "msgId": "initial-83",
+          "text": "初始消息 083",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:23:00.000Z"
+        },
+        {
+          "id": "016b0f5d-785f-42da-800f-0939148ff283",
+          "msgId": "initial-84",
+          "text": "初始消息 084",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:24:00.000Z"
+        },
+        {
+          "id": "1c4d7f09-de1b-4877-ac02-71e23d155181",
+          "msgId": "initial-85",
+          "text": "初始消息 085",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:25:00.000Z"
+        },
+        {
+          "id": "4e330a96-8d6f-4492-b03c-b659b9cdf11f",
+          "msgId": "initial-86",
+          "text": "初始消息 086",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:26:00.000Z"
+        },
+        {
+          "id": "515b35c7-60fa-4fb6-8952-f35860018a2c",
+          "msgId": "initial-87",
+          "text": "初始消息 087",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:27:00.000Z"
+        },
+        {
+          "id": "939b0f0e-9fc2-4dc9-bc82-785be0664292",
+          "msgId": "initial-88",
+          "text": "初始消息 088",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:28:00.000Z"
+        },
+        {
+          "id": "8a9a7de1-3f41-4451-ba8a-668bb4cccdd5",
+          "msgId": "initial-89",
+          "text": "初始消息 089",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:29:00.000Z"
+        },
+        {
+          "id": "3928aacd-ccd5-4113-83f1-ce690cabdb75",
+          "msgId": "initial-90",
+          "text": "初始消息 090",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:30:00.000Z"
+        },
+        {
+          "id": "0f4cc61a-e1cd-47b0-9909-fd6f690d3dc1",
+          "msgId": "initial-91",
+          "text": "初始消息 091",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:31:00.000Z"
+        },
+        {
+          "id": "4c9dc136-e322-4776-a126-fca9f5c7bdca",
+          "msgId": "initial-92",
+          "text": "初始消息 092",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:32:00.000Z"
+        },
+        {
+          "id": "2abeeb52-c756-4d06-a4d8-3c20074a7290",
+          "msgId": "initial-93",
+          "text": "初始消息 093",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:33:00.000Z"
+        },
+        {
+          "id": "5d4f3bf2-d434-4f67-83b4-2ebbf626cab3",
+          "msgId": "initial-94",
+          "text": "初始消息 094",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:34:00.000Z"
+        },
+        {
+          "id": "0ee8b9a6-9bb0-4677-a7f9-e1ac770667b0",
+          "msgId": "initial-95",
+          "text": "初始消息 095",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:35:00.000Z"
+        },
+        {
+          "id": "8f834509-34ac-43ea-9174-b91c5ddb4563",
+          "msgId": "initial-96",
+          "text": "初始消息 096",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:36:00.000Z"
+        },
+        {
+          "id": "3ec5a6d6-793a-409b-be40-59bfeff37f92",
+          "msgId": "initial-97",
+          "text": "初始消息 097",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:37:00.000Z"
+        },
+        {
+          "id": "a6669602-3447-4f14-b4d5-0284efa87b8d",
+          "msgId": "initial-98",
+          "text": "初始消息 098",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:38:00.000Z"
+        },
+        {
+          "id": "c64d1139-2469-437b-b8e0-0efaca8350e3",
+          "msgId": "initial-99",
+          "text": "初始消息 099",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:39:00.000Z"
+        },
+        {
+          "id": "676043aa-bd59-481f-9468-6027c5959a16",
+          "msgId": "initial-100",
+          "text": "初始消息 100",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:40:00.000Z"
+        },
+        {
+          "id": "f51fcc0d-c689-4937-bf86-5e548d423412",
+          "msgId": "initial-101",
+          "text": "初始消息 101",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:41:00.000Z"
+        },
+        {
+          "id": "ef99a749-d2f7-4352-8373-f13b3b8d29af",
+          "msgId": "initial-102",
+          "text": "初始消息 102",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:42:00.000Z"
+        },
+        {
+          "id": "2ef999ce-b8bc-4acb-99d8-a1a30c33b8d8",
+          "msgId": "initial-103",
+          "text": "初始消息 103",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:43:00.000Z"
+        },
+        {
+          "id": "52ed0701-4794-497d-914e-a025357a047e",
+          "msgId": "initial-104",
+          "text": "初始消息 104",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:44:00.000Z"
+        },
+        {
+          "id": "64f9ef53-c305-4441-aa8a-04d917e7fd75",
+          "msgId": "initial-105",
+          "text": "初始消息 105",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:45:00.000Z"
+        },
+        {
+          "id": "6499aecf-e227-40a0-8d68-4152f10baf26",
+          "msgId": "initial-106",
+          "text": "初始消息 106",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:46:00.000Z"
+        },
+        {
+          "id": "3d7a3060-1585-408c-89fc-bcf3bc773f08",
+          "msgId": "initial-107",
+          "text": "初始消息 107",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:47:00.000Z"
+        },
+        {
+          "id": "ef26218b-c318-4360-b20f-db7bcd27778e",
+          "msgId": "initial-108",
+          "text": "初始消息 108",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:48:00.000Z"
+        },
+        {
+          "id": "441fc471-154e-4d2f-904f-f33051ebb55b",
+          "msgId": "initial-109",
+          "text": "初始消息 109",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:49:00.000Z"
+        },
+        {
+          "id": "61710ec4-846e-474b-9908-2f2108b3b3b0",
+          "msgId": "initial-110",
+          "text": "初始消息 110",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:50:00.000Z"
+        },
+        {
+          "id": "4be8efd2-94a0-4027-bb3f-b5d503210a61",
+          "msgId": "initial-111",
+          "text": "初始消息 111",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:51:00.000Z"
+        },
+        {
+          "id": "227b753d-de1a-4206-bbb8-a99d633706d4",
+          "msgId": "initial-112",
+          "text": "初始消息 112",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:52:00.000Z"
+        },
+        {
+          "id": "a44e25c9-4234-467d-ab63-12c0827723ac",
+          "msgId": "initial-113",
+          "text": "初始消息 113",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:53:00.000Z"
+        },
+        {
+          "id": "8e7c1acd-1cb6-4c85-9497-c20d03a69056",
+          "msgId": "initial-114",
+          "text": "初始消息 114",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:54:00.000Z"
+        },
+        {
+          "id": "1f5ecaef-601f-4bcc-8ad5-1121a7b16162",
+          "msgId": "initial-115",
+          "text": "初始消息 115",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:55:00.000Z"
+        },
+        {
+          "id": "e3df7042-ba31-42c3-b975-083ba5305ba4",
+          "msgId": "initial-116",
+          "text": "初始消息 116",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:56:00.000Z"
+        },
+        {
+          "id": "c30eda24-38bc-4d0a-8230-484ae38eec3c",
+          "msgId": "initial-117",
+          "text": "初始消息 117",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:57:00.000Z"
+        },
+        {
+          "id": "ba5c78e7-6de1-44fb-82c2-6a278e4dd8f3",
+          "msgId": "initial-118",
+          "text": "初始消息 118",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:58:00.000Z"
+        },
+        {
+          "id": "552497bb-8792-413e-b455-f458266fe021",
+          "msgId": "initial-119",
+          "text": "初始消息 119",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T01:59:00.000Z"
+        },
+        {
+          "id": "ea80bfe7-d45b-4c6d-8754-7f79acc749f9",
+          "msgId": "initial-120",
+          "text": "初始消息 120",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:00:00.000Z"
+        },
+        {
+          "id": "4c4112eb-36cf-478a-9120-819b174fd83e",
+          "msgId": "initial-121",
+          "text": "初始消息 121",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:01:00.000Z"
+        },
+        {
+          "id": "3fd2a4a0-146f-4cfe-b227-c2585a46486d",
+          "msgId": "initial-122",
+          "text": "初始消息 122",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:02:00.000Z"
+        },
+        {
+          "id": "511d51de-eb71-4a34-af14-8974d2a30405",
+          "msgId": "initial-123",
+          "text": "初始消息 123",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:03:00.000Z"
+        },
+        {
+          "id": "0613f686-acf8-4014-8953-63cc9143bab0",
+          "msgId": "initial-124",
+          "text": "初始消息 124",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:04:00.000Z"
+        },
+        {
+          "id": "a38b2d3a-78d6-4da7-ad80-c4a0d3664c22",
+          "msgId": "initial-125",
+          "text": "初始消息 125",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:05:00.000Z"
+        },
+        {
+          "id": "1e72138b-ef4f-4aa6-b73b-8d98fcec09ca",
+          "msgId": "initial-126",
+          "text": "初始消息 126",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:06:00.000Z"
+        },
+        {
+          "id": "f43656c4-bbdb-41f5-87c9-f359c15c7b6a",
+          "msgId": "initial-127",
+          "text": "初始消息 127",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:07:00.000Z"
+        },
+        {
+          "id": "aab09f9f-9e6a-413a-ab06-76afa0f6c611",
+          "msgId": "initial-128",
+          "text": "初始消息 128",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:08:00.000Z"
+        },
+        {
+          "id": "08d3bb95-a9ab-493c-89e9-19277d6d8546",
+          "msgId": "initial-129",
+          "text": "初始消息 129",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:09:00.000Z"
+        },
+        {
+          "id": "bbdd7f32-1904-4824-8ac6-f1948074799d",
+          "msgId": "initial-130",
+          "text": "初始消息 130",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:10:00.000Z"
+        },
+        {
+          "id": "57968aec-3640-4ee7-996c-495024b8381e",
+          "msgId": "initial-131",
+          "text": "初始消息 131",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:11:00.000Z"
+        },
+        {
+          "id": "8dd909cf-8460-4a0b-9e69-c3e992c38564",
+          "msgId": "initial-132",
+          "text": "初始消息 132",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:12:00.000Z"
+        },
+        {
+          "id": "996b5aa3-632d-4dd6-9580-36cfc90cd3bf",
+          "msgId": "initial-133",
+          "text": "初始消息 133",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:13:00.000Z"
+        },
+        {
+          "id": "13c3ff6b-d9dc-4c41-a2e6-6ff427abd276",
+          "msgId": "initial-134",
+          "text": "初始消息 134",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:14:00.000Z"
+        },
+        {
+          "id": "6b87f951-25f7-4ad3-8f64-38c4689dacf1",
+          "msgId": "initial-135",
+          "text": "初始消息 135",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:15:00.000Z"
+        },
+        {
+          "id": "569aceea-5747-440b-a085-a44dd1966dad",
+          "msgId": "initial-136",
+          "text": "初始消息 136",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:16:00.000Z"
+        },
+        {
+          "id": "54439154-a0ff-45f8-bba1-6ca3cf4b364b",
+          "msgId": "initial-137",
+          "text": "初始消息 137",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:17:00.000Z"
+        },
+        {
+          "id": "93abd2aa-ef5a-4ca5-b6fc-a8dcdb403e20",
+          "msgId": "initial-138",
+          "text": "初始消息 138",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:18:00.000Z"
+        },
+        {
+          "id": "1584e0e7-6ec8-4c72-9fbb-eba4ea636a5b",
+          "msgId": "initial-139",
+          "text": "初始消息 139",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:19:00.000Z"
+        },
+        {
+          "id": "fd520f09-600e-4cdc-b8fb-4cf7e554a1bc",
+          "msgId": "initial-140",
+          "text": "初始消息 140",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:20:00.000Z"
+        },
+        {
+          "id": "c66f50cf-94cf-4265-b18a-e12b44bc847c",
+          "msgId": "initial-141",
+          "text": "初始消息 141",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:21:00.000Z"
+        },
+        {
+          "id": "93fb3f4a-6053-480a-8877-cfc02cd2e40b",
+          "msgId": "initial-142",
+          "text": "初始消息 142",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:22:00.000Z"
+        },
+        {
+          "id": "66658a59-9b61-4527-9b2b-87575292502a",
+          "msgId": "initial-143",
+          "text": "初始消息 143",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:23:00.000Z"
+        },
+        {
+          "id": "795b42d0-32b1-4ebd-ad91-5c2492a582ad",
+          "msgId": "initial-144",
+          "text": "初始消息 144",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:24:00.000Z"
+        },
+        {
+          "id": "9e84da2e-33f4-4281-9da4-8265185598df",
+          "msgId": "initial-145",
+          "text": "初始消息 145",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:25:00.000Z"
+        },
+        {
+          "id": "a7db4af5-ca49-4f39-a2eb-83bcb202154e",
+          "msgId": "initial-146",
+          "text": "初始消息 146",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:26:00.000Z"
+        },
+        {
+          "id": "9725d296-eea5-41b8-90bc-a51a9070eace",
+          "msgId": "initial-147",
+          "text": "初始消息 147",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:27:00.000Z"
+        },
+        {
+          "id": "2773705c-1544-4f10-ae11-2bc79ff78f69",
+          "msgId": "initial-148",
+          "text": "初始消息 148",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:28:00.000Z"
+        },
+        {
+          "id": "93d5c37f-34e1-4d45-a327-64cdbe27ed0e",
+          "msgId": "initial-149",
+          "text": "初始消息 149",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:29:00.000Z"
+        },
+        {
+          "id": "189d8bf0-340a-4b34-8c48-f86222337fba",
+          "msgId": "initial-150",
+          "text": "初始消息 150",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:30:00.000Z"
+        },
+        {
+          "id": "af751bfb-e02e-4c90-96c9-2614ae367f88",
+          "msgId": "initial-151",
+          "text": "初始消息 151",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:31:00.000Z"
+        },
+        {
+          "id": "dcad33a6-00f4-47a2-ac2f-8bab4131c68f",
+          "msgId": "initial-152",
+          "text": "初始消息 152",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:32:00.000Z"
+        },
+        {
+          "id": "ef1c276a-f1f7-4e9c-9712-5e968af914cb",
+          "msgId": "initial-153",
+          "text": "初始消息 153",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:33:00.000Z"
+        },
+        {
+          "id": "4a02c678-a504-4ee5-95dd-3e2536658b4b",
+          "msgId": "initial-154",
+          "text": "初始消息 154",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:34:00.000Z"
+        },
+        {
+          "id": "4e8988e1-d335-4319-89b5-fa93604aaae4",
+          "msgId": "initial-155",
+          "text": "初始消息 155",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:35:00.000Z"
+        },
+        {
+          "id": "d3094446-b33f-4a31-8c44-ade8bdc30ae4",
+          "msgId": "initial-156",
+          "text": "初始消息 156",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:36:00.000Z"
+        },
+        {
+          "id": "04cbb8c4-ddca-410d-bde4-0e0901aaf8f9",
+          "msgId": "initial-157",
+          "text": "初始消息 157",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:37:00.000Z"
+        },
+        {
+          "id": "2d769d42-5515-4999-9015-8575593dcedf",
+          "msgId": "initial-158",
+          "text": "初始消息 158",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:38:00.000Z"
+        },
+        {
+          "id": "b2e6cb11-0f9b-4ff7-9561-d4389fb7dc65",
+          "msgId": "initial-159",
+          "text": "初始消息 159",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:39:00.000Z"
+        },
+        {
+          "id": "655c5ab4-eab4-4539-8eb7-6e2a12e93a5b",
+          "msgId": "offline-new-1",
+          "text": "断线新消息 1",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:41:00.000Z"
+        },
+        {
+          "id": "40a23302-752f-49b4-ab8b-0c914f56d34d",
+          "msgId": "offline-new-2",
+          "text": "断线新消息 2",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:42:00.000Z"
+        },
+        {
+          "id": "c47b2a48-a633-4ad9-9f5d-cb90954ae00d",
+          "msgId": "offline-new-3",
+          "text": "断线新消息 3",
+          "sender": "external-core-user",
+          "own": false,
+          "sentAt": "2026-01-01T02:43:00.000Z"
+        }
+      ]
+    }
+  },
+  "navigationsDuringRecovery": 0,
+  "timingResult": {
+    "transportAvailableAt": 1790805366244.1765,
+    "wsAuthenticatedAt": 1790805366248.5,
+    "domMatchedAt": 1790805366600.1,
+    "domReadyAt": 1790805366617.3,
+    "availabilityToAuthMs": 4.323486328125,
+    "authToDomMs": 368.800048828125,
+    "availabilityToDomMs": 373.12353515625
+  },
+  "recoveryReads": [
+    {
+      "id": "43dc3499-20a3-4db9-953f-ebb61e3901ab",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50",
+      "method": "GET",
+      "startedAt": 1790805366317.586,
+      "fault": "one-restored-timeline-503",
+      "status": 503,
+      "finishedAt": 1790805366317.6313
+    },
+    {
+      "id": "556c756b-496e-48f2-a8a5-3480a5bf15b5",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50",
+      "method": "GET",
+      "startedAt": 1790805366574.9644,
+      "status": 200,
+      "finishedAt": 1790805366581.6821,
+      "itemCount": 50,
+      "snapshotId": "8bdbd16e-2b73-4095-89aa-99af5225d308",
+      "hasNextCursor": true
+    },
+    {
+      "id": "d8edb644-c048-4486-b81d-366085eb6aaf",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50&before=eyJzbmFwc2hvdElkIjoiOGJkYmQxNmUtMmI3My00MDk1LTg5YWEtOTlhZjUyMjVkMzA4Iiwib2Zmc2V0Ijo1MH0",
+      "method": "GET",
+      "startedAt": 1790805366584.2993,
+      "status": 200,
+      "finishedAt": 1790805366585.8723,
+      "itemCount": 50,
+      "snapshotId": "8bdbd16e-2b73-4095-89aa-99af5225d308",
+      "hasNextCursor": true
+    },
+    {
+      "id": "1422a2d3-445b-4eac-8f1c-8cbb60512c1e",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50&before=eyJzbmFwc2hvdElkIjoiOGJkYmQxNmUtMmI3My00MDk1LTg5YWEtOTlhZjUyMjVkMzA4Iiwib2Zmc2V0IjoxMDB9",
+      "method": "GET",
+      "startedAt": 1790805366588.2466,
+      "status": 200,
+      "finishedAt": 1790805366589.5068,
+      "itemCount": 50,
+      "snapshotId": "8bdbd16e-2b73-4095-89aa-99af5225d308",
+      "hasNextCursor": true
+    },
+    {
+      "id": "7bcd31c7-0ce3-46f8-bd6a-7ee4c4228796",
+      "url": "/api/groups/core-reconnect-group/messages?limit=50&before=eyJzbmFwc2hvdElkIjoiOGJkYmQxNmUtMmI3My00MDk1LTg5YWEtOTlhZjUyMjVkMzA4Iiwib2Zmc2V0IjoxNTB9",
+      "method": "GET",
+      "startedAt": 1790805366591.878,
+      "status": 200,
+      "finishedAt": 1790805366593.058,
+      "itemCount": 15,
+      "snapshotId": "8bdbd16e-2b73-4095-89aa-99af5225d308",
+      "hasNextCursor": false
+    }
+  ],
+  "recoverySnapshots": [
+    {
+      "id": "8bdbd16e-2b73-4095-89aa-99af5225d308",
+      "pages": [
+        50,
+        50,
+        50,
+        15
+      ]
+    }
+  ],
+  "stableAfterReplay": {
+    "matches": true,
+    "allLaidOut": true,
+    "stateMatches": true,
+    "syncFinished": true,
+    "live": true,
+    "actual": [
+      {
+        "id": "e93d4fdf-4758-401f-bd38-97c97992ce12",
+        "msgId": "late-history-oldest",
+        "text": "晚到历史：早于所有可见消息",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2025-12-31T23:30:00.000Z"
+      },
+      {
+        "id": "d1e90835-0c48-4338-9c98-dd2e2484e777",
+        "msgId": "initial-0",
+        "text": "初始消息 000",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:00:00.000Z"
+      },
+      {
+        "id": "c73edd25-a950-4542-8555-9ad5d851937f",
+        "msgId": "initial-1",
+        "text": "初始消息 001",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:01:00.000Z"
+      },
+      {
+        "id": "fdb5023b-e357-4fff-bb97-28f563d98a44",
+        "msgId": "initial-2",
+        "text": "初始消息 002",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:02:00.000Z"
+      },
+      {
+        "id": "786cf031-e361-4d32-a3ee-a77c3975e693",
+        "msgId": "initial-3",
+        "text": "初始消息 003",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:03:00.000Z"
+      },
+      {
+        "id": "b0973f67-d90f-4795-b0ba-2db6877931f8",
+        "msgId": "initial-4",
+        "text": "初始消息 004",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:04:00.000Z"
+      },
+      {
+        "id": "2b463a1e-cc87-483b-acd8-5d78c91bee5c",
+        "msgId": "initial-5",
+        "text": "初始消息 005",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:05:00.000Z"
+      },
+      {
+        "id": "41e02108-0b30-4d24-a378-6ad98b2c7f19",
+        "msgId": "initial-6",
+        "text": "初始消息 006",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:06:00.000Z"
+      },
+      {
+        "id": "ff7e0e13-416d-4e1a-8227-27eb31df9d1c",
+        "msgId": "initial-7",
+        "text": "初始消息 007",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:07:00.000Z"
+      },
+      {
+        "id": "41c87fc4-cabf-4c40-91d3-6e0f3992019e",
+        "msgId": "initial-8",
+        "text": "初始消息 008",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:08:00.000Z"
+      },
+      {
+        "id": "3f1717e6-e890-41cf-b7e7-c9a9c3594c46",
+        "msgId": "initial-9",
+        "text": "初始消息 009",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:09:00.000Z"
+      },
+      {
+        "id": "9b05dbb6-571a-49fc-8d66-8ac42bc9b171",
+        "msgId": "initial-10",
+        "text": "初始消息 010",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:10:00.000Z"
+      },
+      {
+        "id": "8a215eea-a922-4e1d-9f5b-5ee88d8be974",
+        "msgId": "initial-11",
+        "text": "初始消息 011",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:11:00.000Z"
+      },
+      {
+        "id": "e268f07b-c72b-4f4e-81ba-c83070dbb47c",
+        "msgId": "initial-12",
+        "text": "初始消息 012",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:12:00.000Z"
+      },
+      {
+        "id": "f2f89c4e-c70f-48e0-9ff3-0316a7a6f2bf",
+        "msgId": "initial-13",
+        "text": "初始消息 013",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:13:00.000Z"
+      },
+      {
+        "id": "5e2d7193-1372-4337-917f-438a62f0274e",
+        "msgId": "initial-14",
+        "text": "初始消息 014",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:14:00.000Z"
+      },
+      {
+        "id": "ce0389df-2cb1-445d-9a89-341df2a39ccb",
+        "msgId": "initial-15",
+        "text": "初始消息 015",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:15:00.000Z"
+      },
+      {
+        "id": "442f0157-5473-4dd0-b30c-47fae9d8607b",
+        "msgId": "initial-16",
+        "text": "初始消息 016",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:16:00.000Z"
+      },
+      {
+        "id": "211269b1-7428-4dbf-9d46-b24e00bfa9fa",
+        "msgId": "initial-17",
+        "text": "初始消息 017",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:17:00.000Z"
+      },
+      {
+        "id": "c8924fdd-80f7-4afe-b7af-9519f5894980",
+        "msgId": "initial-18",
+        "text": "初始消息 018",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:18:00.000Z"
+      },
+      {
+        "id": "85b42325-5272-49d7-b0fd-28dd64e97beb",
+        "msgId": "initial-19",
+        "text": "初始消息 019",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:19:00.000Z"
+      },
+      {
+        "id": "0d62057a-9f29-4606-9ff7-c4413274dba7",
+        "msgId": "initial-20",
+        "text": "初始消息 020",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:20:00.000Z"
+      },
+      {
+        "id": "1566a7d6-bbc8-4bc1-8f14-5a51aa4732d7",
+        "msgId": "initial-21",
+        "text": "初始消息 021",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:21:00.000Z"
+      },
+      {
+        "id": "4b2f6ebf-4b0d-4e5d-976c-b20a6a5b3c1f",
+        "msgId": "initial-22",
+        "text": "初始消息 022",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:22:00.000Z"
+      },
+      {
+        "id": "a2fe7663-b61f-4243-9f48-a341b6cc73fe",
+        "msgId": "initial-23",
+        "text": "初始消息 023",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:23:00.000Z"
+      },
+      {
+        "id": "3ae0901b-0f50-4b0a-8d09-07e5c9f1457b",
+        "msgId": "initial-24",
+        "text": "初始消息 024",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:24:00.000Z"
+      },
+      {
+        "id": "be573441-fcc0-474c-a6b1-c3f3862aa0b6",
+        "msgId": "initial-25",
+        "text": "初始消息 025",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:25:00.000Z"
+      },
+      {
+        "id": "9df6fb33-624a-4686-b3d3-5b1d6fbb2f6b",
+        "msgId": "initial-26",
+        "text": "初始消息 026",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:26:00.000Z"
+      },
+      {
+        "id": "54b018e0-7485-4429-a767-e74cf65116b4",
+        "msgId": "initial-27",
+        "text": "初始消息 027",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:27:00.000Z"
+      },
+      {
+        "id": "cfb41b95-f341-4db6-897a-77fae00c34c6",
+        "msgId": "initial-28",
+        "text": "初始消息 028",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:28:00.000Z"
+      },
+      {
+        "id": "9a466ef7-c09b-4b5c-9a48-742e5af93b75",
+        "msgId": "initial-29",
+        "text": "初始消息 029",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:29:00.000Z"
+      },
+      {
+        "id": "705fd721-405f-4347-ba59-1f4ece679cae",
+        "msgId": "initial-30",
+        "text": "初始消息 030",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:30:00.000Z"
+      },
+      {
+        "id": "7d7217a8-58a3-4835-a3f7-9395e5e2bae8",
+        "msgId": "initial-31",
+        "text": "初始消息 031",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:31:00.000Z"
+      },
+      {
+        "id": "451de5ce-d282-410b-a8eb-d0dce25f89cd",
+        "msgId": "initial-32",
+        "text": "初始消息 032",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:32:00.000Z"
+      },
+      {
+        "id": "6e34b419-d380-47e9-b158-861ae5ce9fbb",
+        "msgId": "initial-33",
+        "text": "初始消息 033",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:33:00.000Z"
+      },
+      {
+        "id": "970c9ff3-7099-4851-8ec4-bcd55e4191f3",
+        "msgId": "initial-34",
+        "text": "初始消息 034",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:34:00.000Z"
+      },
+      {
+        "id": "09069300-b602-4b45-a762-a34505273807",
+        "msgId": "initial-35",
+        "text": "初始消息 035",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:35:00.000Z"
+      },
+      {
+        "id": "76267daf-ca1b-456e-9a0c-a2adbde5e7e5",
+        "msgId": "initial-36",
+        "text": "初始消息 036",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:36:00.000Z"
+      },
+      {
+        "id": "b3902ecd-9181-4606-81b4-9bb8dfa25b2a",
+        "msgId": "initial-37",
+        "text": "初始消息 037",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:37:00.000Z"
+      },
+      {
+        "id": "86bc4ad0-a0ce-4b6d-a731-163dc942d529",
+        "msgId": "initial-38",
+        "text": "初始消息 038",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:38:00.000Z"
+      },
+      {
+        "id": "35573080-a26d-41e9-9e78-7c4dbc6f8dda",
+        "msgId": "initial-39",
+        "text": "初始消息 039",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:39:00.000Z"
+      },
+      {
+        "id": "eb409f17-19cc-4211-9861-7e8509763f78",
+        "msgId": "initial-40",
+        "text": "初始消息 040",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:40:00.000Z"
+      },
+      {
+        "id": "69cee345-2094-4378-8881-6251a4f5b725",
+        "msgId": "initial-41",
+        "text": "初始消息 041",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:41:00.000Z"
+      },
+      {
+        "id": "2451bcdc-e1a5-49f0-abb2-3f2a6a6d3b9a",
+        "msgId": "initial-42",
+        "text": "初始消息 042",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:42:00.000Z"
+      },
+      {
+        "id": "b789cfe6-9ba4-4b06-8435-342229c7eae9",
+        "msgId": "initial-43",
+        "text": "初始消息 043",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:43:00.000Z"
+      },
+      {
+        "id": "ca5fe45e-aab3-4679-8591-9a110d909b6f",
+        "msgId": "initial-44",
+        "text": "初始消息 044",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:44:00.000Z"
+      },
+      {
+        "id": "e079a03f-f42e-4d3d-a8cd-2c5d6a977a17",
+        "msgId": "initial-45",
+        "text": "初始消息 045",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:45:00.000Z"
+      },
+      {
+        "id": "5fac3461-f961-4d95-a844-81a77ec0719e",
+        "msgId": "initial-46",
+        "text": "初始消息 046",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:46:00.000Z"
+      },
+      {
+        "id": "c6438ddc-18a3-4e89-985e-55cb167d9d4e",
+        "msgId": "initial-47",
+        "text": "初始消息 047",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:47:00.000Z"
+      },
+      {
+        "id": "39f30e1c-63d1-4052-8e91-d433ba47255e",
+        "msgId": "initial-48",
+        "text": "初始消息 048",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:48:00.000Z"
+      },
+      {
+        "id": "72cf9ac1-2fd2-4ccb-baed-b244c9dd6404",
+        "msgId": "initial-49",
+        "text": "初始消息 049",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:49:00.000Z"
+      },
+      {
+        "id": "ff9a4b7b-1f56-4ab0-9f69-c52f7ad5c3b1",
+        "msgId": "initial-50",
+        "text": "初始消息 050",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:50:00.000Z"
+      },
+      {
+        "id": "5e0b50d4-8724-4a39-9dba-76855046a3bd",
+        "msgId": "initial-51",
+        "text": "初始消息 051",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:51:00.000Z"
+      },
+      {
+        "id": "e6ea0651-2ddf-4cad-8fd6-a5c0c6cf7f2f",
+        "msgId": "initial-52",
+        "text": "初始消息 052",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:52:00.000Z"
+      },
+      {
+        "id": "0f5fcd98-a85a-4f9e-89b3-1ac4fb6f74d3",
+        "msgId": "initial-53",
+        "text": "初始消息 053",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:53:00.000Z"
+      },
+      {
+        "id": "a8868abc-498a-46dd-83dd-5799debb70ec",
+        "msgId": "initial-54",
+        "text": "初始消息 054",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:54:00.000Z"
+      },
+      {
+        "id": "5ef886ac-8e22-4680-98e8-5da36e19df39",
+        "msgId": "initial-55",
+        "text": "初始消息 055",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:55:00.000Z"
+      },
+      {
+        "id": "87d4d0d3-78b3-4443-a274-e292f8b040fb",
+        "msgId": "initial-56",
+        "text": "初始消息 056",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:56:00.000Z"
+      },
+      {
+        "id": "8d19fb67-ba05-4234-ab39-51234922fbef",
+        "msgId": "initial-57",
+        "text": "初始消息 057",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:57:00.000Z"
+      },
+      {
+        "id": "b7f3fab2-8535-4b06-be32-92c4ee2ab028",
+        "msgId": "initial-58",
+        "text": "初始消息 058",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:58:00.000Z"
+      },
+      {
+        "id": "3114e591-a1fe-475e-8bf2-7ca99d3ecfcb",
+        "msgId": "initial-59",
+        "text": "初始消息 059",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T00:59:00.000Z"
+      },
+      {
+        "id": "9c2e3371-91d4-4eaa-bf10-3689abd5276e",
+        "msgId": "initial-60",
+        "text": "初始消息 060",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:00:00.000Z"
+      },
+      {
+        "id": "f369c479-7113-48c9-90c2-1e6b3d76ccbc",
+        "msgId": "initial-61",
+        "text": "初始消息 061",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:01:00.000Z"
+      },
+      {
+        "id": "ab7fd562-c23a-4628-96e2-ff9d28c6825f",
+        "msgId": "initial-62",
+        "text": "初始消息 062",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:02:00.000Z"
+      },
+      {
+        "id": "ab9cf697-b646-484a-92f6-65b9bf8060d4",
+        "msgId": "initial-63",
+        "text": "初始消息 063",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:03:00.000Z"
+      },
+      {
+        "id": "9fdc6380-7993-43ef-9134-f25669cbe994",
+        "msgId": "initial-64",
+        "text": "初始消息 064",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:04:00.000Z"
+      },
+      {
+        "id": "f7d3196b-4965-47a2-ab9d-7bec6b6547a9",
+        "msgId": "initial-65",
+        "text": "初始消息 065",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:05:00.000Z"
+      },
+      {
+        "id": "c744bbde-5734-44d7-8e11-7e1f352fa7e7",
+        "msgId": "initial-66",
+        "text": "初始消息 066",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:06:00.000Z"
+      },
+      {
+        "id": "a8748e41-3004-461b-9d41-e7c307344298",
+        "msgId": "initial-67",
+        "text": "初始消息 067",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:07:00.000Z"
+      },
+      {
+        "id": "706266a3-64b1-427e-8d93-6e10e8d54f8e",
+        "msgId": "initial-68",
+        "text": "初始消息 068",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:08:00.000Z"
+      },
+      {
+        "id": "37277b0c-944b-472f-a9a5-794f0ffee22f",
+        "msgId": "initial-69",
+        "text": "初始消息 069",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:09:00.000Z"
+      },
+      {
+        "id": "4b20dc7e-e976-41ee-adda-2607a9117d32",
+        "msgId": "initial-70",
+        "text": "初始消息 070",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:10:00.000Z"
+      },
+      {
+        "id": "c8dcd386-ba90-4bbe-888e-51f5f0d819c8",
+        "msgId": "initial-71",
+        "text": "初始消息 071",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:11:00.000Z"
+      },
+      {
+        "id": "8065c22c-4590-4783-b9b3-390143c7ce5b",
+        "msgId": "initial-72",
+        "text": "初始消息 072",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:12:00.000Z"
+      },
+      {
+        "id": "51a83096-0c3c-41eb-abc7-c7da0ca93bc5",
+        "msgId": "initial-73",
+        "text": "初始消息 073",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:13:00.000Z"
+      },
+      {
+        "id": "a7010e0a-2cff-4090-86b1-7066a0445f43",
+        "msgId": "initial-74",
+        "text": "初始消息 074",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:14:00.000Z"
+      },
+      {
+        "id": "1e3aef85-598d-493a-a398-3da8ce74201e",
+        "msgId": "initial-75",
+        "text": "初始消息 075",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:15:00.000Z"
+      },
+      {
+        "id": "6250bd99-7c15-4ba6-a890-0b3feee51cbc",
+        "msgId": "late-history-middle",
+        "text": "晚到历史：插入中间同时间排序",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:15:00.000Z"
+      },
+      {
+        "id": "b6872559-5f0e-43bf-a1cd-1fe528dd98a9",
+        "msgId": "initial-76",
+        "text": "初始消息 076",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:16:00.000Z"
+      },
+      {
+        "id": "a2db4a45-16d1-4451-ac76-0e1dc37c6c35",
+        "msgId": "initial-77",
+        "text": "初始消息 077",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:17:00.000Z"
+      },
+      {
+        "id": "e848a7bc-02ad-484b-8e45-a803da553ab2",
+        "msgId": "initial-78",
+        "text": "初始消息 078",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:18:00.000Z"
+      },
+      {
+        "id": "c871f3fe-4fb9-488f-9faf-b3c38cd4a13e",
+        "msgId": "initial-79",
+        "text": "初始消息 079",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:19:00.000Z"
+      },
+      {
+        "id": "dbc4b5d3-5203-4376-9f03-c3f357a0dbe4",
+        "msgId": "initial-80",
+        "text": "初始消息 080",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:20:00.000Z"
+      },
+      {
+        "id": "ee4b0e6a-3b8f-4dc2-a932-ecf8de389ec7",
+        "msgId": "initial-81",
+        "text": "初始消息 081",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:21:00.000Z"
+      },
+      {
+        "id": "49b8d3df-005f-47d0-87cc-c8570aafdfe8",
+        "msgId": "initial-82",
+        "text": "初始消息 082",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:22:00.000Z"
+      },
+      {
+        "id": "9d64f275-44d0-4cf6-b25e-14a3919e35e8",
+        "msgId": "initial-83",
+        "text": "初始消息 083",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:23:00.000Z"
+      },
+      {
+        "id": "016b0f5d-785f-42da-800f-0939148ff283",
+        "msgId": "initial-84",
+        "text": "初始消息 084",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:24:00.000Z"
+      },
+      {
+        "id": "1c4d7f09-de1b-4877-ac02-71e23d155181",
+        "msgId": "initial-85",
+        "text": "初始消息 085",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:25:00.000Z"
+      },
+      {
+        "id": "4e330a96-8d6f-4492-b03c-b659b9cdf11f",
+        "msgId": "initial-86",
+        "text": "初始消息 086",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:26:00.000Z"
+      },
+      {
+        "id": "515b35c7-60fa-4fb6-8952-f35860018a2c",
+        "msgId": "initial-87",
+        "text": "初始消息 087",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:27:00.000Z"
+      },
+      {
+        "id": "939b0f0e-9fc2-4dc9-bc82-785be0664292",
+        "msgId": "initial-88",
+        "text": "初始消息 088",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:28:00.000Z"
+      },
+      {
+        "id": "8a9a7de1-3f41-4451-ba8a-668bb4cccdd5",
+        "msgId": "initial-89",
+        "text": "初始消息 089",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:29:00.000Z"
+      },
+      {
+        "id": "3928aacd-ccd5-4113-83f1-ce690cabdb75",
+        "msgId": "initial-90",
+        "text": "初始消息 090",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:30:00.000Z"
+      },
+      {
+        "id": "0f4cc61a-e1cd-47b0-9909-fd6f690d3dc1",
+        "msgId": "initial-91",
+        "text": "初始消息 091",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:31:00.000Z"
+      },
+      {
+        "id": "4c9dc136-e322-4776-a126-fca9f5c7bdca",
+        "msgId": "initial-92",
+        "text": "初始消息 092",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:32:00.000Z"
+      },
+      {
+        "id": "2abeeb52-c756-4d06-a4d8-3c20074a7290",
+        "msgId": "initial-93",
+        "text": "初始消息 093",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:33:00.000Z"
+      },
+      {
+        "id": "5d4f3bf2-d434-4f67-83b4-2ebbf626cab3",
+        "msgId": "initial-94",
+        "text": "初始消息 094",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:34:00.000Z"
+      },
+      {
+        "id": "0ee8b9a6-9bb0-4677-a7f9-e1ac770667b0",
+        "msgId": "initial-95",
+        "text": "初始消息 095",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:35:00.000Z"
+      },
+      {
+        "id": "8f834509-34ac-43ea-9174-b91c5ddb4563",
+        "msgId": "initial-96",
+        "text": "初始消息 096",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:36:00.000Z"
+      },
+      {
+        "id": "3ec5a6d6-793a-409b-be40-59bfeff37f92",
+        "msgId": "initial-97",
+        "text": "初始消息 097",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:37:00.000Z"
+      },
+      {
+        "id": "a6669602-3447-4f14-b4d5-0284efa87b8d",
+        "msgId": "initial-98",
+        "text": "初始消息 098",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:38:00.000Z"
+      },
+      {
+        "id": "c64d1139-2469-437b-b8e0-0efaca8350e3",
+        "msgId": "initial-99",
+        "text": "初始消息 099",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:39:00.000Z"
+      },
+      {
+        "id": "676043aa-bd59-481f-9468-6027c5959a16",
+        "msgId": "initial-100",
+        "text": "初始消息 100",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:40:00.000Z"
+      },
+      {
+        "id": "f51fcc0d-c689-4937-bf86-5e548d423412",
+        "msgId": "initial-101",
+        "text": "初始消息 101",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:41:00.000Z"
+      },
+      {
+        "id": "ef99a749-d2f7-4352-8373-f13b3b8d29af",
+        "msgId": "initial-102",
+        "text": "初始消息 102",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:42:00.000Z"
+      },
+      {
+        "id": "2ef999ce-b8bc-4acb-99d8-a1a30c33b8d8",
+        "msgId": "initial-103",
+        "text": "初始消息 103",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:43:00.000Z"
+      },
+      {
+        "id": "52ed0701-4794-497d-914e-a025357a047e",
+        "msgId": "initial-104",
+        "text": "初始消息 104",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:44:00.000Z"
+      },
+      {
+        "id": "64f9ef53-c305-4441-aa8a-04d917e7fd75",
+        "msgId": "initial-105",
+        "text": "初始消息 105",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:45:00.000Z"
+      },
+      {
+        "id": "6499aecf-e227-40a0-8d68-4152f10baf26",
+        "msgId": "initial-106",
+        "text": "初始消息 106",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:46:00.000Z"
+      },
+      {
+        "id": "3d7a3060-1585-408c-89fc-bcf3bc773f08",
+        "msgId": "initial-107",
+        "text": "初始消息 107",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:47:00.000Z"
+      },
+      {
+        "id": "ef26218b-c318-4360-b20f-db7bcd27778e",
+        "msgId": "initial-108",
+        "text": "初始消息 108",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:48:00.000Z"
+      },
+      {
+        "id": "441fc471-154e-4d2f-904f-f33051ebb55b",
+        "msgId": "initial-109",
+        "text": "初始消息 109",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:49:00.000Z"
+      },
+      {
+        "id": "61710ec4-846e-474b-9908-2f2108b3b3b0",
+        "msgId": "initial-110",
+        "text": "初始消息 110",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:50:00.000Z"
+      },
+      {
+        "id": "4be8efd2-94a0-4027-bb3f-b5d503210a61",
+        "msgId": "initial-111",
+        "text": "初始消息 111",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:51:00.000Z"
+      },
+      {
+        "id": "227b753d-de1a-4206-bbb8-a99d633706d4",
+        "msgId": "initial-112",
+        "text": "初始消息 112",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:52:00.000Z"
+      },
+      {
+        "id": "a44e25c9-4234-467d-ab63-12c0827723ac",
+        "msgId": "initial-113",
+        "text": "初始消息 113",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:53:00.000Z"
+      },
+      {
+        "id": "8e7c1acd-1cb6-4c85-9497-c20d03a69056",
+        "msgId": "initial-114",
+        "text": "初始消息 114",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:54:00.000Z"
+      },
+      {
+        "id": "1f5ecaef-601f-4bcc-8ad5-1121a7b16162",
+        "msgId": "initial-115",
+        "text": "初始消息 115",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:55:00.000Z"
+      },
+      {
+        "id": "e3df7042-ba31-42c3-b975-083ba5305ba4",
+        "msgId": "initial-116",
+        "text": "初始消息 116",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:56:00.000Z"
+      },
+      {
+        "id": "c30eda24-38bc-4d0a-8230-484ae38eec3c",
+        "msgId": "initial-117",
+        "text": "初始消息 117",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:57:00.000Z"
+      },
+      {
+        "id": "ba5c78e7-6de1-44fb-82c2-6a278e4dd8f3",
+        "msgId": "initial-118",
+        "text": "初始消息 118",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:58:00.000Z"
+      },
+      {
+        "id": "552497bb-8792-413e-b455-f458266fe021",
+        "msgId": "initial-119",
+        "text": "初始消息 119",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T01:59:00.000Z"
+      },
+      {
+        "id": "ea80bfe7-d45b-4c6d-8754-7f79acc749f9",
+        "msgId": "initial-120",
+        "text": "初始消息 120",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:00:00.000Z"
+      },
+      {
+        "id": "4c4112eb-36cf-478a-9120-819b174fd83e",
+        "msgId": "initial-121",
+        "text": "初始消息 121",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:01:00.000Z"
+      },
+      {
+        "id": "3fd2a4a0-146f-4cfe-b227-c2585a46486d",
+        "msgId": "initial-122",
+        "text": "初始消息 122",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:02:00.000Z"
+      },
+      {
+        "id": "511d51de-eb71-4a34-af14-8974d2a30405",
+        "msgId": "initial-123",
+        "text": "初始消息 123",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:03:00.000Z"
+      },
+      {
+        "id": "0613f686-acf8-4014-8953-63cc9143bab0",
+        "msgId": "initial-124",
+        "text": "初始消息 124",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:04:00.000Z"
+      },
+      {
+        "id": "a38b2d3a-78d6-4da7-ad80-c4a0d3664c22",
+        "msgId": "initial-125",
+        "text": "初始消息 125",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:05:00.000Z"
+      },
+      {
+        "id": "1e72138b-ef4f-4aa6-b73b-8d98fcec09ca",
+        "msgId": "initial-126",
+        "text": "初始消息 126",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:06:00.000Z"
+      },
+      {
+        "id": "f43656c4-bbdb-41f5-87c9-f359c15c7b6a",
+        "msgId": "initial-127",
+        "text": "初始消息 127",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:07:00.000Z"
+      },
+      {
+        "id": "aab09f9f-9e6a-413a-ab06-76afa0f6c611",
+        "msgId": "initial-128",
+        "text": "初始消息 128",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:08:00.000Z"
+      },
+      {
+        "id": "08d3bb95-a9ab-493c-89e9-19277d6d8546",
+        "msgId": "initial-129",
+        "text": "初始消息 129",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:09:00.000Z"
+      },
+      {
+        "id": "bbdd7f32-1904-4824-8ac6-f1948074799d",
+        "msgId": "initial-130",
+        "text": "初始消息 130",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:10:00.000Z"
+      },
+      {
+        "id": "57968aec-3640-4ee7-996c-495024b8381e",
+        "msgId": "initial-131",
+        "text": "初始消息 131",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:11:00.000Z"
+      },
+      {
+        "id": "8dd909cf-8460-4a0b-9e69-c3e992c38564",
+        "msgId": "initial-132",
+        "text": "初始消息 132",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:12:00.000Z"
+      },
+      {
+        "id": "996b5aa3-632d-4dd6-9580-36cfc90cd3bf",
+        "msgId": "initial-133",
+        "text": "初始消息 133",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:13:00.000Z"
+      },
+      {
+        "id": "13c3ff6b-d9dc-4c41-a2e6-6ff427abd276",
+        "msgId": "initial-134",
+        "text": "初始消息 134",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:14:00.000Z"
+      },
+      {
+        "id": "6b87f951-25f7-4ad3-8f64-38c4689dacf1",
+        "msgId": "initial-135",
+        "text": "初始消息 135",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:15:00.000Z"
+      },
+      {
+        "id": "569aceea-5747-440b-a085-a44dd1966dad",
+        "msgId": "initial-136",
+        "text": "初始消息 136",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:16:00.000Z"
+      },
+      {
+        "id": "54439154-a0ff-45f8-bba1-6ca3cf4b364b",
+        "msgId": "initial-137",
+        "text": "初始消息 137",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:17:00.000Z"
+      },
+      {
+        "id": "93abd2aa-ef5a-4ca5-b6fc-a8dcdb403e20",
+        "msgId": "initial-138",
+        "text": "初始消息 138",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:18:00.000Z"
+      },
+      {
+        "id": "1584e0e7-6ec8-4c72-9fbb-eba4ea636a5b",
+        "msgId": "initial-139",
+        "text": "初始消息 139",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:19:00.000Z"
+      },
+      {
+        "id": "fd520f09-600e-4cdc-b8fb-4cf7e554a1bc",
+        "msgId": "initial-140",
+        "text": "初始消息 140",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:20:00.000Z"
+      },
+      {
+        "id": "c66f50cf-94cf-4265-b18a-e12b44bc847c",
+        "msgId": "initial-141",
+        "text": "初始消息 141",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:21:00.000Z"
+      },
+      {
+        "id": "93fb3f4a-6053-480a-8877-cfc02cd2e40b",
+        "msgId": "initial-142",
+        "text": "初始消息 142",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:22:00.000Z"
+      },
+      {
+        "id": "66658a59-9b61-4527-9b2b-87575292502a",
+        "msgId": "initial-143",
+        "text": "初始消息 143",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:23:00.000Z"
+      },
+      {
+        "id": "795b42d0-32b1-4ebd-ad91-5c2492a582ad",
+        "msgId": "initial-144",
+        "text": "初始消息 144",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:24:00.000Z"
+      },
+      {
+        "id": "9e84da2e-33f4-4281-9da4-8265185598df",
+        "msgId": "initial-145",
+        "text": "初始消息 145",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:25:00.000Z"
+      },
+      {
+        "id": "a7db4af5-ca49-4f39-a2eb-83bcb202154e",
+        "msgId": "initial-146",
+        "text": "初始消息 146",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:26:00.000Z"
+      },
+      {
+        "id": "9725d296-eea5-41b8-90bc-a51a9070eace",
+        "msgId": "initial-147",
+        "text": "初始消息 147",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:27:00.000Z"
+      },
+      {
+        "id": "2773705c-1544-4f10-ae11-2bc79ff78f69",
+        "msgId": "initial-148",
+        "text": "初始消息 148",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:28:00.000Z"
+      },
+      {
+        "id": "93d5c37f-34e1-4d45-a327-64cdbe27ed0e",
+        "msgId": "initial-149",
+        "text": "初始消息 149",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:29:00.000Z"
+      },
+      {
+        "id": "189d8bf0-340a-4b34-8c48-f86222337fba",
+        "msgId": "initial-150",
+        "text": "初始消息 150",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:30:00.000Z"
+      },
+      {
+        "id": "af751bfb-e02e-4c90-96c9-2614ae367f88",
+        "msgId": "initial-151",
+        "text": "初始消息 151",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:31:00.000Z"
+      },
+      {
+        "id": "dcad33a6-00f4-47a2-ac2f-8bab4131c68f",
+        "msgId": "initial-152",
+        "text": "初始消息 152",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:32:00.000Z"
+      },
+      {
+        "id": "ef1c276a-f1f7-4e9c-9712-5e968af914cb",
+        "msgId": "initial-153",
+        "text": "初始消息 153",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:33:00.000Z"
+      },
+      {
+        "id": "4a02c678-a504-4ee5-95dd-3e2536658b4b",
+        "msgId": "initial-154",
+        "text": "初始消息 154",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:34:00.000Z"
+      },
+      {
+        "id": "4e8988e1-d335-4319-89b5-fa93604aaae4",
+        "msgId": "initial-155",
+        "text": "初始消息 155",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:35:00.000Z"
+      },
+      {
+        "id": "d3094446-b33f-4a31-8c44-ade8bdc30ae4",
+        "msgId": "initial-156",
+        "text": "初始消息 156",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:36:00.000Z"
+      },
+      {
+        "id": "04cbb8c4-ddca-410d-bde4-0e0901aaf8f9",
+        "msgId": "initial-157",
+        "text": "初始消息 157",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:37:00.000Z"
+      },
+      {
+        "id": "2d769d42-5515-4999-9015-8575593dcedf",
+        "msgId": "initial-158",
+        "text": "初始消息 158",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:38:00.000Z"
+      },
+      {
+        "id": "b2e6cb11-0f9b-4ff7-9561-d4389fb7dc65",
+        "msgId": "initial-159",
+        "text": "初始消息 159",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:39:00.000Z"
+      },
+      {
+        "id": "655c5ab4-eab4-4539-8eb7-6e2a12e93a5b",
+        "msgId": "offline-new-1",
+        "text": "断线新消息 1",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:41:00.000Z"
+      },
+      {
+        "id": "40a23302-752f-49b4-ab8b-0c914f56d34d",
+        "msgId": "offline-new-2",
+        "text": "断线新消息 2",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:42:00.000Z"
+      },
+      {
+        "id": "c47b2a48-a633-4ad9-9f5d-cb90954ae00d",
+        "msgId": "offline-new-3",
+        "text": "断线新消息 3",
+        "sender": "external-core-user",
+        "own": false,
+        "sentAt": "2026-01-01T02:43:00.000Z"
+      }
+    ]
+  },
+  "screenshot": "docs/evidence/core-reconnect-browser-2026-09-30T21-56-01-127Z.png",
+  "passed": true,
+  "finishedAt": "2026-09-30T21:56:07.635Z"
+}
