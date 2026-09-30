@@ -1,60 +1,549 @@
-import Fastify, { type FastifyReply } from 'fastify';
-import { randomUUID } from 'node:crypto';
-import { z } from 'zod';
-import type { ServerResponse } from 'node:http';
-import { JsonStore,delay } from './store.js';
-interface SimAccount { online:boolean; platformUserId:string; terminal?:'suspended'|'session_expired'; limitedUntil?:number; retrySeconds?:number; }
-interface SimGroup { owner:string; members:string[]; admins:string[]; invite?:string; readyAt?:number; writable:boolean; }
-interface SimMessage {groupId:string;accountId:string;clientMsgId:string;msgId:string;text:string;sentAt:string;}
-interface Event {eventId:number;type:string;[key:string]:unknown;}
-interface Config { duplicateEvents:boolean; outOfOrder:boolean; sendDelayMs:number; sendResponseDelayMs:number; inviteReadyMs:number; joinDelayMs:number; joinNever:string[]; leaveFailures:string[]; expireInviteOnce:boolean; unavailable:boolean; queryUnavailable:boolean; sendFaults:string[]; kickFaults:string[]; promoteNotMemberOnce:boolean; }
-interface State {accounts:Record<string,SimAccount>;groups:Record<string,SimGroup>;messages:SimMessage[];events:Event[];requests:{at:string;path:string;body:unknown}[];config:Config;}
-const configSchema=z.object({duplicateEvents:z.boolean(),outOfOrder:z.boolean(),sendDelayMs:z.number().nonnegative(),sendResponseDelayMs:z.number().nonnegative(),inviteReadyMs:z.number().nonnegative(),joinDelayMs:z.number().nonnegative(),joinNever:z.array(z.string()),leaveFailures:z.array(z.string()),expireInviteOnce:z.boolean(),unavailable:z.boolean(),queryUnavailable:z.boolean(),sendFaults:z.array(z.string()),kickFaults:z.array(z.string()),promoteNotMemberOnce:z.boolean()}).partial();
-const defaults:Config={duplicateEvents:false,outOfOrder:false,sendDelayMs:250,sendResponseDelayMs:0,inviteReadyMs:0,joinDelayMs:200,joinNever:[],leaveFailures:[],expireInviteOnce:false,unavailable:false,queryUnavailable:false,sendFaults:[],kickFaults:[],promoteNotMemberOnce:false};
-export function createGatewaySimulator(path='.runtime/gateway.json') {
- const app=Fastify({logger:false});const store=new JsonStore<State>(path,{accounts:{},groups:{},messages:[],events:[],requests:[],config:{...defaults}});const s=store.state;const clients=new Set<ServerResponse>();const timers=new Set<NodeJS.Timeout>();
- function later(ms:number,fn:()=>void):void {const timer=setTimeout(()=>{timers.delete(timer);fn();},ms);timers.add(timer);}
- function publish(type:string,data:Record<string,unknown>):void {const e:Event={...data,type,eventId:(s.events.at(-1)?.eventId??0)+1};s.events.push(e);store.save();const wire=`id: ${e.eventId}\nevent: ${type}\ndata: ${JSON.stringify(e)}\n\n`;later(s.config.outOfOrder&&e.eventId%2?700:0,()=>{for(const c of clients)if(!c.destroyed){c.write(wire);if(s.config.duplicateEvents)c.write(wire);}});}
- function fail(reply:FastifyReply,status:number,code:string,extra:Record<string,unknown>={}) {return reply.code(status).send({code,...extra});}
- function account(id:string,reply:FastifyReply,needOnline=true):SimAccount|null {const a=s.accounts[id];if(a?.terminal){fail(reply,a.terminal==='suspended'?403:401,a.terminal==='suspended'?'ACCOUNT_SUSPENDED':'SESSION_EXPIRED');return null;}if(!a || needOnline&&!a.online){fail(reply,409,'ACCOUNT_OFFLINE');return null;}return a;}
- function group(id:string,reply:FastifyReply):SimGroup|null {const g=s.groups[id];if(!g){fail(reply,404,'GROUP_NOT_FOUND');return null;}return g;}
- function sendMessage(groupId:string,accountId:string,clientMsgId:string,text:string):void {const a=s.accounts[accountId]!;const g=s.groups[groupId]!;
-   if(a.terminal || !g.writable){publish('message_failed',{clientMsgId,code:a.terminal?'ACCOUNT_SUSPENDED':'GROUP_WRITE_FORBIDDEN'});return;}
-   const msg:SimMessage={groupId,accountId,clientMsgId,text,msgId:randomUUID(),sentAt:new Date().toISOString()};s.messages.push(msg);store.save();
-   publish('message_sent',{clientMsgId,msgId:msg.msgId,sentAt:msg.sentAt});publish('message',{groupId,msgId:msg.msgId,senderPlatformUserId:a.platformUserId,text,sentAt:msg.sentAt});
- }
- app.addHook('onRequest',async(req,reply)=>{if(!req.url.startsWith('/__control')&&s.config.unavailable)return fail(reply,503,'UNAVAILABLE');});
- app.addHook('preHandler',async req=>{if(!req.url.startsWith('/__control')&&!req.url.startsWith('/events')){s.requests.push({at:new Date().toISOString(),path:req.url,body:req.body??null});store.save();}});
- app.setErrorHandler((error,_req,reply)=>fail(reply,400,'VALIDATION_ERROR',{message:String(error)}));
- app.post('/accounts/:accountId/connect',async(req,reply)=>{const {accountId:id}=z.object({accountId:z.string()}).parse(req.params);const prior=s.accounts[id];if(prior?.terminal){account(id,reply,false);return;}const a=prior??{online:false,platformUserId:`platform-${id}`};a.online=true;s.accounts[id]=a;store.save();return{platformUserId:a.platformUserId};});
- app.post('/accounts/:accountId/disconnect',async(req,reply)=>{const {accountId:id}=z.object({accountId:z.string()}).parse(req.params);const a=account(id,reply,false);if(!a)return;a.online=false;store.save();return{};});
- app.post('/groups',async(req,reply)=>{const {creatorAccountId}=z.object({creatorAccountId:z.string()}).parse(req.body);const a=account(creatorAccountId,reply);if(!a)return;const groupId=randomUUID();s.groups[groupId]={owner:creatorAccountId,members:[a.platformUserId],admins:[],writable:true};store.save();return{groupId};});
- app.post('/groups/:id/invite',async(req,reply)=>{const{id}=z.object({id:z.string()}).parse(req.params);const g=group(id,reply);if(!g)return;g.invite=`invite-${randomUUID()}`;g.readyAt=Date.now()+s.config.inviteReadyMs;store.save();return{inviteLink:g.invite,readyAfterMs:s.config.inviteReadyMs};});
- app.post('/groups/:id/join',async(req,reply)=>{const{id}=z.object({id:z.string()}).parse(req.params);const{accountId,inviteLink}=z.object({accountId:z.string(),inviteLink:z.string()}).parse(req.body);const a=account(accountId,reply);const g=group(id,reply);if(!a||!g)return;if(g.members.includes(a.platformUserId))return fail(reply,409,'ALREADY_MEMBER');if(s.config.expireInviteOnce){s.config.expireInviteOnce=false;g.invite=undefined;store.save();}if(g.invite!==inviteLink)return fail(reply,410,'INVITE_EXPIRED');if(Date.now()<(g.readyAt??0))return fail(reply,409,'INVITE_NOT_READY');
-   if(!s.config.joinNever.includes(accountId))later(s.config.joinDelayMs,()=>{if(!g.members.includes(a.platformUserId)){g.members.push(a.platformUserId);store.save();publish('member_joined',{groupId:id,platformUserId:a.platformUserId});}});
-   return reply.code(202).send({accepted:true});});
- app.post('/groups/:id/promote',async(req,reply)=>{const{id}=z.object({id:z.string()}).parse(req.params);const{byAccountId,accountId}=z.object({byAccountId:z.string(),accountId:z.string()}).parse(req.body);const a=account(byAccountId,reply);const g=group(id,reply);if(!a||!g)return;if(g.owner!==byAccountId)return fail(reply,403,'NO_PERMISSION');if(s.config.promoteNotMemberOnce){s.config.promoteNotMemberOnce=false;store.save();return fail(reply,409,'NOT_MEMBER_YET');}const target=s.accounts[accountId];if(!target||!g.members.includes(target.platformUserId))return fail(reply,409,'NOT_MEMBER_YET');if(!g.admins.includes(accountId))g.admins.push(accountId);store.save();return{};});
- app.get('/groups/:id/members',async(req,reply)=>{const{id}=z.object({id:z.string()}).parse(req.params);const g=group(id,reply);if(!g)return;return g.members.map(platformUserId=>({platformUserId}));});
- app.post('/groups/:id/leave',async(req,reply)=>{const{id}=z.object({id:z.string()}).parse(req.params);const{accountId}=z.object({accountId:z.string()}).parse(req.body);const a=account(accountId,reply);const g=group(id,reply);if(!a||!g)return;if(s.config.leaveFailures.includes(accountId))return fail(reply,500,'LEAVE_FAILED');g.members=g.members.filter(x=>x!==a.platformUserId);store.save();publish('member_left',{groupId:id,platformUserId:a.platformUserId});return{};});
- app.post('/groups/:id/kick',async(req,reply)=>{const{id}=z.object({id:z.string()}).parse(req.params);const{byAccountId,targetPlatformUserId}=z.object({byAccountId:z.string(),targetPlatformUserId:z.string()}).parse(req.body);const a=account(byAccountId,reply);const g=group(id,reply);if(!a||!g)return;if(!g.members.includes(s.accounts[g.owner]!.platformUserId))return fail(reply,409,'OWNER_LEFT');if(g.owner!==byAccountId&&!g.admins.includes(byAccountId))return fail(reply,403,'NO_PERMISSION');const fault=s.config.kickFaults.shift();store.save();if(fault==='NETWORK_TIMEOUT_NO_EFFECT')return fail(reply,504,'NETWORK_TIMEOUT');if(fault==='NETWORK_TIMEOUT'){later(1500,()=>{g.members=g.members.filter(x=>x!==targetPlatformUserId);store.save();publish('member_left',{groupId:id,platformUserId:targetPlatformUserId});});return fail(reply,504,'NETWORK_TIMEOUT');}await delay(1000);g.members=g.members.filter(x=>x!==targetPlatformUserId);store.save();publish('member_left',{groupId:id,platformUserId:targetPlatformUserId});return{kicked:true};});
- app.post('/groups/:id/send',async(req,reply)=>{const{id}=z.object({id:z.string()}).parse(req.params);const{accountId,clientMsgId,text}=z.object({accountId:z.string(),clientMsgId:z.string(),text:z.string()}).parse(req.body);const a=account(accountId,reply);const g=group(id,reply);if(!a||!g)return;
-   if(!g.writable)return fail(reply,403,'GROUP_WRITE_FORBIDDEN');if(!g.members.includes(a.platformUserId))return fail(reply,403,'SENDER_NOT_IN_GROUP');
-   if((a.limitedUntil??0)>Date.now()){a.limitedUntil=Date.now()+(a.retrySeconds??2)*1000;store.save();return fail(reply,429,'RATE_LIMITED',{retryAfterSeconds:a.retrySeconds??2});}
-   const fault=s.config.sendFaults.shift();store.save();
-   if(fault==='RATE_LIMITED'){a.retrySeconds=2;a.limitedUntil=Date.now()+2000;store.save();return fail(reply,429,'RATE_LIMITED',{retryAfterSeconds:2});}
-   if(fault==='ACCOUNT_SUSPENDED'||fault==='SESSION_EXPIRED'){a.terminal=fault==='ACCOUNT_SUSPENDED'?'suspended':'session_expired';a.online=false;store.save();return fail(reply,fault==='ACCOUNT_SUSPENDED'?403:401,fault);}
-   if(fault==='GROUP_WRITE_FORBIDDEN'){g.writable=false;store.save();return fail(reply,403,fault);}
-   if(fault==='NETWORK_TIMEOUT'||fault==='NETWORK_TIMEOUT_NO_EFFECT'){if(fault==='NETWORK_TIMEOUT')later(1500,()=>sendMessage(id,accountId,clientMsgId,text));return fail(reply,504,'NETWORK_TIMEOUT');}
-   if(fault==='UNAVAILABLE')return fail(reply,503,'UNAVAILABLE');
-   later(s.config.sendDelayMs,()=>sendMessage(id,accountId,clientMsgId,text));if(s.config.sendResponseDelayMs)await delay(s.config.sendResponseDelayMs);return reply.code(202).send({accepted:true});});
- app.get('/groups/:id/messages/by-client-id/:clientMsgId',async(req,reply)=>{const{id,clientMsgId}=z.object({id:z.string(),clientMsgId:z.string()}).parse(req.params);if(s.config.queryUnavailable)return fail(reply,503,'UNAVAILABLE');const message=s.messages.find(m=>m.groupId===id&&m.clientMsgId===clientMsgId);if(!message)return fail(reply,404,'NOT_FOUND');return{msgId:message.msgId,sentAt:message.sentAt};});
- app.get('/events',async(req,reply)=>{const{since}=z.object({since:z.coerce.number().int().nonnegative().optional()}).parse(req.query);reply.hijack();reply.raw.writeHead(200,{'content-type':'text/event-stream','cache-control':'no-cache',connection:'keep-alive'});reply.raw.write(': connected\n\n');clients.add(reply.raw);if(since!==undefined)for(const e of s.events.filter(e=>e.eventId>since))reply.raw.write(`id: ${e.eventId}\nevent: ${e.type}\ndata: ${JSON.stringify(e)}\n\n`);req.raw.on('close',()=>clients.delete(reply.raw));});
- app.get('/__control',async()=>s);
- app.post('/__control/config',async req=>{Object.assign(s.config,configSchema.parse(req.body));store.save();return s.config;});
- app.post('/__control/message',async(req,reply)=>{const b=z.object({groupId:z.string(),senderPlatformUserId:z.string().default('external-user'),text:z.string(),sentAt:z.iso.datetime().optional(),msgId:z.string().optional()}).parse(req.body);if(!group(b.groupId,reply))return;const event={...b,msgId:b.msgId??randomUUID(),sentAt:b.sentAt??new Date().toISOString()};publish('message',event);return event;});
- app.post('/__control/account-status',async req=>{const{accountId,status}=z.object({accountId:z.string(),status:z.enum(['suspended','session_expired'])}).parse(req.body);const a=s.accounts[accountId];if(!a)throw new Error('Unknown account');a.terminal=status;a.online=false;store.save();publish('account_status',{accountId,status});for(const[id,g]of Object.entries(s.groups))if(g.members.includes(a.platformUserId)){g.members=g.members.filter(x=>x!==a.platformUserId);store.save();publish('member_left',{groupId:id,platformUserId:a.platformUserId});}return{ok:true};});
- app.post('/__control/member',async(req,reply)=>{const{groupId,platformUserId,joined}=z.object({groupId:z.string(),platformUserId:z.string(),joined:z.boolean()}).parse(req.body);const g=group(groupId,reply);if(!g)return;g.members=g.members.filter(x=>x!==platformUserId);if(joined)g.members.push(platformUserId);store.save();publish(joined?'member_joined':'member_left',{groupId,platformUserId});return{ok:true};});
- app.post('/__control/disconnect-events',async()=>{for(const c of clients)c.end();clients.clear();return{ok:true};});
- app.post('/__control/replay',async req=>{const{eventId}=z.object({eventId:z.number()}).parse(req.body);const prior=s.events.find(e=>e.eventId===eventId);if(!prior)throw new Error('Event not found');publish(prior.type,prior);return{ok:true};});
- app.addHook('onClose',async()=>{timers.forEach(clearTimeout);for(const c of clients)c.end();});return app;
+import Fastify, { type FastifyReply } from "fastify";
+import { randomUUID } from "node:crypto";
+import { z } from "zod";
+import type { ServerResponse } from "node:http";
+import { JsonStore, delay } from "./store.js";
+interface SimAccount {
+  online: boolean;
+  platformUserId: string;
+  terminal?: "suspended" | "session_expired";
+  limitedUntil?: number;
+  retrySeconds?: number;
+}
+interface SimGroup {
+  owner: string;
+  members: string[];
+  admins: string[];
+  invite?: string;
+  readyAt?: number;
+  writable: boolean;
+}
+interface SimMessage {
+  groupId: string;
+  accountId: string;
+  clientMsgId: string;
+  msgId: string;
+  text: string;
+  sentAt: string;
+}
+interface Event {
+  eventId: number;
+  type: string;
+  [key: string]: unknown;
+}
+interface Config {
+  duplicateEvents: boolean;
+  outOfOrder: boolean;
+  sendDelayMs: number;
+  sendResponseDelayMs: number;
+  inviteReadyMs: number;
+  joinDelayMs: number;
+  joinNever: string[];
+  leaveFailures: string[];
+  expireInviteOnce: boolean;
+  unavailable: boolean;
+  queryUnavailable: boolean;
+  sendFaults: string[];
+  kickFaults: string[];
+  promoteNotMemberOnce: boolean;
+}
+interface State {
+  accounts: Record<string, SimAccount>;
+  groups: Record<string, SimGroup>;
+  messages: SimMessage[];
+  events: Event[];
+  requests: { at: string; path: string; body: unknown }[];
+  config: Config;
+}
+const configSchema = z
+  .object({
+    duplicateEvents: z.boolean(),
+    outOfOrder: z.boolean(),
+    sendDelayMs: z.number().nonnegative(),
+    sendResponseDelayMs: z.number().nonnegative(),
+    inviteReadyMs: z.number().nonnegative(),
+    joinDelayMs: z.number().nonnegative(),
+    joinNever: z.array(z.string()),
+    leaveFailures: z.array(z.string()),
+    expireInviteOnce: z.boolean(),
+    unavailable: z.boolean(),
+    queryUnavailable: z.boolean(),
+    sendFaults: z.array(z.string()),
+    kickFaults: z.array(z.string()),
+    promoteNotMemberOnce: z.boolean(),
+  })
+  .partial();
+const defaults: Config = {
+  duplicateEvents: false,
+  outOfOrder: false,
+  sendDelayMs: 250,
+  sendResponseDelayMs: 0,
+  inviteReadyMs: 0,
+  joinDelayMs: 200,
+  joinNever: [],
+  leaveFailures: [],
+  expireInviteOnce: false,
+  unavailable: false,
+  queryUnavailable: false,
+  sendFaults: [],
+  kickFaults: [],
+  promoteNotMemberOnce: false,
+};
+export function createGatewaySimulator(path = ".runtime/gateway.json") {
+  const app = Fastify({ logger: false });
+  const store = new JsonStore<State>(path, {
+    accounts: {},
+    groups: {},
+    messages: [],
+    events: [],
+    requests: [],
+    config: { ...defaults },
+  });
+  const s = store.state;
+  const clients = new Set<ServerResponse>();
+  const timers = new Set<NodeJS.Timeout>();
+  function later(ms: number, fn: () => void): void {
+    const timer = setTimeout(() => {
+      timers.delete(timer);
+      fn();
+    }, ms);
+    timers.add(timer);
+  }
+  function publish(type: string, data: Record<string, unknown>): void {
+    const e: Event = {
+      ...data,
+      type,
+      eventId: (s.events.at(-1)?.eventId ?? 0) + 1,
+    };
+    s.events.push(e);
+    store.save();
+    const wire = `id: ${e.eventId}\nevent: ${type}\ndata: ${JSON.stringify(e)}\n\n`;
+    later(s.config.outOfOrder && e.eventId % 2 ? 700 : 0, () => {
+      for (const c of clients)
+        if (!c.destroyed) {
+          c.write(wire);
+          if (s.config.duplicateEvents) c.write(wire);
+        }
+    });
+  }
+  function fail(
+    reply: FastifyReply,
+    status: number,
+    code: string,
+    extra: Record<string, unknown> = {},
+  ) {
+    return reply.code(status).send({ code, ...extra });
+  }
+  function account(
+    id: string,
+    reply: FastifyReply,
+    needOnline = true,
+  ): SimAccount | null {
+    const a = s.accounts[id];
+    if (a?.terminal) {
+      fail(
+        reply,
+        a.terminal === "suspended" ? 403 : 401,
+        a.terminal === "suspended" ? "ACCOUNT_SUSPENDED" : "SESSION_EXPIRED",
+      );
+      return null;
+    }
+    if (!a || (needOnline && !a.online)) {
+      fail(reply, 409, "ACCOUNT_OFFLINE");
+      return null;
+    }
+    return a;
+  }
+  function group(id: string, reply: FastifyReply): SimGroup | null {
+    const g = s.groups[id];
+    if (!g) {
+      fail(reply, 404, "GROUP_NOT_FOUND");
+      return null;
+    }
+    return g;
+  }
+  function sendMessage(
+    groupId: string,
+    accountId: string,
+    clientMsgId: string,
+    text: string,
+  ): void {
+    const a = s.accounts[accountId]!;
+    const g = s.groups[groupId]!;
+    if (a.terminal || !g.writable) {
+      publish("message_failed", {
+        clientMsgId,
+        code: a.terminal ? "ACCOUNT_SUSPENDED" : "GROUP_WRITE_FORBIDDEN",
+      });
+      return;
+    }
+    const msg: SimMessage = {
+      groupId,
+      accountId,
+      clientMsgId,
+      text,
+      msgId: randomUUID(),
+      sentAt: new Date().toISOString(),
+    };
+    s.messages.push(msg);
+    store.save();
+    publish("message_sent", {
+      clientMsgId,
+      msgId: msg.msgId,
+      sentAt: msg.sentAt,
+    });
+    publish("message", {
+      groupId,
+      msgId: msg.msgId,
+      senderPlatformUserId: a.platformUserId,
+      text,
+      sentAt: msg.sentAt,
+    });
+  }
+  app.addHook("onRequest", async (req, reply) => {
+    if (!req.url.startsWith("/__control") && s.config.unavailable)
+      return fail(reply, 503, "UNAVAILABLE");
+  });
+  app.addHook("preHandler", async (req) => {
+    if (!req.url.startsWith("/__control") && !req.url.startsWith("/events")) {
+      s.requests.push({
+        at: new Date().toISOString(),
+        path: req.url,
+        body: req.body ?? null,
+      });
+      store.save();
+    }
+  });
+  app.setErrorHandler((error, _req, reply) =>
+    fail(reply, 400, "VALIDATION_ERROR", { message: String(error) }),
+  );
+  app.post("/accounts/:accountId/connect", async (req, reply) => {
+    const { accountId: id } = z
+      .object({ accountId: z.string() })
+      .parse(req.params);
+    const prior = s.accounts[id];
+    if (prior?.terminal) {
+      account(id, reply, false);
+      return;
+    }
+    const a = prior ?? { online: false, platformUserId: `platform-${id}` };
+    a.online = true;
+    s.accounts[id] = a;
+    store.save();
+    return { platformUserId: a.platformUserId };
+  });
+  app.post("/accounts/:accountId/disconnect", async (req, reply) => {
+    const { accountId: id } = z
+      .object({ accountId: z.string() })
+      .parse(req.params);
+    const a = account(id, reply, false);
+    if (!a) return;
+    a.online = false;
+    store.save();
+    return {};
+  });
+  app.post("/groups", async (req, reply) => {
+    const { creatorAccountId } = z
+      .object({ creatorAccountId: z.string() })
+      .parse(req.body);
+    const a = account(creatorAccountId, reply);
+    if (!a) return;
+    const groupId = randomUUID();
+    s.groups[groupId] = {
+      owner: creatorAccountId,
+      members: [a.platformUserId],
+      admins: [],
+      writable: true,
+    };
+    store.save();
+    return { groupId };
+  });
+  app.post("/groups/:id/invite", async (req, reply) => {
+    const { id } = z.object({ id: z.string() }).parse(req.params);
+    const g = group(id, reply);
+    if (!g) return;
+    g.invite = `invite-${randomUUID()}`;
+    g.readyAt = Date.now() + s.config.inviteReadyMs;
+    store.save();
+    return { inviteLink: g.invite, readyAfterMs: s.config.inviteReadyMs };
+  });
+  app.post("/groups/:id/join", async (req, reply) => {
+    const { id } = z.object({ id: z.string() }).parse(req.params);
+    const { accountId, inviteLink } = z
+      .object({ accountId: z.string(), inviteLink: z.string() })
+      .parse(req.body);
+    const a = account(accountId, reply);
+    const g = group(id, reply);
+    if (!a || !g) return;
+    if (g.members.includes(a.platformUserId))
+      return fail(reply, 409, "ALREADY_MEMBER");
+    if (s.config.expireInviteOnce) {
+      s.config.expireInviteOnce = false;
+      g.invite = undefined;
+      store.save();
+    }
+    if (g.invite !== inviteLink) return fail(reply, 410, "INVITE_EXPIRED");
+    if (Date.now() < (g.readyAt ?? 0))
+      return fail(reply, 409, "INVITE_NOT_READY");
+    if (!s.config.joinNever.includes(accountId))
+      later(s.config.joinDelayMs, () => {
+        if (!g.members.includes(a.platformUserId)) {
+          g.members.push(a.platformUserId);
+          store.save();
+          publish("member_joined", {
+            groupId: id,
+            platformUserId: a.platformUserId,
+          });
+        }
+      });
+    return reply.code(202).send({ accepted: true });
+  });
+  app.post("/groups/:id/promote", async (req, reply) => {
+    const { id } = z.object({ id: z.string() }).parse(req.params);
+    const { byAccountId, accountId } = z
+      .object({ byAccountId: z.string(), accountId: z.string() })
+      .parse(req.body);
+    const a = account(byAccountId, reply);
+    const g = group(id, reply);
+    if (!a || !g) return;
+    if (g.owner !== byAccountId) return fail(reply, 403, "NO_PERMISSION");
+    if (s.config.promoteNotMemberOnce) {
+      s.config.promoteNotMemberOnce = false;
+      store.save();
+      return fail(reply, 409, "NOT_MEMBER_YET");
+    }
+    const target = s.accounts[accountId];
+    if (!target || !g.members.includes(target.platformUserId))
+      return fail(reply, 409, "NOT_MEMBER_YET");
+    if (!g.admins.includes(accountId)) g.admins.push(accountId);
+    store.save();
+    return {};
+  });
+  app.get("/groups/:id/members", async (req, reply) => {
+    const { id } = z.object({ id: z.string() }).parse(req.params);
+    const g = group(id, reply);
+    if (!g) return;
+    return g.members.map((platformUserId) => ({ platformUserId }));
+  });
+  app.post("/groups/:id/leave", async (req, reply) => {
+    const { id } = z.object({ id: z.string() }).parse(req.params);
+    const { accountId } = z.object({ accountId: z.string() }).parse(req.body);
+    const a = account(accountId, reply);
+    const g = group(id, reply);
+    if (!a || !g) return;
+    if (s.config.leaveFailures.includes(accountId))
+      return fail(reply, 500, "LEAVE_FAILED");
+    g.members = g.members.filter((x) => x !== a.platformUserId);
+    store.save();
+    publish("member_left", { groupId: id, platformUserId: a.platformUserId });
+    return {};
+  });
+  app.post("/groups/:id/kick", async (req, reply) => {
+    const { id } = z.object({ id: z.string() }).parse(req.params);
+    const { byAccountId, targetPlatformUserId } = z
+      .object({ byAccountId: z.string(), targetPlatformUserId: z.string() })
+      .parse(req.body);
+    const a = account(byAccountId, reply);
+    const g = group(id, reply);
+    if (!a || !g) return;
+    if (!g.members.includes(s.accounts[g.owner]!.platformUserId))
+      return fail(reply, 409, "OWNER_LEFT");
+    if (g.owner !== byAccountId && !g.admins.includes(byAccountId))
+      return fail(reply, 403, "NO_PERMISSION");
+    const fault = s.config.kickFaults.shift();
+    store.save();
+    if (fault === "NETWORK_TIMEOUT_NO_EFFECT")
+      return fail(reply, 504, "NETWORK_TIMEOUT");
+    if (fault === "NETWORK_TIMEOUT") {
+      later(1500, () => {
+        g.members = g.members.filter((x) => x !== targetPlatformUserId);
+        store.save();
+        publish("member_left", {
+          groupId: id,
+          platformUserId: targetPlatformUserId,
+        });
+      });
+      return fail(reply, 504, "NETWORK_TIMEOUT");
+    }
+    await delay(1000);
+    g.members = g.members.filter((x) => x !== targetPlatformUserId);
+    store.save();
+    publish("member_left", {
+      groupId: id,
+      platformUserId: targetPlatformUserId,
+    });
+    return { kicked: true };
+  });
+  app.post("/groups/:id/send", async (req, reply) => {
+    const { id } = z.object({ id: z.string() }).parse(req.params);
+    const { accountId, clientMsgId, text } = z
+      .object({
+        accountId: z.string(),
+        clientMsgId: z.string(),
+        text: z.string(),
+      })
+      .parse(req.body);
+    const a = account(accountId, reply);
+    const g = group(id, reply);
+    if (!a || !g) return;
+    if (!g.writable) return fail(reply, 403, "GROUP_WRITE_FORBIDDEN");
+    if (!g.members.includes(a.platformUserId))
+      return fail(reply, 403, "SENDER_NOT_IN_GROUP");
+    if ((a.limitedUntil ?? 0) > Date.now()) {
+      a.limitedUntil = Date.now() + (a.retrySeconds ?? 2) * 1000;
+      store.save();
+      return fail(reply, 429, "RATE_LIMITED", {
+        retryAfterSeconds: a.retrySeconds ?? 2,
+      });
+    }
+    const fault = s.config.sendFaults.shift();
+    store.save();
+    if (fault === "RATE_LIMITED") {
+      a.retrySeconds = 2;
+      a.limitedUntil = Date.now() + 2000;
+      store.save();
+      return fail(reply, 429, "RATE_LIMITED", { retryAfterSeconds: 2 });
+    }
+    if (fault === "ACCOUNT_SUSPENDED" || fault === "SESSION_EXPIRED") {
+      a.terminal =
+        fault === "ACCOUNT_SUSPENDED" ? "suspended" : "session_expired";
+      a.online = false;
+      store.save();
+      return fail(reply, fault === "ACCOUNT_SUSPENDED" ? 403 : 401, fault);
+    }
+    if (fault === "GROUP_WRITE_FORBIDDEN") {
+      g.writable = false;
+      store.save();
+      return fail(reply, 403, fault);
+    }
+    if (fault === "NETWORK_TIMEOUT" || fault === "NETWORK_TIMEOUT_NO_EFFECT") {
+      if (fault === "NETWORK_TIMEOUT")
+        later(1500, () => sendMessage(id, accountId, clientMsgId, text));
+      return fail(reply, 504, "NETWORK_TIMEOUT");
+    }
+    if (fault === "UNAVAILABLE") return fail(reply, 503, "UNAVAILABLE");
+    later(s.config.sendDelayMs, () =>
+      sendMessage(id, accountId, clientMsgId, text),
+    );
+    if (s.config.sendResponseDelayMs) await delay(s.config.sendResponseDelayMs);
+    return reply.code(202).send({ accepted: true });
+  });
+  app.get(
+    "/groups/:id/messages/by-client-id/:clientMsgId",
+    async (req, reply) => {
+      const { id, clientMsgId } = z
+        .object({ id: z.string(), clientMsgId: z.string() })
+        .parse(req.params);
+      if (s.config.queryUnavailable) return fail(reply, 503, "UNAVAILABLE");
+      const message = s.messages.find(
+        (m) => m.groupId === id && m.clientMsgId === clientMsgId,
+      );
+      if (!message) return fail(reply, 404, "NOT_FOUND");
+      return { msgId: message.msgId, sentAt: message.sentAt };
+    },
+  );
+  app.get("/events", async (req, reply) => {
+    const { since } = z
+      .object({ since: z.coerce.number().int().nonnegative().optional() })
+      .parse(req.query);
+    reply.hijack();
+    reply.raw.writeHead(200, {
+      "content-type": "text/event-stream",
+      "cache-control": "no-cache",
+      connection: "keep-alive",
+    });
+    reply.raw.write(": connected\n\n");
+    clients.add(reply.raw);
+    if (since !== undefined)
+      for (const e of s.events.filter((e) => e.eventId > since))
+        reply.raw.write(
+          `id: ${e.eventId}\nevent: ${e.type}\ndata: ${JSON.stringify(e)}\n\n`,
+        );
+    req.raw.on("close", () => clients.delete(reply.raw));
+  });
+  app.get("/__control", async () => s);
+  app.post("/__control/config", async (req) => {
+    Object.assign(s.config, configSchema.parse(req.body));
+    store.save();
+    return s.config;
+  });
+  app.post("/__control/message", async (req, reply) => {
+    const b = z
+      .object({
+        groupId: z.string(),
+        senderPlatformUserId: z.string().default("external-user"),
+        text: z.string(),
+        sentAt: z.iso.datetime().optional(),
+        msgId: z.string().optional(),
+      })
+      .parse(req.body);
+    if (!group(b.groupId, reply)) return;
+    const event = {
+      ...b,
+      msgId: b.msgId ?? randomUUID(),
+      sentAt: b.sentAt ?? new Date().toISOString(),
+    };
+    publish("message", event);
+    return event;
+  });
+  app.post("/__control/account-status", async (req) => {
+    const { accountId, status } = z
+      .object({
+        accountId: z.string(),
+        status: z.enum(["suspended", "session_expired"]),
+      })
+      .parse(req.body);
+    const a = s.accounts[accountId];
+    if (!a) throw new Error("Unknown account");
+    a.terminal = status;
+    a.online = false;
+    store.save();
+    publish("account_status", { accountId, status });
+    for (const [id, g] of Object.entries(s.groups))
+      if (g.members.includes(a.platformUserId)) {
+        g.members = g.members.filter((x) => x !== a.platformUserId);
+        store.save();
+        publish("member_left", {
+          groupId: id,
+          platformUserId: a.platformUserId,
+        });
+      }
+    return { ok: true };
+  });
+  app.post("/__control/member", async (req, reply) => {
+    const { groupId, platformUserId, joined } = z
+      .object({
+        groupId: z.string(),
+        platformUserId: z.string(),
+        joined: z.boolean(),
+      })
+      .parse(req.body);
+    const g = group(groupId, reply);
+    if (!g) return;
+    g.members = g.members.filter((x) => x !== platformUserId);
+    if (joined) g.members.push(platformUserId);
+    store.save();
+    publish(joined ? "member_joined" : "member_left", {
+      groupId,
+      platformUserId,
+    });
+    return { ok: true };
+  });
+  app.post("/__control/disconnect-events", async () => {
+    for (const c of clients) c.end();
+    clients.clear();
+    return { ok: true };
+  });
+  app.post("/__control/replay", async (req) => {
+    const { eventId } = z.object({ eventId: z.number() }).parse(req.body);
+    const prior = s.events.find((e) => e.eventId === eventId);
+    if (!prior) throw new Error("Event not found");
+    publish(prior.type, prior);
+    return { ok: true };
+  });
+  app.addHook("onClose", async () => {
+    timers.forEach(clearTimeout);
+    for (const c of clients) c.end();
+  });
+  return app;
 }
