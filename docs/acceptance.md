@@ -1,8 +1,8 @@
 # 分批验收与运行说明
 
-> 文档基线说明：当前 `main` 仅含文档。本文的代码入口、启动与测试命令均指 `agent/platform-integration` 实施分支；工作树位置和证据边界见[文档入口](README.md)。
+> 代码入口与命令均相对于项目根目录。运行位置、当前演示版本和证据边界见[文档入口](README.md)。
 
-本清单用于体验、核对行为并理解关键设计。测试证据已核对本轮集成日志，覆盖源码 `5a35ce6`，并补充核对后续 `52e7dbd` 的P13定向证据；当前正在运行的演示版本另见下表。**用户人工验收全部待进行**；下表的开发者检查记录仅是已有证据，不能代替人工确认。每次实际验收记录 `git rev-parse HEAD`，修复影响已验项目时重新执行对应批次。
+本清单用于体验、核对行为并理解关键设计。测试证据按候选发布源码 `f52faec` 的实际结果登记；当前正在运行的演示版本另见下表。**用户人工验收全部待进行**；下表的开发者检查记录仅是已有证据，不能代替人工确认。每次实际验收记录 `git rev-parse HEAD`，修复影响已验项目时重新执行对应批次。
 
 
 ## 功能总览与建议路线
@@ -11,36 +11,38 @@
 
 | 范围 | 可验收能力 | 入口 | 当前状态 |
 |---|---|---|---|
-| A0/B3 | 登录、权限、续期、注销、迁移与拒启 | 批次一/四/七 | 常规84项、独立长计时3项已有通过记录；用户待验 |
+| A0/B3 | 登录、权限、续期、注销、迁移与拒启 | 批次一/四/七 | 常规124项、同版本独立长计时3项通过；用户待验 |
 | A1/A3/B2 | 账号状态、异步建群、成员角色、群主最后退出 | 批次一/五/七 | 正常账号建群已浏览器通过；异常自动证据见矩阵；用户待验 |
-| A2/A4/B4 | 统一可靠发送、去重、历史分页、实时恢复 | 批次二/五/六/七 | 消息单行与服务器补齐已有通过记录；504旧404边界待修复；浏览器3秒待验 |
+| A2/A4/B4 | 统一可靠发送、去重、历史分页、实时恢复 | 批次二/五/六/七 | 消息单行与服务器补齐已有通过记录；旧404修复通过；新版浏览器59行+503恢复1872ms通过 |
 | A5/页面4 | 自动触发、完整工具步骤、审计、恢复与预算 | 批次二/五/七 | 正常3步浏览器通过；协议不可判定窗口保守暂停 |
 | B1/页面5 | 变量继承、来源预检、定时运行、并发互斥 | 批次三/七 | 两步浏览器运行通过；调度失锁修复已集成验证；用户待验 |
 | C1/C2/C3 | 媒体归档、真实模型、完整Playwright | 未启用 | 未实现，独立于基础验收 |
 
-最终常规测试日志 `.runtime/verification-final.log` 登记87项：**84通过、3跳过、0失败，95.77秒**。运行基线为 `853629b` 加纯格式化改动，已提交为 `5a35ce6`。跳过的3项实际等待测试此前独立执行，`.runtime/verification-timing-final.log` 记录 **3/3通过、0跳过，94.31秒**；它们并非在常规套中执行。集成执行者另确认该版本构建与原文校验通过。真实HTTP kick截止、S5第二次同key返回sent、预检错误字段、序列调度锁失效回滚和停机预算专项均已进入本次常规结果。日志保留在实施工作树 `.runtime/`，不随本次文档基线复制。P13在 `52e7dbd` 增加全部账号响应不变断言后又定向通过（测试4.32秒），日志为 `.runtime/verification-kick-accounts.log`。精确索引与各断言范围见[需求矩阵](requirements-matrix.md)。
+候选 `f52faecc5eb543e347aee3536d8a6f0fd8bc0975` 已通过构建和原文校验，发布工作树 `.runtime/release-final-verification.log` 记录 **127项登记、124通过、3跳过、0失败，111.589秒**。计数包括嵌套子测试；跳过的3项已在相同源码下独立3/3通过：12秒turn、3×5秒审计、60秒活动预算，测试分别耗时13.614/16.485/60.032秒，总94.470秒。本批R1–R11修复均已进入上述常规回归，具体缺陷、断言和边界见[可靠性复查](reliability-review.md)与[需求矩阵](requirements-matrix.md)。
 
-**当前仍有待修复项：**独立审查发现504查询的旧404响应若延迟返回并跨过2秒窗口，现有判定可能误用旧否定证据而重发（L8）。复现与修复正在进行；上述通过结果保留其原验证范围，不能据此宣布基础阶段完成。修复后须执行针对性时序测试及受影响的集成回归。
+新版B4在`32bd438`的独立实例通过：一次时间线503后，无手动刷新、无新消息触发地显示全部59行，WS恢复至渲染1872ms，失败请求至渲染284ms。[发布测试清单](evidence/release-verification.json)保留该轮源码与日志哈希；最终候选的日志单独见矩阵，[浏览器数据](evidence/browser-reconnect-retry.json)记录场景边界。
+
+R11活动时钟初始化竞态已由`f52faec`修复。新增数据库初始化栅栏使follower等待owner的基点重设事务提交；真实PG屏障测试修前以`wall_clock`失败，修后通过，已进入最终常规回归。**用户人工验收全部待进行**；实际演示重启和新版运行证据尚待记录。
 
 ## 当前演示与源码证据的区别
 
 | 对象 | 已知运行信息 | 使用这些证据时的边界 |
 |---|---|---|
-| 当前后端演示进程 | PID `73373`，2026-09-30 18:46:02（北京时间）启动；与当时 `34d9af2` 匹配 | 未保存启动版本manifest，提交号为**推断版本**，不能作为精确构建标识 |
+| 当前演示进程组 | `scripts/dev.ts`父进程73373于18:46:02启动；后端73376、模拟器73375于18:46:03启动，Vite73377；日期均为2026-09-30北京时间 | 后三者cwd均已确认为旧演示42fe目录；后端与当时34d9af2匹配，但无启动manifest，只能记**推断版本** |
 | 后端与模拟服务 | 未启用watch，启动后未重启 | 后续源码修复与测试通过，不代表当前演示已经加载这些修复 |
-| 控制台 | Vite此前已热更新至 `a8aac5f` 对应前端内容 | 页面与后端可能来自不同修订；此后未继续修改web |
-| 当前验收安排 | 保持用户正在使用的演示服务，不重启，不操作用户浏览器 | 本文新增的是源码验证证据；演示加载后端修复的版本仍需单独记录 |
+| 控制台 | 前端曾热更新；旧演示工作树apps/web与 `a8aac5f` 差异已确认为空 | 页面与后端来自不同修订；此后前端修复仅写入独立release，未热更新到5173 |
+| 当前验收安排 | 此前冻结演示的安排已被D015替代：可在验证后重启5173到新版本，保留数据；新修复目前使用独立实例验证 | 本文新增的是源码验证证据；演示加载后端修复的版本仍需单独记录 |
 
-序列调度锁失效修复和“实际关闭模块700ms不扣活动预算”测试已合入并通过最终常规套。B4浏览器断线到渲染≤3秒仍待验证。此前开发者浏览器截图只证明当时观察到的流程，不能证明新修复已进入演示。
+序列调度锁失效修复和“实际关闭模块700ms不扣活动预算”测试已合入并通过最终常规套。B4旧前端场景125ms通过；新版同规模加一次503场景1872ms通过。此前开发者浏览器截图只证明当时观察到的流程，不能证明新修复已进入演示。
 
 ## 最短入口
 
 服务已启动时直接打开 [控制台](http://127.0.0.1:5173)。管理员 `admin / admin`，只读账号 `viewer / viewer`。
 
-仅在服务尚未启动时，于实施工作树执行冷启动命令（当前文档版 `main` 无应用依赖）：
+仅在需要新环境且默认端口未被现有演示占用时，于发布验证工作树或已合入完整代码的main目录冷启动：
 
 ```sh
-cd /Users/zcm/.codex/worktrees/42fe/kapibala
+cd /Users/zcm/.codex/worktrees/platform-gateway/kapibala
 nvm use
 npm ci
 docker compose up -d --wait
@@ -159,7 +161,7 @@ curl -s http://127.0.0.1:3101/__control/message \
 | 重复/乱序 | 设置duplicateEvents=true、outOfOrder=true，再发外部消息 | 单行时间线、单次Agent触发；成员与状态最终正确 | P01/P03/P07自动通过；用户待验 |
 | 限流 | 下一次sendFaults=[RATE_LIMITED]，同账号连续发两条 | rate_limited期间排队，无提前远端send；恢复后按原顺序发送 | P02/B09通过；浏览器用户待验 |
 | 504已落地 | 下一次sendFaults=[NETWORK_TIMEOUT] | unknown后按查询/事件收敛sent，远端只有一条 | P02/P03通过；用户待验 |
-| 504未落地 | 下一次sendFaults=[NETWORK_TIMEOUT_NO_EFFECT] | 确认无结果后同clientMsgId仅重发一次；第二次失败路径见G06/G07 | P02/G07既有场景通过；延迟旧404跨越2秒边界待修复/复验（L8） |
+| 504未落地 | 下一次sendFaults=[NETWORK_TIMEOUT_NO_EFFECT] | 确认无结果后同clientMsgId仅重发一次；第二次失败路径见G06/G07 | P02/G07既有场景通过；G30延迟旧404修后无重发；候选全套通过 |
 | 查询503 | 设置queryUnavailable=true，同时触发504 | 查询不可用期间保留unknown；恢复queryUnavailable=false后确认 | G10与P11恢复后<2秒均通过；用户待验 |
 | 历史补投 | 注入同一msgId、旧sentAt；同时操作加载更早 | 原快照页不重漏，新快照补齐历史；稳定内部id防止自己的消息多行 | P01/P08/W06/W07通过；浏览器联合场景待验 |
 | 审计不确定 | 下方三个审计错误脚本 | run blocked，醒目提示；待发内容未进入网关 | P03/B06通过；浏览器提示待验 |
@@ -205,7 +207,7 @@ curl -s http://127.0.0.1:3102/__control/config \
 4. 在新消息写入时加载更早，核对稳定消息id和数量。实时完整快照核对后历史可能已全部载入，此时不再出现“加载更早”。
 5. 对照原快照语义：分页固定的是一次读取的成员集合；新补投和状态变化在后续快照合并中展示，不被悄悄塞入旧快照游标。
 
-P09只证明服务端按sinceSeq在三秒内补发；本批浏览器渲染、重新查询与大历史量耗时仍待实测。未实测不记通过。
+P09证明服务端按sinceSeq在三秒内补发。另一次隔离hidden IAB实测（源码21be48c、旧前端）在125ms显示全部59行，含55条断线期间新消息和1条2000年的历史补投，无重复；[数据](evidence/browser-reconnect.json)与[截图](evidence/console-reconnect.png)记录其范围。该场景只断开WS传输，API和网关保持可用；不代表完整操作系统断网或任意历史量。新版32bd438在相同59行规模中，额外令首次时间线GET返回503，随后没有新消息事件或手动刷新仍自动补齐，耗时1872ms（其中失败请求后284ms）；见[新版数据](evidence/browser-reconnect-retry.json)与[截图](evidence/console-reconnect-retry.png)。
 
 
 ## 批次七：界面外的自动验收
@@ -215,16 +217,21 @@ P09只证明服务端按sinceSeq在三秒内补发；本批浏览器渲染、重
 | 要求 | 可执行命令 | 预期/证据 | 当前状态与复验 |
 |---|---|---|---|
 | A0/B3迁移、轮换、重放撤销、注销 | `npx tsx --test tests/integration/auth.test.ts` | H01所有断言pass | 已自动通过；用户待验 |
+| A0已有数据从001+002升级003+004且幂等 | `npm run db:migrate`（仅在计划升级的独立环境执行） | [迁移证据](evidence/migration-upgrade.json)：消息、run、events既有列不变，active_ms=12345，新增时钟列/事件索引，二次执行不变 | 隔离旧schema实际升级通过；未对现有demo执行迁移 |
 | A0旧schema拒启、viewer全部8类业务写接口 | `npx tsx --test --test-name-pattern="schema lag" tests/integration/platform.test.ts` | P12启动拒绝且全部写请求403/FORBIDDEN | 已自动通过；用户待验 |
-| A1账号CAS/终态原子后果、A2错误/限流/504、A3/B2邀请/退出、A4快照 | `npx tsx --test tests/integration/gateway.test.ts` | G01–G29通过，含36种转移、错误作用域、发送失锁与kick取消；失败注入不遗留半提交 | 本轮29项已通过；后续变更需复验 |
-| A5.1–12、B1变量/角色/排期/并发/恢复 | `npx tsx --test tests/integration/automation.test.ts` | 正常、协议错误、blocked、预算、工具幂等、序列互斥/继承各断言pass；长计时默认skip | B01–B20、B24–B28共25项常规集成通过，含调度失锁和实际停机预算；用户待验 |
-| A5真实12秒turn/15秒审计/60秒预算 | `AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern="timing:" tests/integration/automation.test.ts` | 3项实际等待测试pass，迟到响应不生效 | B21–B23已独立3/3通过（真实等待）；版本边界见矩阵 |
+| A1账号CAS/终态原子后果、A2错误/限流/504、A3/B2邀请/退出、A4快照 | `npx tsx --test tests/integration/gateway.test.ts` | G01–G31，含36种转移、旧404时序、成员投影删除、错误作用域、发送失锁与kick取消；失败注入不遗留半提交 | 候选版本31项通过；用户待验 |
+| A5.1–12、B1变量/角色/排期/并发/恢复 | `npx tsx --test tests/integration/automation.test.ts` | 正常、协议错误、blocked、预算、工具幂等、序列互斥/继承各断言pass；长计时默认skip | B01–B36按名称索引，常规43项通过（含子测试）；3项长计时另运行；用户待验 |
+| A5真实12秒turn/15秒审计/60秒预算 | `AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern="timing:" tests/integration/automation.test.ts` | 3项实际等待测试pass，迟到响应不生效 | B21–B23在32bd438已独立3/3通过（真实等待）；用户待验 |
 | A2受理窗口、查询不可用恢复2秒 | `npx tsx --test --test-name-pattern="S1 distinguishes" tests/integration/platform.test.ts` | accepted时远端消息0；查询503时unknown；恢复<2秒sent | 已自动通过；用户待验 |
 | S1–S8、DB写失败/多实例/断线与业务SIGKILL | `npx tsx --test tests/integration/platform.test.ts` | P01–P15通过；远端调用、持久状态与事件联合断言 | 最终15项集成通过；用户待验 |
 | A4/B4服务端WS重放与注销断流 | `npx tsx --test --test-name-pattern="authenticated WebSocket" tests/integration/platform.test.ts` | auth先到、seq不重复、3秒内补发、注销4401 | 已自动通过；浏览器渲染3秒另按批次六验 |
 | B3并发续期、A4稳定身份与旧分页 | `npx tsx --test apps/web/tests/reliability.test.ts` | W01–W08受控fetch/合并机制通过 | 已通过，不能代替真实PG/浏览器 |
-| Agent kick真实HTTP截止 | `npx tsx --test --test-name-pattern="Agent kick deadline" tests/integration/platform.test.ts` | P15预算到期停止等待，未知效果保持不可重放，第二实例不重复kick | 最终常规套已通过（7.63秒）；用户待验 |
+| Agent kick真实HTTP截止 | `npx tsx --test --test-name-pattern="Agent kick deadline" tests/integration/platform.test.ts` | P15预算到期停止等待，未知效果保持不可重放，第二实例不重复kick | 候选常规套已通过（7.58秒）；用户待验 |
 | 持锁连接/事务连接丢失、HTTP中止与错误解析 | `npx tsx --test tests/integration/core-reliability.test.ts` | R01–R05失锁后禁止后续DB/远端写、容量恢复、保留原错 | 本轮5项集成通过；序列调度器另由B27验证 |
+| 成员并发及事件重试公平 | `npx tsx --test tests/integration/membership-reliability.test.ts` | M01–M06：终态/left成员不复活、迟到快照不覆盖删除、21号事件不被前20个失败饿死 | 修前失败、修后候选全套通过；用户待验 |
+| 迟到kick/leave成功与成员重入 | `npx tsx --test tests/integration/member-rejoin.test.ts` | M07–M11：旧200不能删除已重新入群成员，GET失败不丢已知成功，也不重复kick/leave | 五项真实HTTP场景已进入候选全套通过；用户待验 |
+| 事务事件锁与已知结果重试 | `npx tsx --test tests/integration/transaction-events.test.ts` | 终态结果与成员删除并行不死锁；本地事务重试不重复远端发送；FIFO按提交顺序 | T01–T03与核心5项合计8/8，候选全套通过；用户待验 |
+| 时间线失败自动恢复 | `npx tsx --test apps/web/tests/timeline-recovery.test.ts` | W09–W13：无新事件仍补齐、退避封顶、卸载清理、完成边界不丢失 | 5项协调器与新版503后自动恢复浏览器场景通过；用户待验 |
 | 数据库锁容量 | `npx tsx --test tests/integration/database.test.ts` | D01锁持有者不耗尽嵌套事务连接 | 已通过；不外推任意负载 |
 
 已补齐全36种状态转移、离线后的限流到期、消息错误作用域和Agent关键计时；浏览器断线超过50条、全部端点字段等尚未完整验证的细分场景在需求矩阵单独列出。最终套通过只覆盖其中实际断言的场景，后续源码改动仍应复验。协议缺口L1–L4不能靠重跑测试消除，需要理解与确认保守处理行为。
@@ -235,9 +242,10 @@ P09只证明服务端按sinceSeq在三秒内补发；本批浏览器渲染、重
 |---|---|---|
 | 账号终态 | 状态、成员、排队消息和序列步骤在同一事务改变；无终态出边 | `gateway/state.ts`、account_terminal、G02 |
 | unknown发送 | 只有明确504具备2秒404判定；任意响应前崩溃不具备同样安全重试依据 | clientMsgId、dispatch_state、recoveryNote、P10/L1 |
-| 事件重放 | 全历史持久去重解决乱序与补投；最大eventId不能直接作为无遗漏证明 | gateway_events、events、G15/P06 |
+| 事件重放 | 全历史持久去重解决乱序与补投；重试失败项排队尾；最大eventId不能作为无遗漏证明 | gateway_events、events、G15/P06/M06 |
+| 历史成功与当前成员 | kick/leave成功不能证明响应到达时仍未入群；群锁下重新读取成员，GET失败保留成功与一致性提示 | M07–M11、membership_refresh_failed |
 | 消息分页 | 固定快照成员，内部id稳定；旧分页不能覆盖最新sent状态 | snapshot游标、P08/W07 |
-| Agent运行 | 群行事务+数据库唯一约束+运行锁；待处理消息聚合；完整历史和审计先于副作用 | runId、agent_steps、agent_send_keys、P07/B10 |
+| Agent运行 | 群行事务+唯一约束+运行锁；单一活动时钟同时累计执行和排队运行；审计先于副作用 | runId、agent_steps、activity_updated_at、P07/B10/B34–B36 |
 | Agent未知恢复 | 未记录的turn/kick结果缺乏安全重放证据，保留running+说明并提醒 | recoveryNote、inconsistency、B08/B11 |
 | 序列排期 | 前一步确认sent/skip后才安排下一步；限流顺延；接管只重排最早逾期步骤 | scheduledAt/sentAt、B09/P04 |
 | 会话 | refresh一次性轮换；旧token重放撤销整会话；前端共享单飞续期 | auth_sessions/auth_tokens、H01/W01 |

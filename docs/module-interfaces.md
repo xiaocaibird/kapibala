@@ -1,6 +1,6 @@
 # 模块协作接口
 
-> 文档基线说明：当前 `main` 仅含文档。本文的代码入口、启动与测试命令均指 `agent/platform-integration` 实施分支；工作树位置和证据边界见[文档入口](README.md)。
+> 代码入口与命令均相对于项目根目录。运行位置、当前演示版本和证据边界见[文档入口](README.md)。
 
 共享基础由协调模块维护。领域行使用 PostgreSQL snake_case；公开 API 使用 contracts 中 camelCase。日期字段输出 ISO UTC。所有写 API 由入口统一校验管理员权限。错误抛 AppError(status,code,message,details)。远端 RemoteError 保留 status/code/body。
 
