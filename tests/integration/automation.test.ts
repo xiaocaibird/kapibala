@@ -281,6 +281,7 @@ before(async () => {
     "004_message_event_order.sql",
     "005_group_metadata.sql",
     "006_group_directory.sql",
+    "007_message_sent_observation.sql",
   ])
     await db.query(
       await readFile(
@@ -753,7 +754,7 @@ test("sequence rate limit defers, sent event schedules next step, and restart on
   await module.tick();
   assert.equal(enqueueCalls, 1);
   await db.query(
-    "UPDATE messages SET delivery_status='sent',updated_at=now() WHERE is_own",
+    "UPDATE messages SET delivery_status='sent',updated_at=now(),message_sent_observed_at=now() WHERE is_own",
   );
   await module.tick();
   const steps = (
@@ -1096,7 +1097,7 @@ test("restart catches up a committed send before rebasing the next unscheduled s
   const runId = start.json<{ runId: string }>().runId;
   await module.tick();
   await db.query(
-    "UPDATE messages SET delivery_status='sent',updated_at=now()-interval '1 hour' WHERE is_own",
+    "UPDATE messages SET delivery_status='sent',updated_at=now()-interval '1 hour',message_sent_observed_at=now()-interval '1 hour' WHERE is_own",
   );
   await module.close!();
   const before = Date.now();
@@ -1199,7 +1200,9 @@ test("sequence roles prefer admin, choose the first member, and skip unavailable
       .rows[0]!.account_id,
     "account-2",
   );
-  await db.query("UPDATE messages SET delivery_status='sent',updated_at=now()");
+  await db.query(
+    "UPDATE messages SET delivery_status='sent',updated_at=now(),message_sent_observed_at=now()",
+  );
   await module.tick();
   await module.tick();
   assert.equal(
@@ -1210,7 +1213,9 @@ test("sequence roles prefer admin, choose the first member, and skip unavailable
     ).rows[0]!.account_id,
     "account-3",
   );
-  await db.query("UPDATE messages SET delivery_status='sent',updated_at=now()");
+  await db.query(
+    "UPDATE messages SET delivery_status='sent',updated_at=now(),message_sent_observed_at=now()",
+  );
   await db.query(
     "UPDATE accounts SET status='disconnected' WHERE id IN ('account-3','account-4')",
   );

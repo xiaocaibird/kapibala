@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import type { TestContext } from "node:test";
-import Fastify from "fastify";
+import Fastify, { type FastifyInstance } from "fastify";
+import type { AppContext } from "../../apps/server/src/core/context.js";
 import { createApp } from "../../apps/server/src/app.js";
 import { RemoteClient } from "../../apps/server/src/core/remote.js";
 import { createAutomationModule } from "../../apps/server/src/modules/automation/index.js";
@@ -49,6 +50,7 @@ export function end(text = "done") {
 export async function automationFixture(
   t: TestContext,
   turnTimeoutMs?: number,
+  configureRemote?: (remote: FastifyInstance) => void,
 ) {
   const temporary = await temporaryDatabase(t);
   const { db } = temporary;
@@ -91,7 +93,9 @@ export async function automationFixture(
     audits.push(body);
     return handlers.audit(body);
   });
+  configureRemote?.(remote);
   await remote.listen({ host: "127.0.0.1", port: 0 });
+  let ctx!: AppContext;
   let automation!: ReturnType<typeof createAutomationModule>;
   const previousTimeout = process.env.AGENT_TURN_TIMEOUT_MS;
   if (turnTimeoutMs !== undefined)
@@ -103,7 +107,7 @@ export async function automationFixture(
       logger: false,
       background: false,
       modules: (context) => {
-        const ctx = {
+        ctx = {
           ...context,
           agent: new RemoteClient(remote.listeningOrigin),
           gateway: new RemoteClient(remote.listeningOrigin),
@@ -184,6 +188,7 @@ export async function automationFixture(
   return {
     ...temporary,
     db,
+    ctx,
     app,
     api,
     remote,
