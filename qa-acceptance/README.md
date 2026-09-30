@@ -1,0 +1,108 @@
+# 独立 QA 验收体系
+
+本目录交付需求追踪、完整用例、独立协议桩、自动化脚本和报告工具。**当前仅完成准备与 QA 工具自身验证，没有启动、连接或测试被测工程。** 产品结果统一从 `NOT_RUN` 开始；开发自测和旧报告不计入本轮证据。
+
+## 阅读入口
+
+- [需求基线与来源](requirements/baseline.json)、[逐项需求](requirements/catalog.json)、[需求—用例追踪](requirements/traceability.md)。
+- [用例格式与分组](cases/README.md)，人工可阅读 `cases/generated/` 中各分组 Markdown；JSON 是维护源。
+- [已确认与待澄清口径](requirements/clarifications.md)、[上线门禁](requirements/release-gates.md)。
+- [独立外部协议桩](contracts/simulator.md)、[公开响应契约](contracts/public-api.ts)。
+- [准备状态报告](reports/preparation/acceptance.md)、[结构化结果](reports/preparation/results.json)。
+
+范围为原始 A/B 与已明确批准的追加需求。C1 媒体、C2 真实模型只列候选；浏览器自动化为本次 QA 的交付方法。消息分页采用固定遍历集合及实时合并，leave-all 比较服务账号成员投影。未知语义保留阻塞，不能从当前实现反推预期。
+
+## 独立性与执行阶段
+
+用例与断言来源于需求、公开接口及已确认变更。测试不导入业务代码、业务类型、现有测试或现有模拟器。只读取启动清单等必要外部配置；Gateway 和 Agent 有独立事实账本，能核对真实外部消息数量、成员变化、请求次数和历史。
+
+准备阶段允许：TypeScript 检查、用例追踪检查、用例注册清单、独立协议桩与报告器自测。它们不会进入 SUT fixture。`test:self` 只用本进程创建的模拟器／临时本地服务器，不运行产品或真实 PostgreSQL。
+
+验收阶段须先取得你的**另一次明确执行授权**，固定完成开发的候选提交。授权 JSON 只是记录和防误操作闸门，不会验证授权人身份，也不能替代你的实际授权。当前示例的 REQUIRED 字段无效，不能用来执行产品。
+
+全部 QA 资产和运行报告留在本目录。产品源码和原始需求不因测试准备而改变。QA 分支独立交付，未自动集成或推送。
+
+## 准备期复核命令
+
+在本目录执行，Node 24；依赖按独立锁文件安装：
+
+```sh
+npm ci --workspaces=false
+npm run verify:tools
+```
+
+`verify:tools` 依次执行类型检查、QA 工具自身测试、用例注册检查、可读用例生成和准备报告生成，并将日志与摘要保存在 `reports/preparation/tooling/` 和 `tooling-verification.json`。也可以分别运行 `typecheck`、`test:self`、`check:catalog`、`render:cases`、`prepare:report`。
+
+`check:catalog` 会使用 Playwright 的 `--list` 检查已注册用例与项目映射，**不执行测试 fixture**。`prepare:report` 只生成 NOT_RUN 状态清单，不能用于产品验收签署。依赖安装安全策略提示被禁用的 install scripts 时，先验证现有工具能否正常运行，不通过开启全部脚本绕过。
+
+## 授权后的环境准备
+
+1. 从开发完成的候选提交建立专用 SUT 工作树，保持产品文件干净。不要使用主演示 checkout、其 `.runtime`、数据库或用户浏览器。配置 `sut.cwd` 指向该独立目录，`sut.revision` 为完整 SHA。QA 脚本位于本目录，SUT 版本与 QA 版本分别记录。
+2. 开发方提供可直接运行的依赖／构建、迁移和启动命令。配置中的默认命令仅来自 main 的启动清单；实际发布构建若不同，需使用候选自身的启动命令。不会自动安装到或重写产品工作树。启动命令和环境须由交付者确认；这里的资源归属检查不构成针对任意恶意产品代码的操作系统网络沙箱。
+3. 在 `config/target.local.json` 中填写目标配置，至少提供四个初始服务账号以执行多成员选择场景。账号数量是测试数据前提，数量不足记 BLOCKED，不修改原文“数量自定”的约定。
+4. 安装测试浏览器到 QA 临时目录，并确认本机 Docker、`lsof`、`ps` 可用。数据库用原工程声明的 PostgreSQL 17 镜像；专用容器随机 loopback 端口，不使用默认数据库连接。
+
+```sh
+PLAYWRIGHT_BROWSERS_PATH="$PWD/.runtime/browsers" npm exec playwright install chromium firefox webkit
+```
+
+5. 通过实际可见页面确认 `ui.routes` 与 `ui.selectors` 后设置 `adapterConfirmed=true`。这些是定位适配，不是对 DOM 属性、页面路由或 UI 库的产品要求。模板中的 `data-qa`/`data-testid` 只是占位定位方式；不要求开发为测试改业务代码。定位缺失先修适配，不降低业务断言。真实 OS 输入法、系统标签栏焦点和主观可读性另有人工用例。
+6. 填写批准的上线 profile 和指标。负载脚本的固定混合为账号／群／消息读取及发送各 25%，外部依赖为独立模拟器；报告只对这个拓扑与负载成立。不能拿本地模拟结果代替生产目标环境的容量证明。`durationSeconds`、`soakSeconds`、并发、p95、错误率、RPO／RTO 均不提供武断默认值。
+7. 计算目标配置摘要，将后续真实授权记录到 `config/authorization.local.json`；目标、命令、环境或 UI 适配变化后重新记录对应摘要。
+
+```sh
+npm run hash:target -- --target config/target.local.json
+```
+
+复制示例仅是开始填写配置，不构成授权。真实 key／生产网关／真实 Agent URL 不属于本次模拟器验收路径；C2 与外部费用仍需另行明确。
+
+## 执行及取证
+
+只有收到后续授权后才运行：
+
+```sh
+npm run acceptance -- --target config/target.local.json --authorization config/authorization.local.json
+```
+
+默认完整执行且不自动重试。系统用例、Chromium 完整 UI、Firefox/WebKit 的 `@compat` 冒烟分别登记。每个用例使用独立数据库、模拟器、候选进程；第二实例与故障注入使用同一用例持有的资源。应用重启保留数据库和外部服务事实；不通过重置模拟器掩盖副作用。
+
+执行目录为 `reports/runs/<run-id>/`，保存：
+
+- `manifest.json`：候选与 QA 版本、源码摘要、配置／授权摘要、时间及依赖锁哈希。
+- `events.json`：每项目每次实际执行结果；`results.json`：按完整用例基线汇总。
+- `acceptance.md`、`junit.xml`：阅读版和工具集成版结果；JUnit skipped 的解释以 JSON 中 BLOCKED／NOT_RUN 为准。
+- `artifacts/`：脱敏 HTTP 记录、Gateway/Agent 请求与副作用账本、故障标记、服务日志、浏览器截图及失败 trace。
+- 人工核验与复测记录：原自动化结果保留，不能手工把自动化失败改成通过。
+
+终止或清理失败不掩盖原始结果。清理只针对本轮创建且仍能确认归属的资源；不要用按端口杀进程、删除默认库等命令补救。备份演练的临时数据库归档不会进入公开报告；报告保存校验值、恢复结果与时间证据。
+
+## 人工结果与复测
+
+人工用例必须记录实际步骤、实际结果、操作者、执行时间和当前 run 内的证据。按 [示例](config/manual-review.example.json)填写后导入：
+
+```sh
+npm run record:manual -- --run reports/runs/<run-id> --input path/to/review.json
+npm run report -- --run reports/runs/<run-id>
+```
+
+设计阻塞项只有在正式澄清证据存在、相应场景实际执行后才能关闭。原先自动化的用例必须用自动化复测。复测使用新 run 目录，记录关联缺陷与修改版本，不覆盖原报告；未重新执行的用例不得直接继承此前通过状态。
+
+## 验收结论规则
+
+`PASS`：当前版本实际执行，全部预期有证据。`FAIL`：明确需求被违反。`BLOCKED`：环境、契约、数据夹具或测量能力不足以判定。`NOT_RUN`：未执行或未完成要求的浏览器项目。候选项单独统计。
+
+覆盖率、执行率、通过率分别计算。自动化全绿不表示人工、协议阻塞或上线门禁已完成；CLI 对不完整验收使用非零结果提示。报告分别给出需求符合性和上线准备度；全部必验项通过且无关键门禁缺证据，才能无条件通过。
+
+强保证的缺口不藏在测试桩里：send 请求未取得明确 504 的崩溃窗口、建群无幂等操作ID、kick后再入群、Agent相同历史重试语义等保留需求阻塞。已经观察到重复或丢失应记 FAIL，不能借“协议限制”撤销失败。有限故障窗口实验不能证明任意时刻数学上的恰好一次。
+
+计时不擅自增加业务容差。无法准确观测创建、收讫或完成时刻时保存时间区间；区间跨越门槛则记录测量不足，不把轮询误差折算成放宽后的通过标准。
+
+## 维护方式
+
+新增需求先登记来源和验收口径，再追加用例与自动化。每个自动用例必须有 `[用例ID]` 测试标题，与 JSON 的 `automation`、浏览器项目一致。不要给失败加自动重试、删断言或静默 skip 来获得通过。修改后运行准备期复核命令，检查最终 diff 仅涉及本目录。
+
+空 schema 拒启用例先验证已迁移的对照库可以正常启动；空库退出若无法从诊断证据确认由 schema 导致，则记 BLOCKED，需人工确认，不能把任意启动错误算作通过。非空旧版本 schema 另需受版本管理的历史夹具。
+
+上线自动化只对批准的闭环负载、低速持续运行和静态样本备份恢复演练提供证据，不能替代生产容量、长期稳定性或持续复制证明。
+
+尚未对候选工程进行联通或端到端试跑。首次授权执行包含环境接入检查；适配问题、产品失败与需求阻塞在报告中分开记录。

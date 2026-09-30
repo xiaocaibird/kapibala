@@ -1,0 +1,218 @@
+[
+  {
+    "id": "OPS-001",
+    "title": "批准负载profile的混合API容量",
+    "requirements": ["REL-05"],
+    "priority": "P1",
+    "mode": "automated",
+    "preconditions": [
+      "后续产品验收已获得明确授权，候选版本及环境被冻结",
+      "测试仅在QA创建的隔离资源上执行"
+    ],
+    "data": {
+      "metrics": ["concurrentUsers", "durationSeconds", "p95LatencyMs", "maxErrorRate"],
+      "profileRequired": true
+    },
+    "steps": [
+      "先完成客户端登录，再按批准并发和时长运行闭环accounts/groups/timeline/send循环，记录实际操作比例、全请求耗时与错误",
+      "负载停止后逐clientMsgId核对外部实际落地与完整游标遍历得到的本地sent记录，无遗漏或重复"
+    ],
+    "expected": [
+      "p95和错误率符合批准阈值；本地与网关落地身份集与受理集一致",
+      "30秒仅为工具排空观察窗，未批准排空SLA时未确认记BLOCKED；明确failed/cancelled、重复或数据矛盾为FAIL"
+    ],
+    "timing": [
+      "负载指标只使用已批准profile；首次登录在计时前，会话续期不计入请求延迟；不以固定30秒观察窗虚构产品SLA"
+    ],
+    "faults": ["具体故障或操作见steps；无默认生产目标"],
+    "evidence": ["当前版本/环境/授权manifest", "实际操作输出、公开状态与可复核证据"],
+    "cleanup": ["只清理由本次QA持有的资源，保留脱敏报告"],
+    "automation": "tests/release/operations.spec.ts"
+  },
+  {
+    "id": "OPS-002",
+    "title": "批准持续时间的稳定运行",
+    "requirements": ["REL-05"],
+    "priority": "P1",
+    "mode": "automated",
+    "preconditions": [
+      "后续产品验收已获得明确授权，候选版本及环境被冻结",
+      "测试仅在QA创建的隔离资源上执行"
+    ],
+    "data": {
+      "metric": "soakSeconds"
+    },
+    "steps": [
+      "按约1秒间隔串行执行health和发送；健康接口延迟单独计量",
+      "逐次核对公开sent状态与外部clientMsgId唯一性；最后遍历本地全量时间线核对全部身份"
+    ],
+    "expected": [
+      "实际观察期间健康可用，消息两侧无重无漏；仅对执行时长及低速工作负载给出结论",
+      "15秒为工具观察窗，未确认sent且无确定缺陷时BLOCKED；明确失败状态或副作用重复为FAIL"
+    ],
+    "timing": ["仅采用需求或已批准上线profile的时限；缺阈值为BLOCKED"],
+    "faults": ["具体故障或操作见steps；无默认生产目标"],
+    "evidence": ["当前版本/环境/授权manifest", "实际操作输出、公开状态与可复核证据"],
+    "cleanup": ["只清理由本次QA持有的资源，保留脱敏报告"],
+    "automation": "tests/release/operations.spec.ts"
+  },
+  {
+    "id": "OPS-003",
+    "title": "真实备份与隔离恢复演练",
+    "requirements": ["REL-05"],
+    "priority": "P1",
+    "mode": "automated",
+    "preconditions": [
+      "后续产品验收已获得明确授权，候选版本及环境被冻结",
+      "测试仅在QA创建的隔离资源上执行"
+    ],
+    "data": {
+      "metrics": ["rpoSeconds", "rtoSeconds"]
+    },
+    "steps": [
+      "持久消息后pg_dump到本用例随机专属备份文件；校验容器owner、不可变ID、loopback端口与owned数据库，工具强制本容器Unix socket",
+      "杀候选进程；pg_restore到另一个owned数据库；启动候选并完整对比公开群与消息",
+      "记录备份SHA256、快照时间区间、停机及就绪时间区间；所有清理动作逐个尝试，即便前一清理失败"
+    ],
+    "expected": [
+      "恢复内容完整；RTO与恢复点年龄区间符合批准上限",
+      "测量下界已超限为FAIL，区间跨界为BLOCKED；不能把保守上界直接当作确定失败",
+      "该演练不证明生产连续复制、活跃写入恢复或长期RPO；保留备份摘要并清理敏感备份文件"
+    ],
+    "timing": ["仅采用需求或已批准上线profile的时限；缺阈值为BLOCKED"],
+    "faults": ["具体故障或操作见steps；无默认生产目标"],
+    "evidence": ["当前版本/环境/授权manifest", "实际操作输出、公开状态与可复核证据"],
+    "cleanup": ["只清理由本次QA持有的资源，保留脱敏报告"],
+    "automation": "tests/release/operations.spec.ts"
+  },
+  {
+    "id": "OPS-MAN-001",
+    "title": "部署升级及回滚演练",
+    "requirements": ["REL-05", "REL-02"],
+    "priority": "P0",
+    "mode": "manual",
+    "preconditions": [
+      "后续产品验收已获得明确授权，候选版本及环境被冻结",
+      "测试仅在QA创建的隔离资源上执行"
+    ],
+    "data": {},
+    "steps": [
+      "发布负责人提供候选、前一版本、升级/回滚runbook及数据兼容声明，缺任一项标BLOCKED",
+      "在独立环境按前版建立真实业务数据并保存公开API快照和备份",
+      "按批准流程部署候选，验证健康、认证、群/消息/在途任务及数据保留",
+      "制造批准的回滚触发条件；按runbook回滚或恢复备份；重新核对版本/数据/可用性",
+      "记录实际停机时间、丢失窗口、不可逆迁移及人工步骤"
+    ],
+    "expected": [
+      "实际按步骤成功完成，不能仅凭脚本存在宣称演练完成",
+      "数据和任务符合批准兼容策略；指标未批准或回滚不完整时不判PASS"
+    ],
+    "timing": ["仅采用需求或已批准上线profile的时限；缺阈值为BLOCKED"],
+    "faults": ["具体故障或操作见steps；无默认生产目标"],
+    "evidence": ["当前版本/环境/授权manifest", "实际操作输出、公开状态与可复核证据"],
+    "cleanup": ["只清理由本次QA持有的资源，保留脱敏报告"]
+  },
+  {
+    "id": "OPS-MAN-002",
+    "title": "生产身份与部署安全评审",
+    "requirements": ["REL-06"],
+    "priority": "P0",
+    "mode": "manual",
+    "preconditions": [
+      "后续产品验收已获得明确授权，候选版本及环境被冻结",
+      "测试仅在QA创建的隔离资源上执行"
+    ],
+    "data": {},
+    "steps": [
+      "取得生产部署拓扑、身份策略、测试专用地址与安全验收清单，缺失标BLOCKED",
+      "在获准测试部署中确认默认演示凭据处理、会话撤销、HTTPS、Cookie属性、跨站请求策略和最小授权",
+      "执行批准清单中的输入注入/脚本执行/越权/敏感错误泄露反例，记录请求和结果",
+      "复核真实凭据与日志/备份访问隔离及依赖风险处置记录"
+    ],
+    "expected": [
+      "实际部署满足已批准安全策略；admin/admin仅是原协议测试身份",
+      "未知或未测安全项明确保留，不能凭配置模板判生产安全通过"
+    ],
+    "timing": ["仅采用需求或已批准上线profile的时限；缺阈值为BLOCKED"],
+    "faults": ["具体故障或操作见steps；无默认生产目标"],
+    "evidence": ["当前版本/环境/授权manifest", "实际操作输出、公开状态与可复核证据"],
+    "cleanup": ["只清理由本次QA持有的资源，保留脱敏报告"]
+  },
+  {
+    "id": "OPS-MAN-003",
+    "title": "监控与告警实际到达及恢复",
+    "requirements": ["REL-05", "REL-03"],
+    "priority": "P1",
+    "mode": "manual",
+    "preconditions": [
+      "后续产品验收已获得明确授权，候选版本及环境被冻结",
+      "测试仅在QA创建的隔离资源上执行"
+    ],
+    "data": {},
+    "steps": [
+      "提供授权测试环境和告警接收范围，实际向他人发送通知另需明确授权",
+      "在独立环境依次注入网关不可用、数据库失败、审计阻断、发送unknown与任务失败",
+      "验证约定日志/指标/告警包含关联ID并可定位对应用户可见状态",
+      "恢复依赖；验证积压收敛和告警恢复，记录发现至通知及恢复时间"
+    ],
+    "expected": [
+      "已批准监控项真实触发并可跟踪；无告警通道/阈值或未授权发送时标BLOCKED",
+      "不把日志存在等同于告警有人收到"
+    ],
+    "timing": ["仅采用需求或已批准上线profile的时限；缺阈值为BLOCKED"],
+    "faults": ["具体故障或操作见steps；无默认生产目标"],
+    "evidence": ["当前版本/环境/授权manifest", "实际操作输出、公开状态与可复核证据"],
+    "cleanup": ["只清理由本次QA持有的资源，保留脱敏报告"]
+  },
+  {
+    "id": "OPS-MAN-004",
+    "title": "授权版本证据及清理复核",
+    "requirements": ["REL-01", "REL-02", "REL-04", "REL-07"],
+    "priority": "P0",
+    "mode": "manual",
+    "preconditions": [
+      "后续产品验收已获得明确授权，候选版本及环境被冻结",
+      "测试仅在QA创建的隔离资源上执行"
+    ],
+    "data": {},
+    "steps": [
+      "核对实际用户授权与manifest候选SHA、QA文件哈希、目标配置摘要",
+      "对照用例全集检查缺失/跳过/失败/阻塞及各浏览器项目，抽查原始请求与独立外部账本",
+      "核对所有created resources与cleanup记录，仅清理本轮资源",
+      "按真实失败填缺陷、影响、复现和复测；记录最终人工结论及例外签署"
+    ],
+    "expected": [
+      "授权及版本范围相符；报告数字和原始证据可重算",
+      "未测/阻塞不算PASS；清理失败明确保留；无隐含用户验收或上线批准"
+    ],
+    "timing": ["仅采用需求或已批准上线profile的时限；缺阈值为BLOCKED"],
+    "faults": ["具体故障或操作见steps；无默认生产目标"],
+    "evidence": ["当前版本/环境/授权manifest", "实际操作输出、公开状态与可复核证据"],
+    "cleanup": ["只清理由本次QA持有的资源，保留脱敏报告"]
+  },
+  {
+    "id": "DOC-MAN-001",
+    "title": "追加需求台账来源与状态审核",
+    "requirements": ["ADD-DOC-01"],
+    "priority": "P1",
+    "mode": "manual",
+    "preconditions": [
+      "后续产品验收已获得明确授权，候选版本及环境被冻结",
+      "测试仅在QA创建的隔离资源上执行"
+    ],
+    "data": {},
+    "steps": [
+      "按批准追加清单逐项定位用户来源、日期、需求正文和影响",
+      "核查每项关联版本、验收入口、实际状态及新旧决定的替代关系",
+      "抽查是否把实现建议或开发自测写成用户确认，是否把待审提案混入已交付"
+    ],
+    "expected": [
+      "所有追加需求可追踪，建议/批准/实现/开发验证/用户验收分开",
+      "缺项具体列缺陷，不采用历史通过数代替当前验收"
+    ],
+    "timing": ["仅采用需求或已批准上线profile的时限；缺阈值为BLOCKED"],
+    "faults": ["具体故障或操作见steps；无默认生产目标"],
+    "evidence": ["当前版本/环境/授权manifest", "实际操作输出、公开状态与可复核证据"],
+    "cleanup": ["只清理由本次QA持有的资源，保留脱敏报告"]
+  }
+]

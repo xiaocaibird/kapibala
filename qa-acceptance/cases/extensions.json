@@ -1,0 +1,254 @@
+[
+  {
+    "id": "EXT-001",
+    "title": "群资料可选、局部编辑及简介清空",
+    "requirements": ["ADD-META-01", "ADD-META-02", "ADD-META-03", "ADD-META-04"],
+    "priority": "P1",
+    "mode": "automated",
+    "preconditions": [
+      "已取得产品执行授权；独立候选服务、PG与协议桩可用",
+      "至少3个可用服务账号；每条用例独立数据库"
+    ],
+    "data": {
+      "source": "tests/extensions/api.spec.ts中的显式测试数据"
+    },
+    "steps": ["未填资料建群；写入名称和简介；仅改简介；清空简介"],
+    "expected": ["名称保持；简介可清空；createdAt稳定；网关不接收本地资料"],
+    "timing": ["接口就绪按配置时限；仅公共条款中明确的时限作为产品断言"],
+    "faults": ["无故障注入；并发场景使用同时发出的请求"],
+    "evidence": ["HTTP请求/响应及最终公开状态", "Gateway事实账本；测试断言与环境manifest"],
+    "cleanup": ["关闭本用例进程与模拟器，删除本用例独立数据库；保留脱敏证据"],
+    "automation": "tests/extensions/api.spec.ts"
+  },
+  {
+    "id": "EXT-002",
+    "title": "viewer资料越权拒绝",
+    "requirements": ["R-A0-05", "ADD-META-01", "ADD-CONFLICT-01"],
+    "priority": "P1",
+    "mode": "automated",
+    "preconditions": [
+      "已取得产品执行授权；独立候选服务、PG与协议桩可用",
+      "至少3个可用服务账号；每条用例独立数据库"
+    ],
+    "data": {
+      "source": "tests/extensions/api.spec.ts中的显式测试数据"
+    },
+    "steps": ["admin建群；viewer带expected提交资料修改"],
+    "expected": ["403 FORBIDDEN；资料未被修改"],
+    "timing": ["接口就绪按配置时限；仅公共条款中明确的时限作为产品断言"],
+    "faults": ["无故障注入；并发场景使用同时发出的请求"],
+    "evidence": ["HTTP请求/响应及最终公开状态", "Gateway事实账本；测试断言与环境manifest"],
+    "cleanup": ["关闭本用例进程与模拟器，删除本用例独立数据库；保留脱敏证据"],
+    "automation": "tests/extensions/api.spec.ts"
+  },
+  {
+    "id": "EXT-003",
+    "title": "目录四字段及字面搜索",
+    "requirements": ["ADD-DIR-02"],
+    "priority": "P1",
+    "mode": "automated",
+    "preconditions": [
+      "已取得产品执行授权；独立候选服务、PG与协议桩可用",
+      "至少3个可用服务账号；每条用例独立数据库"
+    ],
+    "data": {
+      "source": "tests/extensions/api.spec.ts中的显式测试数据"
+    },
+    "steps": ["建立含大小写和特殊符号的两群；按四字段和空格差异查询"],
+    "expected": ["仅匹配整段字面关键词；大小写和首尾空白按约定处理"],
+    "timing": ["接口就绪按配置时限；仅公共条款中明确的时限作为产品断言"],
+    "faults": ["无故障注入；并发场景使用同时发出的请求"],
+    "evidence": ["HTTP请求/响应及最终公开状态", "Gateway事实账本；测试断言与环境manifest"],
+    "cleanup": ["关闭本用例进程与模拟器，删除本用例独立数据库；保留脱敏证据"],
+    "automation": "tests/extensions/api.spec.ts"
+  },
+  {
+    "id": "EXT-004",
+    "title": "目录分页兼容与双向遍历",
+    "requirements": ["ADD-DIR-01", "ADD-DIR-04", "ADD-DIR-06"],
+    "priority": "P1",
+    "mode": "automated",
+    "preconditions": [
+      "已取得产品执行授权；独立候选服务、PG与协议桩可用",
+      "至少3个可用服务账号；每条用例独立数据库"
+    ],
+    "data": {
+      "source": "tests/extensions/api.spec.ts中的显式测试数据"
+    },
+    "steps": ["建立23群；核验旧数组接口；默认首页；asc/desc逐页遍历"],
+    "expected": ["默认20条；静态全集恰好一次；时间顺序及同时间ID顺序正确"],
+    "timing": ["接口就绪按配置时限；仅公共条款中明确的时限作为产品断言"],
+    "faults": ["无故障注入；并发场景使用同时发出的请求"],
+    "evidence": ["HTTP请求/响应及最终公开状态", "Gateway事实账本；测试断言与环境manifest"],
+    "cleanup": ["关闭本用例进程与模拟器，删除本用例独立数据库；保留脱敏证据"],
+    "automation": "tests/extensions/api.spec.ts"
+  },
+  {
+    "id": "EXT-005",
+    "title": "目录输入边界与鉴权",
+    "requirements": ["ADD-DIR-04"],
+    "priority": "P1",
+    "mode": "automated",
+    "preconditions": [
+      "已取得产品执行授权；独立候选服务、PG与协议桩可用",
+      "至少3个可用服务账号；每条用例独立数据库"
+    ],
+    "data": {
+      "source": "tests/extensions/api.spec.ts中的显式测试数据"
+    },
+    "steps": ["提交非法pageSize/order/q/cursor；无token请求；边界1和50"],
+    "expected": ["非法输入400；无身份401；合法边界受理"],
+    "timing": ["接口就绪按配置时限；仅公共条款中明确的时限作为产品断言"],
+    "faults": ["无故障注入；并发场景使用同时发出的请求"],
+    "evidence": ["HTTP请求/响应及最终公开状态", "Gateway事实账本；测试断言与环境manifest"],
+    "cleanup": ["关闭本用例进程与模拟器，删除本用例独立数据库；保留脱敏证据"],
+    "automation": "tests/extensions/api.spec.ts"
+  },
+  {
+    "id": "EXT-006",
+    "title": "完整查询游标绑定",
+    "requirements": ["ADD-DIR-05", "ADD-DIR-12"],
+    "priority": "P1",
+    "mode": "automated",
+    "preconditions": [
+      "已取得产品执行授权；独立候选服务、PG与协议桩可用",
+      "至少3个可用服务账号；每条用例独立数据库"
+    ],
+    "data": {
+      "source": "tests/extensions/api.spec.ts中的显式测试数据"
+    },
+    "steps": ["获取pageSize1的游标；逐项改变q/order/pageSize/status/agentEnabled；撤去token"],
+    "expected": ["不兼容查询400；游标不绕过401"],
+    "timing": ["接口就绪按配置时限；仅公共条款中明确的时限作为产品断言"],
+    "faults": ["无故障注入；并发场景使用同时发出的请求"],
+    "evidence": ["HTTP请求/响应及最终公开状态", "Gateway事实账本；测试断言与环境manifest"],
+    "cleanup": ["关闭本用例进程与模拟器，删除本用例独立数据库；保留脱敏证据"],
+    "automation": "tests/extensions/api.spec.ts"
+  },
+  {
+    "id": "EXT-007",
+    "title": "组合筛选先于分页",
+    "requirements": ["ADD-DIR-12"],
+    "priority": "P1",
+    "mode": "automated",
+    "preconditions": [
+      "已取得产品执行授权；独立候选服务、PG与协议桩可用",
+      "至少3个可用服务账号；每条用例独立数据库"
+    ],
+    "data": {
+      "source": "tests/extensions/api.spec.ts中的显式测试数据"
+    },
+    "steps": ["创建启用与禁用群；组合关键词/开关/状态；执行leave-all"],
+    "expected": ["每页只包含匹配群；空后续游标正确；left和active互不混淆"],
+    "timing": ["接口就绪按配置时限；仅公共条款中明确的时限作为产品断言"],
+    "faults": ["无故障注入；并发场景使用同时发出的请求"],
+    "evidence": ["HTTP请求/响应及最终公开状态", "Gateway事实账本；测试断言与环境manifest"],
+    "cleanup": ["关闭本用例进程与模拟器，删除本用例独立数据库；保留脱敏证据"],
+    "automation": "tests/extensions/api.spec.ts"
+  },
+  {
+    "id": "EXT-008",
+    "title": "同字段并发原值竞争",
+    "requirements": ["ADD-CONFLICT-01", "ADD-CONFLICT-02"],
+    "priority": "P1",
+    "mode": "automated",
+    "preconditions": [
+      "已取得产品执行授权；独立候选服务、PG与协议桩可用",
+      "至少3个可用服务账号；每条用例独立数据库"
+    ],
+    "data": {
+      "source": "tests/extensions/api.spec.ts中的显式测试数据"
+    },
+    "steps": ["两个请求携带同原值同时修改name"],
+    "expected": ["一个200一个409；错误码与当前快照/冲突字段正确"],
+    "timing": ["接口就绪按配置时限；仅公共条款中明确的时限作为产品断言"],
+    "faults": ["无故障注入；并发场景使用同时发出的请求"],
+    "evidence": ["HTTP请求/响应及最终公开状态", "Gateway事实账本；测试断言与环境manifest"],
+    "cleanup": ["关闭本用例进程与模拟器，删除本用例独立数据库；保留脱敏证据"],
+    "automation": "tests/extensions/api.spec.ts"
+  },
+  {
+    "id": "EXT-009",
+    "title": "冲突请求无部分副作用",
+    "requirements": ["ADD-CONFLICT-02"],
+    "priority": "P1",
+    "mode": "automated",
+    "preconditions": [
+      "已取得产品执行授权；独立候选服务、PG与协议桩可用",
+      "至少3个可用服务账号；每条用例独立数据库"
+    ],
+    "data": {
+      "source": "tests/extensions/api.spec.ts中的显式测试数据"
+    },
+    "steps": ["携带过期原值一起修改资料与Agent开关"],
+    "expected": ["409；全部资料及开关均保持原状态"],
+    "timing": ["接口就绪按配置时限；仅公共条款中明确的时限作为产品断言"],
+    "faults": ["无故障注入；并发场景使用同时发出的请求"],
+    "evidence": ["HTTP请求/响应及最终公开状态", "Gateway事实账本；测试断言与环境manifest"],
+    "cleanup": ["关闭本用例进程与模拟器，删除本用例独立数据库；保留脱敏证据"],
+    "automation": "tests/extensions/api.spec.ts"
+  },
+  {
+    "id": "EXT-010",
+    "title": "异字段并发及旧请求兼容",
+    "requirements": ["ADD-CONFLICT-03", "ADD-META-04"],
+    "priority": "P0",
+    "mode": "automated",
+    "preconditions": [
+      "已取得产品执行授权；独立候选服务、PG与协议桩可用",
+      "至少3个可用服务账号；每条用例独立数据库"
+    ],
+    "data": {
+      "source": "tests/extensions/api.spec.ts中的显式测试数据"
+    },
+    "steps": ["name/description分别条件并发修改；再提交无expected请求"],
+    "expected": ["异字段都成功；旧请求最后写入；未给字段不覆盖"],
+    "timing": ["接口就绪按配置时限；仅公共条款中明确的时限作为产品断言"],
+    "faults": ["无故障注入；并发场景使用同时发出的请求"],
+    "evidence": ["HTTP请求/响应及最终公开状态", "Gateway事实账本；测试断言与环境manifest"],
+    "cleanup": ["关闭本用例进程与模拟器，删除本用例独立数据库；保留脱敏证据"],
+    "automation": "tests/extensions/api.spec.ts"
+  },
+  {
+    "id": "EXT-011",
+    "title": "null原值与非法条件",
+    "requirements": ["ADD-CONFLICT-01"],
+    "priority": "P0",
+    "mode": "automated",
+    "preconditions": [
+      "已取得产品执行授权；独立候选服务、PG与协议桩可用",
+      "至少3个可用服务账号；每条用例独立数据库"
+    ],
+    "data": {
+      "source": "tests/extensions/api.spec.ts中的显式测试数据"
+    },
+    "steps": ["null原值首次改名；原值加空白；无关/空/非法expected；只改开关"],
+    "expected": ["null可比较；原值不归一；不合法条件400；单开关兼容"],
+    "timing": ["接口就绪按配置时限；仅公共条款中明确的时限作为产品断言"],
+    "faults": ["无故障注入；并发场景使用同时发出的请求"],
+    "evidence": ["HTTP请求/响应及最终公开状态", "Gateway事实账本；测试断言与环境manifest"],
+    "cleanup": ["关闭本用例进程与模拟器，删除本用例独立数据库；保留脱敏证据"],
+    "automation": "tests/extensions/api.spec.ts"
+  },
+  {
+    "id": "EXT-012",
+    "title": "资料跨重启持久性",
+    "requirements": ["ADD-META-03", "ADD-META-04", "ADD-CONFLICT-01"],
+    "priority": "P0",
+    "mode": "automated",
+    "preconditions": [
+      "已取得产品执行授权；独立候选服务、PG与协议桩可用",
+      "至少3个可用服务账号；每条用例独立数据库"
+    ],
+    "data": {
+      "source": "tests/extensions/api.spec.ts中的显式测试数据"
+    },
+    "steps": ["写资料；强制重启应用；读取；提交旧条件"],
+    "expected": ["资料和创建时间不变；过期条件仍409"],
+    "timing": ["接口就绪按配置时限；仅公共条款中明确的时限作为产品断言"],
+    "faults": ["仅杀死本用例拥有的SUT进程"],
+    "evidence": ["HTTP请求/响应及最终公开状态", "Gateway事实账本；测试断言与环境manifest"],
+    "cleanup": ["关闭本用例进程与模拟器，删除本用例独立数据库；保留脱敏证据"],
+    "automation": "tests/extensions/api.spec.ts"
+  }
+]
