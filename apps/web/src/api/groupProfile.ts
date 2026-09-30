@@ -4,6 +4,7 @@ import {
   GROUP_NAME_MAX_LENGTH,
   type Group,
 } from "../../../../packages/contracts/src/index";
+import { ApiError } from "./client";
 
 const nameInput = z.string().trim().min(1).max(GROUP_NAME_MAX_LENGTH);
 const descriptionInput = z.string().trim().max(GROUP_DESCRIPTION_MAX_LENGTH);
@@ -11,8 +12,73 @@ export interface GroupProfileDraft {
   name: string;
   description: string;
 }
-type Profile = Pick<Group, "name" | "description">;
+export type GroupProfileSnapshot = Pick<Group, "name" | "description">;
+export type GroupProfileField = keyof GroupProfileDraft;
+type Profile = GroupProfileSnapshot;
 type ProfileChanges = Partial<GroupProfileDraft>;
+export interface GroupProfilePatch extends ProfileChanges {
+  expected: Partial<GroupProfileSnapshot>;
+}
+const profileFields: readonly GroupProfileField[] = ["name", "description"];
+const profileConflictSchema = z.object({
+  current: z
+    .object({ name: z.string().nullable(), description: z.string().nullable() })
+    .strict(),
+  conflictingFields: z
+    .array(z.enum(["name", "description"]))
+    .min(1)
+    .max(2)
+    .refine((fields) => new Set(fields).size === fields.length),
+});
+export type GroupProfileConflict = z.infer<typeof profileConflictSchema>;
+
+export function changedProfileFields(
+  changes: ProfileChanges,
+): GroupProfileField[] {
+  return profileFields.filter((field) => Object.hasOwn(changes, field));
+}
+
+export function conditionalGroupProfilePatch(
+  original: GroupProfileSnapshot,
+  draft: GroupProfileDraft,
+): GroupProfilePatch | null {
+  const changes = changedGroupProfile(original, draft);
+  const fields = changedProfileFields(changes);
+  if (!fields.length) return null;
+  const expected: Partial<GroupProfileSnapshot> = {};
+  // Preconditions are the raw snapshot, including null or legacy empty values.
+  // Only actual write fields participate, so disjoint edits remain independent.
+  for (const field of fields) expected[field] = original[field];
+  return { ...changes, expected };
+}
+
+export function readGroupProfileConflict(
+  error: unknown,
+): GroupProfileConflict | null {
+  if (
+    !(error instanceof ApiError) ||
+    error.status !== 409 ||
+    error.code !== "GROUP_PROFILE_CONFLICT"
+  )
+    return null;
+  const result = profileConflictSchema.safeParse(error.details);
+  return result.success ? result.data : null;
+}
+
+export function rebaseGroupProfileDraft(
+  draft: GroupProfileDraft,
+  current: GroupProfileSnapshot,
+  submittedFields: readonly GroupProfileField[],
+): GroupProfileDraft {
+  // Untouched drafts must follow the new base. Otherwise the next submission
+  // could turn another administrator's independent change into our write.
+  return {
+    name: submittedFields.includes("name") ? draft.name : (current.name ?? ""),
+    description: submittedFields.includes("description")
+      ? draft.description
+      : (current.description ?? ""),
+  };
+}
 
 function readName(value: string): string {
   const result = nameInput.safeParse(value);
