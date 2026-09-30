@@ -12,7 +12,12 @@ import type {
 import { Accounts, accountStatusSchema } from "./accounts.js";
 import { GatewayEvents } from "./events.js";
 import { Jobs } from "./jobs.js";
-import { groupDescriptionSchema, groupNameSchema } from "./group-profile.js";
+import {
+  groupDescriptionSchema,
+  groupNameSchema,
+  groupPatchSchema,
+  groupProfileFields,
+} from "./group-profile.js";
 import { registerGroupDirectory } from "./group-directory.js";
 import { Messages } from "./messages.js";
 import { type GroupRow, type MessageRow, messageDto } from "./models.js";
@@ -153,23 +158,7 @@ export function createGatewayModule(
     );
     app.patch("/api/groups/:id", async (request) => {
       const { id } = parse(idParams, request.params);
-      const input = parse(
-        z
-          .object({
-            name: groupNameSchema.optional(),
-            description: groupDescriptionSchema.optional(),
-            agentEnabled: z.boolean().optional(),
-            autoKickEnabled: z.boolean().optional(),
-          })
-          .refine(
-            (value) =>
-              value.name !== undefined ||
-              value.description !== undefined ||
-              value.agentEnabled !== undefined ||
-              value.autoKickEnabled !== undefined,
-          ),
-        request.body,
-      );
+      const input = parse(groupPatchSchema, request.body);
       await ctx.db.transaction(async (tx) => {
         const before = (
           await tx.query<GroupRow>(
@@ -190,8 +179,10 @@ export function createGatewayModule(
             ([key, value]) => input[key] !== undefined && input[key] !== value,
           )
           .map(([key]) => key);
+        // Compare only the submitted profile fields. The conditional write must
+        // succeed before settings, Agent cancellation or change events take effect.
         const updated = await tx.query(
-          "UPDATE groups SET name=COALESCE($2,name),description=CASE WHEN $3::boolean THEN $4::text ELSE description END,agent_enabled=COALESCE($5,agent_enabled),auto_kick_enabled=COALESCE($6,auto_kick_enabled) WHERE id=$1 RETURNING id",
+          "UPDATE groups SET name=COALESCE($2,name),description=CASE WHEN $3::boolean THEN $4::text ELSE description END,agent_enabled=COALESCE($5,agent_enabled),auto_kick_enabled=COALESCE($6,auto_kick_enabled) WHERE id=$1 AND (NOT $7::boolean OR name IS NOT DISTINCT FROM $8::text) AND (NOT $9::boolean OR description IS NOT DISTINCT FROM $10::text) RETURNING id",
           [
             id,
             input.name ?? null,
@@ -199,10 +190,26 @@ export function createGatewayModule(
             input.description ?? null,
             input.agentEnabled ?? null,
             input.autoKickEnabled ?? null,
+            input.expected?.name !== undefined,
+            input.expected?.name ?? null,
+            input.expected?.description !== undefined,
+            input.expected?.description ?? null,
           ],
         );
         if (!updated.rowCount)
-          throw new AppError(404, "GROUP_NOT_FOUND", "群不存在");
+          throw new AppError(
+            409,
+            "GROUP_PROFILE_CONFLICT",
+            "群资料已被其他人修改，请比较最新内容后重新确认。",
+            {
+              current: { name: before.name, description: before.description },
+              conflictingFields: groupProfileFields.filter(
+                (field) =>
+                  input.expected?.[field] !== undefined &&
+                  input.expected[field] !== before[field],
+              ),
+            },
+          );
         if (input.agentEnabled === false)
           await tx.query(
             "UPDATE agent_runs SET cancel_requested=true WHERE group_id=$1 AND status='running'",
