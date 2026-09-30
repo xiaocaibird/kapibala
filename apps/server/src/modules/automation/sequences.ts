@@ -12,39 +12,11 @@ import {
 import { AppError } from "../../core/errors.js";
 import type { MessagingService } from "../../core/messaging.js";
 import type { SequenceStep } from "../../../../../packages/contracts/src/index.js";
+import {
+  sequenceDefinitionRequestSchema,
+  sequenceStartRequestSchema,
+} from "../../../../../packages/contracts/src/sequence-requests.js";
 import { schedulingTransaction } from "./scheduling-transaction.js";
-
-const definitionSchema = z
-  .object({
-    name: z.string().trim().min(1).max(200),
-    steps: z
-      .array(
-        z
-          .object({
-            index: z.number().int().positive(),
-            accountRole: z.enum(["admin", "member"]),
-            text: z.string().min(1).max(20000),
-            delaySeconds: z.number().min(0).max(604800),
-          })
-          .strict(),
-      )
-      .min(1)
-      .max(200),
-  })
-  .strict();
-const variableSchema = z.record(
-  z.string().regex(/^[A-Za-z0-9_]+$/),
-  z.string().max(20000),
-);
-const startSchema = z
-  .object({
-    sequenceId: z.string().min(1),
-    vars: variableSchema.default({}),
-    stepVars: z
-      .record(z.string().regex(/^[1-9][0-9]*$/), variableSchema)
-      .default({}),
-  })
-  .strict();
 export interface ResolvedStep {
   index: number;
   text: string;
@@ -178,13 +150,7 @@ export class SequenceModule {
         ).rows,
     );
     app.post("/api/sequences", async (request) => {
-      const data = parse(definitionSchema, request.body);
-      if (data.steps.some((step, i) => step.index !== i + 1))
-        throw new AppError(
-          400,
-          "VALIDATION_ERROR",
-          "Step indexes must be consecutive and start at 1",
-        );
+      const data = parse(sequenceDefinitionRequestSchema, request.body);
       const id = randomUUID();
       await this.ctx.db.transaction(async (tx) => {
         await tx.query(
@@ -199,7 +165,7 @@ export class SequenceModule {
       return { id };
     });
     app.post("/api/sequences/preview", async (request) => {
-      const input = parse(startSchema, request.body);
+      const input = parse(sequenceStartRequestSchema, request.body);
       const sequence = await this.definition(input.sequenceId);
       return {
         steps: resolveSteps(sequence.steps, input.vars, input.stepVars),
@@ -208,7 +174,7 @@ export class SequenceModule {
     app.post<{ Params: { id: string } }>(
       "/api/groups/:id/sequence-runs",
       async (request, reply) => {
-        const input = parse(startSchema, request.body);
+        const input = parse(sequenceStartRequestSchema, request.body);
         const sequence = await this.definition(input.sequenceId);
         const resolved = resolveSteps(
           sequence.steps,
