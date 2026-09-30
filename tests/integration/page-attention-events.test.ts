@@ -542,6 +542,20 @@ test("attention: sequence definitions and displayed step mutations emit once whi
     ),
   );
   await f.sequences.tick();
+  assert.equal(
+    (await f.events("sequence_run")).length,
+    1,
+    "query confirmation alone must not advance a sequence",
+  );
+  const gatewayEvents = new GatewayEvents(f.ctx, f.messages);
+  await gatewayEvents.process({
+    eventId: "10001",
+    type: "message_sent",
+    clientMsgId: snapshot.steps[0]!.clientMsgId,
+    msgId: "sequence-msg",
+    sentAt: new Date().toISOString(),
+  });
+  await f.sequences.tick();
   assert.deepEqual(
     (await f.events("sequence_run")).map(
       (event) => event.payload.directoryChangedFields,
@@ -553,14 +567,13 @@ test("attention: sequence definitions and displayed step mutations emit once whi
   const second = (await f.api("GET", `/api/sequence-runs/${runId}`)).json<{
     steps: { clientMsgId: string }[];
   }>();
-  await f.db.transaction((tx) =>
-    recordSent(
-      tx,
-      second.steps[1]!.clientMsgId,
-      "sequence-msg-2",
-      new Date().toISOString(),
-    ),
-  );
+  await gatewayEvents.process({
+    eventId: "10002",
+    type: "message_sent",
+    clientMsgId: second.steps[1]!.clientMsgId,
+    msgId: "sequence-msg-2",
+    sentAt: new Date().toISOString(),
+  });
   await f.sequences.tick();
   assert.equal(
     (await f.events("sequence_run")).at(-1)!.payload.status,
