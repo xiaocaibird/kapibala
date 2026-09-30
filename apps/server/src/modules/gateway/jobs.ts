@@ -387,6 +387,13 @@ export class Jobs {
       return;
     }
     if (state.phase === "promote" || state.phase === "promote_dispatch") {
+      if (state.phase === "promote_dispatch") {
+        await this.uncertain(
+          job,
+          "提升管理员请求已开始但没有保存结果；网关没有查询管理员角色的接口，结果未知时不自动重试。",
+        );
+        return;
+      }
       const attempts = state.promoteAttempts ?? 0;
       if (attempts >= 2) {
         await this.uncertain(
@@ -427,17 +434,34 @@ export class Jobs {
           await notifyJob(tx, job);
         });
       } catch (error) {
-        if (
+        if (error instanceof RemoteError && error.status === 503) {
+          // Global unavailability is an explicit rejection. It still consumes one
+          // of the protocol's two promote calls; an unknown result cannot retry.
+          if (promoting.promoteAttempts < 2)
+            await this.remoteFailure(
+              { ...job, state: promoting },
+              "promote",
+              error,
+              state.creatorAccountId,
+              "promote",
+            );
+          else
+            await this.fail(
+              { ...job, state: promoting },
+              "promote",
+              error.code,
+            );
+        } else if (
           error instanceof RemoteError &&
           error.code === "NOT_MEMBER_YET" &&
           attempts === 0
-        )
+        ) {
           await this.save(job, {
             ...promoting,
             phase: "promote",
             nextAt: Date.now() + 250,
           });
-        else
+        } else
           await this.remoteFailure(
             { ...job, state: promoting },
             "promote",
