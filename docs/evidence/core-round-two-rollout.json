@@ -336,5 +336,36 @@
   "proofBoundary": "Stopped backup and existing-row/simulator equality; health and source identity only, not complete production-path replay or human acceptance",
   "humanAcceptance": "paused",
   "testedProduct": "3c071d24712a99b56544573f6cf21e7d8b2fd32c",
-  "healthBoundary": "Real local frontend login page rendered; API and frontend proxy schema7 healthy. No full business flow replay on demo."
+  "healthBoundary": "Real local frontend login page rendered; API and frontend proxy schema7 healthy. No full business flow replay on demo.",
+  "browser": {
+    "screenshot": "docs/evidence/core-round-two-console-login.jpg",
+    "observed": "real browser rendered login entry after new services became healthy; no demo login or business write performed"
+  },
+  "sourceProof": {
+    "apps": {
+      "tested": "bee1fb89a8a75bd12f6cd2760dde46f1c9201d60",
+      "running": "bee1fb89a8a75bd12f6cd2760dde46f1c9201d60",
+      "equal": true
+    },
+    "db": {
+      "tested": "ca417defc0b0d796089d19146f1bd633c26d2dfc",
+      "running": "ca417defc0b0d796089d19146f1bd633c26d2dfc",
+      "equal": true
+    },
+    "packages": {
+      "tested": "785ad5068c3d3fb29a6a85fb9c642b50ead7302e",
+      "running": "785ad5068c3d3fb29a6a85fb9c642b50ead7302e",
+      "equal": true
+    },
+    "scripts": {
+      "tested": "405215b089ac566fb47c5733ef440f29af55a8b6",
+      "running": "405215b089ac566fb47c5733ef440f29af55a8b6",
+      "equal": true
+    }
+  },
+  "frontendModuleCheck": {
+    "status": 200,
+    "cookieQueuePresent": true,
+    "generationGuardPresent": true
+  }
 }
