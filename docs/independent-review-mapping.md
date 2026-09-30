@@ -6,6 +6,12 @@
 - 原文之外的产品、容量与生产运维建议：[额外增强建议](product-enhancement-proposal.md#independent-review-enhancements)。
 - 已执行的修复及有限验证：[核心质量收口](core-quality-closeout.md)；逐项验收仍使用[机制评审卡](acceptance.md#mechanism-review)与[证据索引](acceptance-evidence-index.md)。
 
+## 架构来源与后续系列
+
+新来源“架构审查员”（b4b579d）及实施侧 ece8b04 复核另归[架构评审系列](architecture-reviews/README.md)，十项对应 AR-01–10。该系列保留架构与工程质量视角，不建立第三套功能需求：重合核心问题沿用 CG/V，额外能力沿用 PI，已确认工程质量要求单独说明最小改进范围。详细对应见[基线报告](architecture-reviews/2026-10-01-baseline.md)。
+
+用户已授权[局部质量改进](architecture-quality-closeout.md)，并要求自测后先 review、同意后再合 main。本索引和原 IR-01 历史事实保留，新的架构来源不覆盖已修结论或扩大原始需求。未决协议、跨系统强保证和人工验收仍分别追踪。
+
 ## 第二轮执行状态补充
 
 以下分类表保留`fa1baa7`时的独立审查与静态复核事实；其中“待复现”是历史阶段，不代表当前修复状态。当前产品`3c071d2`和演示`56e320c`的执行结果见[第二轮记录](core-repair-round-two.md)、[统一证据](evidence/core-round-two-verification.json)及[实际切换](evidence/core-round-two-rollout.json)。

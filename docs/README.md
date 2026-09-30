@@ -10,6 +10,7 @@
 | 定位已有证据、版本及尚未执行的反例 | [核心验收证据索引与补验证清单](acceptance-evidence-index.md)；现已加入第二轮机制和执行证据，用户验收仍独立；方法修订见[决策D032](decisions.md) |
 | 区分原始要求未闭合与额外产品增强 | [核心缺口与证据复核](core-requirements-gap-review.md)；[额外增强建议](product-enhancement-proposal.md)；[旧PI提案映射](product-improvement-proposal.md) |
 | 关联最新独立审查、区分重复发现与新增场景 | [独立审查关联索引](independent-review-mapping.md)；两份清单沿用CG/PI编号，不重复登记 |
+| 评审架构、工程质量与阶段演进，关联原始要求和增强范围 | [架构评审系列](architecture-reviews/README.md)；[当前基线](architecture-reviews/2026-10-01-baseline.md)；[本批局部改进](architecture-quality-closeout.md) |
 | 跟踪本轮核心修复，人工验收暂缓 | [第二轮修复与验证](core-repair-round-two.md)；额外增强继续暂缓 |
 | 跟踪已授权核心修复、补证和协议待决事项 | [本轮核心质量收口](core-quality-closeout.md)；修复与开发验证不自动代表用户验收 |
 | 快速了解当前能力、来源、实现与用户验收状态 | [当前功能总表与需求追踪](feature-matrix.md) |
