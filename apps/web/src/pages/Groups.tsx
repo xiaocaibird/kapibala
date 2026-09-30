@@ -21,12 +21,11 @@ import {
   directoryQueryIdentity,
   type DirectoryPosition,
 } from "../directory/controller";
+import { PageAttentionScope, useAttentionCollection } from "../attention";
 import {
-  PageAttentionScope,
-  useAttentionCollection,
-  isDefinitiveBusinessEvent,
-} from "../attention";
-import { eventEntity, groupFields } from "../attention/pageAdapters";
+  directoryAttentionImpact,
+  directoryAttentionKey,
+} from "../directory/attention";
 
 export function Groups() {
   const { user } = useAuth();
@@ -243,36 +242,8 @@ function GroupDirectoryView({
   const attention = useAttentionCollection({
     targetId: "directory",
     label: "当前群目录可能有变化",
-    eventKey: (event) => {
-      const id = eventEntity(
-        event,
-        ["group_changed", "agent_run", "sequence_run"],
-        "groupId",
-      );
-      if (!id) return null;
-      if (
-        event.type === "group_changed" &&
-        !groupFields(event, id, [
-          "name",
-          "description",
-          "status",
-          "members",
-          "agentEnabled",
-          "created",
-        ])
-      )
-        return null;
-      return id;
-    },
-    definitiveEvent: (event) =>
-      event.type === "group_changed" &&
-      isDefinitiveBusinessEvent(event) &&
-      Array.isArray(event.payload.changedFields) &&
-      event.payload.changedFields.some((field) =>
-        ["name", "description", "status", "agentEnabled", "created"].includes(
-          String(field),
-        ),
-      ),
+    eventKey: directoryAttentionKey,
+    definitiveEvent: (event) => directoryAttentionImpact(event) === "changed",
     renderRangeSummary: () => (
       <div>
         <strong>当前查询的最新结果</strong>
@@ -289,9 +260,22 @@ function GroupDirectoryView({
         </p>
         <p>
           {state.items.length
-            ? `当前显示 ${state.items.length} 个群：${state.items.map((group) => group.name ?? group.gatewayGroupId).join("、")}`
+            ? `当前显示 ${state.items.length} 个群。`
             : "当前查询没有匹配的群。"}
         </p>
+        {state.items.slice(0, 5).map((group) => (
+          <p key={group.id}>
+            {group.name ?? group.gatewayGroupId} · {group.memberCount} 位成员 ·
+            Agent {group.activeAgentRunId ? "运行中" : "无活动运行"} · 序列{" "}
+            {group.activeSequenceRunId ? "运行中" : "无活动运行"}
+          </p>
+        ))}
+        {state.items.length > 5 && (
+          <p>
+            以上为前 5 个群的摘要，其余 {state.items.length - 5}{" "}
+            个群可在列表中查看。
+          </p>
+        )}
         <p>
           {state.nextCursor
             ? "后续结果可继续加载；本次确认当前查询范围已刷新，不表示逐条查看全部群。"
