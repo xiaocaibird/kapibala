@@ -34,7 +34,7 @@ export class Jobs {
   async get(id: string) {
     const job = (await this.ctx.db.query<JobRow>('SELECT * FROM jobs WHERE id=$1', [id])).rows[0];
     if (!job) throw new AppError(404, 'JOB_NOT_FOUND', '任务不存在');
-    return { id: job.id, status: job.status, errors: job.errors, groupId: job.group_id, recoveryNote: job.state.recoveryNote ?? null };
+    return { id: job.id, status: job.errors.length ? 'failed' as const : job.status, errors: job.errors, groupId: job.group_id, recoveryNote: job.state.recoveryNote ?? null, processing: job.status === 'running' };
   }
   async advance(id: string): Promise<void> {
     await this.ctx.db.withLock(`job:${id}`, async () => {
@@ -129,14 +129,17 @@ export class Jobs {
     const index = state.index ?? 0;
     const accountId = state.leavingIds?.[index];
     if (!accountId) {
+      const gatewayMembers = membersSchema.parse(await this.ctx.gateway.request(`/groups/${encodeURIComponent(group.gateway_group_id)}/members`));
+      const remainingServiceAccounts = (await this.ctx.db.query<{ id: string }>('SELECT id FROM accounts WHERE platform_user_id=ANY($1::text[])', [gatewayMembers.map(member => member.platformUserId)])).rows;
+      const completionErrors = [...job.errors, ...remainingServiceAccounts.map(account => ({ step: `leave:${account.id}`, code: 'MEMBER_STILL_PRESENT' }))];
       await this.ctx.db.transaction(async tx => {
-        if (!job.errors.length) {
+        if (!completionErrors.length) {
           await tx.query('DELETE FROM members WHERE group_id=$1', [group.id]);
           await tx.query("UPDATE groups SET status='left' WHERE id=$1", [group.id]);
           await tx.query("UPDATE agent_runs SET cancel_requested=true WHERE group_id=$1 AND status='running'", [group.id]);
         }
-        await tx.query('UPDATE jobs SET status=$2,updated_at=now() WHERE id=$1', [job.id, job.errors.length ? 'failed' : 'finished']);
-        await emit(tx, 'group_changed', { groupId: group.id, status: job.errors.length ? group.status : 'left' });
+        await tx.query('UPDATE jobs SET status=$2,state=$3,errors=$4,updated_at=now() WHERE id=$1', [job.id, completionErrors.length ? 'failed' : 'finished', JSON.stringify({ ...state, phase: 'done', gatewayMembersAtCompletion: gatewayMembers }), JSON.stringify(completionErrors)]);
+        await emit(tx, 'group_changed', { groupId: group.id, status: completionErrors.length ? group.status : 'left' });
       });
       return;
     }

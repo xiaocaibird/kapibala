@@ -12,6 +12,10 @@ const landedSchema = z.object({ msgId: z.string().min(1), sentAt: z.iso.datetime
 export async function recordSent(tx: Queryable, clientMsgId: string, msgId: string, sentAt: string): Promise<void> {
   const row = (await tx.query<MessageRow>('SELECT * FROM messages WHERE client_msg_id=$1 FOR UPDATE', [clientMsgId])).rows[0];
   if (!row) return;
+  if (row.delivery_status === 'sent') {
+    if (row.msg_id !== msgId) await emit(tx, 'inconsistency', { kind: 'duplicate_remote_delivery', ref: clientMsgId, message: '同一出站标识对应不同远端消息，需要人工核验。' });
+    return;
+  }
   // An echo can arrive before its acknowledgement. Keep the original outbox identity.
   await tx.query('DELETE FROM messages WHERE group_id=$1 AND msg_id=$2 AND id<>$3', [row.group_id, msgId, row.id]);
   await tx.query("UPDATE messages SET msg_id=$2,sent_at=$3,delivery_status='sent',fail_code=null,dispatch_state='done',timeout_at=null,updated_at=now() WHERE id=$1", [row.id, msgId, sentAt]);
@@ -30,6 +34,8 @@ export class Messages implements MessagingService {
     if (!(await tx.query('SELECT 1 FROM members WHERE group_id=$1 AND account_id=$2', [input.groupId, input.accountId])).rowCount) throw new AppError(409, 'ACCOUNT_NOT_IN_GROUP', '账号不在群内');
     const row = (await tx.query<MessageRow>('INSERT INTO messages(id,group_id,client_msg_id,account_id,sender_platform_user_id,is_own,text,delivery_status,metadata) VALUES($1,$2,$3,$4,$5,true,$6,\'queued\',$7) RETURNING *', [randomUUID(), input.groupId, input.clientMsgId ?? randomUUID(), input.accountId, account.platform_user_id, input.text, JSON.stringify({ source: input.source ?? 'manual', sourceRef: input.sourceRef ?? null })])).rows[0]!;
     await emit(tx, 'message', { groupId: row.group_id, msgId: null, clientMsgId: row.client_msg_id, id: row.id, isOwn: true });
+    // created_at uses the transaction start time; a committed event sequence is the durable FIFO key.
+    await tx.query("UPDATE messages SET metadata=metadata || jsonb_build_object('queueOrder',currval(pg_get_serial_sequence('events','seq'))) WHERE id=$1", [row.id]);
     return messageDto(row);
   }
   async getMessage(clientMsgId: string): Promise<Message | null> {
@@ -38,9 +44,9 @@ export class Messages implements MessagingService {
   }
   async accountWork(accountId: string): Promise<void> {
     await this.ctx.db.withLock(`send-account:${accountId}`, async () => {
-      const candidates = (await this.ctx.db.query<MessageRow>("SELECT * FROM messages WHERE account_id=$1 AND delivery_status IN ('queued','unknown','accepted') ORDER BY created_at,id", [accountId])).rows;
+      const candidates = (await this.ctx.db.query<MessageRow>("SELECT * FROM messages WHERE account_id=$1 AND delivery_status IN ('queued','unknown','accepted') ORDER BY (metadata->>'queueOrder')::bigint NULLS FIRST,created_at,id", [accountId])).rows;
       for (const row of candidates) {
-        if (typeof row.metadata.nextAttemptAt === 'number' && row.metadata.nextAttemptAt > Date.now()) continue;
+        if (typeof row.metadata.nextAttemptAt === 'number' && row.metadata.nextAttemptAt > Date.now()) break;
         if (row.delivery_status === 'unknown' && row.dispatch_state !== 'pending') {
           await this.confirm(row);
           // Unknown delivery blocks subsequent sends for this account, preserving order.
@@ -123,9 +129,13 @@ export class Messages implements MessagingService {
     await emit(tx, 'message', { groupId: row.group_id, id: row.id, msgId: row.msg_id, clientMsgId: row.client_msg_id, isOwn: true });
   }
   async recover(): Promise<void> {
-    await this.ctx.db.transaction(async tx => {
-      const uncertain = await tx.query<MessageRow>("UPDATE messages SET delivery_status='unknown',dispatch_state='uncertain',timeout_at=null,metadata=metadata || '{\"recoveryNote\":\"发送意图已持久化，但进程未记录远端响应；不自动重发。\"}'::jsonb WHERE dispatch_state='sending' AND delivery_status IN ('queued','unknown') RETURNING *");
-      for (const row of uncertain.rows) await emit(tx, 'inconsistency', { kind: 'send_result_unknown', ref: row.client_msg_id, message: row.metadata.recoveryNote });
+    const accounts = (await this.ctx.db.query<{ account_id: string }>("SELECT DISTINCT account_id FROM messages WHERE dispatch_state='sending' AND account_id IS NOT NULL")).rows;
+    for (const account of accounts) await this.ctx.db.withLock(`send-account:${account.account_id}`, async () => {
+      // A new instance must not reclassify another live instance's in-flight operation.
+      await this.ctx.db.transaction(async tx => {
+        const uncertain = await tx.query<MessageRow>("UPDATE messages SET delivery_status='unknown',dispatch_state='uncertain',timeout_at=null,metadata=metadata || '{\"recoveryNote\":\"发送意图已持久化，但进程未记录远端响应；不自动重发。\"}'::jsonb WHERE account_id=$1 AND dispatch_state='sending' AND delivery_status IN ('queued','unknown') RETURNING *", [account.account_id]);
+        for (const row of uncertain.rows) await emit(tx, 'inconsistency', { kind: 'send_result_unknown', ref: row.client_msg_id, message: row.metadata.recoveryNote });
+      });
     });
   }
   async kick(input: { groupId: string; accountId: string; targetPlatformUserId: string }): Promise<{ kicked: true }> {
@@ -138,6 +148,12 @@ export class Messages implements MessagingService {
       try {
         z.object({ kicked: z.literal(true) }).parse(await this.ctx.gateway.request(`/groups/${encodeURIComponent(group.gateway_group_id)}/kick`, { byAccountId: input.accountId, targetPlatformUserId: input.targetPlatformUserId }));
       } catch (error) {
+        if (error instanceof RemoteError && ['ACCOUNT_SUSPENDED', 'SESSION_EXPIRED', 'GROUP_WRITE_FORBIDDEN'].includes(error.code)) {
+          await this.ctx.db.transaction(async tx => {
+            if (error.code === 'GROUP_WRITE_FORBIDDEN') await markGroupUnreachable(tx, input.groupId);
+            else await changeAccount(tx, input.accountId, error.code === 'ACCOUNT_SUSPENDED' ? 'suspended' : 'session_expired');
+          });
+        }
         if (!(error instanceof RemoteError) || error.code !== 'NETWORK_TIMEOUT') throw error;
         await new Promise(resolve => setTimeout(resolve, 2100));
         const members = z.array(z.object({ platformUserId: z.string() })).parse(await this.ctx.gateway.request(`/groups/${encodeURIComponent(group.gateway_group_id)}/members`));

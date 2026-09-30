@@ -15,6 +15,7 @@ export interface JobState {
   phase: string; creatorAccountId?: string; memberAccountIds?: string[]; localGroupId?: string;
   inviteLink?: string; readyAt?: number; index?: number; joinStartedAt?: number; inviteRetries?: number;
   promoteAttempts?: number; leavingIds?: string[]; nextAt?: number; recoveryNote?: string;
+  gatewayMembersAtCompletion?: { platformUserId: string }[];
 }
 export function accountDto(row: AccountRow): Account { return { id: row.id, status: row.status, platformUserId: row.platform_user_id, rateLimitedUntil: row.rate_limited_until?.toISOString() ?? null }; }
 export function messageDto(row: MessageRow): Message { return { id: row.id, msgId: row.msg_id, clientMsgId: row.client_msg_id, senderPlatformUserId: row.sender_platform_user_id, isOwn: row.is_own, text: row.text, sentAt: row.sent_at.toISOString(), deliveryStatus: row.delivery_status, failCode: row.fail_code }; }
