@@ -87,8 +87,11 @@ export class GatewayEvents {
     await this.stream;
   }
   async retryFailed(): Promise<void> {
-    for (const event of [...this.retry.values()].slice(0, 20))
+    for (const event of [...this.retry.values()].slice(0, 20)) {
+      // A failed retry joins the tail, so persistent failures cannot starve later events.
+      this.retry.delete(String(event.eventId));
       await this.process(event);
+    }
     for (const [ref, message] of this.issues) {
       try {
         await this.ctx.db.transaction((tx) =>
@@ -166,15 +169,6 @@ export class GatewayEvents {
         this.retry.delete(ref);
         return;
       }
-      // Membership is reconciled against current gateway state, because historical events may arrive out of order.
-      const gatewayMembers =
-        event.type === "member_joined" || event.type === "member_left"
-          ? memberListSchema.parse(
-              await this.ctx.gateway.request(
-                `/groups/${encodeURIComponent(event.groupId)}/members`,
-              ),
-            )
-          : null;
       const echoClientId =
         event.type === "message" ? await this.findEcho(event) : null;
       await this.ctx.db.transaction(async (tx) => {
@@ -263,12 +257,19 @@ export class GatewayEvents {
           case "member_left": {
             const group = (
               await tx.query<GroupRow>(
-                "SELECT * FROM groups WHERE gateway_group_id=$1",
+                "SELECT * FROM groups WHERE gateway_group_id=$1 FOR UPDATE",
                 [event.groupId],
               )
             ).rows[0];
             if (!group) throw new Error(`群 ${event.groupId} 尚未落库`);
-            const present = gatewayMembers!.some(
+            // Fetch after taking the group lock: a delayed response must not overwrite
+            // membership already reconciled by another event worker or a local removal.
+            const gatewayMembers = memberListSchema.parse(
+              await this.ctx.gateway.request(
+                `/groups/${encodeURIComponent(event.groupId)}/members`,
+              ),
+            );
+            const present = gatewayMembers.some(
               (member) => member.platformUserId === event.platformUserId,
             );
             if (!present)
@@ -304,7 +305,7 @@ export class GatewayEvents {
   ): Promise<void> {
     const account = (
       await tx.query<AccountRow>(
-        "SELECT * FROM accounts WHERE platform_user_id=$1",
+        "SELECT * FROM accounts WHERE platform_user_id=$1 FOR SHARE",
         [platformUserId],
       )
     ).rows[0];

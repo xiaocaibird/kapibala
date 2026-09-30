@@ -269,26 +269,36 @@ export class Jobs {
           error instanceof RemoteError &&
           error.code === "ALREADY_MEMBER"
         ) {
-          const account = (
-            await this.ctx.db.query<AccountRow>(
-              "SELECT * FROM accounts WHERE id=$1",
-              [accountId],
-            )
-          ).rows[0]!;
-          const members = membersSchema.parse(
-            await this.ctx.gateway.request(
-              `/groups/${encodeURIComponent(group.gateway_group_id)}/members`,
-            ),
-          );
-          if (
-            members.some(
-              (member) => member.platformUserId === account.platform_user_id,
-            )
-          )
-            await this.ctx.db.query(
-              "INSERT INTO members(group_id,account_id,platform_user_id,role) VALUES($1,$2,$3,'member') ON CONFLICT DO NOTHING",
-              [group.id, accountId, account.platform_user_id],
+          await this.ctx.db.transaction(async (tx) => {
+            const currentGroup = (
+              await tx.query<GroupRow>(
+                "SELECT * FROM groups WHERE id=$1 FOR UPDATE",
+                [group.id],
+              )
+            ).rows[0]!;
+            const account = (
+              await tx.query<AccountRow>(
+                "SELECT * FROM accounts WHERE id=$1 FOR SHARE",
+                [accountId],
+              )
+            ).rows[0]!;
+            if (currentGroup.status === "left" || isTerminal(account.status))
+              return;
+            const members = membersSchema.parse(
+              await this.ctx.gateway.request(
+                `/groups/${encodeURIComponent(currentGroup.gateway_group_id)}/members`,
+              ),
             );
+            if (
+              members.some(
+                (member) => member.platformUserId === account.platform_user_id,
+              )
+            )
+              await tx.query(
+                "INSERT INTO members(group_id,account_id,platform_user_id,role) VALUES($1,$2,$3,'member') ON CONFLICT DO NOTHING",
+                [group.id, accountId, account.platform_user_id],
+              );
+          });
         } else
           await this.remoteFailure(
             { ...job, state: joining },
@@ -401,6 +411,9 @@ export class Jobs {
         })),
       ];
       await this.ctx.db.transaction(async (tx) => {
+        await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
+          group.id,
+        ]);
         if (!completionErrors.length) {
           await tx.query("DELETE FROM members WHERE group_id=$1", [group.id]);
           await tx.query("UPDATE groups SET status='left' WHERE id=$1", [
@@ -501,6 +514,9 @@ export class Jobs {
   }
   private async afterLeave(job: JobRow, accountId: string): Promise<void> {
     await this.ctx.db.transaction(async (tx) => {
+      await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
+        job.group_id,
+      ]);
       await tx.query(
         "DELETE FROM members WHERE group_id=$1 AND account_id=$2",
         [job.group_id, accountId],
