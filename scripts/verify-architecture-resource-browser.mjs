@@ -22,7 +22,7 @@ const name = `architecture_browser_${randomUUID().replaceAll("-", "")}`;
 const adminUrl = new URL(process.env.DATABASE_URL);
 adminUrl.pathname = "/postgres";
 const admin = new Database(adminUrl.toString());
-let db, app, vite, browser;
+let db, app, vite, browser, page;
 let created = false;
 const report = {
   sourceHead: execFileSync("git", ["rev-parse", "HEAD"], {
@@ -87,7 +87,7 @@ try {
   const context = await browser.newContext({
     viewport: { width: 1440, height: 1100 },
   });
-  const page = await context.newPage();
+  page = await context.newPage();
   page.on("pageerror", (error) => report.pageErrors.push(error.message));
   let failures = 0,
     status = 503,
@@ -191,7 +191,8 @@ try {
   await enter();
   await sampleVisible();
   await page.getByRole("button", { name: "新建序列", exact: true }).click();
-  const input = page.getByLabel("序列 JSON", { exact: true });
+  // The wrapping label includes the textarea's initial text content in this DOM.
+  const input = page.getByRole("textbox", { name: /^序列 JSON/ });
   const valid = {
     name: "架构契约验证",
     steps: [
@@ -247,6 +248,14 @@ try {
     message: error.message,
     stack: error.stack,
   };
+  if (page && !page.isClosed()) {
+    await mkdir("docs/evidence", { recursive: true });
+    report.failurePage = await page.locator("body").ariaSnapshot();
+    await page.screenshot({
+      path: "docs/evidence/architecture-resource-browser-failure.png",
+      fullPage: true,
+    });
+  }
   process.exitCode = 1;
 } finally {
   for (const [label, close] of [
