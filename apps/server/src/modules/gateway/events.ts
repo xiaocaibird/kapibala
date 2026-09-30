@@ -71,6 +71,7 @@ export class GatewayEvents {
   private stream: Promise<void> | undefined;
   private readonly retry = new Map<string, GatewayEvent>();
   private readonly issues = new Map<string, string>();
+  private readonly messageSentObservedAt = new Map<string, Date>();
   constructor(
     private readonly ctx: AppContext,
     private readonly messages: Messages,
@@ -157,6 +158,13 @@ export class GatewayEvents {
   }
   async process(event: GatewayEvent): Promise<void> {
     const ref = String(event.eventId);
+    // A local persistence retry retains when this process first received the
+    // event. Query confirmations and message echoes never supply this clock.
+    const observedAt =
+      event.type === "message_sent"
+        ? (this.messageSentObservedAt.get(ref) ?? new Date())
+        : undefined;
+    if (observedAt) this.messageSentObservedAt.set(ref, observedAt);
     try {
       if (
         (
@@ -167,6 +175,7 @@ export class GatewayEvents {
         ).rowCount
       ) {
         this.retry.delete(ref);
+        this.messageSentObservedAt.delete(ref);
         return;
       }
       const echoClientId =
@@ -182,7 +191,13 @@ export class GatewayEvents {
             await changeAccount(tx, event.accountId, event.status);
             break;
           case "message_sent":
-            await recordSent(tx, event.clientMsgId, event.msgId, event.sentAt);
+            await recordSent(
+              tx,
+              event.clientMsgId,
+              event.msgId,
+              event.sentAt,
+              observedAt,
+            );
             break;
           case "message_failed": {
             const row = (
@@ -323,6 +338,7 @@ export class GatewayEvents {
         }
       });
       this.retry.delete(ref);
+      this.messageSentObservedAt.delete(ref);
     } catch (error) {
       this.retry.set(ref, event);
       if (!this.issues.has(ref))
