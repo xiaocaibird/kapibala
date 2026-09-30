@@ -1,0 +1,63 @@
+{
+  "branch": "agent/architecture-runtime-boundaries",
+  "base": "cc5d3d2",
+  "commit": "4d1f57e8d3cc9316a9e3c8e2e9f063d8ee48f33e",
+  "worktree": "/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala",
+  "database": "postgres://qa:qa-local@127.0.0.1:50033/postgres",
+  "scope": "Three product files and two new regression test files. No shared fixture, migration, SSE, health, frontend, main or demonstration changes.",
+  "baseline_reproduction": {
+    "command": "DATABASE_URL=postgres://qa:qa-local@127.0.0.1:50033/postgres node --import tsx --test --test-name-pattern='Agent kick waits' tests/integration/agent-capacity.test.ts",
+    "product_files": "Temporarily replaced only the three modified product files with git show cc5d3d2 contents; restored all bytes in Python finally.",
+    "passed": 0,
+    "failed": 1,
+    "duration_ms": 3376.564542,
+    "observation": "With all eight local lock slots occupied, kick had zero gateway calls but the old Agent persisted complete/is_error=true/error_code=SEND_FAILED and result.message=SEND_TIMEOUT. The new ready-state assertion failed."
+  },
+  "regression": {
+    "command": "DATABASE_URL=postgres://qa:qa-local@127.0.0.1:50033/postgres node --import tsx --test tests/integration/agent-capacity.test.ts tests/integration/lock-admission.test.ts tests/integration/database.test.ts tests/integration/core-reliability.test.ts tests/integration/member-rejoin.test.ts",
+    "first_run": {
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "duration_ms": 2164.856209
+    },
+    "repeated_run": {
+      "passed": 16,
+      "failed": 1,
+      "skipped": 0,
+      "duration_ms": 2202.638666,
+      "output": "architecture-runtime-repeated-failure.log"
+    },
+    "failed_test": "transaction client loss during HTTP wait aborts safely and does not poison later transactions",
+    "failure_status": "Unresolved intermittent failure. Single-test success does not exclude the failure. No cause established; concurrent test activity is context only, not a confirmed cause.",
+    "log_provenance": "Exact test-output portion copied from exec_command tool response chunk 737458, which included all emitted stack frames. The following unrelated database-inventory JSON was omitted. The original invocation did not redirect to a log file. No additional stack frames were emitted."
+  },
+  "focused_recheck": {
+    "command": "DATABASE_URL=postgres://qa:qa-local@127.0.0.1:50033/postgres node --import tsx --test --test-name-pattern='transaction client loss during HTTP' tests/integration/core-reliability.test.ts",
+    "passed": 1,
+    "failed": 0,
+    "duration_ms": 168.950916
+  },
+  "existing_agent_checks": {
+    "command": "DATABASE_URL=postgres://qa:qa-local@127.0.0.1:50033/postgres node --import tsx --test --test-name-pattern='kick|disabling Agent|advisory-lock connection|run lock during audit' tests/integration/automation.test.ts",
+    "passed": 6,
+    "failed": 0,
+    "skipped": 0,
+    "duration_ms": 1104.417583
+  },
+  "static_checks": [
+    "tsc --noEmit passed",
+    "Prettier check for all five changed files passed",
+    "git diff --check passed",
+    "Original requirements SHA256 c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75 passed"
+  ],
+  "limits": [
+    "No full-suite or frontend tests run",
+    "Persistent saturation still consumes the original activity budget and can end orchestration with wall_clock",
+    "Hard interruption between a capacity refusal and the local ready-state repair can still conservatively retain executing intent; this does not close CG-05",
+    "No retry of any dispatched remote kick or unknown outcome",
+    "Temporary UUID databases and automation schema used; another task's live database was not touched",
+    "Temporary node_modules symlink removed; worktree clean after commit",
+    "Independent PostgreSQL container retained for coordinator"
+  ]
+}

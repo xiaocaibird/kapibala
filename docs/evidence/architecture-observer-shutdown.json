@@ -1,0 +1,76 @@
+{
+  "base_commit": "4d1f57e8d3cc9316a9e3c8e2e9f063d8ee48f33e",
+  "fixture_fix_commit": "c9fac1e0e68c34ff6c7ee24543dd38b94f4eea05",
+  "changed_file": "tests/integration/core-reliability.test.ts",
+  "scope": "Replace only the reliability-test observer pool with a dedicated pg.Client, register cleanup before connect, and await connect/end. No product transaction, shared fixture, migration, API, main or demonstration changes.",
+  "evidence_boundary": "The prior intermittent failure had no event timeline. Thirty natural observation runs below passed. A controlled 30ms observer shutdown delay reproduced the same test and error class through a confirmed observer/DROP cleanup race. This is not a direct capture of the earlier intermittent failure scene and does not exclude other possible causes.",
+  "source_mechanism": {
+    "original_fixture": "core-reliability.test.ts resources used a raw pg.Pool without a pool error handler and awaited only pool.end before temporaryDatabase issued DROP DATABASE WITH(FORCE).",
+    "installed_pg_pool": "pg-pool/index.js _pulseQueue lines 133-142 resolves end once _clients is empty; _remove line 179 removes a client from that array before the asynchronous client.end callback at line 181 completes.",
+    "transaction_path": "The transaction receives its intended connection error, sets connectionFailed before aborting the HTTP request, releases the failed client with true, and the following transaction succeeds. No observed rollback/reuse failure was found in the traced reproduction.",
+    "cleanup_race": "pool.end can resolve before the observer socket closes. DROP FORCE can then terminate the observer; its raw pool re-emits error without a handler, causing an uncaught exception during cleanup.",
+    "fix": "Dedicated pg.Client.end waits for actual connection end. No error listener was added to swallow errors."
+  },
+  "runtime": {
+    "worktree": "/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala",
+    "database_url": "postgres://qa:qa-local@127.0.0.1:50033/postgres",
+    "node": "24.21.0",
+    "dependencies": "/Users/zcm/Desktop/kapibala/node_modules",
+    "temporary_link": "The worktree used a node_modules symlink to the dependency path only during tests; it was removed afterward.",
+    "isolation": "Every test used a UUID kapibala_test database. No demonstration or qa-acceptance database was accessed."
+  },
+  "natural_observation": {
+    "script": "run-shutdown-probe.py",
+    "command": "DATABASE_URL=postgres://qa:qa-local@127.0.0.1:50033/postgres python3 /tmp/kapibala-runtime-boundaries-evidence/run-shutdown-probe.py 30",
+    "passed": 30,
+    "failed": 0,
+    "logs": "shutdown-probe-01 through shutdown-probe-30, .tap and .jsonl",
+    "observation": "Passing traces still show pool.end resolution and DROP issued before the observer client end. The gap alone does not imply failure on every run."
+  },
+  "controlled_delay": {
+    "preloader": "trace-pg-shutdown.mjs",
+    "delay_ms": 30,
+    "method": "Delay only the observer connection.end call in the preloader, retaining real PostgreSQL connections, test bodies, error emissions and exception behavior. Log via emit wrappers and uncaughtExceptionMonitor; do not consume error events.",
+    "command_pattern": "PG_SHUTDOWN_TRACE=<absolute-jsonl-path> PG_SHUTDOWN_DELAY_MS=30 DATABASE_URL=postgres://qa:qa-local@127.0.0.1:50033/postgres node --import /tmp/kapibala-runtime-boundaries-evidence/trace-pg-shutdown.mjs --import tsx --test --test-reporter=tap --test-name-pattern='transaction client loss during HTTP' tests/integration/core-reliability.test.ts > <absolute-tap-path> 2>&1",
+    "before": {
+      "passed": 0,
+      "failed": 1,
+      "logs": ["shutdown-delayed-before.tap", "shutdown-delayed-before.jsonl"],
+      "failure_type": "uncaughtException",
+      "postgres_code": "57P01",
+      "observer_backend_pid": 2194,
+      "timeline_ms": {
+        "observer_pool_end_resolved": 87.149,
+        "drop_database_issued": 87.448,
+        "observer_error": 88.050,
+        "pool_error_without_listeners": 88.194,
+        "uncaught_exception_monitor": 88.287
+      }
+    },
+    "after": {
+      "passed": 1,
+      "failed": 0,
+      "logs": ["shutdown-delayed-after.tap", "shutdown-delayed-after.jsonl"],
+      "observer_backend_pid": 2199,
+      "timeline_ms": {
+        "observer_client_end": 141.565,
+        "drop_database_issued": 142.055
+      }
+    },
+    "after_repeat": {
+      "command": "PG_PROBE_LABEL=shutdown-after-repeat PG_SHUTDOWN_DELAY_MS=30 DATABASE_URL=postgres://qa:qa-local@127.0.0.1:50033/postgres python3 /tmp/kapibala-runtime-boundaries-evidence/run-shutdown-probe.py 5",
+      "passed": 5,
+      "failed": 0,
+      "logs": "shutdown-after-repeat-01 through shutdown-after-repeat-05, .tap and .jsonl"
+    }
+  },
+  "regression": {
+    "command": "DATABASE_URL=postgres://qa:qa-local@127.0.0.1:50033/postgres node --import tsx --test tests/integration/core-reliability.test.ts tests/integration/agent-capacity.test.ts tests/integration/lock-admission.test.ts tests/integration/database.test.ts tests/integration/member-rejoin.test.ts",
+    "first": { "passed": 17, "failed": 0, "skipped": 0, "duration_ms": 2416.840666, "log": "fixture-after-regression.log" },
+    "repeat": { "passed": 17, "failed": 0, "skipped": 0, "duration_ms": 2418.785917, "log": "fixture-after-regression-repeat.log" },
+    "remaining_logs": "Some business Database pools still logged handled idle_connection_error near temporary database cleanup. This fixture change does not claim to eliminate all pool shutdown log noise."
+  },
+  "static_checks": ["tsc --noEmit passed", "Prettier check passed", "git diff --check passed"],
+  "final_cleanup_inventory": { "temporaryDatabases": [], "automationSchemas": [] },
+  "delivery": "Clean independent branch; main and demonstration unchanged. Dedicated PostgreSQL window released to coordinator; container retained."
+}

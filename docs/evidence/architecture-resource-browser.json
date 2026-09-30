@@ -1,0 +1,58 @@
+{
+  "sourceHead": "a17db825c8ea7d41c2182582e0443a9c11ac8ef9",
+  "startedAt": "2026-09-30T21:02:52.459Z",
+  "database": "architecture_browser_eefe05e321ce47f180afbbb525c15b95",
+  "background": false,
+  "webMode": "production build",
+  "results": [
+    {
+      "name": "transient GET failures recover without polling, new events, or manual reload",
+      "observed": {
+        "gets": 3,
+        "events": 0
+      }
+    },
+    {
+      "name": "permanent forbidden response is not automatically retried",
+      "observed": {
+        "gets": 1
+      }
+    },
+    {
+      "name": "transient retry budget stops after initial attempt plus three retries",
+      "observed": {
+        "gets": 4
+      }
+    },
+    {
+      "name": "leaving a resource page cancels its pending retries",
+      "observed": {
+        "beforeWait": 1,
+        "afterWait": 1
+      }
+    },
+    {
+      "name": "unknown sequence fields are rejected by the rendered form without POST",
+      "observed": {
+        "posts": 0
+      }
+    },
+    {
+      "name": "non-contiguous sequence indices are rejected before POST",
+      "observed": {
+        "posts": 0
+      }
+    },
+    {
+      "name": "valid sequence still saves exactly once through the real API",
+      "observed": {
+        "posts": 1,
+        "rows": 1
+      }
+    }
+  ],
+  "pageErrors": [],
+  "cleanupErrors": [],
+  "passed": true,
+  "completedAt": "2026-09-30T21:03:02.977Z"
+}

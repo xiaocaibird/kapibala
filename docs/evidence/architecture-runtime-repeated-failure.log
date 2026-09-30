@@ -1,0 +1,45 @@
+✔ Agent kick waits for local capacity without failing, repeating audit, or dispatching twice (306.26475ms)
+ℹ Independent database: kapibala_test_48895ec4650f45be97aa942bf8948d4f
+✔ Agent capacity wait keeps the original activity budget and does not invent an unknown kick (1326.148917ms)
+ℹ Independent database: kapibala_test_93c5e8373e0e4768a326ecdf660e8be4
+✔ Agent rechecks kick policy after capacity refusal and preserves the recorded audit (217.302917ms)
+ℹ Independent database: kapibala_test_87f1af4613604fe5b2921dc265c0bb04
+✔ Agent cancellation while waiting for capacity ends after the current step without another turn (197.457ms)
+ℹ Independent database: kapibala_test_3861d5f509804cee98ba530996dc1fd1
+✔ checked-out advisory connection loss rejects safely, fences subsequent DB work, and releases capacity (153.142792ms)
+✔ advisory lock loss aborts an in-flight HTTP request and blocks later remote calls (79.987833ms)
+✖ transaction client loss during HTTP wait aborts safely and does not poison later transactions (140.736709ms)
+✔ cleanup on a disconnected advisory connection preserves the callback error (205.68375ms)
+✔ RemoteClient preserves HTTP errors for null, primitive, malformed nested envelopes and valid arrays (4.664875ms)
+✔ PostgreSQL lock admission preserves connection capacity for nested transactions (238.94625ms)
+✔ PostgreSQL lock admission distinguishes local capacity, entity contention, and an undefined callback result (159.430458ms)
+✔ Gateway kick maps only actual entity contention to the existing member conflict (319.045291ms)
+ℹ Independent database: kapibala_test_f92d556b82ef499c9d1289ac99b97423
+✔ kick 200 arriving after a committed rejoin preserves current membership without kicking twice (180.977375ms)
+✔ leave 200 arriving after rejoin retains the member and prevents the creator from leaving (143.216959ms)
+✔ member refresh failure after confirmed kick remains success and converges through event retry (204.572542ms)
+✔ leave refresh failure preserves confirmed progress and prevents unsafe creator departure (85.030875ms)
+✔ leave completion reads current members after acquiring the group projection lock (90.58325ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 16
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2202.638666
+
+✖ failing tests:
+
+test at tests/integration/core-reliability.test.ts:1:3075
+✖ transaction client loss during HTTP wait aborts safely and does not poison later transactions (140.736709ms)
+  error: terminating connection due to administrator command
+      at parseErrorMessage (/Users/zcm/Desktop/kapibala/node_modules/pg-protocol/src/parser.ts:395:9)
+      at Parser.handlePacket (/Users/zcm/Desktop/kapibala/node_modules/pg-protocol/src/parser.ts:212:19)
+      at Parser.parse (/Users/zcm/Desktop/kapibala/node_modules/pg-protocol/src/parser.ts:105:30)
+      at Socket.<anonymous> (/Users/zcm/Desktop/kapibala/node_modules/pg-protocol/src/index.ts:7:48)
+      at Socket.emit (node:events:514:28)
+      at addChunk (node:internal/streams/readable:568:12)
+      at readableAddChunkPushByteMode (node:internal/streams/readable:519:3)
+      at Readable.push (node:internal/streams/readable:399:5)
+      at TCP.onStreamRead (node:internal/stream_base_commons:189:23)

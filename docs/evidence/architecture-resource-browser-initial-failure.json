@@ -1,0 +1,44 @@
+{
+  "sourceHead": "0972229a0f0531e3c8bd574691eaca799f1aa17f",
+  "startedAt": "2026-09-30T21:01:34.843Z",
+  "database": "architecture_browser_a51a494f920d4c7895a435bb272fac57",
+  "background": false,
+  "webMode": "production build",
+  "results": [
+    {
+      "name": "transient GET failures recover without polling, new events, or manual reload",
+      "observed": {
+        "gets": 3,
+        "events": 0
+      }
+    },
+    {
+      "name": "permanent forbidden response is not automatically retried",
+      "observed": {
+        "gets": 1
+      }
+    },
+    {
+      "name": "transient retry budget stops after initial attempt plus three retries",
+      "observed": {
+        "gets": 4
+      }
+    },
+    {
+      "name": "leaving a resource page cancels its pending retries",
+      "observed": {
+        "beforeWait": 1,
+        "afterWait": 1
+      }
+    }
+  ],
+  "pageErrors": [],
+  "cleanupErrors": [],
+  "passed": false,
+  "error": {
+    "name": "TimeoutError",
+    "message": "locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('序列 JSON', { exact: true })\u001b[22m\n",
+    "stack": "locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('序列 JSON', { exact: true })\u001b[22m\n\n    at <anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/scripts/verify-architecture-resource-browser.mjs:201:15)"
+  },
+  "completedAt": "2026-09-30T21:02:16.528Z"
+}

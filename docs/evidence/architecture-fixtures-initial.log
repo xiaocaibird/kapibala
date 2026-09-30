@@ -1,0 +1,121 @@
+✔ tool definitions have all required arguments; invalid protocols are rejected (105.023208ms)
+✔ sequence variables persist overrides and report the first unresolved step (0.334584ms)
+✔ PostgreSQL serializes concurrent sequence starts and failed preflight creates no run (26.651875ms)
+✔ multiple workers create one agent run and same send key is audited and enqueued once (115.200042ms)
+✔ bad JSON, unknown tool, duplicate tool id are recorded without corrupting history (76.528167ms)
+▶ invalid finish inputs return INVALID_INPUT and allow a later valid completion
+  ✔ null followed by end_turn (83.732541ms)
+  ✔ null followed by finish (87.590375ms)
+  ✔ missing summary followed by end_turn (79.543958ms)
+  ✔ missing summary followed by finish (77.08075ms)
+  ✔ wrong summary type followed by end_turn (77.515583ms)
+  ✔ wrong summary type followed by finish (79.47ms)
+✔ invalid finish inputs return INVALID_INPUT and allow a later valid completion (485.7335ms)
+▶ completed invalid finish recovery honors cancellation and execution limits
+  ✔ cancelled (41.95225ms)
+  ✔ wall_clock (42.84625ms)
+  ✔ budget_exhausted (45.646708ms)
+  ✔ protocol_errors (42.204209ms)
+✔ completed invalid finish recovery honors cancellation and execution limits (173.184291ms)
+✔ a successful persisted finish completes recovery without another remote turn (39.876333ms)
+✔ inconclusive audit blocks without side effects; rejection does not reserve a send key (109.492709ms)
+✔ messages arriving during a run become one next trigger and own messages never trigger (103.303041ms)
+✔ interrupted remote turn is visibly paused and never replayed (47.073583ms)
+✔ sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step (49.040333ms)
+✔ persisted final and prepared send recover without replaying prior external work (77.282958ms)
+✔ kick policy and persisted uncertain kick cannot produce a second side effect (81.404583ms)
+✔ repeated reads stop within twelve steps and result bytes remain bounded (435.229458ms)
+✔ disabling Agent during its current step cancels after that step, without another turn (73.165917ms)
+✔ activity budget interrupts a late turn and discards the eventual response (333.674458ms)
+✔ activity budget expires during audit without authorizing the prepared tool (310.925166ms)
+✔ an accepted send whose account becomes terminal yields SEND_FAILED without a resend (48.147875ms)
+✔ restart catches up a committed send before rebasing the next unscheduled step (42.583333ms)
+✔ kick permission errors remain tool errors and a confirmed kick succeeds (122.508917ms)
+✔ SEND_TIMEOUT retries with the same key read the eventual send without re-auditing (5139.598334ms)
+✔ sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp (63.072292ms)
+✔ loss of the advisory-lock connection aborts a turn without saving a false protocol error (179.452917ms)
+✔ loss of a run lock during audit prevents old-worker effects and permits safe audit recovery (206.149ms)
+✔ kick budget exhaustion ends the run while retaining an uncertain non-replayable effect (138.662292ms)
+✔ a stale scheduler transaction cannot enqueue after its ownership connection is lost (50.692083ms)
+✔ closing and recreating modules preserves activity while excluding actual downtime (970.715292ms)
+✔ queued runs persist online activity across a real shutdown without counting downtime or a second clock (2760.625042ms)
+✔ a follower cannot execute against a stale activity base while the new clock owner initializes (1354.368958ms)
+✔ an initialization follower takes over after the blocked clock owner connection is terminated (2015.732541ms)
+✔ frequent activity samples retain subinterval time instead of losing rounded milliseconds (31.527292ms)
+✔ activity clock survives loss of its own PostgreSQL session and only bills once after takeover (1524.545583ms)
+✔ inconclusive audit step and blocked run roll back together before recovery (93.288666ms)
+✔ persisted legacy audit-block window cannot resume another Agent turn (41.068791ms)
+﹣ timing: the default twelve-second turn timeout discards the late response (0.176125ms) # SKIP
+﹣ timing: three five-second inconclusive audit attempts block without sending (0.059042ms) # SKIP
+﹣ timing: sixty seconds of activity ends the run even below the twelve-step cap (0.068ms) # SKIP
+✔ 真实PG：并发账号CAS只有一个成功，非法边优先于状态冲突 (178.004541ms)
+✔ 账号完整36种状态组合严格遵循允许转移表，终态无出边 (232.01675ms)
+✔ 限流到期前已手动离线，不得被过期调度恢复为online (120.954958ms)
+✔ ACCOUNT_OFFLINE及SENDER_NOT_IN_GROUP只失败当前消息，账号和群不变 (111.632708ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ 同步SESSION_EXPIRED与异步account_status都执行相同终态后果 (451.631625ms)
+✔ 异步message_failed按错误传播账号终态或群不可写，不能混淆范围 (344.404458ms)
+✔ 真实PG：终态后果原子提交；步骤写失败整笔回滚 (203.145917ms)
+✔ 限流期间所有来源共用账号队列且恢复保持顺序 (115.591ms)
+✔ 503退避不能让同账号后续消息越过队首 (106.223917ms)
+✔ 504已落地查询收敛为sent，不重发；自身回流去重且不触发Agent (212.755458ms)
+✔ 504明确未落地只重试一次，第二次仍未落地最终failed (101.081833ms)
+✔ 真实时钟：两次504且均未落地，在5秒内确定失败并且只重发一次 (4431.50525ms)
+✔ 真实HTTP：窗口内取得的404延迟返回后不得触发重发，后续查询确认原消息 (2555.292792ms)
+✔ 崩溃发送意图恢复为unknown，没有已知504不得重发 (89.500625ms)
+✔ 发送持锁连接丢失后新worker就地接管，旧worker不能写accepted或重发 (108.8305ms)
+✔ 第二实例启动不能把活跃worker的发送标记为恢复未知 (87.918875ms)
+✔ 504查询不可用期间保持unknown，恢复后确认不会重复发出 (120.141917ms)
+✔ 已sent补投和重复确认不会重写首次确认时间 (211.688792ms)
+✔ kick同步终态错误也执行成员清理与取消，群错误只改变群 (91.884667ms)
+✔ kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未知时不删除成员 (2568.667292ms)
+✔ kick已确认删除等待群投影事务，旧成员快照不能覆盖删除结果 (200.425583ms)
+✔ 真实PG双实例发送互斥，单个outbox只调用一次远端 (87.604625ms)
+✔ 群不可写原子停止序列并取消Agent，不改变账号 (77.623834ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ 真实PG事件写失败后重放，乱序eventId与任意历史补投均保留 (185.503833ms)
+✔ 建群包括creator/admin，过期链接重申，promote仅一次 (132.413292ms)
+✔ 邀请ready时间前不join，ALREADY_MEMBER无需等待事件，可重试一次promote (654.884584ms)
+✔ 建群远端成功但本地写失败时记录待确认，禁止重复创建 (80.44175ms)
+✔ join事件超过10秒未到，任务失败且不提前promote (86.902708ms)
+✔ 非群主退出失败继续其他成员，群主不退出 (195.592875ms)
+✔ leave-all服务账号全部退出但保留外部用户，left公开视图为空并保存远端证据 (117.007292ms)
+✔ 时间线快照在历史补投和queued.sentAt改写时保持原始分页无重漏 (80.27125ms)
+✔ platform fixture: migration failure still releases acquired resources (186.448459ms)
+✔ platform fixture: app startup failure still releases acquired resources (193.970833ms)
+✔ platform: message dedup, own echo, delayed delivery and historical pagination (7669.71975ms)
+✔ platform: explicit 504 confirmation retries at most once and account-wide rate limit queues (12295.66375ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ platform: Agent exactly-once key, bad responses, audit blocking and no self-trigger (7823.587833ms)
+✔ platform: sequence preflight, variable inheritance and concurrent single running (6887.631041ms)
+✔ platform: account CAS, terminal atomic effects and owner-last failed leave (5897.364541ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ platform: database write failure retains events, reports inconsistency and replays after outage (7071.965ms)
+✔ platform: two instances enforce one Agent and share durable event replay (7902.468083ms)
+✔ platform: frozen pagination survives queued sentAt changes (7172.964334ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ platform: authenticated WebSocket replays missed events and logout closes the stream (6049.613125ms)
+✔ platform: SIGKILL during remote send recovers by evidence without resending (5676.936375ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ platform: S1 distinguishes accepted from sent and unknown survives query outage (9890.109959ms)
+✔ platform: schema lag refuses startup and viewer is denied all business write routes (104.593959ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ platform: audited kick confirms 504 and propagates permission errors without account mutation (8189.678625ms)
+✔ platform: Agent SEND_TIMEOUT repeats the same key without re-auditing or duplicating delivery (11269.525542ms)
+✔ platform: Agent kick deadline cancels real HTTP confirmation without replaying an uncertain effect (7625.597458ms)
+✔ temporary database: failed CREATE response still drops the database and closes the admin pool (237.803292ms)
+✔ temporary database: cleanup failure cannot skip later resources and repeated close runs once (219.537333ms)
+ℹ tests 98
+ℹ suites 0
+ℹ pass 95
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 3
+ℹ todo 0
+ℹ duration_ms 112099.090792

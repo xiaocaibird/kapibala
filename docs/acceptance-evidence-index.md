@@ -19,7 +19,7 @@
 <a id="e01"></a>
 ### E01 — A0 固定基线专项
 
-- **定位**：[报告](/Users/zcm/.codex/worktrees/a0-acceptance/kapibala/docs/a0-acceptance-report.md)、[JSON](/Users/zcm/.codex/worktrees/a0-acceptance/kapibala/docs/evidence/a0-acceptance-verification.json)、[测试](/Users/zcm/.codex/worktrees/a0-acceptance/kapibala/tests/integration/a0-acceptance.test.ts)、[新增测试日志](/Users/zcm/.codex/worktrees/a0-acceptance/kapibala/docs/evidence/a0-tests.tap)、[首次重启夹具失败日志](/Users/zcm/.codex/worktrees/a0-acceptance/kapibala/docs/evidence/a0-restart-fixture-initial.tap)。材料位于独立分支 `agent/a0-acceptance-evidence` 提交 `2ef168e`，尚未集成到主分支；以上是本机路径，不是可移植仓库相对路径。
+- **定位**：[报告](archives/a0-2026-09-30/docs/a0-acceptance-report.md)、[JSON](archives/a0-2026-09-30/docs/evidence/a0-acceptance-verification.json)、[测试](archives/a0-2026-09-30/tests/integration/a0-acceptance.test.ts)、[新增测试日志](archives/a0-2026-09-30/docs/evidence/a0-tests.tap)、[首次重启夹具失败日志](archives/a0-2026-09-30/docs/evidence/a0-restart-fixture-initial.tap)。材料位于独立分支 `agent/a0-acceptance-evidence` 提交 `2ef168e`，尚未集成到主分支；以上是本机路径，不是可移植仓库相对路径。
 - **基线与结果**：产品 `ef361957`；原定向4/4，新增7个子测试加父测试共8/8。仅为历史固定版本；第二轮迁移与客户端会话已改变，当前证据分别见E09/E12，不能称此报告在最新main重跑。
 - **查找字段**：`observations[].id` 中的 `migration-startup`（真实 schema 5 拒启、补至 6 后健康）、`migration-repeat`（结构、迁移记录和业务摘要）、`viewer-all-write-routes`（注册路由与9项矩阵一致，逐项403且业务快照不变/外部零调用）、`error-envelope`（代表错误）、`real-process-session-restart`（重启后的身份权限）。
 - **边界**：未检查历史 SQL 修改、迁移编号/记录缺口、迁移中途失败及并发迁移；15分钟有效期通过数据库间隔及到期前后请求验证，不是实等15分钟。正常旧库测试仍有效，不据此判断迁移历史校验完善。
@@ -121,6 +121,13 @@
 - **定位**：[实际切换JSON](evidence/core-round-two-rollout.json)、[第二轮记录](core-repair-round-two.md)。2026-10-01 03:50:31（北京时间）完成，从main启动源`56e320c`运行，产品树与已全测`3c071d2`一致，schema7。
 - **实际步骤与保留**：停旧四实例，确认running序列/job/Agent及pending outbox均0、无其他DB连接；停写状态新备份后，显式旧六版基线化、007及重复迁移。18表旧字段/旧记录投影（含旧迁移applied_at微秒精度）和两个模拟器文件哈希保持，15条历史消息观察字段均NULL；不能把旧投影一致说成新ledger字段未改变。
 - **检查与边界**：API及前端代理health均schema7、5173 HTTP200，真实浏览器登录入口呈现；未在演示重跑业务写流程，也不是全库恢复演练或人工验收通过。前置条件与显式基线的有限背书继续适用，不因一次升级成功扩展到任意旧库。
+
+<a id="e15"></a>
+### E15 — 架构局部质量候选（待 review，未合 main）
+
+- **定位**：[本批记录](architecture-quality-closeout.md)、[结构化验证](evidence/architecture-quality-verification.json)。AR-04 执行准入、AR-08 请求 schema、AR-09 读取恢复、AR-10 测试夹具；其余架构建议维持原分类与授权边界。
+- **当前证据**：夹具修后 `0972229` 全套 361/361、0 失败/跳过；三组真实计时开关开启。产品源与构建通过的 `e45fc4a` 相同；`a17db82` 生产浏览器 7/7、页面及清理错误均为 0。间歇失败的受控反例、最小夹具修复和原失败记录均保留，不覆盖旧批次事实。
+- **版本边界**：独立 `agent/architecture-quality-review`，未合 main、未切换演示、用户未 review。仅更新候选证据，不将旧演示视为具有新机制，也不代填人工通过。
 
 ## 源码发现、修复结果与仍待决定事项
 

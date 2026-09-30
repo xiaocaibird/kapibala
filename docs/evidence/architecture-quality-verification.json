@@ -1,0 +1,95 @@
+{
+  "recordedAt": "2026-09-30T21:05:42.939821+00:00",
+  "baseline": "cc5d3d23d1fa68631026b62286860a81ff558c1b",
+  "reviewBranch": "agent/architecture-quality-review",
+  "mainMerged": false,
+  "demoUpdated": false,
+  "fullSuite": {
+    "sourceHead": "0972229a0f0531e3c8bd574691eaca799f1aa17f",
+    "command": "DATABASE_URL=<dedicated disposable PG> AUTOMATION_TIMING_TESTS=1 CORE_AUTOMATION_TIMING_TESTS=1 SESSION_COOKIE_TIMING_TESTS=1 npm test",
+    "exitCode": 0,
+    "tests": 361,
+    "pass": 361,
+    "fail": 0,
+    "skipped": 0,
+    "durationMs": 116838.623458,
+    "log": "architecture-quality-final-tests.log"
+  },
+  "build": {
+    "sourceHead": "e45fc4a8eccc79255a5515fd7de8d96538fc32f5",
+    "command": "npm run build",
+    "exitCode": 0,
+    "log": "architecture-quality-build.log"
+  },
+  "databaseEnvironment": {
+    "container": "kapibala-architecture-11dc6e4f6c",
+    "image": "postgres:17-alpine",
+    "hostPort": 50033,
+    "ephemeral": true,
+    "demoPort": 55432,
+    "usesDemoDatabase": false
+  },
+  "priorIntermittentFailure": {
+    "evidence": "architecture-runtime-verification.json",
+    "status": "Confirmed observer cleanup race repaired and controlled-delay counterexample passes; original failure scene not directly captured"
+  },
+  "originalRequirementsSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+  "manualAcceptance": "pending",
+  "observerShutdownRepair": {
+    "sourceCommit": "c9fac1e0e68c34ff6c7ee24543dd38b94f4eea05",
+    "analysis": "architecture-observer-shutdown.json",
+    "archive": "architecture-observer-shutdown-evidence.tar.gz",
+    "archiveSha256": "8784a5dccf072ebd9d0b201988c146f802594bc813b8dda3796a1275fba37b76",
+    "scope": "One test fixture only; actual Client.end awaited, no product transaction change",
+    "evidenceBoundary": "Controlled delay reproduces same error class; prior failure scene was not instrumented and other possible causes are not excluded"
+  },
+  "browser": {
+    "sourceHead": "a17db82",
+    "productSourceSameAs": "e45fc4a",
+    "productionBuild": true,
+    "passed": true,
+    "cases": 7,
+    "pageErrors": 0,
+    "cleanupErrors": 0,
+    "report": "architecture-resource-browser.json",
+    "initialFailure": "architecture-resource-browser-initial-failure.json",
+    "initialFailureCause": "Exact text label locator did not locate textarea; 4 read-recovery scenarios had passed. Script uses textbox accessible name in final run; no product changes."
+  },
+  "initialFullSuite": {
+    "sourceHead": "e45fc4a8eccc79255a5515fd7de8d96538fc32f5",
+    "command": "DATABASE_URL=<dedicated disposable PG> AUTOMATION_TIMING_TESTS=1 CORE_AUTOMATION_TIMING_TESTS=1 SESSION_COOKIE_TIMING_TESTS=1 npm test",
+    "exitCode": 0,
+    "tests": 361,
+    "pass": 361,
+    "fail": 0,
+    "skipped": 0,
+    "durationMs": 113126.872208,
+    "log": "architecture-quality-full-tests.log"
+  },
+  "delivery": {
+    "reviewSourceHead": "a17db82",
+    "productSourceSameAs": "e45fc4a",
+    "verifiedMainHead": "cc5d3d23d1fa68631026b62286860a81ff558c1b",
+    "mainWorkingTreeClean": true,
+    "mainMerged": false,
+    "demoUpdated": false,
+    "demoManifestSourceCommit": "56e320cfde5d85e79c658b86d6dc6fe5af8b7ea9",
+    "manualReview": "pending"
+  },
+  "cleanup": {
+    "beforeStop": {
+      "nonSystemDatabases": [],
+      "customSchemas": [],
+      "activeConnections": []
+    },
+    "browserAndTemporaryServersClosed": true,
+    "containerStopSucceeded": true,
+    "containerAutoRemoved": true
+  },
+  "staticVerification": {
+    "localDocLinkTargets": 338,
+    "historicalArchiveFilesMatchGitAndSha256": 6,
+    "productDiffSinceBuild": "empty for apps and packages",
+    "gitDiffCheck": "passed"
+  }
+}
