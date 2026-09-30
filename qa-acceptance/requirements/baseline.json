@@ -100,6 +100,11 @@
       "id": "QA-D5",
       "source": "用户本次明确授权必要QA资产调整；D036/D037批准范围见docs/decisions.md:53–57",
       "decision": "补齐容量耗尽、触发停止、读写重试、取消/预算/政策交错等通用质量风险的QA设计；原遗漏属于QA覆盖不足，不以新增业务需求解释。仅调整QA资产并自检工具，产品执行仍须单独授权。"
+    },
+    {
+      "id": "QA-D6",
+      "source": "2026-10-01本会话：QA建议普通序列失败使整条run为failed且停止后续发送，用户明确回复“按你的建议执行”；详见qa-acceptance/requirements/sequence-failure-policy.md",
+      "decision": "补充原B1未规定的普通发送失败策略：步骤及run为failed，后续不发送，重启不恢复后续发送；保留原无匹配账号skipped继续、rate_limited等待、unknown确认流程和群不可写stopped。只授权QA资产更新，产品执行仍须单独授权。"
     }
   ],
   "requiredAdditions": [
@@ -114,7 +119,8 @@
     "CR-010",
     "CR-011",
     "CR-012",
-    "CR-013"
+    "CR-013",
+    "ADD-SEQ-FAIL-01"
   ],
   "additionNotes": {
     "CR-003": "排序方向最终由CR-007承接，不能把早期实现默认值冒充当时用户确认。",
@@ -169,6 +175,22 @@
       ],
       "impactReview": "qa-acceptance/requirements/architecture-impact.md",
       "riskReview": "qa-acceptance/requirements/risk-coverage-review.md",
+      "productTestingAuthorized": false
+    },
+    {
+      "id": "QA-REV-03",
+      "date": "2026-10-01",
+      "qaBaseCommit": "7cfa1743c71656d561419db75bb0c8f5583d466c",
+      "qaBranch": "agent/qa-sequence-failure-policy",
+      "classification": "用户批准原B1普通失败终止的补充口径；同步修正原A2可选重发的过约束断言",
+      "requirementIds": ["ADD-SEQ-FAIL-01"],
+      "decisionIds": ["QA-D6"],
+      "decisionRecord": "qa-acceptance/requirements/sequence-failure-policy.md",
+      "preserves": [
+        "原始需求内容和SHA-256、原baseCommit及sourceSnapshots",
+        "原跳过/限流等待/unknown确认/群不可写stopped规则",
+        "13项工程接入依赖及产品NOT_RUN状态"
+      ],
       "productTestingAuthorized": false
     }
   ]

@@ -4,7 +4,8 @@
 
 ## 阅读入口
 
-- [原24条设计阻塞复核](requirements/blocker-reassessment.md)：逐项区分脚本、工程/夹具依赖和唯一业务待决，不以 automated 数量冒充就绪度。
+- [原24条设计阻塞复核](requirements/blocker-reassessment.md)：24条均有脚本，13条工程/夹具依赖未接入，11条script-ready，0条业务决策待定；不以 automated 数量冒充就绪度。
+- [普通序列失败裁定](requirements/sequence-failure-policy.md)：用户已批准普通发送失败使整条运行failed、后续不发送；保留原跳过、限流等待、结果确认及群不可写停止规则。
 - [共享用例与开发提测入口](sharing/README.md)：QA 维护一份标准，开发只读选取预跑，报告与正式验收隔离。
 - [本轮方案影响评估](requirements/architecture-impact.md)、[横向风险覆盖复核](requirements/risk-coverage-review.md)、[跨职责交接流程](requirements/collaboration.md)。
 - [需求基线与来源](requirements/baseline.json)、[逐项需求](requirements/catalog.json)、[需求—用例追踪](requirements/traceability.md)。
