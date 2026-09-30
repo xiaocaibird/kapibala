@@ -1,0 +1,566 @@
+{
+  "date": "2026-09-30",
+  "sourceCommit": "b6d7743",
+  "backendCommit": "0ad7cb7",
+  "frontendCommit": "b6d7743",
+  "scope": "PI-02 group status and Agent automatic-response setting filters only",
+  "checks": {
+    "build": "passed (root and web TypeScript checks plus Vite build)",
+    "focusedTests": {
+      "registered": 65,
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0,
+      "durationMs": 2226.045083,
+      "web": 46,
+      "groupDirectory": 11,
+      "groupMetadata": 8,
+      "command": "DATABASE_URL=postgres://kapibala:kapibala@localhost:55432/postgres npx tsx --test tests/integration/group-directory.test.ts tests/integration/group-metadata.test.ts apps/web/tests/*.test.ts",
+      "isolation": "Each PostgreSQL fixture uses a temporary database; 11 logged directory database names verified absent afterward; metadata helper cleans its separate fixtures.",
+      "fullRegressionRerun": false
+    },
+    "originalSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+    "diffCheck": "passed"
+  },
+  "browser": {
+    "database": "group_filter_qa_7ab5030ccdb547bdb1eabaa42db3f51e",
+    "url": "http://127.0.0.1:50705",
+    "seeded": 65,
+    "userChromeTouched": false,
+    "results": [
+      "active+true server-filtered first page20 then10:30 unique cards all matching",
+      "detail round trip retains filters and30 loaded cards",
+      "left+true shows no matches, not empty-system or failure",
+      "left+false+asc+q directory65 returns1; clear preserves left/false/asc; request log confirms",
+      "reset removes keyword/status/Agent filters and returns descending first page20",
+      "next-page503 retains20; existing single-page poll clears error; subsequent load-more returns30",
+      "isolated API PATCH group60 Agent true-to-false invalidates30-card cache",
+      "first-page503 retains30 stale cards; successful refresh replaces with20 and excludes group60",
+      "existing wrapped toolbar layout readable without CSS changes"
+    ],
+    "screenshot": "group-directory-filters.png",
+    "counters": {
+      "directory": 73,
+      "create": 0,
+      "patch": 1,
+      "heldWrites": 0
+    },
+    "querySamples": [
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": ""
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": ""
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": ""
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true",
+        "cursor": "eyJ2IjoxLCJjcmVhdGVkQXQiOiIyMDI2LTA5LTMwVDEyOjAwOjAwLjAwMDAyMloiLCJpZCI6IjYzNmYxMjUyLWQ1MmItNGY4Yy04MjYyLTMzMTgxY2Y2NDRjMSIsInEiOiIiLCJvcmRlciI6ImRlc2MiLCJwYWdlU2l6ZSI6MjAsInN0YXR1cyI6ImFjdGl2ZSIsImFnZW50RW5hYmxlZCI6dHJ1ZX0"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "left",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "left",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "left",
+        "agentEnabled": "false"
+      },
+      {
+        "pageSize": "20",
+        "order": "asc",
+        "q": "",
+        "status": "left",
+        "agentEnabled": "false"
+      },
+      {
+        "pageSize": "20",
+        "order": "asc",
+        "q": "目录验收 65",
+        "status": "left",
+        "agentEnabled": "false"
+      },
+      {
+        "pageSize": "20",
+        "order": "asc",
+        "q": "目录验收 65",
+        "status": "left",
+        "agentEnabled": "false"
+      },
+      {
+        "pageSize": "20",
+        "order": "asc",
+        "q": "目录验收 65",
+        "status": "left",
+        "agentEnabled": "false"
+      },
+      {
+        "pageSize": "20",
+        "order": "asc",
+        "q": "目录验收 65",
+        "status": "left",
+        "agentEnabled": "false"
+      },
+      {
+        "pageSize": "20",
+        "order": "asc",
+        "q": "目录验收 65",
+        "status": "left",
+        "agentEnabled": "false"
+      },
+      {
+        "pageSize": "20",
+        "order": "asc",
+        "q": "目录验收 65",
+        "status": "left",
+        "agentEnabled": "false"
+      },
+      {
+        "pageSize": "20",
+        "order": "asc",
+        "q": "",
+        "status": "left",
+        "agentEnabled": "false"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": ""
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": ""
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": ""
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": ""
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": ""
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true",
+        "cursor": "eyJ2IjoxLCJjcmVhdGVkQXQiOiIyMDI2LTA5LTMwVDEyOjAwOjAwLjAwMDAyMloiLCJpZCI6IjYzNmYxMjUyLWQ1MmItNGY4Yy04MjYyLTMzMTgxY2Y2NDRjMSIsInEiOiIiLCJvcmRlciI6ImRlc2MiLCJwYWdlU2l6ZSI6MjAsInN0YXR1cyI6ImFjdGl2ZSIsImFnZW50RW5hYmxlZCI6dHJ1ZX0"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true",
+        "cursor": "eyJ2IjoxLCJjcmVhdGVkQXQiOiIyMDI2LTA5LTMwVDEyOjAwOjAwLjAwMDAyMloiLCJpZCI6IjYzNmYxMjUyLWQ1MmItNGY4Yy04MjYyLTMzMTgxY2Y2NDRjMSIsInEiOiIiLCJvcmRlciI6ImRlc2MiLCJwYWdlU2l6ZSI6MjAsInN0YXR1cyI6ImFjdGl2ZSIsImFnZW50RW5hYmxlZCI6dHJ1ZX0"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      },
+      {
+        "pageSize": "20",
+        "order": "desc",
+        "q": "",
+        "status": "active",
+        "agentEnabled": "true"
+      }
+    ],
+    "cleanup": {
+      "status": "stopped",
+      "errors": [],
+      "databaseAbsent": true,
+      "tabClosed": true
+    }
+  },
+  "limits": [
+    "No real OS IME interaction repeated; IME and late-response race covered by controller tests",
+    "No unrelated full or long timing regression rerun",
+    "Developer verification does not establish user acceptance"
+  ],
+  "demoUpdate": {
+    "status": "completed",
+    "sourceCommit": "b6d774331f8f935b6e60f6bcacfbda9152aca2c3",
+    "startedAtLocal": "2026-09-30 22:47:25 Asia/Shanghai",
+    "schemaVersion": 6,
+    "manifestEvidence": "group-directory-filters-rollout.json",
+    "businessDataPreserved": true
+  }
+}
