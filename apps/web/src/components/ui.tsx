@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import React, { useEffect, useRef, type ReactNode } from "react";
 import { ApiError, describeError } from "../api/client";
 export function Icon({
   name,
@@ -251,7 +251,13 @@ export function Modal({
     </dialog>
   );
 }
-export function DateTime({ value }: { value: string | null }) {
+export function DateTime({
+  value,
+  includeYear = false,
+}: {
+  value: string | null;
+  includeYear?: boolean;
+}) {
   if (!value) return <span className="muted">—</span>;
   const date = new Date(value);
   return (
@@ -260,6 +266,7 @@ export function DateTime({ value }: { value: string | null }) {
         ? value
         : date.toLocaleString("zh-CN", {
             hour12: false,
+            year: includeYear ? "numeric" : undefined,
             month: "2-digit",
             day: "2-digit",
             hour: "2-digit",

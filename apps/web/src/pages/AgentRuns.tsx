@@ -38,7 +38,7 @@ export function AgentRuns() {
             </option>
             {data?.map((group) => (
               <option key={group.id} value={group.id}>
-                {group.gatewayGroupId}
+                {groupOptionLabel(group)}
               </option>
             ))}
           </select>
@@ -183,3 +183,4 @@ export function AgentRunDetail({ id }: { id: string }) {
     </>
   );
 }
+import { groupOptionLabel } from "../api/groupProfile";

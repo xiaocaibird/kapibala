@@ -1,5 +1,10 @@
 import { useState, type FormEvent } from "react";
+import {
+  GROUP_DESCRIPTION_MAX_LENGTH,
+  GROUP_NAME_MAX_LENGTH,
+} from "../../../../packages/contracts/src/index";
 import { post } from "../api/client";
+import { createGroupProfile } from "../api/groupProfile";
 import { accountSchema, jobIdSchema } from "../api/schemas";
 import { useResource } from "../hooks/useResource";
 import { ErrorNotice, Loading, Modal } from "./ui";
@@ -15,6 +20,8 @@ export function CreateGroup({
   const [creator, setCreator] = useState("");
   const [admin, setAdmin] = useState("");
   const [members, setMembers] = useState<string[]>([]);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState<unknown>(null);
   const online = data?.filter((account) => account.status === "online") ?? [];
@@ -24,6 +31,7 @@ export function CreateGroup({
     setActionError(null);
     try {
       const { jobId } = await post("/api/groups", jobIdSchema, {
+        ...createGroupProfile({ name, description }),
         creatorAccountId: creator,
         memberAccountIds: [
           admin,
@@ -48,6 +56,34 @@ export function CreateGroup({
           <Loading />
         ) : (
           <>
+            <label>
+              群名称 <span className="muted small">可选</span>
+              <input
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                disabled={busy}
+                placeholder="例如：产品协作群"
+                aria-describedby="create-group-name-help"
+              />
+              <span className="muted small" id="create-group-name-help">
+                留空时显示网关群 ID；填写后去除首尾空格，最多{" "}
+                {GROUP_NAME_MAX_LENGTH} 个字符。
+              </span>
+            </label>
+            <label>
+              群简介 <span className="muted small">可选</span>
+              <textarea
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+                disabled={busy}
+                rows={3}
+                placeholder="介绍这个群的用途与协作安排"
+                aria-describedby="create-group-description-help"
+              />
+              <span className="muted small" id="create-group-description-help">
+                最多 {GROUP_DESCRIPTION_MAX_LENGTH} 个字符，可稍后编辑。
+              </span>
+            </label>
             <label>
               群主账号
               <select

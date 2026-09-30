@@ -20,6 +20,7 @@ import {
 import { Timeline } from "../components/Timeline";
 import { AgentRunList } from "../components/AgentRunList";
 import { JobProgress } from "../components/JobProgress";
+import { GroupProfile, EditGroupProfile } from "../components/GroupProfile";
 const accountsSchema = accountSchema.array();
 export function GroupDetail({ id }: { id: string }) {
   const { user } = useAuth();
@@ -33,6 +34,7 @@ export function GroupDetail({ id }: { id: string }) {
   const [actionError, setActionError] = useState<unknown>(null);
   const [busy, setBusy] = useState(false);
   const [leaveOpen, setLeaveOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [jobId, setJobId] = useState<string | null>(null);
   const toggle = async (
     key: "agentEnabled" | "autoKickEnabled",
@@ -84,8 +86,8 @@ export function GroupDetail({ id }: { id: string }) {
       </a>
       <PageHeader
         eyebrow="GROUP DETAILS"
-        title={group.gatewayGroupId}
-        subtitle={`群组 ID · ${group.id}`}
+        title={group.name ?? group.gatewayGroupId}
+        subtitle={`网关群 ID · ${group.gatewayGroupId}`}
         actions={
           <>
             <Badge status={group.status} />
@@ -110,6 +112,11 @@ export function GroupDetail({ id }: { id: string }) {
           <AgentRunList groupId={id} />
         </div>
         <aside className="detail-aside">
+          <GroupProfile
+            group={group}
+            canEdit={user?.role === "admin"}
+            onEdit={() => setProfileOpen(true)}
+          />
           <section className="panel">
             <div className="panel-header">
               <h2>自动化设置</h2>
@@ -180,6 +187,14 @@ export function GroupDetail({ id }: { id: string }) {
           )}
         </aside>
       </div>
+      {profileOpen && user?.role === "admin" && (
+        <EditGroupProfile
+          key={group.id}
+          group={group}
+          onClose={() => setProfileOpen(false)}
+          onSaved={reload}
+        />
+      )}
       {leaveOpen && (
         <Modal title="确认全部服务账号退群" onClose={() => setLeaveOpen(false)}>
           <p>

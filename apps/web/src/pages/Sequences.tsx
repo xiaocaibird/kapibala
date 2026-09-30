@@ -204,7 +204,7 @@ export function Sequences({
                 </option>
                 {groups.data?.map((item) => (
                   <option key={item.id} value={item.id}>
-                    {item.gatewayGroupId} ·{" "}
+                    {groupOptionLabel(item)} ·{" "}
                     {item.status === "active" ? "可用" : "不可用"}
                   </option>
                 ))}
@@ -511,3 +511,4 @@ function CreateSequence({
     </Modal>
   );
 }
+import { groupOptionLabel } from "../api/groupProfile";

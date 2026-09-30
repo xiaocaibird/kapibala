@@ -4,6 +4,7 @@ import { useResource } from "../hooks/useResource";
 import { useAuth } from "../state/auth";
 import {
   Badge,
+  DateTime,
   Empty,
   ErrorNotice,
   Icon,
@@ -88,10 +89,16 @@ export function Groups() {
                 </span>
                 <Badge status={group.status} />
               </div>
-              <h3>{group.gatewayGroupId}</h3>
-              <span className="mono muted small truncate" title={group.id}>
-                {group.id}
+              <h3>{group.name ?? group.gatewayGroupId}</h3>
+              <span
+                className="mono muted small truncate"
+                title={group.gatewayGroupId}
+              >
+                网关 ID · {group.gatewayGroupId}
               </span>
+              <div className="group-created muted small">
+                创建于 <DateTime value={group.createdAt} includeYear />
+              </div>
               <div className="group-card-stats">
                 <span>
                   <Icon name="users" size={16} />

@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+  GROUP_DESCRIPTION_MAX_LENGTH,
+  GROUP_NAME_MAX_LENGTH,
+} from "../../../../packages/contracts/src/index";
 import type {
   Account,
   Group,
@@ -36,6 +40,19 @@ export const accountSchema: z.ZodType<Account> = z.object({
 export const groupSchema: z.ZodType<Group> = z.object({
   id: z.string(),
   gatewayGroupId: z.string(),
+  name: z
+    .string()
+    .min(1)
+    .max(GROUP_NAME_MAX_LENGTH)
+    .refine((value) => value === value.trim())
+    .nullable(),
+  description: z
+    .string()
+    .min(1)
+    .max(GROUP_DESCRIPTION_MAX_LENGTH)
+    .refine((value) => value === value.trim())
+    .nullable(),
+  createdAt: z.iso.datetime(),
   status: z.enum(["active", "unreachable", "left"]),
   creatorAccountId: z.string(),
   agentEnabled: z.boolean(),
