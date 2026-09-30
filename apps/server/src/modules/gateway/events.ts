@@ -301,6 +301,8 @@ export class GatewayEvents {
             const gatewayMembers = memberListSchema.parse(
               await this.ctx.gateway.request(
                 `/groups/${encodeURIComponent(event.groupId)}/members`,
+                undefined,
+                2000,
               ),
             );
             const beforeMembers = (
