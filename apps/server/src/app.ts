@@ -11,11 +11,14 @@ import { registerRealtime } from "./core/realtime.js";
 import { assertSchemaCurrent } from "./core/migrations.js";
 import type { AppContext } from "./core/context.js";
 import type { PlatformModule } from "./core/messaging.js";
+import { ModuleProgress } from "./core/module-progress.js";
+import type { RealtimeLimits } from "./core/socket-sender.js";
 export interface AppOptions {
   db?: Database;
   modules?: (ctx: AppContext) => PlatformModule[];
   background?: boolean;
   logger?: boolean;
+  realtime?: RealtimeLimits;
 }
 export async function createApp(options: AppOptions = {}) {
   const app = Fastify({
@@ -87,7 +90,7 @@ export async function createApp(options: AppOptions = {}) {
     }),
   );
   await registerAuth(app, db);
-  await registerRealtime(app, db);
+  await registerRealtime(app, db, options.realtime);
   app.get("/api/health", async () => ({ ok: true, schemaVersion: version }));
   const ctx: AppContext = {
     db,
@@ -98,20 +101,57 @@ export async function createApp(options: AppOptions = {}) {
     log: app.log,
   };
   const modules = options.modules?.(ctx) ?? [];
+  const progress = modules.map(
+    (module, index) =>
+      new ModuleProgress(
+        "name" in module && typeof module.name === "string"
+          ? module.name
+          : `module-${index + 1}`,
+        options.background !== false,
+      ),
+  );
+  app.get("/api/diagnostics/background", async (request) => {
+    if (request.identity?.role !== "admin")
+      throw new AppError(403, "FORBIDDEN", "后台运行诊断仅管理员可查看");
+    return {
+      scope: "process",
+      semantics: "scheduler-ticks-not-business-completion",
+      observedAt: new Date().toISOString(),
+      backgroundEnabled: options.background !== false,
+      modules: progress.map((activity) => activity.snapshot()),
+    };
+  });
   for (const module of modules) await module.register(app);
   const timers: NodeJS.Timeout[] = [];
   const ticks = new Set<Promise<void>>();
   if (options.background !== false)
-    for (const module of modules) {
-      await module.recover?.();
+    for (const [index, module] of modules.entries()) {
+      const activity = progress[index]!;
+      activity.recovery = "running";
+      try {
+        await module.recover?.();
+        activity.recovery = "succeeded";
+      } catch (err) {
+        activity.recovery = "failed";
+        app.log.error({ err, module: activity.name }, "Module recovery failed");
+        throw err;
+      }
       let busy = false;
       timers.push(
         setInterval(() => {
           if (busy) return;
           busy = true;
-          const tick = module
-            .tick()
-            .catch((err) => app.log.error({ err }, "Module tick failed"))
+          activity.start();
+          const tick = Promise.resolve()
+            .then(() => module.tick())
+            .then(() => activity.finish(true))
+            .catch((err) => {
+              activity.finish(false);
+              app.log.error(
+                { err, module: activity.name },
+                "Module tick failed",
+              );
+            })
             .finally(() => {
               busy = false;
               ticks.delete(tick);

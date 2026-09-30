@@ -2,20 +2,26 @@ import type { FastifyInstance } from "fastify";
 import { z } from "zod";
 import type { Database } from "./db.js";
 import { authenticate } from "./auth.js";
+import { boundedSocketSender, type RealtimeLimits } from "./socket-sender.js";
 export async function registerRealtime(
   app: FastifyInstance,
   db: Database,
+  limits?: RealtimeLimits,
 ): Promise<void> {
   app.get("/ws", { websocket: true }, (socket) => {
+    const sender = boundedSocketSender(socket, limits);
     let token: string | undefined;
     let seq = 0;
     let authenticating = false;
     let stopped = false;
     let busy = false;
+    let markerBusy = false;
+    const pendingMarkers = new Set<string>();
     const deadline = setTimeout(() => {
-      if (!token) socket.close(4401, "Authentication required");
+      if (!token) sender.close(4401, "Authentication required");
     }, 5000);
     socket.on("message", async (raw) => {
+      if (stopped || sender.stopped) return;
       if (token) {
         let input: unknown;
         try {
@@ -31,26 +37,45 @@ export async function registerRealtime(
           })
           .safeParse(input);
         if (!marker.success) return;
+        // Batch pending marker reads without dropping any admitted request ID.
+        // The fixed queue also bounds work when a peer floods control frames.
+        pendingMarkers.add(marker.data.requestId);
+        if (pendingMarkers.size > 128) {
+          pendingMarkers.clear();
+          sender.close(1013, "Too many pending markers; reconnect to resume");
+          return;
+        }
+        if (markerBusy) return;
+        markerBusy = true;
         try {
-          await authenticate(db, token);
-          const startSeq = Number(
-            (
-              await db.query<{ seq: string }>(
-                "SELECT COALESCE(max(seq),0) AS seq FROM events",
-              )
-            ).rows[0]?.seq ?? 0,
-          );
-          // Control acknowledgements never advance the durable event replay cursor.
-          if (!stopped && socket.readyState === 1)
-            socket.send(
-              JSON.stringify({
-                type: "scope_ready",
-                requestId: marker.data.requestId,
-                startSeq,
-              }),
+          while (pendingMarkers.size && !sender.stopped) {
+            const requestIds = [...pendingMarkers];
+            pendingMarkers.clear();
+            await authenticate(db, token);
+            const startSeq = Number(
+              (
+                await db.query<{ seq: string }>(
+                  "SELECT COALESCE(max(seq),0) AS seq FROM events",
+                )
+              ).rows[0]?.seq ?? 0,
             );
+            // Control acknowledgements never advance the durable event replay cursor.
+            for (const requestId of requestIds) {
+              if (
+                stopped ||
+                !(await sender.send({
+                  type: "scope_ready",
+                  requestId,
+                  startSeq,
+                }))
+              )
+                break;
+            }
+          }
         } catch {
-          socket.close(4401, "Session or connection unavailable");
+          sender.close(4401, "Session or connection unavailable");
+        } finally {
+          markerBusy = false;
         }
         return;
       }
@@ -77,15 +102,15 @@ export async function registerRealtime(
           );
         token = auth.accessToken;
         clearTimeout(deadline);
-        socket.send(JSON.stringify({ type: "auth", success: true }));
+        await sender.send({ type: "auth", success: true });
       } catch {
-        socket.close(4401, "Unauthorized");
+        sender.close(4401, "Unauthorized");
       } finally {
         authenticating = false;
       }
     });
     const timer = setInterval(() => {
-      if (stopped || busy || !token) return;
+      if (stopped || sender.stopped || busy || !token) return;
       busy = true;
       void (async () => {
         await authenticate(db, token);
@@ -98,20 +123,18 @@ export async function registerRealtime(
           [seq],
         );
         for (const row of events.rows) {
-          if (socket.readyState !== 1) break;
-          socket.send(
-            JSON.stringify({
-              seq: Number(row.seq),
-              type: row.type,
-              payload: row.payload,
-            }),
-          );
+          const sent = await sender.send({
+            seq: Number(row.seq),
+            type: row.type,
+            payload: row.payload,
+          });
+          if (!sent) break;
           seq = Number(row.seq);
         }
       })()
         .catch((error) => {
           app.log.warn({ err: error }, "Realtime stream interrupted");
-          socket.close(4401, "Session or connection unavailable");
+          sender.close(4401, "Session or connection unavailable");
         })
         .finally(() => {
           busy = false;
@@ -119,6 +142,7 @@ export async function registerRealtime(
     }, 100);
     socket.on("close", () => {
       stopped = true;
+      pendingMarkers.clear();
       clearInterval(timer);
       clearTimeout(deadline);
     });

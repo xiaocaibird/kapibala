@@ -47,7 +47,7 @@ const groupInput = z
 
 export function createGatewayModule(
   ctx: AppContext,
-): PlatformModule & MessagingService {
+): PlatformModule & MessagingService & { readonly name: string } {
   const accounts = new Accounts(ctx);
   const messages = new Messages(ctx);
   const events = new GatewayEvents(ctx, messages);
@@ -258,6 +258,7 @@ export function createGatewayModule(
       let snapshotId: string;
       let offset = 0;
       let items: Message[];
+      let total: number;
       if (before) {
         try {
           const cursor = parse(
@@ -273,9 +274,12 @@ export function createGatewayModule(
           throw new AppError(400, "VALIDATION_ERROR", "消息游标无效");
         }
         const snapshot = (
-          await ctx.db.query<{ items: Message[] }>(
-            "SELECT items FROM timeline_snapshots WHERE id=$1 AND group_id=$2",
-            [snapshotId, id],
+          await ctx.db.query<{ items: Message[]; total: number }>(
+            // Slice in PostgreSQL: old cursors and frozen ordering stay intact,
+            // while continuation pages no longer transfer the complete snapshot.
+            // PostgreSQL still reads the JSONB value; this is not incremental storage.
+            "SELECT jsonb_array_length(items) AS total, COALESCE((SELECT jsonb_agg(items->position ORDER BY position) FROM generate_series(LEAST($3::numeric, jsonb_array_length(items))::int, LEAST(jsonb_array_length(items), $3::numeric+$4::int)::int-1) AS position), '[]'::jsonb) AS items FROM timeline_snapshots WHERE id=$1 AND group_id=$2",
+            [snapshotId, id, offset, limit],
           )
         ).rows[0];
         if (!snapshot)
@@ -285,6 +289,7 @@ export function createGatewayModule(
             "消息快照不存在，请刷新时间线",
           );
         items = snapshot.items;
+        total = snapshot.total;
       } else {
         if (
           !(await ctx.db.query("SELECT 1 FROM groups WHERE id=$1", [id]))
@@ -303,12 +308,14 @@ export function createGatewayModule(
           "INSERT INTO timeline_snapshots(id,group_id,items) VALUES($1,$2,$3)",
           [snapshotId, id, JSON.stringify(items)],
         );
+        total = items.length;
+        items = items.slice(0, limit);
       }
       const next = offset + limit;
       return {
-        items: items.slice(offset, next),
+        items,
         nextCursor:
-          next < items.length
+          next < total
             ? Buffer.from(
                 JSON.stringify({ snapshotId, offset: next }),
               ).toString("base64url")
@@ -318,6 +325,7 @@ export function createGatewayModule(
     });
   }
   return {
+    name: "gateway",
     register,
     enqueueSend: (input, tx) => messages.enqueueSend(input, tx),
     getMessage: (clientMsgId) => messages.getMessage(clientMsgId),
