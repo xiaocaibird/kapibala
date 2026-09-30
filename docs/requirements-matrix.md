@@ -6,7 +6,7 @@
 
 ## 证据口径与版本
 
-源码审查基线为 `3b15955`，补充读取 `90ae48e` 及本轮集成工作树，记录时间 2026-09-30 晚间（北京时间）。测试名称与路径见文末索引；后续修订需更新版本及受影响条目。**全部用户人工验收仍待进行**；开发者浏览器检查、自动验证均不等于用户已验收。
+本次补充读取源码 `5a35ce6`、后续 `52e7dbd` 及下述测试日志，记录时间 2026-09-30 晚间（北京时间）。测试名称与路径见文末索引；后续修订需更新版本及受影响条目。**全部用户人工验收仍待进行**；开发者浏览器检查、自动验证均不等于用户已验收。
 
 - **自动通过**：已实际执行且断言覆盖本行描述的场景，不扩大到未测分支。
 - **部分验证**：已有实现和部分证据，列出的分支或时限仍待验证。
@@ -15,9 +15,22 @@
 - **待修复**：有明确失败或已确认缺陷；修复后须复验。当前表不以“未验证”冒充失败。
 - **未实现**：未进入当前范围的扩展。
 
-已确认的本轮执行证据：完整 `npm test` **60/60 通过，约77秒**，包含 P01–P12 系统场景、G01–G22 网关模块、B01–B16 自动化模块、H01 会话、D01 数据库容量、W01–W08 控制台机制。执行时HEAD记录为 `e8985cc`，同时包含当时集成工作树新增的P11/P12、D01及测试命令更新；不要把HEAD单独视为完整测试树。之后 `90ae48e` 新增 B17–B23 和恢复修订：模块执行者报告快速20项及实际计时3项通过，集成后的最终全套复跑仍待确认。
+本轮执行证据分开登记，避免把后续新增断言混入较早的全套结果：
 
-P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服务；其中 P09 使用真实 WebSocket，P10 对独立业务服务进程执行 SIGKILL。G 系列使用真实 PostgreSQL 与受控网关适配器；B 系列使用真实 PostgreSQL 和 HTTP Agent，但发送适配器受控。W 系列是受控 fetch / 纯合并逻辑检查。模块测试不替代跨模块和浏览器证据；P09 的三秒断言只覆盖服务端重放，不能直接证明浏览器完成渲染的时限。
+| 证据 | 执行结果与覆盖 | 版本边界 |
+|---|---|---|
+| 实施工作树 `.runtime/verification-final.log` | 最终87登记，84通过、3跳过、0失败，95.77秒；P01–P15、G01–G29、B01–B20/B24–B28、R01–R05、H01、D01、W01–W08均通过 | `853629b` 加纯格式化改动，提交后为 `5a35ce6`；本轮最新常规回归依据 |
+| `.runtime/verification-timing-final.log` | B21–B23独立3/3通过、0跳过，94.31秒；测试总耗时分别13.54、16.48、60.06秒，含清理等待 | 实际12秒turn、3×5秒审计、60秒预算；执行早于853629b的调度器/停机测试修订，未作为最终常规套再次执行 |
+| 较早 `.runtime/verification-tests-final.log` | 84登记、81通过、3跳过，92.82秒 | `374d83c` 加当时工作树改动；保留历史记录，常规证据已由上方最终套更新 |
+| 本轮补充断言 | P03第二次同key返回sent、P04预检code/key/stepIndex、P15真实HTTP kick截止；B03第3步错误完整字段；B27调度失锁回滚、B28实际停机预算 | 已进入最终常规套；不再仅标模块定向通过 |
+| `.runtime/verification-kick-accounts.log` | P13补充全部账号响应deepEqual不变断言，1/1通过，测试4.32秒（总4.47秒） | 后续提交 `52e7dbd`，不混入较早84项常规结果 |
+| 构建与原文完整性 | 集成执行者确认build与verify:original通过 | `5a35ce6`；不替代业务断言或用户验收 |
+
+日志位于 `/Users/zcm/.codex/worktrees/42fe/kapibala/.runtime/`，不随文档版main复制。上述版本的常规回归已完成。其后独立审查发现L8旧404时序缺陷，复现与修复进行中；修复后的针对性时序测试与集成回归仍待执行，基础阶段尚未收口。
+
+**当前演示运行信息单独记录：**后端PID `73373` 于2026-09-30 18:46:02（北京时间）启动，与当时 `34d9af2` 匹配；未保存启动版本manifest，因此该提交号仅为推断版本。后端和模拟器未watch、未重启；前端Vite此前已热更新 `a8aac5f` 对应内容，此后不再修改web。最新源码的测试结果不等于旧演示已加载修复。当前保持演示运行，不重启服务或操作用户浏览器。全部用户人工验收仍待进行。
+
+P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服务；其中 P09 使用真实 WebSocket，P10 对独立业务服务进程执行 SIGKILL。G 系列使用真实 PostgreSQL 与受控网关适配器，其中G29另使用真实HTTP断流/取消；B 系列使用真实 PostgreSQL 和 HTTP Agent，但发送适配器受控。R 系列使用真实PG连接终止与HTTP服务验证连接失效。W 系列是受控 fetch / 纯合并逻辑检查。模块测试不替代跨模块和浏览器证据；P09 的三秒断言只覆盖服务端重放，不能直接证明浏览器完成渲染的时限。
 
 ## A0 基础与统一契约
 
@@ -36,12 +49,12 @@ P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服
 | 要求 | 实现入口 | 场景、证据 | 状态与剩余验证 |
 |---|---|---|---|
 | 预置账号 idle/null，connect 稳定身份 | `db/migrations/001_core.sql`、`gateway/accounts.ts` | P 系列先连接预置账号；浏览器已连接 4 个账号 | 部分验证：初始空值与重复 connect 平台身份稳定专项待补 |
-| 允许转移表、非法边/同状态、404、expectedFrom 必填 | `gateway/accounts.ts`、`gateway/index.ts` | G01 覆盖非法同状态优先于 CAS；API 运行时 schema | 部分验证：全表枚举及 400/404 尚无完整执行证据 |
+| 允许转移表、非法边/同状态、404、expectedFrom 必填 | `gateway/accounts.ts`、`gateway/index.ts` | G01非法同状态优先CAS；G23逐一验证36种from/to组合及终态connect拒绝 | 部分验证：全转移表通过；API 400/404及expectedFrom缺失组合仍待专项 |
 | CAS 并发至多一成功、不后写覆盖 | `gateway/accounts.ts` | P05 两个合法竞争操作恰好一个 200、一个 409；G01 | 自动通过：此并发场景 |
-| suspended/session_expired 无出边，重复终态静默 | `gateway/accounts.ts`、`gateway/state.ts` | G02 重复 suspended 仅一条 terminal 事件；状态规则无终态出边 | 部分验证：G02通过；两个终态全出边枚举仍待补 |
+| suspended/session_expired 无出边，重复终态静默 | `gateway/accounts.ts`、`gateway/state.ts` | G23两个终态全部出边拒绝；G02/G26重复终态只一条terminal事件 | 自动通过：终态出边与已测重复事件 |
 | 终态成员移除、queued cancelled、failCode、序列 skipped 原子性 | `gateway/state.ts` | P05 确认成员删除；G02 通过数据库触发器失败注入核对整笔回滚及 skipped | 自动通过：G02状态/成员/消息/步骤同事务回滚及成功后果 |
-| 所有来源终态后果一致、提交后事件 | `gateway/state.ts`、`gateway/events.ts`、`gateway/messages.ts`、`core/db.ts:emit` | G12 kick 同步错误；P05 手动操作；G02 事务事件 | 部分验证：send/message_failed/account_status 与两个终态来源矩阵未完整覆盖 |
-| 限流自动恢复；已手动离线不恢复；刷新截止不算转移 | `gateway/accounts.ts:releaseRateLimits`、`gateway/messages.ts` | P02 真实等待限流恢复；G03 队列顺序 | 部分验证：已离线时截止到期的反例待补 |
+| 所有来源终态后果一致、提交后事件 | `gateway/state.ts`、`gateway/events.ts`、`gateway/messages.ts`、`core/db.ts:emit` | G12同步kick suspended；G26同步send/异步account_status session_expired；G27异步message_failed suspended；G02回滚/提交事件 | 自动通过：上述来源的具体断言；全部错误与来源的笛卡尔组合未穷举 |
+| 限流自动恢复；已手动离线不恢复；刷新截止不算转移 | `gateway/accounts.ts:releaseRateLimits`、`gateway/messages.ts` | P02限流恢复；G03队列顺序；G24手动disconnected后到期仍离线 | 部分验证：恢复与手动离线反例通过；刷新截止事件计数待专项 |
 | 标记 disconnected/idle 调 disconnect | `gateway/accounts.ts` | P05 执行合法转移；对应实现调用网关 | 部分验证：远端请求与状态联合断言待补 |
 
 ## A2 网关与可靠发送
@@ -49,19 +62,19 @@ P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服
 | 要求 | 实现入口 | 场景、证据 | 状态与剩余验证 |
 |---|---|---|---|
 | 三种发送共用持久出站、稳定 id、queued 起可见 | `core/messaging.ts`、`gateway/messages.ts` | P01/P03/P04 实际手动/Agent/序列发送；W06 稳定 id；浏览器已观察 queued→sent 单行 | 自动通过：P11明确accepted时远端消息数为0，随后sent |
-| 多实例同一 outbox 不重复调用网关 | `gateway/messages.ts`、`core/db.ts:withLock` | G13 双 worker；P10 硬终止后按远端查询证据恢复且只 send 一次 | 部分验证：P10 可判定崩溃场景已过；任意未知窗口见限制 L1 |
-| 明确 504 后 unknown，确认后收敛，不确认不重发，最多一次重发 | `gateway/messages.ts` | P02 覆盖已落地/未落地再发；G06/G07 两次均未落地失败且真实时钟 ≤5s | 自动通过：P02不重复；G07真实时钟两次504最终失败≤5秒 |
+| 多实例同一 outbox 不重复调用网关 | `gateway/messages.ts`、`core/db.ts:withLock` | G13双worker；G28强制终止持锁PG连接，新worker接管、旧worker不能写accepted/重发；P10 SIGKILL可确认成功恢复 | 自动通过：上述互斥和接管窗口；任意未知窗口见L1 |
+| 明确 504 后 unknown，确认后收敛，不确认不重发，最多一次重发 | `gateway/messages.ts` | P02 覆盖已落地/未落地再发；G06/G07 两次均未落地失败且真实时钟 ≤5s | 待修复（L8）：既有P02/G07场景通过，但窗口内发起查询的旧404延迟跨过2秒后可能被误作安全重试判据；需新增时序回归 |
 | by-client-id 503 保持 unknown，恢复后两秒内确认 | `gateway/messages.ts` | G10查询恢复不重复；P11真实查询503期间unknown，恢复后<2秒sent | 自动通过：上述恢复场景 |
 | 入站按 (groupId,msgId) 去重，同毫秒稳定排序、任意历史补投 | `gateway/events.ts`、`gateway/models.ts` | P01/P08；W08 同时间稳定 id 排序；G15 乱序 eventId | 自动通过：重复、乱序与历史补投测试场景；浏览器历史分页待验 |
 | 自己回流一行 isOwn=true、不触发 Agent | `gateway/events.ts`、`automation/agent.ts:scan` | P01 单行 isOwn；P03/P07 运行数与副作用数；B07/W06 | 自动通过 |
 | 数据库写失败不丢事件、不阻塞其他事件、inconsistency | `gateway/events.ts` | P06 注入单条写失败，其他消息成功，撤除故障后补齐且只有一条 | 自动通过：局部写失败；完整数据库进程停机时长及告警延迟未覆盖 |
 | 服务/SSE 停机期间事件恢复不漏 | `gateway/events.ts` | P06 断流并 503 后恢复；P10 业务重启查询收敛 | 部分验证：断流补齐已过；业务停机期间多个外部历史事件专项待补 |
 | RATE_LIMITED 账号全局暂停、队首顺序、序列顺延 | `gateway/messages.ts`、`automation/sequences.ts` | P02 请求时间差 ≥1.95s；G03/G04 手动+Agent/503队首；B09 序列限流顺延 | 自动通过：已测限流与序列场景；跨全部来源同一瞬间竞争待扩展 |
-| ACCOUNT_SUSPENDED / SESSION_EXPIRED | `gateway/state.ts`、`gateway/messages.ts` | 统一 changeAccount；G12 suspended；B16 accepted 后账号终态 | 部分验证：两个错误在同步发送/异步失败的完整映射待补 |
-| GROUP_WRITE_FORBIDDEN 仅影响群、序列 stopped、Agent 当前步后取消 | `gateway/state.ts`、`automation/agent.ts` | G14 原子停止/请求取消且账号不变；B13 当前步后取消 | 部分验证：两个模块断言已存在，真实远端错误跨模块终态链需补证据 |
-| SENDER_NOT_IN_GROUP / ACCOUNT_OFFLINE 仅消息 failed | `gateway/messages.ts` | 对应错误分支实现 | 未验证：两类错误及账号/群不变断言待补 |
+| ACCOUNT_SUSPENDED / SESSION_EXPIRED | `gateway/state.ts`、`gateway/messages.ts` | G12同步kick suspended；G26同步send和异步account_status session_expired；G27异步message_failed suspended；B16 accepted后终态 | 自动通过：所列来源与影响范围；未穷举所有来源/错误组合 |
+| GROUP_WRITE_FORBIDDEN 仅影响群、序列 stopped、Agent 当前步后取消 | `gateway/state.ts`、`automation/agent.ts` | G12同步kick、G27异步message_failed仅改变群并停止序列/标记取消；G14原子后果；B13当前步后取消 | 部分验证：来源传播和模块取消已过；真实HTTP错误到Agent当前步结束的完整链待专项 |
+| SENDER_NOT_IN_GROUP / ACCOUNT_OFFLINE 仅消息 failed | `gateway/messages.ts` | G25两种错误都保留账号online、群active和成员，仅当前消息failed/failCode | 自动通过 |
 | NOT_MEMBER_YET ≤2 次 promote；入群超过 10s 失败 | `gateway/jobs.ts` | G17 一次重试计数2；G19 调整持久时间触发 JOIN_TIMEOUT 且无提前 promote | 自动通过：G17/G19对应分支；G19是持久时钟推进断言，非实际等待10秒 |
-| kick OWNER_LEFT/NO_PERMISSION 不改账号群，504 查询成员确认 | `gateway/messages.ts:kick`、`automation/tool-execution.ts` | 正常权限映射与2秒查询实现；B11 是策略/未知恢复，不是远端成功链 | 未验证：真实HTTP kick成功、504、权限错误专项待补；重新入群歧义见 L3 |
+| kick OWNER_LEFT/NO_PERMISSION 不改账号群，504 查询成员确认 | `gateway/messages.ts:kick`、`automation/tool-execution.ts` | B18成功/权限映射；P13真实HTTP 504确认、两个权限码、群仍active、3次审计及kick文本；G29取消贯穿HTTP/504等待/成员查询 | 自动通过：52e7dbd的P13另直接deepEqual核对三个场景全部账号响应不变；重入歧义见L3 |
 
 ## A3 建群、A4 时间线与实时事件
 
@@ -80,15 +93,15 @@ P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服
 |---|---|---|---|
 | A5.1 非自身消息触发；同群单 running；期间消息聚合下一 run | `automation/agent.ts:scan/startNext/finish`、`002_automation.sql` | B04/B07；P07 双实例、重复事件、两个run触发数1+2、每run3轮 | 自动通过 |
 | A5.2 完整历史循环、12步、连续3协议错、合法响应清零 | `automation/agent.ts:run/turn/protocolError` | B05 连续3错误；B12 恰12轮；P03 错误后合法工具完成 | 自动通过：这些断言；“合法后重置再累计”反例序列待补 |
-| A5.2 60秒活动预算、停机不计、等待容量计入 | `automation/agent.ts:run/persistTime` | B14/B15 注入59930ms后迟到turn/audit被丢弃；3b15955补计执行容量等待 | 部分验证：截止边界已过；多群排队和重启停机累计时钟专项待补，硬终止最多少计一心跳周期 |
-| A5.2 每turn 10–15秒可配，超时计协议错、迟到丢弃 | `automation/agent.ts:constructor/turn` | 默认12秒、配置夹在10–15秒；B14迟到响应不生效 | 部分验证：真实12秒超时（区别于剩余预算缩短）及配置边界待补 |
+| A5.2 60秒活动预算、停机不计、等待容量计入 | `automation/agent.ts:run/persistTime` | B14/B15迟到turn/audit丢弃；B23真实60秒未满12步即wall_clock；B26/P15 kick预算中止且未知不重放 | 部分验证：真实60秒与截止通过；B28关闭/重建模块并实际停机700ms，同run保留已用预算且停机不累计已通过；多群容量等待累计专项仍待验证 |
+| A5.2 每turn 10–15秒可配，超时计协议错、迟到丢弃 | `automation/agent.ts:constructor/turn` | B21实际默认12秒后TURN_TIMEOUT，下一合法轮结束，迟到响应不新增步骤 | 部分验证：真实12秒已通过；10/15秒配置边界专项待补 |
 | A5.3 工具未知/入参错历史形状；坏JSON/重复ID/超时不追加assistant | `automation/protocol.ts`、`agent.ts:turn/protocolError` | B01/B05；P03 坏JSON→未知工具→正常完成 | 部分验证：核心错误已过；非2xx、前后文字、缺字段、类型不一致及INVALID_INPUT历史形状尚未全矩阵断言 |
-| A5.4 send/kick执行前审计；明确pass才允许；fail拒绝 | `automation/tool-execution.ts:audit/send/kick` | B06 fail后同key可重试；P03 send审计pass实际发出 | 部分验证：send已过；kick审计文本/合法成功流程待补 |
-| A5.4 不确定最多3次，不计步，3次blocked/no side effect/通知 | `automation/tool-execution.ts:audit` | P03 500、坏JSON、maybe后blocked且远端消息数不增；B06审计次数3；B15迟到pass不授权 | 自动通过：上述错误组合；缺verdict和完整三次超时组合待补 |
+| A5.4 send/kick执行前审计；明确pass才允许；fail拒绝 | `automation/tool-execution.ts:audit/send/kick` | B06 fail不占key；P03发送审计；B18/P13 kick合法成功、3次调用各有审计且文本字段正确 | 自动通过：已测send/kick审计流程 |
+| A5.4 不确定最多3次，不计步，3次blocked/no side effect/通知 | `automation/tool-execution.ts:audit` | P03 500/坏JSON/maybe；B06次数3；B22实际3×5秒超时后blocked，迟到pass不发送 | 部分验证：三次真实超时及上述错误组合通过；缺verdict、推送通知字段专项待补 |
 | A5.5 仅online群成员；kick需creator/admin；无账号业务错误 | `automation/tool-execution.ts:account/delivery` | SQL角色/状态过滤；B16 accepted后账号终态为SEND_FAILED且无重发 | 部分验证：B16已通过；无账号及更多执行中状态变化分支待补 |
 | A5.6 kick须autoKickEnabled | `automation/tool-execution.ts:kick` | B11关闭时POLICY_DENIED，零审计、零kick | 自动通过：关闭策略场景；审计期间关闭的竞态待补 |
-| A5.7 run+key相同不重复发送/审计，读取当前状态；拒绝不占key | `agent_send_keys`、`tool-execution.ts:send` | P03 504后同key最终一条消息、一次审计；B04/B06 | 自动通过：已测场景；SEND_TIMEOUT后同key再次调用的完整5秒窗口待补 |
-| A5.8 持久会话/步骤/审计/工具恢复，同runId不重复副作用 | `automation/agent.ts`、`tool-execution.ts`、`002_automation.sql` | B10已保存final/已入队send恢复；B08/B11未知turn/kick暂停；P10业务send硬终止恢复 | 部分验证 + 协议限制 L1/L3/L4；不能声明任意崩溃自动正常结束 |
+| A5.7 run+key相同不重复发送/审计，读取当前状态；拒绝不占key | `agent_send_keys`、`tool-execution.ts:send` | P03第二次同key返回sent；B04/B06；B19完整SEND_TIMEOUT后同key读sent，enqueue/audit均1；P14真实HTTP仅一消息/一次审计 | 自动通过：同key成功、拒绝及5秒超时后的恢复场景 |
+| A5.8 持久会话/步骤/审计/工具恢复，同runId不重复副作用 | `automation/agent.ts`、`tool-execution.ts`、`002_automation.sql` | B10持久final/prepared send；B08/B11不确定暂停；B24 turn失锁不写假协议错；B25审计失锁旧worker零发送、新worker安全恢复；B26/P15未知kick不重放；P10发送SIGKILL | 部分验证 + 协议限制L1/L3/L4；不声明任意崩溃自动正常结束 |
 | A5.9 tool_result≤8KB，摘要≤200字，rawResponse≤2KB | `automation/protocol.ts`、`tool-execution.ts:recent` | B01字节上限；B12 55条长消息、limit100000、12步均≤8192 bytes | 部分验证：结果限制已过；每条≤500字、摘要200/原文2048字节专项断言待补 |
 | A5.10 群不可写或关闭Agent，在当前步后cancelled | `gateway/state.ts`、`gateway/index.ts`、`automation/agent.ts` | B13已开始步骤完成后cancelled且无下一turn；G14群状态取消标记 | 部分验证：关闭场景通过；群不可写的真实跨模块链待补 |
 | A5.11 同参重复get_recent_messages在12步内合理结束 | `automation/agent.ts:run` | B12 12次读取后budget_exhausted | 自动通过 |
@@ -100,13 +113,13 @@ P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服
 
 | 要求 | 实现入口 | 场景、证据 | 状态与剩余验证 |
 |---|---|---|---|
-| B1 序列格式、连续步号、角色admin优先/member字典序 | `automation/sequences.ts:register/advance` | P04实际两步；输入schema与SQL排序实现 | 部分验证：角色优先/字典序专项待补 |
-| B1 无角色skipped有时间，限流顺延不跳过 | `automation/sequences.ts:advance/progress` | B09限流等待后推进；G02账号终态skipped | 部分验证：无匹配角色的skipped及下一步起算专项待补 |
+| B1 序列格式、连续步号、角色admin优先/member字典序 | `automation/sequences.ts:register/advance` | P04实际两步；B20有管理员时优先admin、两个member选首个账号 | 部分验证：角色优先/字典序已通过；非法步号输入组合待专项 |
+| B1 无角色skipped有时间，限流顺延不跳过 | `automation/sequences.ts:advance/progress` | B09限流等待后推进；B20无在线member时skipped且sentAt有值；G02账号终态skipped | 自动通过：无角色跳过与限流顺延；跳过后下一步精确起算另见排期行 |
 | B1 vars继承、stepVars覆盖、空字符串、来源原始步 | `automation/sequences.ts:resolveSteps` | B02三步继承和空字符串；P04已执行变量和step:2来源 | 自动通过：规则场景 |
-| B1 全步骤预检422/stepIndex/key；不发送不留running且能重启 | `automation/sequences.ts:register` | B03第3步缺变量、run0/send0；P04预检失败后并发成功 | 自动通过 |
+| B1 全步骤预检422/stepIndex/key；不发送不留running且能重启 | `automation/sequences.ts:register` | B03第3步422/code/key=missing/stepIndex=3、run0/send0；P04第2步错误字段后并发成功 | 自动通过：第3步完整错误字段、无副作用及预检后重新启动 |
 | B1 同群并发启动恰一201、一409 | 群事务锁、序列部分唯一索引 | B03、P04真实PG | 自动通过 |
 | B1 第一步启动后延迟、后续按前一步确认sent/skip后起算 | `automation/sequences.ts:advance/progress` | P04发送时间差；B09发送确认后精确延迟10秒排期 | 部分验证：正常发送已过；跳过链待补 |
-| B1 重启只重排最早过期步骤，不补发全部 | `automation/sequences.ts:ensureScheduler/rebaseExpired` | B09第二实例不重排、旧调度器关闭后新实例重排当前一步 | 自动通过：模块调度器接管；真实进程重启连续多步待补 |
+| B1 重启只重排最早过期步骤，不补发全部 | `automation/sequences.ts:ensureScheduler/rebaseExpired` | B09正常接管只重排当前步；B17先追赶已确认sent，再重排下一未调度步，enqueue=1 | 自动通过：B09/B17正常接管与已确认发送恢复；B27强制终止调度锁，旧事务回滚、零enqueue，新owner按完整延迟重排；不外推任意崩溃窗口 |
 | B2 INVITE_NOT_READY/readyAfter、过期一次重申、ALREADY_MEMBER | `gateway/jobs.ts` | G16过期；G17 ready等待/ALREADY_MEMBER/两次promote | 自动通过：G16/G17受控网关分支；真实HTTP组合仍可追加 |
 | B2 leave-all非群主失败继续其他人、群主保留、错误可见 | `gateway/jobs.ts` | P05留群成员与错误；G20远端/本地成员一致 | 自动通过：P05/G20核对失败成员与群主保留、其余成员继续、两侧成员一致 |
 | B2 成功left/members=[]，与远端成员视角解释一致 | `gateway/jobs.ts`、`gateway/models.ts` | G21外部用户仍在远端；公开left members=[]、job留gatewayMembersAtCompletion | 自动通过：G21；全部服务账号退出不等于移除外部用户 |
@@ -128,10 +141,10 @@ P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服
 | S2 重复事件 | P01、P03、P07 | 自动通过：单行/单run/单副作用断言 |
 | S3 自身回流 | P01、P03、B07、W06 | 自动通过 |
 | S4 限流 | P02、B09、G03 | 自动通过：真实请求间隔与序列顺延 |
-| S5 504后同key重试 | P03、B04 | 自动通过：一条远端消息、一次审计、run finished；第二步返回sent字段专项待补 |
+| S5 504后同key重试 | P03/B04；P03第二次同key返回sent断言已进入最终套；B19/P14覆盖SEND_TIMEOUT后读取原发送 | 自动通过：一次审计、一条远端消息、第二次返回sent |
 | S6 坏响应→未知工具→正常 | P03、B05 | 自动通过：完成/错误轨迹；逐步raw字段由B05断言 |
 | S7 并发启动 | P04、B03 | 自动通过：一个201/一个409 |
-| S8 第3步预检失败 | B03、P04 | 自动通过：stepIndex3、无run、无send，之后可启动；key字段由变量解析断言 |
+| S8 第3步预检失败 | B03第3步422、code、key=missing、stepIndex=3且无run/send；P04另覆盖第2步并随后成功启动 | 自动通过：第3步完整错误字段与无副作用 |
 
 ## 已知限制与扩展
 
@@ -139,10 +152,12 @@ P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服
 |---|---|---|
 | L1 | send请求已到远端但响应前崩溃；无明确504不能适用2秒404安全重试判据 | 持久记录保留unknown，查询到成功才收敛；G08保守不重发，P10证明一个可确认成功场景。不声称全局任意崩溃恰好一次 |
 | L2 | 创建群无幂等键，也无本次job结果查询 | 远端成功/本地未存groupId后保留running+recoveryNote，不重复create；G18为可复现写失败窗口 |
-| L3 | kick后目标重新入群、或副作用已发但本地未记结果 | 缺少能证明安全重放的证据时暂停，B11；正常504可判定窗口仍应单独测试 |
+| L3 | kick后目标重新入群、或副作用已发但本地未记结果 | 缺少安全重放证据时暂停，B11/B26/P15；P13正常504可判定窗口已通过，不能外推重新入群窗口 |
 | L4 | Agent服务维护runId会话，相同历史请求不保证幂等 | 未记录响应的inflight_turn暂停并推inconsistency；B08。既不虚报失败，也不能标为自动恢复正常结束 |
 | L5 | 无法覆盖全部瞬间的崩溃注入 | 已测持久final、prepared send、调度接管和业务SIGKILL窗口；其余不能由一项测试外推 |
 | L6 | 时间线新快照完整遍历、SSE全历史重放 | 正确性优先，成本随历史增长；大历史量下浏览器三秒目标待容量验证 |
+| L7 | 已修复的序列调度锁失效 | 853629b修复旧调度事务在锁连接失效后仍可提交的问题；B27最终套通过，旧事务拒绝、消息/入队为0、接管完整重排延迟；当前旧演示尚未加载此修复 |
+| L8 | 待修复：504确认使用延迟返回的旧404 | 窗口内发起查询产生的404若延迟返回并跨过2秒，按响应接收时刻判断可能误认为已有足够否定证据而重发。独立审查已指出此路径；真实时序复现、修复及集成回归进行中。现有G06/G07通过不覆盖本边界 |
 | C1/C2/C3 | 媒体归档/真实模型/完整Playwright | 未实现；首阶段保留接入边界。当前必要自动验证与开发者浏览器检查已独立开展 |
 
 ## 测试名称索引
@@ -165,6 +180,9 @@ P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服
 | P10 | platform: SIGKILL during remote send recovers by evidence without resending |
 | P11 | platform: S1 distinguishes accepted from sent and unknown survives query outage |
 | P12 | platform: schema lag refuses startup and viewer is denied all business write routes |
+| P13 | platform: audited kick confirms 504 and propagates permission errors without account mutation |
+| P14 | platform: Agent SEND_TIMEOUT repeats the same key without re-auditing or duplicating delivery |
+| P15 | platform: Agent kick deadline cancels real HTTP confirmation without replaying an uncertain effect |
 
 ### 网关模块：`tests/integration/gateway.test.ts`
 
@@ -192,6 +210,13 @@ P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服
 | G20 | 非群主退出失败继续其他成员，群主不退出 |
 | G21 | leave-all服务账号全部退出但保留外部用户，left公开视图为空并保存远端证据 |
 | G22 | 时间线快照在历史补投和queued.sentAt改写时保持原始分页无重漏 |
+| G23 | 账号完整36种状态组合严格遵循允许转移表，终态无出边 |
+| G24 | 限流到期前已手动离线，不得被过期调度恢复为online |
+| G25 | ACCOUNT_OFFLINE及SENDER_NOT_IN_GROUP只失败当前消息，账号和群不变 |
+| G26 | 同步SESSION_EXPIRED与异步account_status都执行相同终态后果 |
+| G27 | 异步message_failed按错误传播账号终态或群不可写，不能混淆范围 |
+| G28 | 发送持锁连接丢失后新worker就地接管，旧worker不能写accepted或重发 |
+| G29 | kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未知时不删除成员 |
 
 ### 自动化模块：`tests/integration/automation.test.ts`
 
@@ -220,6 +245,21 @@ P 系列使用真实 PostgreSQL、真实业务模块、本地 HTTP/SSE 模拟服
 | B21 | timing: the default twelve-second turn timeout discards the late response |
 | B22 | timing: three five-second inconclusive audit attempts block without sending |
 | B23 | timing: sixty seconds of activity ends the run even below the twelve-step cap |
+| B24 | loss of the advisory-lock connection aborts a turn without saving a false protocol error |
+| B25 | loss of a run lock during audit prevents old-worker effects and permits safe audit recovery |
+| B26 | kick budget exhaustion ends the run while retaining an uncertain non-replayable effect |
+| B27 | a stale scheduler transaction cannot enqueue after its ownership connection is lost |
+| B28 | closing and recreating modules preserves activity while excluding actual downtime |
+
+### 连接失效与远端解析：`tests/integration/core-reliability.test.ts`
+
+| ID | 完整测试名 |
+|---|---|
+| R01 | checked-out advisory connection loss rejects safely, fences subsequent DB work, and releases capacity |
+| R02 | advisory lock loss aborts an in-flight HTTP request and blocks later remote calls |
+| R03 | transaction client loss during HTTP wait aborts safely and does not poison later transactions |
+| R04 | cleanup on a disconnected advisory connection preserves the callback error |
+| R05 | RemoteClient preserves HTTP errors for null, primitive, malformed nested envelopes and valid arrays |
 
 ### 会话、连接容量与控制台
 
@@ -240,6 +280,8 @@ D01 在当前集成工作树中已执行，其文件随基础容量修复提交�
 
 ## 本轮后续验证登记
 
-`90ae48e` 新增B17–B20对应恢复后已确认发送的下一步重排、kick权限映射与成功、SEND_TIMEOUT同key重试、角色优先与skipped时间戳；B21–B23为真实12秒turn、3×5秒审计、60秒活动预算。模块执行者已报告通过，但合入后的最终全套复跑尚待确认，因此上表相关“待补”在当前版本仍保留集成复验要求。长时序命令：`AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern="timing:" tests/integration/automation.test.ts`。
+最终常规套已覆盖B17–B20恢复/角色/同key、G23–G29状态/错误/失锁、B24–B28运行锁/预算/调度失锁/实际停机、P13–P15真实HTTP关键链和R01–R05连接失效。B21–B23长计时已独立通过。上述已有执行证据的条目不再保留“测试待补”；仍未覆盖的细分断言按各行明确列出。
+
+剩余验收与证据边界：L8旧404时序问题待修复及回归，B4浏览器恢复≤3秒仍待验证；表内其他未覆盖细分分支与全部用户人工验收仍待进行。当前旧演示未加载最新后端修复，后续重新启动时须另记实际运行版本。长时序复现命令：`AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern="timing:" tests/integration/automation.test.ts`。
 
 开发者浏览器补充：序列缺location报step2/key→补stepVars→预检来源→两步sent；viewer登录后序列无新建/启动、accounts无操作列、group无发送/设置开关/退群。证据：[序列](evidence/console-sequence.png)、[只读账号](evidence/console-viewer.png)。这些不是用户人工验收结果。
