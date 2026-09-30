@@ -1,0 +1,79 @@
+TAP version 13
+# Subtest: TB01 known 504 clock starts at receipt, before local result-persistence lock wait
+not ok 1 - TB01 known 504 clock starts at receipt, before local result-persistence lock wait
+  ---
+  duration_ms: 940.829291
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/core-timeout-boundaries.test.ts:1:4210'
+  failureType: 'testCodeFailure'
+  error: '504 receipt clock shifted by 765 ms'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/core-timeout-boundaries.test.ts:213:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# isolated database: kapibala_test_e0c1328bce9a4e79bcd4d0e46702a4cd
+# {"case":"TB01","localLockWaitMs":750,"anchorShiftMs":765}
+# Subtest: TB02 a 1900ms initial 202 is accepted only after its real response
+ok 2 - TB02 a 1900ms initial 202 is accepted only after its real response
+  ---
+  duration_ms: 2023.171458
+  type: 'test'
+  ...
+# isolated database: kapibala_test_2167cf0c8b464a81b4067b755cfaec15
+# {"case":"TB02","sendStartToAcceptedMs":1926.9921669999999}
+# Subtest: TB03 known 504, authoritative absence, then 1800ms retry 202 converges within five seconds
+ok 3 - TB03 known 504, authoritative absence, then 1800ms retry 202 converges within five seconds
+  ---
+  duration_ms: 4145.89325
+  type: 'test'
+  ...
+# isolated database: kapibala_test_7c6a06527b4946ae8e48717d4fa81172
+# {"case":"TB03","first504ToAcceptedMs":4051.5723749999997,"retryStartedMs":2244.7770410000003}
+# Subtest: TB04 two immediate HTTP 504 responses and absence converge within the first five seconds
+ok 4 - TB04 two immediate HTTP 504 responses and absence converge within the first five seconds
+  ---
+  duration_ms: 4525.04875
+  type: 'test'
+  ...
+# isolated database: kapibala_test_4cd0ccaefebc4f1e9d2e8adffd7daf43
+# {"case":"TB04","first504ToFailedMs":4398.287834000001,"second504ToFailedMs":2158.262917}
+# Subtest: TB05 boundary: a 1400ms second 504 preserves its safety window but exceeds the first five seconds
+ok 5 - TB05 boundary: a 1400ms second 504 preserves its safety window but exceeds the first five seconds
+  ---
+  duration_ms: 6015.5235
+  type: 'test'
+  ...
+# isolated database: kapibala_test_e48b6a3282814ff4828ccd9e851ea72e
+# {"case":"TB05","first504ToFailedMs":5920.247125,"second504ToFailedMs":2196.2498749999995,"first504FiveSecondRequirementMet":false,"boundary":"open: first versus each 504 clock; no forced failure before authoritative absence"}
+# Subtest: TB06 query 503 beyond five seconds stays unknown; a 1400ms positive query recovers within two seconds
+ok 6 - TB06 query 503 beyond five seconds stays unknown; a 1400ms positive query recovers within two seconds
+  ---
+  duration_ms: 6837.294208
+  type: 'test'
+  ...
+# isolated database: kapibala_test_e078d94ecce74affbf4dcfc5375d8389
+# {"case":"TB06","first504ToSentMs":6736.7899590000015,"availabilityToSentMs":1516.1515839999993}
+# Subtest: TB07 a query exceeding the two-second HTTP timeout does not authorize retry or failure
+ok 7 - TB07 a query exceeding the two-second HTTP timeout does not authorize retry or failure
+  ---
+  duration_ms: 2212.683292
+  type: 'test'
+  ...
+# isolated database: kapibala_test_caca708505954d4db89b2487318153d1
+# {"case":"TB07","queryElapsedMs":2005.2829590000001,"fastQueryAvailabilityToSentMs":114.56154199999946}
+1..7
+# tests 7
+# suites 0
+# pass 6
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 27013.004542

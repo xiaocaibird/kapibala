@@ -1,0 +1,28 @@
+✖ TB01 known 504 clock starts at receipt, before local result-persistence lock wait (923.850917ms)
+ℹ isolated database: kapibala_test_70d0a1e748be4995811afa4299098b6d
+ℹ {"case":"TB01","localLockWaitMs":750,"anchorShiftMs":761}
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1063.906708
+
+✖ failing tests:
+
+test at tests/integration/core-timeout-boundaries.test.ts:1:4210
+✖ TB01 known 504 clock starts at receipt, before local result-persistence lock wait (923.850917ms)
+  AssertionError [ERR_ASSERTION]: 504 receipt clock shifted by 761 ms
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/core-timeout-boundaries.test.ts:132:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

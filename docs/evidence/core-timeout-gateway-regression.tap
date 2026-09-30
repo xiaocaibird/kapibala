@@ -1,0 +1,196 @@
+TAP version 13
+# Subtest: 真实PG：并发账号CAS只有一个成功，非法边优先于状态冲突
+ok 1 - 真实PG：并发账号CAS只有一个成功，非法边优先于状态冲突
+  ---
+  duration_ms: 118.871209
+  type: 'test'
+  ...
+# Subtest: 账号完整36种状态组合严格遵循允许转移表，终态无出边
+ok 2 - 账号完整36种状态组合严格遵循允许转移表，终态无出边
+  ---
+  duration_ms: 149.278167
+  type: 'test'
+  ...
+# Subtest: 限流到期前已手动离线，不得被过期调度恢复为online
+ok 3 - 限流到期前已手动离线，不得被过期调度恢复为online
+  ---
+  duration_ms: 71.346833
+  type: 'test'
+  ...
+# Subtest: ACCOUNT_OFFLINE及SENDER_NOT_IN_GROUP只失败当前消息，账号和群不变
+ok 4 - ACCOUNT_OFFLINE及SENDER_NOT_IN_GROUP只失败当前消息，账号和群不变
+  ---
+  duration_ms: 103.774959
+  type: 'test'
+  ...
+# Subtest: 同步SESSION_EXPIRED与异步account_status都执行相同终态后果
+ok 5 - 同步SESSION_EXPIRED与异步account_status都执行相同终态后果
+  ---
+  duration_ms: 223.467917
+  type: 'test'
+  ...
+# Subtest: 异步message_failed按错误传播账号终态或群不可写，不能混淆范围
+ok 6 - 异步message_failed按错误传播账号终态或群不可写，不能混淆范围
+  ---
+  duration_ms: 341.611291
+  type: 'test'
+  ...
+# Subtest: 真实PG：终态后果原子提交；步骤写失败整笔回滚
+ok 7 - 真实PG：终态后果原子提交；步骤写失败整笔回滚
+  ---
+  duration_ms: 89.551208
+  type: 'test'
+  ...
+# Subtest: 限流期间所有来源共用账号队列且恢复保持顺序
+ok 8 - 限流期间所有来源共用账号队列且恢复保持顺序
+  ---
+  duration_ms: 111.87275
+  type: 'test'
+  ...
+# Subtest: 503退避不能让同账号后续消息越过队首
+ok 9 - 503退避不能让同账号后续消息越过队首
+  ---
+  duration_ms: 99.641916
+  type: 'test'
+  ...
+# Subtest: 504已落地查询收敛为sent，不重发；自身回流去重且不触发Agent
+ok 10 - 504已落地查询收敛为sent，不重发；自身回流去重且不触发Agent
+  ---
+  duration_ms: 197.542625
+  type: 'test'
+  ...
+# Subtest: 504明确未落地只重试一次，第二次仍未落地最终failed
+ok 11 - 504明确未落地只重试一次，第二次仍未落地最终failed
+  ---
+  duration_ms: 114.099792
+  type: 'test'
+  ...
+# Subtest: 真实时钟：两次504且均未落地，在5秒内确定失败并且只重发一次
+ok 12 - 真实时钟：两次504且均未落地，在5秒内确定失败并且只重发一次
+  ---
+  duration_ms: 4390.894291
+  type: 'test'
+  ...
+# Subtest: 真实HTTP：窗口内取得的404延迟返回后不得触发重发，后续查询确认原消息
+ok 13 - 真实HTTP：窗口内取得的404延迟返回后不得触发重发，后续查询确认原消息
+  ---
+  duration_ms: 2514.882084
+  type: 'test'
+  ...
+# Subtest: 崩溃发送意图恢复为unknown，没有已知504不得重发
+ok 14 - 崩溃发送意图恢复为unknown，没有已知504不得重发
+  ---
+  duration_ms: 105.489875
+  type: 'test'
+  ...
+# Subtest: 发送持锁连接丢失后新worker就地接管，旧worker不能写accepted或重发
+ok 15 - 发送持锁连接丢失后新worker就地接管，旧worker不能写accepted或重发
+  ---
+  duration_ms: 114.315459
+  type: 'test'
+  ...
+# Subtest: 第二实例启动不能把活跃worker的发送标记为恢复未知
+ok 16 - 第二实例启动不能把活跃worker的发送标记为恢复未知
+  ---
+  duration_ms: 89.688958
+  type: 'test'
+  ...
+# Subtest: 504查询不可用期间保持unknown，恢复后确认不会重复发出
+ok 17 - 504查询不可用期间保持unknown，恢复后确认不会重复发出
+  ---
+  duration_ms: 95.417583
+  type: 'test'
+  ...
+# Subtest: 已sent补投和重复确认不会重写首次确认时间
+ok 18 - 已sent补投和重复确认不会重写首次确认时间
+  ---
+  duration_ms: 88.766459
+  type: 'test'
+  ...
+# Subtest: kick同步终态错误也执行成员清理与取消，群错误只改变群
+ok 19 - kick同步终态错误也执行成员清理与取消，群错误只改变群
+  ---
+  duration_ms: 91.054709
+  type: 'test'
+  ...
+# Subtest: kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未知时不删除成员
+ok 20 - kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未知时不删除成员
+  ---
+  duration_ms: 2499.031834
+  type: 'test'
+  ...
+# Subtest: kick已确认删除等待群投影事务，旧成员快照不能覆盖删除结果
+ok 21 - kick已确认删除等待群投影事务，旧成员快照不能覆盖删除结果
+  ---
+  duration_ms: 92.795541
+  type: 'test'
+  ...
+# Subtest: 真实PG双实例发送互斥，单个outbox只调用一次远端
+ok 22 - 真实PG双实例发送互斥，单个outbox只调用一次远端
+  ---
+  duration_ms: 84.187375
+  type: 'test'
+  ...
+# Subtest: 群不可写原子停止序列并取消Agent，不改变账号
+ok 23 - 群不可写原子停止序列并取消Agent，不改变账号
+  ---
+  duration_ms: 82.934875
+  type: 'test'
+  ...
+# Subtest: 真实PG事件写失败后重放，乱序eventId与任意历史补投均保留
+ok 24 - 真实PG事件写失败后重放，乱序eventId与任意历史补投均保留
+  ---
+  duration_ms: 81.6805
+  type: 'test'
+  ...
+# Subtest: 建群包括creator/admin，过期链接重申，promote仅一次
+ok 25 - 建群包括creator/admin，过期链接重申，promote仅一次
+  ---
+  duration_ms: 121.018541
+  type: 'test'
+  ...
+# Subtest: 邀请ready时间前不join，ALREADY_MEMBER无需等待事件，可重试一次promote
+ok 26 - 邀请ready时间前不join，ALREADY_MEMBER无需等待事件，可重试一次promote
+  ---
+  duration_ms: 712.394417
+  type: 'test'
+  ...
+# Subtest: 建群远端成功但本地写失败时记录待确认，禁止重复创建
+ok 27 - 建群远端成功但本地写失败时记录待确认，禁止重复创建
+  ---
+  duration_ms: 105.676458
+  type: 'test'
+  ...
+# Subtest: join事件超过10秒未到，任务失败且不提前promote
+ok 28 - join事件超过10秒未到，任务失败且不提前promote
+  ---
+  duration_ms: 87.413583
+  type: 'test'
+  ...
+# Subtest: 非群主退出失败继续其他成员，群主不退出
+ok 29 - 非群主退出失败继续其他成员，群主不退出
+  ---
+  duration_ms: 95.625667
+  type: 'test'
+  ...
+# Subtest: leave-all服务账号全部退出但保留外部用户，left公开视图为空并保存远端证据
+ok 30 - leave-all服务账号全部退出但保留外部用户，left公开视图为空并保存远端证据
+  ---
+  duration_ms: 109.672625
+  type: 'test'
+  ...
+# Subtest: 时间线快照在历史补投和queued.sentAt改写时保持原始分页无重漏
+ok 31 - 时间线快照在历史补投和queued.sentAt改写时保持原始分页无重漏
+  ---
+  duration_ms: 82.301958
+  type: 'test'
+  ...
+1..31
+# tests 31
+# suites 0
+# pass 31
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 13423.310041

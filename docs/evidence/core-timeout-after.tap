@@ -1,0 +1,74 @@
+TAP version 13
+# Subtest: TB01 known 504 clock starts at receipt, before local result-persistence lock wait
+ok 1 - TB01 known 504 clock starts at receipt, before local result-persistence lock wait
+  ---
+  duration_ms: 932.770667
+  type: 'test'
+  ...
+# isolated database: kapibala_test_3a9188cf84094c72a41540454e154c3a
+# {"case":"TB01","localLockWaitMs":750,"anchorShiftMs":0}
+# Subtest: TB02 a 1900ms initial 202 is accepted only after its real response
+ok 2 - TB02 a 1900ms initial 202 is accepted only after its real response
+  ---
+  duration_ms: 2054.986959
+  type: 'test'
+  ...
+# isolated database: kapibala_test_7570de46e4cd42b9b810ed2982854e40
+# {"case":"TB02","sendStartToAcceptedMs":1918.966417}
+# Subtest: TB03 known 504, authoritative absence, then 1800ms retry 202 converges within five seconds
+ok 3 - TB03 known 504, authoritative absence, then 1800ms retry 202 converges within five seconds
+  ---
+  duration_ms: 4199.114625
+  type: 'test'
+  ...
+# isolated database: kapibala_test_a38572a497e946b391971449ca5aa182
+# {"case":"TB03","first504ToAcceptedMs":4107.863791,"retryStartedMs":2300.7751660000004}
+# Subtest: TB04 two immediate HTTP 504 responses and absence converge within the first five seconds
+ok 4 - TB04 two immediate HTTP 504 responses and absence converge within the first five seconds
+  ---
+  duration_ms: 4627.985792
+  type: 'test'
+  ...
+# isolated database: kapibala_test_612f6eb85bc64a3ba1d12e9cde2fdc44
+# {"case":"TB04","first504ToFailedMs":4423.763000000001,"second504ToFailedMs":2200.9927500000013}
+# Subtest: TB05 boundary: a 1400ms second 504 preserves its safety window but exceeds the first five seconds
+ok 5 - TB05 boundary: a 1400ms second 504 preserves its safety window but exceeds the first five seconds
+  ---
+  duration_ms: 5999.560125
+  type: 'test'
+  ...
+# isolated database: kapibala_test_0306e141acfd4bf39740e7e6647926b6
+# {"case":"TB05","first504ToFailedMs":5909.667957999998,"second504ToFailedMs":2205.686290999998,"first504FiveSecondRequirementMet":false,"boundary":"open: first versus each 504 clock; no forced failure before authoritative absence"}
+# Subtest: TB06 query 503 beyond five seconds stays unknown; a 1400ms positive query recovers within two seconds
+ok 6 - TB06 query 503 beyond five seconds stays unknown; a 1400ms positive query recovers within two seconds
+  ---
+  duration_ms: 6869.371666
+  type: 'test'
+  ...
+# isolated database: kapibala_test_6147e1384c7f4096ac834f1d28581d2a
+# {"case":"TB06","first504ToSentMs":6777.323250000001,"availabilityToSentMs":1520.6438750000016}
+# Subtest: TB07 a query exceeding the two-second HTTP timeout does not authorize retry or failure
+ok 7 - TB07 a query exceeding the two-second HTTP timeout does not authorize retry or failure
+  ---
+  duration_ms: 2222.54975
+  type: 'test'
+  ...
+# isolated database: kapibala_test_9ae65355b99841dca839fc318c526dba
+# {"case":"TB07","queryElapsedMs":2006.4655409999978,"fastQueryAvailabilityToSentMs":115.71887499999866}
+# Subtest: TB08 boundary: query recovery with absence and another 504 needs a new safety window
+ok 8 - TB08 boundary: query recovery with absence and another 504 needs a new safety window
+  ---
+  duration_ms: 7666.442542
+  type: 'test'
+  ...
+# isolated database: kapibala_test_87a1e17fc073465ba52098ba17728a58
+# {"case":"TB08","availabilityToFailedMs":2354.527374999998,"second504ToFailedMs":2114.253583999998,"recoveryTwoSecondRequirementMet":false,"boundary":"open: recovery deadline versus a safely authorized retry receiving another 504"}
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 34718.653292

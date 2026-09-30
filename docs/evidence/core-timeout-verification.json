@@ -1,0 +1,139 @@
+{
+  "date": "2026-10-01",
+  "baseline": "0cdad82",
+  "sourceAndTestsCommit": "8e00561f75d3b87dfcece8968b304785197c93d7",
+  "node": "24.21.0",
+  "pg": {
+    "host": "127.0.0.1",
+    "port": 64550,
+    "isolation": "UUID database per test; formal migrations; no application writes to administrative database"
+  },
+  "before": {
+    "passed": 6,
+    "failed": 1,
+    "skipped": 0,
+    "observations": [
+      {
+        "case": "TB01",
+        "localLockWaitMs": 750,
+        "anchorShiftMs": 765
+      },
+      {
+        "case": "TB02",
+        "sendStartToAcceptedMs": 1926.9921669999999
+      },
+      {
+        "case": "TB03",
+        "first504ToAcceptedMs": 4051.5723749999997,
+        "retryStartedMs": 2244.7770410000003
+      },
+      {
+        "case": "TB04",
+        "first504ToFailedMs": 4398.287834000001,
+        "second504ToFailedMs": 2158.262917
+      },
+      {
+        "case": "TB05",
+        "first504ToFailedMs": 5920.247125,
+        "second504ToFailedMs": 2196.2498749999995,
+        "first504FiveSecondRequirementMet": false,
+        "boundary": "open: first versus each 504 clock; no forced failure before authoritative absence"
+      },
+      {
+        "case": "TB06",
+        "first504ToSentMs": 6736.7899590000015,
+        "availabilityToSentMs": 1516.1515839999993
+      },
+      {
+        "case": "TB07",
+        "queryElapsedMs": 2005.2829590000001,
+        "fastQueryAvailabilityToSentMs": 114.56154199999946
+      }
+    ]
+  },
+  "after": {
+    "passed": 8,
+    "failed": 0,
+    "skipped": 0,
+    "observations": [
+      {
+        "case": "TB01",
+        "localLockWaitMs": 750,
+        "anchorShiftMs": 0
+      },
+      {
+        "case": "TB02",
+        "sendStartToAcceptedMs": 1918.966417
+      },
+      {
+        "case": "TB03",
+        "first504ToAcceptedMs": 4107.863791,
+        "retryStartedMs": 2300.7751660000004
+      },
+      {
+        "case": "TB04",
+        "first504ToFailedMs": 4423.763000000001,
+        "second504ToFailedMs": 2200.9927500000013
+      },
+      {
+        "case": "TB05",
+        "first504ToFailedMs": 5909.667957999998,
+        "second504ToFailedMs": 2205.686290999998,
+        "first504FiveSecondRequirementMet": false,
+        "boundary": "open: first versus each 504 clock; no forced failure before authoritative absence"
+      },
+      {
+        "case": "TB06",
+        "first504ToSentMs": 6777.323250000001,
+        "availabilityToSentMs": 1520.6438750000016
+      },
+      {
+        "case": "TB07",
+        "queryElapsedMs": 2006.4655409999978,
+        "fastQueryAvailabilityToSentMs": 115.71887499999866
+      },
+      {
+        "case": "TB08",
+        "availabilityToFailedMs": 2354.527374999998,
+        "second504ToFailedMs": 2114.253583999998,
+        "recoveryTwoSecondRequirementMet": false,
+        "boundary": "open: recovery deadline versus a safely authorized retry receiving another 504"
+      }
+    ]
+  },
+  "regressions": {
+    "gateway": {
+      "passed": 31,
+      "failed": 0,
+      "skipped": 0
+    },
+    "P11": {
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0,
+      "handledCleanupLog": "idle_connection_error: terminating connection due to administrator command"
+    }
+  },
+  "checks": [
+    "tsc --noEmit: exit 0",
+    "prettier --check on changed source/test: exit 0",
+    "git diff --check: exit 0"
+  ],
+  "unresolved": [
+    "TB05: 5 seconds from the first 504 versus each subsequent 504",
+    "TB08: 2 seconds from query recovery versus new retry 504 convergence window"
+  ],
+  "boundaries": [
+    "8 passing tests include two explicit timing-boundary observations; A2 is not fully closed",
+    "Existing G07/P11 evidence preserved and rerun",
+    "No change to retry policy, external protocol, unknown outcome safety or SSE",
+    "No full-suite or qa-acceptance run; no main merge or demo switch"
+  ],
+  "files": [
+    "core-timeout-before.tap",
+    "core-timeout-TB01-before.log",
+    "core-timeout-after.tap",
+    "core-timeout-gateway-regression.tap",
+    "core-timeout-P11-regression.tap"
+  ]
+}
