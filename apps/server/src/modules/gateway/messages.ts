@@ -25,6 +25,7 @@ export async function recordSent(
   clientMsgId: string,
   msgId: string,
   sentAt: string,
+  messageSentObservedAt?: Date,
 ): Promise<void> {
   const row = (
     await tx.query<MessageRow>(
@@ -33,6 +34,16 @@ export async function recordSent(
     )
   ).rows[0];
   if (!row) return;
+  // A query or echo may confirm delivery first. Only the explicit event supplies
+  // the B1 scheduling clock, including when delivery is already marked sent.
+  if (
+    messageSentObservedAt &&
+    (row.delivery_status !== "sent" || row.msg_id === msgId)
+  )
+    await tx.query(
+      "UPDATE messages SET message_sent_observed_at=COALESCE(message_sent_observed_at,$2) WHERE id=$1",
+      [row.id, messageSentObservedAt],
+    );
   if (row.delivery_status === "sent") {
     if (row.msg_id !== msgId)
       await emit(tx, "inconsistency", {
