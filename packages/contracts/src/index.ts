@@ -35,6 +35,25 @@ export interface Group {
   activeSequenceRunId: string | null;
   activeAgentRunId: string | null;
 }
+export type GroupDirectoryOrder = "asc" | "desc";
+export interface GroupDirectoryItem extends Pick<
+  Group,
+  | "id"
+  | "name"
+  | "description"
+  | "createdAt"
+  | "gatewayGroupId"
+  | "status"
+  | "agentEnabled"
+  | "activeSequenceRunId"
+  | "activeAgentRunId"
+> {
+  memberCount: number;
+}
+export interface GroupDirectoryPage {
+  items: GroupDirectoryItem[];
+  nextCursor: string | null;
+}
 export interface Message {
   id: string;
   msgId: string | null;
