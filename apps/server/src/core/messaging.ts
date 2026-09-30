@@ -12,11 +12,14 @@ export interface SendInput {
 export interface MessagingService {
   enqueueSend(input: SendInput, tx?: Queryable): Promise<Message>;
   getMessage(clientMsgId: string): Promise<Message | null>;
-  kick(input: {
-    groupId: string;
-    accountId: string;
-    targetPlatformUserId: string;
-  }): Promise<{ kicked: true }>;
+  kick(
+    input: {
+      groupId: string;
+      accountId: string;
+      targetPlatformUserId: string;
+    },
+    options?: { signal?: AbortSignal },
+  ): Promise<{ kicked: true }>;
 }
 export interface PlatformModule {
   register(app: FastifyInstance): Promise<void>;
