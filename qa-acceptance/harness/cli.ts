@@ -9,6 +9,7 @@ import { loadTarget, requireAuthorization, redact, targetFingerprint } from './s
 import { snapshotQaTree, reportDirectory } from './provenance.js';
 import { recordManual, readManualEvents, type ManualReview } from './manual.js';
 import { exec } from './process.js';
+import { executionPlan, validatePlanManifest } from './execution-plan.js';
 import { reviewTargetChanges } from './change-review.js';
 import type { CaseResult } from './types.js';
 
@@ -23,6 +24,9 @@ async function regenerate(out: string): Promise<void> {
   const events = JSON.parse(await readFile(resolve(out, 'events.json'), 'utf8')) as CaseResult[];
   if (!Array.isArray(events)) throw new Error('events必须为执行结果数组');
   const manifest = JSON.parse(await readFile(resolve(out, 'manifest.json'), 'utf8'));
+  if (!['execution', 'developer-preflight'].includes(manifest.phase))
+    throw new Error('再生成报告缺少有效执行用途；准备状态请用 prepare');
+  validatePlanManifest(await executionPlan(root, manifest.phase, manifest.suite?.id), manifest);
   let runner: Record<string, unknown>;
   try {
     runner = JSON.parse(await readFile(resolve(out, 'runner-summary.json'), 'utf8'));
@@ -34,7 +38,12 @@ async function regenerate(out: string): Promise<void> {
     catalog.requirements,
     catalog.cases,
     [...events, ...(await readManualEvents(out))],
-    { ...manifest, ...runner },
+    {
+      ...manifest,
+      runnerStatus: runner?.runnerStatus,
+      runnerErrors: runner?.runnerErrors,
+      completedAt: runner?.completedAt,
+    },
   );
 }
 if (action === 'hash-target') {
@@ -70,7 +79,31 @@ if (action === 'hash-target') {
   );
   await regenerate(out);
   console.log('已追加人工审计记录，原自动化events未修改。');
-} else if (action === 'run') {
+} else if (action === 'hash-suite') {
+  const plan = await executionPlan(root, 'developer-preflight', option('--suite'));
+  console.log(plan.suiteSha256);
+} else if (action === 'run' || action === 'preflight') {
+  const allowedOptions = new Set(['--target', '--authorization', '--suite']);
+  const seenOptions = new Set<string>();
+  for (let i = 0; i < args.length; i += 2) {
+    const key = args[i]!;
+    const value = args[i + 1];
+    if (!allowedOptions.has(key) || seenOptions.has(key) || !value || value.startsWith('--'))
+      throw new Error('执行参数无效、重复或缺值；只能选择登记的 QA 子集，不接受额外筛选参数');
+    seenOptions.add(key);
+  }
+  const plan = await executionPlan(
+    root,
+    action === 'run' ? 'execution' : 'developer-preflight',
+    option('--suite'),
+  );
+  process.env.QA_EXECUTION_KIND = plan.phase;
+  delete process.env.QA_EXECUTION_SUITE_ID;
+  delete process.env.QA_EXECUTION_SUITE_SHA256;
+  if (plan.suite) {
+    process.env.QA_EXECUTION_SUITE_ID = plan.suite.id;
+    process.env.QA_EXECUTION_SUITE_SHA256 = plan.suiteSha256;
+  }
   const targetPath = option('--target'),
     authPath = option('--authorization');
   if (!targetPath || !authPath)
@@ -89,7 +122,11 @@ if (action === 'hash-target') {
   if (hash !== 'c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75')
     throw new Error('原始需求校验值变化，停止执行');
   const runId = `${new Date().toISOString().replaceAll(':', '-')}-${randomUUID().slice(0, 8)}`;
-  const out = await reportDirectory(root, `reports/runs/${runId}`, true);
+  const out = await reportDirectory(
+    root,
+    `reports/${plan.phase === 'execution' ? 'runs' : 'preflight'}/${runId}`,
+    true,
+  );
   process.env.QA_RUN_DIRECTORY = out;
   const qaRevision = (await exec('git', ['rev-parse', 'HEAD'], { cwd: root })).stdout.trim();
   const qaDirtyState = (
@@ -101,7 +138,7 @@ if (action === 'hash-target') {
     resolve(out, 'manifest.json'),
     redact({
       runId,
-      phase: 'execution',
+      ...plan,
       startedAt: new Date().toISOString(),
       baseline,
       qaRevision,
@@ -111,6 +148,16 @@ if (action === 'hash-target') {
       targetSha256: targetFingerprint(target),
       target,
       authorization,
+      executionApproval: {
+        scope: authorization.scope,
+        approvedBy: authorization.approvedBy,
+        approvalReference: authorization.approvalReference,
+        approvedAt: authorization.approvedAt,
+        expiresAt: authorization.expiresAt,
+        suiteId: authorization.suiteId,
+        suiteSha256: authorization.suiteSha256,
+        targetSha256: authorization.targetSha256,
+      },
       changeReview,
       originalSha256: hash,
       dependencyLockSha256: createHash('sha256').update(lock).digest('hex'),
@@ -121,7 +168,7 @@ if (action === 'hash-target') {
   );
   const child = spawn(
     process.execPath,
-    [resolve(root, 'node_modules/@playwright/test/cli.js'), 'test'],
+    [resolve(root, 'node_modules/@playwright/test/cli.js'), ...plan.playwrightArgs],
     { cwd: root, env: process.env, stdio: 'inherit' },
   );
   const relay = (signal: NodeJS.Signals) => {
@@ -142,13 +189,19 @@ if (action === 'hash-target') {
   }
   try {
     const summary = JSON.parse(await readFile(resolve(out, 'results.json'), 'utf8'));
-    if (!summary.conclusions.unconditionalPass && process.exitCode === 0) process.exitCode = 2;
+    const passed =
+      plan.phase === 'execution'
+        ? summary.conclusions.unconditionalPass === true
+        : summary.preflight?.verdict === 'PASS' && summary.preflight?.suiteId === plan.suite!.id;
+    if (!passed && process.exitCode === 0) process.exitCode = 2;
   } catch {
     process.exitCode = process.exitCode || 2;
     console.error('执行器未生成完整报告，不能判通过');
   }
-  console.log(`验收证据: ${out}`);
+  console.log(
+    `${plan.phase === 'execution' ? '正式验收' : '开发预跑（不构成正式验收）'}证据: ${out}`,
+  );
 } else
   throw new Error(
-    '用法: prepare | hash-target --target <file> | report --run <dir> | record-manual --run <dir> --input <review.json> | run --target <file> --authorization <file>',
+    '用法: prepare | hash-target --target <file> | report --run <dir> | record-manual --run <dir> --input <review.json> | hash-suite --suite <id> | run --target <file> --authorization <file> | preflight --suite <id> --target <file> --authorization <file>',
   );

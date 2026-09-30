@@ -1,9 +1,12 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { resolve } from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 import type { CaseDefinition, CaseResult, Requirement, ResultStatus } from './types.js';
 import { redact } from './security.js';
 import { caseProjects } from './catalog.js';
+import { resolveSuiteDefinition, type ResolvedSuite } from './suites.js';
+import { suiteFingerprint } from './execution-plan.js';
 
 const rank: Record<ResultStatus, number> = { FAIL: 4, BLOCKED: 3, NOT_RUN: 2, PASS: 1 };
 export function aggregateResults(cases: CaseDefinition[], events: CaseResult[]): CaseResult[] {
@@ -91,6 +94,48 @@ const xml = (s: string) =>
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;');
 const cell = (s: string) => s.replaceAll('|', '\\|').replaceAll('\n', ' ');
+
+function checkedSuite(metadata: Record<string, unknown>, cases: CaseDefinition[]): ResolvedSuite {
+  const snapshot = metadata.suite;
+  if (!snapshot || typeof snapshot !== 'object' || Array.isArray(snapshot))
+    throw new Error('缺少完整suite快照');
+  const supplied = snapshot as Record<string, unknown>;
+  const suite = resolveSuiteDefinition(
+    {
+      schemaVersion: 1,
+      owner: 'QA',
+      suites: [
+        {
+          id: supplied.id,
+          title: supplied.title,
+          purpose: supplied.purpose,
+          caseIds: supplied.caseIds,
+          projects: supplied.projects,
+          riskBoundaries: supplied.riskBoundaries,
+        },
+      ],
+    },
+    cases,
+    typeof supplied.id === 'string' ? supplied.id : '',
+  );
+  if (!isDeepStrictEqual(snapshot, suite))
+    throw new Error('suite快照与当前catalog解析结果不一致（含grep、用例文件、名称或项目）');
+  const fingerprint = suiteFingerprint(suite);
+  if (metadata.suiteSha256 !== fingerprint)
+    throw new Error('suiteSha256缺失或与完整suite快照不一致');
+  const approval = metadata.executionApproval;
+  if (!approval || typeof approval !== 'object' || Array.isArray(approval))
+    throw new Error('缺少开发预跑executionApproval安全记录');
+  const approved = approval as Record<string, unknown>;
+  if (
+    approved.scope !== 'developer-preflight' ||
+    approved.suiteId !== suite.id ||
+    approved.suiteSha256 !== fingerprint
+  )
+    throw new Error('executionApproval的scope/suiteId/suiteSha256与预跑快照不一致');
+  return suite;
+}
+
 export async function writeReport(
   root: string,
   requirements: Requirement[],
@@ -100,15 +145,66 @@ export async function writeReport(
 ): Promise<void> {
   await mkdir(root, { recursive: true });
   const integrity: string[] = [];
+  const developerPreflight = metadata.phase === 'developer-preflight';
+  if (
+    typeof metadata.phase !== 'string' ||
+    !['preparation', 'execution', 'developer-preflight'].includes(metadata.phase)
+  )
+    integrity.push(`缺失或未知报告阶段: ${String(metadata.phase)}`);
+  if (metadata.phase === 'execution') {
+    if (metadata.suite !== undefined || metadata.suiteSha256 !== undefined)
+      integrity.push('正式验收报告不可携带开发子集suite或suiteSha256');
+    if (metadata.executionApproval !== undefined) {
+      const approval = metadata.executionApproval;
+      if (
+        !approval ||
+        typeof approval !== 'object' ||
+        Array.isArray(approval) ||
+        (approval as Record<string, unknown>).scope !== 'all-required' ||
+        (approval as Record<string, unknown>).suiteId !== undefined ||
+        (approval as Record<string, unknown>).suiteSha256 !== undefined
+      )
+        integrity.push('正式验收executionApproval必须是无子集的all-required范围');
+    }
+  }
   if (metadata.phase === 'preparation' && events.length)
     integrity.push('准备报告忽略所有传入执行结果，产品用例保持NOT_RUN');
   const attempts = metadata.phase === 'preparation' ? [] : events;
+  let suite: ResolvedSuite | undefined;
+  let admittedAttempts = attempts;
+  const rejectedAttempts: CaseResult[] = [];
+  if (developerPreflight) {
+    try {
+      suite = checkedSuite(metadata, cases);
+    } catch (error) {
+      integrity.push(`开发预跑suite无效: ${String(error)}`);
+    }
+    const selectedPairs = new Set(
+      suite?.cases.flatMap((c) => c.projects.map((project) => `${c.id}:${project}`)) ?? [],
+    );
+    admittedAttempts = attempts.filter((attempt) => {
+      if (
+        typeof attempt.project === 'string' &&
+        selectedPairs.has(`${attempt.id}:${attempt.project}`)
+      )
+        return true;
+      rejectedAttempts.push(attempt);
+      integrity.push(`开发预跑包含非子集用例或项目: ${attempt.id}:${String(attempt.project)}`);
+      return false;
+    });
+  }
   for (const event of attempts)
     if (!cases.some((c) => c.id === event.id))
       integrity.push(`未知用例结果: ${event.id} (${event.status})`);
-  const knownCaseFailure = attempts.some(
+  const knownCaseFailure = admittedAttempts.some(
     (event) => event.status === 'FAIL' && cases.some((c) => c.id === event.id),
   );
+  if (
+    developerPreflight &&
+    (typeof metadata.runnerStatus !== 'string' ||
+      !['passed', 'failed'].includes(metadata.runnerStatus))
+  )
+    integrity.push('开发预跑缺少有效执行器最终状态passed/failed，不能仅凭suite和事件宣称通过');
   if (
     metadata.runnerStatus &&
     metadata.runnerStatus !== 'passed' &&
@@ -129,7 +225,7 @@ export async function writeReport(
   for (const c of cases)
     for (const id of c.requirements)
       if (!requirements.some((r) => r.id === id)) integrity.push(`用例${c.id}引用未知需求${id}`);
-  const results = aggregateResults(cases, attempts);
+  const results = aggregateResults(cases, admittedAttempts);
   const scope = (kind: string) =>
     cases.filter(
       (c) =>
@@ -139,8 +235,57 @@ export async function writeReport(
   const rawFunctionality = verdict(scope('required'), results),
     rawRelease = verdict(scope('release'), results);
   const functionality =
-      rawFunctionality === 'PASS' && integrity.length ? 'INCOMPLETE' : rawFunctionality,
-    release = rawRelease === 'PASS' && integrity.length ? 'INCOMPLETE' : rawRelease;
+      developerPreflight || (rawFunctionality === 'PASS' && integrity.length)
+        ? 'INCOMPLETE'
+        : rawFunctionality,
+    release =
+      developerPreflight || (rawRelease === 'PASS' && integrity.length) ? 'INCOMPLETE' : rawRelease;
+  const selectedCases =
+    suite?.cases.map((selected) => {
+      const original = cases.find((c) => c.id === selected.id)!;
+      return { ...original, data: { ...original.data, projects: selected.projects } };
+    }) ?? [];
+  const selectedResults = aggregateResults(selectedCases, admittedAttempts);
+  const projectResults = selectedCases.flatMap((c) =>
+    caseProjects(c).map((project) => ({
+      ...aggregateResults(
+        [{ ...c, data: { ...c.data, projects: [project] } }],
+        admittedAttempts.filter((attempt) => attempt.id === c.id && attempt.project === project),
+      )[0]!,
+      project,
+    })),
+  );
+  const selectedVerdict = verdict(selectedCases, selectedResults);
+  const preflight = developerPreflight
+    ? {
+        suiteId: suite?.id ?? null,
+        verdict:
+          selectedVerdict === 'FAIL'
+            ? 'FAIL'
+            : suite && selectedVerdict === 'PASS' && !integrity.length
+              ? 'PASS'
+              : 'INCOMPLETE',
+        selectedCaseCount: selectedCases.length,
+        selectedProjectCount: suite?.projects.length ?? 0,
+        selectedCaseProjectCount: projectResults.length,
+        counts: Object.fromEntries(
+          ['PASS', 'FAIL', 'BLOCKED', 'NOT_RUN'].map((status) => [
+            status,
+            selectedResults.filter((r) => r.status === status).length,
+          ]),
+        ),
+        projects: suite?.projects ?? [],
+        results: selectedResults,
+        projectResults,
+        attempts: admittedAttempts,
+        rejectedAttempts,
+        integrity,
+        riskBoundaries: suite?.riskBoundaries ?? [],
+        countingNote:
+          'selectedProjectCount为项目数；selectedCaseProjectCount为所选用例与项目的应执行组合数。所有attempt取最差结果，未选范围不因此通过。',
+        authority: '开发预跑，仅对该子集有效，不是正式QA验收或发布结论。',
+      }
+    : undefined;
   const total = cases.filter((c) => c.mode !== 'candidate').length;
   const counts = Object.fromEntries(
     ['PASS', 'FAIL', 'BLOCKED', 'NOT_RUN'].map((s) => [
@@ -173,7 +318,7 @@ export async function writeReport(
     .filter((r) => r.status === 'FAIL')
     .map((r) => {
       const c = cases.find((c) => c.id === r.id)!;
-      const failedAttempts = attempts.filter((a) => a.id === r.id && a.status === 'FAIL');
+      const failedAttempts = admittedAttempts.filter((a) => a.id === r.id && a.status === 'FAIL');
       const severity =
         failedAttempts.filter((a) => a.defectSeverity).at(-1)?.defectSeverity ?? 'UNTRIAGED';
       return {
@@ -216,11 +361,12 @@ export async function writeReport(
     formatVersion: 1,
     generatedAt: new Date().toISOString(),
     metadata,
+    ...(preflight ? { preflight } : {}),
     conclusions: {
       functionality,
       release,
       unconditionalPass:
-        metadata.phase !== 'preparation' &&
+        metadata.phase === 'execution' &&
         !integrity.length &&
         functionality === 'PASS' &&
         release === 'PASS',
@@ -254,9 +400,15 @@ export async function writeReport(
   await writeFile(resolve(root, 'results.json'), redact(report), {
     flag: constants.O_CREAT | constants.O_WRONLY | constants.O_TRUNC | constants.O_NOFOLLOW,
   });
-  const header = `# 独立 QA 验收报告\n\n需求符合性：**${functionality}**；上线准备度：**${release}**。\n\n${metadata.phase === 'preparation' ? '本报告是准备状态清单，未启动或连接被测系统，不能用于宣称产品验收通过。' : '仅对所记录版本、环境、用例和证据成立；有限故障实验不证明任意时刻绝对保证。'}\n\n`;
+  const header = preflight
+    ? `# 开发预跑报告\n\n子集：**${cell(preflight.suiteId ?? '无有效suite')}**；预跑结论：**${preflight.verdict}**。\n\n这是开发预跑，不是正式 QA 验收。正式需求符合性及上线准备度均为 **INCOMPLETE**，不能据此宣称正式验收或无条件通过。\n\n`
+    : `# 独立 QA 验收报告\n\n需求符合性：**${functionality}**；上线准备度：**${release}**。\n\n${metadata.phase === 'preparation' ? '本报告是准备状态清单，未启动或连接被测系统，不能用于宣称产品验收通过。' : '仅对所记录版本、环境、用例和证据成立；有限故障实验不证明任意时刻绝对保证。'}\n\n`;
+  const preflightText = preflight
+    ? `所选 ${preflight.selectedCaseCount} 条用例、${preflight.selectedProjectCount} 个项目，共 ${preflight.selectedCaseProjectCount} 个用例/项目组合。未选项保持 NOT_RUN；仅完成Chromium不等于完成该用例要求的所有浏览器。JSON保留全部attempt及被拒绝的越界结果。\n\n## 预跑项目结果\n\n|用例|项目|结果|说明|\n|---|---|---|---|\n${preflight.projectResults.map((r) => `|${cell(r.id)}|${cell(r.project)}|${r.status}|${cell(r.reason ?? '')}|`).join('\n')}\n\n${preflight.riskBoundaries.map((risk) => `- ${cell(risk)}`).join('\n')}\n\n以下是完整catalog的观测清单，不能转用为正式验收结果。\n\n`
+    : '';
   const text =
     header +
+    preflightText +
     `- 范围内用例：${total}；通过 ${counts.PASS}，失败 ${counts.FAIL}，阻塞 ${counts.BLOCKED}，未执行 ${counts.NOT_RUN}。\n- 自动化 ${report.metrics.automated}，人工 ${report.metrics.manual}，设计阻塞 ${report.metrics.blockedDesign}，候选 ${report.metrics.candidate}。\n- 有用例覆盖、实际执行和通过率分别统计；跳过、缺少浏览器项目、缺少环境均不作通过。JSON另列required/release/candidate各范围计数及已执行通过率；多范围用例分别计数，不可直接相加。\n\n## 版本、环境与授权\n\n\x60\x60\x60json\n${redact(metadata)}\n\x60\x60\x60\n\n## 逐项结果\n\n|用例|需求|结果|说明|证据|\n|---|---|---|---|---|\n` +
     cases
       .map((c) => {
@@ -281,9 +433,16 @@ export async function writeReport(
   await writeFile(resolve(root, 'acceptance.md'), text, {
     flag: constants.O_CREAT | constants.O_WRONLY | constants.O_TRUNC | constants.O_NOFOLLOW,
   });
+  const junitResults = preflight ? preflight.projectResults : results;
+  const junitIntegrity = integrity.length
+    ? `<testcase classname="report-integrity" name="${preflight ? 'PREFLIGHT-INTEGRITY' : 'REPORT-INTEGRITY'}" time="0"><error message="${xml(integrity.join('; '))}"/></testcase>`
+    : '';
+  const junitName = preflight
+    ? `developer-preflight:${preflight.suiteId ?? 'invalid-suite'}`
+    : 'independent-qa';
   await writeFile(
     resolve(root, 'junit.xml'),
-    `<?xml version="1.0" encoding="UTF-8"?>\n<testsuite name="independent-qa" tests="${results.length}" failures="${results.filter((r) => r.status === 'FAIL').length}" skipped="${results.filter((r) => r.status === 'BLOCKED' || r.status === 'NOT_RUN').length}">${results.map((r) => `<testcase name="${xml(r.id)}" time="${(r.durationMs ?? 0) / 1000}">${r.status === 'PASS' ? '' : r.status === 'FAIL' ? `<failure message="${xml(r.reason ?? 'failed')}"/>` : `<skipped message="${xml(`${r.status}: ${r.reason ?? ''}`)}"/>`}</testcase>`).join('')}</testsuite>\n`,
+    `<?xml version="1.0" encoding="UTF-8"?>\n<testsuite name="${xml(junitName)}" tests="${junitResults.length + (junitIntegrity ? 1 : 0)}" failures="${junitResults.filter((r) => r.status === 'FAIL').length}" errors="${junitIntegrity ? 1 : 0}" skipped="${junitResults.filter((r) => r.status === 'BLOCKED' || r.status === 'NOT_RUN').length}">${junitResults.map((r) => `<testcase name="${xml(preflight ? `${r.id} [${r.project}]` : r.id)}" time="${(r.durationMs ?? 0) / 1000}">${r.status === 'PASS' ? '' : r.status === 'FAIL' ? `<failure message="${xml(r.reason ?? 'failed')}"/>` : `<skipped message="${xml(`${r.status}: ${r.reason ?? ''}`)}"/>`}</testcase>`).join('')}${junitIntegrity}</testsuite>\n`,
     { flag: constants.O_CREAT | constants.O_WRONLY | constants.O_TRUNC | constants.O_NOFOLLOW },
   );
 }

@@ -1,3 +1,4 @@
+import { currentExecutionPlan, validatePlanManifest } from './execution-plan.js';
 import { reviewTargetChanges } from './change-review.js';
 import { realpath, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -18,11 +19,15 @@ export default async function executionGate(): Promise<void> {
   const target = await loadTarget(process.env.QA_TARGET_CONFIG, root);
   await requireAuthorization(target);
   await reviewTargetChanges(root, target);
+  const plan = await currentExecutionPlan(root);
   const out = await realpath(process.env.QA_RUN_DIRECTORY);
-  const allowed = await realpath(resolve(root, 'reports/runs'));
+  const allowed = await realpath(
+    resolve(root, plan.phase === 'execution' ? 'reports/runs' : 'reports/preflight'),
+  );
   if (!isWithin(allowed, out) || out === allowed)
-    throw new BlockedError('运行证据目录不属于专属reports/runs');
+    throw new BlockedError('运行证据目录与当前正式验收/开发预跑用途不一致');
   const manifest = JSON.parse(await readFile(resolve(out, 'manifest.json'), 'utf8'));
-  if (manifest.phase !== 'execution' || manifest.targetSha256 !== targetFingerprint(target))
+  validatePlanManifest(plan, manifest);
+  if (manifest.targetSha256 !== targetFingerprint(target))
     throw new BlockedError('执行manifest未绑定当前目标配置');
 }

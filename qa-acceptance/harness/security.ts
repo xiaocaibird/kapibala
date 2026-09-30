@@ -3,7 +3,7 @@ import { resolve, relative, isAbsolute } from 'node:path';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { createHash } from 'node:crypto';
-import type { Authorization, TargetConfig } from './types.js';
+import type { Authorization, TargetConfig, ExecutionPurpose } from './types.js';
 
 const exec = promisify(execFile);
 export class BlockedError extends Error {
@@ -129,14 +129,34 @@ export async function loadTarget(path: string, qaRoot: string): Promise<TargetCo
       throw new BlockedError('UI路由只能是当前隔离origin的相对路径');
   return c;
 }
+export function executionPurpose(env: NodeJS.ProcessEnv = process.env): ExecutionPurpose {
+  const phase = env.QA_EXECUTION_KIND ?? 'execution';
+  if (phase === 'execution') {
+    if (env.QA_EXECUTION_SUITE_ID || env.QA_EXECUTION_SUITE_SHA256)
+      throw new BlockedError('正式验收不能携带开发子集环境变量');
+    return { phase };
+  }
+  if (
+    phase !== 'developer-preflight' ||
+    !/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(env.QA_EXECUTION_SUITE_ID ?? '') ||
+    !/^[a-f0-9]{64}$/.test(env.QA_EXECUTION_SUITE_SHA256 ?? '')
+  )
+    throw new BlockedError('开发预跑缺少有效子集和内容摘要，或执行用途无效');
+  return {
+    phase,
+    suiteId: env.QA_EXECUTION_SUITE_ID!,
+    suiteSha256: env.QA_EXECUTION_SUITE_SHA256!,
+  };
+}
 export function validateAuthorization(
   a: Authorization,
   target: TargetConfig,
   now = Date.now(),
+  purpose: ExecutionPurpose = { phase: 'execution' },
 ): void {
   if (
     a.version !== 1 ||
-    a.scope !== 'all-required' ||
+    a.scope !== (purpose.phase === 'execution' ? 'all-required' : 'developer-preflight') ||
     typeof a.approvedBy !== 'string' ||
     !a.approvedBy.trim() ||
     /REQUIRED/.test(a.approvedBy) ||
@@ -145,6 +165,15 @@ export function validateAuthorization(
     /REQUIRED/.test(a.approvalReference)
   )
     throw new BlockedError('缺少后续用户明确授权的记录');
+  if (
+    purpose.phase === 'developer-preflight' &&
+    (a.suiteId !== purpose.suiteId ||
+      a.suiteSha256 !== purpose.suiteSha256 ||
+      !/^[a-f0-9]{64}$/.test(purpose.suiteSha256))
+  )
+    throw new BlockedError('预跑授权未绑定当前 QA 子集及内容摘要');
+  if (purpose.phase === 'execution' && (a.suiteId !== undefined || a.suiteSha256 !== undefined))
+    throw new BlockedError('正式验收授权不可携带开发子集');
   const from = Date.parse(a.approvedAt),
     until = Date.parse(a.expiresAt);
   if (
@@ -176,7 +205,7 @@ export async function requireAuthorization(target: TargetConfig): Promise<Author
     throw new BlockedError('尚未授权执行产品验收；仅可运行 test:self/typecheck/check:catalog');
   const a = JSON.parse(await readFile(file, 'utf8')) as Authorization;
   a.sutDirectory = await realpath(a.sutDirectory);
-  validateAuthorization(a, target);
+  validateAuthorization(a, target, Date.now(), executionPurpose());
   const workspace = (
     await exec('git', ['rev-parse', '--show-toplevel'], { cwd: target.sut.cwd })
   ).stdout.trim();

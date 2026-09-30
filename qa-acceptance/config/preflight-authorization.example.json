@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "approvedBy": "REQUIRED",
+  "approvalReference": "REQUIRED: later explicit user authorization",
+  "approvedAt": "REQUIRED_ISO_UTC",
+  "expiresAt": "REQUIRED_ISO_UTC",
+  "sutRevision": "REQUIRED_FULL_COMMIT_SHA",
+  "sutDirectory": "REQUIRED_ABSOLUTE_PATH",
+  "allowedActions": [
+    "start-isolated-sut",
+    "create-owned-database",
+    "fault-injection",
+    "kill-owned-process",
+    "browser-automation"
+  ],
+  "scope": "developer-preflight",
+  "targetSha256": "REQUIRED_NORMALIZED_TARGET_CONFIG_SHA256",
+  "suiteId": "developer-smoke",
+  "suiteSha256": "REQUIRED_RESOLVED_SUITE_SHA256"
+}
