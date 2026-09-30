@@ -52,8 +52,8 @@ export class AgentModule {
     messaging: MessagingService,
   ) {
     this.toolRunner = new AgentTools(ctx, messaging, {
-      completeStep: (run, step, outcome) =>
-        this.completeStep(run, step, outcome),
+      completeStep: (run, step, outcome, endReason) =>
+        this.completeStep(run, step, outcome, endReason),
       finishAfterStep: (run, text) => this.finishAfterStep(run, text),
       remaining: (run) => this.remaining(run),
       finish: (run, status, reason) => this.finish(run, status, reason),
@@ -279,6 +279,19 @@ export class AgentModule {
   private async run(id: string, connection: PoolClient): Promise<void> {
     let run = await this.readRun(id);
     if (!run || run.status !== "running" || run.recovery_note) return;
+    // Older persisted runs can contain the former two-commit audit-block window.
+    // Its exhausted audit evidence must stop recovery before any further turn.
+    if (
+      (
+        await this.ctx.db.query(
+          "SELECT 1 FROM agent_steps WHERE run_id=$1 AND state='complete' AND audit_attempts>=3 AND audit_verdict IS NULL AND is_error AND error_code='AUDIT_REJECTED' LIMIT 1",
+          [id],
+        )
+      ).rowCount
+    ) {
+      await this.finish(run, "blocked", "audit_blocked");
+      return;
+    }
     if (run.inflight_turn) {
       await this.pause(
         run,
@@ -553,6 +566,7 @@ export class AgentModule {
     run: RunRow,
     step: StepRow,
     outcome: ToolOutcome,
+    endReason?: "audit_blocked",
   ): Promise<void> {
     const content = resultContent(outcome.value);
     const history: ConversationMessage[] = [
@@ -570,6 +584,10 @@ export class AgentModule {
       },
     ];
     await this.ctx.db.transaction(async (tx) => {
+      if (endReason)
+        await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
+          run.group_id,
+        ]);
       await tx.query(
         "UPDATE agent_steps SET state='complete',result=$3,result_summary=$4,is_error=$5,error_code=$6 WHERE run_id=$1 AND ordinal=$2",
         [
@@ -585,7 +603,21 @@ export class AgentModule {
         "UPDATE agent_runs SET history=$2,updated_at=now() WHERE id=$1",
         [run.id, JSON.stringify(history)],
       );
+      if (endReason) {
+        // The complete tool result and terminal conclusion are one durable fact.
+        const blocked = (
+          await tx.query<RunRow>(
+            "UPDATE agent_runs SET status='blocked',end_reason=$2,inflight_turn=false WHERE id=$1 AND status='running' RETURNING *",
+            [run.id, endReason],
+          )
+        ).rows[0];
+        if (blocked) await notify(tx, blocked);
+      }
     });
+    if (endReason) {
+      await this.scan();
+      await this.startNext(run.group_id);
+    }
   }
   private async finishAfterStep(run: RunRow, text: string): Promise<void> {
     const fresh = (await this.readRun(run.id))!;

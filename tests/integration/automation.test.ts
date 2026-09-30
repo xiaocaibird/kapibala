@@ -248,11 +248,9 @@ before(async () => {
   api = Fastify();
   api.setErrorHandler((error, _request, reply) => {
     if (error instanceof AppError)
-      return reply
-        .code(error.status)
-        .send({
-          error: { code: error.code, message: error.message, ...error.details },
-        });
+      return reply.code(error.status).send({
+        error: { code: error.code, message: error.message, ...error.details },
+      });
     return reply
       .code(500)
       .send({ error: { code: "INTERNAL", message: String(error) } });
@@ -1326,6 +1324,84 @@ test("closing and recreating modules preserves activity while excluding actual d
 });
 
 const realTiming = process.env.AUTOMATION_TIMING_TESTS === "1";
+test("inconclusive audit step and blocked run roll back together before recovery", async () => {
+  await reset();
+  let turns = 0;
+  agentReply = () =>
+    ++turns === 1
+      ? use("uncertain-audit", "send_message", {
+          text: "must not send",
+          idempotency_key: "blocked",
+        })
+      : end();
+  auditReply = () => ({ verdict: "maybe" });
+  await db.query(
+    "CREATE FUNCTION reject_audit_block() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.status='blocked' THEN RAISE EXCEPTION 'injected block persistence failure'; END IF; RETURN NEW; END $$",
+  );
+  await db.query(
+    "CREATE TRIGGER reject_audit_block BEFORE UPDATE ON agent_runs FOR EACH ROW EXECUTE FUNCTION reject_audit_block()",
+  );
+  try {
+    await inbound();
+    await module.tick();
+    const deadline = Date.now() + 3000;
+    while (auditCalls < 3 && Date.now() < deadline) await delay(10);
+    assert.equal(auditCalls, 3);
+    await module.close!();
+    const saved = (
+      await db.query<{ state: string }>(
+        "SELECT state FROM agent_steps WHERE tool_use_id='uncertain-audit'",
+      )
+    ).rows[0]!;
+    assert.equal(
+      saved.state,
+      "auditing",
+      "a failed blocked commit must not persist a completed tool step",
+    );
+    assert.equal((await latestRun()).status, "running");
+  } finally {
+    await db.query("DROP TRIGGER reject_audit_block ON agent_runs");
+    await db.query("DROP FUNCTION reject_audit_block()");
+  }
+  module = createAutomationModule(
+    {
+      db,
+      agent: new RemoteClient(remote.listeningOrigin),
+      gateway: new RemoteClient(remote.listeningOrigin),
+      log: api.log,
+    },
+    messaging,
+  );
+  await waitFor(async () => (await latestRun())?.status === "blocked");
+  assert.equal((await latestRun()).end_reason, "audit_blocked");
+  assert.equal(turns, 1);
+  assert.equal(auditCalls, 3);
+  assert.equal(enqueueCalls, 0);
+});
+
+test("persisted legacy audit-block window cannot resume another Agent turn", async () => {
+  await reset();
+  let turns = 0;
+  agentReply = () => {
+    turns++;
+    return end();
+  };
+  const id = randomUUID();
+  await db.query(
+    "INSERT INTO agent_runs(id,group_id,step_count) VALUES($1,$2,1)",
+    [id, groupId],
+  );
+  await db.query(
+    "INSERT INTO agent_steps(run_id,ordinal,kind,tool_use_id,name,input,state,audit_attempts,is_error,error_code) VALUES($1,1,'tool_use','legacy-audit','send_message',$2,'complete',3,true,'AUDIT_REJECTED')",
+    [id, JSON.stringify({ text: "blocked", idempotency_key: "legacy" })],
+  );
+  await waitFor(async () => (await latestRun())?.status !== "running");
+  assert.equal((await latestRun()).status, "blocked");
+  assert.equal((await latestRun()).end_reason, "audit_blocked");
+  assert.equal(turns, 0);
+  assert.equal(enqueueCalls, 0);
+});
+
 test(
   "timing: the default twelve-second turn timeout discards the late response",
   { skip: !realTiming },

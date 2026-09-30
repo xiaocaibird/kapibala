@@ -16,7 +16,12 @@ import {
 import type { GroupRow, RecentRow, RunRow, StepRow } from "./types.js";
 
 export interface ToolExecutionHost {
-  completeStep(run: RunRow, step: StepRow, outcome: ToolOutcome): Promise<void>;
+  completeStep(
+    run: RunRow,
+    step: StepRow,
+    outcome: ToolOutcome,
+    endReason?: "audit_blocked",
+  ): Promise<void>;
   finishAfterStep(run: RunRow, text: string): Promise<void>;
   remaining(run: RunRow): number;
   finish(
@@ -164,8 +169,8 @@ export class AgentTools {
         "Audit service returned no conclusive verdict after three attempts.",
         "The run is blocked; no side effect was executed.",
       ),
+      "audit_blocked",
     );
-    await this.host.finish(run, "blocked", "audit_blocked");
     return "blocked";
   }
   private async send(run: RunRow, step: StepRow): Promise<void> {
