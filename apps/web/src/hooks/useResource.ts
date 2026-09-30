@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { z } from "zod";
 import { request } from "../api/client";
 import { useLive } from "../state/live";
+import type { SnapshotEvidence } from "../attention/model";
 export function useResource<T>(
   path: string | null,
   schema: z.ZodType<T>,
@@ -10,11 +11,13 @@ export function useResource<T>(
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
+  const [snapshot, setSnapshot] = useState<SnapshotEvidence | null>(null);
+  const snapshotRevision = useRef(0);
   const generation = useRef(0);
   const controller = useRef<AbortController | null>(null);
   const flight = useRef<Promise<void> | null>(null);
   const pending = useRef(false);
-  const { revision } = useLive();
+  const { revision, getLastSeq } = useLive();
   const reload = useCallback((): Promise<void> => {
     if (!path) {
       setLoading(false);
@@ -32,11 +35,17 @@ export function useResource<T>(
     const operation = (async () => {
       do {
         pending.current = false;
+        const startedSeq = getLastSeq();
         try {
           const next = await request(path, schema, { signal });
           if (generation.current === current) {
             setData(next);
             setError(null);
+            setSnapshot({
+              seq: startedSeq,
+              revision: ++snapshotRevision.current,
+              path,
+            });
           }
         } catch (value) {
           if (
@@ -57,12 +66,13 @@ export function useResource<T>(
     });
     flight.current = operation;
     return operation;
-  }, [path, schema]);
+  }, [path, schema, getLastSeq]);
   useEffect(() => {
     generation.current++;
     flight.current = null;
     pending.current = false;
     setData(null);
+    setSnapshot(null);
     setLoading(true);
     void reload();
     return () => {
@@ -83,5 +93,5 @@ export function useResource<T>(
     const interval = setInterval(() => void reload(), pollMs);
     return () => clearInterval(interval);
   }, [pollMs, path, reload]);
-  return { data, error, loading, reload };
+  return { data, error, loading, reload, snapshot };
 }
