@@ -1,0 +1,49 @@
+{
+  "scope": "V-AUTH-01 same-page session boundary",
+  "date": "2026-10-01T03:13:17+08:00",
+  "baselineCommit": "9087630",
+  "testedCommit": "acb271b9c39f66ed855a0a5a5f14f439d5ba0d7f",
+  "environment": "Node v24.21.0 / npm 12.1.0; real API client with controlled fetch responses; no browser or database",
+  "before": {
+    "command": "node --import tsx --test apps/web/tests/session-boundary.test.ts",
+    "expectedRegressionFailures": 4,
+    "passed": 0,
+    "failed": 4
+  },
+  "after": {
+    "command": "node --import tsx --test apps/web/tests/*.test.ts",
+    "passed": 102,
+    "failed": 0,
+    "skipped": 0
+  },
+  "build": {
+    "command": "npm run build",
+    "result": "passed (server and web TypeScript, web production build)"
+  },
+  "cases": [
+    "old write 401 after another login does not retry with new identity",
+    "old retried 401 does not clear new identity",
+    "late successful data cannot be returned into another session",
+    "new session gets independent refresh flight; old finalizer cannot clear it"
+  ],
+  "limits": [
+    "not a real-browser or real-server experiment",
+    "no cross-tab coordination implemented",
+    "already dispatched requests or remote effects cannot be rolled back",
+    "does not prevent a browser applying a delayed Set-Cookie; that needs separate cookie/session coordination"
+  ],
+  "logs": {
+    "session-boundary-before.log": {
+      "path": "session-boundary-before.log",
+      "sha256": "b668e2a8478b0f01323fd0dcd44ba6f4873c7687f11c8b8984c587898647696c"
+    },
+    "session-boundary-after.log": {
+      "path": "session-boundary-after.log",
+      "sha256": "015ff4c0de8cea743f2c4517d9f9a1add1570825f511b2bea16ad6c2e265e144"
+    },
+    "session-boundary-build.log": {
+      "path": "session-boundary-build.log",
+      "sha256": "683817ce32d63fa1b15638211cda1f50a03d75f9bd39f215ae4d3f9f52cd4630"
+    }
+  }
+}

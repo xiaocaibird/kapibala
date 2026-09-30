@@ -1,0 +1,91 @@
+✖ a delayed write 401 cannot replay under a newly logged-in identity (11.437ms)
+✖ an old retried request cannot clear the new identity on its delayed 401 (0.674667ms)
+✖ a late successful result is not returned into a different session (0.181084ms)
+✖ a new session owns a new refresh flight and an old finalizer cannot release it (0.524667ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 630.349708
+
+✖ failing tests:
+
+test at apps/web/tests/session-boundary.test.ts:1:1086
+✖ a delayed write 401 cannot replay under a newly logged-in identity (11.437ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection (sessionChanged).
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/apps/web/tests/session-boundary.test.ts:54:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at apps/web/tests/session-boundary.test.ts:1:1774
+✖ an old retried request cannot clear the new identity on its delayed 401 (0.674667ms)
+  AssertionError [ERR_ASSERTION]: The "sessionChanged" validation function is expected to return "true". Received false
+  
+  Caught error:
+  
+  ApiError: expired
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/apps/web/tests/session-boundary.test.ts:75:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: ApiError: expired
+        at exchange (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/apps/web/src/api/client.ts:78:13)
+        at async request (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/apps/web/src/api/client.ts:144:14)
+        at async waitForActual (node:assert:646:5)
+        at async strict.rejects (node:assert:769:25)
+        at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/apps/web/tests/session-boundary.test.ts:75:3)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at apps/web/tests/session-boundary.test.ts:1:2457
+✖ a late successful result is not returned into a different session (0.181084ms)
+  AssertionError [ERR_ASSERTION]: Missing expected rejection (sessionChanged).
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/apps/web/tests/session-boundary.test.ts:88:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    operator: 'rejects',
+    diff: 'simple'
+  }
+
+test at apps/web/tests/session-boundary.test.ts:1:2872
+✖ a new session owns a new refresh flight and an old finalizer cannot release it (0.524667ms)
+  AssertionError [ERR_ASSERTION]: Expected "actual" not to be reference-equal to "expected":
+  
+  Promise {
+    <rejected> ApiError: 会话已变更，请重新登录。
+        at <anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/apps/web/src/api/client.ts:103:15) {
+      code: 'SESSION_CHANGED',
+      details: {},
+      requestId: null,
+      status: 401
+    },
+    Symbol(async_id_symbol): 330,
+    Symbol(trigger_async_id_symbol): 329
+  }
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/apps/web/tests/session-boundary.test.ts:109:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [Promise],
+    expected: [Promise],
+    operator: 'notStrictEqual',
+    diff: 'simple'
+  }
