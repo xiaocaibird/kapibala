@@ -13,6 +13,7 @@ import {
 } from "./models.js";
 import { changeAccount } from "./state.js";
 import { reconcileLeftMembers } from "./left-membership.js";
+import { requestGroupAgentCancellation } from "../automation/lifecycle.js";
 
 async function notifyJob(tx: Queryable, before: JobRow): Promise<void> {
   const after = (
@@ -516,10 +517,7 @@ export class Jobs {
           );
           if (membership.changed) changedFields.push("members");
           if (left.rowCount) changedFields.push("status");
-          await tx.query(
-            "UPDATE agent_runs SET cancel_requested=true WHERE group_id=$1 AND status='running'",
-            [group.id],
-          );
+          await requestGroupAgentCancellation(tx, group.id);
         }
         await tx.query(
           "UPDATE jobs SET status=$2,state=$3,errors=$4,updated_at=now() WHERE id=$1",
