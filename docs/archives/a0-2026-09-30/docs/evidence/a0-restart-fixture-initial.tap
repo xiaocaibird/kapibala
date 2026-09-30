@@ -1,0 +1,54 @@
+▶ A0 acceptance: migration, real startup gate, error envelope, authentication and every registered write route
+  ✔ real older schema refuses process startup; migration restores health (967.793375ms)
+  ✔ repeat migration preserves structure, migration records and existing business rows (62.305208ms)
+  ✔ both roles receive 900-second access tokens; viewer can read (23.250625ms)
+  ✔ every registered business POST/PATCH rejects viewer without business or remote effects (60.940875ms)
+  ✔ representative actual API error sources preserve the common envelope and business fields (26.291875ms)
+  ✔ expiry and viewer refresh/logout are enforced independently of business writes (14.211917ms)
+  ✖ persisted access sessions and viewer business restrictions survive a real process restart (311.221166ms)
+✖ A0 acceptance: migration, real startup gate, error envelope, authentication and every registered write route (1964.679208ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 6
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2138.966167
+
+✖ failing tests:
+
+test at tests/integration/a0-acceptance.test.ts:1:19903
+✖ persisted access sessions and viewer business restrictions survive a real process restart (311.221166ms)
+  AssertionError [ERR_ASSERTION]: /api/groups/:id/leave-all
+  + actual - expected
+
+    {
+      accounts: {
+        rows: 6,
+        sha256: '49cc1d2c4a3c5bf2246692c0cad21bf2edba752e49c2d4f42d26651c43c093fd'
+      },
+      agent_pending: {
+  +     rows: 1,
+  +     sha256: 'c3ee6dd2c65c2eec69fbe445c51e54f552b8f6cea1d7f2faf382a475a97f5c16'
+  -     rows: 0,
+  -     sha256: '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945'
+      },
+      agent_runs: {
+        rows: 1,
+        sha256: 'f35af8e1d1c89493bd3f76dad7fd032af9e332c717ce05fdd670b5c40c40cf9e'
+      },
+
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/a0-acceptance/kapibala/tests/integration/a0-acceptance.test.ts:906:16)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/a0-acceptance/kapibala/tests/integration/a0-acceptance.test.ts:857:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { accounts: { rows: 6, sha256: '49cc1d2c4a3c5bf2246692c0cad21bf2edba752e49c2d4f42d26651c43c093fd' }, agent_pending: { rows: 1, sha256: 'c3ee6dd2c65c2eec69fbe445c51e54f552b8f6cea1d7f2faf382a475a97f5c16' }, agent_runs: { rows: 1, sha256: 'f35af8e1d1c89493bd3f76dad7fd032af9e332c717ce05fdd670b5c40c40cf9e' }, agent_send_keys: { rows: 0, sha256: '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945' }, agent_steps: { rows: 0, sha256: '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945' }, events: { rows: 0, sha256: '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945' }, gateway_events: { rows: 0, sha256: '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945' }, groups: { rows: 1, sha256: '825558b12c3df246ec339925ede7aa9ff9c211fe1a95ff8312c36251ca534358' }, jobs: { rows: 1, sha256: '06321ba19866054d906e0a26fedf2330272e15b1313c5c97c6e422ceeb6a048e' }, members: { rows: 2, sha256: '3b586ddee5d93d839aa4cca24eed2bc8a78747d9f1b0966fbfc3d67af99256c1' }, messages: { rows: 1, sha256: 'ef172b351a4756511316002947bb3eb25f6ed48b8ac79c96c8f169612e60962e' }, schema_migrations: { rows: 6, sha256: '0a49eca487bfc0b458f17f080ff70df4273e3fc974b1167dfcd0fbae8c557d3f' }, sequence_runs: { rows: 1, sha256: 'b5faeb0a7778e7b9c1259cd4eebe6d2559daa91a61fe0ff6af9fb1781aa9ebcb' }, sequence_steps: { rows: 0, sha256: '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945' }, sequences: { rows: 1, sha256: '9d92845646436032d983f67b37e290e0a5b9aba1f438c5d8d0bfdf40de61370a' }, timeline_snapshots: { rows: 2, sha256: '7cf985b96b9314fbb842cbc4cb7b38a5590dd7b3c8f5ae44007308f4e648f085' } },
+    expected: { accounts: { rows: 6, sha256: '49cc1d2c4a3c5bf2246692c0cad21bf2edba752e49c2d4f42d26651c43c093fd' }, agent_pending: { rows: 0, sha256: '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945' }, agent_runs: { rows: 1, sha256: 'f35af8e1d1c89493bd3f76dad7fd032af9e332c717ce05fdd670b5c40c40cf9e' }, agent_send_keys: { rows: 0, sha256: '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945' }, agent_steps: { rows: 0, sha256: '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945' }, events: { rows: 0, sha256: '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945' }, gateway_events: { rows: 0, sha256: '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945' }, groups: { rows: 1, sha256: '825558b12c3df246ec339925ede7aa9ff9c211fe1a95ff8312c36251ca534358' }, jobs: { rows: 1, sha256: '06321ba19866054d906e0a26fedf2330272e15b1313c5c97c6e422ceeb6a048e' }, members: { rows: 2, sha256: '3b586ddee5d93d839aa4cca24eed2bc8a78747d9f1b0966fbfc3d67af99256c1' }, messages: { rows: 1, sha256: 'ef172b351a4756511316002947bb3eb25f6ed48b8ac79c96c8f169612e60962e' }, schema_migrations: { rows: 6, sha256: '0a49eca487bfc0b458f17f080ff70df4273e3fc974b1167dfcd0fbae8c557d3f' }, sequence_runs: { rows: 1, sha256: 'b5faeb0a7778e7b9c1259cd4eebe6d2559daa91a61fe0ff6af9fb1781aa9ebcb' }, sequence_steps: { rows: 0, sha256: '4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945' }, sequences: { rows: 1, sha256: '9d92845646436032d983f67b37e290e0a5b9aba1f438c5d8d0bfdf40de61370a' }, timeline_snapshots: { rows: 2, sha256: '7cf985b96b9314fbb842cbc4cb7b38a5590dd7b3c8f5ae44007308f4e648f085' } },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

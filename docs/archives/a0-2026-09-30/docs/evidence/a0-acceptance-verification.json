@@ -1,0 +1,1021 @@
+{
+  "scope": "A0 on fixed main baseline; automated verification is not user acceptance",
+  "baselineCommit": "ef3619577228ee8a776023a99c296a0fdbeb8948",
+  "executionCommit": "ef3619577228ee8a776023a99c296a0fdbeb8948",
+  "baselineProductDiffEmpty": true,
+  "startedAt": "2026-09-30T15:57:40.424Z",
+  "completedAt": "2026-09-30T15:57:42.309Z",
+  "runtime": "v24.21.0",
+  "postgres": {
+    "version": "PostgreSQL 17.11 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+    "database": "kapibala_test_9774c7900e1e40889b00c0b48f1dad2e"
+  },
+  "originalSha256Before": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+  "originalSha256After": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+  "isolation": {
+    "database": "kapibala_test_9774c7900e1e40889b00c0b48f1dad2e",
+    "managementDatabase": "postgres",
+    "upstreamDynamicPort": 53109,
+    "backgroundForRouteTests": false,
+    "databaseCleanup": "temporaryDatabase t.after: close fixtures/pool, DROP DATABASE UUID WITH (FORCE)"
+  },
+  "observations": [
+    {
+      "id": "migration-startup",
+      "expected": "Schema 5 process exits before listen; applying migration 6 restores process HTTP health",
+      "observed": {
+        "oldSchemaVersion": 5,
+        "requiredSchemaVersion": 6,
+        "missingIndexBefore": true,
+        "indexAfter": true,
+        "refusedExitCode": 1,
+        "refusedBeforeListening": true,
+        "restoredStatus": 200,
+        "health": {
+          "ok": true,
+          "schemaVersion": 6
+        },
+        "dynamicPort": 53116
+      },
+      "status": "pass",
+      "at": "2026-09-30T15:57:41.417Z"
+    },
+    {
+      "id": "migration-repeat",
+      "expected": "All schema catalogs, migration records including timestamps, and existing business row snapshots remain equal",
+      "observed": {
+        "structureSha256Before": "6e3aea13552a1c98210ad30286961161a565f219ea286a2b070385dff68dbdd3",
+        "structureSha256After": "6e3aea13552a1c98210ad30286961161a565f219ea286a2b070385dff68dbdd3",
+        "migrationRecords": [
+          {
+            "version": 1,
+            "name": "001_core.sql",
+            "applied_at": "2026-09-30T15:57:40.509Z"
+          },
+          {
+            "version": 2,
+            "name": "002_automation.sql",
+            "applied_at": "2026-09-30T15:57:40.524Z"
+          },
+          {
+            "version": 3,
+            "name": "003_agent_activity.sql",
+            "applied_at": "2026-09-30T15:57:40.526Z"
+          },
+          {
+            "version": 4,
+            "name": "004_message_event_order.sql",
+            "applied_at": "2026-09-30T15:57:40.528Z"
+          },
+          {
+            "version": 5,
+            "name": "005_group_metadata.sql",
+            "applied_at": "2026-09-30T15:57:40.529Z"
+          },
+          {
+            "version": 6,
+            "name": "006_group_directory.sql",
+            "applied_at": "2026-09-30T15:57:40.717Z"
+          }
+        ],
+        "before": {
+          "accounts": {
+            "rows": 6,
+            "sha256": "91db41bafcc2c4c75e367ee09096e1b5bf4f65d5b87fbfd7aeead0e0481cbad2"
+          },
+          "agent_pending": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "agent_runs": {
+            "rows": 1,
+            "sha256": "c16f46bc973dfc162c8db9dd9675cd8ee9fbe6c975db651ae0b95fbc0ac75e1c"
+          },
+          "agent_send_keys": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "agent_steps": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "events": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "gateway_events": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "groups": {
+            "rows": 1,
+            "sha256": "d3045a5fc676494a9bd0463f7d16d26d72546b86e875ff50b4bd60547371f552"
+          },
+          "jobs": {
+            "rows": 1,
+            "sha256": "ea92d00ef0bb40d0cb92fcefe7a4ec36c90abd6aa24f8a346b2528783a9ff2dc"
+          },
+          "members": {
+            "rows": 2,
+            "sha256": "3b586ddee5d93d839aa4cca24eed2bc8a78747d9f1b0966fbfc3d67af99256c1"
+          },
+          "messages": {
+            "rows": 1,
+            "sha256": "0eb602b84d92e674b4fc0ae5d138d89ba73fe6058ab1074f85da3cc78a988c25"
+          },
+          "schema_migrations": {
+            "rows": 6,
+            "sha256": "a3729a8bdc9136d7d53a9b1506395d73aa730df18ff82b86ea85bb33c8392f91"
+          },
+          "sequence_runs": {
+            "rows": 1,
+            "sha256": "2af883299e95d7271173f585922975b925d06335eefc434bb7db8f72df3f2305"
+          },
+          "sequence_steps": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "sequences": {
+            "rows": 1,
+            "sha256": "46a75417cda44c04b62d0fdf85f54a473c074b88ac18be3113ac47c0d0008ae0"
+          },
+          "timeline_snapshots": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        },
+        "after": {
+          "accounts": {
+            "rows": 6,
+            "sha256": "91db41bafcc2c4c75e367ee09096e1b5bf4f65d5b87fbfd7aeead0e0481cbad2"
+          },
+          "agent_pending": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "agent_runs": {
+            "rows": 1,
+            "sha256": "c16f46bc973dfc162c8db9dd9675cd8ee9fbe6c975db651ae0b95fbc0ac75e1c"
+          },
+          "agent_send_keys": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "agent_steps": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "events": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "gateway_events": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "groups": {
+            "rows": 1,
+            "sha256": "d3045a5fc676494a9bd0463f7d16d26d72546b86e875ff50b4bd60547371f552"
+          },
+          "jobs": {
+            "rows": 1,
+            "sha256": "ea92d00ef0bb40d0cb92fcefe7a4ec36c90abd6aa24f8a346b2528783a9ff2dc"
+          },
+          "members": {
+            "rows": 2,
+            "sha256": "3b586ddee5d93d839aa4cca24eed2bc8a78747d9f1b0966fbfc3d67af99256c1"
+          },
+          "messages": {
+            "rows": 1,
+            "sha256": "0eb602b84d92e674b4fc0ae5d138d89ba73fe6058ab1074f85da3cc78a988c25"
+          },
+          "schema_migrations": {
+            "rows": 6,
+            "sha256": "a3729a8bdc9136d7d53a9b1506395d73aa730df18ff82b86ea85bb33c8392f91"
+          },
+          "sequence_runs": {
+            "rows": 1,
+            "sha256": "2af883299e95d7271173f585922975b925d06335eefc434bb7db8f72df3f2305"
+          },
+          "sequence_steps": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "sequences": {
+            "rows": 1,
+            "sha256": "46a75417cda44c04b62d0fdf85f54a473c074b88ac18be3113ac47c0d0008ae0"
+          },
+          "timeline_snapshots": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          }
+        }
+      },
+      "status": "pass",
+      "at": "2026-09-30T15:57:41.468Z"
+    },
+    {
+      "id": "login-and-viewer-reads",
+      "expected": "Both roles receive nonempty strings valid for 900 seconds; viewer reads real business endpoints",
+      "observed": {
+        "logins": [
+          {
+            "username": "admin",
+            "token": {
+              "type": "string",
+              "nonempty": true
+            },
+            "expiresAfterSeconds": 900,
+            "initiallyValid": true
+          },
+          {
+            "username": "viewer",
+            "token": {
+              "type": "string",
+              "nonempty": true
+            },
+            "expiresAfterSeconds": 900,
+            "initiallyValid": true
+          }
+        ],
+        "reads": [
+          {
+            "method": "GET",
+            "url": "/api/accounts",
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "url": "/api/groups",
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "url": "/api/group-directory",
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "url": "/api/groups/a0-group",
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "url": "/api/groups/a0-group/messages",
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "url": "/api/jobs/a0-job",
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "url": "/api/sequences",
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "url": "/api/sequence-runs/a0-sequence-run",
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "url": "/api/agent-runs/a0-agent-run",
+            "status": 200
+          },
+          {
+            "method": "GET",
+            "url": "/api/groups/a0-group/agent-runs",
+            "status": 200
+          }
+        ],
+        "timelineNote": "GET messages creates an internal pagination snapshot; baseline for denied writes is taken after these reads."
+      },
+      "status": "pass",
+      "at": "2026-09-30T15:57:41.512Z"
+    },
+    {
+      "id": "viewer-all-write-routes",
+      "expected": "Discovered route registry equals matrix; all 9 routes return 403/FORBIDDEN with unchanged rows and zero outbound effects",
+      "observed": {
+        "discoveredRoutes": [
+          "PATCH /api/groups/:id",
+          "POST /api/accounts/:id/connect",
+          "POST /api/accounts/:id/transition",
+          "POST /api/groups",
+          "POST /api/groups/:id/leave-all",
+          "POST /api/groups/:id/send",
+          "POST /api/groups/:id/sequence-runs",
+          "POST /api/sequences",
+          "POST /api/sequences/preview"
+        ],
+        "results": [
+          {
+            "method": "POST",
+            "route": "/api/accounts/:id/connect",
+            "testedUrl": "/api/accounts/account-3/connect",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "da246e02-8db1-4d74-8179-208b3e6b6db4"
+              }
+            },
+            "businessRowsUnchanged": true,
+            "externalRequestsAdded": 0
+          },
+          {
+            "method": "POST",
+            "route": "/api/accounts/:id/transition",
+            "testedUrl": "/api/accounts/account-1/transition",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "a62b57aa-8f13-4b7b-9bfc-cae1990ae487"
+              }
+            },
+            "businessRowsUnchanged": true,
+            "externalRequestsAdded": 0
+          },
+          {
+            "method": "POST",
+            "route": "/api/groups",
+            "testedUrl": "/api/groups",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "d09f24e2-5d0d-491b-bad5-044b74c6adbd"
+              }
+            },
+            "businessRowsUnchanged": true,
+            "externalRequestsAdded": 0
+          },
+          {
+            "method": "PATCH",
+            "route": "/api/groups/:id",
+            "testedUrl": "/api/groups/a0-group",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "72975682-0014-4432-bd63-44bad8e45c8a"
+              }
+            },
+            "businessRowsUnchanged": true,
+            "externalRequestsAdded": 0
+          },
+          {
+            "method": "POST",
+            "route": "/api/groups/:id/send",
+            "testedUrl": "/api/groups/a0-group/send",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "57be4c5e-eb8f-41db-8714-424a1722b9c8"
+              }
+            },
+            "businessRowsUnchanged": true,
+            "externalRequestsAdded": 0
+          },
+          {
+            "method": "POST",
+            "route": "/api/groups/:id/leave-all",
+            "testedUrl": "/api/groups/a0-group/leave-all",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "012b51b3-f55b-4679-9f45-af667fc43b65"
+              }
+            },
+            "businessRowsUnchanged": true,
+            "externalRequestsAdded": 0
+          },
+          {
+            "method": "POST",
+            "route": "/api/sequences",
+            "testedUrl": "/api/sequences",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "611451c9-ab31-44d8-a29f-9ee9d00c2144"
+              }
+            },
+            "businessRowsUnchanged": true,
+            "externalRequestsAdded": 0
+          },
+          {
+            "method": "POST",
+            "route": "/api/sequences/preview",
+            "testedUrl": "/api/sequences/preview",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "dcb7a209-3d22-4c38-be6a-c701233e385a"
+              }
+            },
+            "businessRowsUnchanged": true,
+            "externalRequestsAdded": 0
+          },
+          {
+            "method": "POST",
+            "route": "/api/groups/:id/sequence-runs",
+            "testedUrl": "/api/groups/a0-group/sequence-runs",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "81e85c3e-db55-41df-b010-5064b3a54f35"
+              }
+            },
+            "businessRowsUnchanged": true,
+            "externalRequestsAdded": 0
+          }
+        ],
+        "businessSnapshot": {
+          "accounts": {
+            "rows": 6,
+            "sha256": "91db41bafcc2c4c75e367ee09096e1b5bf4f65d5b87fbfd7aeead0e0481cbad2"
+          },
+          "agent_pending": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "agent_runs": {
+            "rows": 1,
+            "sha256": "c16f46bc973dfc162c8db9dd9675cd8ee9fbe6c975db651ae0b95fbc0ac75e1c"
+          },
+          "agent_send_keys": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "agent_steps": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "events": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "gateway_events": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "groups": {
+            "rows": 1,
+            "sha256": "d3045a5fc676494a9bd0463f7d16d26d72546b86e875ff50b4bd60547371f552"
+          },
+          "jobs": {
+            "rows": 1,
+            "sha256": "ea92d00ef0bb40d0cb92fcefe7a4ec36c90abd6aa24f8a346b2528783a9ff2dc"
+          },
+          "members": {
+            "rows": 2,
+            "sha256": "3b586ddee5d93d839aa4cca24eed2bc8a78747d9f1b0966fbfc3d67af99256c1"
+          },
+          "messages": {
+            "rows": 1,
+            "sha256": "0eb602b84d92e674b4fc0ae5d138d89ba73fe6058ab1074f85da3cc78a988c25"
+          },
+          "schema_migrations": {
+            "rows": 6,
+            "sha256": "a3729a8bdc9136d7d53a9b1506395d73aa730df18ff82b86ea85bb33c8392f91"
+          },
+          "sequence_runs": {
+            "rows": 1,
+            "sha256": "2af883299e95d7271173f585922975b925d06335eefc434bb7db8f72df3f2305"
+          },
+          "sequence_steps": {
+            "rows": 0,
+            "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          },
+          "sequences": {
+            "rows": 1,
+            "sha256": "46a75417cda44c04b62d0fdf85f54a473c074b88ac18be3113ac47c0d0008ae0"
+          },
+          "timeline_snapshots": {
+            "rows": 1,
+            "sha256": "206d31946ce9122a96d7180a7f0f9eb8eba792f254b57624e77401e860d2a04b"
+          }
+        },
+        "excludesAuthLifecycle": [
+          "POST /api/auth/login",
+          "POST /api/auth/refresh",
+          "POST /api/auth/logout"
+        ]
+      },
+      "status": "pass",
+      "at": "2026-09-30T15:57:41.571Z"
+    },
+    {
+      "id": "error-envelope",
+      "expected": "Representative validation/parser/auth/resource/conflict/422/external/internal errors share error.code/message/requestId; 422 retains stepIndex/key",
+      "observed": {
+        "results": [
+          {
+            "id": "invalid-login-body-zod",
+            "status": 400,
+            "body": {
+              "error": {
+                "code": "VALIDATION_ERROR",
+                "message": "请求参数不合法",
+                "requestId": "dff65b0b-d08f-41c3-aa22-22ca29e3a798",
+                "issues": [
+                  {
+                    "expected": "string",
+                    "code": "invalid_type",
+                    "path": [
+                      "username"
+                    ],
+                    "message": "Invalid input: expected string, received undefined"
+                  },
+                  {
+                    "expected": "string",
+                    "code": "invalid_type",
+                    "path": [
+                      "password"
+                    ],
+                    "message": "Invalid input: expected string, received undefined"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "invalid-business-body",
+            "status": 400,
+            "body": {
+              "error": {
+                "code": "VALIDATION_ERROR",
+                "message": "请求参数不符合约定",
+                "requestId": "bde04ba7-9c59-47f5-82cc-6b98d40a0d91",
+                "issues": [
+                  {
+                    "expected": "string",
+                    "code": "invalid_type",
+                    "path": [
+                      "creatorAccountId"
+                    ],
+                    "message": "Invalid input: expected string, received undefined"
+                  },
+                  {
+                    "expected": "array",
+                    "code": "invalid_type",
+                    "path": [
+                      "memberAccountIds"
+                    ],
+                    "message": "Invalid input: expected array, received undefined"
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "id": "invalid-json",
+            "status": 400,
+            "body": {
+              "error": {
+                "code": "VALIDATION_ERROR",
+                "message": "请求参数不合法",
+                "requestId": "bea5e226-e494-446a-afbc-978448c3556a"
+              }
+            }
+          },
+          {
+            "id": "missing-auth",
+            "status": 401,
+            "body": {
+              "error": {
+                "code": "UNAUTHORIZED",
+                "message": "请登录后继续",
+                "requestId": "d3def323-974b-45d6-8144-913ac5753242"
+              }
+            }
+          },
+          {
+            "id": "invalid-auth",
+            "status": 401,
+            "body": {
+              "error": {
+                "code": "UNAUTHORIZED",
+                "message": "登录会话已失效",
+                "requestId": "a28618a8-a629-4855-a507-68cbc8e35887"
+              }
+            }
+          },
+          {
+            "id": "wrong-password",
+            "status": 401,
+            "body": {
+              "error": {
+                "code": "UNAUTHORIZED",
+                "message": "用户名或密码错误",
+                "requestId": "b53002d0-cbe3-4988-96fa-7420bffcbf18"
+              }
+            }
+          },
+          {
+            "id": "missing-business-resource",
+            "status": 404,
+            "body": {
+              "error": {
+                "code": "GROUP_NOT_FOUND",
+                "message": "群不存在",
+                "requestId": "16106c9f-b41e-453f-bdab-1fc023fce245"
+              }
+            }
+          },
+          {
+            "id": "unregistered-route",
+            "status": 404,
+            "body": {
+              "error": {
+                "code": "NOT_FOUND",
+                "message": "接口不存在",
+                "requestId": "41011123-57bd-4608-8ea6-c5c6664cefb1"
+              }
+            }
+          },
+          {
+            "id": "illegal-transition",
+            "status": 409,
+            "body": {
+              "error": {
+                "code": "ILLEGAL_TRANSITION",
+                "message": "不允许此状态转移",
+                "requestId": "def19cb2-22c1-4bc7-ba47-85cf983db657"
+              }
+            }
+          },
+          {
+            "id": "cas-conflict",
+            "status": 409,
+            "body": {
+              "error": {
+                "code": "CAS_CONFLICT",
+                "message": "账号状态已经变化",
+                "requestId": "325bc938-5084-496c-81a8-09afd3a50ac5"
+              }
+            }
+          },
+          {
+            "id": "offline-group-creator",
+            "status": 422,
+            "body": {
+              "error": {
+                "code": "ACCOUNT_NOT_ONLINE",
+                "message": "所有账号必须在线",
+                "requestId": "c5f7f3f2-4c95-47b2-8727-515e0f28dec0"
+              }
+            }
+          },
+          {
+            "id": "unresolved-placeholder",
+            "status": 422,
+            "body": {
+              "error": {
+                "code": "UNRESOLVED_PLACEHOLDER",
+                "message": "Step 1 requires topic",
+                "requestId": "9c7a79e3-a1f8-4131-a773-4bc2fe62867a",
+                "stepIndex": 1,
+                "key": "topic"
+              }
+            }
+          },
+          {
+            "id": "external-unavailable",
+            "status": 502,
+            "body": {
+              "error": {
+                "code": "UPSTREAM_UNAVAILABLE",
+                "message": "外部服务暂时不可用",
+                "requestId": "d9ca023f-8be8-411a-8cfe-d6959dd44c6a"
+              }
+            }
+          },
+          {
+            "id": "external-bad-json",
+            "status": 502,
+            "body": {
+              "error": {
+                "code": "BAD_JSON",
+                "message": "外部服务暂时不可用",
+                "requestId": "87dff928-2a17-44c2-a305-d2b796e975f2"
+              }
+            }
+          },
+          {
+            "id": "internal-database-error",
+            "status": 500,
+            "body": {
+              "error": {
+                "code": "INTERNAL_ERROR",
+                "message": "请求未完成，请查看关联日志",
+                "requestId": "5613b318-9d27-4b36-84c8-366e7c606d73"
+              }
+            }
+          }
+        ],
+        "forbiddenCases": "See viewer-all-write-routes: all 9 actual routes",
+        "requestIdsUnique": true,
+        "internalFault": "Temporarily rename accounts in the isolated database, then restore in finally",
+        "coverage": "Representative error sources, not every endpoint/failure combination"
+      },
+      "status": "pass",
+      "at": "2026-09-30T15:57:41.601Z"
+    },
+    {
+      "id": "expiry-and-session-lifecycle",
+      "expected": "Future access expiry permits read, reached expiry rejects, viewer may refresh/logout, logout invalidates access and refresh",
+      "observed": {
+        "futureExpiryStatus": 200,
+        "reachedExpiry": {
+          "error": {
+            "code": "UNAUTHORIZED",
+            "message": "登录会话已失效",
+            "requestId": "42f3571d-1d7a-4c78-99fc-7c3c00db525e"
+          }
+        },
+        "refreshStatus": 200,
+        "refreshedToken": {
+          "type": "string",
+          "nonempty": true
+        },
+        "logoutStatus": 200,
+        "revokedAccess": {
+          "error": {
+            "code": "UNAUTHORIZED",
+            "message": "登录会话已失效",
+            "requestId": "3e497cfb-74a9-43f3-af04-bc42ccec6abc"
+          }
+        },
+        "revokedRefresh": {
+          "error": {
+            "code": "UNAUTHORIZED",
+            "message": "续期会话已失效",
+            "requestId": "388620a2-3bfc-408a-8675-8eec29ad02ae"
+          }
+        },
+        "method": "Only the isolated database expiration timestamp was changed; this is an expiry-boundary test, not a 15-minute wall-clock soak."
+      },
+      "status": "pass",
+      "at": "2026-09-30T15:57:41.614Z"
+    },
+    {
+      "id": "real-process-session-restart",
+      "expected": "Existing admin/viewer access sessions, business reads and all nine viewer restrictions remain valid after process restart",
+      "observed": {
+        "persistedSessions": [
+          "admin",
+          "viewer"
+        ],
+        "identityStatuses": [
+          200,
+          200
+        ],
+        "viewerReadStatuses": [
+          {
+            "url": "/api/accounts",
+            "status": 200
+          },
+          {
+            "url": "/api/groups",
+            "status": 200
+          },
+          {
+            "url": "/api/group-directory",
+            "status": 200
+          },
+          {
+            "url": "/api/groups/a0-group",
+            "status": 200
+          },
+          {
+            "url": "/api/groups/a0-group/messages",
+            "status": 200
+          },
+          {
+            "url": "/api/jobs/a0-job",
+            "status": 200
+          },
+          {
+            "url": "/api/sequences",
+            "status": 200
+          },
+          {
+            "url": "/api/sequence-runs/a0-sequence-run",
+            "status": 200
+          },
+          {
+            "url": "/api/agent-runs/a0-agent-run",
+            "status": 200
+          },
+          {
+            "url": "/api/groups/a0-group/agent-runs",
+            "status": 200
+          }
+        ],
+        "viewerWriteResults": [
+          {
+            "method": "POST",
+            "route": "/api/accounts/:id/connect",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "9d55f3be-488c-4ea7-a0f3-909964997918"
+              }
+            },
+            "businessRowsUnchanged": true
+          },
+          {
+            "method": "POST",
+            "route": "/api/accounts/:id/transition",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "331692a8-52ed-4219-b560-e5b97bf4680d"
+              }
+            },
+            "businessRowsUnchanged": true
+          },
+          {
+            "method": "POST",
+            "route": "/api/groups",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "94385e87-5f7d-4e36-9a2b-918e1ffa5e93"
+              }
+            },
+            "businessRowsUnchanged": true
+          },
+          {
+            "method": "PATCH",
+            "route": "/api/groups/:id",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "f892a96f-7fb4-4cee-a75a-631ebcc869be"
+              }
+            },
+            "businessRowsUnchanged": true
+          },
+          {
+            "method": "POST",
+            "route": "/api/groups/:id/send",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "af0c83bc-e08b-4e1e-a53c-95d47ded25c2"
+              }
+            },
+            "businessRowsUnchanged": true
+          },
+          {
+            "method": "POST",
+            "route": "/api/groups/:id/leave-all",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "3e9b956a-60aa-4321-9c43-b802cc8d088c"
+              }
+            },
+            "businessRowsUnchanged": true
+          },
+          {
+            "method": "POST",
+            "route": "/api/sequences",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "662caf7c-2699-4a41-a210-d6d4574e995b"
+              }
+            },
+            "businessRowsUnchanged": true
+          },
+          {
+            "method": "POST",
+            "route": "/api/sequences/preview",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "b8c68c75-e0ed-4911-98b6-5ea670a7194d"
+              }
+            },
+            "businessRowsUnchanged": true
+          },
+          {
+            "method": "POST",
+            "route": "/api/groups/:id/sequence-runs",
+            "status": 403,
+            "body": {
+              "error": {
+                "code": "FORBIDDEN",
+                "message": "只读账号不能执行写操作",
+                "requestId": "6f963de6-64e0-4cd7-b3aa-4111faae35b2"
+              }
+            },
+            "businessRowsUnchanged": true
+          }
+        ],
+        "dynamicPort": 53135,
+        "processExitCode": 0,
+        "note": "Production background recovery/ticks enabled; waited for the initial scan of the existing incoming message before taking the write-effect baseline. Its agent_pending row is ineligible."
+      },
+      "status": "pass",
+      "at": "2026-09-30T15:57:42.309Z"
+    }
+  ],
+  "notVerified": [
+    "Manual browser acceptance",
+    "Every API/error cross-product",
+    "15-minute real-time soak",
+    "PI-03 or other commits after fixed baseline",
+    "Production infrastructure or external real gateway/agent"
+  ],
+  "cleanupVerification": {
+    "at": "2026-09-30T15:58:59.276Z",
+    "temporaryDatabaseAbsent": true,
+    "restoredServerPortClosed": true,
+    "sessionRestartPortClosed": true,
+    "upstreamPortClosed": true
+  },
+  "validation": {
+    "existingTests": {
+      "passed": 4,
+      "failed": 0,
+      "durationMs": 7416.073916,
+      "log": "docs/evidence/a0-existing-tests.tap"
+    },
+    "a0Tests": {
+      "passed": 8,
+      "failed": 0,
+      "durationMs": 2064.014917,
+      "log": "docs/evidence/a0-tests.tap"
+    },
+    "initialRestartAttempt": {
+      "passed": 6,
+      "failed": 2,
+      "log": "docs/evidence/a0-restart-fixture-initial.tap",
+      "reason": "The first background Agent scan inserted an ineligible pending marker for the pre-existing fixture message between the snapshot and a denied request. Fixed only test baseline timing by waiting for that independent scan; no product change."
+    },
+    "typescript": {
+      "command": "node node_modules/typescript/bin/tsc --noEmit",
+      "exitCode": 0
+    },
+    "originalRequirement": {
+      "command": "npm run verify:original",
+      "exitCode": 0
+    },
+    "formatting": {
+      "command": "node node_modules/prettier/bin/prettier.cjs --check tests/integration/a0-acceptance.test.ts",
+      "exitCode": 0
+    }
+  },
+  "commands": [
+    "DATABASE_URL=postgres://kapibala:kapibala@127.0.0.1:55432/postgres node --import tsx --test --test-name-pattern=\"PostgreSQL sessions|PostgreSQL lock admission|platform: schema lag|platform: sequence preflight\" tests/integration/auth.test.ts tests/integration/database.test.ts tests/integration/platform.test.ts",
+    "A0_EVIDENCE_PATH=docs/evidence/a0-acceptance-verification.json DATABASE_URL=postgres://kapibala:kapibala@127.0.0.1:55432/postgres node --import tsx --test tests/integration/a0-acceptance.test.ts",
+    "node node_modules/typescript/bin/tsc --noEmit",
+    "npm run verify:original",
+    "node node_modules/prettier/bin/prettier.cjs --check tests/integration/a0-acceptance.test.ts"
+  ],
+  "tooling": {
+    "npm": "12.1.0",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "fastify": "5.12.5",
+    "pg": "8.23.0",
+    "dockerImage": "postgres:17-alpine"
+  }
+}

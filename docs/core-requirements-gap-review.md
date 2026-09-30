@@ -59,7 +59,7 @@ D031第一轮完成后，用户通过D034授权本轮必要修复、补验证并
 |---|---|---|
 | [历史核心矩阵](/Users/zcm/Desktop/kapibala/docs/requirements-matrix.md)、[可靠性复核](/Users/zcm/Desktop/kapibala/docs/reliability-review.md) | `82312b9` 常规 128 登记、125 通过、3 跳过；产品源码相同的 `f52faec` 另有 3 项长计时通过；R1–R11 已修复 | 各条 G/B/P/W 编号是这些文档中的历史证据，不是本次重跑；L7/L8 已修复，不再作为现存缺口 |
 | [页面更新提醒证据](/Users/zcm/Desktop/kapibala/docs/evidence/page-attention-verification.json) | `ee2a0d9`，2026-09-30 23:15 北京时间归档：234 登记、231 通过、3 长计时跳过；24 个隔离浏览器场景、pageerror 0、构建通过 | 是较新的常规全套，不是 `7f424f6` 全套重跑；夹具业务事件配合真实 API/WS/UI，不代表任意断线、真实网关故障或 3 秒完整时限已重验 |
-| [A0 专项报告](/Users/zcm/.codex/worktrees/a0-acceptance/kapibala/docs/a0-acceptance-report.md)、[原始证据](/Users/zcm/.codex/worktrees/a0-acceptance/kapibala/docs/evidence/a0-acceptance-verification.json) | 固定产品基线 `ef361957`，2026-09-30 23:57 北京时间执行；已有专项 4/4、新增 8/8（父测试加 7 子测试）；真实生产入口、独立数据库 | 证据分支 `2ef168e` 尚未合 main。本次比对确认 `ef361957..7f424f6` 产品差异是群资料条件更新及其前端/测试，auth、错误处理、realtime、迁移未变；可沿用基础结论，不能改称最新全套 |
+| [A0 专项报告](archives/a0-2026-09-30/docs/a0-acceptance-report.md)、[原始证据](archives/a0-2026-09-30/docs/evidence/a0-acceptance-verification.json) | 固定产品基线 `ef361957`，2026-09-30 23:57 北京时间执行；已有专项 4/4、新增 8/8（父测试加 7 子测试）；真实生产入口、独立数据库 | 证据分支 `2ef168e` 尚未合 main。本次比对确认 `ef361957..7f424f6` 产品差异是群资料条件更新及其前端/测试，auth、错误处理、realtime、迁移未变；可沿用基础结论，不能改称最新全套 |
 | [群资料条件更新证据](/Users/zcm/Desktop/kapibala/docs/evidence/group-profile-conflict-verification.json) | `7e83191`，2026-10-01 00:00 北京时间归档：聚焦 138/138、构建、16 项隔离双页观察；新增 409 结构、viewer 403、匿名 401、无未授权写入均有证据 | `7e83191..7f424f6` 仅文档/证据变化；不是全部后端、长计时或用户人工验收通过 |
 
 main 运行记录指向 `7e83191`、schema 6、2026-10-01 00:02:35 启动；本次只读取记录，没有现场确认进程或页面。部分旧矩阵仍写 health、preview、900 秒有效期等“待补”，已由独立 A0 证据补上；应按下表判断，不能继续复制旧待测结论。
