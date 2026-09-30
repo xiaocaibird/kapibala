@@ -30,6 +30,7 @@ class Gateway extends RemoteClient {
   }
   override async request<T>(path: string): Promise<T> {
     if (path.endsWith("/members")) return [] as T;
+    if (path.endsWith("/promote")) return {} as T;
     throw new RemoteError(404, "NOT_FOUND");
   }
 }
@@ -488,6 +489,7 @@ test("attention: group and rate-limit no-ops are silent; terminal membership con
   assert.deepEqual(groupEvents.at(-1)!.payload, {
     groupId: "g",
     changedFields: ["members"],
+    directoryChangedFields: ["memberCount"],
   });
 });
 
@@ -502,6 +504,7 @@ test("attention: sequence definitions and displayed step mutations emit once whi
         text: "sequence send",
         delaySeconds: 0,
       },
+      { index: 2, accountRole: "admin", text: "next", delaySeconds: 0 },
     ],
   });
   const sequenceId = definition.json<{ id: string }>().id;
@@ -539,9 +542,33 @@ test("attention: sequence definitions and displayed step mutations emit once whi
     ),
   );
   await f.sequences.tick();
+  assert.deepEqual(
+    (await f.events("sequence_run")).map(
+      (event) => event.payload.directoryChangedFields,
+    ),
+    [["activeSequenceRunId"], []],
+    "step advancement retains the same active run",
+  );
+  await f.sequences.tick();
+  const second = (await f.api("GET", `/api/sequence-runs/${runId}`)).json<{
+    steps: { clientMsgId: string }[];
+  }>();
+  await f.db.transaction((tx) =>
+    recordSent(
+      tx,
+      second.steps[1]!.clientMsgId,
+      "sequence-msg-2",
+      new Date().toISOString(),
+    ),
+  );
+  await f.sequences.tick();
   assert.equal(
     (await f.events("sequence_run")).at(-1)!.payload.status,
     "finished",
+  );
+  assert.deepEqual(
+    (await f.events("sequence_run")).at(-1)!.payload.directoryChangedFields,
+    ["activeSequenceRunId"],
   );
 });
 
@@ -615,6 +642,13 @@ test("attention: Agent persisted ordinary steps, audit result and final result c
     detail.steps.map((step) => step.ordinal),
     [1, 2],
   );
+  assert.deepEqual(
+    (await f.events("agent_run")).map(
+      (event) => event.payload.directoryChangedFields,
+    ),
+    [["activeAgentRunId"], ["activeAgentRunId"]],
+    "run creation and terminal transition alter the directory active run",
+  );
   const changes = (await f.events("agent_step_changed")).map(
     (event) => event.payload,
   );
@@ -639,4 +673,106 @@ test("attention: Agent persisted ordinary steps, audit result and final result c
         (event.changedFields as string[]).includes("created"),
     ),
   );
+});
+
+test("attention: directory member count evidence excludes role-only changes and repeated removals", async (t) => {
+  const f = await fixture(t);
+  const memberId = (
+    await f.db.query<{ id: string }>(
+      "SELECT id FROM accounts WHERE id<>$1 ORDER BY id LIMIT 1",
+      [f.accountId],
+    )
+  ).rows[0]!.id;
+  await f.db.query(
+    "INSERT INTO members(group_id,account_id,platform_user_id,role) VALUES('g',$1,$1,'member')",
+    [memberId],
+  );
+  const directory = async () =>
+    (await f.api("GET", "/api/group-directory")).json<{
+      items: { memberCount: number }[];
+    }>().items[0]!;
+  assert.equal((await directory()).memberCount, 2);
+  await f.db.query(
+    "INSERT INTO jobs(id,kind,group_id,state) VALUES('promote','create','g',$1)",
+    [
+      JSON.stringify({
+        phase: "promote",
+        creatorAccountId: f.accountId,
+        memberAccountIds: [memberId],
+      }),
+    ],
+  );
+  await new Jobs(f.ctx).advance("promote");
+  const roleEvent = (await f.events("group_changed")).at(-1)!;
+  assert.deepEqual(roleEvent.payload.changedFields, ["members"]);
+  assert.deepEqual(roleEvent.payload.directoryChangedFields, []);
+  assert.equal((await directory()).memberCount, 2);
+  const events = new GatewayEvents(f.ctx, f.messages);
+  await events.process({
+    eventId: 1,
+    type: "member_left",
+    groupId: "remote-g",
+    platformUserId: memberId,
+  });
+  assert.equal((await directory()).memberCount, 1);
+  assert.deepEqual(
+    (await f.events("group_changed")).at(-1)!.payload.directoryChangedFields,
+    ["memberCount"],
+  );
+  const count = (await f.events("group_changed")).length;
+  await events.process({
+    eventId: 2,
+    type: "member_left",
+    groupId: "remote-g",
+    platformUserId: memberId,
+  });
+  assert.equal((await f.events("group_changed")).length, count);
+});
+
+test("attention: Agent recovery note does not claim a directory active ID change", async (t) => {
+  const f = await fixture(t);
+  await f.db.query("UPDATE groups SET agent_enabled=true WHERE id='g'");
+  await f.db.query(
+    "INSERT INTO agent_runs(id,group_id,inflight_turn) VALUES('recovering','g',true)",
+  );
+  const agent = new AgentModule(f.ctx, f.messages);
+  f.onCleanup(() => agent.close());
+  await until(async () => {
+    await agent.tick();
+    return (await f.events("agent_run")).length > 0;
+  });
+  const event = (await f.events("agent_run")).at(-1)!;
+  assert.equal(event.payload.status, "running");
+  assert.ok(event.payload.recoveryNote);
+  assert.deepEqual(event.payload.directoryChangedFields, []);
+  const directory = (await f.api("GET", "/api/group-directory")).json<{
+    items: { activeAgentRunId: string }[];
+  }>();
+  assert.equal(directory.items[0]!.activeAgentRunId, "recovering");
+});
+
+test("attention: group-terminal sequence cancellation carries the actual active-ID removal", async (t) => {
+  const f = await fixture(t);
+  const created = await f.api("POST", "/api/sequences", {
+    name: "Pending",
+    steps: [
+      { index: 1, accountRole: "admin", text: "later", delaySeconds: 3600 },
+    ],
+  });
+  const started = await f.api("POST", "/api/groups/g/sequence-runs", {
+    sequenceId: created.json<{ id: string }>().id,
+  });
+  const runId = started.json<{ runId: string }>().runId;
+  const directory = async () =>
+    (await f.api("GET", "/api/group-directory")).json<{
+      items: { activeSequenceRunId: string | null }[];
+    }>().items[0]!;
+  assert.equal((await directory()).activeSequenceRunId, runId);
+  await f.db.transaction((tx) => markGroupUnreachable(tx, "g"));
+  assert.equal((await directory()).activeSequenceRunId, null);
+  const event = (await f.events("sequence_run")).at(-1)!;
+  assert.equal(event.payload.status, "stopped");
+  assert.deepEqual(event.payload.directoryChangedFields, [
+    "activeSequenceRunId",
+  ]);
 });

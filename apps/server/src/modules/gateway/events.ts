@@ -313,6 +313,10 @@ export class GatewayEvents {
               await emit(tx, "group_changed", {
                 groupId: group.id,
                 changedFields: ["members"],
+                directoryChangedFields:
+                  beforeMembers.length !== afterMembers.length
+                    ? ["memberCount"]
+                    : [],
               });
             break;
           }

@@ -622,6 +622,7 @@ export class Messages implements MessagingService {
               await emit(tx, "group_changed", {
                 groupId: input.groupId,
                 changedFields: ["members"],
+                directoryChangedFields: ["memberCount"],
               });
           }
         });

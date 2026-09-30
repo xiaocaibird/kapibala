@@ -31,10 +31,15 @@ function runPublic(run: RunRow): AgentRun {
     recoveryNote: run.recovery_note,
   };
 }
-async function notify(tx: Queryable, run: RunRow): Promise<void> {
+async function notify(
+  tx: Queryable,
+  run: RunRow,
+  activeIdChanged: boolean,
+): Promise<void> {
   await emit(tx, "agent_run", {
     runId: run.id,
     groupId: run.group_id,
+    directoryChangedFields: activeIdChanged ? ["activeAgentRunId"] : [],
     status: run.status,
     endReason: run.end_reason,
     summary: run.summary,
@@ -234,7 +239,7 @@ export class AgentModule {
         "UPDATE agent_pending SET run_id=$1 WHERE message_id=ANY($2::text[])",
         [id, messages.map((m) => m.id)],
       );
-      await notify(tx, run);
+      await notify(tx, run, true);
     });
   }
   private async readRun(
@@ -252,7 +257,7 @@ export class AgentModule {
         [run.id, reason],
       );
       if (run.recovery_note !== reason)
-        await notify(tx, { ...run, recovery_note: reason });
+        await notify(tx, { ...run, recovery_note: reason }, false);
       await emit(tx, "inconsistency", {
         kind: "agent_recovery_unknown",
         ref: run.id,
@@ -276,7 +281,7 @@ export class AgentModule {
           [run.id, status, reason, finalSummary],
         )
       ).rows[0];
-      if (updated) await notify(tx, updated);
+      if (updated) await notify(tx, updated, true);
     });
     // Messages that arrived during the previous run are handed off without waiting for another turn.
     await this.scan();
@@ -617,7 +622,7 @@ export class AgentModule {
             [run.id, endReason],
           )
         ).rows[0];
-        if (blocked) await notify(tx, blocked);
+        if (blocked) await notify(tx, blocked, true);
       }
     });
     if (endReason) {

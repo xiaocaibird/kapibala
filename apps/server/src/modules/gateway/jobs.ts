@@ -350,6 +350,7 @@ export class Jobs {
                 await emit(tx, "group_changed", {
                   groupId: group.id,
                   changedFields: ["members"],
+                  directoryChangedFields: ["memberCount"],
                 });
             }
           });
@@ -421,6 +422,7 @@ export class Jobs {
             await emit(tx, "group_changed", {
               groupId: group.id,
               changedFields: ["members"],
+              directoryChangedFields: [],
             });
           await notifyJob(tx, job);
         });
@@ -508,6 +510,9 @@ export class Jobs {
             groupId: group.id,
             status: "left",
             changedFields,
+            directoryChangedFields: changedFields.includes("members")
+              ? ["memberCount"]
+              : [],
           });
         await notifyJob(tx, job);
       });
@@ -663,6 +668,7 @@ export class Jobs {
         await emit(tx, "group_changed", {
           groupId: job.group_id,
           changedFields: ["members"],
+          directoryChangedFields: ["memberCount"],
         });
       await notifyJob(tx, job);
     });

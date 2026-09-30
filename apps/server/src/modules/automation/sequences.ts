@@ -144,10 +144,15 @@ function parse<T>(schema: z.ZodType<T>, body: unknown): T {
     );
   return result.data;
 }
-async function notify(tx: Queryable, run: RunRow): Promise<void> {
+async function notify(
+  tx: Queryable,
+  run: RunRow,
+  activeIdChanged: boolean,
+): Promise<void> {
   await emit(tx, "sequence_run", {
     runId: run.id,
     groupId: run.group_id,
+    directoryChangedFields: activeIdChanged ? ["activeSequenceRunId"] : [],
     status: run.status,
     currentStepIndex: run.current_step_index,
   });
@@ -252,12 +257,16 @@ export class SequenceModule {
               ],
             );
           }
-          await notify(tx, {
-            id,
-            group_id: request.params.id,
-            status: "running",
-            current_step_index: 1,
-          });
+          await notify(
+            tx,
+            {
+              id,
+              group_id: request.params.id,
+              status: "running",
+              current_step_index: 1,
+            },
+            true,
+          );
           return id;
         });
         return reply.code(201).send({ runId });
@@ -475,7 +484,7 @@ export class SequenceModule {
           id,
           run.status,
         ]);
-        await notify(tx, run);
+        await notify(tx, run, run.status !== "running");
         return;
       }
       // Terminal account transitions lock account -> messages -> steps. Lock accounts before
@@ -637,6 +646,6 @@ export class SequenceModule {
       "UPDATE sequence_runs SET status=$2,current_step_index=$3,updated_at=now() WHERE id=$1",
       [run.id, run.status, run.current_step_index],
     );
-    await notify(tx, run);
+    await notify(tx, run, run.status !== "running");
   }
 }

@@ -56,6 +56,7 @@ export async function changeAccount(
       await emit(tx, "group_changed", {
         groupId: group.group_id,
         changedFields: ["members"],
+        directoryChangedFields: ["memberCount"],
       });
     const cancelled = await tx.query<MessageRow>(
       "UPDATE messages SET delivery_status='cancelled',fail_code='ACCOUNT_TERMINAL',dispatch_state='done',updated_at=now() WHERE account_id=$1 AND delivery_status='queued' RETURNING *",
@@ -127,6 +128,7 @@ export async function markGroupUnreachable(
       runId: run.id,
       groupId,
       status: "stopped",
+      directoryChangedFields: ["activeSequenceRunId"],
       currentStepIndex: run.current_step_index,
     });
   for (const message of cancelled.rows)
