@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
+import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { test, type TestContext } from 'node:test';
@@ -15,7 +16,7 @@ import { Jobs } from '../../apps/server/src/modules/gateway/jobs.js';
 import { Messages } from '../../apps/server/src/modules/gateway/messages.js';
 import { changeAccount, markGroupUnreachable } from '../../apps/server/src/modules/gateway/state.js';
 import { createGatewayModule } from '../../apps/server/src/modules/gateway/index.js';
-import type { Message } from '../../packages/contracts/src/index.js';
+import type { AccountStatus, Message } from '../../packages/contracts/src/index.js';
 
 class FakeGateway extends RemoteClient {
   readonly calls: { path: string; body: unknown }[] = [];
@@ -71,6 +72,9 @@ class FakeGateway extends RemoteClient {
       if (mode === 'unavailable') throw new RemoteError(503, 'SERVICE_UNAVAILABLE');
       if (mode === 'forbidden') throw new RemoteError(403, 'GROUP_WRITE_FORBIDDEN');
       if (mode === 'suspended') throw new RemoteError(403, 'ACCOUNT_SUSPENDED');
+      if (mode === 'expired') throw new RemoteError(401, 'SESSION_EXPIRED');
+      if (mode === 'offline') throw new RemoteError(409, 'ACCOUNT_OFFLINE');
+      if (mode === 'not-member') throw new RemoteError(403, 'SENDER_NOT_IN_GROUP');
       return { accepted: true } as T;
     }
     if (path.includes('/messages/by-client-id/')) {
@@ -121,6 +125,80 @@ test('真实PG：并发账号CAS只有一个成功，非法边优先于状态冲
   assert.equal(result.filter(item => item.status === 'fulfilled').length, 1);
   assert.equal((result.find(item => item.status === 'rejected') as PromiseRejectedResult).reason.code, 'CAS_CONFLICT');
   await assert.rejects(f.accounts.transition('account-1', 'online', 'online'), { code: 'ILLEGAL_TRANSITION' });
+});
+
+test('账号完整36种状态组合严格遵循允许转移表，终态无出边', async t => {
+  const f = await fixture(t);
+  const expected: Record<AccountStatus, readonly AccountStatus[]> = {
+    idle: ['online', 'suspended', 'session_expired'],
+    online: ['idle', 'rate_limited', 'disconnected', 'suspended', 'session_expired'],
+    rate_limited: ['online', 'disconnected', 'suspended', 'session_expired'],
+    disconnected: ['idle', 'online', 'suspended', 'session_expired'],
+    suspended: [], session_expired: [],
+  };
+  const states = Object.keys(expected) as AccountStatus[];
+  for (const from of states) for (const to of states) {
+    await f.db.query('UPDATE accounts SET status=$2,rate_limited_until=null WHERE id=$1', ['account-1', from]);
+    if (expected[from].includes(to)) assert.equal((await f.accounts.transition('account-1', to, from)).status, to, `${from} -> ${to}`);
+    else await assert.rejects(f.accounts.transition('account-1', to, from), { code: 'ILLEGAL_TRANSITION' }, `${from} -> ${to}`);
+  }
+  await assert.rejects(f.accounts.connect('account-1'), { code: 'ILLEGAL_TRANSITION' });
+});
+
+test('限流到期前已手动离线，不得被过期调度恢复为online', async t => {
+  const f = await fixture(t); await f.accounts.connect('account-1');
+  await f.db.transaction(tx => changeAccount(tx, 'account-1', 'rate_limited', undefined, new Date(Date.now() - 1000)));
+  await f.accounts.transition('account-1', 'disconnected', 'rate_limited');
+  await f.accounts.releaseRateLimits();
+  assert.equal((await f.accounts.list()).find(account => account.id === 'account-1')!.status, 'disconnected');
+});
+
+test('ACCOUNT_OFFLINE及SENDER_NOT_IN_GROUP只失败当前消息，账号和群不变', async t => {
+  const f = await fixture(t); await f.seedGroup();
+  for (const [mode, code] of [['offline', 'ACCOUNT_OFFLINE'], ['not-member', 'SENDER_NOT_IN_GROUP']] as const) {
+    f.gateway.sendModes = [mode];
+    const message = await f.messages.enqueueSend({ groupId: 'g', accountId: 'account-2', text: code });
+    await f.messages.accountWork('account-2');
+    assert.equal((await f.messages.getMessage(message.clientMsgId!))?.failCode, code);
+    assert.equal((await f.accounts.list()).find(account => account.id === 'account-2')!.status, 'online');
+    assert.equal((await f.db.query("SELECT status FROM groups WHERE id='g'")).rows[0]!.status, 'active');
+    assert.equal((await f.db.query("SELECT * FROM members WHERE account_id='account-2'")).rowCount, 1);
+  }
+});
+
+test('同步SESSION_EXPIRED与异步account_status都执行相同终态后果', async t => {
+  for (const source of ['send', 'event'] as const) {
+    const f = await fixture(t); await f.seedGroup();
+    const first = await f.messages.enqueueSend({ groupId: 'g', accountId: 'account-2', text: 'current' });
+    const queued = await f.messages.enqueueSend({ groupId: 'g', accountId: 'account-2', text: 'next' }); await f.seedSequence(queued.clientMsgId!);
+    if (source === 'send') { f.gateway.sendModes = ['expired']; await f.messages.accountWork('account-2'); assert.equal((await f.messages.getMessage(first.clientMsgId!))?.failCode, 'SESSION_EXPIRED'); }
+    else await f.events.process({ eventId: 300, type: 'account_status', accountId: 'account-2', status: 'session_expired' });
+    await f.events.process({ eventId: 301, type: 'account_status', accountId: 'account-2', status: 'session_expired' });
+    assert.equal((await f.accounts.list()).find(account => account.id === 'account-2')!.status, 'session_expired');
+    assert.equal((await f.messages.getMessage(queued.clientMsgId!))?.failCode, 'ACCOUNT_TERMINAL');
+    assert.equal((await f.db.query('SELECT status FROM sequence_steps')).rows[0]!.status, 'skipped');
+    assert.equal((await f.db.query("SELECT * FROM members WHERE account_id='account-2'")).rowCount, 0);
+    assert.equal((await f.db.query("SELECT * FROM events WHERE type='account_terminal'")).rowCount, 1);
+  }
+});
+
+test('异步message_failed按错误传播账号终态或群不可写，不能混淆范围', async t => {
+  for (const code of ['ACCOUNT_SUSPENDED', 'GROUP_WRITE_FORBIDDEN'] as const) {
+    const f = await fixture(t); await f.seedGroup();
+    const message = await f.messages.enqueueSend({ groupId: 'g', accountId: 'account-2', text: 'accepted then failed' });
+    await f.messages.accountWork('account-2');
+    const queued = await f.messages.enqueueSend({ groupId: 'g', accountId: 'account-2', text: 'next' }); await f.seedSequence(queued.clientMsgId!);
+    await f.db.query("INSERT INTO agent_runs(id,group_id) VALUES('ar','g')");
+    await f.events.process({ eventId: 302, type: 'message_failed', clientMsgId: message.clientMsgId!, code });
+    assert.equal((await f.messages.getMessage(message.clientMsgId!))?.deliveryStatus, 'failed');
+    assert.equal((await f.messages.getMessage(message.clientMsgId!))?.failCode, code);
+    assert.equal((await f.accounts.list()).find(account => account.id === 'account-2')!.status, code === 'ACCOUNT_SUSPENDED' ? 'suspended' : 'online');
+    assert.equal((await f.db.query("SELECT status FROM groups WHERE id='g'")).rows[0]!.status, code === 'ACCOUNT_SUSPENDED' ? 'active' : 'unreachable');
+    if (code === 'GROUP_WRITE_FORBIDDEN') {
+      assert.equal((await f.db.query('SELECT status FROM sequence_runs')).rows[0]!.status, 'stopped');
+      assert.equal((await f.db.query('SELECT cancel_requested FROM agent_runs')).rows[0]!.cancel_requested, true);
+    } else assert.equal((await f.db.query('SELECT status FROM sequence_steps')).rows[0]!.status, 'skipped');
+  }
 });
 
 test('真实PG：终态后果原子提交；步骤写失败整笔回滚', async t => {
@@ -208,6 +286,31 @@ test('崩溃发送意图恢复为unknown，没有已知504不得重发', async t
   assert.equal((await f.messages.getMessage(message.clientMsgId!))?.deliveryStatus, 'unknown'); assert.equal(f.gateway.sends.length, 0);
 });
 
+test('发送持锁连接丢失后新worker就地接管，旧worker不能写accepted或重发', async t => {
+  const f = await fixture(t); await f.seedGroup();
+  let release!: () => void;
+  f.gateway.sendBarrier = new Promise<void>(resolve => { release = resolve; });
+  let ownerPid = 0;
+  const withLock = f.db.withLock.bind(f.db);
+  f.db.withLock = async <T>(key: string, work: (client: pg.PoolClient, signal: AbortSignal) => Promise<T>) => withLock(key, async (client, signal) => {
+    ownerPid = (await client.query<{ pid: number }>('SELECT pg_backend_pid() AS pid')).rows[0]!.pid;
+    return work(client, signal);
+  });
+  const message = await f.messages.enqueueSend({ groupId: 'g', accountId: 'account-2', text: 'lost connection' });
+  const oldWorker = f.messages.accountWork('account-2');
+  const oldRejected = assert.rejects(oldWorker, /terminating connection|connection.*terminated/i);
+  while (f.gateway.sends.length === 0) await new Promise(resolve => setTimeout(resolve, 1));
+  await f.db.query('SELECT pg_terminate_backend($1)', [ownerPid]);
+  await new Promise(resolve => setTimeout(resolve, 10));
+  await new Messages(f.ctx).accountWork('account-2');
+  assert.equal((await f.messages.getMessage(message.clientMsgId!))?.deliveryStatus, 'unknown');
+  release(); await oldRejected;
+  assert.equal((await f.messages.getMessage(message.clientMsgId!))?.deliveryStatus, 'unknown');
+  assert.equal(f.gateway.sends.length, 1);
+  await f.events.process({ eventId: 400, type: 'message_sent', clientMsgId: message.clientMsgId!, msgId: 'confirmed-later', sentAt: new Date().toISOString() });
+  assert.equal((await f.messages.getMessage(message.clientMsgId!))?.deliveryStatus, 'sent');
+});
+
 test('第二实例启动不能把活跃worker的发送标记为恢复未知', async t => {
   const f = await fixture(t); await f.seedGroup();
   let release!: () => void;
@@ -249,6 +352,36 @@ test('kick同步终态错误也执行成员清理与取消，群错误只改变�
   f.gateway.kickMode = 'forbidden';
   await assert.rejects(f.messages.kick({ groupId: 'g', accountId: 'account-1', targetPlatformUserId: 'external' }), { code: 'GROUP_WRITE_FORBIDDEN' });
   assert.equal((await f.db.query("SELECT status FROM groups WHERE id='g'")).rows[0]!.status, 'unreachable');
+});
+
+test('kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未知时不删除成员', async t => {
+  for (const phase of ['post', 'settle', 'query'] as const) {
+    const f = await fixture(t); await f.seedGroup();
+    await f.db.query("INSERT INTO members(group_id,platform_user_id,role) VALUES('g','external','member')");
+    const controller = new AbortController();
+    const calls: string[] = [];
+    const budget = new Error('budget exhausted');
+    const server = createServer((request, response) => {
+      calls.push(request.url!);
+      if (request.url!.endsWith('/kick')) {
+        if (phase === 'post') { response.writeHead(200); response.write(' '); }
+        else { response.writeHead(504, { 'content-type': 'application/json' }); response.end('{"code":"NETWORK_TIMEOUT"}'); }
+        if (phase !== 'query') setTimeout(() => controller.abort(budget), 20);
+      } else { response.writeHead(200); response.write(' '); setTimeout(() => controller.abort(budget), 20); }
+    });
+    await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+    const address = server.address(); assert.ok(address && typeof address !== 'string');
+    f.ctx.gateway = new RemoteClient(`http://127.0.0.1:${address.port}`);
+    const safetyTimer = setTimeout(() => controller.abort(budget), 5000);
+    try {
+      const started = performance.now();
+      await assert.rejects(f.messages.kick({ groupId: 'g', accountId: 'account-2', targetPlatformUserId: 'external' }, { signal: controller.signal }), /budget exhausted|aborted/i);
+      assert.ok(performance.now() - started < (phase === 'query' ? 3000 : 1000));
+      assert.equal(calls.filter(path => path.endsWith('/kick')).length, 1);
+      assert.equal(calls.filter(path => path.endsWith('/members')).length, phase === 'query' ? 1 : 0);
+      assert.equal((await f.db.query("SELECT * FROM members WHERE platform_user_id='external'")).rowCount, 1);
+    } finally { clearTimeout(safetyTimer); server.closeAllConnections(); await new Promise<void>(resolve => server.close(() => resolve())); }
+  }
 });
 
 test('真实PG双实例发送互斥，单个outbox只调用一次远端', async t => {
@@ -322,7 +455,10 @@ test('join事件超过10秒未到，任务失败且不提前promote', async t =>
 
 test('非群主退出失败继续其他成员，群主不退出', async t => {
   const f = await fixture(t); await f.seedGroup(); f.gateway.leaveFailure = 'account-2';
-  const { jobId } = await f.jobs.leaveAll('g'); for (let i = 0; i < 5; i++) await f.jobs.advance(jobId);
+  const { jobId } = await f.jobs.leaveAll('g');
+  await f.jobs.advance(jobId);
+  assert.equal((await f.jobs.get(jobId)).status, 'failed'); assert.equal((await f.jobs.get(jobId)).processing, true);
+  for (let i = 0; i < 5; i++) await f.jobs.advance(jobId);
   assert.equal((await f.jobs.get(jobId)).status, 'failed');
   assert.deepEqual((await f.db.query('SELECT account_id FROM members ORDER BY account_id')).rows.map(row => row.account_id), ['account-1', 'account-2']);
   assert.deepEqual([...f.gateway.remoteMembers.get('remote-g')!].sort(), ['p-account-1', 'p-account-2']);

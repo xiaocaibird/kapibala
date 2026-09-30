@@ -9,15 +9,18 @@ export class RemoteClient {
     path: string,
     body?: unknown,
     timeoutMs = 15000,
+    signal?: AbortSignal,
   ): Promise<T> {
     const operationSignal = currentOperationSignal();
     operationSignal?.throwIfAborted();
+    signal?.throwIfAborted();
     const timeout = AbortSignal.timeout(timeoutMs);
+    const requestSignal = AbortSignal.any([timeout, ...(operationSignal ? [operationSignal] : []), ...(signal ? [signal] : [])]);
     const response = await fetch(`${this.baseUrl}${path}`, {
       method: body === undefined ? "GET" : "POST",
       headers: { "content-type": "application/json" },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-      signal: operationSignal ? AbortSignal.any([timeout, operationSignal]) : timeout,
+      signal: requestSignal,
     });
     const raw = await response.text();
     let data: unknown;
@@ -26,7 +29,7 @@ export class RemoteClient {
     } catch {
       throw new RemoteError(response.status, "BAD_JSON", { raw });
     }
-    operationSignal?.throwIfAborted();
+    requestSignal.throwIfAborted();
     if (!response.ok) {
       const envelope = isRecord(data) ? data : { raw };
       const nested = isRecord(envelope.error) ? envelope.error : undefined;

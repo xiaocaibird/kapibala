@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { setTimeout as delay } from 'node:timers/promises';
 import { z } from 'zod';
 import type { AppContext } from '../../core/context.js';
 import { emit, type Queryable } from '../../core/db.js';
@@ -44,6 +45,7 @@ export class Messages implements MessagingService {
   }
   async accountWork(accountId: string): Promise<void> {
     await this.ctx.db.withLock(`send-account:${accountId}`, async () => {
+      await this.recoverAccount(accountId);
       const candidates = (await this.ctx.db.query<MessageRow>("SELECT * FROM messages WHERE account_id=$1 AND delivery_status IN ('queued','unknown','accepted') ORDER BY (metadata->>'queueOrder')::bigint NULLS FIRST,created_at,id", [accountId])).rows;
       for (const row of candidates) {
         if (typeof row.metadata.nextAttemptAt === 'number' && row.metadata.nextAttemptAt > Date.now()) break;
@@ -131,22 +133,29 @@ export class Messages implements MessagingService {
   async recover(): Promise<void> {
     const accounts = (await this.ctx.db.query<{ account_id: string }>("SELECT DISTINCT account_id FROM messages WHERE dispatch_state='sending' AND account_id IS NOT NULL")).rows;
     for (const account of accounts) await this.ctx.db.withLock(`send-account:${account.account_id}`, async () => {
-      // A new instance must not reclassify another live instance's in-flight operation.
-      await this.ctx.db.transaction(async tx => {
-        const uncertain = await tx.query<MessageRow>("UPDATE messages SET delivery_status='unknown',dispatch_state='uncertain',timeout_at=null,metadata=metadata || '{\"recoveryNote\":\"发送意图已持久化，但进程未记录远端响应；不自动重发。\"}'::jsonb WHERE account_id=$1 AND dispatch_state='sending' AND delivery_status IN ('queued','unknown') RETURNING *", [account.account_id]);
-        for (const row of uncertain.rows) await emit(tx, 'inconsistency', { kind: 'send_result_unknown', ref: row.client_msg_id, message: row.metadata.recoveryNote });
-      });
+      await this.recoverAccount(account.account_id);
     });
   }
-  async kick(input: { groupId: string; accountId: string; targetPlatformUserId: string }): Promise<{ kicked: true }> {
-    const result = await this.ctx.db.withLock(`kick:${input.groupId}:${input.targetPlatformUserId}`, async () => {
+  private async recoverAccount(accountId: string): Promise<void> {
+    // The caller owns the account lock. This also repairs an interrupted operation after
+    // a database connection loss without requiring the whole application to restart.
+    await this.ctx.db.transaction(async tx => {
+      const uncertain = await tx.query<MessageRow>("UPDATE messages SET delivery_status='unknown',dispatch_state='uncertain',timeout_at=null,metadata=metadata || '{\"recoveryNote\":\"发送意图已持久化，但进程未记录远端响应；不自动重发。\"}'::jsonb WHERE account_id=$1 AND dispatch_state='sending' AND delivery_status IN ('queued','unknown') RETURNING *", [accountId]);
+      for (const row of uncertain.rows) await emit(tx, 'inconsistency', { kind: 'send_result_unknown', ref: row.client_msg_id, message: row.metadata.recoveryNote });
+    });
+  }
+  async kick(input: { groupId: string; accountId: string; targetPlatformUserId: string }, options?: { signal?: AbortSignal }): Promise<{ kicked: true }> {
+    options?.signal?.throwIfAborted();
+    const result = await this.ctx.db.withLock(`kick:${input.groupId}:${input.targetPlatformUserId}`, async (_connection, lockSignal) => {
+      const signal = options?.signal ? AbortSignal.any([options.signal, lockSignal]) : lockSignal;
+      signal.throwIfAborted();
       const group = (await this.ctx.db.query<GroupRow>('SELECT * FROM groups WHERE id=$1', [input.groupId])).rows[0];
       if (!group || group.status !== 'active') throw new AppError(409, 'GROUP_UNREACHABLE', '群不可写');
       const member = (await this.ctx.db.query<{ role: string; status: string }>('SELECT m.role,a.status FROM members m JOIN accounts a ON a.id=m.account_id WHERE m.group_id=$1 AND m.account_id=$2', [input.groupId, input.accountId])).rows[0];
       if (!member || member.status !== 'online') throw new AppError(409, 'NO_AVAILABLE_ACCOUNT', '没有可执行的账号');
       if (!['creator', 'admin'].includes(member.role)) throw new AppError(403, 'NO_PERMISSION', '账号没有移除成员权限');
       try {
-        z.object({ kicked: z.literal(true) }).parse(await this.ctx.gateway.request(`/groups/${encodeURIComponent(group.gateway_group_id)}/kick`, { byAccountId: input.accountId, targetPlatformUserId: input.targetPlatformUserId }));
+        z.object({ kicked: z.literal(true) }).parse(await this.ctx.gateway.request(`/groups/${encodeURIComponent(group.gateway_group_id)}/kick`, { byAccountId: input.accountId, targetPlatformUserId: input.targetPlatformUserId }, 15000, signal));
       } catch (error) {
         if (error instanceof RemoteError && ['ACCOUNT_SUSPENDED', 'SESSION_EXPIRED', 'GROUP_WRITE_FORBIDDEN'].includes(error.code)) {
           await this.ctx.db.transaction(async tx => {
@@ -155,8 +164,8 @@ export class Messages implements MessagingService {
           });
         }
         if (!(error instanceof RemoteError) || error.code !== 'NETWORK_TIMEOUT') throw error;
-        await new Promise(resolve => setTimeout(resolve, 2100));
-        const members = z.array(z.object({ platformUserId: z.string() })).parse(await this.ctx.gateway.request(`/groups/${encodeURIComponent(group.gateway_group_id)}/members`));
+        await delay(2100, undefined, { signal });
+        const members = z.array(z.object({ platformUserId: z.string() })).parse(await this.ctx.gateway.request(`/groups/${encodeURIComponent(group.gateway_group_id)}/members`, undefined, 15000, signal));
         if (members.some(item => item.platformUserId === input.targetPlatformUserId)) throw new RemoteError(504, 'NETWORK_TIMEOUT', { recoveryNote: '当前成员仍存在；移除与重新加入无法区分，不自动重试。' });
       }
       await this.ctx.db.transaction(async tx => { await tx.query('DELETE FROM members WHERE group_id=$1 AND platform_user_id=$2', [input.groupId, input.targetPlatformUserId]); await emit(tx, 'group_changed', { groupId: input.groupId }); });

@@ -103,7 +103,7 @@ export function createGatewayModule(ctx: AppContext): PlatformModule & Messaging
     register,
     enqueueSend: (input, tx) => messages.enqueueSend(input, tx),
     getMessage: clientMsgId => messages.getMessage(clientMsgId),
-    kick: input => messages.kick(input),
+    kick: (input, options?: { signal?: AbortSignal }) => messages.kick(input, options),
     recover: async () => { await messages.recover(); events.start(); },
     tick: async () => {
       events.start();
