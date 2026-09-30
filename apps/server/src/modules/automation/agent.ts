@@ -136,7 +136,9 @@ export class AgentModule {
       await this.ctx.db.withLock(`agent:${run.id}`, async () => {
         // Cancellation ends orchestration without declaring the uncertain external
         // effect failed or clearing its recovery evidence.
-        await this.finish(run, "cancelled", "cancelled");
+        await this.finish(run, "cancelled", "cancelled", null, {
+          deferIfLocked: true,
+        });
       });
     const runs = (
       await this.ctx.db.query<{ id: string }>(
@@ -280,8 +282,9 @@ export class AgentModule {
     status: AgentRun["status"],
     reason: string,
     finalSummary: string | null = null,
+    options: { deferIfLocked?: boolean } = {},
   ): Promise<void> {
-    await this.ctx.db.transaction(async (tx) => {
+    const commit = async (tx: Queryable): Promise<void> => {
       await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
         run.group_id,
       ]);
@@ -292,7 +295,13 @@ export class AgentModule {
         )
       ).rows[0];
       if (updated) await notify(tx, updated, true);
-    });
+    };
+    if (options.deferIfLocked) {
+      // Paused-run cancellation is background progress, just like admission. A
+      // lock timeout rolls back status/events and leaves the durable intent for
+      // the next tick, while other groups can still start and run sequences.
+      if (!(await schedulingTransaction(this.ctx.db, commit))) return;
+    } else await this.ctx.db.transaction(commit);
     // Messages that arrived during the previous run are handed off without waiting for another turn.
     await this.scan();
     await this.startNext(run.group_id);

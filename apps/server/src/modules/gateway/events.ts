@@ -160,12 +160,17 @@ export class GatewayEvents {
   async process(event: GatewayEvent): Promise<void> {
     const ref = String(event.eventId);
     // A local persistence retry retains when this process first received the
-    // event. Query confirmations and message echoes never supply this clock.
-    const observedAt =
+    // message, even if a duplicate acknowledgement has another eventId. Include
+    // msgId so a conflicting remote delivery cannot supply the valid one's clock.
+    const observationKey =
       event.type === "message_sent"
-        ? (this.messageSentObservedAt.get(ref) ?? new Date())
+        ? JSON.stringify([event.clientMsgId, event.msgId])
         : undefined;
-    if (observedAt) this.messageSentObservedAt.set(ref, observedAt);
+    const observedAt = observationKey
+      ? (this.messageSentObservedAt.get(observationKey) ?? new Date())
+      : undefined;
+    if (observationKey && observedAt)
+      this.messageSentObservedAt.set(observationKey, observedAt);
     try {
       if (
         (
@@ -176,7 +181,7 @@ export class GatewayEvents {
         ).rowCount
       ) {
         this.retry.delete(ref);
-        this.messageSentObservedAt.delete(ref);
+        if (observationKey) this.messageSentObservedAt.delete(observationKey);
         return;
       }
       const echoClientId =
@@ -341,7 +346,7 @@ export class GatewayEvents {
         }
       });
       this.retry.delete(ref);
-      this.messageSentObservedAt.delete(ref);
+      if (observationKey) this.messageSentObservedAt.delete(observationKey);
     } catch (error) {
       this.retry.set(ref, event);
       if (!this.issues.has(ref))
