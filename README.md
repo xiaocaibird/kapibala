@@ -34,8 +34,9 @@ npm test
 AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern='timing:' tests/integration/automation.test.ts
 ```
 
-当前演示于2026-09-30 19:57:51从main的`9befc8a`统一启动，产品源码与已验证的`f52faec`完全一致；具体进程、备份、数据保留及浏览器结果见[运行证据](docs/evidence/demo-verification.json)。原数据保留，额外创建的开发者复验群也有明确记录。通过编译或开发者浏览器检查不代表用户已完成人工验收。
+运行版本、进程及本批证据统一见[文档入口](docs/README.md)；当前能力与验证边界见[功能总表](docs/feature-matrix.md)。历史运行记录保留各自版本，不作为当前状态。通过编译或开发者浏览器检查不代表用户已完成人工验收。
 
+- [当前功能总表与需求追踪](docs/feature-matrix.md)
 - [分批功能验收](docs/acceptance.md)
 - [逐条需求与验证证据](docs/requirements-matrix.md)
 - [工程要求](docs/engineering-requirements.md)
