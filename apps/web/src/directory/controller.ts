@@ -2,11 +2,14 @@ import type {
   GroupDirectoryItem,
   GroupDirectoryOrder,
   GroupDirectoryPage,
+  GroupStatus,
 } from "../../../../packages/contracts/src/index";
 
 export interface DirectoryQuery {
   q: string;
   order: GroupDirectoryOrder;
+  status?: GroupStatus;
+  agentEnabled?: boolean;
   cursor?: string;
 }
 export interface DirectoryPosition {
@@ -19,6 +22,8 @@ export interface DirectoryState {
   input: string;
   q: string;
   order: GroupDirectoryOrder;
+  status?: GroupStatus;
+  agentEnabled?: boolean;
   composing: boolean;
   items: GroupDirectoryItem[];
   pages: number;
@@ -29,7 +34,6 @@ export interface DirectoryState {
   error: { kind: "initial" | "refresh" | "more"; value: unknown } | null;
   position: DirectoryPosition | null;
   notice: string | null;
-  jobId: string | null;
   /** Only a successfully applied first-page read can confirm a range refresh. */
   snapshot: { seq: number; revision: number; path: string } | null;
 }
@@ -55,7 +59,6 @@ const initialState = (): DirectoryState => ({
   error: null,
   position: null,
   notice: null,
-  jobId: null,
   snapshot: null,
 });
 function signature(page: GroupDirectoryPage): string {
@@ -98,6 +101,14 @@ export function createGroupDirectoryController(
     for (const listener of listeners) listener();
   };
   const pendingQuery = () => state.composing || state.input.trim() !== state.q;
+  const currentQuery = (): DirectoryQuery => ({
+    q: state.q,
+    order: state.order,
+    ...(state.status !== undefined ? { status: state.status } : {}),
+    ...(state.agentEnabled !== undefined
+      ? { agentEnabled: state.agentEnabled }
+      : {}),
+  });
   const clearDebounce = () => {
     if (debounce !== undefined) timers.clear(debounce);
     debounce = undefined;
@@ -118,8 +129,7 @@ export function createGroupDirectoryController(
     const coversSeq = readSequence();
     const cursor = kind === "more" ? state.nextCursor! : undefined;
     const query: DirectoryQuery = {
-      q: state.q,
-      order: state.order,
+      ...currentQuery(),
       ...(cursor ? { cursor } : {}),
     };
     const controller = new AbortController();
@@ -172,7 +182,7 @@ export function createGroupDirectoryController(
             notice:
               state.position &&
               !page.items.some((item) => item.id === state.position!.groupId)
-                ? "原群未出现在当前已加载结果中，可继续加载或调整搜索。"
+                ? "原群未出现在当前已加载结果中，可继续加载或调整条件。"
                 : null,
           });
         }
@@ -206,16 +216,18 @@ export function createGroupDirectoryController(
     return promise;
   }
 
-  const apply = (q: string, order: GroupDirectoryOrder) => {
-    if (q === state.q && order === state.order) {
+  const apply = (query: Omit<DirectoryQuery, "cursor">) => {
+    if (directoryQueryIdentity(query) === directoryQueryIdentity(state)) {
       if (!state.initialized) void load("initial");
       return;
     }
     cancel();
     firstSignature = "";
     update({
-      q,
-      order,
+      q: query.q,
+      order: query.order,
+      status: query.status,
+      agentEnabled: query.agentEnabled,
       items: [],
       pages: 0,
       nextCursor: null,
@@ -227,6 +239,16 @@ export function createGroupDirectoryController(
       snapshot: null,
     });
     void load("initial");
+  };
+  const changeConditions = (
+    changes: Partial<Pick<DirectoryQuery, "order" | "status" | "agentEnabled">>,
+  ) => {
+    clearDebounce();
+    apply({
+      ...currentQuery(),
+      q: state.composing ? state.q : state.input.trim(),
+      ...changes,
+    });
   };
   const poll = (): Promise<void> => {
     if (
@@ -274,17 +296,27 @@ export function createGroupDirectoryController(
       }
       debounce = timers.set(() => {
         debounce = undefined;
-        apply(state.input.trim(), state.order);
+        apply({ ...currentQuery(), q: state.input.trim() });
       }, 250);
     },
     setOrder(order: GroupDirectoryOrder) {
-      clearDebounce();
-      apply(state.composing ? state.q : state.input.trim(), order);
+      changeConditions({ order });
+    },
+    setStatus(status: GroupStatus | undefined) {
+      changeConditions({ status });
+    },
+    setAgentEnabled(agentEnabled: boolean | undefined) {
+      changeConditions({ agentEnabled });
     },
     clearSearch() {
       clearDebounce();
       update({ input: "", composing: false });
-      apply("", state.order);
+      apply({ ...currentQuery(), q: "" });
+    },
+    resetConditions() {
+      clearDebounce();
+      update({ input: "", composing: false });
+      apply({ q: "", order: "desc" });
     },
     refresh(): Promise<void> {
       if (pendingQuery()) return Promise.resolve();
@@ -306,21 +338,33 @@ export function createGroupDirectoryController(
     setNotice(notice: string | null) {
       update({ notice });
     },
-    setJobId(jobId: string | null) {
-      update({ jobId });
-    },
   };
 }
 export type GroupDirectoryController = ReturnType<
   typeof createGroupDirectoryController
 >;
 
+const directoryPageSize = 20;
+/** Identity of the complete server query, independent of pagination or requests. */
+export function directoryQueryIdentity(query: DirectoryQuery): string {
+  return JSON.stringify({
+    q: query.q.trim(),
+    order: query.order,
+    status: query.status ?? null,
+    agentEnabled: query.agentEnabled ?? null,
+    pageSize: directoryPageSize,
+  });
+}
+
 export function groupDirectoryPath(query: DirectoryQuery): string {
   const params = new URLSearchParams({
-    pageSize: "20",
+    pageSize: String(directoryPageSize),
     order: query.order,
     q: query.q.trim(),
   });
+  if (query.status !== undefined) params.set("status", query.status);
+  if (query.agentEnabled !== undefined)
+    params.set("agentEnabled", String(query.agentEnabled));
   if (query.cursor) params.set("cursor", query.cursor);
   return `/api/group-directory?${params}`;
 }

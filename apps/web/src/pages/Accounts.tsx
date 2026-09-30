@@ -31,11 +31,11 @@ export function legalActions(account: Account): AccountAction[] {
       ];
     case "online":
       return [
-        { text: "标记离线", to: "disconnected" },
+        { text: "断开连接", to: "disconnected" },
         { text: "释放账号", to: "idle" },
       ];
     case "rate_limited":
-      return [{ text: "标记离线", to: "disconnected" }];
+      return [{ text: "断开连接", to: "disconnected" }];
     default:
       return [];
   }
@@ -222,6 +222,8 @@ export function Accounts() {
         )}
       </section>
       <p className="footnote">
+        断开连接会断开账号的网关连接；释放账号会断开连接并回到待连接，保留账号与历史记录。
+        <br />
         限流结束后自动恢复；已停用与会话失效为终态。状态变更采用并发校验，冲突时刷新后重试。
       </p>
     </>

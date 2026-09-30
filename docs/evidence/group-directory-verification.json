@@ -1,0 +1,83 @@
+{
+  "recordedAt": "2026-09-30T14:17:47.888Z",
+  "sourceCommit": "9bc34fd",
+  "buildCommit": "3486a11",
+  "laterChange": "Only JobProgress completion copy changed after build; no control-flow change.",
+  "commands": [
+    "npm run build",
+    "npm run verify:original",
+    "node .runtime/run-directory-suite.mjs"
+  ],
+  "fullSuite": {
+    "registered": 169,
+    "passed": 166,
+    "failed": 0,
+    "skipped": 3,
+    "durationMs": 112305.759542,
+    "skipReason": "Existing opt-in long timing tests; timing engines unchanged.",
+    "log": ".runtime/group-directory-isolated-verification.log",
+    "sha256": "9b904b43e107e45a91367b0b2ccc63543db0643dd3e3a724cd21a9fef074e499",
+    "temporaryBaseDatabase": "verification_447b6330732c47ecbcea80009c2fed2a",
+    "removed": true,
+    "startedSourceCommit": "3486a11",
+    "completedSourceCommit": "9bc34fd",
+    "sourceNote": "During the suite only the JobProgress completion text changed; directory and backend behavior stayed identical. The suite was not restarted at 9bc34fd."
+  },
+  "focused": {
+    "backendPassed": 16,
+    "frontendPassed": 38,
+    "newDirectoryFrontendTests": 18
+  },
+  "browser": {
+    "environment": {
+      "database": "group_directory_qa_f9eda0013b43411589a0cf31ebcd8958",
+      "url": "http://127.0.0.1:62216",
+      "isolated": true,
+      "cleaned": true,
+      "userChromeUntouched": true
+    },
+    "passed": [
+      "First page 20; load-more failure preserves existing rows; retry reaches 26 unique IDs.",
+      "Multi-page idle polling: 2 requests in 11 seconds (counter 14 to 16). Controller tests assert first-page-only requests.",
+      "Back from second-page group retains all 26 rows and restores the card in viewport (scrollY 2844, top 290.528).",
+      "External profile PATCH marks 26 cached rows stale; refresh 503 preserves all 26 and stale state; successful retry replaces with 20 and explains the missing prior anchor.",
+      "Literal %_ and backslash description search returns one match, with description hint and retained search focus.",
+      "Ascending order starts with unnamed qa-gateway-01; clearing search retains ascending order.",
+      "No matches shows a successful 0 result; first-page fault on reload shows initial failure rather than empty directory.",
+      "Full reload resets search/order. Logout admin with search/order and login viewer resets to empty search, descending, first page.",
+      "Viewer can read directory and details; no create or edit controls.",
+      "Create: dirty cancel asks confirmation, continue keeps input; held request blocks Escape/X, disables inputs, only one POST, completion dismisses form.",
+      "Edit: dirty Escape confirmation, continue preserves input; failed save preserves input, retry succeeds; unchanged close dismisses directly.",
+      "Held PATCH blocks Escape/X; navigating to accounts unmounts it and late success leaves accounts with no dialog."
+    ],
+    "limits": [
+      "IME composition and stale-query races verified by controller tests, not a real OS IME session.",
+      "Create late-unmount response and discard/backdrop paths source-reviewed; not all were separately browser-exercised.",
+      "No scalability benchmark or snapshot-consistent pagination claim."
+    ],
+    "screenshot": "group-directory-search.png"
+  },
+  "immutableOriginalSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+  "userAcceptance": "pending",
+  "demoRollout": "Recorded separately in group-directory-rollout.json",
+  "finalSourceCommit": "028a2e8",
+  "followUp": {
+    "reason": "Preserve existing create-job task recovery independently of directory memory cache.",
+    "source": "028a2e8",
+    "buildAndTypecheck": true,
+    "frontendTests": {
+      "passed": 38,
+      "failed": 0
+    },
+    "browser": {
+      "database": "group_directory_qa_c09a801070544b9599235cd92b1ae33b",
+      "cleaned": true,
+      "jobId": "2c16492c-b355-4848-90a1-325b8518082d",
+      "createRequests": 1,
+      "restoredSameJobAfterReload": true,
+      "hiddenStaysHiddenAfterReload": true,
+      "screenshot": "group-directory-job-recovery.png"
+    },
+    "storageException": "Read-only independent review confirms caught get/set/remove errors cannot make an already successful POST retriable; real storage-denial browser setup not exercised."
+  }
+}

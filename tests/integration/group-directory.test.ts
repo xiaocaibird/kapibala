@@ -398,3 +398,193 @@ test("group directory: migration is repeatable and preserves legacy values and m
     ["groups_directory_asc", "groups_directory_desc"],
   );
 });
+
+test("group directory filters: complete-set intersection precedes pagination in both orders", async (t) => {
+  const f = await fixture(t);
+  const records: {
+    id: string;
+    status: string;
+    enabled: boolean;
+    at: string;
+    matching: boolean;
+  }[] = [];
+  for (const status of ["active", "unreachable", "left"])
+    for (const enabled of [true, false])
+      for (let index = 0; index < 3; index++) {
+        const record = {
+          id: `${status}-${enabled ? "on" : "off"}-${index}`,
+          status,
+          enabled,
+          at: `2026-01-01T00:00:00.00000${index === 2 ? 9 : 1}Z`,
+          matching: index < 2,
+        };
+        records.push(record);
+        await f.insert(
+          record.id,
+          record.at,
+          index === 0 ? "Needle_%\\" : "not a match",
+          index === 1 ? "prefix needle_%\\ suffix" : null,
+        );
+        await f.db.query(
+          "UPDATE groups SET status=$2,agent_enabled=$3 WHERE id=$1",
+          [record.id, status, enabled],
+        );
+      }
+  for (const status of [undefined, "active", "unreachable", "left"])
+    for (const agentEnabled of [undefined, "true", "false"])
+      for (const q of ["", "  needle_%\\  "])
+        for (const order of ["asc", "desc"]) {
+          const query = {
+            pageSize: "2",
+            order,
+            q,
+            ...(status === undefined ? {} : { status }),
+            ...(agentEnabled === undefined ? {} : { agentEnabled }),
+          };
+          const expected = records
+            .filter(
+              (row) =>
+                (status === undefined || row.status === status) &&
+                (agentEnabled === undefined ||
+                  row.enabled === (agentEnabled === "true")) &&
+                (!q || row.matching),
+            )
+            .sort((a, b) => {
+              if (a.at !== b.at)
+                return (a.at < b.at ? -1 : 1) * (order === "asc" ? 1 : -1);
+              return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+            })
+            .map((row) => row.id);
+          assert.deepEqual(
+            await f.collect(query),
+            expected,
+            JSON.stringify(query),
+          );
+        }
+  assert.deepEqual(
+    await f.page({ status: "left", agentEnabled: "false", q: "absent" }),
+    { items: [], nextCursor: null },
+  );
+  const legacy = await f.app.inject({
+    method: "GET",
+    url: "/api/groups",
+    headers: { authorization: `Bearer ${f.token}` },
+  });
+  assert.equal(legacy.statusCode, 200);
+  assert.equal(legacy.json<Group[]>().length, records.length);
+});
+
+test("group directory filters: v1 cursors bind optional normalized filters and preserve old defaults", async (t) => {
+  const f = await fixture(t);
+  await f.insert("a");
+  await f.insert("b");
+  await f.insert("c");
+  const encode = (value: unknown) =>
+    Buffer.from(JSON.stringify(value)).toString("base64url");
+  const oldCursor = encode({
+    v: 1,
+    createdAt: "2026-01-01T00:00:00.123456Z",
+    id: "a",
+    q: "",
+    order: "desc",
+    pageSize: 1,
+  });
+  const continuation = await f.page({ pageSize: "1", cursor: oldCursor });
+  assert.equal(continuation.items[0]!.id, "b");
+  const defaultCursor = JSON.parse(
+    Buffer.from(continuation.nextCursor!, "base64url").toString("utf8"),
+  );
+  assert.equal(Object.hasOwn(defaultCursor, "status"), false);
+  assert.equal(Object.hasOwn(defaultCursor, "agentEnabled"), false);
+  const newFilters: Record<string, string>[] = [
+    { status: "active" },
+    { agentEnabled: "false" },
+    { status: "active", agentEnabled: "false" },
+  ];
+  for (const query of newFilters) {
+    const result = await f.get({ pageSize: "1", ...query, cursor: oldCursor });
+    assert.equal(result.statusCode, 400);
+    assert.equal(
+      result.json<{ error: { code: string } }>().error.code,
+      "VALIDATION_ERROR",
+    );
+  }
+  const base = { pageSize: "1", status: "active", agentEnabled: "false" };
+  const cursor = (await f.page(base)).nextCursor!;
+  const decoded = JSON.parse(Buffer.from(cursor, "base64url").toString("utf8"));
+  assert.equal(decoded.v, 1);
+  assert.equal(decoded.status, "active");
+  assert.equal(decoded.agentEnabled, false);
+  assert.equal((await f.page({ ...base, cursor })).items[0]!.id, "b");
+  const changed: Record<string, string>[] = [
+    { pageSize: "1" },
+    { pageSize: "1", status: "active" },
+    { pageSize: "1", agentEnabled: "false" },
+    { ...base, status: "left" },
+    { ...base, agentEnabled: "true" },
+  ];
+  for (const query of changed)
+    assert.equal((await f.get({ ...query, cursor })).statusCode, 400);
+  for (const payload of [
+    { ...decoded, status: null },
+    { ...decoded, status: "ACTIVE" },
+    { ...decoded, status: "all" },
+    { ...decoded, agentEnabled: "false" },
+    { ...decoded, agentEnabled: 0 },
+    { ...decoded, agentEnabled: null },
+  ])
+    assert.equal(
+      (await f.get({ ...base, cursor: encode(payload) })).statusCode,
+      400,
+    );
+});
+
+test("group directory filters: strict query values and viewer access", async (t) => {
+  const f = await fixture(t);
+  await f.insert("active-off");
+  await f.insert("left-on");
+  await f.db.query(
+    "UPDATE groups SET status='left',agent_enabled=true WHERE id='left-on'",
+  );
+  const invalid: Record<string, string>[] = [
+    ...["", "all", "ACTIVE", " active ", "unknown", "active' OR 1=1 --"].map(
+      (status) => ({ status }),
+    ),
+    ...["", "1", "0", "TRUE", "False", " true ", "null", "yes"].map(
+      (agentEnabled) => ({ agentEnabled }),
+    ),
+  ];
+  for (const query of invalid) {
+    const result = await f.get(query);
+    assert.equal(result.statusCode, 400, JSON.stringify(query));
+    assert.equal(
+      result.json<{ error: { code: string } }>().error.code,
+      "VALIDATION_ERROR",
+    );
+  }
+  for (const suffix of [
+    "status=active&status=left",
+    "agentEnabled=true&agentEnabled=false",
+  ]) {
+    const result = await f.app.inject({
+      method: "GET",
+      url: `/api/group-directory?${suffix}`,
+      headers: { authorization: `Bearer ${f.token}` },
+    });
+    assert.equal(result.statusCode, 400);
+  }
+  const query = { status: "left", agentEnabled: "true", q: "left" };
+  const viewer = await f.login("viewer");
+  const result = await f.get(query, viewer);
+  assert.equal(result.statusCode, 200);
+  assert.deepEqual(result.json<GroupDirectoryPage>(), await f.page(query));
+  assert.deepEqual(
+    result.json<GroupDirectoryPage>().items.map((item) => item.id),
+    ["left-on"],
+  );
+  const unauthorized = await f.app.inject({
+    method: "GET",
+    url: `/api/group-directory?${new URLSearchParams(query)}`,
+  });
+  assert.equal(unauthorized.statusCode, 401);
+});

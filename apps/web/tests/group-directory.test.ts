@@ -8,11 +8,15 @@ import type {
 import {
   affectsGroupDirectory,
   createGroupDirectoryController,
+  directoryQueryIdentity,
   groupDirectoryPath,
   type DirectoryQuery,
   type DirectoryScheduler,
 } from "../src/directory/controller";
-import { directoryMatch } from "../src/directory/presentation";
+import {
+  directoryMatch,
+  hasDirectoryConditions,
+} from "../src/directory/presentation";
 import { groupDirectoryPageSchema } from "../src/api/schemas";
 
 function item(
@@ -148,6 +152,276 @@ test("search debounce and order changes abort old requests and ignore late resul
   );
   assert.equal(h.state().q, "A  C");
   assert.equal(h.state().order, "asc");
+});
+
+test("directory query identity includes all server conditions but excludes cursor and request lifecycle", async (t) => {
+  const h = harness(t);
+  const query: DirectoryQuery = {
+    q: "  A  B  ",
+    order: "asc",
+    status: "left",
+    agentEnabled: false,
+  };
+  const identity = directoryQueryIdentity(query);
+  assert.deepEqual(JSON.parse(identity), {
+    q: "A  B",
+    order: "asc",
+    status: "left",
+    agentEnabled: false,
+    pageSize: 20,
+  });
+  assert.equal(
+    directoryQueryIdentity({ ...query, q: "A  B", cursor: "second-page" }),
+    identity,
+  );
+  for (const change of [
+    { q: "A B" },
+    { order: "desc" as const },
+    { status: undefined },
+    { agentEnabled: undefined },
+    { agentEnabled: true },
+  ])
+    assert.notEqual(directoryQueryIdentity({ ...query, ...change }), identity);
+  assert.deepEqual(JSON.parse(directoryQueryIdentity(h.state())), {
+    q: "",
+    order: "desc",
+    status: null,
+    agentEnabled: null,
+    pageSize: 20,
+  });
+  const before = directoryQueryIdentity(h.state());
+  await setImmediate();
+  await h.reply(page(["a"], "next"));
+  h.controller.rememberPosition({ groupId: "a", offset: 12, scrollY: 20 });
+  h.controller.invalidate();
+  assert.equal(directoryQueryIdentity(h.state()), before);
+});
+
+test("filter URL combinations send explicit booleans and omit unselected conditions", () => {
+  for (const status of [undefined, "active", "unreachable", "left"] as const)
+    for (const agentEnabled of [undefined, true, false]) {
+      const url = new URL(
+        groupDirectoryPath({
+          q: " name ",
+          order: "desc",
+          status,
+          agentEnabled,
+        }),
+        "http://local",
+      );
+      assert.equal(url.searchParams.get("q"), "name");
+      assert.equal(url.searchParams.get("status"), status ?? null);
+      assert.equal(
+        url.searchParams.get("agentEnabled"),
+        agentEnabled === undefined ? null : String(agentEnabled),
+      );
+      assert.equal([...url.searchParams.values()].includes("all"), false);
+      assert.equal(url.searchParams.get("pageSize"), "20");
+    }
+});
+
+test("changing filters abandons a loaded cursor and ignores both late page and prior-filter responses", async (t) => {
+  const h = await twoPages(t);
+  h.controller.rememberPosition({ groupId: "d", offset: 70, scrollY: 400 });
+  void h.controller.loadMore();
+  await setImmediate();
+  const oldPage = h.requests.at(-1)!;
+  h.controller.setStatus("left");
+  await setImmediate();
+  const oldFilter = h.requests.at(-1)!;
+  assert.equal(oldPage.signal.aborted, true);
+  assert.equal(h.state().pages, 0);
+  assert.equal(h.state().nextCursor, null);
+  assert.equal(h.state().position, null);
+  assert.deepEqual(oldFilter.query, { q: "", order: "desc", status: "left" });
+  h.controller.setAgentEnabled(false);
+  await setImmediate();
+  assert.equal(oldFilter.signal.aborted, true);
+  assert.deepEqual(h.requests.at(-1)!.query, {
+    q: "",
+    order: "desc",
+    status: "left",
+    agentEnabled: false,
+  });
+  await h.reply({
+    items: [item("selected", { status: "left", agentEnabled: false })],
+    nextCursor: null,
+  });
+  oldPage.resolve(page(["stale page"]));
+  oldFilter.resolve(page(["stale filter"]));
+  await setImmediate();
+  assert.deepEqual(
+    h.state().items.map((row) => row.id),
+    ["selected"],
+  );
+  assert.equal(h.state().pages, 1);
+  assert.equal(h.state().agentEnabled, false);
+});
+
+test("clear search preserves filters and ordering while reset restores every default and cancels late results", async (t) => {
+  const h = harness(t);
+  await setImmediate();
+  await h.reply(page(["initial"]));
+  h.controller.setInput(" name ");
+  h.controller.setStatus("unreachable");
+  h.controller.setAgentEnabled(false);
+  h.controller.setOrder("asc");
+  await setImmediate();
+  assert.deepEqual(h.requests.at(-1)!.query, {
+    q: "name",
+    order: "asc",
+    status: "unreachable",
+    agentEnabled: false,
+  });
+  await h.reply(page([]));
+  h.controller.clearSearch();
+  await setImmediate();
+  const clearing = h.requests.at(-1)!;
+  assert.deepEqual(clearing.query, {
+    q: "",
+    order: "asc",
+    status: "unreachable",
+    agentEnabled: false,
+  });
+  assert.equal(h.state().input, "");
+  h.controller.resetConditions();
+  await setImmediate();
+  assert.equal(clearing.signal.aborted, true);
+  assert.deepEqual(h.requests.at(-1)!.query, { q: "", order: "desc" });
+  assert.equal(h.state().status, undefined);
+  assert.equal(h.state().agentEnabled, undefined);
+  assert.equal(h.state().position, null);
+  await h.reply(page(["all groups"]));
+  clearing.resolve(page(["old filtered groups"]));
+  await h.tick(500);
+  assert.deepEqual(
+    h.state().items.map((row) => row.id),
+    ["all groups"],
+  );
+  assert.equal(h.state().order, "desc");
+});
+
+test("choosing all in one filter preserves the other filter and the search", async (t) => {
+  const h = harness(t);
+  await setImmediate();
+  await h.reply(page([]));
+  h.controller.setInput("keyword");
+  h.controller.setStatus("active");
+  h.controller.setAgentEnabled(false);
+  await setImmediate();
+  await h.reply(page([]));
+  h.controller.setStatus(undefined);
+  await setImmediate();
+  assert.deepEqual(h.requests.at(-1)!.query, {
+    q: "keyword",
+    order: "desc",
+    agentEnabled: false,
+  });
+  await h.reply(page([]));
+  h.controller.setAgentEnabled(undefined);
+  await setImmediate();
+  assert.deepEqual(h.requests.at(-1)!.query, { q: "keyword", order: "desc" });
+  await h.reply(page([]));
+  const count = h.requests.length;
+  h.controller.setAgentEnabled(undefined);
+  h.controller.setStatus(undefined);
+  await setImmediate();
+  assert.equal(h.requests.length, count);
+  assert.equal(h.state().input, "keyword");
+});
+
+test("IME composition defers combined filters until committed and sends them in one first-page query", async (t) => {
+  const h = harness(t);
+  await setImmediate();
+  await h.reply(page(["initial"]));
+  h.controller.setInput("zhong", true);
+  h.controller.setStatus("left");
+  h.controller.setAgentEnabled(false);
+  h.controller.setOrder("asc");
+  await h.tick(1000);
+  await h.controller.poll();
+  assert.equal(h.requests.length, 1);
+  h.controller.setInput("中文");
+  await h.tick(250);
+  assert.equal(h.requests.length, 2);
+  assert.deepEqual(h.requests[1]!.query, {
+    q: "中文",
+    order: "asc",
+    status: "left",
+    agentEnabled: false,
+  });
+});
+
+test("filtered pagination retries and cached returns preserve conditions and stable location", async (t) => {
+  const h = harness(t);
+  await setImmediate();
+  await h.reply(page([]));
+  h.controller.setStatus("active");
+  h.controller.setAgentEnabled(false);
+  await setImmediate();
+  await h.reply(page(["a"], "filtered-second"));
+  void h.controller.loadMore();
+  await setImmediate();
+  await h.reject(new Error("filtered second unavailable"));
+  assert.equal(h.state().error?.kind, "more");
+  const retryQuery = h.requests.at(-1)!.query;
+  void h.controller.loadMore();
+  await setImmediate();
+  assert.deepEqual(h.requests.at(-1)!.query, retryQuery);
+  assert.deepEqual(retryQuery, {
+    q: "",
+    order: "desc",
+    status: "active",
+    agentEnabled: false,
+    cursor: "filtered-second",
+  });
+  await h.reply(page(["b"], "filtered-third"));
+  const position = { groupId: "b", offset: 100, scrollY: 600 };
+  const identity = directoryQueryIdentity(h.state());
+  h.controller.rememberPosition(position);
+  h.controller.setVisible(false);
+  h.controller.invalidate();
+  const count = h.requests.length;
+  h.controller.setVisible(true);
+  await setImmediate();
+  assert.equal(h.requests.length, count);
+  assert.equal(directoryQueryIdentity(h.state()), identity);
+  assert.equal(h.state().pages, 2);
+  assert.equal(h.state().stale, true);
+  assert.deepEqual(h.state().position, position);
+  assert.deepEqual(
+    h.state().items.map((row) => row.id),
+    ["a", "b"],
+  );
+  void h.controller.refresh();
+  await setImmediate();
+  assert.deepEqual(h.requests.at(-1)!.query, {
+    q: "",
+    order: "desc",
+    status: "active",
+    agentEnabled: false,
+  });
+  await h.reply(page([]));
+  assert.equal(h.state().initialized, true);
+  assert.equal(h.state().items.length, 0);
+  assert.equal(hasDirectoryConditions(h.state()), true);
+  assert.equal(h.state().status, "active");
+  assert.equal(h.state().agentEnabled, false);
+});
+
+test("filter-only empty results are recognized as no matches including Agent disabled", () => {
+  assert.equal(hasDirectoryConditions({ q: "", status: "left" }), true);
+  assert.equal(hasDirectoryConditions({ q: "", agentEnabled: false }), true);
+  assert.equal(hasDirectoryConditions({ q: "", agentEnabled: true }), true);
+  assert.equal(hasDirectoryConditions({ q: " search " }), true);
+  assert.equal(
+    hasDirectoryConditions({
+      q: "  ",
+      status: undefined,
+      agentEnabled: undefined,
+    }),
+    false,
+  );
 });
 
 test("IME composition suppresses debounce, sort requests and polling until committed", async (t) => {
@@ -327,7 +601,6 @@ test("leaving and returning retains multi-page query, anchor and stale contents 
   const h = await twoPages(t);
   const position = { groupId: "d", offset: 125, scrollY: 700 };
   h.controller.rememberPosition(position);
-  h.controller.setJobId("created-job");
   h.controller.setVisible(false);
   h.controller.invalidate();
   const before = h.requests.length;
@@ -340,13 +613,12 @@ test("leaving and returning retains multi-page query, anchor and stale contents 
     ["a", "b", "c", "d"],
   );
   assert.equal(h.state().pages, 2);
-  assert.equal(h.state().jobId, "created-job");
   void h.controller.refresh();
   await setImmediate();
   await h.reply(page(["new first page"], "next"));
   assert.equal(
     h.state().notice,
-    "原群未出现在当前已加载结果中，可继续加载或调整搜索。",
+    "原群未出现在当前已加载结果中，可继续加载或调整条件。",
   );
   assert.equal(h.state().q, "");
 });
@@ -391,7 +663,6 @@ test("a stopped session cancels pending debounce and late responses; a new sessi
   const h = harness(t);
   await setImmediate();
   h.controller.setInput("private query");
-  h.controller.setJobId("private-job");
   h.controller.rememberPosition({
     groupId: "private-group",
     offset: 8,
@@ -406,7 +677,6 @@ test("a stopped session cancels pending debounce and late responses; a new sessi
   await setImmediate();
   assert.deepEqual(next.requests[0]!.query, { q: "", order: "desc" });
   assert.equal(next.state().position, null);
-  assert.equal(next.state().jobId, null);
   assert.equal(next.state().input, "");
   assert.deepEqual(next.state().items, []);
 });

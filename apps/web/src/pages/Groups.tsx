@@ -8,13 +8,17 @@ import {
   Icon,
   Loading,
   PageHeader,
+  label,
 } from "../components/ui";
 import { CreateGroup } from "../components/CreateGroup";
 import { JobProgress } from "../components/JobProgress";
 import { useGroupDirectory } from "../directory/GroupDirectoryProvider";
-import { directoryMatch } from "../directory/presentation";
 import {
-  groupDirectoryPath,
+  directoryMatch,
+  hasDirectoryConditions,
+} from "../directory/presentation";
+import {
+  directoryQueryIdentity,
   type DirectoryPosition,
 } from "../directory/controller";
 import {
@@ -28,6 +32,30 @@ export function Groups() {
   const { user } = useAuth();
   const { controller, state } = useGroupDirectory();
   const [createOpen, setCreateOpen] = useState(false);
+  const [jobId, setJobId] = useState<string | null>(() => {
+    try {
+      return sessionStorage.getItem("kapibala:createJob");
+    } catch {
+      return null;
+    }
+  });
+  const rememberJob = (id: string | null) => {
+    setJobId(id);
+    try {
+      if (id) sessionStorage.setItem("kapibala:createJob", id);
+      else sessionStorage.removeItem("kapibala:createJob");
+    } catch {
+      // Storage may be unavailable. A completed create request must never be
+      // presented as a failed submission that the user should send again.
+    }
+  };
+  const hasConditions = hasDirectoryConditions(state);
+  const canReset =
+    hasConditions || state.input !== "" || state.order !== "desc";
+  const resetConditions = () => {
+    composing.current = false;
+    controller.resetConditions();
+  };
   const composing = useRef(false);
   const pendingQuery = state.composing || state.input.trim() !== state.q;
   const busy = state.loading !== null;
@@ -61,7 +89,10 @@ export function Groups() {
           )
         }
       />
-      <section className="panel directory-tools" aria-label="群列表查找与排序">
+      <section
+        className="panel directory-tools"
+        aria-label="群列表查找、筛选与排序"
+      >
         <label className="directory-search">
           搜索群组
           <input
@@ -93,6 +124,46 @@ export function Groups() {
           清除搜索
         </button>
         <label>
+          群状态
+          <select
+            value={state.status ?? ""}
+            onChange={(event) => {
+              const value = event.target.value;
+              controller.setStatus(
+                value === "active" ||
+                  value === "unreachable" ||
+                  value === "left"
+                  ? value
+                  : undefined,
+              );
+            }}
+          >
+            <option value="">全部</option>
+            <option value="active">{label("active")}</option>
+            <option value="unreachable">{label("unreachable")}</option>
+            <option value="left">{label("left")}</option>
+          </select>
+        </label>
+        <label>
+          Agent 自动应答
+          <select
+            value={
+              state.agentEnabled === undefined ? "" : String(state.agentEnabled)
+            }
+            onChange={(event) =>
+              controller.setAgentEnabled(
+                event.target.value === ""
+                  ? undefined
+                  : event.target.value === "true",
+              )
+            }
+          >
+            <option value="">全部</option>
+            <option value="true">开启</option>
+            <option value="false">关闭</option>
+          </select>
+        </label>
+        <label>
           创建时间
           <select
             value={state.order}
@@ -106,6 +177,13 @@ export function Groups() {
         </label>
         <button
           className="button secondary"
+          disabled={!canReset}
+          onClick={resetConditions}
+        >
+          重置条件
+        </button>
+        <button
+          className="button secondary"
           disabled={busy || pendingQuery}
           onClick={refresh}
         >
@@ -113,11 +191,11 @@ export function Groups() {
           {state.loading === "refresh" ? "正在刷新…" : "刷新列表"}
         </button>
         <p className="muted small directory-help" id="directory-search-help">
-          搜索完整群目录；忽略首尾空白与英文大小写，按整段关键词匹配。
+          搜索与筛选完整群目录；关键词忽略首尾空白与英文大小写，按整段匹配。
         </p>
       </section>
       <PageAttentionScope
-        scopeKey={`directory:${groupDirectoryPath(state)}`}
+        scopeKey={`directory:${directoryQueryIdentity(state)}`}
         acceptEvent={(event) =>
           [
             "group_changed",
@@ -129,6 +207,9 @@ export function Groups() {
         title="群组工作台 · Kapibala"
       >
         <GroupDirectoryView
+          jobId={jobId}
+          rememberJob={rememberJob}
+          resetConditions={resetConditions}
           createOpen={createOpen}
           setCreateOpen={setCreateOpen}
         />
@@ -140,7 +221,13 @@ export function Groups() {
 function GroupDirectoryView({
   createOpen,
   setCreateOpen,
+  jobId,
+  rememberJob,
+  resetConditions,
 }: {
+  jobId: string | null;
+  rememberJob: (id: string | null) => void;
+  resetConditions: () => void;
   createOpen: boolean;
   setCreateOpen: (open: boolean) => void;
 }) {
@@ -149,7 +236,8 @@ function GroupDirectoryView({
   const grid = useRef<HTMLDivElement>(null);
   const clickedPosition = useRef<DirectoryPosition | null>(null);
   const restored = useRef<string | null>(null);
-  const queryKey = groupDirectoryPath(state);
+  const queryKey = directoryQueryIdentity(state);
+  const hasConditions = hasDirectoryConditions(state);
   const pendingQuery = state.composing || state.input.trim() !== state.q;
   const busy = state.loading !== null;
   const attention = useAttentionCollection({
@@ -183,7 +271,14 @@ function GroupDirectoryView({
         <strong>当前查询的最新结果</strong>
         <p>
           搜索：{state.q || "全部关键词"}；创建时间：
-          {state.order === "desc" ? "新到旧" : "旧到新"}。
+          {state.order === "desc" ? "新到旧" : "旧到新"}；群状态：
+          {state.status ? label(state.status) : "全部"}；Agent 自动应答：
+          {state.agentEnabled === undefined
+            ? "全部"
+            : state.agentEnabled
+              ? "开启"
+              : "关闭"}
+          。
         </p>
         <p>
           {state.items.length
@@ -210,7 +305,7 @@ function GroupDirectoryView({
   }, [queryKey]);
   useLayoutEffect(
     () => () => {
-      if (groupDirectoryPath(controller.getSnapshot()) !== queryKey) return;
+      if (directoryQueryIdentity(controller.getSnapshot()) !== queryKey) return;
       const cards = [
         ...(grid.current?.querySelectorAll<HTMLElement>(
           "[data-directory-group-id]",
@@ -264,17 +359,17 @@ function GroupDirectoryView({
   };
   return (
     <>
-      {state.jobId && (
+      {jobId && (
         <div className="panel job-panel">
           <button
             className="icon-button dismiss"
             aria-label="隐藏任务"
-            onClick={() => controller.setJobId(null)}
+            onClick={() => rememberJob(null)}
           >
             ×
           </button>
           <JobProgress
-            id={state.jobId}
+            id={jobId}
             onComplete={() => {
               controller.invalidate();
             }}
@@ -309,7 +404,7 @@ function GroupDirectoryView({
         </div>
       )}
       <div className="section-heading">
-        <h2>{state.q ? "搜索结果" : "所有群组"}</h2>
+        <h2>{hasConditions ? "匹配结果" : "所有群组"}</h2>
         <span className="muted small" aria-live="polite">
           {pendingQuery
             ? "正在应用搜索条件…"
@@ -331,20 +426,17 @@ function GroupDirectoryView({
         )
       ) : !state.items.length ? (
         <section className="panel">
-          <Empty title={state.q ? "没有匹配的群" : "从第一个群组开始"}>
-            {state.q
-              ? "试试名称、简介或完整群 ID，也可以清除搜索查看全部群。"
+          <Empty title={hasConditions ? "没有匹配的群" : "从第一个群组开始"}>
+            {hasConditions
+              ? "试试其他关键词或筛选条件，也可以重置条件查看全部群。"
               : user?.role === "admin"
                 ? "连接服务账号后，创建一个群组开始协作。"
                 : "暂时没有群组，请等待管理员创建。"}
           </Empty>
-          {state.q && (
+          {hasConditions && (
             <div className="directory-empty-action">
-              <button
-                className="button secondary"
-                onClick={() => controller.clearSearch()}
-              >
-                清除搜索
+              <button className="button secondary" onClick={resetConditions}>
+                重置条件
               </button>
             </div>
           )}
@@ -457,7 +549,7 @@ function GroupDirectoryView({
         <CreateGroup
           onClose={() => setCreateOpen(false)}
           onCreated={(id) => {
-            controller.setJobId(id);
+            rememberJob(id);
             setCreateOpen(false);
             controller.invalidate();
           }}

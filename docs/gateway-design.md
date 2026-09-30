@@ -10,7 +10,7 @@
 
 名称、简介和创建时间展示见[CR-001、CR-002、CR-005](change-requests.md)。新名称/简介作为本地 nullable 字段，创建任务持久保存可选输入，改名/改简介不调用 gateway；旧创建请求兼容，局部 PATCH 不覆盖省略字段。创建时间沿用已有 `created_at`，本批不重写旧业务记录。具体提交、迁移验证及上线状态已在台账记录；既有固定 `created_at DESC,id` 及早期方向记录见 CR-003，后续已批准切换排序由 CR-007 承接。
 
-群目录增量（CR-007–009，实施中）使用独立`GET /api/group-directory`摘要接口，原数组接口不变。服务端过滤后以有界materialized page CTE及成员/活动run汇总单SQL查询，避免沿用旧列表逐群详情组装；`006_group_directory.sql`仅新增created_at/id正倒序索引，不新增业务列。游标保留UTC六位微秒并绑定查询条件，活数据分页与消息快照分别处理。契约见[模块接口](module-interfaces.md#群目录增量契约已批准实施验证待完成)和[批准方案](group-directory-profile-proposal.md)；迁移执行、性能及正确性证据待补，不将实施选择写成已验证收益。
+群目录增量（CR-007–009，f7045d0已实现，schema6演示已启用）使用独立`GET /api/group-directory`摘要接口，原数组接口不变。服务端过滤后以有界materialized page CTE及成员/活动run汇总单SQL查询，避免沿用旧列表逐群详情组装；`006_group_directory.sql`仅新增created_at/id正倒序索引，不新增业务列。游标保留UTC六位微秒并绑定查询条件，活数据分页与消息快照分别处理。契约见[模块接口](module-interfaces.md#群目录增量契约已批准实施验证待完成)和[批准方案](group-directory-profile-proposal.md)；真实PG目录8项加原metadata8项专项通过，覆盖排序/微秒/字面搜索/cursor/鉴权/旧接口及重复迁移的旧群值保留；[证据](evidence/group-directory-verification.json)按版本记录。默认演示006已重复执行两次、17表业务/auth行哈希保留，见[运行记录](evidence/group-directory-rollout.json)，未进行容量压测，不将实现结构写成实测性能收益。
 
 ## 状态与并发
 

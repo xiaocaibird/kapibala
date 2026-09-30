@@ -195,7 +195,7 @@ export function GroupDetail({ id }: { id: string }) {
                 {group.members.slice(0, 5).map((member) => (
                   <p key={member.platformUserId}>
                     {member.accountId ?? member.platformUserId} ·{" "}
-                    {label(member.role)}
+                    {member.role === "admin" ? "群管理员" : label(member.role)}
                   </p>
                 ))}
                 {group.members.length > 5 && (
@@ -238,7 +238,9 @@ export function GroupDetail({ id }: { id: string }) {
                         </span>
                       </div>
                       <span className={`role role-${member.role}`}>
-                        {label(member.role)}
+                        {member.role === "admin"
+                          ? "群管理员"
+                          : label(member.role)}
                       </span>
                     </div>
                   ))
@@ -246,6 +248,9 @@ export function GroupDetail({ id }: { id: string }) {
                   <p className="muted">当前无成员</p>
                 )}
               </div>
+              <p className="footnote">
+                控制台管理员负责平台管理；这里的群内角色决定服务账号在本群可执行的操作，两者相互独立。
+              </p>
             </section>
           </AttentionRegion>
           {user?.role === "admin" && group.status !== "left" && (
