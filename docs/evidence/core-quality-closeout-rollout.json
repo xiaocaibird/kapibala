@@ -1,0 +1,273 @@
+{
+  "verifiedAt": "2026-09-30T17:27:42.490Z",
+  "previousMainCommit": "39db6039f4516cce2fb864110ed8513ec3d63ad7",
+  "integratedMainCommit": "e6df178e541f42b18a740bcd4d85fba9e90414d1",
+  "frontendSourceCommit": "393d43e295febab5527164c64b04af94e7554376",
+  "frontendTree": "e7680a336a585edc2252a990a9ac685ed1f2e205",
+  "backendStartupSource": "7e83191fdbbc905cf975b28f101d5fe5d5128662",
+  "backendStartedAtLocal": "2026-10-01 00:02:35 Asia/Shanghai",
+  "backendProductUnchanged": true,
+  "processes": "  PID  PPID STARTED                      COMMAND\n21643     1 Thu Oct  1 00:02:35 2026     /Users/zcm/.nvm/versions/node/v24.21.0/bin/node --import tsx scripts/dev.ts\n21646 21643 Thu Oct  1 00:02:35 2026     /Users/zcm/.nvm/versions/node/v24.21.0/bin/node --import tsx apps/simulator/src/main.ts\n21647 21643 Thu Oct  1 00:02:35 2026     /Users/zcm/.nvm/versions/node/v24.21.0/bin/node --import tsx apps/server/src/main.ts\n21648 21643 Thu Oct  1 00:02:35 2026     /Users/zcm/.nvm/versions/node/v24.21.0/bin/node node_modules/vite/bin/vite.js --config apps/web/vite.config.ts apps/web\n",
+  "pids": {
+    "supervisor": 21643,
+    "simulator": 21646,
+    "api": 21647,
+    "vite": 21648
+  },
+  "checks": {
+    "console": {
+      "url": "http://127.0.0.1:5173/",
+      "status": 200,
+      "matched": true,
+      "expected": [
+        "id=\"root\""
+      ]
+    },
+    "sender": {
+      "url": "http://127.0.0.1:5173/src/components/Timeline.tsx",
+      "status": 200,
+      "matched": true,
+      "expected": [
+        "resolveSenderSelection",
+        "senderAvailable",
+        "消息草稿已保留"
+      ]
+    },
+    "sequenceTime": {
+      "url": "http://127.0.0.1:5173/src/components/SequenceStepTime.tsx",
+      "status": 200,
+      "matched": true,
+      "expected": [
+        "确认发出时间",
+        "失败处理时间",
+        "尚无确认发出时间"
+      ]
+    },
+    "timeline": {
+      "url": "http://127.0.0.1:5173/src/hooks/useTimeline.ts",
+      "status": 200,
+      "matched": true,
+      "expected": [
+        "loadEarlierTimelinePage",
+        "snapshotRevision.current"
+      ]
+    },
+    "pageGuard": {
+      "url": "http://127.0.0.1:5173/src/hooks/loadEarlierTimelinePage.ts",
+      "status": 200,
+      "matched": true,
+      "expected": [
+        "current.generation === started.generation",
+        "current.revision === started.revision"
+      ]
+    },
+    "api": {
+      "url": "http://127.0.0.1:3100/api/health",
+      "status": 200,
+      "matched": true,
+      "expected": [],
+      "body": {
+        "ok": true,
+        "schemaVersion": 6
+      }
+    },
+    "proxy": {
+      "url": "http://127.0.0.1:5173/api/health",
+      "status": 200,
+      "matched": true,
+      "expected": [],
+      "body": {
+        "ok": true,
+        "schemaVersion": 6
+      }
+    }
+  },
+  "backupDirectory": "/Users/zcm/Desktop/kapibala/.runtime/backups/2026-10-01-before-core-closeout",
+  "backups": {
+    "database.dump": {
+      "bytes": 67863,
+      "sha256": "1363254a5d9952a19f84442ede6dc7cb1b2dbe90fac701f4182c4835394b14f3"
+    },
+    "gateway.json": {
+      "bytes": 22395,
+      "sha256": "c38a12c3996b48f3af59103cf0483f9c079661d9e474abb1b3b50304011a4736"
+    },
+    "agent.json": {
+      "bytes": 31975,
+      "sha256": "3686d7aa05c7b620cc1b5c3d5fa83fb64f4b2f4ffbcf402c61931a9499edc0af"
+    }
+  },
+  "backupArchiveListVerified": true,
+  "backupArchiveListSha256": "1dd0b96d6f073513745bec7b0385da2a8a24e97dbd8f3fccaffa2871295cbcd1",
+  "dataPreservation": {
+    "before": {
+      "recordedAt": "2026-09-30T17:19:12.504Z",
+      "tables": {
+        "accounts": {
+          "count": 6,
+          "sha256": "06e4f6e823413958bb7199318e49990e752a3a0c4e7e1a3f345bb093f90b5eed"
+        },
+        "agent_pending": {
+          "count": 4,
+          "sha256": "1d6876e57d654782c506408ccbf340ef954d13a57370eca09a2fdc97129ea15b"
+        },
+        "agent_runs": {
+          "count": 4,
+          "sha256": "bf33eef99989cfd8c4480f75c24018e045a879873821f12d7410c1d7c3e82a25"
+        },
+        "agent_send_keys": {
+          "count": 4,
+          "sha256": "e7ec0c2f2f0f39b47d2763a30673c63702235499563b75b79c97b6eaf9d6da06"
+        },
+        "agent_steps": {
+          "count": 12,
+          "sha256": "1decb6a7410bbb79ec4af01610226b127062615c74262ef342de3915e8f4e429"
+        },
+        "auth_sessions": {
+          "count": 25,
+          "sha256": "39b57248b10739edf9d9612825840ae49138c3e68a901b14482d4b9717e89766"
+        },
+        "auth_tokens": {
+          "count": 174,
+          "sha256": "2a45f479a6b536d0233eb7268dfec3467c6495249b8d9797fa15ebb5de021913"
+        },
+        "events": {
+          "count": 81,
+          "sha256": "ae58703eec9c312084d53d9e5650ab1426669db46f03664a1a72cc2db0779714"
+        },
+        "gateway_events": {
+          "count": 36,
+          "sha256": "2405e479f87a652439db2baf6f9c6439c7158d3b53d324e800cf2a4b804faafb"
+        },
+        "groups": {
+          "count": 4,
+          "sha256": "a1c0f78f06496462cd4b540b7c1856bc72a344d9d71bb172fb79ffa970c00d28"
+        },
+        "jobs": {
+          "count": 4,
+          "sha256": "597767e997973a924997312d7c1566f145d8d4ca56b15237ca3041ec793f79aa"
+        },
+        "members": {
+          "count": 14,
+          "sha256": "dc0c35937d9b42b7592acec6291a2d927a566a8579a3ff69f70f013385b17cc8"
+        },
+        "messages": {
+          "count": 15,
+          "sha256": "fdfce098f23d1804237cfa5ba5a5970ae80a9f0523da260a15fe9669d891a944"
+        },
+        "schema_migrations": {
+          "count": 6,
+          "sha256": "67d4182b6bd40c51a59f9481c440f94e8fca3f8b954c95bcf4dea1b12b854c26"
+        },
+        "sequence_runs": {
+          "count": 2,
+          "sha256": "557f70af8ac2db98c3a773e3adf73935a896d44038b70a47ef770bfb2627ca9c"
+        },
+        "sequence_steps": {
+          "count": 4,
+          "sha256": "177f6aa50d63aa0ba7868bdba110d8e01e03eaf6ece9bf6547f45c38fa5f3665"
+        },
+        "sequences": {
+          "count": 1,
+          "sha256": "88abc577b437bb765fc9ab21d4b9501b2dbb29cf6d000245da26a38832f05ca9"
+        },
+        "timeline_snapshots": {
+          "count": 141,
+          "sha256": "9b6054814934fd758b724cb54d20510af320a901c2549574a44cc0c2e73db82f"
+        }
+      },
+      "simulator": {
+        "gateway": "c38a12c3996b48f3af59103cf0483f9c079661d9e474abb1b3b50304011a4736",
+        "agent": "3686d7aa05c7b620cc1b5c3d5fa83fb64f4b2f4ffbcf402c61931a9499edc0af"
+      }
+    },
+    "after": {
+      "recordedAt": "2026-09-30T17:26:46.526Z",
+      "tables": {
+        "accounts": {
+          "count": 6,
+          "sha256": "06e4f6e823413958bb7199318e49990e752a3a0c4e7e1a3f345bb093f90b5eed"
+        },
+        "agent_pending": {
+          "count": 4,
+          "sha256": "1d6876e57d654782c506408ccbf340ef954d13a57370eca09a2fdc97129ea15b"
+        },
+        "agent_runs": {
+          "count": 4,
+          "sha256": "bf33eef99989cfd8c4480f75c24018e045a879873821f12d7410c1d7c3e82a25"
+        },
+        "agent_send_keys": {
+          "count": 4,
+          "sha256": "e7ec0c2f2f0f39b47d2763a30673c63702235499563b75b79c97b6eaf9d6da06"
+        },
+        "agent_steps": {
+          "count": 12,
+          "sha256": "1decb6a7410bbb79ec4af01610226b127062615c74262ef342de3915e8f4e429"
+        },
+        "auth_sessions": {
+          "count": 25,
+          "sha256": "39b57248b10739edf9d9612825840ae49138c3e68a901b14482d4b9717e89766"
+        },
+        "auth_tokens": {
+          "count": 174,
+          "sha256": "2a45f479a6b536d0233eb7268dfec3467c6495249b8d9797fa15ebb5de021913"
+        },
+        "events": {
+          "count": 81,
+          "sha256": "ae58703eec9c312084d53d9e5650ab1426669db46f03664a1a72cc2db0779714"
+        },
+        "gateway_events": {
+          "count": 36,
+          "sha256": "2405e479f87a652439db2baf6f9c6439c7158d3b53d324e800cf2a4b804faafb"
+        },
+        "groups": {
+          "count": 4,
+          "sha256": "a1c0f78f06496462cd4b540b7c1856bc72a344d9d71bb172fb79ffa970c00d28"
+        },
+        "jobs": {
+          "count": 4,
+          "sha256": "597767e997973a924997312d7c1566f145d8d4ca56b15237ca3041ec793f79aa"
+        },
+        "members": {
+          "count": 14,
+          "sha256": "dc0c35937d9b42b7592acec6291a2d927a566a8579a3ff69f70f013385b17cc8"
+        },
+        "messages": {
+          "count": 15,
+          "sha256": "fdfce098f23d1804237cfa5ba5a5970ae80a9f0523da260a15fe9669d891a944"
+        },
+        "schema_migrations": {
+          "count": 6,
+          "sha256": "67d4182b6bd40c51a59f9481c440f94e8fca3f8b954c95bcf4dea1b12b854c26"
+        },
+        "sequence_runs": {
+          "count": 2,
+          "sha256": "557f70af8ac2db98c3a773e3adf73935a896d44038b70a47ef770bfb2627ca9c"
+        },
+        "sequence_steps": {
+          "count": 4,
+          "sha256": "177f6aa50d63aa0ba7868bdba110d8e01e03eaf6ece9bf6547f45c38fa5f3665"
+        },
+        "sequences": {
+          "count": 1,
+          "sha256": "88abc577b437bb765fc9ab21d4b9501b2dbb29cf6d000245da26a38832f05ca9"
+        },
+        "timeline_snapshots": {
+          "count": 141,
+          "sha256": "9b6054814934fd758b724cb54d20510af320a901c2549574a44cc0c2e73db82f"
+        }
+      },
+      "simulator": {
+        "gateway": "c38a12c3996b48f3af59103cf0483f9c079661d9e474abb1b3b50304011a4736",
+        "agent": "3686d7aa05c7b620cc1b5c3d5fa83fb64f4b2f4ffbcf402c61931a9499edc0af"
+      }
+    },
+    "tablesMatch": true,
+    "simulatorFilesMatch": true
+  },
+  "serviceRestarted": false,
+  "migrationRun": false,
+  "seedOrReset": false,
+  "verificationScope": "Readonly HTTP served-module and health checks. No demo login, browser interaction, business writes, or fault injection. Real UI evidence came from the isolated fixture.",
+  "userAcceptance": "Pending; protocol and timing limits remain open."
+}

@@ -32,19 +32,21 @@
 <a id="代码与命令执行位置"></a>
 ## 当前演示与代码位置
 
-当前演示已于 **2026-10-01 00:02:35（北京时间）** 从main产品提交 `7e83191` 统一启动模拟器/API/Vite，schemaVersion仍为6，没有新迁移。入口：[本地控制台](http://127.0.0.1:5173)，管理员`admin/admin`，只读账号`viewer/viewer`。父进程21643、模拟21646、API21647、Vite21648；脱离启动shell运行（PPID1），未设置开机自启。源码、进程和运行检查以main `.runtime/runtime-manifest.json`与[本次运行证据](evidence/group-profile-conflict-rollout.json)为准；后续文档提交不自动重启服务。
+当前演示前端已更新为产品提交 **`393d43e`**，于 **2026-10-01 01:27:42（北京时间）** 完成只读运行核验；模拟器/API仍从`7e83191`于00:02:35启动，schemaVersion=6，无新迁移或重启。入口：[本地控制台](http://127.0.0.1:5173)，管理员`admin/admin`，只读账号`viewer/viewer`。父进程21643、模拟21646、API21647、Vite21648及启动时间未变；脱离启动shell运行（PPID1），未设置开机自启。源码与运行检查以main `.runtime/runtime-manifest.json`和[本轮运行证据](evidence/core-quality-closeout-rollout.json)为准，后端启动源与前端更新源分列。
 
-本次增加PI-03获准的群资料同字段冲突保护：当前表单只为本次修改字段携带原值条件；冲突整次不写入，保留草稿、展示服务器快照，明确重新确认后再次比较。不同字段编辑可共存；无expected旧调用方仍按最后写入生效。仅第三项获准，序列表单及PI-03其余建议不在本批。PI-01文案、PI-02目录完善和本项均已交付待人工复验；PI-04–23暂缓，提醒维持已交付范围，下一步按D029优先验收原始核心能力及处理发现的问题。
+本轮修复发送身份静默替换、序列失败时间误标、迟到历史页覆盖新快照三处前端问题。构建/双方TS及定向110/110通过，隔离真实页面验证已归档；CG03–08六项协议、成员视图与计时边界仍待决，用户验收未完成，见[核心收口记录](core-quality-closeout.md)。切换前67863字节PG归档可读，更新前后18表和两个模拟器文件完全一致，4群/15消息/6账号保留；没有使用演示进行故障测试。此次仅HTTP模块/health只读核验，不冒称在演示重新完成全部浏览器测试。
+
+上一批增加PI-03获准的群资料同字段冲突保护：当前表单只为本次修改字段携带原值条件；冲突整次不写入，保留草稿、展示服务器快照，明确重新确认后再次比较。不同字段编辑可共存；无expected旧调用方仍按最后写入生效。仅第三项获准，序列表单及PI-03其余建议不在本批。PI-01文案、PI-02目录完善和本项均已交付待人工复验；PI-04–23暂缓，提醒维持已交付范围，下一步按D029优先验收原始核心能力及处理发现的问题。
 
 `7e83191`通过构建/前后端TS/原文SHA、定向 **138/138**（前端92、5个PG文件46；0失败/跳过）和16项双IAB观察。测试覆盖原值条件、真实行锁并发、整请求原子性、草稿/二次确认、空值、503、关闭/迟到和只读权限；详情见[专项](group-profile-conflict-review.md)、[结构化验证](evidence/group-profile-conflict-verification.json)。本批未重跑全部后端或长计时套件，不扩大历史验证范围；用户仍待验。
 
-切换前四类在途任务均为0，67613字节PG归档通过archive-list核验，备份位于main `.runtime/backups/2026-10-01-before-group-profile-conflict`。重启后、viewer只读冒烟前，18表行数/哈希和2个模拟器文件完全一致，4群/15消息/6账号保留；未运行迁移/seed/reset。独立IAB viewer只读核对4群和资料页无编辑入口后关闭，未做业务写入或操作用户Chrome；登录正常生成认证记录。备份可读不等于灾难恢复演练，持久数据保留也不承诺浏览器未提交输入保留。
+上一批PI-03切换前四类在途任务均为0，67613字节PG归档通过archive-list核验，备份位于main `.runtime/backups/2026-10-01-before-group-profile-conflict`。重启后、viewer只读冒烟前，18表行数/哈希和2个模拟器文件完全一致，4群/15消息/6账号保留；未运行迁移/seed/reset。独立IAB viewer只读核对4群和资料页无编辑入口后关闭，未做业务写入或操作用户Chrome；登录正常生成认证记录。备份可读不等于灾难恢复演练，持久数据保留也不承诺浏览器未提交输入保留。
 
 | 用途 | 本地路径 | 版本与执行边界 |
 |---|---|---|
-| main及当前演示 | `/Users/zcm/Desktop/kapibala` | 统一运行产品源7e83191；默认端口只从此目录启动 |
-| 本批集成与证据 | `/Users/zcm/.codex/worktrees/42fe/kapibala` | `agent/group-profile-conflict-release`；验证使用独立库/随机端口，资源已清理 |
-| 本批API与前端实现 | `group-directory-api`、`group-directory-web`托管工作树 | 原提交6834dd9、aa28ee9分别集成为9c81c96、7e83191；不是默认服务目录 |
+| main及当前演示 | `/Users/zcm/Desktop/kapibala` | 后端启动源7e83191、前端393d43e；默认端口只从此目录启动 |
+| 本批集成与证据 | `/Users/zcm/.codex/worktrees/42fe/kapibala` | `agent/core-quality-closeout-release`；验证使用独立库/随机端口，所列40个QA库均清理 |
+| 本批模块验证与前端修复 | `core-gateway-checks`、`group-directory-api`、`group-directory-web`托管工作树 | 网关/自动化补证及前端最小修复；版本对应见核心收口记录；不是默认服务目录 |
 
 历史版本保持各自证据，不作为当前运行状态：
 
