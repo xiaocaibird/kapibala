@@ -955,8 +955,8 @@ test("platform: schema lag refuses startup and viewer is denied all business wri
       );
     }
     const latest = (
-      await f.db.query<{ version: number; name: string }>(
-        "SELECT version,name FROM schema_migrations ORDER BY version DESC LIMIT 1",
+      await f.db.query<{ version: number; name: string; checksum: string }>(
+        "SELECT version,name,checksum FROM schema_migrations ORDER BY version DESC LIMIT 1",
       )
     ).rows[0]!;
     await f.db.query("DELETE FROM schema_migrations WHERE version=$1", [
@@ -967,8 +967,8 @@ test("platform: schema lag refuses startup and viewer is denied all business wri
       /Schema mismatch/,
     );
     await f.db.query(
-      "INSERT INTO schema_migrations(version,name) VALUES($1,$2)",
-      [latest.version, latest.name],
+      "INSERT INTO schema_migrations(version,name,checksum) VALUES($1,$2,$3)",
+      [latest.version, latest.name, latest.checksum],
     );
   } finally {
     await f.close();

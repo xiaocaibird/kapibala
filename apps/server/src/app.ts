@@ -8,7 +8,7 @@ import { AppError, RemoteError } from "./core/errors.js";
 import { RemoteClient } from "./core/remote.js";
 import { registerAuth } from "./core/auth.js";
 import { registerRealtime } from "./core/realtime.js";
-import { expectedVersion } from "../../../scripts/migrate.js";
+import { assertSchemaCurrent } from "./core/migrations.js";
 import type { AppContext } from "./core/context.js";
 import type { PlatformModule } from "./core/messaging.js";
 export interface AppOptions {
@@ -28,19 +28,12 @@ export async function createApp(options: AppOptions = {}) {
       process.env.DATABASE_URL ??
         "postgres://kapibala:kapibala@localhost:55432/kapibala",
     );
-  const version = await expectedVersion();
-  const installed = Number(
-    (
-      await db.query<{ version: number }>(
-        "SELECT COALESCE(max(version),0) AS version FROM schema_migrations",
-      )
-    ).rows[0]?.version,
-  );
-  if (installed !== version) {
+  let version: number;
+  try {
+    version = await assertSchemaCurrent(db);
+  } catch (error) {
     if (!options.db) await db.close();
-    throw new Error(
-      `Schema mismatch: installed=${installed}, required=${version}; run npm run db:migrate`,
-    );
+    throw error;
   }
   await app.register(cookie);
   await app.register(websocket);

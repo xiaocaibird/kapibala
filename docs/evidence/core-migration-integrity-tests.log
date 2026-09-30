@@ -1,0 +1,45 @@
+npm notice run kapibala-platform@0.1.0 npx
+npm notice run 'tsx' --test tests/integration/migration-integrity.test.ts
+✔ migration manifest uses explicit numeric identifiers and rejects invalid or duplicate versions (9.691667ms)
+✔ history content changes with the same file count are rejected, while a fresh database gets the changed schema (90.573917ms)
+ℹ Same count/version=1, old schema integer versus fresh schema text; old ledger rejected by checksum before writes
+▶ complete ledger comparison rejects middle holes, renamed/deleted/inserted history and a newer database
+  ✔ middle-hole (43.451583ms)
+  ✔ renamed-file (42.7735ms)
+  ✔ deleted-file (43.06275ms)
+  ✔ inserted-file (43.566ms)
+  ✔ renumbered-file (41.625958ms)
+  ✔ newer-database (145.733458ms)
+✔ complete ledger comparison rejects middle holes, renamed/deleted/inserted history and a newer database (361.159167ms)
+✔ a failure after pending SQL and earlier ledger writes rolls the entire batch back before a successful retry (68.215083ms)
+ℹ Version 2 SQL/ledger plus version 3 DDL/data all rolled back when the version 3 ledger INSERT failed; retry and repeat passed
+✔ two migration processes wait on a real PostgreSQL advisory lock and apply a batch exactly once (308.734209ms)
+ℹ {"observedLocks":[{"application_name":"a0_migration_first","lock_key":"913456","granted":true},{"application_name":"a0_migration_first","lock_key":"913458","granted":false},{"application_name":"a0_migration_second","lock_key":"913456","granted":false}],"finalValue":2,"version2LedgerRows":1}
+✔ the production entry refuses an actually lagging database before listening, then migration permits a healthy server and repeat (314.505083ms)
+ℹ {"laggingVersion":6,"requiredVersion":7,"refusedProcessExit":1,"randomRefusedPort":49490,"healthyUrl":"http://127.0.0.1:49493"}
+✔ a real six-migration legacy ledger stays explicitly unverified and unchanged rather than gaining fabricated checksums (75.101541ms)
+ℹ Historical 001–006 SQL was executed into the old ledger shape; migrate/startup rejected with no checksum column, DDL, ledger or account changes
+✔ explicit legacy baseline compares a replayed release schema, records limited provenance, and permits subsequent migration (342.8585ms)
+ℹ {"source":"git:fa1baa7d7524bf16f379c9c2837fa8cc9ef0bcac","schemaChecksum":"8dcbd355bde9d283034612c00f5f819a209adb588cd3ea18f33cf0d43f0a16bd","verifiedAt":"2026-09-30T19:23:46.417Z","versions":[1,2,3,4,5,6],"referenceDatabase":"kapibala_migration_reference_6300c25c5ea24115b1edc3ed76c445ee","referenceRemoved":true,"currentVersion":7,"pastExecutionBytesProven":false}
+▶ legacy baseline rejects damaged ledgers, structural drift and untrusted source bytes without changing the target
+  ✔ middle-hole (154.619375ms)
+  ✔ name-mismatch (258.575083ms)
+  ✔ missing-index (142.971833ms)
+  ✔ changed-default (146.091083ms)
+  ✔ extra-function (144.506416ms)
+  ✔ disabled-internal-constraint-triggers (143.398ms)
+  ✔ altered-sequence (142.768291ms)
+  ✔ modified-source (68.574917ms)
+✔ legacy baseline rejects damaged ledgers, structural drift and untrusted source bytes without changing the target (1202.89525ms)
+✔ legacy baseline lock contention and missing CREATEDB permission fail without target changes or reference leaks (5185.449125ms)
+✔ legacy baseline and migration 007 preserve the running-sequence gate and leave historical observation time unknown (171.304584ms)
+ℹ Legacy 6 -> explicit baseline -> 007 rejects running sequence atomically -> completed-run fixture -> 007 succeeds; historical observed_at remains NULL
+✔ a reference cleanup failure reports that the target baseline already committed, with its exact evidence and reference name (168.346458ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8456.85575
