@@ -1,7 +1,13 @@
 import type { AccountStatus } from "../../../../../packages/contracts/src/index.js";
 import { emit, type Queryable } from "../../core/db.js";
 import { AppError } from "../../core/errors.js";
-import { type AccountRow, isTerminal, transitions } from "./models.js";
+import {
+  type AccountRow,
+  type MessageRow,
+  isTerminal,
+  transitions,
+} from "./models.js";
+import { resolveMessageAttention } from "./message-attention.js";
 
 /** All terminal consequences commit together. Events never describe an uncommitted state. */
 export async function changeAccount(
@@ -51,8 +57,8 @@ export async function changeAccount(
         groupId: group.group_id,
         changedFields: ["members"],
       });
-    await tx.query(
-      "UPDATE messages SET delivery_status='cancelled',fail_code='ACCOUNT_TERMINAL',dispatch_state='done',updated_at=now() WHERE account_id=$1 AND delivery_status='queued'",
+    const cancelled = await tx.query<MessageRow>(
+      "UPDATE messages SET delivery_status='cancelled',fail_code='ACCOUNT_TERMINAL',dispatch_state='done',updated_at=now() WHERE account_id=$1 AND delivery_status='queued' RETURNING *",
       [accountId],
     );
     const skipped = await tx.query<{ run_id: string; index: number }>(
@@ -73,6 +79,8 @@ export async function changeAccount(
         changedFields: ["status", "sentAt"],
       });
     }
+    for (const message of cancelled.rows)
+      await resolveMessageAttention(tx, message);
     await emit(tx, "account_terminal", { accountId, status: to });
   }
   if (account.status !== to)
@@ -102,8 +110,8 @@ export async function markGroupUnreachable(
     [groupId],
   );
   if (!changed.rowCount) return;
-  await tx.query(
-    "UPDATE messages SET delivery_status='cancelled',fail_code='GROUP_UNREACHABLE',dispatch_state='done',updated_at=now() WHERE group_id=$1 AND delivery_status='queued'",
+  const cancelled = await tx.query<MessageRow>(
+    "UPDATE messages SET delivery_status='cancelled',fail_code='GROUP_UNREACHABLE',dispatch_state='done',updated_at=now() WHERE group_id=$1 AND delivery_status='queued' RETURNING *",
     [groupId],
   );
   await tx.query(
@@ -121,6 +129,8 @@ export async function markGroupUnreachable(
       status: "stopped",
       currentStepIndex: run.current_step_index,
     });
+  for (const message of cancelled.rows)
+    await resolveMessageAttention(tx, message);
   await emit(tx, "group_changed", {
     groupId,
     status: "unreachable",

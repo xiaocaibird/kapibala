@@ -13,7 +13,11 @@ import {
   recordSent,
 } from "../../apps/server/src/modules/gateway/messages.js";
 import { GatewayEvents } from "../../apps/server/src/modules/gateway/events.js";
-import { changeAccount } from "../../apps/server/src/modules/gateway/state.js";
+import {
+  changeAccount,
+  markGroupUnreachable,
+} from "../../apps/server/src/modules/gateway/state.js";
+import type { MessageRow } from "../../apps/server/src/modules/gateway/models.js";
 import { Jobs } from "../../apps/server/src/modules/gateway/jobs.js";
 import { SequenceModule } from "../../apps/server/src/modules/automation/sequences.js";
 import { AgentModule } from "../../apps/server/src/modules/automation/agent.js";
@@ -253,6 +257,190 @@ test("attention: duplicate inbound and ambiguous own echo never invent a second 
   );
   assert.equal(
     (await f.db.query("SELECT * FROM messages WHERE msg_id='echo-id'"))
+      .rowCount,
+    1,
+  );
+});
+
+test("attention: an unrelated same-sender message with different text is confirmed immediately", async (t) => {
+  const f = await fixture(t);
+  await f.messages.enqueueSend({
+    groupId: "g",
+    accountId: f.accountId,
+    text: "X",
+    clientMsgId: "outbound-x",
+  });
+  await new GatewayEvents(f.ctx, f.messages).process({
+    type: "message",
+    eventId: 1,
+    groupId: "remote-g",
+    msgId: "independent-y",
+    senderPlatformUserId: f.accountId,
+    text: "Y",
+    sentAt: new Date().toISOString(),
+  });
+  const event = (await f.events("message")).at(-1)!;
+  assert.equal(event.payload.attentionIdentity, "confirmed");
+  assert.equal(event.payload.msgId, "independent-y");
+});
+
+test("attention: authoritative distinct message IDs release only fully resolved same-text candidates", async (t) => {
+  const f = await fixture(t);
+  for (const id of ["outbound-a", "outbound-b"])
+    await f.messages.enqueueSend({
+      groupId: "g",
+      accountId: f.accountId,
+      text: "same",
+      clientMsgId: id,
+    });
+  await new GatewayEvents(f.ctx, f.messages).process({
+    type: "message",
+    eventId: 1,
+    groupId: "remote-g",
+    msgId: "independent",
+    senderPlatformUserId: f.accountId,
+    text: "same",
+    sentAt: new Date().toISOString(),
+  });
+  const original = (await f.events("message")).at(-1)!;
+  assert.equal(original.payload.attentionIdentity, "pending");
+  await f.db.transaction((tx) =>
+    recordSent(tx, "outbound-a", "landed-a", new Date().toISOString()),
+  );
+  assert.equal(
+    (await f.events("message")).filter(
+      (event) => event.payload.id === original.payload.id,
+    ).length,
+    1,
+  );
+  await assert.rejects(
+    f.db.transaction(async (tx) => {
+      await recordSent(tx, "outbound-b", "landed-b", new Date().toISOString());
+      throw new Error("rollback candidate resolution");
+    }),
+  );
+  assert.equal(
+    (await f.events("message")).filter(
+      (event) => event.payload.id === original.payload.id,
+    ).length,
+    1,
+  );
+  await f.db.transaction((tx) =>
+    recordSent(tx, "outbound-b", "landed-b", new Date().toISOString()),
+  );
+  await f.db.transaction((tx) =>
+    recordSent(tx, "outbound-b", "landed-b", new Date().toISOString()),
+  );
+  const related = (await f.events("message")).filter(
+    (event) => event.payload.id === original.payload.id,
+  );
+  assert.deepEqual(
+    related.map((event) => event.payload.attentionIdentity),
+    ["pending", "confirmed"],
+  );
+  assert.equal(related[1]!.payload.changeKind, "created");
+  assert.equal(
+    (await f.db.query("SELECT * FROM messages WHERE msg_id='independent'"))
+      .rowCount,
+    1,
+  );
+});
+
+test("attention: failed and cancelled outbox transitions resolve dependent inbound candidates", async (t) => {
+  for (const mode of [
+    "failed",
+    "account-terminal",
+    "group-unreachable",
+  ] as const)
+    await t.test(mode, async (t) => {
+      const f = await fixture(t);
+      const outbound = await f.messages.enqueueSend({
+        groupId: "g",
+        accountId: f.accountId,
+        text: "same",
+        clientMsgId: "outbound",
+      });
+      await new GatewayEvents(f.ctx, f.messages).process({
+        type: "message",
+        eventId: 1,
+        groupId: "remote-g",
+        msgId: "independent",
+        senderPlatformUserId: f.accountId,
+        text: "same",
+        sentAt: new Date().toISOString(),
+      });
+      const original = (await f.events("message")).at(-1)!;
+      assert.equal(original.payload.attentionIdentity, "pending");
+      await f.db.transaction(async (tx) => {
+        if (mode === "account-terminal")
+          await changeAccount(tx, f.accountId, "suspended");
+        else if (mode === "group-unreachable")
+          await markGroupUnreachable(tx, "g");
+        else {
+          const row = (
+            await tx.query<MessageRow>("SELECT * FROM messages WHERE id=$1", [
+              outbound.id,
+            ])
+          ).rows[0]!;
+          await f.messages.fail(tx, row, "SENDER_NOT_IN_GROUP");
+        }
+      });
+      const related = (await f.events("message")).filter(
+        (event) => event.payload.id === original.payload.id,
+      );
+      assert.deepEqual(
+        related.map((event) => event.payload.attentionIdentity),
+        ["pending", "confirmed"],
+      );
+      assert.equal(
+        (await f.db.query("SELECT * FROM messages WHERE msg_id='independent'"))
+          .rowCount,
+        1,
+      );
+    });
+});
+
+test("attention: cancelling an attempted send does not prove its pending echo independent", async (t) => {
+  const f = await fixture(t);
+  await f.messages.enqueueSend({
+    groupId: "g",
+    accountId: f.accountId,
+    text: "on wire",
+    clientMsgId: "attempted",
+  });
+  await f.db.query(
+    "UPDATE messages SET attempts=1,dispatch_state='sending' WHERE client_msg_id='attempted'",
+  );
+  await new GatewayEvents(f.ctx, f.messages).process({
+    type: "message",
+    eventId: 1,
+    groupId: "remote-g",
+    msgId: "late-echo",
+    senderPlatformUserId: f.accountId,
+    text: "on wire",
+    sentAt: new Date().toISOString(),
+  });
+  const original = (await f.events("message")).at(-1)!;
+  assert.equal(original.payload.attentionIdentity, "pending");
+  await f.db.transaction((tx) => changeAccount(tx, f.accountId, "suspended"));
+  assert.equal(
+    (await f.events("message")).filter(
+      (event) => event.payload.id === original.payload.id,
+    ).length,
+    1,
+  );
+  await f.db.transaction((tx) =>
+    recordSent(tx, "attempted", "late-echo", new Date().toISOString()),
+  );
+  assert.equal(
+    (await f.events("message")).filter(
+      (event) => event.payload.id === original.payload.id,
+    ).length,
+    1,
+    "authoritative echo merges without a false independent creation",
+  );
+  assert.equal(
+    (await f.db.query("SELECT * FROM messages WHERE msg_id='late-echo'"))
       .rowCount,
     1,
   );

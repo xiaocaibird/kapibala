@@ -14,6 +14,7 @@ import {
   messageDto,
 } from "./models.js";
 import { changeAccount, markGroupUnreachable } from "./state.js";
+import { resolveMessageAttention } from "./message-attention.js";
 
 const landedSchema = z.object({
   msgId: z.string().min(1),
@@ -59,6 +60,7 @@ export async function recordSent(
     id: row.id,
     isOwn: true,
   });
+  await resolveMessageAttention(tx, row);
 }
 
 export class Messages implements MessagingService {
@@ -448,6 +450,7 @@ export class Messages implements MessagingService {
       clientMsgId: row.client_msg_id,
       isOwn: true,
     });
+    await resolveMessageAttention(tx, row);
   }
   async recover(): Promise<void> {
     const accounts = (

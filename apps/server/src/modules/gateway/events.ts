@@ -227,18 +227,18 @@ export class GatewayEvents {
                 )
               ).rowCount,
             );
-            // An uncorrelated service-account echo can still be the outstanding
-            // outbox row. Defer only attention classification, never persistence.
-            const identityPending =
-              own &&
-              Boolean(
-                (
-                  await tx.query(
-                    "SELECT 1 FROM messages WHERE group_id=$1 AND sender_platform_user_id=$2 AND client_msg_id IS NOT NULL AND msg_id IS NULL AND delivery_status IN ('queued','accepted','unknown') LIMIT 1",
-                    [group.id, event.senderPlatformUserId],
+            // Different text rules out an echo; matching text does not prove one.
+            // Hold candidate rows until insertion commits so a concurrent terminal
+            // transition cannot resolve before this dependent candidate is visible.
+            const pendingClientIds = own
+              ? (
+                  await tx.query<{ client_msg_id: string }>(
+                    "SELECT client_msg_id FROM messages WHERE group_id=$1 AND sender_platform_user_id=$2 AND text=$3 AND client_msg_id IS NOT NULL AND msg_id IS NULL AND delivery_status IN ('queued','accepted','unknown') ORDER BY id FOR SHARE",
+                    [group.id, event.senderPlatformUserId, event.text],
                   )
-                ).rowCount,
-              );
+                ).rows.map((row) => row.client_msg_id)
+              : [];
+            const identityPending = pendingClientIds.length > 0;
             const insertedMessage = await tx.query<{ id: string }>(
               "INSERT INTO messages(id,group_id,msg_id,sender_platform_user_id,is_own,text,sent_at,metadata) VALUES($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT(group_id,msg_id) DO NOTHING RETURNING id",
               [
@@ -252,6 +252,9 @@ export class GatewayEvents {
                 JSON.stringify({
                   agentEligible:
                     !own && group.agent_enabled && group.status === "active",
+                  ...(identityPending
+                    ? { attentionPendingClientMsgIds: pendingClientIds }
+                    : {}),
                   ...(event.mediaUrl ? { mediaUrl: event.mediaUrl } : {}),
                 }),
               ],
