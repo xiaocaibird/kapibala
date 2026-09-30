@@ -37,6 +37,7 @@ export interface ToolExecutionHost {
   ): Promise<void>;
   pause(run: RunRow, reason: string): Promise<void>;
   readRun(id: string): Promise<RunRow | undefined>;
+  checkpoint(run: RunRow, phase: string): Promise<void>;
 }
 const sleep = async (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -129,6 +130,7 @@ export class AgentTools {
       return step.audit_verdict;
     let attempts = step.audit_attempts;
     while (attempts < 3) {
+      await this.host.checkpoint(run, "audit:before");
       const current = (await this.host.readRun(run.id))!;
       const left = this.host.remaining(current);
       if (left <= 0) {
@@ -159,6 +161,9 @@ export class AgentTools {
         operation?.throwIfAborted(); /* An uncertain audit response grants no permission. */
       }
       operation?.throwIfAborted();
+      // A received pass is not usable until its elapsed wait is durably billed.
+      // Infrastructure failure must escape rather than consume another attempt.
+      await this.host.checkpoint(run, "audit:after");
       if (verdict) {
         await this.ctx.db.transaction(async (tx) => {
           await tx.query(

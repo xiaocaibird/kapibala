@@ -68,6 +68,7 @@ export class AgentModule {
       finish: (run, status, reason) => this.finish(run, status, reason),
       pause: (run, reason) => this.pause(run, reason),
       readRun: (id) => this.readRun(id),
+      checkpoint: (run, phase) => this.activityClock.checkpoint(run.id, phase),
     });
     const configured = Number(process.env.AGENT_TURN_TIMEOUT_MS ?? 12000);
     this.turnTimeoutMs = Number.isFinite(configured)
@@ -284,6 +285,7 @@ export class AgentModule {
     finalSummary: string | null = null,
     options: { deferIfLocked?: boolean } = {},
   ): Promise<void> {
+    await this.activityClock.checkpoint(run.id, "run:finish");
     const commit = async (tx: Queryable): Promise<void> => {
       await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
         run.group_id,
@@ -403,7 +405,7 @@ export class AgentModule {
           await this.finish(run, "failed", "budget_exhausted");
           return;
         }
-        await this.turn(run, Math.min(this.turnTimeoutMs, this.remaining(run)));
+        await this.turn(run);
       }
     } finally {
       this.deadlines.delete(id);
@@ -417,7 +419,14 @@ export class AgentModule {
         Date.now(),
     );
   }
-  private async turn(run: RunRow, timeoutMs: number): Promise<void> {
+  private async turn(run: RunRow): Promise<void> {
+    await this.activityClock.checkpoint(run.id, "model:before");
+    const left = this.remaining(run);
+    if (left <= 0) {
+      await this.finish(run, "failed", "wall_clock");
+      return;
+    }
+    const timeoutMs = Math.min(this.turnTimeoutMs, left);
     await this.ctx.db.query(
       "UPDATE agent_runs SET inflight_turn=true WHERE id=$1",
       [run.id],
@@ -445,6 +454,9 @@ export class AgentModule {
       raw = error instanceof Error ? error.message : String(error);
     }
     operation?.throwIfAborted();
+    // Keep accounting failures outside the remote-response catch. An unrecorded
+    // response remains inflight and cannot authorize another turn or tool.
+    await this.activityClock.checkpoint(run.id, "model:after");
     const response = code ? null : parseTurn(raw);
     if (!response) {
       await this.protocolError(run, code ?? "BAD_JSON", raw);
