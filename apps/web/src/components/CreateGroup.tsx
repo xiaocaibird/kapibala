@@ -7,6 +7,8 @@ import { post } from "../api/client";
 import { createGroupProfile } from "../api/groupProfile";
 import { accountSchema, jobIdSchema } from "../api/schemas";
 import { useResource } from "../hooks/useResource";
+import { useGroupFormGuard } from "../hooks/useGroupFormGuard";
+import { GroupDiscardPrompt } from "./GroupDiscardPrompt";
 import { ErrorNotice, Loading, Modal } from "./ui";
 const accountsSchema = accountSchema.array();
 export function CreateGroup({
@@ -22,14 +24,15 @@ export function CreateGroup({
   const [members, setMembers] = useState<string[]>([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [actionError, setActionError] = useState<unknown>(null);
+  const guard = useGroupFormGuard(
+    Boolean(creator || admin || members.length || name || description),
+    onClose,
+  );
+  const { busy } = guard;
   const online = data?.filter((account) => account.status === "online") ?? [];
   const submit = async (event: FormEvent): Promise<void> => {
     event.preventDefault();
-    setBusy(true);
-    setActionError(null);
-    try {
+    await guard.submit(async (isCurrent) => {
       const { jobId } = await post("/api/groups", jobIdSchema, {
         ...createGroupProfile({ name, description }),
         creatorAccountId: creator,
@@ -38,20 +41,16 @@ export function CreateGroup({
           ...members.filter((id) => id !== creator && id !== admin),
         ],
       });
-      onCreated(jobId);
-    } catch (value) {
-      setActionError(value);
-    } finally {
-      setBusy(false);
-    }
+      if (isCurrent()) onCreated(jobId);
+    });
   };
   return (
-    <Modal title="创建群组" onClose={onClose}>
+    <Modal title="创建群组" onClose={guard.close}>
       <form onSubmit={(event) => void submit(event)}>
         <p className="muted">
           选择在线账号。管理员会在入群确认后自动提升权限。
         </p>
-        <ErrorNotice error={error ?? actionError} />
+        <ErrorNotice error={error ?? guard.error} />
         {loading ? (
           <Loading />
         ) : (
@@ -93,6 +92,7 @@ export function CreateGroup({
                   if (admin === event.target.value) setAdmin("");
                 }}
                 required
+                disabled={busy}
               >
                 <option value="">请选择群主</option>
                 {online.map((account) => (
@@ -106,6 +106,7 @@ export function CreateGroup({
                 value={admin}
                 onChange={(event) => setAdmin(event.target.value)}
                 required
+                disabled={busy}
               >
                 <option value="">请选择管理员</option>
                 {online
@@ -127,6 +128,7 @@ export function CreateGroup({
                   <label className="checkbox-label" key={account.id}>
                     <input
                       type="checkbox"
+                      disabled={busy}
                       checked={members.includes(account.id)}
                       onChange={(event) =>
                         setMembers((values) =>
@@ -151,7 +153,7 @@ export function CreateGroup({
           <button
             type="button"
             className="button secondary"
-            onClick={onClose}
+            onClick={guard.close}
             disabled={busy}
           >
             取消
@@ -164,6 +166,12 @@ export function CreateGroup({
           </button>
         </div>
       </form>
+      {guard.confirmDiscard && (
+        <GroupDiscardPrompt
+          onContinue={guard.continueEditing}
+          onDiscard={guard.discard}
+        />
+      )}
     </Modal>
   );
 }
