@@ -108,6 +108,50 @@ async function terminateRunLock(runId: string): Promise<void> {
     "exactly one active run lock must be terminated",
   );
 }
+async function waitForInitializingClockOwner(
+  blockerPid: number,
+): Promise<number> {
+  const deadline = Date.now() + 3000;
+  do {
+    const owner = (
+      await db.query<{ pid: number }>(
+        `SELECT a.pid FROM pg_stat_activity a JOIN pg_locks l ON l.pid=a.pid
+       WHERE a.application_name=$1 AND $2::integer=ANY(pg_blocking_pids(a.pid))
+       AND l.locktype='advisory' AND l.database=(SELECT oid FROM pg_database WHERE datname=current_database())
+       AND l.classid::bigint=((hashtextextended(current_schema()||':automation:activity-clock',0)>>32)&4294967295)
+       AND l.objid::bigint=(hashtextextended(current_schema()||':automation:activity-clock',0)&4294967295) AND l.granted`,
+        [schema, blockerPid],
+      )
+    ).rows[0];
+    if (owner) return owner.pid;
+    await delay(10);
+  } while (Date.now() < deadline);
+  throw new Error(
+    "Clock owner did not hold its session lock while waiting for the run row",
+  );
+}
+async function waitForClockInitializationFollower(
+  ownerPid: number,
+): Promise<number> {
+  const deadline = Date.now() + 3000;
+  do {
+    const follower = (
+      await db.query<{ pid: number }>(
+        `SELECT a.pid FROM pg_stat_activity a JOIN pg_locks l ON l.pid=a.pid
+       WHERE a.application_name=$1 AND $2::integer=ANY(pg_blocking_pids(a.pid))
+       AND l.locktype='advisory' AND l.database=(SELECT oid FROM pg_database WHERE datname=current_database())
+       AND l.classid::bigint=((hashtextextended(current_schema()||':automation:activity-clock:init',0)>>32)&4294967295)
+       AND l.objid::bigint=(hashtextextended(current_schema()||':automation:activity-clock:init',0)&4294967295) AND NOT l.granted`,
+        [schema, ownerPid],
+      )
+    ).rows[0];
+    if (follower) return follower.pid;
+    await delay(10);
+  } while (Date.now() < deadline);
+  throw new Error(
+    "Follower did not demonstrably wait for the owner's initialization advisory lock",
+  );
+}
 async function reset(): Promise<void> {
   await module.close!();
   await second.close!();
@@ -1611,29 +1655,13 @@ test("a follower cannot execute against a stale activity base while the new cloc
       runId,
     ]);
     ownerRecovery = module.recover!();
-    const waitUntil = Date.now() + 3000;
-    let blocked = false;
-    while (Date.now() < waitUntil) {
-      blocked = Boolean(
-        (
-          await db.query(
-            "SELECT pid FROM pg_stat_activity WHERE application_name=$1 AND $2::integer=ANY(pg_blocking_pids(pid))",
-            [schema, blockerPid],
-          )
-        ).rowCount,
-      );
-      if (blocked) break;
-      await delay(10);
-    }
-    assert.ok(
-      blocked,
-      "new clock owner must be blocked before rebasing this run",
-    );
+    const ownerPid = await waitForInitializingClockOwner(blockerPid);
     let followerReturned = false;
     followerTick = second.tick().then(() => {
       followerReturned = true;
     });
-    await delay(200);
+    const followerPid = await waitForClockInitializationFollower(ownerPid);
+    assert.notEqual(followerPid, ownerPid);
     const executedBeforeReady = Boolean(
       (
         await db.query(
@@ -1684,6 +1712,159 @@ test("a follower cannot execute against a stale activity base while the new cloc
         Boolean(work),
       ),
     );
+  }
+});
+
+test("an initialization follower takes over after the blocked clock owner connection is terminated", async () => {
+  await reset();
+  await module.recover!();
+  const runId = randomUUID();
+  await db.query(
+    "INSERT INTO agent_runs(id,group_id,active_ms) VALUES($1,$2,59000)",
+    [runId, groupId],
+  );
+  await module.close!();
+  await second.close!();
+  const consumedBefore = Number(
+    (
+      await db.query<{ active_ms: string }>(
+        "SELECT active_ms FROM agent_runs WHERE id=$1",
+        [runId],
+      )
+    ).rows[0]!.active_ms,
+  );
+  await delay(1200);
+  const context = {
+    db,
+    agent: new RemoteClient(remote.listeningOrigin),
+    gateway: new RemoteClient(remote.listeningOrigin),
+    log: api.log,
+  };
+  module = createAutomationModule(context, messaging);
+  second = createAutomationModule(context, messaging);
+  let turns = 0;
+  agentReply = async () => {
+    turns++;
+    await delay(100);
+    return end("clock takeover preserved remaining budget");
+  };
+  const blocker = await db.pool.connect();
+  let released = false;
+  let ownerOutcome: Promise<unknown> | undefined;
+  let ownerClosing: Promise<void> | undefined;
+  let followerTick: Promise<void> | undefined;
+  try {
+    await blocker.query("BEGIN");
+    const blockerPid = (
+      await blocker.query<{ pid: number }>("SELECT pg_backend_pid() AS pid")
+    ).rows[0]!.pid;
+    await blocker.query("SELECT id FROM agent_runs WHERE id=$1 FOR UPDATE", [
+      runId,
+    ]);
+    // Observe rejection immediately so terminating the connection cannot become an
+    // unhandled rejection while the test inspects PostgreSQL's replacement owner.
+    ownerOutcome = module.recover!().then(
+      () => null,
+      (error: unknown) => error,
+    );
+    const ownerPid = await waitForInitializingClockOwner(blockerPid);
+    let followerReturned = false;
+    followerTick = second.tick().then(() => {
+      followerReturned = true;
+    });
+    const followerPid = await waitForClockInitializationFollower(ownerPid);
+    assert.notEqual(followerPid, ownerPid);
+    assert.equal(turns, 0);
+    // Closing starts by disabling the old instance's timer. Its blocked startup
+    // remains pending until the following kill, and cannot revive as a competitor.
+    ownerClosing = module.close!();
+    await Promise.resolve();
+    const killed = (
+      await db.query<{ killed: boolean }>(
+        "SELECT pg_terminate_backend($1) AS killed",
+        [ownerPid],
+      )
+    ).rows[0]!.killed;
+    assert.equal(killed, true);
+    const ownerError = await ownerOutcome;
+    assert.ok(ownerError instanceof Error);
+    assert.match(
+      ownerError.message,
+      /terminating connection|connection.*terminated/i,
+    );
+    await ownerClosing;
+    const takeoverPid = await waitForInitializingClockOwner(blockerPid);
+    assert.equal(
+      takeoverPid,
+      followerPid,
+      "the follower proven to wait on init must become the new clock owner",
+    );
+    assert.equal(
+      (await db.query("SELECT 1 FROM pg_locks WHERE pid=$1", [ownerPid]))
+        .rowCount,
+      0,
+      "the terminated initialization transaction and all its locks must be released",
+    );
+    // Keep the confirmed replacement blocked long enough to detect billing from
+    // BEGIN instead of the actual successful rebase, independently of downtime.
+    await delay(650);
+    assert.equal(followerReturned, false);
+    assert.equal(turns, 0);
+    assert.equal(
+      (await db.query("SELECT 1 FROM agent_steps WHERE run_id=$1", [runId]))
+        .rowCount,
+      0,
+    );
+    assert.equal(
+      Number(
+        (
+          await db.query<{ active_ms: string }>(
+            "SELECT active_ms FROM agent_runs WHERE id=$1",
+            [runId],
+          )
+        ).rows[0]!.active_ms,
+      ),
+      consumedBefore,
+    );
+    await blocker.query("COMMIT");
+    released = true;
+    await followerTick;
+    await waitFor(async () => (await latestRun()).status !== "running");
+    const result = await latestRun();
+    assert.equal(result.status, "finished");
+    assert.equal(result.end_reason, "final");
+    assert.equal(
+      turns,
+      1,
+      "initialization recovery must not execute the Agent twice",
+    );
+    assert.equal(
+      (await db.query("SELECT 1 FROM agent_steps WHERE run_id=$1", [runId]))
+        .rowCount,
+      1,
+    );
+    const consumedAfter = Number(
+      (
+        await db.query<{ active_ms: string }>(
+          "SELECT active_ms FROM agent_runs WHERE id=$1",
+          [runId],
+        )
+      ).rows[0]!.active_ms,
+    );
+    assert.ok(
+      consumedAfter >= consumedBefore && consumedAfter - consumedBefore < 600,
+      `downtime or blocked takeover was charged: ${consumedAfter - consumedBefore}ms`,
+    );
+  } finally {
+    if (!released) await blocker.query("ROLLBACK");
+    blocker.release();
+    await Promise.allSettled(
+      [ownerOutcome, ownerClosing, followerTick].filter(
+        (work) => work !== undefined,
+      ),
+    );
+    await module.close!();
+    await second.close!();
   }
 });
 
