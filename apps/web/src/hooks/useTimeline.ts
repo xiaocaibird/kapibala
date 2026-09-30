@@ -3,6 +3,7 @@ import { request } from "../api/client";
 import { messagesSchema, type Message } from "../api/schemas";
 import { useLive } from "../state/live";
 import { mergeMessages } from "../api/messages";
+import { createSnapshotReconciler } from "./snapshotReconciler";
 
 export function useTimeline(groupId: string) {
   const [items, setItems] = useState<Message[]>([]);
@@ -13,30 +14,70 @@ export function useTimeline(groupId: string) {
   const [error, setError] = useState<unknown>(null);
   const { revision } = useLive();
   const generation = useRef(0);
-  const inFlight = useRef(false);
-  const pending = useRef(false);
+  const reconciler = useRef<ReturnType<
+    typeof createSnapshotReconciler<Message[]>
+  > | null>(null);
+  const lifetime = useRef<AbortController | null>(null);
   const path = `/api/groups/${encodeURIComponent(groupId)}/messages`;
   useEffect(() => {
     const current = ++generation.current;
-    inFlight.current = false;
-    pending.current = false;
     setItems([]);
     setCursor(null);
     setLoading(true);
+    setLoadingEarlier(false);
+    setSyncing(false);
     setError(null);
     const controller = new AbortController();
+    lifetime.current = controller;
+    let reconciled = false;
+    const coordinator = createSnapshotReconciler<Message[]>({
+      load: async (signal) => {
+        let next: string | null = null;
+        let fresh: Message[] = [];
+        const visited = new Set<string>();
+        // A late gateway message can predate any visible row. Retry the complete
+        // fresh snapshot after any failed page instead of losing that backfill.
+        do {
+          const page: { items: Message[]; nextCursor: string | null } =
+            await request(
+              `${path}?limit=50${next ? `&before=${encodeURIComponent(next)}` : ""}`,
+              messagesSchema,
+              { signal },
+            );
+          signal.throwIfAborted();
+          fresh = mergeMessages(fresh, page.items);
+          next = page.nextCursor;
+          if (next && visited.has(next))
+            throw new Error("消息分页游标重复，请重试并检查服务端分页。");
+          if (next) visited.add(next);
+        } while (next);
+        return fresh;
+      },
+      onValue: (fresh) => {
+        reconciled = true;
+        setItems((existing) => mergeMessages(existing, fresh));
+        setCursor(null);
+        setError(null);
+      },
+      onError: setError,
+      onSyncing: setSyncing,
+    });
+    reconciler.current = coordinator;
     void request(path, messagesSchema, { signal: controller.signal })
       .then((page) => {
         if (generation.current !== current) return;
         setItems((existing) => mergeMessages(page.items, existing));
-        setCursor(page.nextCursor);
+        if (!reconciled) setCursor(page.nextCursor);
       })
       .catch((value: unknown) => {
         if (
           generation.current === current &&
+          !reconciled &&
           !(value instanceof DOMException && value.name === "AbortError")
-        )
+        ) {
           setError(value);
+          void coordinator.invalidate();
+        }
       })
       .finally(() => {
         if (generation.current === current) setLoading(false);
@@ -44,50 +85,15 @@ export function useTimeline(groupId: string) {
     return () => {
       generation.current++;
       controller.abort();
+      coordinator.dispose();
+      if (reconciler.current === coordinator) reconciler.current = null;
+      if (lifetime.current === controller) lifetime.current = null;
     };
   }, [path]);
-  const reconcile = useCallback(async (): Promise<void> => {
-    if (inFlight.current) {
-      pending.current = true;
-      return;
-    }
-    const current = generation.current;
-    inFlight.current = true;
-    setSyncing(true);
-    try {
-      do {
-        pending.current = false;
-        let next: string | null = null;
-        let fresh: Message[] = [];
-        const visited = new Set<string>();
-        // A late gateway message can predate any visible row. Walk the fresh snapshot
-        // completely; stopping at the first overlap would lose historical backfill.
-        do {
-          const page: { items: Message[]; nextCursor: string | null } =
-            await request(
-              `${path}?limit=50${next ? `&before=${encodeURIComponent(next)}` : ""}`,
-              messagesSchema,
-            );
-          if (generation.current !== current) return;
-          fresh = mergeMessages(fresh, page.items);
-          next = page.nextCursor;
-          if (next && visited.has(next))
-            throw new Error("消息分页游标重复，请重试并检查服务端分页。");
-          if (next) visited.add(next);
-        } while (next);
-        setItems((existing) => mergeMessages(existing, fresh));
-        setCursor(null);
-        setError(null);
-      } while (pending.current && generation.current === current);
-    } catch (value) {
-      if (generation.current === current) setError(value);
-    } finally {
-      if (generation.current === current) {
-        inFlight.current = false;
-        setSyncing(false);
-      }
-    }
-  }, [path]);
+  const reconcile = useCallback(
+    (): Promise<void> => reconciler.current?.invalidate() ?? Promise.resolve(),
+    [],
+  );
   const prior = useRef(revision);
   useEffect(() => {
     if (prior.current !== revision) {
@@ -103,6 +109,7 @@ export function useTimeline(groupId: string) {
       const page = await request(
         `${path}?limit=50&before=${encodeURIComponent(cursor)}`,
         messagesSchema,
+        { signal: lifetime.current?.signal },
       );
       if (generation.current === current) {
         // Old snapshot rows must not replace newer delivery state or corrected sentAt.
