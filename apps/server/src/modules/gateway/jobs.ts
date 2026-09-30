@@ -19,6 +19,8 @@ export class Jobs {
   async createGroup(
     creatorAccountId: string,
     memberAccountIds: string[],
+    name?: string,
+    description?: string | null,
   ): Promise<{ jobId: string }> {
     return this.ctx.db.transaction(async (tx) => {
       const ids = [creatorAccountId, ...memberAccountIds];
@@ -38,6 +40,8 @@ export class Jobs {
         jobId,
         JSON.stringify({
           phase: "create",
+          name,
+          description,
           creatorAccountId,
           memberAccountIds,
           localGroupId: randomUUID(),
@@ -161,17 +165,21 @@ export class Jobs {
     if (state.phase === "create") {
       await this.save(job, { ...state, phase: "create_dispatch" });
       try {
-        const result = z
-          .object({ groupId: z.string().min(1) })
-          .parse(
-            await this.ctx.gateway.request("/groups", {
-              creatorAccountId: state.creatorAccountId,
-            }),
-          );
+        const result = z.object({ groupId: z.string().min(1) }).parse(
+          await this.ctx.gateway.request("/groups", {
+            creatorAccountId: state.creatorAccountId,
+          }),
+        );
         await this.ctx.db.transaction(async (tx) => {
           await tx.query(
-            "INSERT INTO groups(id,gateway_group_id,creator_account_id) VALUES($1,$2,$3)",
-            [state.localGroupId, result.groupId, state.creatorAccountId],
+            "INSERT INTO groups(id,gateway_group_id,creator_account_id,name,description) VALUES($1,$2,$3,$4,$5)",
+            [
+              state.localGroupId,
+              result.groupId,
+              state.creatorAccountId,
+              state.name ?? null,
+              state.description ?? null,
+            ],
           );
           const creator = (
             await tx.query<AccountRow>(

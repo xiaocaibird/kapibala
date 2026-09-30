@@ -12,6 +12,7 @@ import type {
 import { Accounts, accountStatusSchema } from "./accounts.js";
 import { GatewayEvents } from "./events.js";
 import { Jobs } from "./jobs.js";
+import { groupDescriptionSchema, groupNameSchema } from "./group-profile.js";
 import { Messages } from "./messages.js";
 import { type GroupRow, type MessageRow, messageDto } from "./models.js";
 
@@ -26,6 +27,8 @@ function parse<T>(schema: z.ZodType<T>, input: unknown): T {
 const idParams = z.object({ id: z.string().min(1) });
 const groupInput = z
   .object({
+    name: groupNameSchema.optional(),
+    description: groupDescriptionSchema.optional(),
     creatorAccountId: z.string().min(1),
     memberAccountIds: z.array(z.string().min(1)).min(1),
   })
@@ -86,6 +89,9 @@ export function createGatewayModule(
     ).rows[0];
     return {
       id: row.id,
+      name: row.name,
+      description: row.description,
+      createdAt: row.created_at.toISOString(),
       gatewayGroupId: row.gateway_group_id,
       status: row.status,
       creatorAccountId: row.creator_account_id,
@@ -127,6 +133,8 @@ export function createGatewayModule(
           await jobs.createGroup(
             input.creatorAccountId,
             input.memberAccountIds,
+            input.name,
+            input.description,
           ),
         );
     });
@@ -146,11 +154,15 @@ export function createGatewayModule(
       const input = parse(
         z
           .object({
+            name: groupNameSchema.optional(),
+            description: groupDescriptionSchema.optional(),
             agentEnabled: z.boolean().optional(),
             autoKickEnabled: z.boolean().optional(),
           })
           .refine(
             (value) =>
+              value.name !== undefined ||
+              value.description !== undefined ||
               value.agentEnabled !== undefined ||
               value.autoKickEnabled !== undefined,
           ),
@@ -158,8 +170,15 @@ export function createGatewayModule(
       );
       await ctx.db.transaction(async (tx) => {
         const updated = await tx.query(
-          "UPDATE groups SET agent_enabled=COALESCE($2,agent_enabled),auto_kick_enabled=COALESCE($3,auto_kick_enabled) WHERE id=$1 RETURNING id",
-          [id, input.agentEnabled ?? null, input.autoKickEnabled ?? null],
+          "UPDATE groups SET name=COALESCE($2,name),description=CASE WHEN $3::boolean THEN $4::text ELSE description END,agent_enabled=COALESCE($5,agent_enabled),auto_kick_enabled=COALESCE($6,auto_kick_enabled) WHERE id=$1 RETURNING id",
+          [
+            id,
+            input.name ?? null,
+            input.description !== undefined,
+            input.description ?? null,
+            input.agentEnabled ?? null,
+            input.autoKickEnabled ?? null,
+          ],
         );
         if (!updated.rowCount)
           throw new AppError(404, "GROUP_NOT_FOUND", "群不存在");

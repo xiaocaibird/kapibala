@@ -150,7 +150,13 @@ async function fixture(t: TestContext) {
   url.searchParams.set("options", `-c search_path=${schema}`);
   const db = new Database(url.toString());
   const migrationRoot = process.env.TEST_MIGRATIONS_ROOT ?? process.cwd();
-  for (const file of ["001_core.sql", "002_automation.sql"])
+  for (const file of [
+    "001_core.sql",
+    "002_automation.sql",
+    "003_agent_activity.sql",
+    "004_message_event_order.sql",
+    "005_group_metadata.sql",
+  ])
     await db.query(
       await readFile(resolve(migrationRoot, "db/migrations", file), "utf8"),
     );

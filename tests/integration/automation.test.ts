@@ -277,6 +277,13 @@ before(async () => {
       "utf8",
     ),
   );
+  for (const file of ["004_message_event_order.sql", "005_group_metadata.sql"])
+    await db.query(
+      await readFile(
+        new URL(`../../db/migrations/${file}`, import.meta.url),
+        "utf8",
+      ),
+    );
   await db.query("UPDATE accounts SET status='online',platform_user_id=id");
   await db.query(
     `INSERT INTO groups(id,gateway_group_id,creator_account_id,agent_enabled) VALUES($1,'remote-group','account-1',true)`,

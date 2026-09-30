@@ -15,6 +15,9 @@ export interface AccountRow extends QueryResultRow {
 }
 export interface GroupRow extends QueryResultRow {
   id: string;
+  name: string | null;
+  description: string | null;
+  created_at: Date;
   gateway_group_id: string;
   status: GroupStatus;
   creator_account_id: string;
@@ -53,6 +56,8 @@ export interface JobRow extends QueryResultRow {
 }
 export interface JobState {
   phase: string;
+  name?: string;
+  description?: string | null;
   creatorAccountId?: string;
   memberAccountIds?: string[];
   localGroupId?: string;
