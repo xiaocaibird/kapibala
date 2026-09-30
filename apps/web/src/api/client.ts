@@ -14,7 +14,10 @@ export class ApiError extends Error {
   }
 }
 let accessToken: string | null = null;
-let refreshFlight: Promise<string> | null = null;
+let refreshFlight: {
+  generation: number;
+  promise: Promise<string>;
+} | null = null;
 let sessionGeneration = 0;
 export const getAccessToken = (): string | null => accessToken;
 export function clearSession(): void {
@@ -25,6 +28,10 @@ export function clearSession(): void {
 export function setAccessToken(token: string): void {
   sessionGeneration++;
   accessToken = token;
+}
+function requireSession(generation: number): void {
+  if (generation !== sessionGeneration)
+    throw new ApiError("SESSION_CHANGED", "会话已变更，请重新确认操作。", 401);
 }
 const errorSchema = z.object({
   error: z
@@ -94,13 +101,13 @@ async function exchange(
 
 export function refreshAccessToken(): Promise<string> {
   // A refresh token is one-use. Every request and the WebSocket share this flight.
-  if (refreshFlight) return refreshFlight;
+  if (refreshFlight?.generation === sessionGeneration)
+    return refreshFlight.promise;
   const generation = sessionGeneration;
-  refreshFlight = exchange("/api/auth/refresh", { method: "POST" }, null)
+  const promise = exchange("/api/auth/refresh", { method: "POST" }, null)
     .then((body) => {
       const result = tokenSchema.parse(body);
-      if (generation !== sessionGeneration)
-        throw new ApiError("SESSION_CHANGED", "会话已变更，请重新登录。", 401);
+      requireSession(generation);
       accessToken = result.accessToken;
       return result.accessToken;
     })
@@ -114,9 +121,11 @@ export function refreshAccessToken(): Promise<string> {
       throw error;
     })
     .finally(() => {
-      refreshFlight = null;
+      // A previous session's late response must not release the current flight.
+      if (refreshFlight?.promise === promise) refreshFlight = null;
     });
-  return refreshFlight;
+  refreshFlight = { generation, promise };
+  return promise;
 }
 
 export async function request<T>(
@@ -124,11 +133,15 @@ export async function request<T>(
   schema: z.ZodType<T>,
   init: RequestInit = {},
 ): Promise<T> {
+  const generation = sessionGeneration;
   const originalToken = accessToken;
   let body: unknown;
   try {
     body = await exchange(path, init, originalToken);
   } catch (error) {
+    // Only renewal within the same session may replay the original operation.
+    // A different token alone cannot distinguish renewal from another login.
+    requireSession(generation);
     if (
       !(error instanceof ApiError) ||
       error.status !== 401 ||
@@ -140,14 +153,18 @@ export async function request<T>(
       accessToken && accessToken !== originalToken
         ? accessToken
         : await refreshAccessToken();
+    requireSession(generation);
     try {
       body = await exchange(path, init, token);
     } catch (retryError) {
+      requireSession(generation);
       if (retryError instanceof ApiError && retryError.status === 401)
         clearSession();
       throw retryError;
     }
   }
+  // Late successful reads must not populate a page belonging to a new identity.
+  requireSession(generation);
   const parsed = schema.safeParse(body);
   if (!parsed.success)
     throw new ApiError(
