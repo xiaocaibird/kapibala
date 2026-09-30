@@ -11,6 +11,10 @@ import {
 } from "../src/attention/events";
 import { retainLatest, type ScopedEvent } from "../src/attention/journal";
 import { AttentionInteractionEpoch } from "../src/attention/interaction";
+import {
+  directoryAttentionImpact,
+  directoryAttentionKey,
+} from "../src/directory/attention";
 
 const snapshot = (seq: number): SnapshotEvidence => ({
   seq,
@@ -61,6 +65,108 @@ const groupChange = (seq: number, changedFields: string[]): ScopedEvent => ({
     payload: { groupId: "group-a", changedFields },
   },
   backgroundSeq: seq,
+});
+
+test("same-batch member role changes preserve the original directory count evidence without reviving it after confirmation", () => {
+  const count = groupChange(11, ["members"]);
+  count.event.payload.directoryChangedFields = ["memberCount"];
+  const role = groupChange(12, ["members"]);
+  role.event.payload.directoryChangedFields = [];
+  let journal = retainLatest(retainLatest([], count), role);
+  assert.deepEqual(
+    journal.map((entry) => [
+      entry.event.seq,
+      entry.event.payload.directoryChangedFields,
+    ]),
+    [
+      [11, ["memberCount"]],
+      [12, []],
+    ],
+  );
+  const directory = new AttentionCandidates();
+  const receive = () => {
+    for (const { event } of journal) {
+      const key = directoryAttentionKey(event);
+      if (key)
+        directory.receive(
+          key,
+          event.seq,
+          10,
+          true,
+          undefined,
+          directoryAttentionImpact(event) === "changed",
+        );
+    }
+  };
+  receive();
+  assert.equal(directory.pending.get("group-a")?.seq, 11);
+  assert.equal(directory.confirm("group-a", snapshot(12), 12), true);
+  const laterRole = groupChange(13, ["members"]);
+  laterRole.event.payload.directoryChangedFields = [];
+  journal = retainLatest(journal, laterRole);
+  receive();
+  assert.equal(directory.pending.size, 0);
+  assert.deepEqual(
+    journal.map((entry) => entry.event.seq),
+    [11, 13],
+  );
+});
+
+test("run creation directory evidence survives same-batch run steps or recovery updates", () => {
+  for (const [type, field] of [
+    ["agent_run", "activeAgentRunId"],
+    ["sequence_run", "activeSequenceRunId"],
+  ]) {
+    const started: ScopedEvent = {
+      event: {
+        seq: 21,
+        type: type!,
+        payload: {
+          groupId: "group-a",
+          runId: "run-a",
+          status: "running",
+          directoryChangedFields: [field],
+        },
+      },
+      backgroundSeq: 21,
+    };
+    const progressed: ScopedEvent = {
+      event: {
+        ...started.event,
+        seq: 22,
+        payload: { ...started.event.payload, directoryChangedFields: [] },
+      },
+      backgroundSeq: 22,
+    };
+    const journal = retainLatest(retainLatest([], started), progressed);
+    assert.deepEqual(
+      journal.map((entry) => entry.event.seq),
+      [21, 22],
+    );
+    assert.equal(directoryAttentionImpact(journal[0]!.event), "changed");
+    assert.equal(directoryAttentionImpact(journal[1]!.event), "none");
+  }
+});
+
+test("directory projection classifications canonicalize fields and keep missing separate from known empty", () => {
+  const positive = groupChange(11, ["members"]);
+  positive.event.payload.directoryChangedFields = [
+    "memberCount",
+    "memberCount",
+  ];
+  const same = groupChange(12, ["members"]);
+  same.event.payload.directoryChangedFields = ["memberCount"];
+  const empty = groupChange(13, ["members"]);
+  empty.event.payload.directoryChangedFields = [];
+  let journal = retainLatest(retainLatest([], positive), same);
+  journal = retainLatest(
+    retainLatest(journal, empty),
+    groupChange(14, ["members"]),
+  );
+  assert.deepEqual(
+    journal.map((entry) => entry.event.seq),
+    [12, 13, 14],
+  );
 });
 
 test("confirming a group name then changing a setting cannot revive profile attention", () => {

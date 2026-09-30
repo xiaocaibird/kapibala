@@ -20,6 +20,17 @@ function identity(event: PlatformEvent): string {
     Array.isArray(event.payload.changedFields)
       ? (event.payload.changedFields[0] ?? null)
       : null,
+    // Empty means this event did not change the directory projection; missing
+    // means an older coarse producer. Neither can replace positive evidence.
+    Array.isArray(event.payload.directoryChangedFields)
+      ? [
+          ...new Set(
+            event.payload.directoryChangedFields.filter(
+              (field): field is string => typeof field === "string",
+            ),
+          ),
+        ].sort()
+      : null,
   ]);
 }
 
