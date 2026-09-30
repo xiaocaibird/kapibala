@@ -13,6 +13,7 @@
 | 核对目标、固定约束、阶段与协作要求 | [工程要求](engineering-requirements.md) |
 | 追踪用户新增功能、实施状态与本轮单点反馈 | [需求变更记录](change-requests.md) |
 | 查看已批准实施的群目录排序、搜索、分页与表单保护 | [群列表与资料完善方案](group-directory-profile-proposal.md)；[验证范围与待验项GD01–GD12](acceptance.md#group-directory-acceptance) |
+| 核对PI-01账号操作及群管理员文案的实际范围与验收 | [账号操作与群内角色文案](account-operation-copy.md) |
 | 区分用户已确认决定与暂定技术选择 | [决策与变更记录](decisions.md) |
 | 理解后端及控制台的接口依赖 | [模块协作接口](module-interfaces.md) |
 | 理解状态、发送、群任务和消息恢复 | [网关设计](gateway-design.md) |
@@ -27,11 +28,11 @@
 
 当前演示已于**2026-09-30 22:18:35（北京时间）**从main的`9bc34fd`启动，schemaVersion为6，控制台HTTP200。父进程38119、模拟38120、API38121、Vite38122；入口[本地控制台](http://127.0.0.1:5173)，管理员`admin/admin`，只读账号`viewer/viewer`。启动源码、产品树及进程以[运行证据](evidence/group-directory-rollout.json)和main `.runtime/runtime-manifest.json`为准，文档提交不会自动重启服务。
 
-当前main最终源码为`028a2e8`，Vite实际提供该前端源码，manifest已记录`frontendSourceCommit`；API仍运行22:18:35启动的`9bc34fd`，没有因纯前端修正再次重启。群目录排序、四字段搜索、游标分页及两处表单保护已实现。028a2e8恢复原创建任务`kapibala:createJob` sessionStorage跨整页刷新找回，并捕获存储异常；目录关键词/方向/页仍仅在本次登录内存保留。补充build/typecheck和前端38/38通过，独立新QA确认仅1次创建POST、reload同任务保留、隐藏后reload不再出现，详见验证记录。真实存储拒绝浏览器场景未执行，防护只作源码审阅证据。
+当前main与Vite前端已更新为PI-01文案提交`f1257c1`，实际模块文案及manifest的`frontendSourceCommit`已确认；API仍运行22:18:35启动的`9bc34fd`，没有因纯前端修正再次重启。群目录排序、四字段搜索、游标分页及两处表单保护已实现。028a2e8恢复原创建任务`kapibala:createJob` sessionStorage跨整页刷新找回，并捕获存储异常；目录关键词/方向/页仍仅在本次登录内存保留。补充build/typecheck和前端38/38通过，独立新QA确认仅1次创建POST、reload同任务保留、隐藏后reload不再出现，详见验证记录。真实存储拒绝浏览器场景未执行，防护只作源码审阅证据。
 
 | 用途 | 本地路径 | 版本与执行边界 |
 |---|---|---|
-| main及当前演示 | `/Users/zcm/Desktop/kapibala` | 本次先ff-only到9bc34fd并启动API，后ff到028a2e8更新Vite前端；默认端口只从此目录启动 |
+| main及当前演示 | `/Users/zcm/Desktop/kapibala` | 本次先ff-only到9bc34fd并启动API，后ff到028a2e8完成分页前端，再独立ff到f1257c1启用PI-01文案；默认端口只从此目录启动 |
 | 群目录集成与文档 | `/Users/zcm/.codex/worktrees/42fe/kapibala` | `agent/group-directory-release`；隔离验证后集成，不在此启动第二套默认端口 |
 | 历史群资料验证 | `/Users/zcm/.codex/worktrees/platform-gateway/kapibala` | 当时群资料集成记录保留；当前是否复用以对应工作树实际状态为准，不视为默认运行目录 |
 
@@ -41,7 +42,7 @@
 
 20:57:22的7efdbf3/schema5群资料版本及19:57:51的9befc8a/schema4均已成为历史，分别见[群资料运行证据](evidence/group-metadata-rollout.json)、[基础运行证据](evidence/demo-verification.json)。既有业务与用户验收记录保留，不将后续数据变化追溯为当时计数。
 
-提醒专项已经在另一线程获得独立实施授权，本批未合入提醒代码或交付该能力；其负责人继续维护范围及进度。后续PI-01及PI-02状态/Agent开关筛选另获独立授权，交由后续分支；不并入本批已测范围。其他未采纳产品/架构建议仍按各自记录评审。
+提醒专项已经在另一线程获得独立实施授权，本批未合入提醒代码或交付该能力；其负责人继续维护范围及进度。PI-01仅文案已在独立f1257c1完成并启用，证据见[文案验收](account-operation-copy.md)；PI-02状态/Agent开关筛选另获授权交后续分支，不并入分页或PI-01的已测范围。其他未采纳产品/架构建议仍按各自记录评审。
 
 ## 来源与证据边界
 
