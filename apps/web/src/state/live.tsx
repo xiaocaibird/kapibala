@@ -7,12 +7,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import {
-  ApiError,
-  clearSession,
-  getAccessToken,
-  refreshAccessToken,
-} from "../api/client";
+import { ApiError, getAccessToken, refreshAccessToken } from "../api/client";
 import { eventSchema, type PlatformEvent } from "../api/schemas";
 import { useAuth } from "./auth";
 import { affectsGroupDirectory } from "../directory/controller";
@@ -220,10 +215,11 @@ export function LiveProvider({ children }: { children: ReactNode }) {
             ? refreshAccessToken()
             : Promise.resolve(token);
           void restored.then(connect).catch((error: unknown) => {
-            if (error instanceof ApiError && error.status === 401)
-              clearSession();
-            else if (!disposed)
-              reconnectTimer = setTimeout(() => void connect(), 900);
+            // The API client owns generation-checked session invalidation.
+            // An old socket's refresh rejection must not clear a later login.
+            if (disposed || (error instanceof ApiError && error.status === 401))
+              return;
+            reconnectTimer = setTimeout(() => void connect(), 900);
           });
         }, 400);
       };

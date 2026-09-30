@@ -92,6 +92,7 @@ const controlSchema = z
   .object({
     outage: z.boolean().optional(),
     holdRefresh: z.boolean().optional(),
+    rejectSockets: z.boolean().optional(),
     holdNextEarlier: z.boolean().optional(),
     releaseEarlier: z.boolean().optional(),
     failTimelineCount: z.number().int().min(0).max(10).optional(),
@@ -315,9 +316,8 @@ try {
           async register(server) {
             server.get("/__qa/state", state);
             server.post("/__qa/control", async (request) => {
-              const { restoreAfterMs, ...input } = controlSchema.parse(
-                request.body,
-              );
+              const { restoreAfterMs, rejectSockets, ...input } =
+                controlSchema.parse(request.body);
               if (
                 input.outage !== undefined &&
                 input.outage !== controls.outage
@@ -330,6 +330,9 @@ try {
                     socket.close(1012, "QA transport outage");
               }
               Object.assign(controls, input);
+              if (rejectSockets)
+                for (const socket of server.websocketServer.clients)
+                  socket.close(4401, "QA credential rejection");
               if (restoreAfterMs !== undefined) {
                 clearTimeout(restoreTimer);
                 marks.restoreScheduledAt = Date.now();
