@@ -19,8 +19,13 @@ export interface Member {
   platformUserId: string;
   role: "creator" | "admin" | "member";
 }
+export const GROUP_NAME_MAX_LENGTH = 80;
+export const GROUP_DESCRIPTION_MAX_LENGTH = 500;
 export interface Group {
   id: string;
+  name: string | null;
+  description: string | null;
+  createdAt: string;
   gatewayGroupId: string;
   status: GroupStatus;
   creatorAccountId: string;
