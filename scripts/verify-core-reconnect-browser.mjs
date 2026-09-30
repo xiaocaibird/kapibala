@@ -596,6 +596,27 @@ try {
   );
   assert.equal(report.navigationsDuringRecovery, 0);
   assert(report.sockets.some((socket) => socket.injectedOldFrames === 6));
+  assert(
+    report.requests.some(
+      (entry) =>
+        entry.url.startsWith("/ws") &&
+        entry.fault === "outage" &&
+        entry.status === 503,
+    ),
+  );
+  const restoredFrames = report.browser.socketEvents.filter(
+    (event) =>
+      event.at >= report.transportAvailableAt && event.seq !== undefined,
+  );
+  report.receivedReplay = {
+    oldFrames: restoredFrames.filter((event) => event.seq <= 160),
+    newFrames: restoredFrames.filter((event) => event.seq > 160),
+  };
+  assert.equal(report.receivedReplay.oldFrames.length, 6);
+  assert.deepEqual(
+    report.receivedReplay.newFrames.map((event) => event.seq),
+    [161, 162, 163, 164, 165, 166],
+  );
   assert.equal(
     new Set(report.browser.complete.actual.map((row) => row.id)).size,
     expected.length,
