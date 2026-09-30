@@ -134,6 +134,7 @@ export const agentRunSchema: z.ZodType<AgentRun> = z.object({
   steps: z
     .array(
       z.object({
+        ordinal: z.number().int().nonnegative().optional(),
         kind: z.enum(["tool_use", "final", "protocol_error"]),
         toolUseId: nullableText,
         name: nullableText,

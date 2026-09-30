@@ -13,22 +13,27 @@ import { CreateGroup } from "../components/CreateGroup";
 import { JobProgress } from "../components/JobProgress";
 import { useGroupDirectory } from "../directory/GroupDirectoryProvider";
 import { directoryMatch } from "../directory/presentation";
-import type { DirectoryPosition } from "../directory/controller";
+import {
+  groupDirectoryPath,
+  type DirectoryPosition,
+} from "../directory/controller";
+import {
+  PageAttentionScope,
+  useAttentionCollection,
+  isDefinitiveBusinessEvent,
+} from "../attention";
+import { eventEntity, groupFields } from "../attention/pageAdapters";
 
 export function Groups() {
   const { user } = useAuth();
   const { controller, state } = useGroupDirectory();
   const [createOpen, setCreateOpen] = useState(false);
-  const grid = useRef<HTMLDivElement>(null);
-  const clickedPosition = useRef<DirectoryPosition | null>(null);
-  const restored = useRef<string | null>(null);
   const composing = useRef(false);
-  const queryKey = JSON.stringify([state.q, state.order]);
   const pendingQuery = state.composing || state.input.trim() !== state.q;
   const busy = state.loading !== null;
-  useEffect(() => {
-    clickedPosition.current = null;
-  }, [queryKey]);
+  const refresh = () => {
+    void controller.refresh();
+  };
   useEffect(() => {
     controller.setVisible(true);
     const interval = setInterval(() => void controller.poll(), 5_000);
@@ -37,59 +42,7 @@ export function Groups() {
       controller.setVisible(false);
     };
   }, [controller]);
-  useLayoutEffect(
-    () => () => {
-      const cards = [
-        ...(grid.current?.querySelectorAll<HTMLElement>(
-          "[data-directory-group-id]",
-        ) ?? []),
-      ];
-      const first = cards.find(
-        (card) => card.getBoundingClientRect().bottom > 80,
-      );
-      const position =
-        clickedPosition.current ??
-        (first
-          ? {
-              groupId: first.dataset.directoryGroupId!,
-              offset: first.getBoundingClientRect().top,
-              scrollY: window.scrollY,
-            }
-          : null);
-      if (position) controller.rememberPosition(position);
-    },
-    [controller],
-  );
-  useLayoutEffect(() => {
-    if (!state.initialized || restored.current === queryKey) return;
-    restored.current = queryKey;
-    const position = state.position;
-    const card = position
-      ? [
-          ...(grid.current?.querySelectorAll<HTMLElement>(
-            "[data-directory-group-id]",
-          ) ?? []),
-        ].find((item) => item.dataset.directoryGroupId === position.groupId)
-      : undefined;
-    if (card && position)
-      window.scrollTo(
-        0,
-        Math.max(
-          0,
-          window.scrollY + card.getBoundingClientRect().top - position.offset,
-        ),
-      );
-    else {
-      window.scrollTo(0, 0);
-      if (position)
-        controller.setNotice(
-          "原群未出现在当前已加载结果中，可继续加载或调整搜索。",
-        );
-    }
-  }, [controller, queryKey, state.initialized, state.items, state.position]);
-  const refresh = () => {
-    void controller.refresh();
-  };
+  // Query controls retain their DOM/focus when the result attention scope changes.
   return (
     <>
       <PageHeader
@@ -108,23 +61,6 @@ export function Groups() {
           )
         }
       />
-      {state.jobId && (
-        <div className="panel job-panel">
-          <button
-            className="icon-button dismiss"
-            aria-label="隐藏任务"
-            onClick={() => controller.setJobId(null)}
-          >
-            ×
-          </button>
-          <JobProgress
-            id={state.jobId}
-            onComplete={() => {
-              controller.invalidate();
-            }}
-          />
-        </div>
-      )}
       <section className="panel directory-tools" aria-label="群列表查找与排序">
         <label className="directory-search">
           搜索群组
@@ -180,7 +116,173 @@ export function Groups() {
           搜索完整群目录；忽略首尾空白与英文大小写，按整段关键词匹配。
         </p>
       </section>
-      {state.stale && (
+      <PageAttentionScope
+        scopeKey={`directory:${groupDirectoryPath(state)}`}
+        acceptEvent={(event) =>
+          [
+            "group_changed",
+            "agent_run",
+            "sequence_run",
+            "job_changed",
+          ].includes(event.type)
+        }
+        title="群组工作台 · Kapibala"
+      >
+        <GroupDirectoryView
+          createOpen={createOpen}
+          setCreateOpen={setCreateOpen}
+        />
+      </PageAttentionScope>
+    </>
+  );
+}
+
+function GroupDirectoryView({
+  createOpen,
+  setCreateOpen,
+}: {
+  createOpen: boolean;
+  setCreateOpen: (open: boolean) => void;
+}) {
+  const { user } = useAuth();
+  const { controller, state } = useGroupDirectory();
+  const grid = useRef<HTMLDivElement>(null);
+  const clickedPosition = useRef<DirectoryPosition | null>(null);
+  const restored = useRef<string | null>(null);
+  const queryKey = groupDirectoryPath(state);
+  const pendingQuery = state.composing || state.input.trim() !== state.q;
+  const busy = state.loading !== null;
+  const attention = useAttentionCollection({
+    targetId: "directory",
+    label: "当前群目录可能有变化",
+    eventKey: (event) => {
+      const id = eventEntity(
+        event,
+        ["group_changed", "agent_run", "sequence_run"],
+        "groupId",
+      );
+      if (!id) return null;
+      if (
+        event.type === "group_changed" &&
+        !groupFields(event, id, [
+          "name",
+          "description",
+          "status",
+          "members",
+          "agentEnabled",
+          "created",
+        ])
+      )
+        return null;
+      return id;
+    },
+    definitiveEvent: (event) =>
+      event.type === "group_changed" && isDefinitiveBusinessEvent(event),
+    renderRangeSummary: () => (
+      <div>
+        <strong>当前查询的最新结果</strong>
+        <p>
+          搜索：{state.q || "全部关键词"}；创建时间：
+          {state.order === "desc" ? "新到旧" : "旧到新"}。
+        </p>
+        <p>
+          {state.items.length
+            ? `当前显示 ${state.items.length} 个群：${state.items.map((group) => group.name ?? group.gatewayGroupId).join("、")}`
+            : "当前查询没有匹配的群。"}
+        </p>
+        <p>
+          {state.nextCursor
+            ? "后续结果可继续加载；本次确认当前查询范围已刷新，不表示逐条查看全部群。"
+            : "当前查询结果已全部返回。"}
+        </p>
+      </div>
+    ),
+    versions: Object.fromEntries(
+      state.items.map((group) => [group.id, JSON.stringify(group)]),
+    ),
+    evidence: state.snapshot,
+    ready: state.initialized && !state.stale && !state.error && !pendingQuery,
+    refresh: () => controller.refresh(),
+    rangeFallback: true,
+  });
+  useEffect(() => {
+    clickedPosition.current = null;
+  }, [queryKey]);
+  useLayoutEffect(
+    () => () => {
+      if (groupDirectoryPath(controller.getSnapshot()) !== queryKey) return;
+      const cards = [
+        ...(grid.current?.querySelectorAll<HTMLElement>(
+          "[data-directory-group-id]",
+        ) ?? []),
+      ];
+      const first = cards.find(
+        (card) => card.getBoundingClientRect().bottom > 80,
+      );
+      const position =
+        clickedPosition.current ??
+        (first
+          ? {
+              groupId: first.dataset.directoryGroupId!,
+              offset: first.getBoundingClientRect().top,
+              scrollY: window.scrollY,
+            }
+          : null);
+      if (position) controller.rememberPosition(position);
+    },
+    [controller, queryKey],
+  );
+  useLayoutEffect(() => {
+    if (!state.initialized || restored.current === queryKey) return;
+    restored.current = queryKey;
+    const position = state.position;
+    const card = position
+      ? [
+          ...(grid.current?.querySelectorAll<HTMLElement>(
+            "[data-directory-group-id]",
+          ) ?? []),
+        ].find((item) => item.dataset.directoryGroupId === position.groupId)
+      : undefined;
+    if (card && position)
+      window.scrollTo(
+        0,
+        Math.max(
+          0,
+          window.scrollY + card.getBoundingClientRect().top - position.offset,
+        ),
+      );
+    else {
+      window.scrollTo(0, 0);
+      if (position)
+        controller.setNotice(
+          "原群未出现在当前已加载结果中，可继续加载或调整搜索。",
+        );
+    }
+  }, [controller, queryKey, state.initialized, state.items, state.position]);
+  const refresh = () => {
+    void controller.refresh();
+  };
+  return (
+    <>
+      {state.jobId && (
+        <div className="panel job-panel">
+          <button
+            className="icon-button dismiss"
+            aria-label="隐藏任务"
+            onClick={() => controller.setJobId(null)}
+          >
+            ×
+          </button>
+          <JobProgress
+            id={state.jobId}
+            onComplete={() => {
+              controller.invalidate();
+            }}
+          />
+        </div>
+      )}
+      {attention.notice}
+      {state.stale && !attention.pending && (
         <div className="notice warning" role="status">
           <div>
             <strong>列表有更新，刷新后继续加载。</strong>
@@ -254,6 +356,7 @@ export function Groups() {
             return (
               <a
                 key={group.id}
+                {...attention.itemProps(group.id)}
                 href={`#/groups/${encodeURIComponent(group.id)}`}
                 className="group-card"
                 data-directory-group-id={group.id}

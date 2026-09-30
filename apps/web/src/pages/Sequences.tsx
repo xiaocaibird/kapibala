@@ -1,4 +1,15 @@
-import { useMemo, useState, type FormEvent } from "react";
+import {
+  PageAttentionScope,
+  AttentionRegion,
+  useAttentionCollection,
+  type SnapshotEvidence,
+} from "../attention";
+import {
+  acceptsSequencePageEvent,
+  definitiveSequenceSelectionEvent,
+  groupFields,
+} from "../attention/pageAdapters";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { z } from "zod";
 import { ApiError, post } from "../api/client";
 import {
@@ -8,6 +19,7 @@ import {
   runIdSchema,
   idSchema,
   type Preview,
+  type Sequence,
 } from "../api/schemas";
 import { useResource } from "../hooks/useResource";
 import { useAuth } from "../state/auth";
@@ -102,6 +114,21 @@ export function Sequences({
   const group = groups.data?.find((item) => item.id === groupId);
   const sequence = sequences.data?.find((item) => item.id === sequenceId);
   const runId = group?.activeSequenceRunId ?? runIds[groupId];
+  // Retain the latest displayed run after it becomes terminal. A later active run
+  // replaces it within the same page scope, whose summary records that replacement.
+  useEffect(() => {
+    if (
+      !group?.activeSequenceRunId ||
+      runIds[groupId] === group.activeSequenceRunId
+    )
+      return;
+    const activeId = group.activeSequenceRunId;
+    setRunIds((current) => {
+      const next = { ...current, [groupId]: activeId };
+      sessionStorage.setItem("kapibala:sequenceRuns", JSON.stringify(next));
+      return next;
+    });
+  }, [groupId, group?.activeSequenceRunId, runIds]);
   const placeholders = useMemo(
     () => [
       ...new Set(
@@ -160,7 +187,12 @@ export function Sequences({
     }
   };
   return (
-    <>
+    <PageAttentionScope
+      key={`${groupId}:${sequenceId}`}
+      scopeKey={`sequences:${groupId}:${sequenceId}`}
+      title="定时序列"
+      acceptEvent={(event) => acceptsSequencePageEvent(event, groupId)}
+    >
       <PageHeader
         eyebrow="SCHEDULED MESSAGING"
         title="定时序列"
@@ -179,6 +211,31 @@ export function Sequences({
       />
       <ErrorNotice error={groups.error ?? sequences.error} />
       <ErrorNotice error={preview ? null : error} />
+      <AttentionRegion
+        targetId="sequence-selection"
+        label="当前选择的群状态或运行有更新"
+        matchEvent={(event) =>
+          groupFields(event, groupId, ["name", "status"]) ||
+          (event.type === "sequence_run" && event.payload.groupId === groupId)
+        }
+        definitiveEvent={definitiveSequenceSelectionEvent}
+        version={JSON.stringify([group?.name, group?.status, runId])}
+        evidence={groups.snapshot}
+        ready={Boolean(group) && !groups.error}
+        refresh={groups.reload}
+      >
+        <p className="muted">
+          当前群组：{group ? groupOptionLabel(group) : "未选择"} · 状态：
+          {group?.status ?? "—"}
+        </p>
+        <p className="mono small">当前展示运行：{runId ?? "尚无运行"}</p>
+      </AttentionRegion>
+      <SequenceChoicesAttention
+        data={sequences.data}
+        evidence={sequences.snapshot}
+        ready={sequences.data !== null && !sequences.error}
+        refresh={sequences.reload}
+      />
       <div className="sequence-layout">
         <section className="panel">
           <div className="panel-header">
@@ -232,22 +289,35 @@ export function Sequences({
             </label>
             {sequences.loading && !sequence && <Loading />}
             {sequence && (
-              <div className="sequence-definition">
-                {sequence.steps.map((step) => (
-                  <div key={step.index}>
-                    <span className="step-number">{step.index}</span>
-                    <div>
-                      <strong>{step.text}</strong>
-                      <span>
-                        {step.accountRole === "admin"
-                          ? "管理员 / 群主"
-                          : "普通成员"}{" "}
-                        · 延迟 {step.delaySeconds} 秒
-                      </span>
+              <AttentionRegion
+                targetId="sequence-definition"
+                label="当前序列定义有更新"
+                matchEvent={(event) =>
+                  event.type === "sequence_definition_changed" &&
+                  event.payload.sequenceId === sequenceId
+                }
+                version={JSON.stringify(sequence)}
+                evidence={sequences.snapshot}
+                ready={!sequences.error}
+                refresh={sequences.reload}
+              >
+                <div className="sequence-definition">
+                  {sequence.steps.map((step) => (
+                    <div key={step.index}>
+                      <span className="step-number">{step.index}</span>
+                      <div>
+                        <strong>{step.text}</strong>
+                        <span>
+                          {step.accountRole === "admin"
+                            ? "管理员 / 群主"
+                            : "普通成员"}{" "}
+                          · 延迟 {step.delaySeconds} 秒
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              </AttentionRegion>
             )}
             {user?.role === "admin" && (
               <>
@@ -404,8 +474,57 @@ export function Sequences({
           }}
         />
       )}
-    </>
+    </PageAttentionScope>
   );
+}
+function SequenceChoicesAttention({
+  data,
+  evidence,
+  ready,
+  refresh,
+}: {
+  data: Sequence[] | null;
+  evidence: SnapshotEvidence | null;
+  ready: boolean;
+  refresh: () => Promise<void>;
+}) {
+  const attention = useAttentionCollection({
+    targetId: "sequence-choices",
+    label: "可选序列列表有更新",
+    eventKey: (event) =>
+      event.type === "sequence_definition_changed" &&
+      typeof event.payload.sequenceId === "string"
+        ? event.payload.sequenceId
+        : null,
+    versions: Object.fromEntries(
+      (data ?? []).map((sequence) => [
+        sequence.id,
+        JSON.stringify([sequence.name, sequence.steps.length]),
+      ]),
+    ),
+    evidence,
+    ready,
+    refresh,
+    rangeFallback: true,
+    renderRangeSummary: () =>
+      data && (
+        <div>
+          <strong>当前可选序列：{data.length} 个</strong>
+          {data.slice(0, 5).map((sequence) => (
+            <p key={sequence.id}>
+              {sequence.name} · {sequence.steps.length} 步
+            </p>
+          ))}
+          {data.length > 5 && (
+            <p>另有 {data.length - 5} 个，可在选择框中查看。</p>
+          )}
+          {!data.length && <p>当前没有可选序列。</p>}
+        </div>
+      ),
+  });
+  // Collapsed native options are not evidence that their contents were seen.
+  // A successful explicit refresh confirms only the selectable range summary.
+  return attention.notice;
 }
 function sourceLabel(source: string): string {
   return source === "default"

@@ -1,3 +1,12 @@
+import {
+  useAttentionCollection,
+  useManualMessageExclusion,
+  type SnapshotEvidence,
+} from "../attention";
+import {
+  definitiveSenderAvailabilityEvent,
+  messageKey,
+} from "../attention/pageAdapters";
 import { useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { post } from "../api/client";
 import { sentSchema, type Account, type Group } from "../api/schemas";
@@ -7,12 +16,54 @@ import { Badge, DateTime, Empty, ErrorNotice, Icon, Loading } from "./ui";
 export function Timeline({
   group,
   accounts,
+  accountsSnapshot,
+  accountsError,
+  reloadAccounts,
 }: {
   group: Group;
   accounts: Account[];
+  accountsSnapshot: SnapshotEvidence | null;
+  accountsError: unknown;
+  reloadAccounts: () => Promise<void>;
 }) {
   const { user } = useAuth();
   const timeline = useTimeline(group.id);
+  const ownSends = useManualMessageExclusion();
+  const attention = useAttentionCollection({
+    targetId: `messages:${group.id}`,
+    label: "群消息有更新",
+    eventKey: (event) =>
+      ownSends.isExcluded(event) ? null : messageKey(event, group.id),
+    // Delivery transitions update the existing row but never create new-content attention.
+    versions: Object.fromEntries(
+      timeline.items.map((message) => [
+        message.id,
+        JSON.stringify([message.id, message.text]),
+      ]),
+    ),
+    evidence: timeline.snapshot,
+    ready: !timeline.loading && !timeline.error,
+    refresh: timeline.reconcile,
+    renderSummary: (key) => {
+      const message = timeline.items.find((item) => item.id === key);
+      if (!message) return null;
+      const excerpt = [...message.text].slice(0, 160).join("");
+      return (
+        <div>
+          <strong>
+            本条消息更新摘要 · {message.senderPlatformUserId ?? "服务账号"}
+          </strong>
+          <p>
+            {excerpt}
+            {[...message.text].length > 160 ? "…" : ""}
+          </p>
+          <span className="muted small">
+            完整内容仍在时间线中，可滚动查看。
+          </span>
+        </div>
+      );
+    },
+  });
   const [accountId, setAccountId] = useState("");
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
@@ -25,6 +76,44 @@ export function Timeline({
       group.members.some((member) => member.accountId === account.id) &&
       ["online", "rate_limited"].includes(account.status),
   );
+  const senders = useAttentionCollection({
+    targetId: `senders:${group.id}`,
+    label: "可用发送身份列表有更新",
+    eventKey: (event) =>
+      user?.role === "admin" &&
+      ["account_status_changed", "account_terminal"].includes(event.type) &&
+      group.members.some(
+        (member) => member.accountId === event.payload.accountId,
+      )
+        ? "available-senders"
+        : null,
+    versions: {
+      "available-senders": JSON.stringify(
+        candidates
+          .map((account) => [account.id, account.status])
+          .sort((a, b) => String(a[0]).localeCompare(String(b[0]))),
+      ),
+    },
+    definitiveEvent: definitiveSenderAvailabilityEvent,
+    evidence: accountsSnapshot,
+    ready: accountsSnapshot !== null && !accountsError,
+    refresh: reloadAccounts,
+    rangeFallback: true,
+    renderRangeSummary: () => (
+      <div>
+        <strong>当前可选发送身份：{candidates.length} 个</strong>
+        {candidates.slice(0, 5).map((account) => (
+          <p key={account.id}>
+            {account.id} <Badge status={account.status} />
+          </p>
+        ))}
+        {candidates.length > 5 && (
+          <p>另有 {candidates.length - 5} 个，可在发送身份中查看。</p>
+        )}
+        {!candidates.length && <p>当前没有可用发送账号。</p>}
+      </div>
+    ),
+  });
   const selected = candidates.some((account) => account.id === accountId)
     ? accountId
     : (candidates[0]?.id ?? "");
@@ -39,13 +128,15 @@ export function Timeline({
   const send = async (event: FormEvent): Promise<void> => {
     event.preventDefault();
     if (!text.trim() || !selected) return;
+    const clientMsgId = crypto.randomUUID();
+    ownSends.register(clientMsgId);
     setBusy(true);
     setError(null);
     try {
       await post(
         `/api/groups/${encodeURIComponent(group.id)}/send`,
         sentSchema,
-        { accountId: selected, text },
+        { accountId: selected, text, clientMsgId },
       );
       setText("");
       nearBottom.current = true;
@@ -69,6 +160,7 @@ export function Timeline({
             : `${timeline.items.length} 条已加载`}
         </span>
       </div>
+      {attention.notice}
       <ErrorNotice
         error={timeline.error}
         retry={() => void timeline.reconcile()}
@@ -108,6 +200,7 @@ export function Timeline({
               className={`message-row ${message.isOwn ? "own" : ""}`}
               key={message.id}
               data-message-id={message.id}
+              {...attention.itemProps(message.id)}
             >
               <span className="message-avatar">
                 {message.isOwn
@@ -144,7 +237,8 @@ export function Timeline({
       </div>
       {user?.role === "admin" && (
         <form className="composer" onSubmit={(event) => void send(event)}>
-          <ErrorNotice error={error} />
+          <ErrorNotice error={error ?? accountsError} />
+          {senders.notice}
           {group.status !== "active" ? (
             <div className="notice warning">此群当前不可发送消息。</div>
           ) : (

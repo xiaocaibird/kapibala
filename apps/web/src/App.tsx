@@ -10,6 +10,7 @@ import { GroupDetail } from "./pages/GroupDetail";
 import { AgentRunDetail, AgentRuns } from "./pages/AgentRuns";
 import { Sequences } from "./pages/Sequences";
 import { ErrorNotice, Icon, Loading } from "./components/ui";
+import { PageAttentionScope } from "./attention";
 export function App() {
   return (
     <ErrorBoundary>
@@ -181,17 +182,54 @@ function Workspace() {
             </div>
           )}
           {route.page === "accounts" ? (
-            <Accounts />
+            <PageAttentionScope
+              scopeKey="accounts"
+              title="服务账号 · Kapibala"
+              acceptEvent={(event) =>
+                [
+                  "account_changed",
+                  "account_status_changed",
+                  "account_terminal",
+                ].includes(event.type)
+              }
+            >
+              <Accounts />
+            </PageAttentionScope>
           ) : route.page === "agent-runs" ? (
             route.id ? (
-              <AgentRunDetail key={route.id} id={route.id} />
+              <PageAttentionScope
+                key={route.id}
+                scopeKey={`agent-run:${route.id}`}
+                acceptEvent={(event) =>
+                  event.payload.runId === route.id &&
+                  ["agent_run", "agent_step_changed"].includes(event.type)
+                }
+                title="Agent 运行详情 · Kapibala"
+              >
+                <AgentRunDetail id={route.id} />
+              </PageAttentionScope>
             ) : (
               <AgentRuns />
             )
           ) : route.page === "sequences" ? (
             <Sequences key={route.id ?? "all"} groupId={route.id} />
           ) : route.id && route.page === "groups" ? (
-            <GroupDetail key={route.id} id={route.id} />
+            <PageAttentionScope
+              key={route.id}
+              scopeKey={`group:${route.id}`}
+              acceptEvent={(event) =>
+                event.payload.groupId === route.id ||
+                [
+                  "job_changed",
+                  "account_changed",
+                  "account_status_changed",
+                  "account_terminal",
+                ].includes(event.type)
+              }
+              title="群详情 · Kapibala"
+            >
+              <GroupDetail id={route.id} />
+            </PageAttentionScope>
           ) : (
             <Groups />
           )}

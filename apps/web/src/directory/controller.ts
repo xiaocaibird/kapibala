@@ -30,6 +30,8 @@ export interface DirectoryState {
   position: DirectoryPosition | null;
   notice: string | null;
   jobId: string | null;
+  /** Only a successfully applied first-page read can confirm a range refresh. */
+  snapshot: { seq: number; revision: number; path: string } | null;
 }
 export interface DirectoryScheduler {
   set(callback: () => void, delay: number): unknown;
@@ -54,6 +56,7 @@ const initialState = (): DirectoryState => ({
   position: null,
   notice: null,
   jobId: null,
+  snapshot: null,
 });
 function signature(page: GroupDirectoryPage): string {
   // Opaque cursors need not have a stable encoding. Compare their presence and
@@ -75,6 +78,7 @@ export function createGroupDirectoryController(
     signal: AbortSignal,
   ) => Promise<GroupDirectoryPage>,
   timers: DirectoryScheduler = scheduler,
+  readSequence: () => number = () => 0,
 ) {
   let state = initialState();
   let running = false;
@@ -111,6 +115,7 @@ export function createGroupDirectoryController(
     if (kind === "more" && (state.stale || !state.nextCursor)) return;
     const requestGeneration = ++generation;
     const beforeInvalidation = invalidation;
+    const coversSeq = readSequence();
     const cursor = kind === "more" ? state.nextCursor! : undefined;
     const query: DirectoryQuery = {
       q: state.q,
@@ -159,6 +164,11 @@ export function createGroupDirectoryController(
             initialized: true,
             error: null,
             stale: false,
+            snapshot: {
+              seq: coversSeq,
+              revision: (state.snapshot?.revision ?? 0) + 1,
+              path: groupDirectoryPath(query),
+            },
             notice:
               state.position &&
               !page.items.some((item) => item.id === state.position!.groupId)
@@ -214,6 +224,7 @@ export function createGroupDirectoryController(
       error: null,
       position: null,
       notice: null,
+      snapshot: null,
     });
     void load("initial");
   };

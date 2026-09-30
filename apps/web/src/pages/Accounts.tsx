@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useAttentionCollection } from "../attention";
+import { accountVersion, eventEntity } from "../attention/pageAdapters";
 import { post } from "../api/client";
 import { accountSchema, unknownSchema, type Account } from "../api/schemas";
 import { useResource } from "../hooks/useResource";
@@ -40,11 +42,54 @@ export function legalActions(account: Account): AccountAction[] {
 }
 export function Accounts() {
   const { user } = useAuth();
-  const { data, loading, error, reload } = useResource(
+  const { data, loading, error, reload, snapshot } = useResource(
     "/api/accounts",
     accountsSchema,
     5_000,
   );
+  const attention = useAttentionCollection({
+    targetId: "accounts",
+    label: "账号状态有更新",
+    eventKey: (event) =>
+      eventEntity(
+        event,
+        ["account_changed", "account_status_changed", "account_terminal"],
+        "accountId",
+      ),
+    versions: Object.fromEntries(
+      (data ?? []).map((account) => [account.id, accountVersion(account)]),
+    ),
+    evidence: snapshot,
+    ready: data !== null && !error,
+    refresh: reload,
+    rangeFallback: true,
+    renderRangeSummary: () =>
+      data && (
+        <div>
+          <strong>当前账号结果：{data.length} 个</strong>
+          <p>
+            {[
+              "idle",
+              "online",
+              "rate_limited",
+              "disconnected",
+              "suspended",
+              "session_expired",
+            ].map((status) => {
+              const count = data.filter(
+                (account) => account.status === status,
+              ).length;
+              return count ? (
+                <span key={status}>
+                  <Badge status={status} /> {count} 个{" "}
+                </span>
+              ) : null;
+            })}
+          </p>
+          {!data.length && <p>当前账号列表为空。</p>}
+        </div>
+      ),
+  });
   const [actionError, setActionError] = useState<unknown>(null);
   const [pending, setPending] = useState<string | null>(null);
   const act = async (
@@ -105,6 +150,7 @@ export function Accounts() {
       </div>
       <ErrorNotice error={error} retry={() => void reload()} />
       <ErrorNotice error={actionError} />
+      {attention.notice}
       <section className="panel">
         <div className="panel-header">
           <h2>账号列表</h2>
@@ -131,7 +177,7 @@ export function Accounts() {
             </thead>
             <tbody>
               {data.map((account) => (
-                <tr key={account.id}>
+                <tr key={account.id} {...attention.itemProps(account.id)}>
                   <td>
                     <span className="identity">
                       <span className="avatar">

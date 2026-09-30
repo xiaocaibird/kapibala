@@ -18,12 +18,19 @@ import {
 
 const DirectoryContext = createContext<GroupDirectoryController | null>(null);
 export function GroupDirectoryProvider({ children }: { children: ReactNode }) {
+  const { directoryRevision, getLastSeq } = useLive();
+  const readSequence = useRef(getLastSeq);
+  readSequence.current = getLastSeq;
   const [controller] = useState(() =>
-    createGroupDirectoryController((query, signal) =>
-      request(groupDirectoryPath(query), groupDirectoryPageSchema, { signal }),
+    createGroupDirectoryController(
+      (query, signal) =>
+        request(groupDirectoryPath(query), groupDirectoryPageSchema, {
+          signal,
+        }),
+      undefined,
+      () => readSequence.current(),
     ),
   );
-  const { directoryRevision } = useLive();
   const prior = useRef(directoryRevision);
   useEffect(() => {
     controller.start();

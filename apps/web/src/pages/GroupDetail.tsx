@@ -1,3 +1,5 @@
+import { AttentionRegion } from "../attention";
+import { groupFields } from "../attention/pageAdapters";
 import { useState } from "react";
 import { patch, post } from "../api/client";
 import {
@@ -29,6 +31,7 @@ export function GroupDetail({ id }: { id: string }) {
     loading,
     error,
     reload,
+    snapshot,
   } = useResource(`/api/groups/${encodeURIComponent(id)}`, groupSchema, 2_000);
   const accounts = useResource("/api/accounts", accountsSchema, 5_000);
   const [actionError, setActionError] = useState<unknown>(null);
@@ -84,22 +87,32 @@ export function GroupDetail({ id }: { id: string }) {
       <a className="back-link" href="#/groups">
         ← 群组工作台
       </a>
-      <PageHeader
-        eyebrow="GROUP DETAILS"
-        title={group.name ?? group.gatewayGroupId}
-        subtitle={`网关群 ID · ${group.gatewayGroupId}`}
-        actions={
-          <>
-            <Badge status={group.status} />
-            <a
-              className="button secondary"
-              href={`#/sequences/${encodeURIComponent(id)}`}
-            >
-              定时序列
-            </a>
-          </>
-        }
-      />
+      <AttentionRegion
+        targetId="group-status"
+        label="群状态有更新"
+        matchEvent={(event) => groupFields(event, id, ["status"])}
+        version={group.status}
+        evidence={snapshot}
+        ready={!error}
+        refresh={reload}
+      >
+        <PageHeader
+          eyebrow="GROUP DETAILS"
+          title={group.name ?? group.gatewayGroupId}
+          subtitle={`网关群 ID · ${group.gatewayGroupId}`}
+          actions={
+            <>
+              <Badge status={group.status} />
+              <a
+                className="button secondary"
+                href={`#/sequences/${encodeURIComponent(id)}`}
+              >
+                定时序列
+              </a>
+            </>
+          }
+        />
+      </AttentionRegion>
       <ErrorNotice error={error ?? actionError} />
       {jobId && (
         <section className="panel">
@@ -108,69 +121,133 @@ export function GroupDetail({ id }: { id: string }) {
       )}
       <div className="group-detail-layout">
         <div className="main-column">
-          <Timeline key={id} group={group} accounts={accounts.data ?? []} />
-          <AgentRunList groupId={id} />
+          <Timeline
+            key={`timeline:${id}`}
+            group={group}
+            accounts={accounts.data ?? []}
+            accountsSnapshot={accounts.snapshot}
+            accountsError={accounts.error}
+            reloadAccounts={accounts.reload}
+          />
+          <AgentRunList key={`agent-runs:${id}`} groupId={id} />
         </div>
         <aside className="detail-aside">
-          <GroupProfile
-            group={group}
-            canEdit={user?.role === "admin"}
-            onEdit={() => setProfileOpen(true)}
-          />
-          <section className="panel">
-            <div className="panel-header">
-              <h2>自动化设置</h2>
-            </div>
-            <div className="settings">
-              <Setting
-                title="Agent 自动应答"
-                description="接收外部成员消息并启动执行。"
-                checked={group.agentEnabled}
-                disabled={busy || group.status !== "active"}
-                readOnly={user?.role !== "admin"}
-                onChange={(value) => void toggle("agentEnabled", value)}
-              />
-              <Setting
-                title="允许自动移除成员"
-                description="需审计通过且执行账号具备权限。"
-                checked={group.autoKickEnabled}
-                disabled={busy || group.status !== "active"}
-                readOnly={user?.role !== "admin"}
-                onChange={(value) => void toggle("autoKickEnabled", value)}
-              />
-            </div>
-          </section>
-          <section className="panel">
-            <div className="panel-header">
-              <h2>群成员</h2>
-              <span className="count">{group.members.length}</span>
-            </div>
-            <div className="member-list">
-              {group.members.length ? (
-                group.members.map((member) => (
-                  <div className="member" key={member.platformUserId}>
-                    <span className="avatar">
-                      {member.accountId ? member.accountId.slice(-2) : "外"}
-                    </span>
-                    <div>
-                      <strong>{member.accountId ?? "外部成员"}</strong>
-                      <span
-                        className="mono muted small"
-                        title={member.platformUserId}
-                      >
-                        {member.platformUserId}
+          <AttentionRegion
+            targetId="group-profile"
+            label="群资料有更新"
+            matchEvent={(event) =>
+              groupFields(event, id, ["name", "description"])
+            }
+            version={JSON.stringify([group.name, group.description])}
+            evidence={snapshot}
+            ready={!error}
+            refresh={reload}
+          >
+            <GroupProfile
+              group={group}
+              canEdit={user?.role === "admin"}
+              onEdit={() => setProfileOpen(true)}
+            />
+          </AttentionRegion>
+          <AttentionRegion
+            targetId="group-settings"
+            label="自动化设置有更新"
+            matchEvent={(event) =>
+              groupFields(event, id, ["agentEnabled", "autoKickEnabled"])
+            }
+            version={JSON.stringify([
+              group.agentEnabled,
+              group.autoKickEnabled,
+            ])}
+            evidence={snapshot}
+            ready={!error}
+            refresh={reload}
+          >
+            <section className="panel">
+              <div className="panel-header">
+                <h2>自动化设置</h2>
+              </div>
+              <div className="settings">
+                <Setting
+                  title="Agent 自动应答"
+                  description="接收外部成员消息并启动执行。"
+                  checked={group.agentEnabled}
+                  disabled={busy || group.status !== "active"}
+                  readOnly={user?.role !== "admin"}
+                  onChange={(value) => void toggle("agentEnabled", value)}
+                />
+                <Setting
+                  title="允许自动移除成员"
+                  description="需审计通过且执行账号具备权限。"
+                  checked={group.autoKickEnabled}
+                  disabled={busy || group.status !== "active"}
+                  readOnly={user?.role !== "admin"}
+                  onChange={(value) => void toggle("autoKickEnabled", value)}
+                />
+              </div>
+            </section>
+          </AttentionRegion>
+          <AttentionRegion
+            rangeFallback
+            renderRangeSummary={() => (
+              <div>
+                <strong>当前群成员：{group.members.length} 位</strong>
+                {group.members.slice(0, 5).map((member) => (
+                  <p key={member.platformUserId}>
+                    {member.accountId ?? member.platformUserId} ·{" "}
+                    {label(member.role)}
+                  </p>
+                ))}
+                {group.members.length > 5 && (
+                  <p>另有 {group.members.length - 5} 位，详见成员列表。</p>
+                )}
+                {!group.members.length && <p>当前群成员列表为空。</p>}
+              </div>
+            )}
+            targetId="group-members"
+            label="群成员列表有更新"
+            matchEvent={(event) => groupFields(event, id, ["members"])}
+            version={JSON.stringify(
+              [...group.members].sort((a, b) =>
+                a.platformUserId.localeCompare(b.platformUserId),
+              ),
+            )}
+            evidence={snapshot}
+            ready={!error}
+            refresh={reload}
+          >
+            <section className="panel">
+              <div className="panel-header">
+                <h2>群成员</h2>
+                <span className="count">{group.members.length}</span>
+              </div>
+              <div className="member-list">
+                {group.members.length ? (
+                  group.members.map((member) => (
+                    <div className="member" key={member.platformUserId}>
+                      <span className="avatar">
+                        {member.accountId ? member.accountId.slice(-2) : "外"}
+                      </span>
+                      <div>
+                        <strong>{member.accountId ?? "外部成员"}</strong>
+                        <span
+                          className="mono muted small"
+                          title={member.platformUserId}
+                        >
+                          {member.platformUserId}
+                        </span>
+                      </div>
+                      <span className={`role role-${member.role}`}>
+                        {label(member.role)}
                       </span>
                     </div>
-                    <span className={`role role-${member.role}`}>
-                      {label(member.role)}
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <p className="muted">当前无成员</p>
-              )}
-            </div>
-          </section>
+                  ))
+                ) : (
+                  <p className="muted">当前无成员</p>
+                )}
+              </div>
+            </section>
+          </AttentionRegion>
           {user?.role === "admin" && group.status !== "left" && (
             <section className="panel danger-zone">
               <h3>退出群组</h3>
