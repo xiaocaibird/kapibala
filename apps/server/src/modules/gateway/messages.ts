@@ -25,6 +25,19 @@ const landedSchema = z.object({
   msgId: z.string().min(1),
   sentAt: z.iso.datetime(),
 });
+
+function isConfirmedAbsentPendingRetry(row: MessageRow): boolean {
+  // Old workers reserved their optional retry only after a safe negative query.
+  // pending means that retry has not started, or a clear 503 returned it here.
+  // A lost response instead leaves sending/uncertain and must not use this proof.
+  return (
+    row.delivery_status === "unknown" &&
+    row.dispatch_state === "pending" &&
+    row.timeout_at === null &&
+    Number(row.metadata.timeoutRetries) === 1
+  );
+}
+
 export async function recordSent(
   tx: Queryable,
   clientMsgId: string,
@@ -179,10 +192,7 @@ export class Messages implements MessagingService {
           row.metadata.nextAttemptAt > Date.now()
         )
           break;
-        if (
-          row.delivery_status === "unknown" &&
-          row.dispatch_state !== "pending"
-        ) {
+        if (row.delivery_status === "unknown") {
           await this.confirm(row);
           // Unknown delivery blocks subsequent sends for this account, preserving order.
           if (
@@ -404,9 +414,10 @@ export class Messages implements MessagingService {
       ])
     ).rows[0]!;
     // A late 404 may describe an observation made before the gateway settled.
-    // Only a query initiated after the known 504 window can authorize a retry.
+    // Only a query initiated after the known 504 window can prove absence.
     const queryStartedAt = Date.now();
     const timeoutAt = row.timeout_at?.getTime();
+    const legacyPendingRetry = isConfirmedAbsentPendingRetry(row);
     try {
       const result = landedSchema.parse(
         await this.ctx.gateway.request(
@@ -423,8 +434,10 @@ export class Messages implements MessagingService {
         !(error instanceof RemoteError) ||
         error.status !== 404 ||
         row.delivery_status !== "unknown" ||
-        timeoutAt === undefined ||
-        queryStartedAt - timeoutAt < 2100
+        (!legacyPendingRetry &&
+          (row.dispatch_state !== "uncertain" ||
+            timeoutAt === undefined ||
+            queryStartedAt - timeoutAt < 2100))
       )
         return;
       await this.ctx.db.transaction(async (tx) => {
@@ -436,17 +449,15 @@ export class Messages implements MessagingService {
         ).rows[0]!;
         if (
           current.delivery_status !== "unknown" ||
-          current.dispatch_state !== "uncertain" ||
-          current.timeout_at?.getTime() !== timeoutAt
+          current.dispatch_state !== row.dispatch_state ||
+          current.attempts !== row.attempts ||
+          current.timeout_at?.getTime() !== timeoutAt ||
+          (legacyPendingRetry && !isConfirmedAbsentPendingRetry(current))
         )
           return;
-        const retries = Number(current.metadata.timeoutRetries ?? 0);
-        if (retries >= 1) await this.fail(tx, row, "NETWORK_TIMEOUT");
-        else
-          await tx.query(
-            "UPDATE messages SET dispatch_state='pending',timeout_at=null,metadata=metadata || $2::jsonb,updated_at=now() WHERE id=$1",
-            [row.id, JSON.stringify({ timeoutRetries: retries + 1 })],
-          );
+        // A2 permits one retry but does not require it. Once absence is proven,
+        // finish without adding a second remote call and convergence window.
+        await this.fail(tx, current, "NETWORK_TIMEOUT");
       });
     }
   }

@@ -162,7 +162,10 @@ async function fixture(t: TestContext, replies: SendReply[]) {
   }
   async function assertEffects(sendsExpected: number, effectsExpected: number) {
     assert.equal(sends.length, sendsExpected);
-    assert.equal(new Set(sends.map((send) => send.clientMsgId)).size, 1);
+    assert.equal(
+      new Set(sends.map((send) => send.clientMsgId)).size,
+      sendsExpected ? 1 : 0,
+    );
     assert.equal(landed.length, effectsExpected);
     assert.equal((await db.query("SELECT id FROM messages")).rowCount, 1);
   }
@@ -236,62 +239,55 @@ test("TB02 a 1900ms initial 202 is accepted only after its real response", async
   await f.assertEffects(1, 0);
 });
 
-test("TB03 known 504, authoritative absence, then 1800ms retry 202 converges within five seconds", async (t) => {
+test("TB03 authoritative absence fails without the optional 1800ms retry 202", async (t) => {
   const f = await fixture(t, [{ status: 504 }, { status: 202, delayMs: 1800 }]);
   await f.work();
   assert.equal((await f.read())?.deliveryStatus, "unknown");
-  const end = await f.driveTo("accepted");
-  const first504ToAcceptedMs = end - f.gateway.timeouts[0]!.monotonic;
+  const end = await f.driveTo("failed");
+  const first504ToFailedMs = end - f.gateway.timeouts[0]!.monotonic;
   t.diagnostic(
     JSON.stringify({
       case: "TB03",
-      first504ToAcceptedMs,
-      retryStartedMs: f.sends[1]!.started - f.gateway.timeouts[0]!.monotonic,
+      first504ToFailedMs,
+      sends: f.sends.length,
     }),
   );
-  assert.ok(f.sends[1]!.started - f.gateway.timeouts[0]!.monotonic > 2000);
-  assert.ok(first504ToAcceptedMs < 5000);
-  await f.assertEffects(2, 0);
+  assert.ok(first504ToFailedMs > 2000 && first504ToFailedMs < 5000);
+  assert.equal((await f.read())?.failCode, "NETWORK_TIMEOUT");
+  await f.assertEffects(1, 0);
 });
 
-test("TB04 two immediate HTTP 504 responses and absence converge within the first five seconds", async (t) => {
+test("TB04 known absent HTTP 504 converges within five seconds without another POST", async (t) => {
   const f = await fixture(t, [{ status: 504 }, { status: 504 }]);
   await f.work();
   const end = await f.driveTo("failed");
   const first504ToFailedMs = end - f.gateway.timeouts[0]!.monotonic;
-  const second504ToFailedMs = end - f.gateway.timeouts[1]!.monotonic;
   t.diagnostic(
-    JSON.stringify({ case: "TB04", first504ToFailedMs, second504ToFailedMs }),
+    JSON.stringify({ case: "TB04", first504ToFailedMs, sends: f.sends.length }),
   );
-  assert.ok(first504ToFailedMs < 5000);
-  assert.ok(second504ToFailedMs > 2000);
+  assert.ok(first504ToFailedMs > 2000 && first504ToFailedMs < 5000);
   assert.equal((await f.read())?.failCode, "NETWORK_TIMEOUT");
   await f.work();
-  await f.assertEffects(2, 0);
+  await f.assertEffects(1, 0);
 });
 
-test("TB05 boundary: a 1400ms second 504 preserves its safety window but exceeds the first five seconds", async (t) => {
+test("TB05 the former delayed-second-504 counterexample now closes within the first five seconds", async (t) => {
   const f = await fixture(t, [{ status: 504 }, { status: 504, delayMs: 1400 }]);
   await f.work();
   const end = await f.driveTo("failed");
   const first504ToFailedMs = end - f.gateway.timeouts[0]!.monotonic;
-  const second504ToFailedMs = end - f.gateway.timeouts[1]!.monotonic;
-  // This passes only the safety check. It explicitly records an OPEN first-504 SLA interpretation.
   t.diagnostic(
     JSON.stringify({
       case: "TB05",
       first504ToFailedMs,
-      second504ToFailedMs,
       first504FiveSecondRequirementMet: first504ToFailedMs <= 5000,
-      boundary:
-        "open: first versus each 504 clock; no forced failure before authoritative absence",
+      sends: f.sends.length,
     }),
   );
-  assert.ok(first504ToFailedMs > 5000);
-  assert.ok(second504ToFailedMs > 2000 && second504ToFailedMs < 5000);
+  assert.ok(first504ToFailedMs > 2000 && first504ToFailedMs < 5000);
   assert.equal((await f.read())?.failCode, "NETWORK_TIMEOUT");
   await f.work();
-  await f.assertEffects(2, 0);
+  await f.assertEffects(1, 0);
 });
 
 test("TB06 query 503 beyond five seconds stays unknown; a 1400ms positive query recovers within two seconds", async (t) => {
@@ -345,7 +341,7 @@ test("TB07 a query exceeding the two-second HTTP timeout does not authorize retr
   await f.assertEffects(1, 1);
 });
 
-test("TB08 boundary: query recovery with absence and another 504 needs a new safety window", async (t) => {
+test("TB08 the former recovery-then-second-504 counterexample closes within two seconds", async (t) => {
   const f = await fixture(t, [{ status: 504 }, { status: 504 }]);
   f.query.unavailable = true;
   await f.work();
@@ -359,20 +355,98 @@ test("TB08 boundary: query recovery with absence and another 504 needs a new saf
   f.query.unavailable = false;
   const end = await f.driveTo("failed");
   const availabilityToFailedMs = end - availableAt;
-  const second504ToFailedMs = end - f.gateway.timeouts[1]!.monotonic;
   t.diagnostic(
     JSON.stringify({
       case: "TB08",
       availabilityToFailedMs,
-      second504ToFailedMs,
       recoveryTwoSecondRequirementMet: availabilityToFailedMs <= 2000,
-      boundary:
-        "open: recovery deadline versus a safely authorized retry receiving another 504",
+      sends: f.sends.length,
     }),
   );
-  assert.ok(availabilityToFailedMs > 2000);
-  assert.ok(second504ToFailedMs > 2000 && second504ToFailedMs < 5000);
+  assert.ok(availabilityToFailedMs < 2000);
   assert.equal((await f.read())?.failCode, "NETWORK_TIMEOUT");
   await f.work();
-  await f.assertEffects(2, 0);
+  await f.assertEffects(1, 0);
+});
+
+for (const attempts of [1, 3]) {
+  test(`TB09 legacy reserved retry (${attempts} attempts) is queried again without dispatch`, async (t) => {
+    const f = await fixture(t, []);
+    // Old confirm() persisted this only after its known-504 window and fresh 404.
+    // Later clear 503 responses could return the reserved retry to the same state.
+    await f.db.query(
+      "UPDATE messages SET delivery_status='unknown',dispatch_state='pending',timeout_at=null,attempts=$2,metadata=metadata || '{\"timeoutRetries\":1}' WHERE id=$1",
+      [f.message.id, attempts],
+    );
+    f.query.unavailable = true;
+    await f.work();
+    assert.equal((await f.read())?.deliveryStatus, "unknown");
+    f.query.unavailable = false;
+    await f.work();
+    assert.equal((await f.read())?.deliveryStatus, "failed");
+    assert.equal((await f.read())?.failCode, "NETWORK_TIMEOUT");
+    assert.deepEqual(
+      f.queries.map((query) => query.status),
+      [503, 404],
+    );
+    await f.assertEffects(0, 0);
+  });
+}
+
+for (const dispatchState of ["sending", "uncertain"]) {
+  test(`TB10 legacy ${dispatchState} retry with unknown result never uses the first 504 clock`, async (t) => {
+    const f = await fixture(t, []);
+    await f.db.query(
+      "UPDATE messages SET delivery_status='unknown',dispatch_state=$2,timeout_at=$3,attempts=2,metadata=metadata || '{\"timeoutRetries\":1}' WHERE id=$1",
+      [
+        f.message.id,
+        dispatchState,
+        dispatchState === "sending" ? new Date(Date.now() - 10000) : null,
+      ],
+    );
+    await f.work();
+    assert.equal((await f.read())?.deliveryStatus, "unknown");
+    const recovered = (
+      await f.db.query<{ timeout_at: Date | null; dispatch_state: string }>(
+        "SELECT timeout_at,dispatch_state FROM messages WHERE id=$1",
+        [f.message.id],
+      )
+    ).rows[0]!;
+    assert.equal(recovered.timeout_at, null);
+    assert.equal(recovered.dispatch_state, "uncertain");
+    f.landed.push({
+      msgId: "legacy-second-effect",
+      sentAt: new Date().toISOString(),
+    });
+    await f.work();
+    assert.equal((await f.read())?.deliveryStatus, "sent");
+    assert.equal((await f.read())?.msgId, "legacy-second-effect");
+    await f.assertEffects(0, 1);
+  });
+}
+
+test("TB11 a legacy retry with its own recorded 504 waits for that latest window", async (t) => {
+  const f = await fixture(t, []);
+  const second504At = Date.now();
+  await f.db.query(
+    "UPDATE messages SET delivery_status='unknown',dispatch_state='uncertain',timeout_at=$2,attempts=2,metadata=metadata || '{\"timeoutRetries\":1}' WHERE id=$1",
+    [f.message.id, new Date(second504At)],
+  );
+  await f.work();
+  assert.equal((await f.read())?.deliveryStatus, "unknown");
+  await f.driveTo("failed");
+  assert.ok(Date.now() - second504At >= 2100);
+  assert.equal((await f.read())?.failCode, "NETWORK_TIMEOUT");
+  await f.assertEffects(0, 0);
+});
+
+test("TB12 an old retry marker does not cancel an ordinary queued send after rate-limit recovery", async (t) => {
+  const f = await fixture(t, [{ status: 202 }]);
+  await f.db.query(
+    "UPDATE messages SET attempts=2,metadata=metadata || '{\"timeoutRetries\":1}' WHERE id=$1",
+    [f.message.id],
+  );
+  await f.work();
+  assert.equal((await f.read())?.deliveryStatus, "accepted");
+  await f.assertEffects(1, 0);
 });

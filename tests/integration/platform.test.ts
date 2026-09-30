@@ -315,7 +315,7 @@ test("platform: message dedup, own echo, delayed delivery and historical paginat
     await f.close();
   }
 });
-test("platform: explicit 504 confirmation retries at most once and account-wide rate limit queues", async (t) => {
+test("platform: explicit 504 absence fails without retry and account-wide rate limit queues", async (t) => {
   const f = await fixture(t);
   try {
     const g = await f.group();
@@ -341,7 +341,7 @@ test("platform: explicit 504 confirmation retries at most once and account-wide 
     const two = await f.api<{ clientMsgId: string }>(
       "POST",
       `/api/groups/${g.id}/send`,
-      { accountId: "account-2", text: "retry once" },
+      { accountId: "account-2", text: "confirmed absence" },
     );
     await until(
       () => f.messages(g.id),
@@ -349,7 +349,8 @@ test("platform: explicit 504 confirmation retries at most once and account-wide 
         m.some(
           (x) =>
             x.clientMsgId === two.body.clientMsgId &&
-            x.deliveryStatus === "sent",
+            x.deliveryStatus === "failed" &&
+            x.failCode === "NETWORK_TIMEOUT",
         ),
       6500,
     );
@@ -364,7 +365,7 @@ test("platform: explicit 504 confirmation retries at most once and account-wide 
     });
     await until(
       () => f.messages(g.id),
-      (m) => m.filter((x) => x.deliveryStatus === "sent").length === 4,
+      (m) => m.filter((x) => x.deliveryStatus === "sent").length === 3,
       7000,
     );
     const remote = await f.control("gateway", "");
@@ -375,13 +376,21 @@ test("platform: explicit 504 confirmation retries at most once and account-wide 
     );
     assert.equal(
       sent.filter((m) => m.clientMsgId === two.body.clientMsgId).length,
-      1,
+      0,
     );
     const requests = remote.requests as {
       at: string;
       path: string;
-      body: { text?: string };
+      body: { text?: string; clientMsgId?: string };
     }[];
+    assert.equal(
+      requests.filter(
+        (r) =>
+          r.path.endsWith("/send") &&
+          r.body.clientMsgId === two.body.clientMsgId,
+      ).length,
+      1,
+    );
     const limited = requests.filter(
       (r) => r.path.endsWith("/send") && r.body.text?.startsWith("limited"),
     );
@@ -941,7 +950,7 @@ test("platform: SIGKILL during remote send recovers by evidence without resendin
   }
 });
 
-test("platform: S1 distinguishes accepted from sent and unknown survives query outage", async (t) => {
+test("platform: S1 distinguishes accepted from sent and query recovery determines proven absence", async (t) => {
   const f = await fixture(t);
   try {
     const g = await f.group();
@@ -1008,7 +1017,8 @@ test("platform: S1 distinguishes accepted from sent and unknown survives query o
         m.some(
           (x) =>
             x.clientMsgId === second.body.clientMsgId &&
-            x.deliveryStatus === "sent",
+            x.deliveryStatus === "failed" &&
+            x.failCode === "NETWORK_TIMEOUT",
         ),
       2000,
     );
@@ -1163,7 +1173,7 @@ test("platform: audited kick confirms 504 and propagates permission errors witho
   }
 });
 
-test("platform: Agent SEND_TIMEOUT repeats the same key without re-auditing or duplicating delivery", async (t) => {
+test("platform: Agent SEND_TIMEOUT repeats the same key and reads proven failure without re-auditing", async (t) => {
   const f = await fixture(t);
   try {
     const g = await f.group();
@@ -1221,10 +1231,17 @@ test("platform: Agent SEND_TIMEOUT repeats the same key without re-auditing or d
     const run = (await f.api<AgentRun>("GET", `/api/agent-runs/${runs[0]!.id}`))
       .body;
     assert.equal(run.steps![0]!.errorCode, "SEND_TIMEOUT");
-    assert.equal(run.steps![1]!.isError, false);
+    assert.equal(run.steps![1]!.isError, true);
+    assert.equal(run.steps![1]!.errorCode, "SEND_FAILED");
     await until(
       () => f.messages(g.id),
-      (m) => m.some((x) => x.isOwn && x.deliveryStatus === "sent"),
+      (m) =>
+        m.some(
+          (x) =>
+            x.isOwn &&
+            x.deliveryStatus === "failed" &&
+            x.failCode === "NETWORK_TIMEOUT",
+        ),
     );
     assert.equal(
       ((await f.control("agent", "")).audits as unknown[]).length,
@@ -1232,7 +1249,7 @@ test("platform: Agent SEND_TIMEOUT repeats the same key without re-auditing or d
     );
     assert.equal(
       ((await f.control("gateway", "")).messages as unknown[]).length,
-      1,
+      0,
     );
   } finally {
     await f.close();

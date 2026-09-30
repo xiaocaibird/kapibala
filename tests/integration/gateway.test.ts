@@ -586,7 +586,7 @@ test("504已落地查询收敛为sent，不重发；自身回流去重且不触�
   assert.equal(f.gateway.sends.length, 1);
 });
 
-test("504明确未落地只重试一次，第二次仍未落地最终failed", async (t) => {
+test("504安全窗口后新查询明确未落地则failed，不采用可选重发", async (t) => {
   const f = await fixture(t);
   await f.seedGroup();
   f.gateway.sendModes = ["timeout-empty", "timeout-empty"];
@@ -604,21 +604,18 @@ test("504明确未落地只重试一次，第二次仍未落地最终failed", as
   );
   await f.messages.accountWork("account-2");
   await f.messages.accountWork("account-2");
-  assert.equal(f.gateway.sends.length, 2);
-  await f.db.query(
-    "UPDATE messages SET timeout_at=now()-interval '3 seconds' WHERE client_msg_id=$1",
-    [message.clientMsgId],
-  );
-  await f.messages.accountWork("account-2");
-  await f.messages.accountWork("account-2");
   assert.equal(
     (await f.messages.getMessage(message.clientMsgId!))?.deliveryStatus,
     "failed",
   );
-  assert.equal(f.gateway.sends.length, 2);
+  assert.equal(
+    (await f.messages.getMessage(message.clientMsgId!))?.failCode,
+    "NETWORK_TIMEOUT",
+  );
+  assert.equal(f.gateway.sends.length, 1);
 });
 
-test("真实时钟：两次504且均未落地，在5秒内确定失败并且只重发一次", async (t) => {
+test("真实时钟：504后明确未落地，在5秒内确定失败并且不重发", async (t) => {
   const f = await fixture(t);
   await f.seedGroup();
   f.gateway.sendModes = ["timeout-empty", "timeout-empty"];
@@ -641,7 +638,7 @@ test("真实时钟：两次504且均未落地，在5秒内确定失败并且只�
     (await f.messages.getMessage(message.clientMsgId!))?.deliveryStatus,
     "failed",
   );
-  assert.equal(f.gateway.sends.length, 2);
+  assert.equal(f.gateway.sends.length, 1);
   assert.ok(performance.now() - started < 5000);
 });
 
