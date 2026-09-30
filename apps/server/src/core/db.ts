@@ -83,8 +83,11 @@ export class Database implements Queryable {
     } catch (error) {
       // A rollback on a broken socket must not hide the original failure.
       if (!connectionFailed) {
-        try { await tx.query("ROLLBACK"); }
-        catch { connectionFailed = true; }
+        try {
+          await tx.query("ROLLBACK");
+        } catch {
+          connectionFailed = true;
+        }
       }
       throw error;
     } finally {
@@ -123,7 +126,9 @@ export class Database implements Queryable {
       if (!r.rows[0]?.locked) return undefined;
       locked = true;
       const connection = client;
-      const result = await operationSignals.run(signal, () => fn(connection, signal));
+      const result = await operationSignals.run(signal, () =>
+        fn(connection, signal),
+      );
       signal.throwIfAborted();
       return result;
     } catch (error) {
@@ -133,7 +138,10 @@ export class Database implements Queryable {
       try {
         if (client && locked && !connectionFailed) {
           try {
-            await client.query("SELECT pg_advisory_unlock(hashtextextended($1, 0))", [key]);
+            await client.query(
+              "SELECT pg_advisory_unlock(hashtextextended($1, 0))",
+              [key],
+            );
           } catch (error) {
             connectionFailed = true;
             if (!operationFailed) throw error;

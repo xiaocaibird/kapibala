@@ -15,7 +15,11 @@ export class RemoteClient {
     operationSignal?.throwIfAborted();
     signal?.throwIfAborted();
     const timeout = AbortSignal.timeout(timeoutMs);
-    const requestSignal = AbortSignal.any([timeout, ...(operationSignal ? [operationSignal] : []), ...(signal ? [signal] : [])]);
+    const requestSignal = AbortSignal.any([
+      timeout,
+      ...(operationSignal ? [operationSignal] : []),
+      ...(signal ? [signal] : []),
+    ]);
     const response = await fetch(`${this.baseUrl}${path}`, {
       method: body === undefined ? "GET" : "POST",
       headers: { "content-type": "application/json" },
@@ -25,7 +29,7 @@ export class RemoteClient {
     const raw = await response.text();
     let data: unknown;
     try {
-      data = raw ? JSON.parse(raw) as unknown : {};
+      data = raw ? (JSON.parse(raw) as unknown) : {};
     } catch {
       throw new RemoteError(response.status, "BAD_JSON", { raw });
     }
@@ -33,13 +37,13 @@ export class RemoteClient {
     if (!response.ok) {
       const envelope = isRecord(data) ? data : { raw };
       const nested = isRecord(envelope.error) ? envelope.error : undefined;
-      const code = typeof envelope.code === "string" ? envelope.code
-        : typeof nested?.code === "string" ? nested.code : `HTTP_${response.status}`;
-      throw new RemoteError(
-        response.status,
-        code,
-        envelope,
-      );
+      const code =
+        typeof envelope.code === "string"
+          ? envelope.code
+          : typeof nested?.code === "string"
+            ? nested.code
+            : `HTTP_${response.status}`;
+      throw new RemoteError(response.status, code, envelope);
     }
     return data as T;
   }
