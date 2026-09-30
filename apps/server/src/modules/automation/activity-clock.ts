@@ -57,19 +57,30 @@ export class ActivityClock {
     connection.on("error", lease.onError);
     this.lease = lease;
     try {
+      // Every contender crosses this database barrier before testing ownership.
+      // Taking the session lock first would let followers observe an owner whose
+      // rebasing UPDATE is still blocked, then execute against the old base.
+      await connection.query("BEGIN");
+      await connection.query(
+        "SELECT pg_advisory_xact_lock(hashtextextended(current_schema()||':automation:activity-clock:init',0))",
+      );
       const result = await connection.query<{ locked: boolean }>(
         "SELECT pg_try_advisory_lock(hashtextextended(current_schema()||':automation:activity-clock',0)) AS locked",
       );
-      if (!result.rows[0]?.locked) {
-        await this.release();
-        return;
+      lease.locked = Boolean(result.rows[0]?.locked);
+      if (lease.locked) {
+        // Lock first, then sample wall time after any initialization wait. now()
+        // would use BEGIN's timestamp and accidentally charge that blocked wait.
+        await connection.query(
+          "SELECT id FROM agent_runs WHERE status='running' AND recovery_note IS NULL ORDER BY id FOR UPDATE",
+        );
+        await connection.query(
+          "UPDATE agent_runs SET activity_updated_at=date_trunc('milliseconds',clock_timestamp()) WHERE status='running' AND recovery_note IS NULL",
+        );
       }
-      lease.locked = true;
-      // No prior owner is alive. Keep its committed consumption, but exclude the
-      // unavailable interval since its final sample instead of charging downtime.
-      await connection.query(
-        "UPDATE agent_runs SET activity_updated_at=date_trunc('milliseconds',now()) WHERE status='running' AND recovery_note IS NULL",
-      );
+      // The initialization barrier is released only after the new base commits.
+      await connection.query("COMMIT");
+      if (!lease.locked) await this.release();
     } catch (error) {
       lease.failed = true;
       await this.release();

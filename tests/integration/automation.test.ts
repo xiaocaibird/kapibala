@@ -1565,6 +1565,128 @@ test("queued runs persist online activity across a real shutdown without countin
   }
 });
 
+test("a follower cannot execute against a stale activity base while the new clock owner initializes", async () => {
+  await reset();
+  await module.recover!();
+  const runId = randomUUID();
+  await db.query(
+    "INSERT INTO agent_runs(id,group_id,active_ms) VALUES($1,$2,59000)",
+    [runId, groupId],
+  );
+  await module.close!();
+  await second.close!();
+  const consumedBefore = Number(
+    (
+      await db.query<{ active_ms: string }>(
+        "SELECT active_ms FROM agent_runs WHERE id=$1",
+        [runId],
+      )
+    ).rows[0]!.active_ms,
+  );
+  await delay(1200);
+  const context = {
+    db,
+    agent: new RemoteClient(remote.listeningOrigin),
+    gateway: new RemoteClient(remote.listeningOrigin),
+    log: api.log,
+  };
+  module = createAutomationModule(context, messaging);
+  second = createAutomationModule(context, messaging);
+  let turns = 0;
+  agentReply = async () => {
+    turns++;
+    await delay(100);
+    return end("remaining budget preserved");
+  };
+  const blocker = await db.pool.connect();
+  let released = false;
+  let ownerRecovery: Promise<void> | undefined;
+  let followerTick: Promise<void> | undefined;
+  try {
+    await blocker.query("BEGIN");
+    const blockerPid = (
+      await blocker.query<{ pid: number }>("SELECT pg_backend_pid() AS pid")
+    ).rows[0]!.pid;
+    await blocker.query("SELECT id FROM agent_runs WHERE id=$1 FOR UPDATE", [
+      runId,
+    ]);
+    ownerRecovery = module.recover!();
+    const waitUntil = Date.now() + 3000;
+    let blocked = false;
+    while (Date.now() < waitUntil) {
+      blocked = Boolean(
+        (
+          await db.query(
+            "SELECT pid FROM pg_stat_activity WHERE application_name=$1 AND $2::integer=ANY(pg_blocking_pids(pid))",
+            [schema, blockerPid],
+          )
+        ).rowCount,
+      );
+      if (blocked) break;
+      await delay(10);
+    }
+    assert.ok(
+      blocked,
+      "new clock owner must be blocked before rebasing this run",
+    );
+    let followerReturned = false;
+    followerTick = second.tick().then(() => {
+      followerReturned = true;
+    });
+    await delay(200);
+    const executedBeforeReady = Boolean(
+      (
+        await db.query(
+          `SELECT pid FROM pg_locks WHERE locktype='advisory' AND database=(SELECT oid FROM pg_database WHERE datname=current_database()) AND classid::bigint=((hashtextextended($1,0)>>32)&4294967295) AND objid::bigint=(hashtextextended($1,0)&4294967295) AND granted`,
+          [`agent:${runId}`],
+        )
+      ).rowCount,
+    );
+    const returnedBeforeReady = followerReturned;
+    await blocker.query("COMMIT");
+    released = true;
+    await Promise.all([ownerRecovery, followerTick]);
+    await waitFor(async () => (await latestRun()).status !== "running");
+    const result = await latestRun();
+    assert.equal(
+      result.status,
+      "finished",
+      `follower exhausted the preserved budget: ${result.end_reason}`,
+    );
+    assert.equal(
+      executedBeforeReady,
+      false,
+      "no Agent execution lock may be obtained before the shared clock is ready",
+    );
+    assert.equal(
+      returnedBeforeReady,
+      false,
+      "follower start must wait for committed clock initialization",
+    );
+    assert.equal(turns, 1);
+    const consumedAfter = Number(
+      (
+        await db.query<{ active_ms: string }>(
+          "SELECT active_ms FROM agent_runs WHERE id=$1",
+          [runId],
+        )
+      ).rows[0]!.active_ms,
+    );
+    assert.ok(
+      consumedAfter >= consumedBefore && consumedAfter - consumedBefore < 600,
+      `downtime or initialization barrier was billed: ${consumedAfter - consumedBefore}ms`,
+    );
+  } finally {
+    if (!released) await blocker.query("ROLLBACK");
+    blocker.release();
+    await Promise.allSettled(
+      [ownerRecovery, followerTick].filter((work): work is Promise<void> =>
+        Boolean(work),
+      ),
+    );
+  }
+});
+
 test("frequent activity samples retain subinterval time instead of losing rounded milliseconds", async () => {
   await reset();
   await module.recover!();
