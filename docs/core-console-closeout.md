@@ -11,7 +11,7 @@
 | CG-12 | 125 条真实网关入站消息的快照分页；旧页挂起与实时新消息、历史时间补投、重复事件交错 | 隐藏页修前 131 条唯一但旧 cursor 重现；修后 137 条唯一且旧页释放后按钮不重现；138 条完整快照成功后等待旧页超过 20 秒超时，错误与 cursor 均未回挂 | 待验 |
 | CG-17 | 同一页面 access 过期，REST 与 WS 共同续期；记录实际 refresh 次数、写请求身份与结果 | 隐藏页实际 WS 4401 + 3 个 GET 401 + 1 个 send 401，同一页只有 1 次 refresh、1 条成功鉴权写入，admin/account-2 与 UI 身份保持，消息唯一 sent；不声称跨标签 single-flight | 待验 |
 | CG-18 | 确定规模与故障窗口中断浏览器 REST/WS；真实消息及群开关事件恢复，另注入一次时间线 503 | 隐藏页 144 条唯一消息、3 页；20.192 秒断线与首次查询 503 一次后，恢复可用→消息及群开关呈现 1451ms，WS 鉴权→呈现 464ms，ID 顺序与数据库完全一致 | 待验 |
-| CG-19 | 现有 Agent 模拟器返回三次审计 503 或畸形 JSON；真实后台生成 blocked / protocol_error 轨迹 | 隐藏页 blocked 醒目提示、工具入参/结果/错误码与原始响应展开通过；畸形协议步骤及合法 finish 轨迹通过；三次审计调用且对应网关发送请求为零 | 待验 |
+| CG-19 | 现有 Agent 模拟器返回三次审计 503 或畸形 JSON；真实后台生成 blocked / protocol_error 轨迹 | 隐藏页 blocked 醒目提示、工具入参/结果/错误码与原始响应展开通过；畸形协议步骤及合法 finish 轨迹通过；清理前工具结果观测该文本三次审计、零匹配网关请求（下述事后转录，不代表 run 全部副作用） | 待验 |
 
 ## 修复与自动验证
 
@@ -66,7 +66,7 @@ CG-18 实测：第三轮在故障恢复前已开始持续等待独特消息和�
 
 CG-18 应分别记录服务器事件生成/提交、传输恢复、WS 鉴权成功、浏览器同时显示消息与页面状态的观察上界。故障持续时间与恢复后呈现耗时不能混为一谈，3 秒结论仅限记录的数据规模及故障窗口；不得将任意长断线或任意远端故障概括为满足 3 秒。
 
-CG-19 场景不新增外部协议能力。blocked 的审计配置为三个实际 503；协议错误场景为实际畸形 JSON 后合法 finish。隐藏页已核对步骤 kind、工具名、入参、结果、错误码与 raw 展开。blocked run `c4d43380-725d-4995-87fc-1dbacf2d4f3d` 的 endReason=audit_blocked，send_message 步错误码为 AUDIT_REJECTED，auditVerdict=null；null 在这里表示未得到明确审计结论，不能写成审计服务明确 reject。协议错误 run `59d570f2-4337-41ed-aebd-564e103bc987` 的第一步为 protocol_error/BAD_JSON，下一步合法 finish，最终 finished/final。模拟器记录三次 blocked 文本审计调用、零对应网关发送请求。截图：[审计阻塞轨迹](evidence/core-agent-blocked.png)、[协议错误原始响应](evidence/core-agent-protocol.png)。
+CG-19 场景不新增外部协议能力。blocked 的审计配置为三个实际 503；协议错误场景为实际畸形 JSON 后合法 finish。隐藏页已核对步骤 kind、工具名、入参、结果、错误码与 raw 展开。blocked run `c4d43380-725d-4995-87fc-1dbacf2d4f3d` 的 endReason=audit_blocked，send_message 步错误码为 AUDIT_REJECTED，auditVerdict=null；null 在这里表示未得到明确审计结论，不能写成审计服务明确 reject。协议错误 run `59d570f2-4337-41ed-aebd-564e103bc987` 的第一步为 protocol_error/BAD_JSON，下一步合法 finish，最终 finished/final。清理前实际读取 gateway 与 agent 两个模拟器的 `/__control` 端点，并读取夹具 `/__qa/state` 关联运行；工具结果 `chunk_id=07d645` 显示三条审计记录均为文本“CG19 blocked 不应发送”，按同一文本筛选的网关请求记录为空。当时未单独归档这些响应；[附属工具结果转录](evidence/core-console-cg19-counter.tool-transcript.json) 是清理后根据已显示工具输出重建的记录，不是当时保存的原始文件。计数仅覆盖该文本及所读请求记录，不能外推整个 run 的全部副作用。截图：[审计阻塞轨迹](evidence/core-agent-blocked.png)、[协议错误原始响应](evidence/core-agent-protocol.png)。
 
 ## 本轮版本与清理
 

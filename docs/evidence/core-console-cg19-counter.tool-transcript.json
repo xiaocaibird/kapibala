@@ -1,0 +1,66 @@
+{
+  "evidenceKind": "post-run reconstruction from displayed tool output",
+  "originalStandaloneCapture": false,
+  "reconstructedAfterFixtureCleanup": true,
+  "source": {
+    "tool": "functions.exec -> tools.exec_command",
+    "chunk_id": "07d645",
+    "exit_code": 0,
+    "wall_time_seconds": 0.150796875,
+    "observationTime": "Before fixture cleanup; exact wall-clock observation timestamp was not present in the displayed result.",
+    "method": "Python urllib.request.urlopen GET; JSON responses parsed and selected fields printed.",
+    "requests": [
+      {
+        "variable": "s",
+        "method": "GET",
+        "url": "http://127.0.0.1:60518/__qa/state"
+      },
+      {
+        "variable": "g",
+        "method": "GET",
+        "url": "http://127.0.0.1:60513/__control"
+      },
+      {
+        "variable": "a",
+        "method": "GET",
+        "url": "http://127.0.0.1:60514/__control"
+      }
+    ]
+  },
+  "printedSelection": {
+    "blockedSendRequests": "[r for r in g['requests'] if isinstance(r.get('body'),dict) and r['body'].get('text')=='CG19 blocked 不应发送']",
+    "auditCalls": "a['audits']",
+    "runs": "{k:{'id':v['id'],'status':v['status'],'steps':len(v.get('steps',[]))} for k,v in s['runs'].items()}"
+  },
+  "displayedOutput": {
+    "blockedSendRequests": [],
+    "auditCalls": [
+      {
+        "text": "CG19 blocked 不应发送",
+        "groupId": "cf4657f5-1899-4e40-9b61-088c6090ee4c"
+      },
+      {
+        "text": "CG19 blocked 不应发送",
+        "groupId": "cf4657f5-1899-4e40-9b61-088c6090ee4c"
+      },
+      {
+        "text": "CG19 blocked 不应发送",
+        "groupId": "cf4657f5-1899-4e40-9b61-088c6090ee4c"
+      }
+    ],
+    "runs": {
+      "blocked": {
+        "id": "c4d43380-725d-4995-87fc-1dbacf2d4f3d",
+        "status": "blocked",
+        "steps": 1
+      }
+    }
+  },
+  "limits": [
+    "The complete HTTP response bodies were not separately saved during the observation.",
+    "The displayed auditCalls array contained exactly the three records reproduced here.",
+    "The empty blockedSendRequests array proves only that the gateway request records read at that moment contained no dictionary body with the specified text.",
+    "The predicate did not filter by runId or request path and does not establish that the whole run had no other side effects.",
+    "No service, database, test, or browser verification was rerun to reconstruct this file."
+  ]
+}
