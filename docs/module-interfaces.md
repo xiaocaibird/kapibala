@@ -14,6 +14,6 @@ MessagingService.enqueueSend(input,tx?) 返回公开 Message（包含稳定 id�
 
 执行单元只提交自己的模块及模块测试、文档。禁止改原始需求、共享 package/lock、入口、共享契约、其他模块。迁移与依赖修改先协调。
 
-## 本批群 metadata 契约变更（实施中）
+## 本批群 metadata 契约变更（已实现，待用户验收）
 
-[CR-001、CR-002、CR-005](change-requests.md)计划为 Group 增加本地可空名称、简介和 `createdAt: string`；日期仍按 ISO UTC 输出，取已有 `groups.created_at`。创建请求可省略新字段；PATCH 未提供的字段保持原值，简介显式清空才写空值。名称/简介不发送到 gateway，旧ID契约不变。字段校验建议、数据保留及最终实现提交以台账为准，此处不预先声明接口已经上线。
+[CR-001、CR-002、CR-005](change-requests.md)已为 Group 增加本地可空名称、简介和 `createdAt: string`；日期仍按 ISO UTC 输出，取已有 `groups.created_at`。创建请求可省略新字段；PATCH 未提供的字段保持原值，简介显式清空才写空值。名称/简介不发送到 gateway，旧ID契约不变。字段校验建议、数据保留及最终实现提交以台账为准，当前schema5演示已启用，见[运行证据](evidence/group-metadata-rollout.json)。

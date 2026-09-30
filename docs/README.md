@@ -26,21 +26,25 @@
 
 | 用途 | 本地路径 | 版本说明 |
 |---|---|---|
-| 本地main及当前演示目录 | `/Users/zcm/Desktop/kapibala` | 完整代码已本地合入；当前演示启动源码为9befc8a，产品源码与f52faec一致，后续测试/文档提交另记 |
-| 发布验证工作树 | `/Users/zcm/.codex/worktrees/platform-gateway/kapibala` | `agent/platform-release`；当前最终验证在此执行，含时间线自动重试修复 |
+| 本地main及当前演示目录 | `/Users/zcm/Desktop/kapibala` | 群资料扩展已本地合入；20:57:22启动源码7efdbf3，产品源码与已验证2d67500一致 |
+| 发布验证工作树 | `/Users/zcm/.codex/worktrees/platform-gateway/kapibala` | `agent/group-metadata-release`；本批集成及隔离验证在此执行 |
 | 历史实施目录 | `/Users/zcm/.codex/worktrees/42fe/kapibala` | 旧演示已停止；保留实施历史和较早日志，不再从此目录启动默认端口 |
 
-服务已运行，直接访问 [本地控制台](http://127.0.0.1:5173)，管理员 `admin/admin`，只读账号 `viewer/viewer`。2026-09-30 19:57:51（北京时间）统一从main启动：父进程6107、模拟服务6109、业务API6110、Vite6111。运行manifest明确记录源码`9befc8a580eb5dc034ed5771d3f3dfc3e756eb76`，产品源码树与`f52faec`完全一致，健康检查schemaVersion为4。此前冻结已按D015结束；旧进程73373/73375/73376/73377属于历史运行记录。
+服务已运行，直接访问 [本地控制台](http://127.0.0.1:5173)，管理员 `admin/admin`，只读账号 `viewer/viewer`。2026-09-30 **20:57:22（北京时间）**从main的 `7efdbf3` 启动本批群资料功能，产品源码与已验证 `2d67500` 一致：父进程58240、模拟服务58241、业务API58242、Vite58243，健康检查schemaVersion为5。运行manifest在main的 `.runtime/runtime-manifest.json`，后续文档提交不改变该次已加载产品源码。
 
-更新前已备份PostgreSQL及两个模拟器状态文件，保留原容器和卷；迁移前后17张表的规范化JSON完全一致。旧群保留4成员、5消息、1个Agent运行和1个序列运行。更新后另建了开发者复验群，检查通过后保留，不能将新增复验记录误算为旧数据改变。[统一演示运行证据](evidence/demo-verification.json)记录进程、版本、哈希、备份、复验对象与待处理任务计数。
+群名称、简介、创建时间与变更台账已交付，具体规则和待确认项见[CR-001–CR-005](change-requests.md)。迁移005只增加两个可空本地字段；更新前已备份PG及模拟器状态，17张业务与会话表的既有字段规范化JSON在迁移前后完全一致，4个旧群保持无名称/简介且创建时间不变。用户新群及“你好，我是用户4”消息已在更新后只读核对；两个模拟器文件备份与启动后哈希相同。[本批运行证据](evidence/group-metadata-rollout.json)记录版本、进程、备份、保留核对和独立页面结果。
+
+19:57:51启动的9befc8a、父6107/API6110等属于上一轮运行，见[历史统一演示证据](evidence/demo-verification.json)。此前开发者新增的复验群及用户数据均保留，不回删历史数据。
 
 原始目录的文档入口为 `/Users/zcm/Desktop/kapibala/docs/README.md`。后续本地启动默认使用此main目录；只有服务未运行时才执行冷启动命令，不要同时从两个工作树启动默认端口。
 
 ## 来源与证据边界
 
+本批 `2d67500` 构建、类型和原文校验通过，独立临时base库常规143项登记、140通过、3跳过、0失败，111.872秒；新增字段创建/编辑/清空、旧群回退、跨日时间和viewer只读通过独立浏览器检查，见[本批验证](evidence/group-metadata-verification.json)。用户对新群资料功能仍待验收。
+
 文档由最初工程基线持续更新，最新源码版本、测试命令、日志、浏览器场景及待验范围集中记录在[需求矩阵](requirements-matrix.md)。较早日志保留其时间和覆盖范围，不能证明后来发现的并发或故障窗口；R11活动时钟接管初始化竞态已在候选`f52faec`修复，真实PG屏障回归与模块检查通过；最终82312b9隔离基库常规128项登记、125通过、3跳过、0失败，f52faec相同产品源的独立真实长计时3/3通过，新版演示关键流程已由开发者复验通过，用户人工验收仍待进行。十一项实现缺陷单独记录在可靠性复查表，不与外部协议本身缺少判定证据的限制混同。
 
-用户全面人工验收尚未完成；已反馈的账号与一次建群单点观察见[需求变更记录](change-requests.md#用户单点观察记录)，其余项目仍应对当前统一演示版本逐项确认。当前版本的开发者截图为[Agent步骤](evidence/demo-agent.png)、[序列预检与执行](evidence/demo-sequence.png)、[viewer只读](evidence/demo-viewer.png)。较早开发者浏览器证据包括[序列运行](evidence/console-sequence.png)、[只读视图](evidence/console-viewer.png)、[断线恢复数据](evidence/browser-reconnect.json)与[断线恢复截图](evidence/console-reconnect.png)；另有新版[断线与503自动恢复数据](evidence/browser-reconnect-retry.json)、[截图](evidence/console-reconnect-retry.png)、[发布测试清单](evidence/release-verification.json)和[已有数据迁移验证](evidence/migration-upgrade.json)。每份证据只适用于其记录的版本和场景。
+用户全面人工验收尚未完成；已反馈的账号与一次建群单点观察见[需求变更记录](change-requests.md#用户单点观察记录)，其余项目仍应对当前统一演示版本逐项确认。上一轮基础功能开发者截图为[Agent步骤](evidence/demo-agent.png)、[序列预检与执行](evidence/demo-sequence.png)、[viewer只读](evidence/demo-viewer.png)。较早开发者浏览器证据包括[序列运行](evidence/console-sequence.png)、[只读视图](evidence/console-viewer.png)、[断线恢复数据](evidence/browser-reconnect.json)与[断线恢复截图](evidence/console-reconnect.png)；另有新版[断线与503自动恢复数据](evidence/browser-reconnect-retry.json)、[截图](evidence/console-reconnect-retry.png)、[发布测试清单](evidence/release-verification.json)和[已有数据迁移验证](evidence/migration-upgrade.json)。每份证据只适用于其记录的版本和场景。
 
 原始需求 SHA-256：`c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75`。可在项目根目录不依赖安装直接核验：
 

@@ -6,7 +6,7 @@
 
 ## 证据口径与版本
 
-本轮依据最终源码与测试提交 `82312b905016cc3cca577aca267d795250d5d3a4` 及下述日志；产品源码与 `f52faec` 一致，记录时间 2026-09-30 晚间（北京时间）。测试名称与路径见文末索引；后续修订需更新版本及受影响条目。**全部用户人工验收仍待进行**；开发者浏览器检查、自动验证均不等于用户已验收。
+本批群资料功能依据 `2d67500` 验证并从 `7efdbf3` 启动，新增要求见[变更台账](change-requests.md)；原基础功能的逐项历史证据以 `82312b9` 及之前版本保留，不能把当时的同源码说明扩展到新增功能。测试名称与路径见文末索引；后续修订需更新版本及受影响条目。**用户全面人工验收尚未完成，已确认的单点见变更台账**；开发者浏览器检查、自动验证均不等于用户已验收。
 
 - **自动通过**：已实际执行且断言覆盖本行描述的场景，不扩大到未测分支。
 - **部分验证**：已有实现和部分证据，列出的分支或时限仍待验证。
@@ -19,9 +19,10 @@
 
 | 证据 | 执行结果与覆盖 | 版本边界 |
 |---|---|---|
-| 发布工作树 `.runtime/release-isolated-verification.log` | 128登记，125通过、3跳过、0失败，112.206秒；R1–R11及B38通过；额外临时base库与测试隔离资源已清理 | `82312b9`，相对f52faec仅测试和文档变化；Node计数含10个嵌套子场景 |
+| 本批 `.runtime/group-metadata-isolated-verification.log` | 143登记，140通过、3计时跳过、0失败，111.872秒；新增后端8项和前端7项均进入常规回归；独立base资源已清理 | `2d67500`；结构化结果见[本批验证](evidence/group-metadata-verification.json) |
+| 历史日志名 `.runtime/release-isolated-verification.log`（原路径后续复用，旧哈希存结构化记录） | 128登记，125通过、3跳过、0失败，112.206秒；R1–R11及B38通过；额外临时base库与测试隔离资源已清理 | `82312b9`，相对f52faec仅测试和文档变化；Node计数含10个嵌套子场景 |
 | 上轮发布工作树 `.runtime/release-final-verification.log` | 127登记，124通过、3跳过、0失败，111.589秒；含B37，R1–R11修复均进入常规回归 | `f52faec`；Node计数包含10个嵌套子场景 |
-| 发布工作树 `.runtime/release-final-timing.log` | B21–B23同产品源码独立3/3通过，94.470秒；单项13.614/16.485/60.032秒 | `f52faec`；与最终产品源一致，未因纯测试/文档变化重复长等待；常规skip与独立执行分开计数 |
+| 发布工作树 `.runtime/release-final-timing.log` | B21–B23同产品源码独立3/3通过，94.470秒；单项13.614/16.485/60.032秒 | `f52faec`；与当时82312b9产品源一致，未因当时纯测试/文档变化重复长等待；常规skip与独立执行分开计数 |
 | 上轮发布工作树 `.runtime/release-verification.log` | 126登记，123通过、3跳过、0失败，111.47秒；P01–P15、G01–G31、B01–B20/B24–B36、M01–M11、T01–T03、R01–R05、H01、D01、W01–W13均通过 | `32bd438`；Node计数包含10个嵌套子场景，与本表顶层名称数量不同 |
 | 上轮发布工作树 `.runtime/release-timing.log` | B21–B23同版本独立3/3通过，94.252秒；单项13.541/16.468/60.032秒，含观察等待 | `32bd438`；常规skip与独立实际执行分开计数 |
 | [已有数据迁移验证](evidence/migration-upgrade.json) | 001+002真实旧库升级至003+004，全部既有消息/run/events字段不变、active_ms保留12345；二次迁移幂等；独立库已清理 | `32bd438`专项使用独立库；另有旧auth测试提前迁移演示库，见D016 |
@@ -30,7 +31,9 @@
 
 本轮日志位于 `/Users/zcm/.codex/worktrees/platform-gateway/kapibala/.runtime/`，历史日志位于旧实施工作树 `.runtime/`；原始日志属于忽略目录。R1–R11均已修复并通过82312b9最终常规回归，相同产品源码的独立长计时也通过；B37真实PG屏障修前失败、修后通过；82312b9补充真实PG锁状态证明follower正在等待，并新增B38初始化owner连接终止后的接管，2/2专项通过。新版B4的独立浏览器证据来自`32bd438`，与最终候选分别记录。[结构化测试记录](evidence/release-verification.json)保存最终128项常规测试与三项长计时各自的源码、日志哈希及测试隔离纠正记录。逐项修复和复验见[可靠性复查](reliability-review.md)。
 
-**当前统一演示：**main目录`/Users/zcm/Desktop/kapibala`，2026-09-30 19:57:51北京时间从`9befc8a580eb5dc034ed5771d3f3dfc3e756eb76`启动；父6107、模拟6109、API6110、Vite6111，health schemaVersion=4。manifest保存源码树哈希，产品源与`f52faec`完全一致。原PG容器卷保留，PG dump及两个模拟器JSON已备份校验，本次迁移前后17张表规范化JSON全一致。旧群4成员/5消息/1Agent/1序列保留；新开发者复验群`4e1fa8c5-ea29-40a6-b432-1490d4dfaa5b`明确新增并保留。正常关键流程已复验，原Chrome账号页仍登录且4账号online，待处理jobs/Agent/sequence/outgoing均0。具体见[运行与复验证据](evidence/demo-verification.json)，全部用户人工验收仍待进行。
+**上一轮统一演示（已于20:57:22替换）：**main目录`/Users/zcm/Desktop/kapibala`，2026-09-30 19:57:51北京时间从`9befc8a580eb5dc034ed5771d3f3dfc3e756eb76`启动；父6107、模拟6109、API6110、Vite6111，health schemaVersion=4。manifest保存源码树哈希，产品源与`f52faec`完全一致。原PG容器卷保留，PG dump及两个模拟器JSON已备份校验，本次迁移前后17张表规范化JSON全一致。旧群4成员/5消息/1Agent/1序列保留；新开发者复验群`4e1fa8c5-ea29-40a6-b432-1490d4dfaa5b`明确新增并保留。正常关键流程已复验，原Chrome账号页仍登录且4账号online，待处理jobs/Agent/sequence/outgoing均0。具体见[运行与复验证据](evidence/demo-verification.json)，全部用户人工验收仍待进行。
+
+**当前群资料演示：**main于20:57:22从 `7efdbf3` 启动，产品源与已验证 `2d67500` 一致，health schema5。005 nullable迁移两次执行后17表既有字段完全相同，4个旧群时间未改；用户最新群/消息在独立viewer页面保留，见[本批运行证据](evidence/group-metadata-rollout.json)。首轮gateway/automation曾使用默认库随机schema，之后独立库76通过/3跳过及完整独立base140通过已分别登记；不称首轮完全未接触演示库。
 
 **测试环境历史修正：**冻结阶段旧auth测试连接默认演示kapibala库并执行两次迁移、写入测试会话，使其提前达到schema 4；业务行未被删除。`9befc8a`改auth/core/database为专用临时库，7项针对性检查及初始化失败清理通过；完整隔离基库复跑128登记/125通过/3跳过已单列，不以新修复抹去此前影响。原数据和会话保留。旧42fe进程已停止，历史后端34d9af2仅为推断版本，当前演示以manifest为准。
 
@@ -336,6 +339,6 @@ D01 在当前集成工作树中已执行，其文件随基础容量修复提交�
 
 最终82312b9常规套已覆盖B17–B38恢复/协议/审计/时钟、G23–G31状态/错误/失锁/旧404、M01–M11成员并发/重入、T01–T03事务锁/本地重试/提交FIFO，以及P13–P15真实HTTP链和W09–W13快照恢复。B21–B23长计时在产品源码相同的f52faec独立通过。上述已有执行证据的条目不再保留“测试待补”；仍未覆盖的细分断言按各行明确列出。
 
-剩余验收与证据边界：旧404已修复且G30专项通过；R1–R10及同版本长计时/新版B4均有通过证据；新增R11及B38已进入82312b9最终全套，相同产品源码长计时通过；表内其他未覆盖细分分支与全部用户人工验收仍待进行。当前统一演示已记录9befc8a源码manifest并完成开发者关键流程复验，用户需按当前版本重新验收。长时序复现命令：`AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern="timing:" tests/integration/automation.test.ts`。
+剩余验收与证据边界：旧404已修复且G30专项通过；R1–R10及同版本长计时/新版B4均有通过证据；新增R11及B38已进入82312b9最终全套，相同产品源码长计时通过；表内其他未覆盖细分分支与全面用户验收仍待完成，已确认单点见变更台账。上一轮统一演示记录9befc8a源码manifest及开发者关键流程复验；当前群资料版本7efdbf3见本批运行证据，按版本分别验收。长时序复现命令：`AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern="timing:" tests/integration/automation.test.ts`。
 
-当前统一演示开发者浏览器补充：缺变量预检阻断→补stepVars→查看展开文本和来源→两步sent；Agent审计pass、3步final；viewer页面无写入口。证据：[运行清单](evidence/demo-verification.json)、[Agent](evidence/demo-agent.png)、[序列](evidence/demo-sequence.png)、[只读账号](evidence/demo-viewer.png)。这些不是用户人工验收结果。
+上一轮统一演示开发者浏览器补充：缺变量预检阻断→补stepVars→查看展开文本和来源→两步sent；Agent审计pass、3步final；viewer页面无写入口。证据：[运行清单](evidence/demo-verification.json)、[Agent](evidence/demo-agent.png)、[序列](evidence/demo-sequence.png)、[只读账号](evidence/demo-viewer.png)。这些不是用户人工验收结果。

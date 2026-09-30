@@ -6,9 +6,9 @@
 
 `gateway/index.ts` 注册 REST 并独立调度账号发送、群任务、限流恢复及事件重试。`accounts.ts` 负责账号操作；`state.ts` 维护跨模块原子状态后果；`messages.ts` 是所有来源共用的发送与成员移除适配；`jobs.ts` 执行持久建群/退群步骤；`events.ts` 接收、校验、重放和去重网关事件。长远端请求只占所属后台任务，不阻塞全局 tick。
 
-## 群 metadata 增量变更（实施中）
+## 群 metadata 增量变更（已实现，待用户验收）
 
-名称、简介和创建时间展示见[CR-001、CR-002、CR-005](change-requests.md)。新名称/简介作为本地 nullable 字段，创建任务需持久保存可选输入，改名/改简介不调用 gateway；旧创建请求兼容，局部 PATCH 不覆盖省略字段。创建时间沿用已有 `created_at`，本批不重写旧业务记录。具体提交、迁移验证及上线状态由台账补录；既有 `created_at DESC,id` 排序与待确认方向见 CR-003。
+名称、简介和创建时间展示见[CR-001、CR-002、CR-005](change-requests.md)。新名称/简介作为本地 nullable 字段，创建任务持久保存可选输入，改名/改简介不调用 gateway；旧创建请求兼容，局部 PATCH 不覆盖省略字段。创建时间沿用已有 `created_at`，本批不重写旧业务记录。具体提交、迁移验证及上线状态已在台账记录；既有 `created_at DESC,id` 排序与待确认方向见 CR-003。
 
 ## 状态与并发
 
