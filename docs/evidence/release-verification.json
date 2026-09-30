@@ -1,0 +1,48 @@
+{
+  "sourceCommit": "32bd438fd65ee521f195d206c975591cef647a76",
+  "workspace": "/Users/zcm/.codex/worktrees/platform-gateway/kapibala",
+  "verifiedAt": "2026-09-30T11:44:14.477Z",
+  "node": "24.21.0",
+  "npm": "12.1.0",
+  "checks": [
+    {
+      "command": "npm run build",
+      "result": "passed"
+    },
+    {
+      "command": "npm run verify:original",
+      "result": "passed",
+      "sha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75"
+    },
+    {
+      "command": "npm test",
+      "tests": 126,
+      "passed": 123,
+      "skipped": 3,
+      "failed": 0,
+      "durationMs": 111474.210167,
+      "log": ".runtime/release-verification.log",
+      "logSha256": "df081bd9e5d95e3128dd4118700a8fb8f830f38d254421941f606cd40f6e1069"
+    },
+    {
+      "command": "AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern='^timing:' tests/integration/automation.test.ts",
+      "tests": 3,
+      "passed": 3,
+      "skipped": 0,
+      "failed": 0,
+      "durationMs": 94251.666584,
+      "individualDurationMs": [
+        13541.433791,
+        16468.223458,
+        60031.952333
+      ],
+      "log": ".runtime/release-timing.log",
+      "logSha256": "f28c3d1f074ec909856a744adbac569c636113edb1dfece61c2c92be7e1b577f"
+    }
+  ],
+  "limits": [
+    "Developer regression evidence is not user acceptance.",
+    "C1 media, C2 real model, and C3 complete Playwright suite remain unimplemented and outside this phase.",
+    "Existing demo process is not the candidate; see acceptance.md for separate frontend/backend provenance."
+  ]
+}

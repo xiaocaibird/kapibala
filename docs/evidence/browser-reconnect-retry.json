@@ -1,0 +1,22 @@
+{
+  "scenario": "hidden IAB; isolated real PostgreSQL and random-port services; block business WebSocket, inject 55 new and one historical message, fail first timeline GET with HTTP 503 after reconnect",
+  "sourceCommit": "32bd438fd65ee521f195d206c975591cef647a76",
+  "browser": "Codex in-app browser, hidden",
+  "initialCount": 3,
+  "addedNewMessages": 55,
+  "addedHistoryMessages": 1,
+  "historySentAt": "2000-01-01T00:00:00.000Z",
+  "resumedAt": 1790768600799,
+  "firstSnapshotFailedAt": 1790768602387,
+  "failedRequests": 1,
+  "domRenderedAt": 1790768602671,
+  "elapsedMs": 1872,
+  "retryToRenderMs": 284,
+  "totalVisibleRows": 59,
+  "newRows": 55,
+  "historyRows": 1,
+  "manualRefresh": false,
+  "additionalMessageTrigger": false,
+  "clock": "Same Mac wall clock; QA-only passive MutationObserver records loaded-row DOM count",
+  "limits": "One local 59-row, two-page scenario. Does not prove arbitrary history volumes, every network failure mode, or full OS network outage."
+}

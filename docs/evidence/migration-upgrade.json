@@ -1,0 +1,53 @@
+{
+  "startedAt": "2026-09-30T11:44:07.158Z",
+  "database": "migration_upgrade_qa_584c165a654f4e8fb3ea6b20541afde7",
+  "releaseHead": "32bd438",
+  "checks": [
+    "All existing message columns unchanged",
+    "All existing run columns unchanged, active_ms remains 12345",
+    "Existing event rows unchanged",
+    "003 adds a non-null activity timestamp to the existing run",
+    "004 creates one valid message-order expression index",
+    "Migration ledger upgraded from 2 to 4 without rewriting previous entries",
+    "Second migrate preserves all rows, timestamps, ledger and index count"
+  ],
+  "result": "passed",
+  "beforeVersion": 2,
+  "afterVersion": 4,
+  "repeatedMigration": "passed",
+  "seededMessageId": "upgrade-message",
+  "seededRunId": "upgrade-run",
+  "preservedActiveMs": "12345",
+  "addedColumn": {
+    "name": "activity_updated_at",
+    "data_type": "timestamp with time zone",
+    "is_nullable": "NO",
+    "column_default": "date_trunc('milliseconds'::text, now())",
+    "seededRunValue": "2026-09-30T11:44:07.241Z"
+  },
+  "addedIndex": {
+    "relname": "events_message_order",
+    "indisvalid": true,
+    "definition": "CREATE INDEX events_message_order ON public.events USING btree (((payload ->> 'id'::text)), seq) WHERE (type = 'message'::text)"
+  },
+  "migrations": [
+    {
+      "version": 1,
+      "name": "001_core.sql"
+    },
+    {
+      "version": 2,
+      "name": "002_automation.sql"
+    },
+    {
+      "version": 3,
+      "name": "003_agent_activity.sql"
+    },
+    {
+      "version": 4,
+      "name": "004_message_event_order.sql"
+    }
+  ],
+  "cleanedUp": true,
+  "finishedAt": "2026-09-30T11:44:07.278Z"
+}
