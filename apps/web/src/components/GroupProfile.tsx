@@ -10,6 +10,8 @@ import {
 } from "../api/groupProfile";
 import { groupSchema, type Group } from "../api/schemas";
 import { DateTime, ErrorNotice, Modal } from "./ui";
+import { useGroupFormGuard } from "../hooks/useGroupFormGuard";
+import { GroupDiscardPrompt } from "./GroupDiscardPrompt";
 
 export function GroupProfile({
   group,
@@ -69,19 +71,14 @@ export function EditGroupProfile({
     name: group.name ?? "",
     description: group.description ?? "",
   }));
-  const [error, setError] = useState<unknown>(null);
-  const [busy, setBusy] = useState(false);
   const hasChanges =
     draft.name !== (original.name ?? "") ||
     draft.description !== (original.description ?? "");
-  const close = () => {
-    if (!busy) onClose();
-  };
+  const guard = useGroupFormGuard(hasChanges, onClose);
+  const { busy } = guard;
   const submit = async (event: FormEvent): Promise<void> => {
     event.preventDefault();
-    setError(null);
-    setBusy(true);
-    try {
+    await guard.submit(async (isCurrent) => {
       const changes = changedGroupProfile(original, draft);
       if (Object.keys(changes).length) {
         await patch(
@@ -89,22 +86,19 @@ export function EditGroupProfile({
           groupSchema,
           changes,
         );
+        if (!isCurrent()) return;
         await onSaved();
       }
-      onClose();
-    } catch (value) {
-      setError(value);
-    } finally {
-      setBusy(false);
-    }
+      if (isCurrent()) onClose();
+    });
   };
   return (
-    <Modal title="编辑群资料" onClose={close}>
+    <Modal title="编辑群资料" onClose={guard.close}>
       <form onSubmit={(event) => void submit(event)}>
         <p className="muted">
           名称便于辨识群组，简介帮助成员了解用途。仅保存本次修改的资料。
         </p>
-        <ErrorNotice error={error} />
+        <ErrorNotice error={guard.error} />
         <label>
           群名称
           <input
@@ -145,7 +139,7 @@ export function EditGroupProfile({
             type="button"
             className="button secondary"
             disabled={busy}
-            onClick={close}
+            onClick={guard.close}
           >
             取消
           </button>
@@ -154,6 +148,12 @@ export function EditGroupProfile({
           </button>
         </div>
       </form>
+      {guard.confirmDiscard && (
+        <GroupDiscardPrompt
+          onContinue={guard.continueEditing}
+          onDiscard={guard.discard}
+        />
+      )}
     </Modal>
   );
 }

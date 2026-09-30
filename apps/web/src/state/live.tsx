@@ -13,10 +13,12 @@ import {
 } from "../api/client";
 import { eventSchema, type PlatformEvent } from "../api/schemas";
 import { useAuth } from "./auth";
+import { affectsGroupDirectory } from "../directory/controller";
 export type ConnectionState = "connecting" | "live" | "reconnecting";
 interface LiveState {
   connection: ConnectionState;
   revision: number;
+  directoryRevision: number;
   notices: PlatformEvent[];
   dismiss: (seq: number) => void;
 }
@@ -25,6 +27,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [connection, setConnection] = useState<ConnectionState>("connecting");
   const [revision, setRevision] = useState(0);
+  const [directoryRevision, setDirectoryRevision] = useState(0);
   const [notices, setNotices] = useState<PlatformEvent[]>([]);
   useEffect(() => {
     if (!user) return;
@@ -36,11 +39,17 @@ export function LiveProvider({ children }: { children: ReactNode }) {
     const storageKey = `kapibala:events:${user.username}`;
     let lastSeq = Number(sessionStorage.getItem(storageKey) ?? 0);
     if (!Number.isSafeInteger(lastSeq) || lastSeq < 0) lastSeq = 0;
-    const invalidate = (): void => {
+    let directoryPending = false;
+    const invalidate = (directory = false): void => {
+      directoryPending ||= directory;
       if (batchTimer) return;
       batchTimer = setTimeout(() => {
         batchTimer = undefined;
-        if (!disposed) setRevision((value) => value + 1);
+        if (!disposed) {
+          setRevision((value) => value + 1);
+          if (directoryPending) setDirectoryRevision((value) => value + 1);
+        }
+        directoryPending = false;
       }, 60);
     };
     const connect = async (): Promise<void> => {
@@ -83,7 +92,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
           if ("success" in data && data.success === true) {
             clearTimeout(handshakeTimer);
             setConnection("live");
-            invalidate();
+            invalidate(true);
           } else current.close(4001, "authentication failed");
           return;
         }
@@ -102,7 +111,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
               parsed.data,
             ].slice(-8),
           );
-        invalidate();
+        invalidate(affectsGroupDirectory(parsed.data.type));
       };
       current.onerror = () => current.close();
       current.onclose = (event) => {
@@ -126,7 +135,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
     void connect();
     const visibility = () => {
       if (document.visibilityState === "visible") {
-        invalidate();
+        invalidate(true);
         if (socket?.readyState === WebSocket.CLOSED) void connect();
       }
     };
@@ -147,6 +156,7 @@ export function LiveProvider({ children }: { children: ReactNode }) {
       value={{
         connection,
         revision,
+        directoryRevision,
         notices,
         dismiss: (seq) =>
           setNotices((items) => items.filter((item) => item.seq !== seq)),

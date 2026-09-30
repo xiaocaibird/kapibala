@@ -45,7 +45,7 @@ export function JobProgress({
         </div>
       ))}
       {data?.status === "finished" && (
-        <p className="success-text">任务已完成，列表已更新。</p>
+        <p className="success-text">任务已完成，可刷新列表查看。</p>
       )}
     </div>
   );

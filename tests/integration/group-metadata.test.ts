@@ -380,6 +380,6 @@ test("group metadata migration leaves legacy group creation timestamps unchanged
   assert.equal(
     (await db.query("SELECT max(version) AS version FROM schema_migrations"))
       .rows[0]!.version,
-    5,
+    6,
   );
 });
