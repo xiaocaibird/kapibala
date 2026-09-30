@@ -6,6 +6,7 @@ import {
 import { sequenceRunSchema } from "../api/schemas";
 import { useResource } from "../hooks/useResource";
 import { Badge, DateTime, ErrorNotice, JsonView, Loading } from "./ui";
+import { SequenceStepTime } from "./SequenceStepTime";
 export function SequenceProgress({ id }: { id: string }) {
   const {
     data: run,
@@ -94,10 +95,7 @@ export function SequenceProgress({ id }: { id: string }) {
                         <span>
                           计划发送 <DateTime value={step.scheduledAt} />
                         </span>
-                        <span>
-                          {step.status === "skipped" ? "跳过时间" : "实际发出"}{" "}
-                          <DateTime value={step.sentAt} />
-                        </span>
+                        <SequenceStepTime step={step} />
                       </div>
                       {step.clientMsgId && (
                         <code

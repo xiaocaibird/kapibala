@@ -13,6 +13,7 @@ import { sentSchema, type Account, type Group } from "../api/schemas";
 import { useTimeline } from "../hooks/useTimeline";
 import { useAuth } from "../state/auth";
 import { Badge, DateTime, Empty, ErrorNotice, Icon, Loading } from "./ui";
+import { availableSenders, resolveSenderSelection } from "./senderSelection";
 export function Timeline({
   group,
   accounts,
@@ -71,11 +72,7 @@ export function Timeline({
   const scroller = useRef<HTMLDivElement>(null);
   const nearBottom = useRef(true);
   const previousHeight = useRef<number | null>(null);
-  const candidates = accounts.filter(
-    (account) =>
-      group.members.some((member) => member.accountId === account.id) &&
-      ["online", "rate_limited"].includes(account.status),
-  );
+  const candidates = availableSenders(accounts, group.members);
   const senders = useAttentionCollection({
     targetId: `senders:${group.id}`,
     label: "可用发送身份列表有更新",
@@ -114,9 +111,12 @@ export function Timeline({
       </div>
     ),
   });
-  const selected = candidates.some((account) => account.id === accountId)
-    ? accountId
-    : (candidates[0]?.id ?? "");
+  const selected = resolveSenderSelection(accountId, candidates);
+  const senderAvailable = candidates.some((account) => account.id === selected);
+  useLayoutEffect(() => {
+    // Retain the initial default too, so later snapshots cannot silently change it.
+    if (!accountId && selected) setAccountId(selected);
+  }, [accountId, selected]);
   useLayoutEffect(() => {
     const element = scroller.current;
     if (!element) return;
@@ -127,7 +127,7 @@ export function Timeline({
   }, [timeline.items]);
   const send = async (event: FormEvent): Promise<void> => {
     event.preventDefault();
-    if (!text.trim() || !selected) return;
+    if (!text.trim() || !senderAvailable || group.status !== "active") return;
     const clientMsgId = crypto.randomUUID();
     ownSends.register(clientMsgId);
     setBusy(true);
@@ -251,6 +251,12 @@ export function Timeline({
                 rows={2}
                 maxLength={20_000}
               />
+              {selected && !senderAvailable && (
+                <div className="notice warning" role="status">
+                  原发送身份 {selected}{" "}
+                  已不可用，请重新选择后再发送。消息草稿已保留。
+                </div>
+              )}
               <div className="split">
                 <label className="inline-label">
                   发送身份
@@ -263,6 +269,11 @@ export function Timeline({
                     <option value="" disabled>
                       暂无可用账号
                     </option>
+                    {selected && !senderAvailable && (
+                      <option value={selected} disabled>
+                        {selected}（不可用，请重新选择）
+                      </option>
+                    )}
                     {candidates.map((account) => (
                       <option key={account.id} value={account.id}>
                         {account.id}
@@ -275,7 +286,7 @@ export function Timeline({
                 </label>
                 <button
                   className="button primary"
-                  disabled={busy || !selected || !text.trim()}
+                  disabled={busy || !senderAvailable || !text.trim()}
                 >
                   {busy ? "提交中…" : "发送消息"}
                   <Icon name="arrow" size={16} />
