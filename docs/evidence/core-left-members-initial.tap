@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: LM01 D042: leave-all exits only managed accounts, creator last; final HTTP and DB members match current external facts
+ok 1 - LM01 D042: leave-all exits only managed accounts, creator last; final HTTP and DB members match current external facts
+  ---
+  duration_ms: 181.2705
+  type: 'test'
+  ...
+# isolated database: kapibala_test_4af38f7da4d141df9ce54af40b38e1ae
+# Subtest: LM02 D042: left member replay reconciles external joins/leaves but never resurrects managed members; failed reads retry
+ok 2 - LM02 D042: left member replay reconciles external joins/leaves but never resurrects managed members; failed reads retry
+  ---
+  duration_ms: 131.064375
+  type: 'test'
+  ...
+# isolated database: kapibala_test_48fed3771bf84e39aea5917e06ae3323
+# Subtest: LM03 D042: a non-creator failure still continues others and keeps creator, failed account and active state
+ok 3 - LM03 D042: a non-creator failure still continues others and keeps creator, failed account and active state
+  ---
+  duration_ms: 94.893209
+  type: 'test'
+  ...
+# isolated database: kapibala_test_d147bd3aad4f422f9b18d3a83339e9d7
+# Subtest: LM04 D042: final membership transaction failure recovers without another leave or partial left state
+ok 4 - LM04 D042: final membership transaction failure recovers without another leave or partial left state
+  ---
+  duration_ms: 112.721208
+  type: 'test'
+  ...
+# isolated database: kapibala_test_e6e4d273be004787a987e3193e59986f
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: LM05 D042: preserved external members cannot enable sending, kick, sequence or Agent recovery in a left group
+ok 5 - LM05 D042: preserved external members cannot enable sending, kick, sequence or Agent recovery in a left group
+  ---
+  duration_ms: 255.4875
+  type: 'test'
+  ...
+# isolated database: kapibala_test_7f776a8ca88b4cad9d8cfc24ca4e6054
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 933.377125

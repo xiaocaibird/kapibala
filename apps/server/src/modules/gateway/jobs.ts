@@ -12,6 +12,7 @@ import {
   isTerminal,
 } from "./models.js";
 import { changeAccount } from "./state.js";
+import { reconcileLeftMembers } from "./left-membership.js";
 
 async function notifyJob(tx: Queryable, before: JobRow): Promise<void> {
   const after = (
@@ -501,16 +502,19 @@ export class Jobs {
           })),
         ];
         const changedFields: string[] = [];
+        let memberCountChanged = false;
         if (!completionErrors.length) {
-          const removed = await tx.query(
-            "DELETE FROM members WHERE group_id=$1",
-            [group.id],
+          const membership = await reconcileLeftMembers(
+            tx,
+            group.id,
+            gatewayMembers,
           );
+          memberCountChanged = membership.countChanged;
           const left = await tx.query(
             "UPDATE groups SET status='left' WHERE id=$1 AND status<>'left'",
             [group.id],
           );
-          if (removed.rowCount) changedFields.push("members");
+          if (membership.changed) changedFields.push("members");
           if (left.rowCount) changedFields.push("status");
           await tx.query(
             "UPDATE agent_runs SET cancel_requested=true WHERE group_id=$1 AND status='running'",
@@ -535,9 +539,7 @@ export class Jobs {
             groupId: group.id,
             status: "left",
             changedFields,
-            directoryChangedFields: changedFields.includes("members")
-              ? ["memberCount"]
-              : [],
+            directoryChangedFields: memberCountChanged ? ["memberCount"] : [],
           });
         await notifyJob(tx, job);
       });

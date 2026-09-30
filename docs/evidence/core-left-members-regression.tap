@@ -1,0 +1,371 @@
+TAP version 13
+# Subtest: CR01 migration 008 is atomic and repeatable, preserving actual old clocks and unknown historical receipts
+ok 1 - CR01 migration 008 is atomic and repeatable, preserving actual old clocks and unknown historical receipts
+  ---
+  duration_ms: 264.098375
+  type: 'test'
+  ...
+# isolated database: kapibala_test_2b166f18357d4bce86eaf38ace7a77c9
+# Subtest: CR02 business rollback leaves a reliable receipt, and a new event handler reuses its stable identity
+ok 2 - CR02 business rollback leaves a reliable receipt, and a new event handler reuses its stable identity
+  ---
+  duration_ms: 226.289792
+  type: 'test'
+  ...
+# isolated database: kapibala_test_bd4d31f0c1294c7197e91383e9b7f9a1
+# Subtest: CR03 receipt-write failure prevents business application and a surviving process retains its first clock
+ok 3 - CR03 receipt-write failure prevents business application and a surviving process retains its first clock
+  ---
+  duration_ms: 211.871625
+  type: 'test'
+  ...
+# isolated database: kapibala_test_61066117cafb490dbc86bc4fbd22df82
+# Subtest: CR04 SIGKILL after independent receipt commit preserves the clock through a new process and sequence recovery
+ok 4 - CR04 SIGKILL after independent receipt commit preserves the clock through a new process and sequence recovery
+  ---
+  duration_ms: 608.497583
+  type: 'test'
+  ...
+# isolated database: kapibala_test_4cad502f00c04bea8a5f84e947d55680
+# {"case":"CR04","signal":"SIGKILL","savedObservedAt":1790808033912,"replayStartedAt":1790808034181,"recoveredObservedAt":1790808033912,"nextScheduledAt":1790808093912}
+# Subtest: CR05 two processes keep the first reliable record, not a later writer's earlier physical observation
+ok 5 - CR05 two processes keep the first reliable record, not a later writer's earlier physical observation
+  ---
+  duration_ms: 554.320583
+  type: 'test'
+  ...
+# isolated database: kapibala_test_224335d026d14565a74499de8db8bdf0
+# {"case":"CR05","earlierProcessStartedAt":1790808034496,"winningProcessStartedAt":1790808034748,"firstReliableObservedAt":1790808034748,"unchangedAfterEarlierObserverContinued":true}
+# Subtest: CR06 SIGKILL before receipt persistence demonstrates the unrecoverable observation window
+ok 6 - CR06 SIGKILL before receipt persistence demonstrates the unrecoverable observation window
+  ---
+  duration_ms: 508.745167
+  type: 'test'
+  ...
+# isolated database: kapibala_test_36cc224b71ea472692b087ebf565ee80
+# {"case":"CR06","lostProcessStartedAt":1790808035021,"replayStartedAt":1790808035276,"firstReliableObservedAt":1790808035277,"originalPhysicalObservationRecovered":false,"faultInjection":"process paused before receipt SQL submission, then SIGKILL","boundary":"Only the new reliable observation survives; this is not reconstruction of the lost receipt."}
+# Subtest: LM01 D042: leave-all exits only managed accounts, creator last; final HTTP and DB members match current external facts
+ok 7 - LM01 D042: leave-all exits only managed accounts, creator last; final HTTP and DB members match current external facts
+  ---
+  duration_ms: 229.882875
+  type: 'test'
+  ...
+# isolated database: kapibala_test_3900003294434ee980dae152fce5bd34
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: LM02 D042: left member replay reconciles external joins/leaves but never resurrects managed members; failed reads retry
+ok 8 - LM02 D042: left member replay reconciles external joins/leaves but never resurrects managed members; failed reads retry
+  ---
+  duration_ms: 229.636625
+  type: 'test'
+  ...
+# isolated database: kapibala_test_33ce77bd6cb84e6ba73db22b4ed970e1
+# Subtest: LM03 D042: a non-creator failure still continues others and keeps creator, failed account and active state
+ok 9 - LM03 D042: a non-creator failure still continues others and keeps creator, failed account and active state
+  ---
+  duration_ms: 207.79375
+  type: 'test'
+  ...
+# isolated database: kapibala_test_a54cf838cc7a4c16bd3d6768cf6064b7
+# Subtest: LM04 D042: final membership transaction failure recovers without another leave or partial left state
+ok 10 - LM04 D042: final membership transaction failure recovers without another leave or partial left state
+  ---
+  duration_ms: 263.797083
+  type: 'test'
+  ...
+# isolated database: kapibala_test_c2f43f97599b4362846cf847e6af5ce6
+# Subtest: LM05 D042: preserved external members cannot enable sending, kick, sequence or Agent recovery in a left group
+ok 11 - LM05 D042: preserved external members cannot enable sending, kick, sequence or Agent recovery in a left group
+  ---
+  duration_ms: 327.914083
+  type: 'test'
+  ...
+# isolated database: kapibala_test_2ae8fefd484f47cf91aa591fa3b182d5
+# Subtest: LM06 D042: legacy cleared left groups recover only from fresh snapshots, never from old completion evidence or deduped replay
+ok 12 - LM06 D042: legacy cleared left groups recover only from fresh snapshots, never from old completion evidence or deduped replay
+  ---
+  duration_ms: 350.432167
+  type: 'test'
+  ...
+# isolated database: kapibala_test_c0254e79926f43cd8b1e020c6c150c45
+# Subtest: KM01 a slow member query rolls back and retries while a later group's SSE message proceeds
+ok 13 - KM01 a slow member query rolls back and retries while a later group's SSE message proceeds
+  ---
+  duration_ms: 2207.894916
+  type: 'test'
+  ...
+# later group's message persisted after 2040 ms
+# Subtest: KG01 SSE CRLF split across three chunks preserves both frames
+ok 14 - KG01 SSE CRLF split across three chunks preserves both frames
+  ---
+  duration_ms: 514.668917
+  type: 'test'
+  ...
+# Subtest: KG02 SSE every byte boundary preserves UTF-8, comments and multiline data
+ok 15 - KG02 SSE every byte boundary preserves UTF-8, comments and multiline data
+  ---
+  duration_ms: 502.002667
+  type: 'test'
+  ...
+# Subtest: 真实PG：并发账号CAS只有一个成功，非法边优先于状态冲突
+ok 16 - 真实PG：并发账号CAS只有一个成功，非法边优先于状态冲突
+  ---
+  duration_ms: 215.419167
+  type: 'test'
+  ...
+# Subtest: 账号完整36种状态组合严格遵循允许转移表，终态无出边
+ok 17 - 账号完整36种状态组合严格遵循允许转移表，终态无出边
+  ---
+  duration_ms: 226.768625
+  type: 'test'
+  ...
+# Subtest: 限流到期前已手动离线，不得被过期调度恢复为online
+ok 18 - 限流到期前已手动离线，不得被过期调度恢复为online
+  ---
+  duration_ms: 207.057958
+  type: 'test'
+  ...
+# Subtest: ACCOUNT_OFFLINE及SENDER_NOT_IN_GROUP只失败当前消息，账号和群不变
+ok 19 - ACCOUNT_OFFLINE及SENDER_NOT_IN_GROUP只失败当前消息，账号和群不变
+  ---
+  duration_ms: 262.802833
+  type: 'test'
+  ...
+# Subtest: 同步SESSION_EXPIRED与异步account_status都执行相同终态后果
+ok 20 - 同步SESSION_EXPIRED与异步account_status都执行相同终态后果
+  ---
+  duration_ms: 394.736542
+  type: 'test'
+  ...
+# Subtest: 异步message_failed按错误传播账号终态或群不可写，不能混淆范围
+ok 21 - 异步message_failed按错误传播账号终态或群不可写，不能混淆范围
+  ---
+  duration_ms: 398.5195
+  type: 'test'
+  ...
+# Subtest: 真实PG：终态后果原子提交；步骤写失败整笔回滚
+ok 22 - 真实PG：终态后果原子提交；步骤写失败整笔回滚
+  ---
+  duration_ms: 114.671917
+  type: 'test'
+  ...
+# Subtest: 限流期间所有来源共用账号队列且恢复保持顺序
+ok 23 - 限流期间所有来源共用账号队列且恢复保持顺序
+  ---
+  duration_ms: 252.213916
+  type: 'test'
+  ...
+# Subtest: 503退避不能让同账号后续消息越过队首
+ok 24 - 503退避不能让同账号后续消息越过队首
+  ---
+  duration_ms: 109.147083
+  type: 'test'
+  ...
+# Subtest: 504已落地查询收敛为sent，不重发；自身回流去重且不触发Agent
+ok 25 - 504已落地查询收敛为sent，不重发；自身回流去重且不触发Agent
+  ---
+  duration_ms: 146.978125
+  type: 'test'
+  ...
+# Subtest: 504安全窗口后新查询明确未落地则failed，不采用可选重发
+ok 26 - 504安全窗口后新查询明确未落地则failed，不采用可选重发
+  ---
+  duration_ms: 94.005375
+  type: 'test'
+  ...
+# Subtest: 真实时钟：504后明确未落地，在5秒内确定失败并且不重发
+ok 27 - 真实时钟：504后明确未落地，在5秒内确定失败并且不重发
+  ---
+  duration_ms: 2205.026417
+  type: 'test'
+  ...
+# Subtest: 真实HTTP：窗口内取得的404延迟返回后不得触发重发，后续查询确认原消息
+ok 28 - 真实HTTP：窗口内取得的404延迟返回后不得触发重发，后续查询确认原消息
+  ---
+  duration_ms: 2407.691167
+  type: 'test'
+  ...
+# Subtest: 崩溃发送意图恢复为unknown，没有已知504不得重发
+ok 29 - 崩溃发送意图恢复为unknown，没有已知504不得重发
+  ---
+  duration_ms: 96.604167
+  type: 'test'
+  ...
+# Subtest: 发送持锁连接丢失后新worker就地接管，旧worker不能写accepted或重发
+ok 30 - 发送持锁连接丢失后新worker就地接管，旧worker不能写accepted或重发
+  ---
+  duration_ms: 111.208875
+  type: 'test'
+  ...
+# Subtest: 第二实例启动不能把活跃worker的发送标记为恢复未知
+ok 31 - 第二实例启动不能把活跃worker的发送标记为恢复未知
+  ---
+  duration_ms: 88.078459
+  type: 'test'
+  ...
+# Subtest: 504查询不可用期间保持unknown，恢复后确认不会重复发出
+ok 32 - 504查询不可用期间保持unknown，恢复后确认不会重复发出
+  ---
+  duration_ms: 97.061625
+  type: 'test'
+  ...
+# Subtest: 已sent补投和重复确认不会重写首次确认时间
+ok 33 - 已sent补投和重复确认不会重写首次确认时间
+  ---
+  duration_ms: 85.74125
+  type: 'test'
+  ...
+# Subtest: kick同步终态错误也执行成员清理与取消，群错误只改变群
+ok 34 - kick同步终态错误也执行成员清理与取消，群错误只改变群
+  ---
+  duration_ms: 93.024166
+  type: 'test'
+  ...
+# Subtest: kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未知时不删除成员
+ok 35 - kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未知时不删除成员
+  ---
+  duration_ms: 2497.469416
+  type: 'test'
+  ...
+# Subtest: kick已确认删除等待群投影事务，旧成员快照不能覆盖删除结果
+ok 36 - kick已确认删除等待群投影事务，旧成员快照不能覆盖删除结果
+  ---
+  duration_ms: 96.877292
+  type: 'test'
+  ...
+# Subtest: 真实PG双实例发送互斥，单个outbox只调用一次远端
+ok 37 - 真实PG双实例发送互斥，单个outbox只调用一次远端
+  ---
+  duration_ms: 87.292959
+  type: 'test'
+  ...
+# Subtest: 群不可写原子停止序列并取消Agent，不改变账号
+ok 38 - 群不可写原子停止序列并取消Agent，不改变账号
+  ---
+  duration_ms: 82.492208
+  type: 'test'
+  ...
+# Subtest: 真实PG事件写失败后重放，乱序eventId与任意历史补投均保留
+ok 39 - 真实PG事件写失败后重放，乱序eventId与任意历史补投均保留
+  ---
+  duration_ms: 89.945167
+  type: 'test'
+  ...
+# Subtest: 建群包括creator/admin，过期链接重申，promote仅一次
+ok 40 - 建群包括creator/admin，过期链接重申，promote仅一次
+  ---
+  duration_ms: 126.210917
+  type: 'test'
+  ...
+# Subtest: 邀请ready时间前不join，ALREADY_MEMBER无需等待事件，可重试一次promote
+ok 41 - 邀请ready时间前不join，ALREADY_MEMBER无需等待事件，可重试一次promote
+  ---
+  duration_ms: 680.840459
+  type: 'test'
+  ...
+# Subtest: 建群远端成功但本地写失败时记录待确认，禁止重复创建
+ok 42 - 建群远端成功但本地写失败时记录待确认，禁止重复创建
+  ---
+  duration_ms: 101.03025
+  type: 'test'
+  ...
+# Subtest: join事件超过10秒未到，任务失败且不提前promote
+ok 43 - join事件超过10秒未到，任务失败且不提前promote
+  ---
+  duration_ms: 92.768375
+  type: 'test'
+  ...
+# Subtest: 非群主退出失败继续其他成员，群主不退出
+ok 44 - 非群主退出失败继续其他成员，群主不退出
+  ---
+  duration_ms: 96.759709
+  type: 'test'
+  ...
+# Subtest: D042: leave-all服务账号全部退出，left公开视图保留远端外部成员
+ok 45 - D042: leave-all服务账号全部退出，left公开视图保留远端外部成员
+  ---
+  duration_ms: 114.628042
+  type: 'test'
+  ...
+# Subtest: 时间线快照在历史补投和queued.sentAt改写时保持原始分页无重漏
+ok 46 - 时间线快照在历史补投和queued.sentAt改写时保持原始分页无重漏
+  ---
+  duration_ms: 83.570583
+  type: 'test'
+  ...
+# Subtest: kick 200 arriving after a committed rejoin preserves current membership without kicking twice
+ok 47 - kick 200 arriving after a committed rejoin preserves current membership without kicking twice
+  ---
+  duration_ms: 275.518334
+  type: 'test'
+  ...
+# Subtest: leave 200 arriving after rejoin retains the member and prevents the creator from leaving
+ok 48 - leave 200 arriving after rejoin retains the member and prevents the creator from leaving
+  ---
+  duration_ms: 224.798666
+  type: 'test'
+  ...
+# Subtest: member refresh failure after confirmed kick remains success and converges through event retry
+ok 49 - member refresh failure after confirmed kick remains success and converges through event retry
+  ---
+  duration_ms: 222.185875
+  type: 'test'
+  ...
+# Subtest: leave refresh failure preserves confirmed progress and prevents unsafe creator departure
+ok 50 - leave refresh failure preserves confirmed progress and prevents unsafe creator departure
+  ---
+  duration_ms: 249.486292
+  type: 'test'
+  ...
+# Subtest: leave completion reads current members after acquiring the group projection lock
+ok 51 - leave completion reads current members after acquiring the group projection lock
+  ---
+  duration_ms: 283.983292
+  type: 'test'
+  ...
+# Subtest: a delayed member snapshot cannot overwrite a newer member removal from another event worker
+ok 52 - a delayed member snapshot cannot overwrite a newer member removal from another event worker
+  ---
+  duration_ms: 238.296833
+  type: 'test'
+  ...
+# Subtest: member_joined rechecks terminal account state under the same lock as terminal cleanup
+ok 53 - member_joined rechecks terminal account state under the same lock as terminal cleanup
+  ---
+  duration_ms: 224.87675
+  type: 'test'
+  ...
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: a delayed member snapshot cannot undo a successful leave job
+ok 54 - a delayed member snapshot cannot undo a successful leave job
+  ---
+  duration_ms: 217.161125
+  type: 'test'
+  ...
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: member_joined cannot add a member after the group has atomically become left
+ok 55 - member_joined cannot add a member after the group has atomically become left
+  ---
+  duration_ms: 254.405666
+  type: 'test'
+  ...
+# Subtest: ALREADY_MEMBER job reconciliation cannot reinsert an account after terminal cleanup
+ok 56 - ALREADY_MEMBER job reconciliation cannot reinsert an account after terminal cleanup
+  ---
+  duration_ms: 237.971583
+  type: 'test'
+  ...
+# Subtest: twenty persistent event failures cannot starve a later recoverable event
+ok 57 - twenty persistent event failures cannot starve a later recoverable event
+  ---
+  duration_ms: 418.524875
+  type: 'test'
+  ...
+1..57
+# tests 57
+# suites 0
+# pass 57
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 12000.689709

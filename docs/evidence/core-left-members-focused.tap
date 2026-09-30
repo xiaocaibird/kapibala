@@ -1,0 +1,53 @@
+TAP version 13
+# Subtest: LM01 D042: leave-all exits only managed accounts, creator last; final HTTP and DB members match current external facts
+ok 1 - LM01 D042: leave-all exits only managed accounts, creator last; final HTTP and DB members match current external facts
+  ---
+  duration_ms: 178.383084
+  type: 'test'
+  ...
+# isolated database: kapibala_test_b97c3a8f8d704e71bdda5e73b2bfab4a
+# Subtest: LM02 D042: left member replay reconciles external joins/leaves but never resurrects managed members; failed reads retry
+ok 2 - LM02 D042: left member replay reconciles external joins/leaves but never resurrects managed members; failed reads retry
+  ---
+  duration_ms: 129.035875
+  type: 'test'
+  ...
+# isolated database: kapibala_test_a6cf1b2f711e40cdb75891a54047174a
+# Subtest: LM03 D042: a non-creator failure still continues others and keeps creator, failed account and active state
+ok 3 - LM03 D042: a non-creator failure still continues others and keeps creator, failed account and active state
+  ---
+  duration_ms: 92.785917
+  type: 'test'
+  ...
+# isolated database: kapibala_test_e3f9c12a7bfb40dba018ed9c2ffc5e2f
+# Subtest: LM04 D042: final membership transaction failure recovers without another leave or partial left state
+ok 4 - LM04 D042: final membership transaction failure recovers without another leave or partial left state
+  ---
+  duration_ms: 114.693709
+  type: 'test'
+  ...
+# isolated database: kapibala_test_fec121f9368e49dc99010b26f16161c2
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: LM05 D042: preserved external members cannot enable sending, kick, sequence or Agent recovery in a left group
+ok 5 - LM05 D042: preserved external members cannot enable sending, kick, sequence or Agent recovery in a left group
+  ---
+  duration_ms: 258.552125
+  type: 'test'
+  ...
+# isolated database: kapibala_test_f4f6fae351354e6c86ad320537ce7753
+# Subtest: LM06 D042: legacy cleared left groups recover only from fresh snapshots, never from old completion evidence or deduped replay
+ok 6 - LM06 D042: legacy cleared left groups recover only from fresh snapshots, never from old completion evidence or deduped replay
+  ---
+  duration_ms: 137.865
+  type: 'test'
+  ...
+# isolated database: kapibala_test_26870bc809d942d6853623134dfb8cb8
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1061.273417

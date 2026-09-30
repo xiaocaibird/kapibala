@@ -1290,7 +1290,7 @@ test("非群主退出失败继续其他成员，群主不退出", async (t) => {
   );
 });
 
-test("leave-all服务账号全部退出但保留外部用户，left公开视图为空并保存远端证据", async (t) => {
+test("D042: leave-all服务账号全部退出，left公开视图保留远端外部成员", async (t) => {
   const f = await fixture(t);
   await f.seedGroup();
   await createGatewayModule(f.ctx).register(f.app);
@@ -1304,7 +1304,7 @@ test("leave-all服务账号全部退出但保留外部用户，left公开视图�
   assert.deepEqual(
     (await f.app.inject("/api/groups/g")).json<{ members: unknown[] }>()
       .members,
-    [],
+    [{ accountId: null, platformUserId: "external", role: "member" }],
   );
   assert.deepEqual([...f.gateway.remoteMembers.get("remote-g")!], ["external"]);
   assert.deepEqual(

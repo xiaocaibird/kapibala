@@ -12,6 +12,7 @@ import {
 import { changeAccount, markGroupUnreachable } from "./state.js";
 import { Messages, recordSent } from "./messages.js";
 import { recordConfirmationReceipt } from "./confirmation-receipts.js";
+import { reconcileLeftMembers } from "./left-membership.js";
 
 const gatewayEventSchema = z.discriminatedUnion("type", [
   z.object({
@@ -328,6 +329,22 @@ export class GatewayEvents {
                 2000,
               ),
             );
+            if (group.status === "left") {
+              const membership = await reconcileLeftMembers(
+                tx,
+                group.id,
+                gatewayMembers,
+              );
+              if (membership.changed)
+                await emit(tx, "group_changed", {
+                  groupId: group.id,
+                  changedFields: ["members"],
+                  directoryChangedFields: membership.countChanged
+                    ? ["memberCount"]
+                    : [],
+                });
+              break;
+            }
             const beforeMembers = (
               await tx.query(
                 "SELECT platform_user_id,account_id,role FROM members WHERE group_id=$1 ORDER BY platform_user_id",
