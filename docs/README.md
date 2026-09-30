@@ -18,6 +18,7 @@
 | 理解后端及控制台的接口依赖 | [模块协作接口](module-interfaces.md) |
 | 理解状态、发送、群任务和消息恢复 | [网关设计](gateway-design.md) |
 | 理解Agent工具、审计、恢复和序列排期 | [自动化设计](automation-design.md) |
+| 查看当前页面更新提醒范围、复核修正与验证 | [页面提醒实施记录](page-update-notification-implementation.md)；[PA01–PA08](acceptance.md#page-attention-acceptance) |
 | 理解登录、权限、页面与实时合并 | [控制台设计](console-design.md) |
 | 复现正常流程与可控故障 | [模拟服务说明](simulator.md) |
 | 核对本轮实际环境与选择依据 | [工具链记录](toolchain.md) |
