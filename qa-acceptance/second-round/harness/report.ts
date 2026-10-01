@@ -6,6 +6,7 @@ import { validateResult, type RoundResult, type Status } from './result.js';
 
 const escapeXml = (s: unknown) => String(s ?? '').replace(/[<>&"']/g, c =>
   ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&apos;'}[c]!));
+const resultReason = (r: RoundResult) => r.reason ?? [...(r.uncoveredVariants ?? []), ...(r.variants ?? []).filter(v=>v.status!=='PASS').map(v=>`${v.id}: ${v.reason ?? v.status}`), ...(r.cleanupErrors ?? [])].join('；');
 const cell = (s: unknown) => String(s ?? '').replaceAll('|', '\\|').replaceAll('\n', ' ');
 export function latestResults(cases: SecondRoundCase[], results: RoundResult[]) {
   const ids = new Set(cases.map(c => c.id));
@@ -54,7 +55,7 @@ export async function writeSecondRoundReport(directory: string, manifest: Record
     '范围为 C1/C2、五项 P0、五项 P1 与受影响原功能。自动重试为零；研发日志仅作交付材料核查，不能替代产品实测。', '',
     '首轮五秒解释和真实 IME/焦点确认按负责人决定暂缓；已决定的工程处置及外部协议限制保留原始结论。第二轮发现的真实新增回归另列。付费 provider 缺许可时保留阻塞，独立离线用例继续执行。', '',
     '| 用例 | 标题 | 结果 | 说明 |', '|---|---|---|---|',
-    ...rows.map(r => `| ${r.id} | ${cell(r.title)} | ${r.result.status} | ${cell(r.result.reason ?? r.result.uncoveredVariants?.join('；') ?? '')} |`), '',
+    ...rows.map(r => `| ${r.id} | ${cell(r.title)} | ${r.result.status} | ${cell(resultReason(r.result))} |`), '',
     '逐项步骤与预期见同版本 cases/；原始事件、子项证据和清理异常见 results.json、events.ndjson 及 cases/ 证据目录。未命中故障窗口不得据此宣称恢复通过；有限执行不构成穷尽性证明。', '',
     ...(errors.length ? ['执行器/清理问题：', '', ...errors.map(e => `- ${e}`), ''] : []),
     '只有本轮所有必验项实际通过且未留阻塞/未执行，才能给出本轮无条件通过建议；最终产品上线决定仍由负责人作出。', '',
@@ -64,7 +65,7 @@ export async function writeSecondRoundReport(directory: string, manifest: Record
     `<testsuite name="second-round-independent" tests="${rows.length}" failures="${counts.FAIL}" errors="${counts.BLOCKED}" skipped="${counts.NOT_RUN}">`];
   for (const {id,title,result} of rows) {
     xml.push(`<testcase name="${escapeXml(id + ' ' + title)}" time="${(result.durationMs ?? 0)/1000}">`);
-    const reason = result.reason ?? result.uncoveredVariants?.join('; ') ?? '';
+    const reason = resultReason(result);
     if (result.status === 'FAIL') xml.push(`<failure message="${escapeXml(reason)}"/>`);
     if (result.status === 'BLOCKED') xml.push(`<error type="BLOCKED" message="${escapeXml(reason)}"/>`);
     if (result.status === 'NOT_RUN') xml.push('<skipped type="NOT_RUN"/>');

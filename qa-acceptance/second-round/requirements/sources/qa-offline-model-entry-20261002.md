@@ -4,6 +4,8 @@
 
 入口仅为 `scripts/qa-gemini-agent.ts`，不接入 `dev`、`dev:gemini-agent` 或生产启动路径。它不读取 `.env`、`GEMINI_ENV_FILE`、`GEMINI_API_KEY`、`GOOGLE_API_KEY`，没有真实 provider 或外网 fallback。此材料提供执行接入能力，本身不授予第二轮执行、真实模型收费调用、合并或上线权限。
 
+可选的 factory 默认关闭/显式开启入口、真实 usage 写前单门及有限 provider transport 事件，见 [工程观测协议](qa-usage-observation-20261002.md)。这些能力必须显式启用，默认仍按下述 main 行为启动。
+
 ## 启动与配置
 
 使用工程锁文件安装的依赖，以及项目要求的 Node 24。先由 QA 启动并拥有一个 HTTP provider 桩，再填写其实际监听端口：

@@ -13,9 +13,10 @@ import { runManagedPolicyBudgetCase } from '../harness/backend-policy-window.js'
 import { profileCancellationRollback } from '../harness/backend-transaction-fault.js';
 import { capacityControlFor } from '../../harness/capacity-control.js';
 import { observeBackendEvents } from '../harness/backend-events.js';
-import { cancelAtKickWait, concurrentProfileCas, deferredPermissionChange, noDispatchBudget, dispatchedUnknownKick, sentKeyCrashRecovery, reuseAtMessageState, independentModuleRecovery } from '../harness/backend-boundaries.js';
+import { cancelAtKickWait, concurrentProfileCas, deferredPermissionChange, noDispatchBudget, dispatchedUnknownKick, assertUnknownKickCompletion, reviewUnknownNextSteps, sentKeyCrashRecovery, reuseAtMessageState, independentModuleRecovery } from '../harness/backend-boundaries.js';
 import { managedProviderRecovery } from '../harness/backend-provider-recovery.js';
 import type { ProviderDriver } from '../contracts/media-provider.js';
+import { SecondRoundEnvironment } from '../harness/environment.js';
 
 export type BackendStatus = 'PASS' | 'FAIL' | 'BLOCKED';
 export interface BackendSubcheck { id: string; status: BackendStatus; evidence: string; reason?: string }
@@ -83,6 +84,30 @@ function step(run: AgentRun, id: string) {
 }
 function checkError(run: AgentRun, id: string, code: string) {
   const s = step(run, id); assert.equal(s.isError, true); assert.equal(s.errorCode, code);
+}
+/** Independent variant resources prevent a queued send, account terminal,
+ * pending model plan or killed process from determining the next verdict. */
+async function isolatedBackendVariant<T>(parent: QaEnvironment, label: string, run: (qa: QaEnvironment) => Promise<T>) {
+  if (!(parent instanceof SecondRoundEnvironment)) throw new BlockedError('Independent backend variants require the owned second-round environment factory');
+  const name = label + '-' + randomUUID();
+  const qa = new SecondRoundEnvironment(parent.config, parent.ownedStorage().cluster,
+    resolve(parent.outputDir, name), resolve(parent.runtimeDirectory, name));
+  let primary: unknown;
+  try {
+    await qa.initialize(); await qa.api.login(); await qa.ownership('c1-media-files');
+    const facts = await run(qa);
+    await qa.evidence('variant-observation', { label, facts });
+    return { variantEvidence: resolve(qa.outputDir, 'variant-observation.json'), facts };
+  } catch (error) {
+    primary = error;
+    await qa.evidence('variant-failure', { label, reason: String(error), gateway: qa.gateway.snapshot(), agent: qa.agent.snapshot() });
+    throw error;
+  } finally {
+    try { await qa.close(); } catch (error) {
+      await parent.evidence('variant-cleanup-failure-' + name, { primary: String(primary), cleanup: String(error), outputDir: qa.outputDir });
+      if (!primary) throw error;
+    }
+  }
 }
 export async function runBackendCase(caseId: string, context: BackendContext): Promise<BackendCaseResult> {
   if (caseId === 'SR-BE-POL-008' || caseId === 'SR-BE-POL-007') {
@@ -329,7 +354,7 @@ export async function runBackendCase(caseId: string, context: BackendContext): P
       return { run, second, third, auditCount: 2, sendCount: 1 };
     });
   } else if (caseId === 'SR-BE-GRD-003') {
-    await check('sent-reuse-and-another-run-independent', async () => {
+    await check('sent-reuse-and-another-run-independent', () => isolatedBackendVariant(qa, 'sent-reuse', async qa => {
       const { group } = await qa.api.createGroup(); const key = randomUUID(), text = `same-key-${randomUUID()}`;
       const ids = [randomUUID(), randomUUID()], barrier = `reuse-${randomUUID()}`, beforeAudits = qa.agent.snapshot().audits.length;
       qa.agent.enqueueTurns(tool(ids[0]!, 'send_message', { text, idempotency_key: key }),
@@ -349,9 +374,9 @@ export async function runBackendCase(caseId: string, context: BackendContext): P
         assert.notEqual(record(JSON.parse(String(results(qa, another.id, independentId)[0]!.content))).clientMsgId, firstResult.clientMsgId);
         return { sent, run, firstResult, retryResult, another, auditCount: 2, sendCount: 2 };
       } finally { qa.agent.barriers.release(barrier); }
-    });
-    for (const state of ['queued', 'accepted', 'unknown'] as const) await check('same-key-at-' + state, () => reuseAtMessageState(qa, state));
-    missing('failed-message-reuse-with-live-agent-run', 'Existing terminal send failure paths may also cancel the run; no witnessed live same-run failed-message continuation fixture is bound, so sent/unknown variants cannot imply failed coverage.');
+    }));
+    for (const state of ['queued', 'accepted', 'unknown', 'failed'] as const)
+      await check('same-key-at-' + state, () => isolatedBackendVariant(qa, 'same-key-at-' + state, child => reuseAtMessageState(child, state)));
   } else if (caseId === 'SR-BE-GRD-006') {
     await check('current-audited-send-finishes-then-cancel', async () => {
       const { group } = await qa.api.createGroup(); const toolId = randomUUID(), barrier = `current-step-${randomUUID()}`, text = `current-${randomUUID()}`;
@@ -375,11 +400,29 @@ export async function runBackendCase(caseId: string, context: BackendContext): P
     });
     for (const wait of ['capacity', 'remote-response'] as const) await check('current-step-cancel-' + wait + '-and-profile', () => cancelAtKickWait(qa, wait));
   } else if (caseId === 'SR-BE-GRD-005') {
-    for (const compete of [false, true]) await check(compete ? 'same-key-crash-dual-instance' : 'same-key-crash-single-instance', () => sentKeyCrashRecovery(qa, compete));
+    for (const compete of [false, true]) {
+      const label = compete ? 'same-key-crash-dual-instance' : 'same-key-crash-single-instance';
+      await check(label, () => isolatedBackendVariant(qa, label, child => sentKeyCrashRecovery(child, compete)));
+    }
   } else if (caseId === 'SR-BE-POL-005' || caseId === 'SR-BE-DIA-004') {
-    for (const effect of [false, true]) await check(effect ? 'dispatched-effect-unknown-restart' : 'dispatched-no-effect-unknown-restart', () => dispatchedUnknownKick(qa, effect, true));
-    if (caseId === 'SR-BE-DIA-004') missing('safe-next-step-semantic-review-and-final-completion', 'Actual unknown, diagnostic text and no-replay evidence retained; semantic review of safe next-step and authoritative completion must be separately concluded, never inferred from safety.');
-    else missing('second-instance-unknown-competition', 'Restart safety does not imply independently witnessed simultaneous owner competition after unknown external effects.');
+    for (const effect of [false, true]) {
+      const label = effect ? 'dispatched-effect-unknown-restart' : 'dispatched-no-effect-unknown-restart';
+      let observed: Awaited<ReturnType<typeof dispatchedUnknownKick>> | undefined;
+      await check(label, async () => {
+        const evidence = await isolatedBackendVariant(qa, label, child => dispatchedUnknownKick(child, effect, true, caseId === 'SR-BE-POL-005'));
+        observed = evidence.facts; return evidence;
+      });
+      await check(label + '-original-budget-and-completion', async () => {
+        if (!observed) throw new BlockedError('Required original-run observation unavailable; no completion inferred from absent requests');
+        assertUnknownKickCompletion(observed);
+        return { run: observed.run, after: observed.after, activity: observed.activity, settlement: observed.settlement };
+      });
+      if (caseId === 'SR-BE-DIA-004') await check(label + '-next-step-semantic-review', async () => {
+        if (!observed) throw new BlockedError('Actual unknown and diagnostic text not captured; semantic review cannot use a hypothetical message');
+        return { reviews: reviewUnknownNextSteps(observed.diagnostics), recoveryNote: observed.rawRecoveryNote, completionAssumed: false };
+      });
+    }
+    if (caseId === 'SR-BE-POL-005') missing('second-instance-unknown-competition', 'Real second instance and automation progress are collected for both effects; no same-run ownership attempt/refusal observation is delivered, so no-HTTP and successful ticks cannot establish lock competition.');
   } else if (caseId === 'SR-BE-GRD-007') {
     await check('actual-event-insert-fault-atomic-rollback-and-next-success', () => profileCancellationRollback(qa));
   } else if (caseId === 'SR-BE-GRD-008') {

@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
-import { readFile, writeFile, mkdir, realpath, lstat, readdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, realpath, lstat, readdir, symlink, readlink, unlink } from 'node:fs/promises';
 import { resolve, dirname, basename } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { OwnedProcess, exec, isolatedEnv, ownedListener } from '../../harness/process.js';
@@ -12,6 +12,21 @@ import { secondRoundRoot } from './scope.js';
 // Independently reviewed public command: random loopback ports; UUID Docker
 // names and run/owner labels; exact manifest cleanup; no compose/down/prune.
 const reviewedScriptSha256 = 'ac868241c41087013ceff48123f6454325f1997fa40b63f3a284149a13b2ca86';
+/** macOS Unix sockets have a short path limit. tsx uses TMPDIR for IPC while
+ * the public launcher resolves its realpath, so all contents remain in QA. */
+export async function shortDeliveryTemporaryAlias(canonicalRoot: string) {
+  assert.equal(await realpath(canonicalRoot), canonicalRoot);
+  const path = resolve(await realpath('/tmp'), `qa-${randomUUID()}`);
+  await symlink(canonicalRoot, path);
+  const identity = await lstat(path);
+  assert.ok(identity.isSymbolicLink()); assert.equal(identity.uid, process.getuid?.());
+  return { path, target: canonicalRoot, async close() {
+    const current = await lstat(path);
+    if (!current.isSymbolicLink() || current.dev !== identity.dev || current.ino !== identity.ino || current.uid !== identity.uid || await readlink(path) !== canonicalRoot)
+      throw new BlockedError('Temporary short-path alias ownership changed; do not unlink');
+    await unlink(path); // Only our symlink entry; never recursive /tmp cleanup.
+  } };
+}
 interface Manifest {
   runId: string; ownerToken: string; ownerPid: number; ownerStarted: string;
   directory: string; containerName: string; containerId?: string; volumeName: string;
@@ -85,10 +100,11 @@ export async function readmeIsolatedDelivery(input: { sutDirectory: string; outp
   const runtimeRoot = resolve(secondRoundRoot, '..', '.runtime', 'second-round-readme', `readme-delivery-${randomUUID()}`);
   await mkdir(runtimeRoot, { recursive: true, mode: 0o700 });
   const canonicalRoot = await realpath(runtimeRoot), log = resolve(outputDir, 'readme-isolated.log');
-  const owned = new OwnedProcess({ command: 'npm', args: ['run', 'dev:isolated'] }, sutDirectory, isolatedEnv({ TMPDIR: canonicalRoot }), log);
+  const alias = await shortDeliveryTemporaryAlias(canonicalRoot);
+  const owned = new OwnedProcess({ command: 'npm', args: ['run', 'dev:isolated'] }, sutDirectory, isolatedEnv({ TMPDIR: alias.path }), log);
   let manifest: Manifest | undefined, manifestPath: string | undefined, primary: unknown;
   const evidencePath = resolve(outputDir, 'readme-isolated-evidence.json');
-  const facts: Record<string, unknown> = { command: owned.command, sourceSha256, startedAt: new Date().toISOString(), evidenceLayer: 'current public README command plus independent QA HTTP and resource checks' };
+  const facts: Record<string, unknown> = { command: owned.command, sourceSha256, temporaryAlias: { path: alias.path, target: alias.target }, startedAt: new Date().toISOString(), evidenceLayer: 'current public README command plus independent QA HTTP and resource checks' };
   const readEvents = async () => isolatedEvents(await readFile(log, 'utf8').catch(() => ''));
   const runDocker = async (owner: Manifest, args: string[]) => (await exec('docker', [...owner.engineArgs, ...args], { env: isolatedEnv({}), timeout: 30_000 })).stdout.trim();
   const docker = async (args: string[]) => runDocker(manifest!, args);
@@ -180,7 +196,7 @@ export async function readmeIsolatedDelivery(input: { sutDirectory: string; outp
           if (exists) {
             // Public recovery also checks dead owner, canonical directory,
             // daemon and labels; this invocation never kills a PID from a file.
-            const cleanup = new OwnedProcess({ command: 'npm', args: ['run', 'dev:isolated', '--', 'cleanup', path] }, sutDirectory, isolatedEnv({ TMPDIR: canonicalRoot }), resolve(outputDir, `readme-recovery-${owner.runId}.log`));
+            const cleanup = new OwnedProcess({ command: 'npm', args: ['run', 'dev:isolated', '--', 'cleanup', path] }, sutDirectory, isolatedEnv({ TMPDIR: alias.path }), resolve(outputDir, `readme-recovery-${owner.runId}.log`));
             await cleanup.runOnce(90_000); facts.recoveryCleanupUsed = true;
           }
           assert.ok(!(await invoke(['ps', '-a', '--format', '{{.Names}}'])).split('\n').includes(owner.containerName));
@@ -196,6 +212,7 @@ export async function readmeIsolatedDelivery(input: { sutDirectory: string; outp
         assert.ok((facts.events as Record<string, unknown>[]).some(e => e.event === 'isolated-cleaned'));
       }
     } catch (error) { errors.push(error); }
+    try { await alias.close(); facts.temporaryAliasRemoved = true; } catch (error) { errors.push(error); }
     facts.cleanupErrors = errors.map(String);
     await writeFile(evidencePath, redact(facts) + '\n');
     if (errors.length) throw new AggregateError(primary ? [primary, ...errors] : errors, 'Public README delivery/cleanup evidence incomplete');

@@ -1,0 +1,41 @@
+{
+  "runId": "2026-10-01T22-25-01.466Z-7951d02e",
+  "sutRevision": "47423c165f74d8b8908297974f7df71bc53b470d",
+  "rawCounts": {
+    "PASS": 80,
+    "FAIL": 4,
+    "BLOCKED": 28,
+    "NOT_RUN": 0
+  },
+  "rawEvidenceUnchanged": true,
+  "issues": [
+    {
+      "caseId": "SR-BE-GRD-003",
+      "type": "product-defect",
+      "fact": "Queued same idempotency key returned SEND_TIMEOUT without original message identity/current state. One original send and audit; no second effect.",
+      "developmentFix": "bc977f3; independently awaiting retest"
+    },
+    {
+      "caseId": "SR-C2-012",
+      "type": "unwaived-recovery-gap",
+      "fact": "SIGKILL leaves dead-owner lock; actual manual reclaim needed. No strong automatic recovery pass or owner waiver."
+    },
+    {
+      "caseId": "SR-C1-009",
+      "type": "qa-premise-error",
+      "fact": "Cleanup-cycle returned before deleting retry became due. Corrected cycle waits actual deleting settlement; original raw failure retained."
+    },
+    {
+      "caseId": "SR-UI-021",
+      "type": "qa-premise-error",
+      "fact": "Hash changed before React destination committed; corrected actual destination barrier. Raw trace retained."
+    }
+  ],
+  "blockedDriverCorrections": [
+    "UI018 public transition endpoint",
+    "DEL004 short owned temporary path",
+    "GRD005 all-run-steps hold correlation and per-variant environment",
+    "DIA004/POL005 accept real pause event before separate safety/completion assessment"
+  ],
+  "pendingExecution": "No new PASS until new frozen execution finishes."
+}

@@ -1,9 +1,11 @@
 import { mkdir, readFile, realpath, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { randomUUID } from 'node:crypto';
+import { randomUUID, randomBytes, createHash } from 'node:crypto';
+import { readProviderEgress, type ProviderEgressBinding } from './provider-egress.js';
+import { ProviderObservationClient, OBSERVATION_PROTOCOL, type ProviderSnapshot } from './provider-observation.js';
 import { QaEnvironment } from '../../harness/environment.js';
 import type { OwnedDatabaseCluster } from '../../harness/database.js';
-import type { TargetConfig } from '../../harness/types.js';
+import type { Command, TargetConfig } from '../../harness/types.js';
 import { requireAuthorization, redact, isWithin } from '../../harness/security.js';
 import { exec, isolatedEnv, OwnedProcess, waitHttp } from '../../harness/process.js';
 import { MediaSourceProxy } from './media-source.js';
@@ -23,6 +25,17 @@ export class SecondRoundEnvironment extends QaEnvironment {
   readonly mediaDirectory: string;
   mediaSource?: MediaSourceProxy;
   externalAgentUrl?: string;
+  readonly egressLedgers: string[] = [];
+  readonly egressBindings = new Map<string, { endpoints: {host:string;port:number}[]; preloadSha256:string; pids?:number[] }>();
+  protected override async applicationLaunch(command: Command, env: NodeJS.ProcessEnv) {
+    if (this.mediaOptions.egress !== true) return { command, env };
+    const directory = resolve(this.outputDir, 'egress'); await mkdir(directory, { recursive: true, mode: 0o700 });
+    const path = resolve(directory, `${randomUUID()}.ndjson`); this.egressLedgers.push(path);
+    const endpoints = [env.GATEWAY_URL, env.AGENT_URL, env.DATABASE_URL].map(value => { if (!value) throw new Error('Missing owned endpoint for egress'); const u = new URL(value); if (!['127.0.0.1','::1'].includes(u.hostname) || !u.port) throw new Error('Non-owned egress endpoint'); return { host: u.hostname, port: Number(u.port) }; });
+    this.egressBindings.set(path,{endpoints,preloadSha256:createHash('sha256').update(await readFile(resolve(this.config.sut.cwd,'scripts/qa-egress-observation.mjs'))).digest('hex')});
+    if (command.command !== process.execPath) throw new Error('Egress preload requires the exact reviewed Node executable');
+    return { command: { command: command.command, args: ['--import','./scripts/qa-egress-observation.mjs', ...command.args] }, env: { ...env, QA_EGRESS_OBSERVATION:'true', QA_EGRESS_MODE:'strict', QA_EGRESS_LEDGER_PATH:path, QA_EGRESS_ALLOWED_ENDPOINTS:JSON.stringify(endpoints) } };
+  }
   constructor(config: TargetConfig, cluster: OwnedDatabaseCluster, output: string,
     readonly runtimeDirectory: string, readonly mediaOptions: Record<string, Json> = {}) {
     super(config, cluster, output);
@@ -35,6 +48,7 @@ export class SecondRoundEnvironment extends QaEnvironment {
   protected override resourceEnvironment() {
     return { MEDIA_DIR: this.mediaDirectory,
       ...(this.mediaOptions.retentionDays === undefined ? {} : { MEDIA_RETENTION_DAYS:String(this.mediaOptions.retentionDays) }),
+      ...(this.mediaOptions.maxBytes === undefined ? {} : { MEDIA_MAX_BYTES:String(this.mediaOptions.maxBytes) }),
       // Only polling cadence changes; it is recorded and does not change file age.
       MEDIA_CLEANUP_INTERVAL_MS: '1000' };
   }
@@ -50,6 +64,7 @@ export class SecondRoundEnvironment extends QaEnvironment {
       await this.mediaSource.start();
     }
     await super.start();
+    if (this.mediaOptions.egress === true) { const path=this.egressLedgers.at(-1)!; const identity=await actualListenerIdentity(this.api.baseUrl); this.egressBindings.get(path)!.pids=identity.map(v=>v.pid); await this.evidence("egress-owned-binding",{path,identity,expected:this.egressBindings.get(path)}); }
   }
   async ownership(contract: 'c1-media-files' | 'c2-gemini-agent'): Promise<Ownership> {
     const identity = await actualListenerIdentity(this.api.baseUrl);
@@ -81,6 +96,11 @@ export class OwnedOfflineProvider {
   readonly logPath: string;
   private process?: OwnedProcess;
   private generation = 0;
+  private observationSerial = 0;
+  readonly providerEgressBindings:ProviderEgressBinding[]=[];
+  private readonly observationToken = randomBytes(32).toString('hex');
+  observation?: ProviderObservationClient;
+  initialObservation?: ProviderSnapshot;
   address = '';
   identities: Awaited<ReturnType<typeof actualListenerIdentity>> = [];
   lastStopOutcome?: { code: number | null; signal: NodeJS.Signals | null };
@@ -93,19 +113,30 @@ export class OwnedOfflineProvider {
     if(u.protocol!=='http:' || u.hostname!=='127.0.0.1' || !u.port || u.pathname!=='/' || u.search || u.hash || u.username || u.password)
       throw new Error('Offline provider requires an explicit loopback origin');
   }
-  async start(options: { usageEnabled?: boolean } = {}) {
+  async start(options: { usageEnabled?: boolean; factoryUsageSupplied?: boolean } = {}) {
     await requireAuthorization(this.target);
     if(this.process) throw new Error('Provider already owned');
+    Object.assign(this.options, options);
     await mkdir(this.runtimeDirectory,{recursive:true,mode:0o700});
     await mkdir(this.sessionDirectory,{recursive:true,mode:0o700});
     const log=resolve(this.outputDirectory,`provider-${++this.generation}.log`);
     const env: Record<string,string>={QA_GEMINI_OFFLINE:'true',QA_GEMINI_PROVIDER_URL:this.providerOrigin,
-      QA_GEMINI_SESSION_DIR:this.sessionDirectory};
+      QA_GEMINI_SESSION_DIR:this.sessionDirectory, QA_GEMINI_USAGE_ENTRY:String(this.options.usageEntry??'main'),
+      QA_GEMINI_USAGE_OBSERVATION:'true', QA_GEMINI_TRANSPORT_OBSERVATION:'true', QA_ACCEPTANCE_RESOURCE_TOKEN:this.observationToken,
+      ...(this.options.usageEntry==='factory'?{QA_GEMINI_FACTORY_USAGE:String(this.options.factoryUsageSupplied===true)}:{})};
     for (const [key, variable] of Object.entries({usageEnabled:'GEMINI_USAGE_ENABLED',usageMaxRecords:'GEMINI_USAGE_MAX_RECORDS',usageMaxBytes:'GEMINI_USAGE_MAX_BYTES',usageMaxAgeDays:'GEMINI_USAGE_MAX_AGE_DAYS'})) {
       const value=key==='usageEnabled' && options.usageEnabled!==undefined ? options.usageEnabled : this.options[key];
       if(value!==undefined) env[variable]=String(value);
     }
-    this.process=new OwnedProcess({command:process.execPath,args:['--import','tsx','scripts/qa-gemini-agent.ts']},
+    const args=['--import','tsx','scripts/qa-gemini-agent.ts'];
+    let egress:ProviderEgressBinding|undefined;
+    if(this.options.transportEgress===true){
+      const path=resolve(this.outputDirectory,`provider-egress-${this.generation}.ndjson`),endpoints=[{host:'127.0.0.1',port:Number(new URL(this.providerOrigin).port)}];
+      const preloadSha256=createHash('sha256').update(await readFile(resolve(this.target.sut.cwd,'scripts/qa-egress-observation.mjs'))).digest('hex');
+      Object.assign(env,{QA_EGRESS_OBSERVATION:'true',QA_EGRESS_MODE:'strict',QA_EGRESS_LEDGER_PATH:path,QA_EGRESS_ALLOWED_ENDPOINTS:JSON.stringify(endpoints)});
+      args.unshift('--import','./scripts/qa-egress-observation.mjs');egress={path,preloadSha256,endpoints,pids:[]};this.providerEgressBindings.push(egress);
+    }
+    this.process=new OwnedProcess({command:process.execPath,args},
       this.target.sut.cwd, isolatedEnv(env),log);
     try {
       await this.process.start();
@@ -125,6 +156,11 @@ export class OwnedOfflineProvider {
       this.address=ready.address;
       await waitHttp(`${this.address}/health`,this.target.sut.startupTimeoutMs,this.process);
       this.identities=await actualListenerIdentity(this.address);
+      if(egress)egress.pids=this.identities.map(i=>i.pid);
+      const descriptor=ready.observation as Record<string,unknown>|undefined;
+      if(!descriptor || descriptor.protocol!==OBSERVATION_PROTOCOL || descriptor.basePath!=='/qa/usage/v1' || typeof descriptor.instanceId!=='string' || descriptor.usageEnabled!==true || descriptor.transportEnabled!==true) throw new Error('Delivered observation descriptor missing or incompatible');
+      this.observation=new ProviderObservationClient(this.address,this.observationToken,descriptor.instanceId,this.identities.map(i=>i.pid),async(name,value)=>{await writeFile(resolve(this.outputDirectory,`${++this.observationSerial}-${name}-generation-${this.generation}.json`),redact(value));});
+      this.initialObservation=await this.observation.snapshot();
       await writeFile(resolve(this.outputDirectory,`provider-identity-${this.generation}.json`),redact({ready,identities:this.identities,guardianPid:this.process.pid}));
     } catch(error) {
       try { await this.process.stop(); this.process=undefined; }
@@ -133,10 +169,11 @@ export class OwnedOfflineProvider {
     }
   }
   async stop(mode: 'SIGTERM'|'SIGKILL'='SIGTERM') {
-    if(this.process) { await this.process.stop(mode); this.lastStopOutcome=this.process.exitOutcome; this.process=undefined; }
+    if(this.process) { await this.process.stop(mode); this.lastStopOutcome=this.process.exitOutcome; this.process=undefined;const binding=this.providerEgressBindings.at(-1);if(binding&&this.lastStopOutcome)binding.exit=this.lastStopOutcome; }
     return this.lastStopOutcome;
   }
-  async restart(mode:'SIGTERM'|'SIGKILL',options?:{usageEnabled:boolean}) {
+  async egress(requireExit=false){return readProviderEgress(this.providerEgressBindings,requireExit);}
+  async restart(mode:'SIGTERM'|'SIGKILL',options?:{usageEnabled?:boolean;factoryUsageSupplied?:boolean}) {
     const beforePid=this.identities[0]?.pid;
     await this.stop(mode);
     try {await this.start(options);return {started:true,beforePid,afterPid:this.identities[0]?.pid};}

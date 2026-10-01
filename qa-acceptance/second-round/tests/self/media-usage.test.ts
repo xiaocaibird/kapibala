@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdir, mkdtemp, writeFile, rm, symlink } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { randomUUID } from 'node:crypto';
+import type { ProviderObservationClient, ProviderSnapshot } from '../../harness/provider-observation.js';
 import { ProviderUsageFiles, type ProviderUsageHost } from '../../harness/provider-usage.js';
 const row = () => ({ requestId: randomUUID(), attemptId: randomUUID(), runId: 'qa-run', observedAt: new Date().toISOString(), stage: 'validated-generation', purpose: 'turn', model: 'gemini-3.1-flash-lite', elapsedMs: 4.25, outcome: 'success', errorCode: null, inputTokens: null, outputTokens: 0, totalTokens: null });
 async function fixture() {
@@ -26,13 +27,39 @@ test('usage evidence rejects partial JSONL and symlinks instead of forgiving cor
     await rm(f.file); const other = join(f.root, 'other'); await writeFile(other, ''); await symlink(other, f.file); await assert.rejects(f.helper.usage(), /Unsafe/);
   } finally { await f.close(); }
 });
-test('usage factory defaults cannot be inferred from a main-entry process', async () => {
-  const f = await fixture(); try { f.host.options.usageEntry = 'factory'; assert.throws(() => f.helper.contract(), /Factory-only/); assert.deepEqual(f.counts(), { starts: 0, stops: 0 }); }
+test('usage factory defaults cannot be inferred without an actual process profile', async () => {
+  const f = await fixture(); try { f.host.options.usageEntry = 'factory'; assert.throws(() => f.helper.contract(), /actual process observation/); assert.deepEqual(f.counts(), { starts: 0, stops: 0 }); }
   finally { await f.close(); }
 });
 test('usage drain needs actual graceful exit evidence, not a sleep', async () => {
   const f = await fixture(); try {
+    f.host.observation = { snapshot: async () => ({usage:{queued:0,activeBatch:0,dropped:0}}) as ProviderSnapshot } as ProviderObservationClient;
     f.host.stopGracefully = async () => ({ code: null, signal: 'SIGKILL', evidence: { reference: 'qa-only-kill', raw: {} } });
     await assert.rejects(f.helper.settleUsage(), /graceful exit/); assert.equal(f.counts().starts, 0);
   } finally { await f.close(); }
+});
+
+test('usage drain preserves actual drops without deriving loss from retained file count',async()=>{
+  const f=await fixture();try{
+    f.host.observation={snapshot:async()=>({usage:{queued:0,activeBatch:0,dropped:76,writeFailures:0}}) as ProviderSnapshot} as ProviderObservationClient;
+    const result=await f.helper.settleUsage();assert.equal(result.dropped,76);assert.equal(result.queued,0);assert.deepEqual(f.counts(),{starts:1,stops:1});
+  }finally{await f.close();}
+});
+test('factory configured profile is checked against actual observation rather than assumed',async()=>{
+  const f=await fixture();try{
+    f.host.options={usageEntry:'factory',factoryUsageSupplied:false,usageEnabled:true};
+    f.host.initialObservation={usage:{entry:'factory',optionsSupplied:false,configuredEnabled:false}} as ProviderSnapshot;
+    assert.equal(f.helper.contract().enabled,false);
+    f.host.initialObservation.usage.optionsSupplied=true;assert.throws(()=>f.helper.contract());
+  }finally{await f.close();}
+});
+test('persistent age fixture stops its owned process and changes only the named timestamp with explicit provenance',async()=>{
+  const f=await fixture();try{
+    const first=row(),second=row();await writeFile(f.file,[first,second].map(r=>JSON.stringify(r)).join('\n')+'\n',{mode:0o600});
+    const change=await f.helper.installUsageAgeFixture(-86400000),actual=JSON.parse((await (await import('node:fs/promises')).readFile(f.file,'utf8')).trim().split('\n')[0]!);
+    assert.equal(change.oldestEligibleRecordId,first.attemptId);assert.ok(Date.parse(change.expiresAt)<Date.now());
+    const {observedAt:_,...rest}=actual,{observedAt:__,...prior}=first;assert.deepEqual(rest,prior);assert.notEqual(actual.observedAt,first.observedAt);
+    assert.equal((await f.helper.usage()).records[1]!.observedAt,second.observedAt);assert.deepEqual(f.counts(),{stops:1,starts:0});
+    assert.equal((change.evidence.raw as Record<string,unknown>).systemClockChanged,false);assert.equal((change.evidence.raw as Record<string,unknown>).priorModelActuallyOccurredAtFixtureTime,false);
+  }finally{await f.close();}
 });

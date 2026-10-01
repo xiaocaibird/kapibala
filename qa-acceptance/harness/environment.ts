@@ -39,6 +39,7 @@ export class QaEnvironment {
     return { gateway: this.gateway.url, agent: this.agent.url };
   }
   protected resourceEnvironment(): Record<string, string> { return {}; }
+  protected async applicationLaunch(command: Command, env: NodeJS.ProcessEnv): Promise<{ command: Command; env: NodeJS.ProcessEnv }> { return { command, env }; }
   constructor(
     readonly config: TargetConfig,
     private readonly cluster: OwnedDatabaseCluster,
@@ -168,10 +169,11 @@ export class QaEnvironment {
   async start(): Promise<void> {
     await requireAuthorization(this.config);
     if (this.server) throw new Error('服务已启动；须先停止');
+    const launch = await this.applicationLaunch(this.command(this.config.sut.start), await this.env());
     this.server = new OwnedProcess(
-      this.command(this.config.sut.start),
+      launch.command,
       this.config.sut.cwd,
-      await this.env(),
+      launch.env,
       resolve(this.outputDir, 'server.log'),
     );
     await this.server.start();
@@ -198,10 +200,11 @@ export class QaEnvironment {
     await requireAuthorization(this.config);
     if (this.second) throw new Error('第二实例已启动');
     const port = await availablePort();
+    const launch = await this.applicationLaunch(this.command(this.config.sut.start, port), await this.env(port));
     this.second = new OwnedProcess(
-      this.command(this.config.sut.start, port),
+      launch.command,
       this.config.sut.cwd,
-      await this.env(port),
+      launch.env,
       resolve(this.outputDir, 'server-2.log'),
     );
     await this.second.start();

@@ -59,7 +59,7 @@ export class MediaDatabaseFixtures {
       last = { after, rows };
       const progressed = Number(after.ticks) > Number(before.ticks) && typeof after.lastSucceededAt === 'string' && after.lastSucceededAt !== before.lastSucceededAt;
       const eligible = rows.some((r) => kind === 'download' ? ['pending', 'downloading'].includes(String(r.state)) && Date.parse(String(r.next_attempt_at)) <= Date.now() :
-        !r.active_reference && ((r.state === 'deleting' && Date.parse(String(r.next_attempt_at)) <= Date.now()) || (r.state === 'ready' && Number(r.age_days) > Number(env.mediaOptions.retentionDays ?? 30))));
+        !r.active_reference && (r.state === 'deleting' || (r.state === 'ready' && Number(r.age_days) > Number(env.mediaOptions.retentionDays ?? 30))));
       if (progressed && !eligible) { const evidence = proof(`media:actual-${kind}-cycle`, { before, beforeRows, after, rows, mapping: 'C1 media work runs in gateway tick; settled rows and independent file/source assertions remain necessary' }); await env.evidence(`media-${kind}-cycle`, evidence); return evidence; }
       await sleep(50);
     } while (performance.now() < deadline);

@@ -8,6 +8,20 @@ PLAYWRIGHT_BROWSERS_PATH=/absolute/owned/browser-cache node --import tsx second-
 
 入口冻结授权、完整范围和目标摘要，先执行冒烟子集，再执行其余用例；首次失败不自动重试。结果写入 `second-round/reports/runs/<run-id>/`；每轮保留 MD/JSON/JUnit、逐例原始证据和资源清理。真实付费模型与生产评估不在本入口范围。`--cases ID1,ID2` 仅用于独立复测批次，报告其余项保持 NOT_RUN，不替代全量结果。 `--browser chromium|firefox|webkit` 为不同引擎分别创建绑定目标和证据的批次；`--headed` 使用实际有头浏览器观察自动焦点行为，不能代替真人 IME／系统焦点签字。
 
+## 执行期补证与归档
+
+执行期公开契约按 [execution-baseline.json](requirements/execution-baseline.json) 冻结。媒体引用/清理事务、受限 Node 出口、usage 写队列、预算与迁移均通过实际进程/公开接口观察；所有子变体需独立成立。`reports/readiness/` 是夹具审查，实际结论仅来自冻结运行与最终人工复核。Darwin 已打开文件的不可变标记探针并不拒绝后续写入，因此不得冒称命中产品 write 失败。
+
+已完成批次的原始文件保留在 [第二轮归档](../reports/acceptance/20261002-second-round/batches/)。归档器校验报告摘要、拒绝符号链接等非普通文件，并逐文件重读压缩包校验 SHA256：
+
+```sh
+python3 second-round/harness/archive-batch.py --run /absolute/completed/run-id --runtime /absolute/owned/runtime/run-id --destination /absolute/qa/report/batches/run-id
+```
+
+每个包有 `evidence-index.json`，包含原路径、包内 `run/` 或 `runtime/` 路径、字节数与摘要。归档不会修改原始结果；QA 判断前提修正与产品修复必须另建复测批次。只有同冻结产品版本的实际结果才能汇入当前结论；兼容性抽样另列，不代替 Chromium 全量或真人确认。
+
+以下内容为原准备期记录，描述当时权限与连接状态，不代表当前执行状态。
+
 # 第二轮独立 QA 准备
 
 本目录只在 `agent/qa-second-round-preparation` 分支准备。范围为原 C1/C2 与 D050 批准的全部五项 P0、五项 P1；D051 只授权提前准备。所有产品结果为 **NOT_RUN**，第二轮产品执行、真实模型调用与合入 main 均未获授权。开发候选是材料输入，不能自动成为正式被测版本。

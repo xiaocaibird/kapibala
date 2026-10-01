@@ -7,7 +7,42 @@ import { BlockedError } from '../../harness/security.js';
 import { capacityControlFor } from '../../harness/capacity-control.js';
 import { runtimeObservationFor } from '../../harness/runtime-observation.js';
 import { assertSingleEpochActivityBudget, assertSingleEpochLifecycleBudget } from '../../tests/support/agent-activity-budget.js';
-import { assertDiagnostics, record } from './backend-oracles.js';
+import { assertDiagnostics, record, type DiagnosticModule } from './backend-oracles.js';
+import { actualListenerIdentity } from './environment.js';
+
+/** Exact public text reviewed by independent QA against SR-P1-03-05. These are
+ * observed API samples, not product constants. New wording needs QA review;
+ * the presence of a reassuring keyword is never enough to accept arbitrary text. */
+const reviewedNextSteps = new Map<string, string>([
+  ['当前没有本进程记录的失败；调度状态不代表业务完成或全部依赖健康。', 'No failure recorded in this process is explicitly not proof of business completion or dependency health.'],
+  ['用模块和 tickId 核对受限日志及已有业务状态；尚不能据此判断业务是否完成。', 'Only inspect the correlated restricted log and existing business state; completion remains unknown.'],
+  ['后续调度轮次已成功，保留最近失败供核对；这不代表此前业务或未知远端操作已完成。', 'A successful later tick is explicitly separated from the old operation and does not authorize replay.'],
+]);
+const knownUnsafeAdvice = new Set([
+  '请立即重新执行踢人', '核对日志，然后直接重发', '请求失败意味着远端未执行', '所有操作都已恢复', '失败可直接重试',
+]);
+export function reviewUnknownNextSteps(modules: readonly DiagnosticModule[]) {
+  assert.ok(modules.length, 'actual diagnostic modules are required');
+  return modules.flatMap(module => [
+    { module: module.name, field: 'nextStep', text: module.nextStep },
+    ...(module.lastFailure ? [{ module: module.name, field: 'lastFailure.nextStep', text: module.lastFailure.nextStep }] : []),
+  ]).map(item => {
+    // A witnessed explicit contradiction is FAIL, not an unreviewed-wording
+    // BLOCKED. Unknown phrasing still needs semantic review; no keyword pass.
+    assert.ok(!item.text.split(/[。；]/).some(clause => knownUnsafeAdvice.has(clause.trim())),
+      'SR-P1-03-05 unsafe public advice: ' + JSON.stringify(item));
+    const rationale = reviewedNextSteps.get(item.text);
+    if (!rationale) throw new BlockedError('Independent QA semantic review required for actual public nextStep: ' + JSON.stringify(item));
+    return { ...item, status: 'PASS' as const, rationale, criterion: 'SR-P1-03-05: inspect existing facts; do not infer no effect or authorize blind replay', reviewSource: 'Observed DIA001/DIA003 public API evidence, run 2026-10-01T22-25-01.466Z-7951d02e; independent QA review' };
+  });
+}
+
+export function assertReusedMessageResult(content: Record<string, unknown>, clientMsgId: string, state: string) {
+  // A5#7 specifically governs repeated keys; do not silently replace it with
+  // the first call's general five-second error contract from section 2.2.
+  assert.equal(content.clientMsgId, clientMsgId, 'A5#7 reuse result preserves original message identity');
+  assert.equal(content.deliveryStatus, state, 'A5#7 reuse exposes actual current delivery state');
+}
 
 export async function observeBackend<T>(read: () => Promise<T>, done: (v: T) => boolean, ms = 30_000, description = 'required causal boundary'): Promise<T> {
   const until = performance.now() + ms;
@@ -153,7 +188,7 @@ export async function noDispatchBudget(qa: QaEnvironment) {
 
 /** Effect has happened; gateway confirmation is unavailable to the product.
  * Private effect ledger is evidence for QA only and never feeds product recovery. */
-export async function dispatchedUnknownKick(qa: QaEnvironment, effect: boolean, restart: boolean) {
+export async function dispatchedUnknownKick(qa: QaEnvironment, effect: boolean, restart: boolean, compete = false) {
   const runtime = runtimeObservationFor(qa); let k: Awaited<ReturnType<typeof preparedKick>> | undefined;
   const responseBarrier = 'qa-unknown-kick-' + randomUUID(); let complete = false, primary: unknown;
   try {
@@ -166,12 +201,19 @@ export async function dispatchedUnknownKick(qa: QaEnvironment, effect: boolean, 
     const actualEffects = () => qa.gateway.snapshot().effects.filter(e => e.kind === 'kick' && e.groupId === k!.group.gatewayGroupId && e.platformUserId === k!.target);
     assert.equal(actualEffects().length, effect ? 1 : 0);
     qa.gateway.configure({ unavailable: true }); qa.gateway.barriers.release(responseBarrier);
-    const terminal = await lifecycle.waitFor('agent-terminal-committed', 65_000);
+    const settlement = await observeBackend(() => lifecycle.snapshot(), snapshot => snapshot.events.some(event =>
+      event.kind === 'agent-terminal-committed' || event.kind === 'agent-activity-pause-committed'), 65_000, 'original run terminal or committed unknown-outcome pause');
     const run = await qa.api.agentRun(k.runId), raw = record(run);
     const diagnostics = assertDiagnostics(await qa.api.require(qa.api.get('/api/diagnostics/background')));
-    const actual = await activity.waitFor('activity-terminal', 5000);
-    // Assert proven overruns before allowing missing terminal detail to block.
-    assertSingleEpochActivityBudget(actual.events, [0, performance.now() - k.startedMono], String(run.endReason));
+    const paused = settlement.events.some(event => event.kind === 'agent-activity-pause-committed');
+    const actual = paused ? await activity.snapshot() : await activity.waitFor('activity-terminal', 5000);
+    const onlineInterval: [number, number] = [0, performance.now() - k.startedMono];
+    // Preserve already witnessed budget breaches before reporting incomplete
+    // settlement. Pause/recovery is evaluated separately after safety evidence.
+    for (const event of actual.events) if (event.includesUnsavedTail && event.activeElapsedMs) {
+      assert.ok(event.activeElapsedMs[0] <= onlineInterval[1], 'activity contradicts independent online upper bound');
+      assert.ok(event.activeElapsedMs[0] <= 60_000, '活动预算已证明超过原始60秒上限');
+    }
     assert.equal(calls(qa, k.group, 'kick').length, 1); assert.equal(actualEffects().length, effect ? 1 : 0);
     assert.equal(qa.agent.snapshot().audits.length - k.auditStart, 1);
     const confirmation = qa.gateway.snapshot().requests.filter(r => r.method === 'GET' && r.path === '/groups/' + k!.group.gatewayGroupId + '/members');
@@ -182,6 +224,20 @@ export async function dispatchedUnknownKick(qa: QaEnvironment, effect: boolean, 
     let persisted;
     try { persisted = (await db.query('SELECT id,status,end_reason,recovery_note,history FROM agent_runs WHERE id=$1', [k.runId])).rows; }
     finally { await db.end(); }
+    let secondObservation: unknown;
+    if (compete) {
+      const second = await qa.startSecondInstance(); await second.login();
+      const primaryIdentity = await actualListenerIdentity(qa.api.baseUrl), secondaryIdentity = await actualListenerIdentity(second.baseUrl);
+      assert.ok(secondaryIdentity.every(item => !primaryIdentity.some(primary => primary.pid === item.pid)), 'second origin must have a different actual listener process');
+      const before = assertDiagnostics(await second.require(second.get('/api/diagnostics/background')));
+      const automation = before.find(module => module.name === 'automation');
+      if (!automation) throw new BlockedError('Second instance did not expose its own automation tick');
+      const afterTicks = await observeBackend(async () => assertDiagnostics(await second.require(second.get('/api/diagnostics/background'))), rows => rows.some(module => module.name === 'automation' && module.ticks > automation.ticks), 10_000, 'actual second-instance automation progress');
+      const secondRun = await second.agentRun(k.runId); assert.equal(secondRun.id, k.runId);
+      assert.equal(calls(qa, k.group, 'kick').length, 1); assert.equal(actualEffects().length, effect ? 1 : 0);
+      secondObservation = { origin: second.baseUrl, primaryIdentity, secondaryIdentity, before, afterTicks, secondRun,
+        competition: 'BLOCKED', reason: 'Actual second process and tick observed, but no public same-run ownership attempt/refusal witness; neither ticks nor zero additional HTTP proves contention.' };
+    }
     let afterRestart: unknown;
     if (restart) {
       const before = qa.capacityControlTarget(); await qa.restart(); await qa.api.login();
@@ -197,10 +253,17 @@ export async function dispatchedUnknownKick(qa: QaEnvironment, effect: boolean, 
     await observeBackend(async () => assertDiagnostics(await qa.api.require(qa.api.get('/api/diagnostics/background'))), rows => rows.some(m => m.name === baseline.name && m.ticks > baseline.ticks), 10_000, 'subsequent actual Agent tick after authority restoration');
     assert.equal(calls(qa, k.group, 'kick').length, 1); assert.equal(actualEffects().length, effect ? 1 : 0);
     const after = await qa.api.agentRun(k.runId); assert.equal(after.id, k.runId);
-    complete = true; return { effect, restart, dispatched, terminal, activity: actual, run, rawRecoveryNote: raw.recoveryNote, persisted, diagnostics, confirmation, afterRestart, after, effects: actualEffects(), kicks: calls(qa, k.group, 'kick'), completionBoundary: 'Safety observations do not imply successful completion of an unconfirmed external effect.' };
+    complete = true; return { effect, restart, compete, dispatched, settlement, paused, activity: actual, onlineInterval, run, rawRecoveryNote: raw.recoveryNote, persisted, diagnostics, confirmation, secondObservation, afterRestart, after, effects: actualEffects(), kicks: calls(qa, k.group, 'kick'), completionBoundary: 'Safety observations do not imply successful completion of an unconfirmed external effect.' };
   } catch (error) { primary = error; throw error; } finally {
-    await cleanupObserved(qa, primary, [() => !complete ? qa.kill() : undefined, () => { qa.gateway.configure({ unavailable: false }); if (k) qa.agent.barriers.release(k.barrier); qa.gateway.barriers.release(responseBarrier); }, () => runtime.close()]);
+    await cleanupObserved(qa, primary, [() => !complete ? qa.kill() : undefined, () => qa.stopSecondInstance(), () => { qa.gateway.configure({ unavailable: false }); if (k) qa.agent.barriers.release(k.barrier); qa.gateway.barriers.release(responseBarrier); }, () => runtime.close()]);
   }
+}
+
+export function assertUnknownKickCompletion(facts: Awaited<ReturnType<typeof dispatchedUnknownKick>>) {
+  assert.ok(!facts.paused, '原A5.8强恢复差异：真实未知外部结果使原run进入recovery-paused；安全不重放不等于完成');
+  assertSingleEpochActivityBudget(facts.activity.events, facts.onlineInterval, String(facts.run.endReason));
+  assert.ok(facts.after.status !== 'running' && !record(facts.after).recoveryNote,
+    '原run在权威来源恢复后仍未完成；后续成功tick不能替代业务恢复');
 }
 
 /** Crash only at a reviewed durable read-only continuation after the first send. */
@@ -213,11 +276,19 @@ export async function sentKeyCrashRecovery(qa: QaEnvironment, compete: boolean) 
     qa.agent.enqueueAudits({ body: { verdict: 'pass', reason: 'first send audit' }, barrier: { phase: 'before-response', name: auditBarrier } });
     qa.agent.enqueueTurns(backendTool(first, 'send_message', { text, idempotency_key: key }), backendTool(readId, 'get_recent_messages', { limit: 10 }), backendTool(retry, 'send_message', { text, idempotency_key: key }));
     const runId = await startBackendRun(qa, group); await qa.agent.barriers.waitFor(auditBarrier);
-    const lease = await runtime.arm('hold-safe-activity-boundary', { kind: 'activity', groupId: group.id, runId, toolUseId: readId });
+    // Delivered activityRequestSchema observes the whole run; it does not
+    // accept a tool-specific filter. This script has exactly one read-only
+    // step before the crash, which is independently checked through the API.
+    const lease = await runtime.arm('hold-safe-activity-boundary', { kind: 'activity', groupId: group.id, runId, toolUseId: 'all-run-steps' });
     qa.agent.barriers.release(auditBarrier);
     const boundary = await lease.waitFor('activity-safe-held', 30_000), held = boundary.events.find(e => e.kind === 'activity-safe-held');
     assert.ok(held?.continuationDurable); assert.equal(held.remoteInFlightCount, 0);
-    const messages = await qa.api.messages(group.id), sent = messages.items.find(m => m.text === text); assert.equal(sent?.deliveryStatus, 'sent');
+    const beforeCrash = await qa.api.agentRun(runId), completedRead = beforeCrash.steps.find(step => step.toolUseId === readId);
+    assert.equal(completedRead?.name, 'get_recent_messages'); assert.equal(completedRead.isError, false); assert.ok(completedRead.resultSummary);
+    assert.equal(beforeCrash.steps.filter(step => step.name === 'get_recent_messages').length, 1);
+    assert.ok(!beforeCrash.steps.some(step => step.toolUseId === retry), 'retry must not have executed before the crash');
+    const messages = await observeBackend(() => qa.api.messages(group.id), page => page.items.some(message => message.text === text && message.deliveryStatus === 'sent'), 5000, 'first message truly sent before durable read-only crash');
+    const sent = messages.items.find(m => m.text === text); assert.equal(sent?.deliveryStatus, 'sent');
     assert.equal(calls(qa, group, 'send').length, 1); assert.equal(qa.agent.snapshot().audits.length - auditsBefore, 1);
     const oldPid = qa.capacityControlTarget().pid; await qa.kill(); await lease.release();
     const second = compete ? await qa.startSecondInstance() : undefined; if (second) await second.login();
@@ -230,17 +301,18 @@ export async function sentKeyCrashRecovery(qa: QaEnvironment, compete: boolean) 
     const firstMsg = record(JSON.parse(String(firstResult.content))), retryMsg = record(JSON.parse(String(retryResult.content))); assert.equal(firstMsg.clientMsgId, retryMsg.clientMsgId);
     assert.equal(calls(qa, group, 'send').length, 1); assert.equal(qa.agent.snapshot().audits.length - auditsBefore, 1);
     assert.equal(qa.gateway.snapshot().messages.filter(m => m.groupId === group.gatewayGroupId && m.text === text).length, 1);
-    complete = true; return { compete, boundary, oldPid, newPid, secondOrigin: second?.baseUrl, sent, run, ledger, firstMsg, retryMsg, sends: calls(qa, group, 'send') };
+    complete = true; return { compete, boundary, beforeCrash, completedRead, oldPid, newPid, secondOrigin: second?.baseUrl, sent, run, ledger, firstMsg, retryMsg, sends: calls(qa, group, 'send') };
   } catch (error) { primary = error; throw error; } finally { await cleanupObserved(qa, primary, [() => !complete ? qa.kill() : undefined, () => qa.stopSecondInstance(), () => qa.agent.barriers.release(auditBarrier), () => runtime.close()]); }
 }
 
-export async function reuseAtMessageState(qa: QaEnvironment, state: 'queued' | 'accepted' | 'unknown') {
+export async function reuseAtMessageState(qa: QaEnvironment, state: 'queued' | 'accepted' | 'unknown' | 'failed') {
   const { group } = await qa.api.createGroup(), first = randomUUID(), retry = randomUUID(), key = randomUUID(), text = 'state-key-' + randomUUID();
   const retryBarrier = 'qa-key-retry-' + randomUUID(), responseBarrier = 'qa-key-response-' + randomUUID();
   const auditStart = qa.agent.snapshot().audits.length; let complete = false, primary: unknown;
   try {
     if (state === 'queued') qa.gateway.enqueue('/groups/' + group.gatewayGroupId + '/send', { status: 429, code: 'RATE_LIMITED', body: { retryAfterSeconds: 60 }, effect: 'none' });
     else if (state === 'accepted') qa.gateway.enqueue('/groups/' + group.gatewayGroupId + '/send', { status: 202, effect: 'none', omitEvent: true });
+    else if (state === 'failed') qa.gateway.enqueue('/groups/' + group.gatewayGroupId + '/send', { failureCode: 'ACCOUNT_SUSPENDED' });
     else qa.gateway.enqueue('/groups/' + group.gatewayGroupId + '/send', { status: 504, code: 'NETWORK_TIMEOUT', effect: 'apply', omitEvent: true, barrier: { phase: 'before-response', name: responseBarrier } });
     qa.agent.enqueueTurns(backendTool(first, 'send_message', { text, idempotency_key: key }), { ...backendTool(retry, 'send_message', { text, idempotency_key: key }), barrier: { phase: 'before-response', name: retryBarrier } });
     const runId = await startBackendRun(qa, group);
@@ -252,6 +324,8 @@ export async function reuseAtMessageState(qa: QaEnvironment, state: 'queued' | '
     const hit = await qa.agent.barriers.waitFor(retryBarrier, 20_000);
     const snapshot = await observeBackend(() => qa.api.messages(group.id), v => v.items.some(m => m.text === text && m.deliveryStatus === state), 5000, 'public original ' + state + ' message before reuse');
     const original = snapshot.items.find(m => m.text === text)!; assert.ok(original.clientMsgId);
+    const beforeReuse = await qa.api.agentRun(runId);
+    assert.equal(beforeReuse.status, 'running', 'the same original run must still be live at the retry response barrier');
     const beforeRequests = calls(qa, group, 'send'); assert.equal(beforeRequests.length, 1);
     qa.agent.barriers.release(retryBarrier); const run = await finishBackendRun(qa, runId);
     assert.equal(qa.agent.snapshot().audits.length - auditStart, 1, 'same-key reuse cannot repeat audit');
@@ -259,9 +333,12 @@ export async function reuseAtMessageState(qa: QaEnvironment, state: 'queued' | '
     const messages = (await qa.api.messages(group.id)).items.filter(m => m.text === text); assert.equal(messages.length, 1); assert.equal(messages[0]?.clientMsgId, original.clientMsgId);
     const returned = turns(qa, runId).flatMap(t => (record(t.body).messages as unknown[]).flatMap(m => record(m).content as unknown[])).map(record).find(b => b.type === 'tool_result' && b.tool_use_id === retry);
     assert.ok(returned); const content = record(JSON.parse(String(returned.content)));
-    assert.equal(content.clientMsgId, original.clientMsgId, 'reuse result preserves original message identity'); assert.equal(content.deliveryStatus, state, 'reuse exposes actual current delivery state');
+    // Persist the actual failed/queued result before assertions so a contract
+    // failure retains identity, state, live-run and protocol evidence.
+    await qa.evidence('message-reuse-' + state + '-' + runId, { state, hit, original, beforeReuse, run, returned, content, messages, beforeRequests, afterRequests: calls(qa, group, 'send') });
+    assertReusedMessageResult(content, original.clientMsgId, state);
     assert.equal(qa.gateway.snapshot().messages.filter(m => m.groupId === group.gatewayGroupId && m.text === text).length, state === 'unknown' ? 1 : 0);
-    complete = true; return { state, hit, original, run, returned, content, messages, beforeRequests, afterRequests: calls(qa, group, 'send'), timingBoundary: 'No strict five-second assertion or synthetic time advance in this regression' };
+    complete = true; return { state, hit, original, beforeReuse, run, returned, content, messages, beforeRequests, afterRequests: calls(qa, group, 'send'), timingBoundary: 'No strict five-second assertion or synthetic time advance in this regression' };
   } catch (error) { primary = error; throw error; } finally { await cleanupObserved(qa, primary, [() => !complete ? qa.kill() : undefined, () => { qa.gateway.configure({ unavailable: false }); qa.gateway.barriers.release(responseBarrier); qa.agent.barriers.release(retryBarrier); }]); }
 }
 

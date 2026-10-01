@@ -1,0 +1,32 @@
+{
+  "phase": "QA_TOOL_VALIDATION_ONLY",
+  "productContractRevision": "a8873d9760122377d2d8989859796491c26c7938",
+  "productTestsRunForNewChanges": false,
+  "checks": [
+    {
+      "command": "npm run typecheck",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run typecheck -- --project second-round/tsconfig.json",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run test:self",
+      "result": "PASS",
+      "count": 361,
+      "log": "parent-self-tests.tap"
+    },
+    {
+      "command": "node --import ./qa-acceptance/node_modules/tsx/dist/loader.mjs --test qa-acceptance/second-round/tests/self/*.test.ts",
+      "result": "PASS",
+      "count": 108,
+      "log": "second-round-self-tests.tap"
+    },
+    {
+      "command": "git diff --check",
+      "result": "PASS"
+    }
+  ],
+  "sourceNote": "Exact QA commit is frozen after these assets are committed; new SUT execution cannot inherit any tool self-test result."
+}

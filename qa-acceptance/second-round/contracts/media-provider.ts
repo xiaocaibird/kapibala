@@ -116,7 +116,7 @@ export type Proposal =
   | { kind: 'tool'; name: string; input: Record<string, Json> }
   | { kind: 'text'; text: string }
   | { kind: 'audit'; verdict: 'pass' | 'fail'; reason: string };
-export type ProviderFault = 'http-401' | 'http-429' | 'http-500' | 'network-error' | 'timeout' |
+export type ProviderFault = 'http-401' | 'http-429' | 'http-500' | 'redirect' | 'network-error' | 'timeout' |
   'bad-json' | 'multiple-candidates' | 'native-function-call' | 'truncated' | 'safety-blocked';
 export interface ProviderCall {
   id: string;
@@ -200,11 +200,14 @@ export interface RealProviderPermission {
 export interface ProviderDriver extends DriverBase {
   /** An upstream transport seam must be explicitly delivered. No monkeypatch
    * of product internals and no silent Google access if the seam is absent. */
-  enqueue(input: { purpose: 'turn' | 'audit'; proposal?: Proposal; fault?: ProviderFault; actualUsage?: Record<string, number> | null; rawUsage?: Record<string, Json>; delayResponseMs?: number }): Promise<void>;
+  enqueue(input: { purpose: 'turn' | 'audit'; proposal?: Proposal; fault?: ProviderFault; actualUsage?: Record<string, number> | null; rawUsage?: Record<string, Json>; delayResponseMs?: number; redirectLocation?: string }): Promise<void>;
   holdNextUpstream(purpose: 'turn' | 'audit'): Promise<Barrier>;
   exchange(path: '/agent/turn' | '/agent/audit', body: unknown): Promise<HttpFact>;
   calls(): Promise<ProviderCall[]>;
-  restart(mode: 'SIGTERM' | 'SIGKILL', options?: { usageEnabled: boolean }): Promise<{ started: boolean; beforePid: number; afterPid?: number; evidence: Evidence }>;
+  upstreamFacts(): Promise<{ records: {call:ProviderCall;responseStatus:number|null;responseFinishedAt:string|null;connectionClosedAt:string|null;aborted:boolean}[]; evidence:Evidence }>;
+  stopProvider(mode:'SIGTERM'|'SIGKILL'):Promise<{beforePid:number;exit:{code:number|null;signal:string|null};evidence:Evidence}>;
+  providerEgress(requireExit?:boolean):Promise<Awaited<ReturnType<typeof import('../harness/provider-egress.js').readProviderEgress>>>;
+  restart(mode: 'SIGTERM' | 'SIGKILL', options?: { usageEnabled?: boolean; factoryUsageSupplied?: boolean }): Promise<{ started: boolean; beforePid: number; afterPid?: number; evidence: Evidence }>;
   lockState(): Promise<{ exists: boolean; actualOwnerAlive: boolean; ownedDirectoryVerified: boolean; evidence: Evidence }>;
   reclaimOwnedStaleLock(): Promise<Evidence>;
   installPrivateStateFault(kind: 'corrupt' | 'symlink' | 'wide-permissions' | 'foreign-owner'): Promise<{ restore(): Promise<void>; evidence: Evidence }>;
@@ -216,12 +219,15 @@ export interface ProviderDriver extends DriverBase {
   /** Observe actual enqueue/write settlement, not just wait a fixed duration;
    * best-effort drops are reported, never invented as token usage. */
   settleUsage(): Promise<{ dropped: number; queued: number; activeBatch: number; evidence: Evidence }>;
+  usageObservation(): Promise<{ snapshot: import('../harness/provider-observation.js').ProviderSnapshot; evidence: Evidence }>;
   holdUsageWrites(): Promise<Barrier>;
   usageQueue(): Promise<{ queued: number; activeBatch: number; dropped: number; diagnosticCodes: string[]; evidence: Evidence }>;
+  usageTemporaryCleanup(): Promise<{ evidence: Evidence }>;
   usageWriteFault(): Promise<{ restore(): Promise<void>; observed(): Promise<Evidence> }>;
   /** Explicit final-contract dependency; these drive real writer config,
    * lifetime and shutdown, not editing usage rows or returning fake counts. */
   usageFiles(): Promise<{ root: string; files: string[]; evidence: Evidence }>;
+  installUsageAgeFixture(remainingMs:number):Promise<{oldestEligibleRecordId:string;expiresAt:string;evidence:Evidence}>;
   advanceUsageRetention(): Promise<{ oldestEligibleRecordId: string; evidence: Evidence }>;
   shutdownUsageWriter(): Promise<{ rejectedAfterClose: boolean; evidence: Evidence }>;
   diagnostics(): Promise<{ failureObserved: boolean; recovered: boolean; raw: Json; evidence: Evidence }>;

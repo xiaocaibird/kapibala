@@ -267,7 +267,7 @@ export class PlatformClient {
   }
   messages(groupId: string, cursor?: string, limit = 50) {
     return this.require(
-      this.get<{ items: Message[]; nextCursor: string | null }>(
+      this.get<{ items: Message[]; nextCursor: string | null; snapshotId?: string; snapshotCursor?: string }>(
         `/api/groups/${groupId}/messages?limit=${limit}${cursor ? `&before=${encodeURIComponent(cursor)}` : ''}`,
       ),
     );
