@@ -1,0 +1,170 @@
+{
+  "sourceCommit": "63c421205b91f57dc34d2caf6909be5f56f3bdd9",
+  "derivedFrom": "focused-final.tap",
+  "records": [
+    {
+      "table": "messages",
+      "messageStatus": "accepted",
+      "accountStatus": "online",
+      "elapsedMs": 5005.637041999999,
+      "accountReads": 0,
+      "releasedAtResult": false,
+      "outcome": {
+        "errorCode": "SEND_TIMEOUT",
+        "value": {
+          "code": "SEND_TIMEOUT",
+          "message": "Delivery could not be confirmed within five seconds.",
+          "hint": "Retrying this idempotency key reads the same outbound message."
+        }
+      }
+    },
+    {
+      "table": "accounts",
+      "messageStatus": "accepted",
+      "accountStatus": "online",
+      "elapsedMs": 5003.628417,
+      "accountReads": 32,
+      "releasedAtResult": false,
+      "outcome": {
+        "errorCode": "SEND_TIMEOUT",
+        "value": {
+          "code": "SEND_TIMEOUT",
+          "message": "Delivery could not be confirmed within five seconds.",
+          "hint": "Retrying this idempotency key reads the same outbound message."
+        }
+      }
+    },
+    {
+      "table": "messages",
+      "messageStatus": "failed",
+      "accountStatus": "online",
+      "elapsedMs": 5004.187042000001,
+      "accountReads": 0,
+      "releasedAtResult": false,
+      "outcome": {
+        "errorCode": "SEND_TIMEOUT",
+        "value": {
+          "code": "SEND_TIMEOUT",
+          "message": "Delivery could not be confirmed within five seconds.",
+          "hint": "Retrying this idempotency key reads the same outbound message."
+        }
+      }
+    },
+    {
+      "table": "accounts",
+      "messageStatus": "accepted",
+      "accountStatus": "suspended",
+      "elapsedMs": 5011.218375000002,
+      "accountReads": 33,
+      "releasedAtResult": false,
+      "outcome": {
+        "errorCode": "SEND_TIMEOUT",
+        "value": {
+          "code": "SEND_TIMEOUT",
+          "message": "Delivery could not be confirmed within five seconds.",
+          "hint": "Retrying this idempotency key reads the same outbound message."
+        }
+      }
+    },
+    {
+      "case": "timely-sent",
+      "elapsedMs": 4.338415999998688,
+      "accountReads": 0,
+      "releasedAtResult": false
+    },
+    {
+      "deliveryStatus": "cancelled",
+      "elapsedMs": 2.1225420000009763,
+      "outcomes": [
+        {
+          "errorCode": "GROUP_UNREACHABLE",
+          "value": {
+            "code": "GROUP_UNREACHABLE",
+            "message": "GROUP_UNREACHABLE"
+          }
+        },
+        {
+          "value": {
+            "clientMsgId": "188b7710-65f3-4c37-9239-0cc9f7cca6ef",
+            "deliveryStatus": "sent"
+          }
+        }
+      ]
+    },
+    {
+      "deliveryStatus": "failed",
+      "elapsedMs": 2.407791999998153,
+      "outcomes": [
+        {
+          "errorCode": "SEND_FAILED",
+          "value": {
+            "code": "SEND_FAILED",
+            "message": "ACCOUNT_TERMINAL"
+          }
+        },
+        {
+          "value": {
+            "clientMsgId": "17edc2a2-2fe0-442c-aa3a-99a7a19bf7c6",
+            "deliveryStatus": "sent"
+          }
+        }
+      ]
+    },
+    {
+      "deliveryStatus": "unknown",
+      "elapsedMs": 5002.432083,
+      "outcomes": [
+        {
+          "errorCode": "SEND_TIMEOUT",
+          "value": {
+            "code": "SEND_TIMEOUT",
+            "message": "Delivery could not be confirmed within five seconds.",
+            "hint": "Retrying this idempotency key reads the same outbound message."
+          }
+        },
+        {
+          "value": {
+            "clientMsgId": "c3bb2a12-6898-4a69-a609-1a36bbd34cc1",
+            "deliveryStatus": "sent"
+          }
+        }
+      ]
+    },
+    {
+      "case": "sent-after-lock-release",
+      "elapsedMs": 309.34349999999904
+    },
+    {
+      "case": "timely-observation-late-cleanup",
+      "deliveryStatus": "sent",
+      "windowMs": 100,
+      "observedAfterMs": 1.5192920000008598,
+      "elapsedMs": 151.9318749999984,
+      "cleanupCompletionDelayMs": 150
+    },
+    {
+      "case": "timely-observation-late-cleanup",
+      "deliveryStatus": "accepted",
+      "windowMs": 100,
+      "observedAfterMs": 1.6483749999970314,
+      "elapsedMs": 153.17158299999937,
+      "cleanupCompletionDelayMs": 150
+    },
+    {
+      "case": "timely-observation-late-cleanup",
+      "deliveryStatus": "failed",
+      "windowMs": 100,
+      "observedAfterMs": 2.0273330000018177,
+      "elapsedMs": 155.35329199999978,
+      "cleanupCompletionDelayMs": 150
+    },
+    {
+      "elapsedMs": 109.199667,
+      "statementTimeoutMs": 100,
+      "originalSleepMs": 1000,
+      "sameConnectionReused": true
+    }
+  ],
+  "strictPhysical5000Verdict": "NOT_SATISFIED",
+  "note": "observed times are execution host durations; no rounding, assertion relaxation, or physical hard-limit claim"
+}

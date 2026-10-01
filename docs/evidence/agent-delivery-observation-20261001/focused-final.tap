@@ -1,0 +1,56 @@
+✔ Agent delivery completes its five-second observation while messages remains locked (accepted/online) (5161.854667ms)
+ℹ Independent database: kapibala_test_dc36f13fb4104165a3fdfe66dc754e2e
+ℹ {"table":"messages","messageStatus":"accepted","accountStatus":"online","elapsedMs":5005.637041999999,"accountReads":0,"releasedAtResult":false,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+✔ Agent delivery completes its five-second observation while accounts remains locked (accepted/online) (5209.805584ms)
+ℹ Independent database: kapibala_test_76f8b18358334fb2925bda3a4487aa2b
+ℹ {"table":"accounts","messageStatus":"accepted","accountStatus":"online","elapsedMs":5003.628417,"accountReads":32,"releasedAtResult":false,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+✔ Agent delivery completes its five-second observation while messages remains locked (failed/online) (5094.3345ms)
+ℹ Independent database: kapibala_test_ce02e29e246a4c7e94eac1b104c2325e
+ℹ {"table":"messages","messageStatus":"failed","accountStatus":"online","elapsedMs":5004.187042000001,"accountReads":0,"releasedAtResult":false,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+✔ Agent delivery completes its five-second observation while accounts remains locked (accepted/suspended) (5101.393875ms)
+ℹ Independent database: kapibala_test_1fccdff248034290993fff04b13f8541
+ℹ {"table":"accounts","messageStatus":"accepted","accountStatus":"suspended","elapsedMs":5011.218375000002,"accountReads":33,"releasedAtResult":false,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+✔ Agent delivery with no remaining wait does not start message or account reads (81.596833ms)
+ℹ Independent database: kapibala_test_97604318f2de4f59a7384753d4e01068
+✔ Agent delivery retains the ownership failure after a blocked read and does not complete the step (121.886375ms)
+ℹ Independent database: kapibala_test_4c20c62e2f3b48b88ac44434f7d2f54c
+✔ Agent delivery returns a timely sent observation without waiting for an unrelated account lock (79.318458ms)
+ℹ Independent database: kapibala_test_91600171fd5c4229b0bc749f8f59190a
+ℹ {"case":"timely-sent","elapsedMs":4.338415999998688,"accountReads":0,"releasedAtResult":false}
+✔ Agent delivery preserves cancelled and same-key sent recovery (81.58275ms)
+ℹ Independent database: kapibala_test_973f9e9b9ad349ac9a7aa3e5c0273bbc
+ℹ {"deliveryStatus":"cancelled","elapsedMs":2.1225420000009763,"outcomes":[{"errorCode":"GROUP_UNREACHABLE","value":{"code":"GROUP_UNREACHABLE","message":"GROUP_UNREACHABLE"}},{"value":{"clientMsgId":"188b7710-65f3-4c37-9239-0cc9f7cca6ef","deliveryStatus":"sent"}}]}
+✔ Agent delivery preserves failed and same-key sent recovery (82.433333ms)
+ℹ Independent database: kapibala_test_bdddbfb922534ef597f3a084043fb116
+ℹ {"deliveryStatus":"failed","elapsedMs":2.407791999998153,"outcomes":[{"errorCode":"SEND_FAILED","value":{"code":"SEND_FAILED","message":"ACCOUNT_TERMINAL"}},{"value":{"clientMsgId":"17edc2a2-2fe0-442c-aa3a-99a7a19bf7c6","deliveryStatus":"sent"}}]}
+✔ Agent delivery preserves unknown and same-key sent recovery (5080.688083ms)
+ℹ Independent database: kapibala_test_2fbefb1a198c4fb8bd5357d0b0944ed2
+ℹ {"deliveryStatus":"unknown","elapsedMs":5002.432083,"outcomes":[{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}},{"value":{"clientMsgId":"c3bb2a12-6898-4a69-a609-1a36bbd34cc1","deliveryStatus":"sent"}}]}
+✔ Agent delivery observes sent after a timed-out message read is released inside the same window (390.50075ms)
+ℹ Independent database: kapibala_test_16bb911abd254dc1baf3e2c619fc94d5
+ℹ {"case":"sent-after-lock-release","elapsedMs":309.34349999999904}
+✔ Agent delivery retains timely sent when successful cleanup returns after the window (233.090125ms)
+ℹ Independent database: kapibala_test_c23050d15737445ab35cf8c4c1ee1607
+ℹ {"case":"timely-observation-late-cleanup","deliveryStatus":"sent","windowMs":100,"observedAfterMs":1.5192920000008598,"elapsedMs":151.9318749999984,"cleanupCompletionDelayMs":150}
+✔ Agent delivery retains timely accepted when successful cleanup returns after the window (232.76075ms)
+ℹ Independent database: kapibala_test_4284239aab29446782959421f45c8eda
+ℹ {"case":"timely-observation-late-cleanup","deliveryStatus":"accepted","windowMs":100,"observedAfterMs":1.6483749999970314,"elapsedMs":153.17158299999937,"cleanupCompletionDelayMs":150}
+✔ Agent delivery retains timely failed when successful cleanup returns after the window (241.003791ms)
+ℹ Independent database: kapibala_test_f493ad4a7ddc499f95478e14c8ce8313
+ℹ {"case":"timely-observation-late-cleanup","deliveryStatus":"failed","windowMs":100,"observedAfterMs":2.0273330000018177,"elapsedMs":155.35329199999978,"cleanupCompletionDelayMs":150}
+✔ delivery SELECT server timeout is acknowledged and its transaction/settings are cleared before reuse (139.198417ms)
+ℹ {"elapsedMs":109.199667,"statementTimeoutMs":100,"originalSleepMs":1000,"sameConnectionReused":true}
+✔ delivery does not swallow a real database cancel as an observation timeout (43.744333ms)
+✔ delivery does not swallow a real database terminate as an observation timeout (40.838917ms)
+✔ delivery propagates non-timeout SQL errors rather than converting them to SEND_TIMEOUT (28.228709ms)
+✔ delivery rollback failure cannot turn an acknowledged statement timeout into retry (131.88675ms)
+✔ delivery preserves ownership loss during rollback after a server timeout (127.928333ms)
+✔ delivery does not accept a SELECT result delivered after its observation deadline (182.473583ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 28169.910375

@@ -1,0 +1,49 @@
+✔ delivery SELECT server timeout is acknowledged and its transaction/settings are cleared before reuse (138.118625ms)
+ℹ {"elapsedMs":109.08574999999996,"statementTimeoutMs":100,"originalSleepMs":1000,"sameConnectionReused":true}
+✔ delivery does not swallow a real database cancel as an observation timeout (46.791917ms)
+✔ delivery does not swallow a real database terminate as an observation timeout (42.426625ms)
+✔ delivery propagates non-timeout SQL errors rather than converting them to SEND_TIMEOUT (26.984458ms)
+✔ delivery rollback failure cannot turn an acknowledged statement timeout into retry (136.502292ms)
+✔ delivery preserves ownership loss during rollback after a server timeout (132.042875ms)
+✔ delivery does not accept a SELECT result delivered after its observation deadline (182.668ms)
+✔ CG13: legal turns reset consecutive errors and preserve exact history shapes and end_turn semantics (225.811416ms)
+ℹ Independent database: kapibala_test_2fd12791556342b197c87d77a99d9f35
+✔ CG14: three audit responses without verdict block one step and publish the terminal fields without effects (129.088542ms)
+ℹ Independent database: kapibala_test_76e62dbe1b164cd58bac3f64cb901076
+✔ CG14: no online member for send and no online elevated member for kick are business errors (150.719875ms)
+ℹ Independent database: kapibala_test_9382729bde014cd0b1de92d77ffb27d2
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ CG14: disabling autoKick while the audit is pending prevents the authorized tool from executing (249.412041ms)
+ℹ Independent database: kapibala_test_edf14ca637774c39919582c014fa30ce
+✔ CG15: a current run reads newly arrived messages in order and exposes Unicode and raw response bounds (248.297ms)
+ℹ Independent database: kapibala_test_2dad74c84b53463c98ffecee957269ba
+✔ CG16: invalid indexes have no persistent effects and the next step starts from actual skip time (589.549125ms)
+ℹ Independent database: kapibala_test_7ec58002629d430a8292557545124bd9
+✔ R09: echo confirmation uses only message_sent observation, preserves it after duplicate and restart (1257.247792ms)
+ℹ Independent database: kapibala_test_6cf982ec33b540d8a2c702010600bead
+✔ R09: query confirmation uses only message_sent observation, preserves it after duplicate and restart (1205.101209ms)
+ℹ Independent database: kapibala_test_612733633c0f4c449d27fd5f63e6f537
+✔ R09: event confirmation uses only message_sent observation, preserves it after duplicate and restart (628.471458ms)
+ℹ Independent database: kapibala_test_19c7b7b9eda74b59bfd3684ca7f630d7
+✔ R05: a locked group cannot block another group's Agent or sequence; retry preserves one run and one enqueue (267.212917ms)
+ℹ Independent database: kapibala_test_490421a2decc4250a6efa6dec7f19a73
+ℹ tick with group lock held: 133ms
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ R05: a real slow member reconciliation holds its group lock without stopping another group (374.761583ms)
+ℹ Independent database: kapibala_test_ff72f22459f747f6940ace0bd3a3a68e
+✔ R05: busy takeover defers only that run and must rebase it before dispatch after unlock (647.934416ms)
+ℹ Independent database: kapibala_test_feb386321497427691df52e39a6f74dc
+✔ R09: skipped step still schedules from the actual skip time (114.646125ms)
+ℹ Independent database: kapibala_test_5e749b6116bb431899ff23d2b9f53d23
+✔ R09: observation precedes row-lock wait and survives a failed transaction retry (398.929334ms)
+ℹ Independent database: kapibala_test_8171eab09a074543880e7611a7f9ad27
+✔ R09: migration refuses active old sequences and never fabricates historical observations (76.770416ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7783.22

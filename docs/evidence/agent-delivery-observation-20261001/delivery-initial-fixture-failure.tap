@@ -1,0 +1,65 @@
+✔ Agent delivery completes its five-second observation while messages remains locked (accepted/online) (5179.996208ms)
+ℹ Independent database: kapibala_test_327be9c148e740d7b5cb7e20a8af0c19
+ℹ {"table":"messages","messageStatus":"accepted","accountStatus":"online","elapsedMs":5004.861792000001,"accountReads":0,"releasedAtResult":false,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+✔ Agent delivery completes its five-second observation while accounts remains locked (accepted/online) (5207.846958ms)
+ℹ Independent database: kapibala_test_c355608a3c7a4b68bc642788491bf28f
+ℹ {"table":"accounts","messageStatus":"accepted","accountStatus":"online","elapsedMs":5005.0358750000005,"accountReads":32,"releasedAtResult":false,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+✔ Agent delivery completes its five-second observation while messages remains locked (failed/online) (5101.669042ms)
+ℹ Independent database: kapibala_test_abd4f51ebf444ed9aed8a2fa6ecd13d7
+ℹ {"table":"messages","messageStatus":"failed","accountStatus":"online","elapsedMs":5003.2853749999995,"accountReads":0,"releasedAtResult":false,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+✔ Agent delivery completes its five-second observation while accounts remains locked (accepted/suspended) (5193.769666ms)
+ℹ Independent database: kapibala_test_c54b54b3daf14e5682c1b19d4b2fe34c
+ℹ {"table":"accounts","messageStatus":"accepted","accountStatus":"suspended","elapsedMs":5004.216375000002,"accountReads":32,"releasedAtResult":false,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+✔ Agent delivery with no remaining wait does not start message or account reads (85.123125ms)
+ℹ Independent database: kapibala_test_55af1c1007114e4eb6477e08e3eccc21
+✔ Agent delivery retains the ownership failure after a blocked read and does not complete the step (202.042917ms)
+ℹ Independent database: kapibala_test_c63726c371a145ba9bfe8f199141755c
+✔ Agent delivery returns a timely sent observation without waiting for an unrelated account lock (190.440666ms)
+ℹ Independent database: kapibala_test_252a432e04114641af2eec17fed10d2b
+ℹ {"case":"timely-sent","elapsedMs":4.349000000001979,"accountReads":0,"releasedAtResult":false}
+✔ Agent delivery preserves cancelled and same-key sent recovery (83.878125ms)
+ℹ Independent database: kapibala_test_91ab0df4c5584d10a3aceb0feaf17efa
+ℹ {"deliveryStatus":"cancelled","elapsedMs":2.056666000000405,"outcomes":[{"errorCode":"GROUP_UNREACHABLE","value":{"code":"GROUP_UNREACHABLE","message":"GROUP_UNREACHABLE"}},{"value":{"clientMsgId":"bf853e7e-059a-467c-a498-d0318a10ec95","deliveryStatus":"sent"}}]}
+✖ Agent delivery preserves failed and same-key sent recovery (75.548416ms)
+ℹ Independent database: kapibala_test_a048d1c9eebd4758a4ba7e41e064dbbb
+✔ Agent delivery preserves unknown and same-key sent recovery (5086.266667ms)
+ℹ Independent database: kapibala_test_f52b61fb24c44ae0af9031dc1efef5ad
+ℹ {"deliveryStatus":"unknown","elapsedMs":5001.5192080000015,"outcomes":[{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}},{"value":{"clientMsgId":"09fdd0ca-b331-4395-a7ea-f65a69c3e779","deliveryStatus":"sent"}}]}
+ℹ tests 10
+ℹ suites 0
+ℹ pass 9
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 26645.94075
+
+✖ failing tests:
+
+test at tests/integration/agent-delivery-deadline.test.ts:332:3
+✖ Agent delivery preserves failed and same-key sent recovery (75.548416ms)
+  error: new row for relation "messages" violates check constraint "messages_check"
+      at /Users/zcm/Desktop/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/apps/server/src/core/db.ts:120:20)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/integration/agent-delivery-deadline.test.ts:337:7)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    length: 501,
+    severity: 'ERROR',
+    code: '23514',
+    detail: 'Failing row contains (8a4d7588-c496-412d-913a-2ded5856db40, g, null, 840d3d8e-87d7-42a4-9cd0-920f8dfcb880, account-1, account-1, t, already enqueued, 2026-10-01 14:51:28.874195+00, failed, null, pending, 0, null, {"source": "manual", "sourceRef": null}, 2026-10-01 14:51:28.874195+00, 2026-10-01 14:51:28.874195+00, null, null).',
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: 'public',
+    table: 'messages',
+    column: undefined,
+    dataType: undefined,
+    constraint: 'messages_check',
+    file: 'execMain.c',
+    line: '2074',
+    routine: 'ExecConstraints'
+  }
