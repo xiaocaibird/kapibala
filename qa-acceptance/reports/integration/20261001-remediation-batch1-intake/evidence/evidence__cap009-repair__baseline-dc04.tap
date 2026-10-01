@@ -1,0 +1,18 @@
+TAP version 13
+# Subtest: DC04 exact before-ready crash retains old history and rebinds same API port to new guardian
+ok 1 - DC04 exact before-ready crash retains old history and rebinds same API port to new guardian
+  ---
+  duration_ms: 2447.411125
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_5b3ac51ba47d47f7a7e02019eaf4b08c; revision b86b0ad1bb52dbb26c345f5667cf37ff8198b192; guardian 62235; API http://127.0.0.1:50128; controller http://127.0.0.1:50127
+# {"case":"DC04-known-product-gap","oldGuardian":62235,"newGuardian":62285,"held":{"protocol":"qa-capacity-control/1","leaseId":"601441dd-17cc-4ca6-9345-b51305d6fd87","state":"held","expiresAt":"2026-10-01T05:57:39.992Z","binding":{"apiUrl":"http://127.0.0.1:50128","revision":"b86b0ad1bb52dbb26c345f5667cf37ff8198b192","pid":62235,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T05:57:30.010Z","kind":"capacity-held","holderKeys":["qa-capacity:c9a8c0dd-a3e9-4086-a520-4e477040e6ce:601441dd-17cc-4ca6-9345-b51305d6fd87:0","qa-capacity:c9a8c0dd-a3e9-4086-a520-4e477040e6ce:601441dd-17cc-4ca6-9345-b51305d6fd87:1","qa-capacity:c9a8c0dd-a3e9-4086-a520-4e477040e6ce:601441dd-17cc-4ca6-9345-b51305d6fd87:2","qa-capacity:c9a8c0dd-a3e9-4086-a520-4e477040e6ce:601441dd-17cc-4ca6-9345-b51305d6fd87:3","qa-capacity:c9a8c0dd-a3e9-4086-a520-4e477040e6ce:601441dd-17cc-4ca6-9345-b51305d6fd87:4","qa-capacity:c9a8c0dd-a3e9-4086-a520-4e477040e6ce:601441dd-17cc-4ca6-9345-b51305d6fd87:5","qa-capacity:c9a8c0dd-a3e9-4086-a520-4e477040e6ce:601441dd-17cc-4ca6-9345-b51305d6fd87:6"]},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T05:57:30.021Z","kind":"admission-refused","attemptId":"b60df015-0504-490d-a680-fc08b3507d4e","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":3,"at":"2026-10-01T05:57:30.021Z","kind":"before-ready-held","attemptId":"b60df015-0504-490d-a680-fc08b3507d4e","reason":"capacity","callbackEntered":false,"remoteRequestCount":0}]},"recovered":{"id":"capacity-run","groupId":"g","status":"running","endReason":null,"summary":null,"recoveryNote":"A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.","steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\\"stop_reason\\":\\"tool_use\\",\\"content\\":[{\\"type\\":\\"tool_use\\",\\"id\\":\\"kick-one\\",\\"name\\":\\"kick_user\\",\\"input\\":{\\"platform_user_id\\":\\"external-target\\",\\"reason\\":\\"engineering capacity observation\\"}}]}"}]},"limit":"Development reproduction: precise CAP009 crash currently pauses; controller does not repair state. This is not a QA result."}
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2591.061333

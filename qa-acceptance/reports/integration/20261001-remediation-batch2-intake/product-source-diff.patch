@@ -1,0 +1,253 @@
+diff --git a/apps/server/src/app.ts b/apps/server/src/app.ts
+index f580791..fd79ef4 100644
+--- a/apps/server/src/app.ts
++++ b/apps/server/src/app.ts
+@@ -110,6 +110,7 @@ export async function createApp(options: AppOptions = {}) {
+         options.background !== false,
+       ),
+   );
++  ctx.testRuntimeObserver?.modules(progress.map((item) => item.name));
+   app.get("/api/diagnostics/background", async (request) => {
+     if (request.identity?.role !== "admin")
+       throw new AppError(403, "FORBIDDEN", "后台运行诊断仅管理员可查看");
+@@ -141,12 +142,23 @@ export async function createApp(options: AppOptions = {}) {
+         setInterval(() => {
+           if (busy) return;
+           busy = true;
+-          activity.start();
++          const observer = ctx.testRuntimeObserver;
++          if (!observer) activity.start();
+           const tick = Promise.resolve()
+-            .then(() => module.tick())
+-            .then(() => activity.finish(true))
++            .then(async () => {
++              if (observer) {
++                await observer.beforeTick(activity.name);
++                activity.start();
++                await observer.tick(activity.name, () => module.tick());
++              } else await module.tick();
++            })
++            .then(() => {
++              activity.finish(true);
++              observer?.tickFinished(activity.name, true);
++            })
+             .catch((err) => {
+               activity.finish(false);
++              observer?.tickFinished(activity.name, false);
+               app.log.error(
+                 { err, module: activity.name },
+                 "Module tick failed",
+diff --git a/apps/server/src/core/context.ts b/apps/server/src/core/context.ts
+index de4591f..13a3fc8 100644
+--- a/apps/server/src/core/context.ts
++++ b/apps/server/src/core/context.ts
+@@ -3,6 +3,7 @@ import type { Database } from "./db.js";
+ import type { RemoteClient } from "./remote.js";
+ import type { TestExecutionObserver } from "./test-execution-observer.js";
+ import type { TestMessageObserver } from "./test-message-observer.js";
++import type { TestRuntimeObserver } from "./test-runtime-observer.js";
+ export interface AppContext {
+   db: Database;
+   gateway: RemoteClient;
+@@ -10,4 +11,5 @@ export interface AppContext {
+   log: FastifyBaseLogger;
+   testExecutionObserver?: TestExecutionObserver;
+   testMessageObserver?: TestMessageObserver;
++  testRuntimeObserver?: TestRuntimeObserver;
+ }
+diff --git a/apps/server/src/core/test-runtime-observer.ts b/apps/server/src/core/test-runtime-observer.ts
+new file mode 100644
+index 0000000..13a86a0
+--- /dev/null
++++ b/apps/server/src/core/test-runtime-observer.ts
+@@ -0,0 +1,25 @@
++import type { PoolClient } from "pg";
++import type { Queryable } from "./db.js";
++
++/** Optional engineering-only hooks. Normal main never installs an observer. */
++export interface TestAccountRequest {
++  requestId: string;
++  accountId: string;
++  operation: "connect" | "transition";
++  expectedFrom?: string;
++  to?: string;
++}
++export interface TestAccountObservation {
++  transaction(tx: PoolClient): Promise<void>;
++  lock<T>(acquire: () => Promise<T>): Promise<T>;
++  remoteSucceeded(): void;
++  save(tx: Queryable): Promise<void>;
++  saveFailed(error: unknown, willRetry: boolean): Promise<void>;
++}
++export interface TestRuntimeObserver {
++  account(request: TestAccountRequest): TestAccountObservation | undefined;
++  modules(names: string[]): void;
++  beforeTick(name: string): Promise<void>;
++  tick(name: string, operation: () => Promise<void>): Promise<void>;
++  tickFinished(name: string, succeeded: boolean): void;
++}
+diff --git a/apps/server/src/modules/gateway/accounts.ts b/apps/server/src/modules/gateway/accounts.ts
+index 30a9600..640a11a 100644
+--- a/apps/server/src/modules/gateway/accounts.ts
++++ b/apps/server/src/modules/gateway/accounts.ts
+@@ -1,5 +1,6 @@
+ import { z } from "zod";
+ import type { AppContext } from "../../core/context.js";
++import type { TestAccountObservation } from "../../core/test-runtime-observer.js";
+ import { emit, withSavepoint, type Queryable } from "../../core/db.js";
+ import { AppError, RemoteError } from "../../core/errors.js";
+ import type { AccountStatus } from "../../../../../packages/contracts/src/index.js";
+@@ -26,15 +27,25 @@ export class Accounts {
+       await this.ctx.db.query<AccountRow>("SELECT * FROM accounts ORDER BY id")
+     ).rows.map(accountDto);
+   }
+-  async connect(id: string) {
++  async connect(id: string, requestId?: string) {
++    const observation = requestId
++      ? this.ctx.testRuntimeObserver?.account({
++          requestId,
++          accountId: id,
++          operation: "connect",
++        })
++      : undefined;
+     let remoteSucceeded = false;
+     try {
+       return await this.ctx.db.transaction(async (tx) => {
+-        const row = (
+-          await tx.query<AccountRow>(
++        await observation?.transaction(tx);
++        const acquire = () =>
++          tx.query<AccountRow>(
+             "SELECT * FROM accounts WHERE id=$1 FOR UPDATE",
+             [id],
+-          )
++          );
++        const row = (
++          await (observation ? observation.lock(acquire) : acquire())
+         ).rows[0];
+         if (!row) throw new AppError(404, "ACCOUNT_NOT_FOUND", "账号不存在");
+         if (row.status !== "idle" && row.status !== "disconnected")
+@@ -47,13 +58,21 @@ export class Accounts {
+         const response = z
+           .object({ platformUserId: z.string().min(1) })
+           .parse(result);
+-        return this.saveRemoteResult(tx, id, async () => {
+-          await tx.query(
+-            "UPDATE accounts SET platform_user_id=$2 WHERE id=$1",
+-            [id, response.platformUserId],
+-          );
+-          return accountDto(await changeAccount(tx, id, "online", row.status));
+-        });
++        observation?.remoteSucceeded();
++        return this.saveRemoteResult(
++          tx,
++          id,
++          async () => {
++            await tx.query(
++              "UPDATE accounts SET platform_user_id=$2 WHERE id=$1",
++              [id, response.platformUserId],
++            );
++            return accountDto(
++              await changeAccount(tx, id, "online", row.status),
++            );
++          },
++          observation,
++        );
+       });
+     } catch (error) {
+       if (remoteSucceeded)
+@@ -62,15 +81,32 @@ export class Accounts {
+       throw error;
+     }
+   }
+-  async transition(id: string, to: AccountStatus, expectedFrom: AccountStatus) {
++  async transition(
++    id: string,
++    to: AccountStatus,
++    expectedFrom: AccountStatus,
++    requestId?: string,
++  ) {
++    const observation = requestId
++      ? this.ctx.testRuntimeObserver?.account({
++          requestId,
++          accountId: id,
++          operation: "transition",
++          expectedFrom,
++          to,
++        })
++      : undefined;
+     let remoteSucceeded: "connect" | "disconnect" | undefined;
+     try {
+       return await this.ctx.db.transaction(async (tx) => {
+-        const account = (
+-          await tx.query<AccountRow>(
++        await observation?.transaction(tx);
++        const acquire = () =>
++          tx.query<AccountRow>(
+             "SELECT * FROM accounts WHERE id=$1 FOR UPDATE",
+             [id],
+-          )
++          );
++        const account = (
++          await (observation ? observation.lock(acquire) : acquire())
+         ).rows[0];
+         if (!account)
+           throw new AppError(404, "ACCOUNT_NOT_FOUND", "账号不存在");
+@@ -122,24 +158,29 @@ export class Accounts {
+     tx: Queryable,
+     accountId: string,
+     persist: () => Promise<T>,
++    observation?: TestAccountObservation,
+   ): Promise<T> {
+     // The account lock predates the savepoint: later connect/disconnect requests
+     // cannot overtake this known result. No new transaction or remote retry is
+     // allowed, including after an unknown COMMIT or a lost connection.
+     for (let attempt = 1; ; attempt++) {
+       try {
+-        return await withSavepoint(tx, persist);
++        return await withSavepoint(tx, async () => {
++          const result = await persist();
++          await observation?.save(tx);
++          return result;
++        });
+       } catch (error) {
+         const code =
+           error && typeof error === "object" && "code" in error
+             ? error.code
+             : undefined;
+-        if (
+-          attempt >= 3 ||
+-          typeof code !== "string" ||
+-          !["40001", "40P01", "55P03"].includes(code)
+-        )
+-          throw error;
++        const willRetry =
++          attempt < 3 &&
++          typeof code === "string" &&
++          ["40001", "40P01", "55P03"].includes(code);
++        await observation?.saveFailed(error, willRetry);
++        if (!willRetry) throw error;
+         this.ctx.log.warn(
+           { accountId, attempt, code },
+           "Retrying local account persistence under the original account lock",
+diff --git a/apps/server/src/modules/gateway/index.ts b/apps/server/src/modules/gateway/index.ts
+index e78c565..8d7413c 100644
+--- a/apps/server/src/modules/gateway/index.ts
++++ b/apps/server/src/modules/gateway/index.ts
+@@ -116,7 +116,7 @@ export function createGatewayModule(
+     registerGroupDirectory(app, ctx);
+     app.get("/api/accounts", () => accounts.list());
+     app.post("/api/accounts/:id/connect", (request) =>
+-      accounts.connect(parse(idParams, request.params).id),
++      accounts.connect(parse(idParams, request.params).id, request.id),
+     );
+     app.post("/api/accounts/:id/transition", (request) => {
+       const { to, expectedFrom } = parse(
+@@ -130,6 +130,7 @@ export function createGatewayModule(
+         parse(idParams, request.params).id,
+         to,
+         expectedFrom,
++        request.id,
+       );
+     });
+     app.post("/api/groups", async (request, reply) => {

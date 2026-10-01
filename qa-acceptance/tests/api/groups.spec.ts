@@ -6,6 +6,7 @@ import {
   type SequenceRun,
   type ApiError,
   type Group,
+  type Job,
 } from '../../harness/platform-client.js';
 import { assertContract, assertGroupMemberIdentities } from '../../contracts/public-api.js';
 import { observe } from '../../harness/observation.js';
@@ -188,12 +189,72 @@ test('[GROUP-007] failed noncreator leave preserves owner and continues remainin
     qa.api.post<{ jobId: string }>(`/api/groups/${group.id}/leave-all`),
     202,
   );
-  const job = await qa.api.waitJob(jobId);
-  expect(job.status).toBe('failed');
+  // Original §2.3 makes any nonempty errors[] a failed status. That status alone
+  // does not prove B2's remaining noncreator work has completed.
+  const remainingIds = accounts
+    .filter((account) => account.id !== group.creatorAccountId)
+    .map((account) => account.id);
+  const samples: unknown[] = [];
+  const settled = await observe({
+    read: async () => ({
+      job: await qa.api.require(qa.api.get<Job>(`/api/jobs/${jobId}`)),
+      local: await qa.api.group(group.id),
+      remote: qa.gateway.snapshot(),
+    }),
+    invariant: (value) => {
+      samples.push(value);
+      assertContract('job', value.job);
+      if (value.job.errors.length) expect(value.job.status).toBe('failed');
+      const leaves = value.remote.requests.filter((request) => request.path.endsWith('/leave'));
+      expect(
+        leaves.some(
+          (request) => (request.body as { accountId: string }).accountId === group.creatorAccountId,
+        ),
+      ).toBe(false);
+      const failed = leaves.find((request) => request.responseStatus === 500);
+      if (failed) {
+        const failedId = (failed.body as { accountId: string }).accountId;
+        const platformId = accounts.find((account) => account.id === failedId)!.platformUserId;
+        expect(value.local.members.some((member) => member.accountId === failedId)).toBe(true);
+        expect(
+          value.remote.groups[0]!.members.some((member) => member.platformUserId === platformId),
+        ).toBe(true);
+      }
+      // Explicit completion plus an omitted account is a real violation, never retried away.
+      if (value.job.processing === false && value.job.status === 'failed')
+        expect(
+          leaves.map((request) => (request.body as { accountId: string }).accountId).sort(),
+        ).toEqual([...remainingIds].sort());
+    },
+    complete: (value) => {
+      const leaves = value.remote.requests.filter((request) => request.path.endsWith('/leave'));
+      return (
+        value.job.status === 'failed' &&
+        value.job.processing !== true &&
+        leaves.some((request) => request.responseStatus === 500) &&
+        remainingIds.every((id) =>
+          leaves.some(
+            (request) =>
+              (request.body as { accountId: string }).accountId === id &&
+              request.responseFinishedAt,
+          ),
+        ) &&
+        JSON.stringify(value.local.members.map((member) => member.platformUserId).sort()) ===
+          JSON.stringify(
+            value.remote.groups[0]!.members.map((member) => member.platformUserId).sort(),
+          )
+      );
+    },
+    durationMs: 25_000,
+  });
+  await qa.evidence('leave-partial-failure-observations', { settled, samples });
+  if (!settled.complete)
+    throw new BlockedError(
+      'Partial-failure leave observation did not complete; failed status alone is not a completion witness',
+    );
+  const { job, local } = settled.last;
   expect(job.errors.length).toBeGreaterThan(0);
-  const leaves = qa.gateway
-    .snapshot()
-    .requests.filter((request) => request.path.endsWith('/leave'));
+  const leaves = settled.last.remote.requests.filter((request) => request.path.endsWith('/leave'));
   expect(leaves).toHaveLength(accounts.length - 1);
   expect(
     leaves.some(
@@ -204,8 +265,7 @@ test('[GROUP-007] failed noncreator leave preserves owner and continues remainin
     leaves.find((request) => request.responseStatus === 500)!.body as { accountId: string }
   ).accountId;
   expect(job.errors.some((error) => error.step === `leave:${failedId}`)).toBe(true);
-  const local = await qa.api.group(group.id);
-  const remote = qa.gateway.snapshot().groups[0]!;
+  const remote = settled.last.remote.groups[0]!;
   expect(local.members.some((member) => member.accountId === failedId)).toBe(true);
   expect(local.members.map((member) => member.platformUserId).sort()).toEqual(
     remote.members
@@ -247,6 +307,10 @@ test('[GROUP-009] ALREADY_MEMBER confirms existing membership without waiting fo
   await qa.api.login();
   const accounts = await qa.api.connectAll();
   requireSeeds(accounts);
+  // Preserve real event history but prevent it reaching the SUT: the target is
+  // an already announced member, not a join whose announcement never happened.
+  qa.gateway.configure({ sseUnavailable: true });
+  qa.gateway.disconnectStreams();
   qa.gateway.enqueue('/groups', {
     barrier: { phase: 'before-response', name: 'preexisting-group' },
   });
@@ -254,23 +318,56 @@ test('[GROUP-009] ALREADY_MEMBER confirms existing membership without waiting fo
     creatorAccountId: accounts[0]!.id,
     memberAccountIds: [accounts[1]!.id],
   });
-  await qa.gateway.barriers.waitFor('preexisting-group');
-  const remote = qa.gateway.snapshot().groups[0]!;
-  qa.gateway.setMembership(remote.groupId, accounts[1]!.platformUserId!, true, { storeOnly: true });
-  qa.gateway.barriers.release('preexisting-group');
-  const response = await pending;
-  expect(response.status).toBe(202);
-  expect((await qa.api.waitJob(response.body.jobId)).status).toBe('finished');
-  const joins = qa.gateway.snapshot().requests.filter((request) => request.path.endsWith('/join'));
-  expect(joins).toHaveLength(1);
-  expect(joins[0]!.responseStatus).toBe(409);
-  const groups = await qa.api.require(qa.api.get<Group[]>('/api/groups'));
-  expect(groups[0]!.members.find((member) => member.accountId === accounts[1]!.id)?.role).toBe(
-    'admin',
+  const safePending = pending.then(
+    (response) => ({ response }),
+    (error: unknown) => ({ error }),
   );
-  expect(
-    qa.gateway.snapshot().requests.filter((request) => request.path.endsWith('/promote')).length,
-  ).toBeLessThanOrEqual(2);
+  try {
+    try {
+      await qa.gateway.barriers.waitFor('preexisting-group');
+    } catch {
+      throw new BlockedError('Preexisting-member create barrier was not reached');
+    }
+    const remote = qa.gateway.snapshot().groups[0]!;
+    expect(qa.gateway.snapshot().connectedStreams).toBe(0);
+    qa.gateway.setMembership(remote.groupId, accounts[1]!.platformUserId!, true);
+    await qa.evidence('already-member-preexisting-announcement', qa.gateway.snapshot());
+    qa.gateway.barriers.release('preexisting-group');
+    const outcome = await safePending;
+    if ('error' in outcome) throw outcome.error;
+    const response = outcome.response;
+    expect(response.status).toBe(202);
+    expect((await qa.api.waitJob(response.body.jobId)).status).toBe('finished');
+    const joins = qa.gateway
+      .snapshot()
+      .requests.filter((request) => request.path.endsWith('/join'));
+    expect(joins).toHaveLength(1);
+    expect(joins[0]!.responseStatus).toBe(409);
+    const groups = await qa.api.require(qa.api.get<Group[]>('/api/groups'));
+    expect(groups[0]!.members.find((member) => member.accountId === accounts[1]!.id)?.role).toBe(
+      'admin',
+    );
+    expect(
+      qa.gateway.snapshot().requests.filter((request) => request.path.endsWith('/promote')).length,
+    ).toBeLessThanOrEqual(2);
+    expect(
+      qa.gateway
+        .snapshot()
+        .requests.some(
+          (request) => request.path.endsWith('/promote') && request.responseStatus === 200,
+        ),
+    ).toBe(true);
+    expect(
+      qa.gateway
+        .snapshot()
+        .groups[0]!.members.find((member) => member.platformUserId === accounts[1]!.platformUserId)
+        ?.role,
+    ).toBe('admin');
+  } finally {
+    qa.gateway.barriers.release('preexisting-group');
+    qa.gateway.configure({ sseUnavailable: false });
+    await safePending;
+  }
 });
 
 test('[GROUP-010] leave-all preserves public external members and keeps left groups inactive', async ({

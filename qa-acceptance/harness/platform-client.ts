@@ -2,6 +2,7 @@ import { BlockedError } from './security.js';
 
 import { randomUUID } from 'node:crypto';
 import { redact } from './security.js';
+import { observe } from './observation.js';
 
 export type HttpRecorder = (entry: Record<string, unknown>) => Promise<void>;
 
@@ -74,6 +75,8 @@ export interface SequenceRun {
 export interface Job {
   status: 'running' | 'finished' | 'failed';
   errors: { step: string; code: string }[];
+  /** Optional public observation; errors make status failed even while work continues. */
+  processing?: boolean;
 }
 export interface ApiError {
   error: { code: string; message: string; requestId: string; [key: string]: unknown };
@@ -312,10 +315,27 @@ export class PlatformClient {
       );
     return { group: matches[0]!, accounts: selected, jobId };
   }
-  waitJob(id: string) {
-    return this.waitFor<Job>(`/api/jobs/${id}`, (job) => job.status !== 'running', {
-      timeoutMs: 25_000,
+  async waitJob(
+    id: string,
+    options: { timeoutMs?: number; intervalMs?: number } = {},
+  ): Promise<Job> {
+    const result = await observe({
+      read: () => this.require(this.get<Job>(`/api/jobs/${id}`)),
+      invariant: (job) => {
+        if (!['running', 'finished', 'failed'].includes(job.status) || !Array.isArray(job.errors))
+          throw new Error('Invalid public job response');
+        if (job.errors.length && job.status !== 'failed')
+          throw new Error('Original §2.3 requires failed status whenever job errors are nonempty');
+      },
+      complete: (job) => job.status !== 'running' && job.processing !== true,
+      durationMs: options.timeoutMs ?? 25_000,
+      intervalMs: options.intervalMs,
     });
+    if (!result.complete)
+      throw new BlockedError(
+        `No settled job observation within finite sampling budget: ${JSON.stringify(result.last)}`,
+      );
+    return result.last;
   }
   send(groupId: string, accountId: string, text: string) {
     return this.require(

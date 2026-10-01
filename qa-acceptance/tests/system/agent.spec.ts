@@ -415,6 +415,27 @@ test('[AGENT-013] repeated read loop cannot exceed twelve turns', async ({ qa })
     ),
   );
   const run = await finished(qa, await trigger(qa, group));
+  // The upper bound alone also passes three unrelated BAD_JSON errors. Prove
+  // that a legal first read completed and the model actually repeated it;
+  // handling of the repeated call remains the product's declared choice.
+  expect(run.steps[0]).toMatchObject({
+    kind: 'tool_use',
+    toolUseId: 'loop-0',
+    name: 'get_recent_messages',
+    input: { limit: 10 },
+    isError: false,
+  });
+  expect(results(qa).some((value) => value.tool_use_id === 'loop-0' && !value.is_error)).toBe(true);
+  const turns = qa.agent
+    .snapshot()
+    .turns.filter((request) => (request.body as TurnRequest).runId === run.id);
+  expect(turns.length, '必须实际返回至少两次相同入参的合法读工具响应').toBeGreaterThanOrEqual(2);
+  for (const [index, response] of turns.slice(0, 2).entries()) {
+    expect(response.responseStatus).toBe(200);
+    expect(JSON.parse(response.rawResponse!)).toEqual(
+      tool(`loop-${index}`, 'get_recent_messages', { limit: 10 }).body,
+    );
+  }
   expect(run.steps.length).toBeLessThanOrEqual(12);
   expect(requests(qa).length).toBeLessThanOrEqual(12);
   expect(run.status).not.toBe('running');

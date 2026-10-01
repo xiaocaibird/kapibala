@@ -1,0 +1,71 @@
+{
+  "kind": "DEVELOPER_REGRESSION_NOT_QA",
+  "revision": "e783c6f9ce994216f6a8f1eac765ca75ad2f9829",
+  "owner": "kapibala-qa-observation-batch3-final-56fa5439-d0c",
+  "startedAt": "2026-10-01T06:35:11.636Z",
+  "checks": [
+    {
+      "name": "focused",
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "--test",
+        "tests/integration/qa-activity-control.test.ts",
+        "tests/integration/qa-activity-witness.test.ts",
+        "tests/integration/qa-combined-observation.test.ts",
+        "tests/integration/qa-runtime-observation.test.ts",
+        "tests/integration/account-remote-boundary.test.ts",
+        "tests/integration/core-resource-observability.test.ts",
+        "tests/integration/qa-message-observation.test.ts",
+        "tests/integration/agent-dispatch-budget.test.ts",
+        "tests/integration/agent-kick-recovery.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-observation-batch3-final-final-focused.log",
+      "bytes": 53083,
+      "sha256": "ce8032c8f3adfda65c94fb2e3f9129416f2eb02b2c5e44ba68ed299e5aed809d"
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-observation-batch3-final-final-typecheck.log",
+      "bytes": 187,
+      "sha256": "30e005d1a7d2022100d69e674fdc8d0abac49571306d528064a9c19c76300bfd"
+    },
+    {
+      "name": "original",
+      "command": [
+        "npm",
+        "run",
+        "verify:original"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-observation-batch3-final-final-original.log",
+      "bytes": 196,
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa"
+    }
+  ],
+  "cleanup": {
+    "remainingDatabases": "",
+    "containerAbsent": true,
+    "remainingOwnedVolumes": []
+  },
+  "database": {
+    "container": "54059e00865c8d8f07d8af397e307221d72ba153a0f393b2ad8c01080096cfe4",
+    "port": "55322",
+    "volumes": [
+      "bf7f34a96fdfc5f2563cfa5eb17814ae9093601ebdf085a47e97b2531eb57b19"
+    ]
+  },
+  "passed": true,
+  "finishedAt": "2026-10-01T06:35:23.494Z"
+}

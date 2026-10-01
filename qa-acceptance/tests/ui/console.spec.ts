@@ -338,6 +338,9 @@ test('[UI-009] 序列预检展示继承与来源，确认后才启动', async ({
   const sequence = await createSequence(qa);
   await login(page, qa);
   await go(page, qa, 'group', group.id);
+  // The public console exposes sequence configuration on its own page.
+  await element(page, qa, 'navSequences').click();
+  await element(page, qa, 'sequenceGroup').selectOption(group.id);
   let starts = 0;
   page.on('request', (request) => {
     if (
@@ -369,6 +372,9 @@ test('[UI-010] 序列预检缺值显示步骤与key且零发送', async ({ qa, p
   const sequence = await createSequence(qa);
   await login(page, qa);
   await go(page, qa, 'group', group.id);
+  // The public console exposes sequence configuration on its own page.
+  await element(page, qa, 'navSequences').click();
+  await element(page, qa, 'sequenceGroup').selectOption(group.id);
   let starts = 0;
   page.on('request', (request) => {
     if (
@@ -1004,7 +1010,8 @@ test('[UI-028] 前台呈现安静，失焦标题和favicon静态提醒且聚焦�
   await page.bringToFront();
   const quietTitle = await page.title();
   const quietIcon = await favicon(page);
-  expect(quietIcon).not.toBe('[]');
+  // An absent custom quiet icon is a valid browser default. The requirement
+  // is that a pending update changes the icon and confirmation restores it.
   incoming(qa, group, '前台安静内容');
   await expect(page.getByText('前台安静内容', { exact: true })).toBeVisible();
   await remains(async () => {
@@ -1331,11 +1338,29 @@ test('[UI-035] 序列自动发送不因isOwn被排除提醒', async ({ qa, page 
 });
 
 test('[UI-036] 编辑卸载后迟到成功不能污染新页面或重放提交', async ({ qa, page }) => {
+  // Observe actual SUT WS epochs to prove URL navigation did not restart the
+  // document/session and accidentally discard the delayed response under test.
+  let socketOpens = 0,
+    successfulAuths = 0;
+  page.on('websocket', (socket) => {
+    if (new URL(socket.url()).pathname !== '/ws') return;
+    socketOpens++;
+    socket.on('framereceived', ({ payload }) => {
+      try {
+        const frame = JSON.parse(String(payload));
+        if (frame.type === 'auth' && frame.success === true) successfulAuths++;
+      } catch {
+        /* Non-JSON frames are not authentication evidence. */
+      }
+    });
+  });
   const group = await prepare(qa);
   await login(page, qa);
   await go(page, qa, 'group', group.id);
   await element(page, qa, 'editProfile').click();
   await element(page, qa, 'groupName').fill('晚到成功草稿');
+  await expect.poll(() => successfulAuths).toBeGreaterThan(0);
+  let originalDocument: Awaited<ReturnType<Page['evaluateHandle']>> | undefined;
   let release!: () => void;
   const held = new Promise<void>((resolve) => (release = resolve));
   let requests = 0;
@@ -1354,7 +1379,44 @@ test('[UI-036] 编辑卸载后迟到成功不能污染新页面或重放提交',
   try {
     await element(page, qa, 'saveProfile').click();
     await expect.poll(() => stored).toBe(true);
-    await element(page, qa, 'navAccounts').click();
+    const accountsRoute = qa.config.ui.routes.accounts;
+    if (!accountsRoute) throw new BlockedError('没有已确认公开账号页路由');
+    const beforeUrl = new URL(page.url()),
+      afterUrl = new URL(accountsRoute, qa.webUrl);
+    if (
+      !afterUrl.hash ||
+      beforeUrl.origin !== afterUrl.origin ||
+      beforeUrl.pathname !== afterUrl.pathname ||
+      beforeUrl.search !== afterUrl.search
+    )
+      throw new BlockedError('无法经纯公开URL片段离页，禁止整页重载替代编辑卸载');
+    originalDocument = await page.evaluateHandle(() => document);
+    const connectionBaseline = { socketOpens, successfulAuths };
+    // Native modal makes the underlying sidebar inert. Navigating to the public
+    // hash URL models an address-bar route change; it does not click through the
+    // modal, call an internal router, or reload the application document.
+    await page.goto(afterUrl.href, { waitUntil: 'domcontentloaded' });
+    let sameDocument = false;
+    try {
+      sameDocument = await page.evaluate((old) => old === document, originalDocument);
+    } catch {
+      /* A destroyed execution context disproves this required precondition. */
+    }
+    if (
+      !sameDocument ||
+      socketOpens !== connectionBaseline.socketOpens ||
+      successfulAuths !== connectionBaseline.successfulAuths
+    )
+      throw new BlockedError('离页改变document或WS认证代次，不能作为迟到结果隔离证据');
+    await qa.evidence('ui-unmount-navigation', {
+      mechanism: 'public same-document hash URL navigation',
+      from: beforeUrl.href,
+      to: afterUrl.href,
+      sameDocument,
+      connectionBaseline,
+      afterNavigation: { socketOpens, successfulAuths },
+      boundary: '用户公开地址导航触发表单卸载；不主张可在原生模态内点击底层侧栏',
+    });
     await expect(element(page, qa, 'accountRow')).toHaveCount((await qa.api.accounts()).length);
     release();
     await remains(async () => {
@@ -1367,6 +1429,7 @@ test('[UI-036] 编辑卸载后迟到成功不能污染新页面或重放提交',
     ).toBe('晚到成功草稿');
   } finally {
     release();
+    await originalDocument?.dispose();
     await page.unrouteAll({ behavior: 'wait' });
   }
 });

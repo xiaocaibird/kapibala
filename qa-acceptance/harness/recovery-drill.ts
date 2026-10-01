@@ -1,11 +1,11 @@
 import { spawn } from 'node:child_process';
 import { constants, createReadStream } from 'node:fs';
-import { lstat, open, realpath } from 'node:fs/promises';
+import { lstat, open, realpath, readFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { createHash } from 'node:crypto';
 import { pipeline } from 'node:stream/promises';
 import type { QaEnvironment } from './environment.js';
-import { OwnedProcess, exec, isolatedEnv, waitHttp } from './process.js';
+import { OwnedProcess, exec, isolatedEnv, ownedListener, waitHttp } from './process.js';
 import { availablePort } from './network.js';
 import { PlatformClient } from './platform-client.js';
 import { ownedDatabaseName } from './database.js';
@@ -223,13 +223,7 @@ export async function launchOwnedDatabase(
   const process = new OwnedProcess(
     command,
     qa.config.sut.cwd,
-    isolatedEnv({
-      ...qa.config.sut.env,
-      PORT: String(port),
-      DATABASE_URL: cluster.url(database),
-      GATEWAY_URL: qa.gateway.url,
-      AGENT_URL: qa.agent.url,
-    }),
+    await qa.ownedDatabaseEnvironment(database, port),
     resolve(qa.outputDir, `drill-${database}.log`),
   );
   try {
@@ -249,6 +243,60 @@ export async function launchOwnedDatabase(
     close: () => process.stop(),
     ready: () => waitHttp(`${api.baseUrl}/api/health`, qa.config.sut.startupTimeoutMs, process),
   };
+}
+
+export interface StartupRejectionObservation {
+  ready: boolean;
+  /** Captured before cleanup: a signal sent by QA must never become self-exit evidence. */
+  exit: { code: number | null; signal: NodeJS.Signals | null } | undefined;
+  log: string;
+}
+
+/** Observe only the already-owned child. Timeout is a diagnostic budget, not a product SLA. */
+export async function observeOwnedStartupRejection(
+  process: OwnedProcess,
+  apiUrl: string,
+  timeoutMs: number,
+): Promise<StartupRejectionObservation> {
+  const url = new URL(apiUrl);
+  if (url.protocol !== 'http:' || url.hostname !== '127.0.0.1' || !url.port)
+    throw new Error('拒启探针仅允许独立loopback地址');
+  let ready = false;
+  let exit: StartupRejectionObservation['exit'];
+  try {
+    const deadline = performance.now() + timeoutMs;
+    while (process.running && performance.now() < deadline) {
+      let listening = false;
+      try {
+        listening = await ownedListener(Number(url.port), process);
+      } catch (error) {
+        if (!process.running) break;
+        throw error;
+      }
+      if (listening) {
+        try {
+          const response = await fetch(`${url.origin}/api/health`, {
+            signal: AbortSignal.timeout(500),
+            redirect: 'manual',
+          });
+          ready ||= response.ok;
+          await response.body?.cancel();
+        } catch {
+          // No response cannot identify the reason for refusal.
+        }
+      }
+      if (ready) break;
+      await new Promise<void>((done) => setTimeout(done, 50));
+    }
+    exit = process.exitOutcome;
+  } finally {
+    await process.stop();
+  }
+  const log = await readFile(process.log, 'utf8').catch((error: NodeJS.ErrnoException) => {
+    if (error.code === 'ENOENT') return ''; // A silent exit lacks diagnostic evidence.
+    throw error;
+  });
+  return { ready, exit, log };
 }
 
 /** Every cleanup is attempted even if another resource cannot be released. */

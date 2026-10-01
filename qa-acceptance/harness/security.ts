@@ -89,11 +89,11 @@ export function validateFixtureArtifactBinding(
   )
     throw new BlockedError('夹具配置必须绑定QA根内相对路径与完整SHA256');
 }
-/** Read-only validation; the caller owns creation and cleanup of its registry directory. */
-export async function capacityRegistryEnvironment(
-  target: Pick<TargetConfig, 'adapters'>,
+async function registryEnvironment(
+  directory: unknown,
+  label: '容量' | '运行观测' | '消息观测',
+  variable: 'QA_CAPACITY_REGISTRY_DIR' | 'QA_RUNTIME_REGISTRY_DIR' | 'QA_MESSAGE_REGISTRY_DIR',
 ): Promise<Record<string, string>> {
-  const directory = target.adapters?.capacityControl?.registryDirectory;
   if (directory === undefined) return {};
   if (
     typeof directory !== 'string' ||
@@ -103,7 +103,7 @@ export async function capacityRegistryEnvironment(
     // Engineering runtime creates <UUID>.sock, with a 100-byte Unix socket limit.
     Buffer.byteLength(resolve(directory, '00000000-0000-0000-0000-000000000000.sock')) > 100
   )
-    throw new BlockedError('容量注册目录必须是短规范绝对路径，UUID.sock完整路径不得超过100字节');
+    throw new BlockedError(`${label}注册目录必须是短规范绝对路径，UUID.sock完整路径不得超过100字节`);
   try {
     const info = await lstat(directory);
     if (
@@ -116,9 +116,37 @@ export async function capacityRegistryEnvironment(
     )
       throw new Error('directory ownership, permissions or canonical path mismatch');
   } catch {
-    throw new BlockedError('容量注册目录必须已存在、非符号链接、路径无符号链接别名、归当前uid且权限为0700');
+    throw new BlockedError(`${label}注册目录必须已存在、非符号链接、路径无符号链接别名、归当前uid且权限为0700`);
   }
-  return { QA_CAPACITY_REGISTRY_DIR: directory };
+  return { [variable]: directory };
+}
+/** Read-only validation; the caller owns creation and cleanup of its registry directory. */
+export async function capacityRegistryEnvironment(
+  target: Pick<TargetConfig, 'adapters'>,
+): Promise<Record<string, string>> {
+  return registryEnvironment(
+    target.adapters?.capacityControl?.registryDirectory,
+    '容量',
+    'QA_CAPACITY_REGISTRY_DIR',
+  );
+}
+export async function runtimeRegistryEnvironment(
+  target: Pick<TargetConfig, 'adapters'>,
+): Promise<Record<string, string>> {
+  return registryEnvironment(
+    target.adapters?.runtimeObservation?.registryDirectory,
+    '运行观测',
+    'QA_RUNTIME_REGISTRY_DIR',
+  );
+}
+export async function messageRegistryEnvironment(
+  target: Pick<TargetConfig, 'adapters'>,
+): Promise<Record<string, string>> {
+  return registryEnvironment(
+    target.adapters?.messageObservation?.registryDirectory,
+    '消息观测',
+    'QA_MESSAGE_REGISTRY_DIR',
+  );
 }
 export async function loadTarget(path: string, qaRoot: string): Promise<TargetConfig> {
   const c = JSON.parse(await readFile(path, 'utf8')) as TargetConfig;
@@ -214,6 +242,7 @@ export async function loadTarget(path: string, qaRoot: string): Promise<TargetCo
       /REQUIRED|REPLACE/.test(adapter.contractReference)
     )
       throw new BlockedError('运行观测控制器需显式loopback origin及已确认契约引用');
+    await runtimeRegistryEnvironment(c);
     if (adapter.diagnostics !== undefined) {
       const profile = adapter.diagnostics;
       const pointers = [
@@ -251,7 +280,27 @@ export async function loadTarget(path: string, qaRoot: string): Promise<TargetCo
         );
     }
   }
+  if (c.adapters?.messageObservation !== undefined) {
+    const adapter = c.adapters.messageObservation;
+    let url: URL;
+    try {
+      if (!record(adapter) || typeof adapter.url !== 'string') throw new Error('invalid adapter');
+      url = new URL(adapter.url);
+    } catch {
+      throw new BlockedError('消息观测控制器URL无效');
+    }
+    if (
+      url.protocol !== 'http:' || url.hostname !== '127.0.0.1' || !url.port ||
+      url.username || url.password || url.search || url.hash || url.pathname !== '/' ||
+      typeof adapter.contractReference !== 'string' || !adapter.contractReference.trim() ||
+      /REQUIRED|REPLACE/.test(adapter.contractReference)
+    )
+      throw new BlockedError('消息观测控制器需显式loopback origin及已确认契约引用');
+    await messageRegistryEnvironment(c);
+  }
   if (!record(c.ui.routes) || !record(c.ui.selectors)) throw new BlockedError('UI适配器格式无效');
+  if (c.ui.headless !== undefined && typeof c.ui.headless !== 'boolean')
+    throw new BlockedError('UI headless 必须为显式布尔值');
   for (const route of Object.values(c.ui.routes))
     if (
       typeof route !== 'string' ||

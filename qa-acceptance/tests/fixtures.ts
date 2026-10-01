@@ -37,7 +37,7 @@ export const test = base.extend<
       }
       let browser;
       try {
-        browser = await type.launch({ ...launchOptions, headless: true, executablePath });
+        browser = await type.launch({ ...launchOptions, headless: target.ui.headless ?? true, executablePath });
       } catch (e) {
         throw new BlockedError(`浏览器运行环境不可用: ${String(e)}`);
       }

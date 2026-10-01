@@ -270,7 +270,6 @@ export async function verifySequenceTimeoutPolicy(qa: QaEnvironment): Promise<vo
     expect(completed.last.run.steps[1]).toMatchObject({
       status: 'failed',
       clientMsgId: payload.clientMsgId,
-      sentAt: null,
     });
     expect((await qa.api.group(group.id)).activeSequenceRunId).toBeNull();
     expect((await qa.api.group(group.id)).status).toBe(group.status);

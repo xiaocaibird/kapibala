@@ -8,8 +8,15 @@ import {
   redact,
   requireAuthorization,
   validateFixtureArtifactBinding,
+  capacityRegistryEnvironment,
+  runtimeRegistryEnvironment,
+  messageRegistryEnvironment,
 } from './security.js';
-import { exec, isolatedEnv, OwnedProcess, ownedListener, waitHttp } from './process.js';
+import { exec, isolatedEnv, OwnedProcess, waitHttp } from './process.js';
+import {
+  observeOwnedStartupRejection,
+  type StartupRejectionObservation,
+} from './recovery-drill.js';
 import { availablePort } from './network.js';
 import { GatewaySimulator } from './gateway.js';
 import { AgentSimulator } from './agent.js';
@@ -66,6 +73,15 @@ export interface FixtureConfiguration {
     directoryPrecision: { manifest: string; sha256: string } | null;
   };
   observation: ObservationFixture | null;
+  /** Optional public diagnostic mapping; exact target and configuration SHA are mandatory. */
+  unmigratedSchema?: UnmigratedSchemaFixture | null;
+}
+export interface UnmigratedSchemaFixture {
+  confirmed: true;
+  candidateRevision: string;
+  reviewReference: string;
+  controlSchemaVersion: string | number;
+  rejectionLogIncludes: string[];
 }
 export interface LoadedArtifact {
   manifest: FixtureManifest;
@@ -282,6 +298,71 @@ export async function loadArtifact(
     throw new BlockedError(`fixture接入未就绪：${String(error)}`);
   }
 }
+export async function loadUnmigratedSchema(
+  root: string,
+  target: TargetConfig,
+): Promise<UnmigratedSchemaFixture & { configurationSha256: string }> {
+  const { value, sha256 } = await loadFixtureConfiguration(root, target);
+  const profile = value.unmigratedSchema;
+  if (!profile || profile.confirmed !== true || profile.candidateRevision !== target.sut.revision)
+    throw new BlockedError('空schema公开拒启诊断尚未审核绑定到本候选');
+  try {
+    text(profile.reviewReference, 'unmigratedSchema.reviewReference');
+    if (
+      !(typeof profile.controlSchemaVersion === 'string' && profile.controlSchemaVersion.trim()) &&
+      !(
+        typeof profile.controlSchemaVersion === 'number' &&
+        Number.isFinite(profile.controlSchemaVersion)
+      )
+    )
+      throw new Error('迁移库健康schemaVersion必须为审核过的实际版本标识');
+    if (
+      !Array.isArray(profile.rejectionLogIncludes) ||
+      !profile.rejectionLogIncludes.length ||
+      !profile.rejectionLogIncludes.every(
+        (marker) =>
+          typeof marker === 'string' && marker.trim().length >= 8 && !/[\r\n\0]/.test(marker),
+      ) ||
+      !profile.rejectionLogIncludes.some((marker) =>
+        /schema|migration|迁移|数据库版本/i.test(marker),
+      )
+    )
+      throw new Error('必须提供审核过的明确schema拒启诊断，不能使用通用崩溃文本');
+  } catch (error) {
+    throw new BlockedError(`空schema诊断适配无效：${String(error)}`);
+  }
+  return { ...profile, configurationSha256: sha256 };
+}
+
+export function assessUnmigratedSchema(
+  profile: UnmigratedSchemaFixture,
+  controlBefore: { ok: unknown; schemaVersion: unknown },
+  controlAfter: { ok: unknown; schemaVersion: unknown },
+  observation: StartupRejectionObservation,
+): { status: 'PASS' | 'FAIL' | 'BLOCKED'; reason: string } {
+  if (observation.ready)
+    return { status: 'FAIL', reason: '空schema仍提供可用健康端点，未拒绝启动' };
+  if (
+    [controlBefore, controlAfter].some(
+      (control) => control.ok !== true || control.schemaVersion !== profile.controlSchemaVersion,
+    )
+  )
+    return { status: 'BLOCKED', reason: '相同候选迁移库前后健康对照与审核版本不符，无法归因' };
+  if (!observation.exit || observation.exit.code === null || observation.exit.signal !== null)
+    return {
+      status: 'BLOCKED',
+      reason: '未观察到候选自行退出；健康超时或外部终止不能证明schema拒启',
+    };
+  if (!profile.rejectionLogIncludes.every((marker) => observation.log.includes(marker)))
+    return {
+      status: 'BLOCKED',
+      reason: '退出日志未命中审核过的空schema拒启诊断，不能将任意崩溃算通过',
+    };
+  return {
+    status: 'PASS',
+    reason: '同候选迁移库前后健康，空库未健康且自行退出，明确schema诊断匹配',
+  };
+}
 export async function loadObservation(
   root: string,
   target: TargetConfig,
@@ -444,6 +525,7 @@ export class FixtureCandidate {
   database = '';
   private port = 0;
   private process?: OwnedProcess;
+  private readonly resourceToken = randomUUID();
   constructor(
     readonly target: TargetConfig,
     readonly cluster: OwnedDatabaseCluster,
@@ -474,9 +556,15 @@ export class FixtureCandidate {
       meaning: '制品已验证并仅恢复到本轮新库，不表示产品测试通过',
     });
   }
-  private command(): OwnedProcess {
+  private async command(): Promise<OwnedProcess> {
+    if (!this.cluster.ownsDatabase(this.database))
+      throw new Error('拒绝为未持有的夹具数据库启动候选');
     const env = isolatedEnv({
       ...this.target.sut.env,
+      ...(await capacityRegistryEnvironment(this.target)),
+      ...(await runtimeRegistryEnvironment(this.target)),
+      ...(await messageRegistryEnvironment(this.target)),
+      QA_ACCEPTANCE_RESOURCE_TOKEN: this.resourceToken,
       PORT: String(this.port),
       DATABASE_URL: this.cluster.url(this.database),
       GATEWAY_URL: this.gateway.url,
@@ -495,7 +583,7 @@ export class FixtureCandidate {
   async start(): Promise<void> {
     await requireAuthorization(this.target);
     if (this.process) throw new Error('fixture候选已启动');
-    this.process = this.command();
+    this.process = await this.command();
     await this.process.start();
     await waitHttp(
       `${this.api.baseUrl}/api/health`,
@@ -503,48 +591,22 @@ export class FixtureCandidate {
       this.process,
     );
   }
-  async observeRejection(): Promise<{
-    ready: boolean;
-    exit: { code: number | null; signal: NodeJS.Signals | null } | undefined;
-    log: string;
-  }> {
+  async observeRejection(): Promise<StartupRejectionObservation> {
     await requireAuthorization(this.target);
     if (this.process) throw new Error('fixture候选已启动');
-    this.process = this.command();
+    this.process = await this.command();
     try {
       await this.process.start();
     } catch (error) {
       throw new BlockedError(`候选命令无法启动，不是schema拒启证据：${String(error)}`);
     }
-    let ready = false;
-    const deadline = performance.now() + this.target.sut.startupTimeoutMs;
-    while (this.process.running && performance.now() < deadline) {
-      let listening = false;
-      try {
-        listening = await ownedListener(this.port, this.process);
-      } catch (error) {
-        if (!this.process.running) break; // A schema rejection can exit during listener inspection.
-        throw error;
-      }
-      if (listening) {
-        try {
-          const response = await fetch(`${this.api.baseUrl}/api/health`, {
-            signal: AbortSignal.timeout(500),
-            redirect: 'manual',
-          });
-          ready ||= response.ok;
-          await response.body?.cancel();
-        } catch {
-          /* No listener/response is not itself proof of schema rejection. */
-        }
-      }
-      if (ready) break;
-      await new Promise<void>((resolve) => setTimeout(resolve, 50));
-    }
-    const exit = this.process.exitOutcome;
-    await this.process.stop();
+    const result = await observeOwnedStartupRejection(
+      this.process,
+      this.api.baseUrl,
+      this.target.sut.startupTimeoutMs,
+    );
     this.process = undefined;
-    return { ready, exit, log: await readFile(resolve(this.output, 'fixture-server.log'), 'utf8') };
+    return result;
   }
   async evidence(name: string, value: unknown): Promise<void> {
     await mkdir(this.output, { recursive: true });

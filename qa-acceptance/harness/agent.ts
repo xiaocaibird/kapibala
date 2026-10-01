@@ -1,5 +1,7 @@
 import type { IncomingMessage, Server, ServerResponse } from 'node:http';
 import { Ajv } from 'ajv';
+import { Ajv2019 } from 'ajv/dist/2019.js';
+import { Ajv2020 } from 'ajv/dist/2020.js';
 import { BarrierController, type BarrierSpec } from './barrier.js';
 import {
   closeServer,
@@ -56,6 +58,13 @@ export class AgentSimulator {
   private readonly auditPlans: AgentResponsePlan[] = [];
   private readonly sessions = new Map<string, number[]>();
   private readonly ajv = new Ajv({ strict: false, allErrors: true });
+  // The public protocol requires valid JSON Schema, without restricting tools
+  // to draft-07. Keep validators separate: 2020-12 is not a draft-07 dialect.
+  private readonly schemaValidators = [
+    this.ajv,
+    new Ajv2019({ strict: false, allErrors: true }),
+    new Ajv2020({ strict: false, allErrors: true }),
+  ];
   private baseUrl = '';
   private managementUrl = '';
   private nextRequestId = 1;
@@ -140,7 +149,16 @@ export class AgentSimulator {
       if (!expected || seen.has(name) || typeof tool.description !== 'string') return false;
       seen.add(name);
       try {
-        if (!this.ajv.validateSchema(schema)) return false;
+        const dialect = schema.$schema;
+        const validator =
+          dialect === undefined
+            ? this.ajv
+            : typeof dialect === 'string'
+              ? this.schemaValidators.find((value) => value.getSchema(dialect))
+              : undefined;
+        // Only bundled metaschemas are used; never fetch an untrusted schema URL
+        // or strip $schema to make an otherwise unvalidated declaration pass.
+        if (!validator || !validator.validateSchema(schema)) return false;
       } catch {
         return false;
       }

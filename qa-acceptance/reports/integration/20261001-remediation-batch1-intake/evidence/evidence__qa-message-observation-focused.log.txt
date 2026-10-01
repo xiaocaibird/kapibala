@@ -1,0 +1,48 @@
+✔ MO01 production entry has no message bridge even with explicit QA variables (466.855334ms)
+ℹ Developer-owned UUID database /kapibala_test_cc32e778248841cd814d3374ec56c1ea; revision 589a66bbb62390f15c5b0d9557220b6768167423; guardian 98490; API http://127.0.0.1:53115; controller http://127.0.0.1:53114
+✖ MO02 committed receipt survives exact pre-business SIGKILL; old lease cannot control reused API (5434.082459ms)
+ℹ Developer-owned UUID database /kapibala_test_b62045846ac24c85aaf92aa29b9c1b3b; revision 589a66bbb62390f15c5b0d9557220b6768167423; guardian 98494; API http://127.0.0.1:53146; controller http://127.0.0.1:53145
+✖ MO03 pre-INSERT window has no receipt; after SIGKILL replay cannot prove original physical timestamp (5406.135875ms)
+ℹ Developer-owned UUID database /kapibala_test_c3176d435f3e4f6a8234c6dde5671303; revision 589a66bbb62390f15c5b0d9557220b6768167423; guardian 98552; API http://127.0.0.1:53258; controller http://127.0.0.1:53257
+✔ MO04 real 504 is captured before local save; delay does not reset timeout timestamp (794.049208ms)
+ℹ Developer-owned UUID database /kapibala_test_5fb4c5b41110417199405b19de49c611; revision 589a66bbb62390f15c5b0d9557220b6768167423; guardian 99721; API http://127.0.0.1:53353; controller http://127.0.0.1:53352
+ℹ {"case":"MO04","held":{"protocol":"qa-message-observation/1","leaseId":"828523e7-e335-4fe1-bc90-ce13c24ff35f","state":"held","expiresAt":"2026-10-01T06:04:31.779Z","binding":{"apiUrl":"http://127.0.0.1:53353","revision":"589a66bbb62390f15c5b0d9557220b6768167423","pid":99721,"observedOwnerToken":"<redacted>"},"correlation":{"clientMsgId":"client-a"},"events":[{"seq":1,"at":"2026-10-01T06:04:21.800Z","kind":"window-held","phase":"timeout-observed-before-local-save","attemptId":"4224974a-2af9-4b55-a69d-94b1edf137a0","groupId":"g","clientMsgId":"client-a","observedAt":"2026-10-01T06:04:21.799Z","instancePid":99721,"databaseIdentity":"f7b481b2ebf356c4ef8e35c5735ada7a391b12f699692151d1f1fd69dd712e0b","localBoundary":"504-recognized-local-result-save-not-started","receiptPresentAtProbe":false,"receiptObservedAt":null,"coverage":{"scope":"bound-instance","allDatabaseWritersProven":false}}]},"storedTimeout":"2026-10-01T06:04:21.799Z"}
+✖ MO05 TTL releases real held receipt; bad target and duplicate UUID cannot retarget or extend gate (5493.685708ms)
+ℹ Developer-owned UUID database /kapibala_test_d0e09217f8274571a506918915adcbd0; revision 589a66bbb62390f15c5b0d9557220b6768167423; guardian 99780; API http://127.0.0.1:53391; controller http://127.0.0.1:53390
+ℹ tests 5
+ℹ suites 0
+ℹ pass 2
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 17800.727458
+
+✖ failing tests:
+
+test at tests/integration/qa-message-observation.test.ts:4:773
+✖ MO02 committed receipt survives exact pre-business SIGKILL; old lease cannot control reused API (5434.082459ms)
+  Error: Condition did not become true within 5000ms
+      at until (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/tests/support/core-automation-fixture.ts:38:9)
+      at async Object.emit (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/tests/integration/qa-message-observation.test.ts:93:5)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/tests/integration/qa-message-observation.test.ts:142:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/qa-message-observation.test.ts:4:2289
+✖ MO03 pre-INSERT window has no receipt; after SIGKILL replay cannot prove original physical timestamp (5406.135875ms)
+  Error: Condition did not become true within 5000ms
+      at until (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/tests/support/core-automation-fixture.ts:38:9)
+      at async Object.emit (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/tests/integration/qa-message-observation.test.ts:93:5)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/tests/integration/qa-message-observation.test.ts:195:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/qa-message-observation.test.ts:4:3943
+✖ MO05 TTL releases real held receipt; bad target and duplicate UUID cannot retarget or extend gate (5493.685708ms)
+  Error: Condition did not become true within 5000ms
+      at until (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/tests/support/core-automation-fixture.ts:38:9)
+      at async Object.emit (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/tests/integration/qa-message-observation.test.ts:93:5)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/tests/integration/qa-message-observation.test.ts:262:3)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

@@ -1,0 +1,715 @@
+npm notice run kapibala-platform@0.1.0 test
+npm notice run tsx --test tests/integration/*.test.ts apps/web/tests/*.test.ts
+✔ an unavailable selected sender stays selected until the user explicitly chooses another identity (0.462667ms)
+✔ initial default and rate limited sender keep the existing queue policy (0.089125ms)
+✔ sequence timestamps distinguish confirmed delivery, skipped handling and failed handling (45.146583ms)
+✔ member count commit survives replay after REST and unrelated WS events already advanced the snapshot (0.708417ms)
+✔ active Agent and sequence identity commits survive REST-leading replay without treating steps as card changes (0.208667ms)
+✔ role-only membership, run recovery and step progression remain silent; polling alone creates no candidate (0.137458ms)
+✔ legacy coarse events retain uncertainty as a range target instead of claiming an unchanged or read card (0.36ms)
+✔ direct visible group changes remain definitive even with a simultaneous role-only projection marker (0.117041ms)
+✔ directory requests use fixed page size and preserve literal search and opaque cursors (0.735833ms)
+✔ search debounce and order changes abort old requests and ignore late results (12.124583ms)
+✔ directory query identity includes all server conditions but excludes cursor and request lifecycle (2.586959ms)
+✔ filter URL combinations send explicit booleans and omit unselected conditions (0.40325ms)
+✔ changing filters abandons a loaded cursor and ignores both late page and prior-filter responses (0.839083ms)
+✔ clear search preserves filters and ordering while reset restores every default and cancels late results (2.36175ms)
+✔ choosing all in one filter preserves the other filter and the search (2.409084ms)
+✔ IME composition defers combined filters until committed and sends them in one first-page query (1.292542ms)
+✔ filtered pagination retries and cached returns preserve conditions and stable location (1.405709ms)
+✔ filter-only empty results are recognized as no matches including Agent disabled (0.11275ms)
+✔ IME composition suppresses debounce, sort requests and polling until committed (1.946125ms)
+✔ initial errors remain distinct from a successful empty directory and can retry (0.603167ms)
+✔ next-page failure keeps items and cursor; exact-cursor retry merges stable IDs once (0.8775ms)
+✔ unchanged first-page probes preserve a failed next-page retry and never rotate its cursor (1.449792ms)
+✔ changed first-page probes invalidate all cached pages without splicing new rows (1.10475ms)
+✔ a relevant change aborts an in-flight next page and ignores its late response (1.61975ms)
+✔ a relevant change during first-page refresh discards that response and coalesces one fresh read (1.428916ms)
+✔ leaving and returning retains multi-page query, anchor and stale contents without automatic reset (0.89725ms)
+✔ off-page request completion is ignored and a one-page cache refreshes on return (1.055917ms)
+✔ condition changes reset pagination and position without clearing the search silently (1.067667ms)
+✔ a stopped session cancels pending debounce and late responses; a new session starts clean (0.710375ms)
+✔ an unchanged non-null next cursor fails visibly instead of repeating a page forever (0.644542ms)
+✔ synchronous loader failure cannot strand the flight or prevent manual retry (0.538166ms)
+✔ directory revision filters unrelated message traffic without changing directory-relevant events (0.11225ms)
+✔ directory runtime schema validates compact rows, dates, counts and cursor without a fake total (2.177833ms)
+✔ description and platform ID matches remain identifiable without HTML highlighting (0.158459ms)
+✔ creating a group omits untouched metadata but rejects an explicitly blank name (1.190833ms)
+✔ metadata limits apply after trimming and reject excess input instead of truncating it (0.231875ms)
+✔ profile patches preserve concurrently updated fields the user did not edit (0.100792ms)
+✔ an existing description can be cleared without clearing a group name (0.092833ms)
+✔ conditional profile writes include raw expected values only for semantically changed fields (0.150417ms)
+✔ profile conflict parsing requires the exact 409 contract and does not normalize server values (1.275459ms)
+✔ a name conflict rebases untouched description without losing the raw submitted draft (0.144125ms)
+✔ normalization-only untouched input follows the new snapshot instead of becoming a stale write (0.088709ms)
+✔ multi-field conflict keeps every submitted draft and a reverted field leaves the next conditional write (0.090125ms)
+✔ clearing a description keeps the raw empty draft and checks the newest description on reconfirmation (0.120459ms)
+✔ adopting a matching server snapshot needs no write and invalid drafts retain original validation (0.128584ms)
+✔ profile conflict comparison shows all submitted fields, their drafts and the atomic no-save boundary (15.200459ms)
+✔ profile conflict comparison distinguishes an empty server description from the draft clear intent (0.1645ms)
+✔ group responses require real metadata fields and a valid UTC creation timestamp (4.304667ms)
+✔ group profile shows the server date and read-only content without a viewer edit entry (31.448791ms)
+✔ group choices retain gateway identity when human names collide (4.7765ms)
+✔ refresh completing after blur and refocus cannot confirm an old view intent (0.607167ms)
+✔ a frame paused while hidden remains invalid after refocus and cannot consume a newer action (0.083541ms)
+✔ same-batch member role changes preserve the original directory count evidence without reviving it after confirmation (0.574625ms)
+✔ run creation directory evidence survives same-batch run steps or recovery updates (0.130333ms)
+✔ directory projection classifications canonicalize fields and keep missing separate from known empty (0.107041ms)
+✔ confirming a group name then changing a setting cannot revive profile attention (0.103208ms)
+✔ late-mounted profile and settings retain separate original field sequences (0.1125ms)
+✔ a definitive field upgrades the same pending event after an ambiguous field without reopening confirmed work (0.084042ms)
+✔ group message marker excludes history; duplicate created event stays one candidate (0.074084ms)
+✔ late identity confirmation cannot turn a pre-scope pending message into a new update (0.127375ms)
+✔ ordinary created messages use their event sequence without inventing an older origin (0.057209ms)
+✔ foreground is quiet; leaving pending content promotes a static reminder and focus cannot clear it (0.067708ms)
+✔ failed reload and snapshots started before the event cannot acknowledge it (0.047666ms)
+✔ an account row interaction cannot consume another row or a later update (0.044583ms)
+✔ same displayed status after a fresh snapshot does not create visible-change attention (0.052416ms)
+✔ real account transitions remain pending when online goes away and returns before snapshot (0.04325ms)
+✔ a definitive replay after REST already rendered its version still requires confirmation (0.044417ms)
+✔ current event classifier separates precise business changes from legacy invalidation (0.101708ms)
+✔ a precise update during first load survives absence of a comparison baseline (0.045125ms)
+✔ coalesced run status keeps latest sequence and ignores out-of-order arrivals (0.101208ms)
+✔ a removed list row remains range-confirmable; one snapshot cannot clear a newer list change (0.037625ms)
+✔ new scope model discards old group candidates without mutating old async callbacks (0.037417ms)
+✔ a message taller than its 510px timeline needs a summary even inside a 1200px window (5.209542ms)
+✔ directory attention evidence advances only on applied refresh, never failed or stale reads (25.157708ms)
+✔ directory query change clears old presentation evidence and never reuses a cursor as a scope (3.463375ms)
+✔ directory attention resets successful evidence for actual status and Agent filters (2.352958ms)
+✔ group message attention distinguishes created content, delivery echoes and another group (0.419375ms)
+✔ only the mounted run and exact step identity receive step changes (0.0955ms)
+✔ account and group adapters reject unrelated page changes (0.087ms)
+✔ business projections ignore identity-neutral polling and include visible changes (0.098458ms)
+✔ current page journals exclude messages and events from other selected groups (0.076333ms)
+✔ definitive changes follow the fields shown by each current-page summary (0.097083ms)
+✔ concurrent REST 401s and WS refresh share one token rotation (36.175041ms)
+✔ a delayed old-token 401 uses the already refreshed token (41.568333ms)
+✔ logout first renews expired access and then reaches the server (0.880333ms)
+✔ revoked refresh clears the access token and reports the server error (0.47475ms)
+✔ a login or logout cannot be overwritten by an older refresh response (0.308833ms)
+✔ own-message return and sentAt correction keep one stable row (0.161834ms)
+✔ old snapshot pagination cannot downgrade a row or lose backfilled history (5.505792ms)
+✔ equal timestamps are ordered consistently by stable identity (0.10225ms)
+✔ a transient resource failure recovers without another event or polling tick (3.897833ms)
+✔ backoff is bounded even with repeated invalidations and a later reload can recover (29.715875ms)
+✔ polls and event bursts share one flight and one serial follow-up (0.393375ms)
+✔ an invalidation during completion is drained before reload resolves (0.203916ms)
+✔ permission, contract, validation and rate-limit errors never schedule automatic retries (1.771875ms)
+✔ disposing during backoff cancels the timer and resolves the outstanding reload (0.854375ms)
+✔ a replaced resource aborts its read and ignores late values and errors (0.302041ms)
+✔ a login while an automatic retry waits cannot issue an old read with the new identity (31.165125ms)
+✔ a login during an active read discards its late result without publishing or retrying (0.449166ms)
+✔ normal token renewal within the same identity does not cancel a waiting recovery (3.664541ms)
+✔ shared sequence definition preserves valid values and boundary sizes (2.88325ms)
+✔ shared sequence definition rejects extra fields, invalid order and server bounds (1.011959ms)
+✔ shared start request retains defaults, empty values and accepted variable keys (0.61625ms)
+✔ both JSON editors use strict variable and positive canonical step keys (0.445917ms)
+✔ a delayed write 401 cannot replay under a newly logged-in identity (11.944ms)
+✔ an old retried request cannot clear the new identity on its delayed 401 (0.969125ms)
+✔ a late successful result is not returned into a different session (0.203625ms)
+✔ a new session owns a new refresh flight and an old finalizer cannot release it (2.847709ms)
+✔ cookie serialization: an old refresh 200 finishes headers/body before logout and new login (17.649459ms)
+✔ cookie serialization: an old refresh 401 finishes headers/body before logout and new login (5.517167ms)
+✔ logout revokes the cookie even when an old successful refresh lost its generation before saving access (1.00075ms)
+✔ a TypeError refresh rejection releases the auth queue for a new login (0.743ms)
+✔ a TimeoutError refresh rejection releases the auth queue for a new login (5.698584ms)
+✔ logout alone renews expired access inside its queue, then revokes without deadlock (0.338208ms)
+✔ a queued obsolete refresh is rejected before it can rotate a newly logged-in cookie (0.228375ms)
+✔ timing: the real twenty-second refresh abort releases a queued login (20000.787625ms)
+ℹ actual refresh timeout: 20001ms
+✔ a failed snapshot retains consumed invalidations and retries without a new event (4.079292ms)
+✔ events during a snapshot coalesce into one serial follow-up snapshot (6.797ms)
+✔ snapshot retries use capped backoff and reset their delay after recovery (25.861084ms)
+✔ disposing a group clears retries and blocks late results from the old group (1.074333ms)
+✔ an invalidation at snapshot completion cannot get stranded behind the finishing promise (0.626958ms)
+✔ a complete snapshot defeats a late earlier-page cursor and a late earlier-page failure (0.25875ms)
+✔ normal earlier pages still merge, preserve a failed-page cursor and allow retry (0.188042ms)
+✔ switching group invalidates an earlier-page completion without requiring another snapshot (0.095709ms)
+✔ KA01 connect confirms remote connection but local rollback is visible without a second remote call (1315.808208ms)
+✔ KA01 transition confirms remote connection but local rollback is visible without a second remote call (415.059334ms)
+✔ KA02 disconnect confirms remote offline but local rollback is visible without a compensation (472.626375ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ KA03 warning persistence failure preserves the original error and logs both failures (547.510209ms)
+✔ KA04 public account API returns a failure and retains existing authorization on persistence mismatch (473.52875ms)
+✔ KA05 transient local save retries retain the known remote result without reconnecting (549.22275ms)
+✔ KA06 local retry does not turn a disconnect into a reconnect (413.512ms)
+✔ KA07 exhausted local attempts preserve failure and do not replay the external operation (505.097916ms)
+✔ KA08 a newer disconnect waits for local recovery and wins after the connect (481.629958ms)
+✔ KA09 savepoint rollback discards staged events and SQL while retaining the parent transaction (466.56975ms)
+✔ Agent kick waits for local capacity without failing, repeating audit, or dispatching twice (1316.393125ms)
+ℹ Independent database: kapibala_test_3f7bae82164d4caf975d2aafb3c8f9d0
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ Agent capacity wait keeps the original activity budget and does not invent an unknown kick (1842.055917ms)
+ℹ Independent database: kapibala_test_a8c1a18d32534154b6a9da6042e27592
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ Agent rechecks kick policy after capacity refusal and preserves the recorded audit (619.740458ms)
+ℹ Independent database: kapibala_test_67d9d2dc8fb04700b597436b5e09a18e
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ Agent cancellation while waiting for capacity ends after the current step without another turn (415.830083ms)
+ℹ Independent database: kapibala_test_426bd07f7219446b89bf3e17eeb39d2e
+✔ Agent does not dispatch a model request after its intent write consumes the remaining budget (1261.317375ms)
+ℹ Independent database: kapibala_test_2c59e7d1f6eb40d0aad953da4f783484
+ℹ {"runId":"expired-intent","elapsedMs":407.45108300000004,"persistedActiveMs":60190,"modelRequests":0}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ Agent does not dispatch an audit request after its intent write consumes the remaining budget (891.158417ms)
+ℹ Independent database: kapibala_test_963baae11c5d4273be2c900b17ec4613
+ℹ {"runId":"expired-audit-intent","elapsedMs":447.01808299999993,"persistedActiveMs":60221,"auditRequests":0}
+✔ CAP009 exact refused-before-ready SIGKILL resumes the same audited step (1707.573375ms)
+ℹ Developer-owned UUID database /kapibala_test_f86a7b7b15524bcdba2a1668df586f74; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 38961; API http://127.0.0.1:50305; controller http://127.0.0.1:50304
+ℹ {"case":"CAP009-development-repaired","oldGuardian":38961,"newGuardian":39081,"held":{"protocol":"qa-capacity-control/1","leaseId":"88cd19c4-6aab-4281-a6de-f0c7ca0e6a37","state":"held","expiresAt":"2026-10-01T06:30:51.931Z","binding":{"apiUrl":"http://127.0.0.1:50305","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":38961,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T06:30:41.950Z","kind":"capacity-held","holderKeys":["qa-capacity:ee66ecb9-ca38-4529-a27f-5ad4323853d6:88cd19c4-6aab-4281-a6de-f0c7ca0e6a37:0","qa-capacity:ee66ecb9-ca38-4529-a27f-5ad4323853d6:88cd19c4-6aab-4281-a6de-f0c7ca0e6a37:1","qa-capacity:ee66ecb9-ca38-4529-a27f-5ad4323853d6:88cd19c4-6aab-4281-a6de-f0c7ca0e6a37:2","qa-capacity:ee66ecb9-ca38-4529-a27f-5ad4323853d6:88cd19c4-6aab-4281-a6de-f0c7ca0e6a37:3","qa-capacity:ee66ecb9-ca38-4529-a27f-5ad4323853d6:88cd19c4-6aab-4281-a6de-f0c7ca0e6a37:4","qa-capacity:ee66ecb9-ca38-4529-a27f-5ad4323853d6:88cd19c4-6aab-4281-a6de-f0c7ca0e6a37:5","qa-capacity:ee66ecb9-ca38-4529-a27f-5ad4323853d6:88cd19c4-6aab-4281-a6de-f0c7ca0e6a37:6"]},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T06:30:41.960Z","kind":"admission-refused","attemptId":"60e4cf1e-f07e-4e3d-bacd-ea80cca5c101","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":3,"at":"2026-10-01T06:30:41.960Z","kind":"before-ready-held","attemptId":"60e4cf1e-f07e-4e3d-bacd-ea80cca5c101","reason":"capacity","callbackEntered":false,"remoteRequestCount":0}]},"pending":{"run_id":"capacity-run","ordinal":1,"kind":"tool_use","tool_use_id":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"result_summary":"","is_error":false,"error_code":null,"audit_verdict":"pass","raw_response":"{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"kick-one\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"external-target\",\"reason\":\"engineering capacity observation\"}}]}","state":"executing","result":null,"audit_attempts":1,"intent":{"accountId":"account-2","dispatchState":"awaiting_admission","targetPlatformUserId":"external-target"}},"recovered":{"id":"capacity-run","groupId":"g","status":"finished","endReason":"final","summary":"done","recoveryNote":null,"steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"{\"kicked\":true}","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"kick-one\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"external-target\",\"reason\":\"engineering capacity observation\"}}]}"},{"ordinal":2,"kind":"final","toolUseId":null,"name":null,"input":null,"resultSummary":"\"done\"","isError":false,"errorCode":null,"auditVerdict":null,"rawResponse":"{\"stop_reason\":\"end_turn\",\"content\":[{\"type\":\"text\",\"text\":\"done\"}]}"}]},"kicks":1,"audits":1,"turns":2}
+✔ CAP009 a dispatched kick killed before response remains paused without replay (1954.533333ms)
+ℹ Developer-owned UUID database /kapibala_test_d05ecb25f4734d678d41fea382cb5380; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 39397; API http://127.0.0.1:50593; controller http://127.0.0.1:50592
+ℹ {"case":"CAP009-dispatched-unknown","saved":{"state":"executing","intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}},"recovered":{"id":"capacity-run","groupId":"g","status":"running","endReason":null,"summary":null,"recoveryNote":"A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.","steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"kick-one\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"external-target\",\"reason\":\"engineering capacity observation\"}}]}"}]},"kicks":1,"audits":1,"turns":1}
+✔ CAP009 dispatch intent commit then pre-HTTP SIGKILL stays conservatively paused (1468.266875ms)
+ℹ Developer-owned UUID database /kapibala_test_89000d13fdae4f568d5877ee3c5513d7; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 39806; API http://127.0.0.1:50866; controller http://127.0.0.1:50865
+ℹ {"case":"CAP009-intent-committed-before-http","saved":{"state":"executing","intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}},"recovered":{"id":"capacity-run","groupId":"g","status":"running","endReason":null,"summary":null,"recoveryNote":"A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.","steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"kick-one\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"external-target\",\"reason\":\"engineering capacity observation\"}}]}"}]},"kicks":0}
+✔ CAP009 legacy executing intents without a dispatch stage remain paused (1599.345875ms)
+ℹ Developer-owned UUID database /kapibala_test_d087b92b3e9a4757aa01d8212e96d172; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 40036; API http://127.0.0.1:51113; controller http://127.0.0.1:51112
+✔ CAP009 two live Agent instances recover one admitted step without duplicate audit or effect (348.350167ms)
+ℹ Independent database: kapibala_test_48e1b7fb1e2648468f095e1507125e2f
+✔ CAP009 failed durable dispatch write never reaches the gateway (609.974458ms)
+ℹ Independent database: kapibala_test_0cbe0b9732494e26a91f765c3170b035
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ CAP009 local kick validation runs before the durable dispatch hook (795.304459ms)
+ℹ Independent database: kapibala_test_7cac6838b57e497ca0974d564b2dca7c
+✔ PostgreSQL sessions rotate, revoke on reuse, enforce viewer and logout (1226.63725ms)
+✔ tool definitions have all required arguments; invalid protocols are rejected (236.41175ms)
+✔ sequence variables persist overrides and report the first unresolved step (0.720167ms)
+✔ PostgreSQL serializes concurrent sequence starts and failed preflight creates no run (50.637833ms)
+✔ multiple workers create one agent run and same send key is audited and enqueued once (332.190083ms)
+✔ bad JSON, unknown tool, duplicate tool id are recorded without corrupting history (79.479625ms)
+▶ invalid finish inputs return INVALID_INPUT and allow a later valid completion
+  ✔ null followed by end_turn (114.307375ms)
+  ✔ null followed by finish (127.781916ms)
+  ✔ missing summary followed by end_turn (94.791459ms)
+  ✔ missing summary followed by finish (129.705041ms)
+  ✔ wrong summary type followed by end_turn (134.001041ms)
+  ✔ wrong summary type followed by finish (186.5865ms)
+✔ invalid finish inputs return INVALID_INPUT and allow a later valid completion (788.08625ms)
+▶ completed invalid finish recovery honors cancellation and execution limits
+  ✔ cancelled (52.79325ms)
+  ✔ wall_clock (47.041834ms)
+  ✔ budget_exhausted (53.079459ms)
+  ✔ protocol_errors (76.817416ms)
+✔ completed invalid finish recovery honors cancellation and execution limits (230.314834ms)
+✔ a successful persisted finish completes recovery without another remote turn (63.28125ms)
+✔ inconclusive audit blocks without side effects; rejection does not reserve a send key (264.373292ms)
+✔ messages arriving during a run become one next trigger and own messages never trigger (176.260417ms)
+✔ interrupted remote turn is visibly paused and never replayed (98.680667ms)
+✔ sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step (141.051292ms)
+✔ persisted final and prepared send recover without replaying prior external work (152.270583ms)
+✔ kick policy and persisted uncertain kick cannot produce a second side effect (193.17625ms)
+✔ repeated reads stop within twelve steps and result bytes remain bounded (696.73525ms)
+✔ disabling Agent during its current step cancels after that step, without another turn (80.06975ms)
+✔ activity budget interrupts a late turn and discards the eventual response (351.251584ms)
+✔ activity budget expires during audit without authorizing the prepared tool (333.458459ms)
+✔ an accepted send whose account becomes terminal yields SEND_FAILED without a resend (127.869958ms)
+✔ restart catches up a committed send before rebasing the next unscheduled step (94.58625ms)
+✔ kick permission errors remain tool errors and a confirmed kick succeeds (363.406208ms)
+✔ SEND_TIMEOUT retries with the same key read the eventual send without re-auditing (5190.707333ms)
+✔ sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp (209.217583ms)
+✔ loss of the advisory-lock connection aborts a turn without saving a false protocol error (243.67325ms)
+✔ loss of a run lock during audit prevents old-worker effects and permits safe audit recovery (305.947ms)
+✔ kick budget exhaustion ends the run while retaining an uncertain non-replayable effect (186.615792ms)
+✔ a stale scheduler transaction cannot enqueue after its ownership connection is lost (81.784833ms)
+✔ closing and recreating modules preserves activity while excluding actual downtime (1049.201334ms)
+✔ queued runs persist online activity across a real shutdown without counting downtime or a second clock (2860.7745ms)
+✔ a follower cannot execute against a stale activity base while the new clock owner initializes (1423.241625ms)
+✔ an initialization follower takes over after the blocked clock owner connection is terminated (2048.897875ms)
+✔ frequent activity samples retain subinterval time instead of losing rounded milliseconds (29.228666ms)
+✔ activity clock survives loss of its own PostgreSQL session and only bills once after takeover (1520.96275ms)
+✔ inconclusive audit step and blocked run roll back together before recovery (90.386375ms)
+✔ persisted legacy audit-block window cannot resume another Agent turn (70.287084ms)
+✔ timing: the default twelve-second turn timeout discards the late response (13538.155917ms)
+✔ timing: three five-second inconclusive audit attempts block without sending (16461.678917ms)
+✔ timing: sixty seconds of activity ends the run even below the twelve-step cap (60077.141458ms)
+✔ CR01 migration 008 is atomic and repeatable, preserving actual old clocks and unknown historical receipts (1253.046875ms)
+ℹ isolated database: kapibala_test_cec78a90422e48d1a86af0f9717dbe7d
+✔ CR02 business rollback leaves a reliable receipt, and a new event handler reuses its stable identity (422.582334ms)
+ℹ isolated database: kapibala_test_eaa56eda9886481da1d7e4b4f8d7f0d9
+✔ CR03 receipt-write failure prevents business application and a surviving process retains its first clock (465.830333ms)
+ℹ isolated database: kapibala_test_be72cd70a193461fa9c372f039d8ed4c
+✔ CR04 SIGKILL after independent receipt commit preserves the clock through a new process and sequence recovery (1018.642833ms)
+ℹ isolated database: kapibala_test_a4076dc1111f47f4bed59a8fade4427b
+ℹ {"case":"CR04","signal":"SIGKILL","savedObservedAt":1790836243632,"replayStartedAt":1790836243962,"recoveredObservedAt":1790836243632,"nextScheduledAt":1790836303632}
+✔ CR05 two processes keep the first reliable record, not a later writer's earlier physical observation (965.949709ms)
+ℹ isolated database: kapibala_test_afd5e79e811f418bbe2404bf558b5db2
+ℹ {"case":"CR05","earlierProcessStartedAt":1790836244642,"winningProcessStartedAt":1790836244910,"firstReliableObservedAt":1790836244910,"unchangedAfterEarlierObserverContinued":true}
+✔ CR06 SIGKILL before receipt persistence demonstrates the unrecoverable observation window (987.437875ms)
+ℹ isolated database: kapibala_test_b0c03f0c02de4c328e4af51c1376f65b
+ℹ {"case":"CR06","lostProcessStartedAt":1790836245584,"replayStartedAt":1790836245866,"firstReliableObservedAt":1790836245867,"originalPhysicalObservationRecovered":false,"faultInjection":"process paused before receipt SQL submission, then SIGKILL","boundary":"Only the new reliable observation survives; this is not reconstruction of the lost receipt."}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ checkpoint connection-pool exhaustion rejects and late checkout returns without reviving the stage (2056.889208ms)
+ℹ Independent database: kapibala_test_a9b1a3870b8240da9089eb0617d1ecb6
+ℹ {"poolWaitMs":1500.4087920000002}
+✔ blocked checkpoint query destroys its owning lease before another owner resumes (1568.491292ms)
+ℹ Independent database: kapibala_test_027069cb4ffb4e0886fc5554ec1e0006
+ℹ {"blockedQueryWaitMs":1208.6147920000003,"remainingOwners":0}
+✔ continuous targeted wakes leave periodic accounting available for queued runs (1820.187708ms)
+ℹ Independent database: kapibala_test_9efe38a750c94abf8d4855c253d4e2fd
+ℹ {"notifications":190,"elapsedMs":1202.6116249999995,"queuedActiveMs":1015}
+✔ an unresponsive owner cannot acknowledge a follower checkpoint, then takeover excludes the outage (2157.020667ms)
+ℹ Independent database: kapibala_test_97e9f7612b08414fbb2191cfcf7259b5
+ℹ {"unresponsiveOwnerWaitMs":1517.0520420000003,"beforeActiveMs":2,"afterActiveMs":10,"caveat":"hard termination still loses the unpersisted online tail"}
+✔ activity checkpoints persist a completed model wait shorter than the sampling interval (993.07425ms)
+ℹ Independent database: kapibala_test_0dd5729895d8450b8593457e86f3fbec
+ℹ {"activeMs":213,"modelWaitMs":141.92666700000063}
+✔ activity checkpoints persist audit waiting and a follower wakes only the shared owner (744.914958ms)
+ℹ Independent database: kapibala_test_1f98386ce92f4d3c9684c3414ed6d009
+ℹ {"auditWaitMs":141.96112500000163,"elapsedMs":411.0004169999993,"activeMs":374,"writers":[818],"ownerPid":818}
+✔ activity checkpoint failure at model:before blocks the next remote or durable stage (493.024291ms)
+ℹ Independent database: kapibala_test_c47062712b314210bbc6b6640c217cfb
+ℹ {"phase":"model:before","turns":0,"audits":0,"inflightTurn":false,"steps":0,"activeMs":0,"elapsedMs":3.2381249999998545}
+✔ activity checkpoint failure at model:after blocks the next remote or durable stage (626.476916ms)
+ℹ Independent database: kapibala_test_b8dd7e7bc88e47c8925520ccb029a9c5
+ℹ {"phase":"model:after","turns":1,"audits":0,"inflightTurn":true,"steps":0,"activeMs":32,"elapsedMs":4.093666999999186}
+✔ activity checkpoint failure at audit:before blocks the next remote or durable stage (534.6015ms)
+ℹ Independent database: kapibala_test_bf7ed1b81e524ab1b6ca977dd4dd6a95
+ℹ {"phase":"audit:before","turns":1,"audits":0,"inflightTurn":false,"steps":1,"activeMs":35,"elapsedMs":1.6194159999995463}
+✔ activity checkpoint failure at audit:after blocks the next remote or durable stage (450.36325ms)
+ℹ Independent database: kapibala_test_3ef6b6c2370d472bba437f53296dbab2
+ℹ {"phase":"audit:after","turns":1,"audits":1,"inflightTurn":false,"steps":1,"activeMs":71,"elapsedMs":2.0834580000009737}
+✔ CG13: legal turns reset consecutive errors and preserve exact history shapes and end_turn semantics (1192.2945ms)
+ℹ Independent database: kapibala_test_f7f64b2a0bde494db0c1387dca5e5423
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ CG14: three audit responses without verdict block one step and publish the terminal fields without effects (419.495375ms)
+ℹ Independent database: kapibala_test_407fb0cc6cd24c8eb24651068a3e266f
+✔ CG14: no online member for send and no online elevated member for kick are business errors (646.606667ms)
+ℹ Independent database: kapibala_test_1255dcbdc08a4062b1393dfe00fec5d1
+✔ CG14: disabling autoKick while the audit is pending prevents the authorized tool from executing (420.498125ms)
+ℹ Independent database: kapibala_test_fdb3606811e24328848b9958e3be76a9
+✔ CG15: a current run reads newly arrived messages in order and exposes Unicode and raw response bounds (421.57425ms)
+ℹ Independent database: kapibala_test_c940d3c437ff471dbdd1d38c62fa6348
+✔ CG16: invalid indexes have no persistent effects and the next step starts from actual skip time (944.34325ms)
+ℹ Independent database: kapibala_test_c268d9d8c4cf4bff9c97fade0cec114d
+✔ R09: echo confirmation uses only message_sent observation, preserves it after duplicate and restart (1589.220958ms)
+ℹ Independent database: kapibala_test_8587a146295041de8bffe5c658e2e608
+✔ R09: query confirmation uses only message_sent observation, preserves it after duplicate and restart (1496.998417ms)
+ℹ Independent database: kapibala_test_e55714b4e1a34e14b8bc822dc96c6643
+✔ R09: event confirmation uses only message_sent observation, preserves it after duplicate and restart (954.091541ms)
+ℹ Independent database: kapibala_test_ceb599e0df7c4ebcae3cd6a986056f7a
+✔ R05: a locked group cannot block another group's Agent or sequence; retry preserves one run and one enqueue (603.825458ms)
+ℹ Independent database: kapibala_test_32b9dbbb4fa74271a7dd11d0d65d9c87
+ℹ tick with group lock held: 151ms
+✔ R05: a real slow member reconciliation holds its group lock without stopping another group (401.5005ms)
+ℹ Independent database: kapibala_test_82ff5818ee4549098afae3821d98003a
+✔ R05: busy takeover defers only that run and must rebase it before dispatch after unlock (953.337875ms)
+ℹ Independent database: kapibala_test_ceddd144271148a1ae7e1460239afa10
+✔ R09: skipped step still schedules from the actual skip time (352.624167ms)
+ℹ Independent database: kapibala_test_be7539fe113e40c69978669dc7c5ffe5
+✔ R09: observation precedes row-lock wait and survives a failed transaction retry (651.584541ms)
+ℹ Independent database: kapibala_test_a89d19bf8f724e16851b5ac3076e10bb
+✔ R09: migration refuses active old sequences and never fabricates historical observations (605.68375ms)
+✔ CG08 timing: configured 10000ms turn timeout rejects a genuinely late HTTP response (10996.553459ms)
+ℹ Independent database: kapibala_test_54f1f2b1e33c49a0b348d352e2515f64
+ℹ {"configuredTimeoutMs":10000,"observedTimeoutMs":10018.843166999999,"lateResponseObserved":true}
+✔ CG08 timing: configured 15000ms turn timeout rejects a genuinely late HTTP response (15593.508916ms)
+ℹ Independent database: kapibala_test_7f47e15254454e26a82b6f0f72d19c26
+ℹ {"configuredTimeoutMs":15000,"observedTimeoutMs":15009.795457999999,"lateResponseObserved":true}
+✔ CG08: hard termination preserves sampled activity, excludes downtime, and exposes a tail beyond one sampling interval (3294.368667ms)
+ℹ Independent database: kapibala_test_06e6089e36b54a55adcdc7131feb00f6
+ℹ {"sampledActiveMs":491,"unbilledOnlineTailMs":1173,"actualDowntimeMs":704,"billedOnRestoreMs":1,"resumedActiveMs":982}
+✔ AR02 a group row lock defers its member events while later SSE messages commit, then retry recovers exactly once (1200.966792ms)
+ℹ independent database: kapibala_test_c6447103bef2401eb59c83f1c15904a7
+ℹ B messages while A remains locked: advanced=true, elapsed=108ms, member HTTP requests=0
+ℹ after A release: ledger=4, A member=1, member change=1, B messages=2; locked retry=102ms
+✔ AR02 non-lock member failure retains replay and a delayed joined event cannot undo a newer authoritative leave (416.870625ms)
+ℹ independent database: kapibala_test_07c872ba01bd4c0f89e5b1baf101b7c4
+ℹ non-lock failure recovered: ledger=3, final A members=0, committed member changes=1, inconsistency=1; member HTTP requests=3
+✔ AR02 a rebuilt event handler recovers a deferred member event from real SSE history without duplicating committed messages (473.483583ms)
+ℹ independent database: kapibala_test_19091adab7c445928c5d36158d2986cf
+ℹ fresh GatewayEvents recovered from since=0 history: ledger=2, A member=1, B message=1, message notification=1
+✔ CG09: HTTP seed, reconnect identity, transition preconditions and actual gateway disconnect (4503.830416ms)
+ℹ isolated database: kapibala_test_4cd47d781e2a44b2b4220218e3a3b574
+✔ CG09: refreshing a rate-limit deadline emits no self transition; offline expiry stays offline (5327.923042ms)
+ℹ isolated database: kapibala_test_33a1224a279148cb9c28a4c7d4fd734f
+✔ CG11: rejected create has no job or gateway effects; defaults and terminal run references match API (5468.688459ms)
+ℹ isolated database: kapibala_test_977d5fdc19df45d0b9da25254158a12b
+✔ CG11: real HTTP job failures expose fixed create/invite/join/promote/leave step names (6842.838792ms)
+ℹ isolated database: kapibala_test_20dbcf541aa043cc97104cc5287c32d6
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ CG10: stopped business process replays every external SSE event once, including history and duplicates (2889.3025ms)
+ℹ isolated database: kapibala_test_b3648d92eeb04d6e819eb22462b9cc84
+✔ CG10: real GROUP_WRITE_FORBIDDEN commits group/sequence cancellation before WS, then finishes current Agent step (5972.88075ms)
+ℹ isolated database: kapibala_test_e2ba1339c4bc4ad8812df6cac7f79890
+✔ LM01 D042: leave-all exits only managed accounts, creator last; final HTTP and DB members match current external facts (1145.498375ms)
+ℹ isolated database: kapibala_test_5261a57639874175b8a14cf823e9b007
+✔ LM02 D042: left member replay reconciles external joins/leaves but never resurrects managed members; failed reads retry (420.207709ms)
+ℹ isolated database: kapibala_test_25b6bd8d48cf499b9807b85eefbe8eb2
+✔ LM03 D042: a non-creator failure still continues others and keeps creator, failed account and active state (471.512333ms)
+ℹ isolated database: kapibala_test_da011d8d44b14d719e116106af3b656f
+✔ LM04 D042: final membership transaction failure recovers without another leave or partial left state (547.278625ms)
+ℹ isolated database: kapibala_test_54212e6848b044258ea5ff84224f5061
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ LM05 D042: preserved external members cannot enable sending, kick, sequence or Agent recovery in a left group (635.24925ms)
+ℹ isolated database: kapibala_test_12339797cc85499eb427b9fc9d34e7d5
+✔ LM06 D042: legacy cleared left groups recover only from fresh snapshots, never from old completion evidence or deduped replay (387.527708ms)
+ℹ isolated database: kapibala_test_6882852b98af4a88b900190cdecc98d4
+✔ checked-out advisory connection loss rejects safely, fences subsequent DB work, and releases capacity (1094.449292ms)
+✔ advisory lock loss aborts an in-flight HTTP request and blocks later remote calls (208.780958ms)
+✔ transaction client loss during HTTP wait aborts safely and does not poison later transactions (326.741291ms)
+✔ cleanup on a disconnected advisory connection preserves the callback error (110.688667ms)
+✔ RemoteClient preserves HTTP errors for null, primitive, malformed nested envelopes and valid arrays (6.45975ms)
+✔ slow socket: an in-flight oversized frame cannot authorize further buffers, and stalled close is terminated (455.395458ms)
+✔ slow socket: callback starvation closes even below the buffer watermark; ordinary close cancels the fallback (161.163625ms)
+✔ slow socket: a drained frame larger than the watermark still reaches an able consumer (0.240541ms)
+✔ slow socket: control replies wait for a permitted oversized frame instead of disconnecting it (0.153416ms)
+✔ slow socket: pending frame admission is bounded and all waiters finish when closed (10.711542ms)
+✔ realtime: a stopped TCP reader is disconnected without blocking a healthy peer; client cursor replays all remaining durable events (1953.160916ms)
+ℹ Independent database: kapibala_test_35d0f3c0b6a140d5ad1fe8ab3038e559
+ℹ Paused TCP reader removed; 80 durable events reached healthy peer and reconnect in exact order
+✔ realtime: marker bursts batch one database request at a time without dropping admitted scope replies or skipping durable replay (474.47875ms)
+ℹ Independent database: kapibala_test_ad47180a009541659420ba5df702dd12
+✔ realtime: overflowing pending marker capacity closes without launching unbounded database work (547.550709ms)
+ℹ Independent database: kapibala_test_f0a99ed887e54cfcb57056e00a00eca0
+✔ timeline: continuation transfers only its slice and preserves old frozen cursors across writes, page sizes and large offsets (415.629125ms)
+ℹ Independent database: kapibala_test_19a25964c06b43ad964e60bd073610d2
+ℹ Frozen snapshot 1252279 bytes; continuation database transfer maximum 91661 bytes for at most 9 items
+✔ diagnostics: only admin sees disabled process-local scheduler data; public health stays unchanged (414.257125ms)
+ℹ Independent database: kapibala_test_928a6d8be7c74ccfb9f106b439d97e81
+✔ diagnostics: failures, hung ticks and later recovery are distinguishable without leaking error bodies or claiming business completion (571.517458ms)
+ℹ Independent database: kapibala_test_c4d648402fc14d8695a37dd7fb6b6ce3
+✔ R05 cancellation: a paused run with a locked group preserves cancellation while another group's Agent and sequence advance (644.098ms)
+ℹ Independent database: kapibala_test_f4adbe977fac48d2aa889248ddc293da
+ℹ tick with paused cancellation locked: 94ms
+✔ R05 cancellation: non-lock persistence errors propagate and preserve the cancellation intent (527.775083ms)
+ℹ Independent database: kapibala_test_25897f3e01794dc790867adaedaef30b
+✔ TB01 known 504 clock starts at receipt, before local result-persistence lock wait (1287.78575ms)
+ℹ isolated database: kapibala_test_561b9aa48e1849b399f2a5639b416cdf
+ℹ {"case":"TB01","localLockWaitMs":750,"anchorShiftMs":0}
+✔ TB02 a 1900ms initial 202 is accepted only after its real response (2407.239458ms)
+ℹ isolated database: kapibala_test_fe574bcb998241e1be26e66c4663a7e5
+ℹ {"case":"TB02","sendStartToAcceptedMs":1936.7546659999998}
+✔ TB03 authoritative absence fails without the optional 1800ms retry 202 (2913.602292ms)
+ℹ isolated database: kapibala_test_dfec58c008c345638d8792d825658087
+ℹ {"case":"TB03","first504ToFailedMs":2139.6462920000004,"sends":1}
+✔ TB04 known absent HTTP 504 converges within five seconds without another POST (2590.44ms)
+ℹ isolated database: kapibala_test_dbc0168d052c46ae98581242706c4397
+ℹ {"case":"TB04","first504ToFailedMs":2158.4557079999995,"sends":1}
+✔ TB05 the former delayed-second-504 counterexample now closes within the first five seconds (2461.29125ms)
+ℹ isolated database: kapibala_test_0d276a001c7443fba132dbcf04d60da9
+ℹ {"case":"TB05","first504ToFailedMs":2189.4293749999997,"first504FiveSecondRequirementMet":true,"sends":1}
+✔ TB06 query 503 beyond five seconds stays unknown; a 1400ms positive query recovers within two seconds (6863.950084ms)
+ℹ isolated database: kapibala_test_d5eb497b1dae44028871a347369b4ced
+ℹ {"case":"TB06","first504ToSentMs":6729.332458999999,"availabilityToSentMs":1511.112792}
+✔ TB07 a query exceeding the two-second HTTP timeout does not authorize retry or failure (2236.285041ms)
+ℹ isolated database: kapibala_test_923ce7224fab457d8524600c5931cc82
+ℹ {"case":"TB07","queryElapsedMs":2004.8315000000002,"fastQueryAvailabilityToSentMs":108.98449999999866}
+✔ TB08 the former recovery-then-second-504 counterexample closes within two seconds (5446.965084ms)
+ℹ isolated database: kapibala_test_8604e09dab5b4943a8b1a39072d8a387
+ℹ {"case":"TB08","availabilityToFailedMs":108.15445900000122,"recoveryTwoSecondRequirementMet":true,"sends":1}
+✔ TB09 legacy reserved retry (1 attempts) is queried again without dispatch (94.071833ms)
+ℹ isolated database: kapibala_test_909b9abedbdd43708d5ec61ec4aee60a
+✔ TB09 legacy reserved retry (3 attempts) is queried again without dispatch (194.788583ms)
+ℹ isolated database: kapibala_test_2d5d94283de64dc78b90554a6c701c70
+✔ TB10 legacy sending retry with unknown result never uses the first 504 clock (92.16575ms)
+ℹ isolated database: kapibala_test_6d4a9511d1a14509bc5893d5de27bc81
+✔ TB10 legacy uncertain retry with unknown result never uses the first 504 clock (83.805833ms)
+ℹ isolated database: kapibala_test_2af34764f5f34e65adc1cf92a6e6e18b
+✔ TB11 a legacy retry with its own recorded 504 waits for that latest window (2220.966667ms)
+ℹ isolated database: kapibala_test_240964ef162744eabe6dcb656313a405
+✔ TB12 an old retry marker does not cancel an ordinary queued send after rate-limit recovery (89.449166ms)
+ℹ isolated database: kapibala_test_44f5b1ca56c8446db838ca2ca45e12aa
+✔ PostgreSQL lock admission preserves connection capacity for nested transactions (450.187875ms)
+✔ KM01 a slow member query rolls back and retries while a later group's SSE message proceeds (2411.340542ms)
+ℹ later group's message persisted after 2058 ms
+✔ R09 combination: failed receipt and a later eventId for the same message retain the first observation (855.224333ms)
+ℹ Independent database: kapibala_test_c0168d11c1bb4a378069c0a2496fc6eb
+✔ R09 combination: a failed acknowledgement for a different msgId cannot occupy the valid message's observation (453.620959ms)
+ℹ Independent database: kapibala_test_86f04f2671d0448bb639b69b23688a77
+✔ KG03 first explicit promote 503 retries after backoff and finishes within two calls (295.426459ms)
+✔ KG04 promote 503 then 503 ends as explicit failure without a third call (553.451625ms)
+✔ KG04 promote not_member then 503 ends as explicit failure without a third call (417.172042ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ KG04 promote 503 then not_member ends as explicit failure without a third call (496.632166ms)
+✔ KG05 promote unknown response or persisted dispatch never silently retries (405.25625ms)
+✔ KG01 SSE CRLF split across three chunks preserves both frames (515.46025ms)
+✔ KG02 SSE every byte boundary preserves UTF-8, comments and multiline data (504.095625ms)
+✔ 真实PG：并发账号CAS只有一个成功，非法边优先于状态冲突 (349.616833ms)
+✔ 账号完整36种状态组合严格遵循允许转移表，终态无出边 (488.509667ms)
+✔ 限流到期前已手动离线，不得被过期调度恢复为online (466.232583ms)
+✔ ACCOUNT_OFFLINE及SENDER_NOT_IN_GROUP只失败当前消息，账号和群不变 (506.692541ms)
+✔ 同步SESSION_EXPIRED与异步account_status都执行相同终态后果 (982.277959ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ 异步message_failed按错误传播账号终态或群不可写，不能混淆范围 (1425.768125ms)
+✔ 真实PG：终态后果原子提交；步骤写失败整笔回滚 (903.231375ms)
+✔ 限流期间所有来源共用账号队列且恢复保持顺序 (522.385875ms)
+✔ 503退避不能让同账号后续消息越过队首 (626.207333ms)
+✔ 504已落地查询收敛为sent，不重发；自身回流去重且不触发Agent (534.616166ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ 504安全窗口后新查询明确未落地则failed，不采用可选重发 (449.926584ms)
+✔ 真实时钟：504后明确未落地，在5秒内确定失败并且不重发 (2374.510667ms)
+✔ 真实HTTP：窗口内取得的404延迟返回后不得触发重发，后续查询确认原消息 (2440.241ms)
+✔ 崩溃发送意图恢复为unknown，没有已知504不得重发 (207.874375ms)
+✔ 发送持锁连接丢失后新worker就地接管，旧worker不能写accepted或重发 (144.695917ms)
+✔ 第二实例启动不能把活跃worker的发送标记为恢复未知 (131.449417ms)
+✔ 504查询不可用期间保持unknown，恢复后确认不会重复发出 (211.644417ms)
+✔ 已sent补投和重复确认不会重写首次确认时间 (122.269625ms)
+✔ kick同步终态错误也执行成员清理与取消，群错误只改变群 (211.123375ms)
+✔ kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未知时不删除成员 (2453.724833ms)
+✔ kick已确认删除等待群投影事务，旧成员快照不能覆盖删除结果 (173.536708ms)
+✔ 真实PG双实例发送互斥，单个outbox只调用一次远端 (145.055833ms)
+✔ 群不可写原子停止序列并取消Agent，不改变账号 (96.883375ms)
+✔ 真实PG事件写失败后重放，乱序eventId与任意历史补投均保留 (169.694667ms)
+✔ 建群包括creator/admin，过期链接重申，promote仅一次 (161.361708ms)
+✔ 邀请ready时间前不join，ALREADY_MEMBER无需等待事件，可重试一次promote (643.897166ms)
+✔ 建群远端成功但本地写失败时记录待确认，禁止重复创建 (93.167792ms)
+✔ join事件超过10秒未到，任务失败且不提前promote (234.562458ms)
+✔ 非群主退出失败继续其他成员，群主不退出 (235.704458ms)
+✔ D042: leave-all服务账号全部退出，left公开视图保留远端外部成员 (245.663416ms)
+✔ 时间线快照在历史补投和queued.sentAt改写时保持原始分页无重漏 (207.558833ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ group directory: bounded summaries, defaults, and unchanged legacy groups (414.938125ms)
+ℹ isolated database: kapibala_test_84a5027a0a554574bdc207808e9823b3
+✔ group directory: microsecond boundaries and equal-time IDs have no gaps in either order (386.350875ms)
+ℹ isolated database: kapibala_test_5a5dd3597c3b45cea7ddfd26c641081d
+✔ group directory: search filters before pagination across all four nullable fields (465.815208ms)
+ℹ isolated database: kapibala_test_72ac2472883b4617a39d36d915ba1953
+✔ group directory: percent underscore backslash SQL text and Chinese are literal search terms (485.092041ms)
+ℹ isolated database: kapibala_test_c6a2cae78bc04568a39f24d765e3f779
+✔ group directory: rejects malformed query and cursor boundaries or changed conditions (371.849083ms)
+ℹ isolated database: kapibala_test_aa91bb1c87094020b848676b6d0a6132
+✔ group directory: authenticated viewer reads, cursor grants no authority, and writes stay forbidden (326.187583ms)
+ℹ isolated database: kapibala_test_e99f172929e24add947fa6f8388d059c
+✔ group directory: live cursor survives boundary deletion and exposes later inserts (322.041041ms)
+ℹ isolated database: kapibala_test_b18dd37955484ed8888a32cb1fc83362
+✔ group directory: migration is repeatable and preserves legacy values and microseconds (598.685625ms)
+ℹ isolated database: kapibala_test_578e9b9470a5475b8e53b78e72142505
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ group directory filters: complete-set intersection precedes pagination in both orders (997.27975ms)
+ℹ isolated database: kapibala_test_7a90826aa9a743cbb33255a2291af617
+✔ group directory filters: v1 cursors bind optional normalized filters and preserve old defaults (714.531666ms)
+ℹ isolated database: kapibala_test_7a303aa0aa8b4759a024d9f96296c508
+✔ group directory filters: strict query values and viewer access (505.752167ms)
+ℹ isolated database: kapibala_test_d617369e720d4957ba7198491fd873a2
+▶ group metadata: omitted fields remain compatible and named jobs survive reconstruction
+  ✔ {} (417.181ms)
+  ✔ {"name":"  项目群  ","description":"  用于交流项目进度。  "} (383.195166ms)
+  ✔ {"description":" \n "} (466.959625ms)
+✔ group metadata: omitted fields remain compatible and named jobs survive reconstruction (1268.168125ms)
+✔ group metadata: shared validation rejects bad input and accepts trimmed limits (505.083209ms)
+✔ group metadata: partial and concurrent edits preserve omitted values, creation time, and permissions (653.5665ms)
+✔ group list remains ordered by creation time descending with stable IDs for ties (349.596209ms)
+✔ group metadata migration leaves legacy group creation timestamps unchanged (604.933917ms)
+✔ group profile conflict: same-field concurrent edits across instances have one winner (209.483834ms)
+ℹ Independent database: kapibala_test_d07bd9b070ca4ce3a4f3fd7fc0d3af61
+✔ group profile conflict: independent fields can commit concurrently (447.9005ms)
+ℹ Independent database: kapibala_test_134afbc9076e44519ba10c4c25d70a12
+✔ group profile conflict: a stale field rolls back the whole patch without events or Agent cancellation (484.216209ms)
+ℹ Independent database: kapibala_test_9581949a9e3e4564be620a085daa8a56
+✔ group profile conflict: null and raw original values are compared without normalization (497.432083ms)
+ℹ Independent database: kapibala_test_1a71688fea324df98d54bd9140df7a83
+✔ group profile conflict: expected is strict nonempty and matches precisely the supplied profile fields (200.009167ms)
+ℹ Independent database: kapibala_test_492c449f983940c08de731af8b09100c
+✔ group profile conflict: legacy requests and successful mixed settings retain existing behavior (322.343875ms)
+ℹ Independent database: kapibala_test_bcd1837386a145cbb0679a9ca465e137
+✔ group profile conflict: viewer and unauthenticated requests cannot mutate or inspect conflict details (603.095125ms)
+ℹ Independent database: kapibala_test_00d34ae3d137408faf7d5a67f89ad8ba
+✔ PostgreSQL lock admission distinguishes local capacity, entity contention, and an undefined callback result (105.880875ms)
+✔ Gateway kick maps only actual entity contention to the existing member conflict (450.931834ms)
+ℹ Independent database: kapibala_test_f1679966c3d947f0a5a91406bdd5448b
+✔ kick 200 arriving after a committed rejoin preserves current membership without kicking twice (386.047708ms)
+✔ leave 200 arriving after rejoin retains the member and prevents the creator from leaving (487.543958ms)
+✔ member refresh failure after confirmed kick remains success and converges through event retry (370.959292ms)
+✔ leave refresh failure preserves confirmed progress and prevents unsafe creator departure (326.910958ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ leave completion reads current members after acquiring the group projection lock (320.98375ms)
+✔ a delayed member snapshot cannot overwrite a newer member removal from another event worker (292.246417ms)
+✔ member_joined rechecks terminal account state under the same lock as terminal cleanup (486.83675ms)
+✔ a delayed member snapshot cannot undo a successful leave job (372.837791ms)
+✔ member_joined cannot add a member after the group has atomically become left (326.218625ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ ALREADY_MEMBER job reconciliation cannot reinsert an account after terminal cleanup (320.872125ms)
+✔ twenty persistent event failures cannot starve a later recoverable event (632.701875ms)
+✔ migration manifest uses explicit numeric identifiers and rejects invalid or duplicate versions (15.882875ms)
+✔ history content changes with the same file count are rejected, while a fresh database gets the changed schema (540.933959ms)
+ℹ Same count/version=1, old schema integer versus fresh schema text; old ledger rejected by checksum before writes
+▶ complete ledger comparison rejects middle holes, renamed/deleted/inserted history and a newer database
+  ✔ middle-hole (238.3555ms)
+  ✔ renamed-file (349.273958ms)
+  ✔ deleted-file (304.313917ms)
+  ✔ inserted-file (349.298334ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+  ✔ renumbered-file (467.388666ms)
+  ✔ newer-database (159.208042ms)
+✔ complete ledger comparison rejects middle holes, renamed/deleted/inserted history and a newer database (1869.00975ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ a failure after pending SQL and earlier ledger writes rolls the entire batch back before a successful retry (777.372875ms)
+ℹ Version 2 SQL/ledger plus version 3 DDL/data all rolled back when the version 3 ledger INSERT failed; retry and repeat passed
+✔ two migration processes wait on a real PostgreSQL advisory lock and apply a batch exactly once (900.36225ms)
+ℹ {"observedLocks":[{"application_name":"a0_migration_first","lock_key":"913456","granted":true},{"application_name":"a0_migration_first","lock_key":"913458","granted":false},{"application_name":"a0_migration_second","lock_key":"913456","granted":false}],"finalValue":2,"version2LedgerRows":1}
+✔ the production entry refuses an actually lagging database before listening, then migration permits a healthy server and repeat (529.199875ms)
+ℹ {"laggingVersion":7,"requiredVersion":8,"refusedProcessExit":1,"randomRefusedPort":51928,"healthyUrl":"http://127.0.0.1:52007"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ a real six-migration legacy ledger stays explicitly unverified and unchanged rather than gaining fabricated checksums (623.100833ms)
+ℹ Historical 001–006 SQL was executed into the old ledger shape; migrate/startup rejected with no checksum column, DDL, ledger or account changes
+✔ explicit legacy baseline compares a replayed release schema, records limited provenance, and permits subsequent migration (1225.051958ms)
+ℹ {"source":"git:fa1baa7d7524bf16f379c9c2837fa8cc9ef0bcac","schemaChecksum":"8dcbd355bde9d283034612c00f5f819a209adb588cd3ea18f33cf0d43f0a16bd","verifiedAt":"2026-10-01T06:30:51.968Z","versions":[1,2,3,4,5,6],"referenceDatabase":"kapibala_migration_reference_c8b70392123143cd85a9a05556c3adcf","referenceRemoved":true,"currentVersion":8,"pastExecutionBytesProven":false}
+▶ legacy baseline rejects damaged ledgers, structural drift and untrusted source bytes without changing the target
+  ✔ middle-hole (500.335041ms)
+  ✔ name-mismatch (256.653708ms)
+  ✔ missing-index (414.750083ms)
+  ✔ changed-default (428.401584ms)
+  ✔ extra-function (240.21375ms)
+  ✔ disabled-internal-constraint-triggers (389.163959ms)
+  ✔ altered-sequence (352.635375ms)
+  ✔ modified-source (78.983833ms)
+✔ legacy baseline rejects damaged ledgers, structural drift and untrusted source bytes without changing the target (2662.076416ms)
+✔ legacy baseline lock contention and missing CREATEDB permission fail without target changes or reference leaks (5197.964125ms)
+✔ legacy baseline and migration 007 preserve the running-sequence gate and leave historical observation time unknown (273.752166ms)
+ℹ Legacy 6 -> explicit baseline -> 007 rejects running sequence atomically -> completed-run fixture -> 007 succeeds; historical observed_at remains NULL
+✔ a reference cleanup failure reports that the target baseline already committed, with its exact evidence and reference name (262.103ms)
+✔ attention: marker is authenticated, committed, request-only and never skips replay (540.641083ms)
+✔ attention: optional send correlation retains legacy response, rejects reuse and distinguishes delivery (416.80725ms)
+✔ attention: duplicate inbound and ambiguous own echo never invent a second logical creation (347.924625ms)
+✔ attention: an unrelated same-sender message with different text is confirmed immediately (609.123834ms)
+✔ attention: authoritative distinct message IDs release only fully resolved same-text candidates (796.226042ms)
+▶ attention: failed and cancelled outbox transitions resolve dependent inbound candidates
+  ✔ failed (647.228125ms)
+  ✔ account-terminal (282.697292ms)
+  ✔ group-unreachable (495.26475ms)
+✔ attention: failed and cancelled outbox transitions resolve dependent inbound candidates (1425.929667ms)
+✔ attention: cancelling an attempted send does not prove its pending echo independent (626.877959ms)
+✔ attention: group and rate-limit no-ops are silent; terminal membership consequences are scoped (534.36675ms)
+✔ attention: sequence definitions and displayed step mutations emit once while idle scans remain silent (456.240875ms)
+✔ attention: job failure commits displayed outcome with its event (277.147958ms)
+✔ attention: Agent persisted ordinary steps, audit result and final result carry stable ordinals (453.853ms)
+✔ attention: directory member count evidence excludes role-only changes and repeated removals (190.905458ms)
+✔ attention: Agent recovery note does not claim a directory active ID change (323.95925ms)
+✔ attention: group-terminal sequence cancellation carries the actual active-ID removal (208.924042ms)
+✔ platform fixture: migration failure still releases acquired resources (652.883916ms)
+✔ platform fixture: simulator startup failure still releases acquired resources (651.346209ms)
+✔ platform fixture: app startup failure still releases acquired resources (1152.690083ms)
+✔ platform: message dedup, own echo, delayed delivery and historical pagination (7797.229125ms)
+✔ platform: explicit 504 absence fails without retry and account-wide rate limit queues (11847.202708ms)
+✔ platform: Agent exactly-once key, bad responses, audit blocking and no self-trigger (7566.675833ms)
+✔ platform: sequence preflight, variable inheritance and concurrent single running (6839.102458ms)
+✔ platform: account CAS, terminal atomic effects and owner-last failed leave (5844.214833ms)
+✔ platform: database write failure retains events, reports inconsistency and replays after outage (6878.621542ms)
+✔ platform: two instances enforce one Agent and share durable event replay (7892.770291ms)
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ platform: frozen pagination survives queued sentAt changes (7315.657792ms)
+✔ platform: authenticated WebSocket replays missed events and logout closes the stream (5920.964667ms)
+✔ platform: SIGKILL during remote send recovers by evidence without resending (5754.278084ms)
+✔ platform: S1 distinguishes accepted from sent and query recovery determines proven absence (9510.028584ms)
+✔ platform: schema lag refuses startup and viewer is denied all business write routes (102.303667ms)
+✔ platform: audited kick confirms 504 and propagates permission errors without account mutation (8185.016292ms)
+✔ platform: Agent SEND_TIMEOUT repeats the same key and reads proven failure without re-auditing (10938.011208ms)
+✔ platform: Agent kick deadline cancels real HTTP confirmation without replaying an uncertain effect (3727.317166ms)
+✔ AC01 real controller permits witness plus same-run safe boundary and exposes killed tail as incomplete (2055.840375ms)
+ℹ Developer UUID DB /kapibala_test_3599e439b62a4db8b41506885783cb81; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 40649; API http://127.0.0.1:51419
+ℹ {"witness":{"protocol":"qa-runtime-observation/1","leaseId":"dd150f09-dd2e-49ca-89b5-9e7c492929b8","state":"armed","expiresAt":"2026-10-01T06:31:09.315Z","binding":{"apiUrl":"http://127.0.0.1:51419","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":40649,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"events":[{"seq":1,"at":"2026-10-01T06:30:49.319Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6a1e9d4a-9b9c-4fdb-af4c-48699259c744","instancePid":40649,"activityState":"active","includesUnsavedTail":true,"epochIds":["9a5b7812-d4b6-4003-ba89-537e72536794"],"persistedActiveMs":79,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[107,124]},{"seq":2,"at":"2026-10-01T06:30:49.379Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6a1e9d4a-9b9c-4fdb-af4c-48699259c744","instancePid":40649,"activityState":"active","includesUnsavedTail":true,"epochIds":["9a5b7812-d4b6-4003-ba89-537e72536794"],"persistedActiveMs":181,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[167,184]},{"seq":3,"at":"2026-10-01T06:30:49.481Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6a1e9d4a-9b9c-4fdb-af4c-48699259c744","instancePid":40649,"activityState":"active","includesUnsavedTail":true,"epochIds":["9a5b7812-d4b6-4003-ba89-537e72536794"],"persistedActiveMs":281,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[268,285]},{"seq":4,"at":"2026-10-01T06:30:49.542Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6a1e9d4a-9b9c-4fdb-af4c-48699259c744","instancePid":40649,"activityState":"active","includesUnsavedTail":true,"epochIds":["9a5b7812-d4b6-4003-ba89-537e72536794"],"persistedActiveMs":344,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[330,347]},{"seq":5,"at":"2026-10-01T06:30:49.550Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6a1e9d4a-9b9c-4fdb-af4c-48699259c744","instancePid":40649,"activityState":"active","includesUnsavedTail":true,"epochIds":["9a5b7812-d4b6-4003-ba89-537e72536794"],"persistedActiveMs":352,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[338,355]}]},"safe":{"protocol":"qa-runtime-observation/1","leaseId":"ca956b87-dcb3-439d-874f-3053a42bf4b7","state":"held","expiresAt":"2026-10-01T06:31:09.394Z","binding":{"apiUrl":"http://127.0.0.1:51419","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":40649,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"events":[{"seq":1,"at":"2026-10-01T06:30:49.396Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6a1e9d4a-9b9c-4fdb-af4c-48699259c744","instancePid":40649,"activityState":"active","includesUnsavedTail":true,"epochIds":["9a5b7812-d4b6-4003-ba89-537e72536794"],"persistedActiveMs":181,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[183,200]},{"seq":2,"at":"2026-10-01T06:30:49.481Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6a1e9d4a-9b9c-4fdb-af4c-48699259c744","instancePid":40649,"activityState":"active","includesUnsavedTail":true,"epochIds":["9a5b7812-d4b6-4003-ba89-537e72536794"],"persistedActiveMs":281,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[268,285]},{"seq":3,"at":"2026-10-01T06:30:49.542Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6a1e9d4a-9b9c-4fdb-af4c-48699259c744","instancePid":40649,"activityState":"active","includesUnsavedTail":true,"epochIds":["9a5b7812-d4b6-4003-ba89-537e72536794"],"persistedActiveMs":344,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[330,347]},{"seq":4,"at":"2026-10-01T06:30:49.550Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6a1e9d4a-9b9c-4fdb-af4c-48699259c744","instancePid":40649,"activityState":"active","includesUnsavedTail":true,"epochIds":["9a5b7812-d4b6-4003-ba89-537e72536794"],"persistedActiveMs":352,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[338,355]},{"seq":5,"at":"2026-10-01T06:30:49.569Z","kind":"activity-safe-held","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6a1e9d4a-9b9c-4fdb-af4c-48699259c744","instancePid":40649,"activityState":"active","includesUnsavedTail":true,"epochIds":["9a5b7812-d4b6-4003-ba89-537e72536794"],"persistedActiveMs":352,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[357,374],"stepId":"cd2382e77f644cdfa6b574d23f4bb62e901eb651c6247aa1377818aedaa7cc13","continuationDurable":true,"remoteInFlightCount":0,"safeBoundary":"read-tool-result-outer-commit-confirmed-before-next-dispatch"}]}}
+ℹ {"resumed":{"protocol":"qa-runtime-observation/1","leaseId":"503bfdb6-3709-46aa-80ab-05125fdd6f2c","state":"armed","expiresAt":"2026-10-01T06:31:10.067Z","binding":{"apiUrl":"http://127.0.0.1:51419","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":41581,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"events":[{"seq":1,"at":"2026-10-01T06:30:50.070Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6197ffee-ee44-431c-8173-d8559b474341","instancePid":41581,"activityState":"active","includesUnsavedTail":false,"epochIds":["6b9121ca-a031-4f67-89ea-becef8bc5f13"],"persistedActiveMs":494,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","observedEpochActiveMs":[126,148],"incompleteReason":"A pre-existing run was rebased after clock ownership acquisition; prior unsaved activity is not reconstructable."}]},"oldReleased":{"protocol":"qa-runtime-observation/1","leaseId":"ca956b87-dcb3-439d-874f-3053a42bf4b7","state":"released","expiresAt":"2026-10-01T06:31:09.394Z","binding":{"apiUrl":"http://127.0.0.1:51419","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":40649,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"events":[{"seq":1,"at":"2026-10-01T06:30:49.396Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6a1e9d4a-9b9c-4fdb-af4c-48699259c744","instancePid":40649,"activityState":"active","includesUnsavedTail":true,"epochIds":["9a5b7812-d4b6-4003-ba89-537e72536794"],"persistedActiveMs":181,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[183,200]},{"seq":2,"at":"2026-10-01T06:30:49.481Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6a1e9d4a-9b9c-4fdb-af4c-48699259c744","instancePid":40649,"activityState":"active","includesUnsavedTail":true,"epochIds":["9a5b7812-d4b6-4003-ba89-537e72536794"],"persistedActiveMs":281,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[268,285]},{"seq":3,"at":"2026-10-01T06:30:49.542Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6a1e9d4a-9b9c-4fdb-af4c-48699259c744","instancePid":40649,"activityState":"active","includesUnsavedTail":true,"epochIds":["9a5b7812-d4b6-4003-ba89-537e72536794"],"persistedActiveMs":344,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[330,347]},{"seq":4,"at":"2026-10-01T06:30:49.550Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6a1e9d4a-9b9c-4fdb-af4c-48699259c744","instancePid":40649,"activityState":"active","includesUnsavedTail":true,"epochIds":["9a5b7812-d4b6-4003-ba89-537e72536794"],"persistedActiveMs":352,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[338,355]},{"seq":5,"at":"2026-10-01T06:30:49.569Z","kind":"activity-safe-held","correlation":{"kind":"activity","groupId":"activity-g","runId":"377dccb6-2f00-49e0-967d-a99b86a23499","toolUseId":"all-run-steps"},"attemptId":"6a1e9d4a-9b9c-4fdb-af4c-48699259c744","instancePid":40649,"activityState":"active","includesUnsavedTail":true,"epochIds":["9a5b7812-d4b6-4003-ba89-537e72536794"],"persistedActiveMs":352,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[357,374],"stepId":"cd2382e77f644cdfa6b574d23f4bb62e901eb651c6247aa1377818aedaa7cc13","continuationDurable":true,"remoteInFlightCount":0,"safeBoundary":"read-tool-result-outer-commit-confirmed-before-next-dispatch"}]}}
+✔ activity witness keeps pre-lease creation time and holds only a committed read continuation (1485.433875ms)
+ℹ Independent database: kapibala_test_bb2506fa979142ee84df2de34cd9fbb6
+ℹ {"safe":{"seq":3,"at":"2026-10-01T06:30:49.517Z","kind":"activity-safe-held","correlation":{"kind":"activity","groupId":"g","runId":"669aef9c-2170-424f-b3f9-09d3b225ae19","toolUseId":"all-run-steps"},"attemptId":"9bcd6888-992e-4c81-800b-b465c0e44ce9","instancePid":40760,"activityState":"active","includesUnsavedTail":true,"epochIds":["c1922328-ba05-435a-92ad-319060fc1a70"],"persistedActiveMs":164,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[174,188],"stepId":"d5e6b6925aa06d0eb46db76ce48a094cb2bd7f64a8bd51a91b6379ab6c20aeca","continuationDurable":true,"remoteInFlightCount":0,"safeBoundary":"read-tool-result-outer-commit-confirmed-before-next-dispatch"},"terminal":{"seq":8,"at":"2026-10-01T06:30:50.350Z","kind":"activity-terminal","correlation":{"kind":"activity","groupId":"g","runId":"669aef9c-2170-424f-b3f9-09d3b225ae19","toolUseId":"all-run-steps"},"attemptId":"9bcd6888-992e-4c81-800b-b465c0e44ce9","instancePid":40760,"activityState":"terminal","includesUnsavedTail":true,"epochIds":["c1922328-ba05-435a-92ad-319060fc1a70"],"persistedActiveMs":1011,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[996,1021]},"limitation":"same-process monotonic creation-to-terminal brackets; not a 60-second acceptance result"}
+✔ safe activity lease TTL releases the actual wait while the product clock keeps billing it (5424.128167ms)
+ℹ Independent database: kapibala_test_f3821ea54aed432995d5f74fa82f030f
+ℹ {"terminal":{"seq":16,"at":"2026-10-01T06:30:55.879Z","kind":"activity-terminal","correlation":{"kind":"activity","groupId":"g","runId":"01cc294c-4589-46b2-850f-c098d7d7f2e6","toolUseId":"all-run-steps"},"attemptId":"852b4095-00f1-41bc-9bd6-24c648462c21","instancePid":40760,"activityState":"terminal","includesUnsavedTail":true,"epochIds":["9bb9c46c-f58f-4593-99df-473308931455"],"persistedActiveMs":5068,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5053,5072]},"holdState":"released"}
+✔ DELETE releases only its matched safe wait without deleting historical events (166.68125ms)
+ℹ Independent database: kapibala_test_755869425b7e4271a22e91eb53be052a
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ loss of the real run lock invalidates a safe hold before a new worker may resume (303.001333ms)
+ℹ Independent database: kapibala_test_55ccd7f7d7e2496692e072cac5aa1a76
+✔ loss of the clock owner invalidates completeness instead of treating a rebased epoch as continuous (214.865667ms)
+ℹ Independent database: kapibala_test_34dce6cbe0254e67bff2e710ceeff291
+✔ pre-existing inflight work reports the real recovery pause with incomplete earlier activity (207.535916ms)
+ℹ Independent database: kapibala_test_02b265c06da14521a448abc6e79c3072
+ℹ {"latest":{"seq":4,"at":"2026-10-01T06:30:56.790Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"unrecorded-response","toolUseId":"all-run-steps"},"attemptId":"a9d0075b-a1f0-42ab-970c-6bae767996fa","instancePid":40760,"activityState":"recovery-paused","includesUnsavedTail":false,"epochIds":["5da6cd65-472d-4216-b597-c682c6e90286"],"persistedActiveMs":1,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","observedEpochActiveMs":[14,19],"incompleteReason":"A pre-existing run was rebased after clock ownership acquisition; prior unsaved activity is not reconstructable."},"qaCompatibility":"Current QA requires activeElapsedMs even when incomplete, so this honest partial witness is BLOCKED at schema validation."}
+✔ audit-blocked commits publish terminal activity without relying on Agent.finish (808.807959ms)
+ℹ Independent database: kapibala_test_35638a7143b0461d91f6ddf3146a55dd
+✔ a rolled-back creation transaction cannot publish a run creation witness (143.098875ms)
+ℹ Independent database: kapibala_test_cffbbcb488fb4d349b6abb2443845646
+✔ subscribing to an already paused run never bills the pause before its later cancellation (343.52525ms)
+ℹ Independent database: kapibala_test_0b8d950f3bc14dc6acfaff4208b71022
+✔ a delayed notification of real clock acquisition cannot overwrite a newer committed recovery pause (126.252417ms)
+ℹ Independent database: kapibala_test_d16b6afef4d346bbaf4b2b37cc59a082
+✔ SIGKILL ends the held instance and a real replacement cannot inherit its lease or invent its unsaved tail (1010.475917ms)
+ℹ Independent database: kapibala_test_a929dbce2f1b41a79927c7fa9320b3eb
+ℹ {"killedAt":1790836258730,"oldOwnerPid":45768,"newOwnerPid":45893,"safe":{"seq":3,"at":"2026-10-01T06:30:58.704Z","kind":"activity-safe-held","correlation":{"kind":"activity","groupId":"g","runId":"795f2c4b-8282-4601-8ed6-be186a7a4665","toolUseId":"all-run-steps"},"attemptId":"c7ae9d52-2581-445e-b202-00fa98500655","instancePid":45768,"activityState":"active","includesUnsavedTail":true,"epochIds":["84c32d92-052e-4c20-a3d2-edb11e536356"],"persistedActiveMs":54,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[57,64],"stepId":"b17f8596267d9ab2b689421050fbcc5d723b06d99b55749cf009130d032f528e","continuationDurable":true,"remoteInFlightCount":0,"safeBoundary":"read-tool-result-outer-commit-confirmed-before-next-dispatch"},"terminal":{"seq":7,"at":"2026-10-01T06:30:59.183Z","kind":"activity-terminal","correlation":{"kind":"activity","groupId":"g","runId":"795f2c4b-8282-4601-8ed6-be186a7a4665","toolUseId":"all-run-steps"},"attemptId":"4960d977-5300-452e-9130-3b4f077b385d","instancePid":45893,"activityState":"terminal","includesUnsavedTail":false,"epochIds":["8268b68f-52da-406a-9628-05802f72a5d1"],"persistedActiveMs":92,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","observedEpochActiveMs":[36,41],"incompleteReason":"A pre-existing run was rebased after clock ownership acquisition; prior unsaved activity is not reconstructable."},"limitation":"Actual old online tail was lost on SIGKILL; no whole-run finite activity interval is asserted."}
+✔ DC01 normal production main ignores test token and never opens a capacity bridge (755.171ms)
+ℹ Developer-owned UUID database /kapibala_test_1fde275c970c49a4bf3479a74c3bae56; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 41298; API http://127.0.0.1:51517; controller http://127.0.0.1:51516
+✔ DC02 real SUT holders, ownership rejects, immutable lease identity and independent release (1239.211042ms)
+ℹ Developer-owned UUID database /kapibala_test_68c6c4d9038e4effb0a93b27eef6ff42; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 41888; API http://127.0.0.1:51738; controller http://127.0.0.1:51737
+ℹ {"case":"DC02","eventCount":4,"refusal":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T06:30:50.741Z","kind":"admission-refused","attemptId":"9c81bac9-0c96-428a-a495-31589ce59c88","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},"terminal":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":4,"at":"2026-10-01T06:30:50.923Z","kind":"run-terminal","status":"finished","endReason":"final","activeElapsedMs":[387,435],"clockSource":"persisted active_ms through last sample; upper includes DB sample-to-terminal-observation tail plus 1ms timestamp resolution; prior hard-crash unsampled tail is not reconstructable"}}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ DC03 lost PUT response remains addressable; TTL and explicit release race preserve history (1890.257583ms)
+ℹ Developer-owned UUID database /kapibala_test_e3d06d124e6d44bb9058434427fe84a6; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 43271; API http://127.0.0.1:52047; controller http://127.0.0.1:52046
+ℹ {"case":"DC03","expiresAt":"2026-10-01T06:30:52.616Z","final":{"protocol":"qa-capacity-control/1","leaseId":"33c55fa0-ba1b-4e4e-a5e2-d0591788e296","state":"released","expiresAt":"2026-10-01T06:30:52.616Z","binding":{"apiUrl":"http://127.0.0.1:52047","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":43271,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T06:30:51.861Z","kind":"capacity-held","holderKeys":["qa-capacity:d7625751-978e-4404-a6d2-7162db0f0af7:33c55fa0-ba1b-4e4e-a5e2-d0591788e296:0","qa-capacity:d7625751-978e-4404-a6d2-7162db0f0af7:33c55fa0-ba1b-4e4e-a5e2-d0591788e296:1","qa-capacity:d7625751-978e-4404-a6d2-7162db0f0af7:33c55fa0-ba1b-4e4e-a5e2-d0591788e296:2","qa-capacity:d7625751-978e-4404-a6d2-7162db0f0af7:33c55fa0-ba1b-4e4e-a5e2-d0591788e296:3","qa-capacity:d7625751-978e-4404-a6d2-7162db0f0af7:33c55fa0-ba1b-4e4e-a5e2-d0591788e296:4","qa-capacity:d7625751-978e-4404-a6d2-7162db0f0af7:33c55fa0-ba1b-4e4e-a5e2-d0591788e296:5","qa-capacity:d7625751-978e-4404-a6d2-7162db0f0af7:33c55fa0-ba1b-4e4e-a5e2-d0591788e296:6"]},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T06:30:51.893Z","kind":"admission-refused","attemptId":"adc4be6c-26c8-4495-8fa4-04076267bad5","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":3,"at":"2026-10-01T06:30:51.898Z","kind":"ready-persisted","attemptId":"adc4be6c-26c8-4495-8fa4-04076267bad5"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":4,"at":"2026-10-01T06:30:51.959Z","kind":"admission-refused","attemptId":"86095557-d503-445f-a94f-5748dc43bac4","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":5,"at":"2026-10-01T06:30:51.961Z","kind":"ready-persisted","attemptId":"86095557-d503-445f-a94f-5748dc43bac4"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":6,"at":"2026-10-01T06:30:52.025Z","kind":"admission-refused","attemptId":"328067f6-2b7d-4590-bbe4-cb228f55e0c1","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":7,"at":"2026-10-01T06:30:52.028Z","kind":"ready-persisted","attemptId":"328067f6-2b7d-4590-bbe4-cb228f55e0c1"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":8,"at":"2026-10-01T06:30:52.085Z","kind":"admission-refused","attemptId":"d9721a2d-b29a-412b-ae50-9ac99693389f","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":9,"at":"2026-10-01T06:30:52.086Z","kind":"ready-persisted","attemptId":"d9721a2d-b29a-412b-ae50-9ac99693389f"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":10,"at":"2026-10-01T06:30:52.145Z","kind":"admission-refused","attemptId":"88bd6086-307b-42dc-89b3-bec32ceeb108","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":11,"at":"2026-10-01T06:30:52.146Z","kind":"ready-persisted","attemptId":"88bd6086-307b-42dc-89b3-bec32ceeb108"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":12,"at":"2026-10-01T06:30:52.206Z","kind":"admission-refused","attemptId":"ab9265a1-6977-4f93-92f1-68670e8ea609","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":13,"at":"2026-10-01T06:30:52.207Z","kind":"ready-persisted","attemptId":"ab9265a1-6977-4f93-92f1-68670e8ea609"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":14,"at":"2026-10-01T06:30:52.270Z","kind":"admission-refused","attemptId":"a2e59799-a786-46cc-a0b2-48ff874276ee","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":15,"at":"2026-10-01T06:30:52.272Z","kind":"ready-persisted","attemptId":"a2e59799-a786-46cc-a0b2-48ff874276ee"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":16,"at":"2026-10-01T06:30:52.334Z","kind":"admission-refused","attemptId":"5721d289-fae5-497d-a90c-c190ff195873","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":17,"at":"2026-10-01T06:30:52.336Z","kind":"ready-persisted","attemptId":"5721d289-fae5-497d-a90c-c190ff195873"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":18,"at":"2026-10-01T06:30:52.397Z","kind":"admission-refused","attemptId":"2f1d7fb9-e4cc-44ac-b95c-55d0efdddc16","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":19,"at":"2026-10-01T06:30:52.401Z","kind":"ready-persisted","attemptId":"2f1d7fb9-e4cc-44ac-b95c-55d0efdddc16"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":20,"at":"2026-10-01T06:30:52.462Z","kind":"admission-refused","attemptId":"c0b54d2f-3841-44c3-985b-0b65249f9563","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":21,"at":"2026-10-01T06:30:52.463Z","kind":"ready-persisted","attemptId":"c0b54d2f-3841-44c3-985b-0b65249f9563"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":22,"at":"2026-10-01T06:30:52.524Z","kind":"admission-refused","attemptId":"9fa80a9e-fd5a-4a0e-9020-d4d5ad3628cd","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":23,"at":"2026-10-01T06:30:52.525Z","kind":"ready-persisted","attemptId":"9fa80a9e-fd5a-4a0e-9020-d4d5ad3628cd"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":24,"at":"2026-10-01T06:30:52.584Z","kind":"admission-refused","attemptId":"1fe70df3-9e92-47ff-bc25-d691ab8087f9","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":25,"at":"2026-10-01T06:30:52.585Z","kind":"ready-persisted","attemptId":"1fe70df3-9e92-47ff-bc25-d691ab8087f9"}]}}
+✔ DC04 exact before-ready crash resumes the saved step and rebinds same API port to new guardian (2616.66525ms)
+ℹ Developer-owned UUID database /kapibala_test_273e778eead945a683cb73bc58f1bfb8; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 44193; API http://127.0.0.1:52402; controller http://127.0.0.1:52401
+ℹ {"case":"DC04-repaired-product-recovery","oldGuardian":44193,"newGuardian":44595,"held":{"protocol":"qa-capacity-control/1","leaseId":"cd73fc3f-d878-49c6-8dc7-26189db943e0","state":"held","expiresAt":"2026-10-01T06:31:03.567Z","binding":{"apiUrl":"http://127.0.0.1:52402","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":44193,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T06:30:53.590Z","kind":"capacity-held","holderKeys":["qa-capacity:b987059b-4483-450e-b07c-6a0746d0b7dc:cd73fc3f-d878-49c6-8dc7-26189db943e0:0","qa-capacity:b987059b-4483-450e-b07c-6a0746d0b7dc:cd73fc3f-d878-49c6-8dc7-26189db943e0:1","qa-capacity:b987059b-4483-450e-b07c-6a0746d0b7dc:cd73fc3f-d878-49c6-8dc7-26189db943e0:2","qa-capacity:b987059b-4483-450e-b07c-6a0746d0b7dc:cd73fc3f-d878-49c6-8dc7-26189db943e0:3","qa-capacity:b987059b-4483-450e-b07c-6a0746d0b7dc:cd73fc3f-d878-49c6-8dc7-26189db943e0:4","qa-capacity:b987059b-4483-450e-b07c-6a0746d0b7dc:cd73fc3f-d878-49c6-8dc7-26189db943e0:5","qa-capacity:b987059b-4483-450e-b07c-6a0746d0b7dc:cd73fc3f-d878-49c6-8dc7-26189db943e0:6"]},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T06:30:53.598Z","kind":"admission-refused","attemptId":"7ff335d7-e486-474f-816f-e9795f705093","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":3,"at":"2026-10-01T06:30:53.598Z","kind":"before-ready-held","attemptId":"7ff335d7-e486-474f-816f-e9795f705093","reason":"capacity","callbackEntered":false,"remoteRequestCount":0}]},"recovered":{"id":"capacity-run","groupId":"g","status":"finished","endReason":"final","summary":"done","recoveryNote":null,"steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"{\"kicked\":true}","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"kick-one\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"external-target\",\"reason\":\"engineering capacity observation\"}}]}"},{"ordinal":2,"kind":"final","toolUseId":null,"name":null,"input":null,"resultSummary":"\"done\"","isError":false,"errorCode":null,"auditVerdict":null,"rawResponse":"{\"stop_reason\":\"end_turn\",\"content\":[{\"type\":\"text\",\"text\":\"done\"}]}"}]},"limit":"Development regression: the saved pre-dispatch intent resumes without repeating its audit or model response. The controller does not repair state. This is not a QA result."}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ DC05 pressure after dispatch holds remaining real slots without attributing a zero-effect refusal (2731.321041ms)
+ℹ Developer-owned UUID database /kapibala_test_1c5df613facd4797912c6d28508cfc6a; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 45260; API http://127.0.0.1:52716; controller http://127.0.0.1:52715
+ℹ {"case":"DC05","snapshot":{"protocol":"qa-capacity-control/1","leaseId":"48700d78-41d5-4f6d-ba6a-817c97fb4434","state":"held","expiresAt":"2026-10-01T06:31:06.098Z","binding":{"apiUrl":"http://127.0.0.1:52716","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":45260,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T06:30:56.116Z","kind":"capacity-held","holderKeys":["qa-capacity:d213f29b-3dff-4ff3-8cff-89faff9d545f:48700d78-41d5-4f6d-ba6a-817c97fb4434:0","qa-capacity:d213f29b-3dff-4ff3-8cff-89faff9d545f:48700d78-41d5-4f6d-ba6a-817c97fb4434:1","qa-capacity:d213f29b-3dff-4ff3-8cff-89faff9d545f:48700d78-41d5-4f6d-ba6a-817c97fb4434:2","qa-capacity:d213f29b-3dff-4ff3-8cff-89faff9d545f:48700d78-41d5-4f6d-ba6a-817c97fb4434:3","qa-capacity:d213f29b-3dff-4ff3-8cff-89faff9d545f:48700d78-41d5-4f6d-ba6a-817c97fb4434:4","qa-capacity:d213f29b-3dff-4ff3-8cff-89faff9d545f:48700d78-41d5-4f6d-ba6a-817c97fb4434:5"]}]},"kicks":1,"publicRun":{"id":"capacity-run","groupId":"g","status":"finished","endReason":"final","summary":"done","recoveryNote":null,"steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"{\"kicked\":true}","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"kick-one\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"external-target\",\"reason\":\"engineering capacity observation\"}}]}"},{"ordinal":2,"kind":"final","toolUseId":null,"name":null,"input":null,"resultSummary":"\"done\"","isError":false,"errorCode":null,"auditVerdict":null,"rawResponse":"{\"stop_reason\":\"end_turn\",\"content\":[{\"type\":\"text\",\"text\":\"done\"}]}"}]}}
+✔ DC06 real uninterrupted budget reports measured active interval without clamping to 60000 (62045.061333ms)
+ℹ Developer-owned UUID database /kapibala_test_cd7fedc6faec4f0bae1537547479fe19; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 45757; API http://127.0.0.1:52905; controller http://127.0.0.1:52904
+ℹ {"case":"DC06-measurement-only","terminal":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2178,"at":"2026-10-01T06:31:58.746Z","kind":"run-terminal","status":"failed","endReason":"wall_clock","activeElapsedMs":[60002,60076],"clockSource":"persisted active_ms through last sample; upper includes DB sample-to-terminal-observation tail plus 1ms timestamp resolution; prior hard-crash unsampled tail is not reconstructable"},"persisted":60002,"independentElapsedMs":[59990.650624999995,60006.411209000005],"limit":"No 60000 clamp or new tolerance; QA classifies its own exact threshold. Valid only for this uninterrupted healthy clock epoch."}
+✔ DC07 TTL releases the precise ready barrier without controller state writes (1424.665292ms)
+ℹ Developer-owned UUID database /kapibala_test_c26c55ffdbce41d58964bce46963218c; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 56584; API http://127.0.0.1:53755; controller http://127.0.0.1:53754
+ℹ {"case":"DC07","snapshot":{"protocol":"qa-capacity-control/1","leaseId":"829b4807-7148-4d2f-92f8-1ac1decbea98","state":"released","expiresAt":"2026-10-01T06:32:01.571Z","binding":{"apiUrl":"http://127.0.0.1:53755","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":56584,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T06:32:00.887Z","kind":"capacity-held","holderKeys":["qa-capacity:1a272d19-0a90-4ed3-9e78-cfa488b2beee:829b4807-7148-4d2f-92f8-1ac1decbea98:0","qa-capacity:1a272d19-0a90-4ed3-9e78-cfa488b2beee:829b4807-7148-4d2f-92f8-1ac1decbea98:1","qa-capacity:1a272d19-0a90-4ed3-9e78-cfa488b2beee:829b4807-7148-4d2f-92f8-1ac1decbea98:2","qa-capacity:1a272d19-0a90-4ed3-9e78-cfa488b2beee:829b4807-7148-4d2f-92f8-1ac1decbea98:3","qa-capacity:1a272d19-0a90-4ed3-9e78-cfa488b2beee:829b4807-7148-4d2f-92f8-1ac1decbea98:4","qa-capacity:1a272d19-0a90-4ed3-9e78-cfa488b2beee:829b4807-7148-4d2f-92f8-1ac1decbea98:5","qa-capacity:1a272d19-0a90-4ed3-9e78-cfa488b2beee:829b4807-7148-4d2f-92f8-1ac1decbea98:6"]},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T06:32:00.898Z","kind":"admission-refused","attemptId":"5b957925-e16d-4b71-ac4c-7ec1339279d6","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":3,"at":"2026-10-01T06:32:00.898Z","kind":"before-ready-held","attemptId":"5b957925-e16d-4b71-ac4c-7ec1339279d6","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":4,"at":"2026-10-01T06:32:01.573Z","kind":"ready-persisted","attemptId":"5b957925-e16d-4b71-ac4c-7ec1339279d6"}]}}
+✔ DC08 a holder connection loss releases only its lease and does not fabricate a target refusal (732.17025ms)
+ℹ Developer-owned UUID database /kapibala_test_7ba7d49e6b624c6483716b1716aa99c2; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 56753; API http://127.0.0.1:53819; controller http://127.0.0.1:53818
+ℹ {"case":"DC08","terminatedHolderPid":1479,"snapshot":{"protocol":"qa-capacity-control/1","leaseId":"d202abd4-cbc9-4505-a963-066530eeb1e2","state":"released","expiresAt":"2026-10-01T06:32:12.295Z","binding":{"apiUrl":"http://127.0.0.1:53819","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":56753,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T06:32:02.323Z","kind":"capacity-held","holderKeys":["qa-capacity:7d3b32fa-b070-42d9-a672-906f364343f2:d202abd4-cbc9-4505-a963-066530eeb1e2:0","qa-capacity:7d3b32fa-b070-42d9-a672-906f364343f2:d202abd4-cbc9-4505-a963-066530eeb1e2:1","qa-capacity:7d3b32fa-b070-42d9-a672-906f364343f2:d202abd4-cbc9-4505-a963-066530eeb1e2:2","qa-capacity:7d3b32fa-b070-42d9-a672-906f364343f2:d202abd4-cbc9-4505-a963-066530eeb1e2:3","qa-capacity:7d3b32fa-b070-42d9-a672-906f364343f2:d202abd4-cbc9-4505-a963-066530eeb1e2:4","qa-capacity:7d3b32fa-b070-42d9-a672-906f364343f2:d202abd4-cbc9-4505-a963-066530eeb1e2:5","qa-capacity:7d3b32fa-b070-42d9-a672-906f364343f2:d202abd4-cbc9-4505-a963-066530eeb1e2:6"]}]}}
+✔ CO02 registry aliases cannot bind different protocols to one real directory (205.1595ms)
+✔ CO01 one real SUT preserves capacity, receipt and account observers simultaneously (1757.490375ms)
+ℹ Developer-owned UUID database /kapibala_test_4516dc04b3bf49cda3150d3cec37b9c2; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 41574; API http://127.0.0.1:51595; controller http://127.0.0.1:51594
+ℹ {"capacity":{"protocol":"qa-capacity-control/1","leaseId":"2b41cd6f-0aa8-4507-8646-9a52b7251c60","state":"released","expiresAt":"2026-10-01T06:31:00.446Z","binding":{"apiUrl":"http://127.0.0.1:51595","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":41574,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T06:30:50.464Z","kind":"capacity-held","holderKeys":["qa-capacity:da077247-f2a0-4379-9b05-24eff03cbe3b:2b41cd6f-0aa8-4507-8646-9a52b7251c60:0","qa-capacity:da077247-f2a0-4379-9b05-24eff03cbe3b:2b41cd6f-0aa8-4507-8646-9a52b7251c60:1","qa-capacity:da077247-f2a0-4379-9b05-24eff03cbe3b:2b41cd6f-0aa8-4507-8646-9a52b7251c60:2","qa-capacity:da077247-f2a0-4379-9b05-24eff03cbe3b:2b41cd6f-0aa8-4507-8646-9a52b7251c60:3","qa-capacity:da077247-f2a0-4379-9b05-24eff03cbe3b:2b41cd6f-0aa8-4507-8646-9a52b7251c60:4","qa-capacity:da077247-f2a0-4379-9b05-24eff03cbe3b:2b41cd6f-0aa8-4507-8646-9a52b7251c60:5","qa-capacity:da077247-f2a0-4379-9b05-24eff03cbe3b:2b41cd6f-0aa8-4507-8646-9a52b7251c60:6"]},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T06:30:50.480Z","kind":"admission-refused","attemptId":"e56649f7-2647-4ea9-b605-7cf24be802bb","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":3,"at":"2026-10-01T06:30:50.481Z","kind":"ready-persisted","attemptId":"e56649f7-2647-4ea9-b605-7cf24be802bb"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":4,"at":"2026-10-01T06:30:50.543Z","kind":"admission-refused","attemptId":"8bce07a4-4cad-4571-9cef-b1bd83266ae7","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":5,"at":"2026-10-01T06:30:50.545Z","kind":"ready-persisted","attemptId":"8bce07a4-4cad-4571-9cef-b1bd83266ae7"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":6,"at":"2026-10-01T06:30:50.605Z","kind":"admission-refused","attemptId":"fb41b6bd-2d64-4aea-9855-fc19ad797c09","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":7,"at":"2026-10-01T06:30:50.607Z","kind":"ready-persisted","attemptId":"fb41b6bd-2d64-4aea-9855-fc19ad797c09"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":8,"at":"2026-10-01T06:30:50.665Z","kind":"admission-refused","attemptId":"27ad3d7d-924e-434a-93a7-7d0d1f47ee84","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":9,"at":"2026-10-01T06:30:50.667Z","kind":"ready-persisted","attemptId":"27ad3d7d-924e-434a-93a7-7d0d1f47ee84"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":10,"at":"2026-10-01T06:30:50.729Z","kind":"admission-refused","attemptId":"92f7c815-8cfd-4fdb-abf5-4c215d8366b6","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":11,"at":"2026-10-01T06:30:50.733Z","kind":"ready-persisted","attemptId":"92f7c815-8cfd-4fdb-abf5-4c215d8366b6"}]},"message":{"protocol":"qa-message-observation/1","leaseId":"89d69186-9bb6-467c-a46f-e6550280b7c7","state":"released","expiresAt":"2026-10-01T06:31:10.682Z","binding":{"apiUrl":"http://127.0.0.1:51595","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":41574,"observedOwnerToken":"<redacted>"},"correlation":{"clientMsgId":"combined-client","msgId":"combined-remote","eventId":"9001"},"events":[{"seq":1,"at":"2026-10-01T06:30:50.691Z","kind":"window-held","phase":"receipt-committed-before-business","attemptId":"32d8c006-9fc4-4386-a870-9e9c0c09b800","clientMsgId":"combined-client","msgId":"combined-remote","eventId":"9001","observedAt":"2026-10-01T06:30:50.685Z","receiptObservedAt":"2026-10-01T06:30:50.685Z","instancePid":41574,"databaseIdentity":"bfd0081d51253c4852906affae2f71d91fa4200dbd1f904d8a87623aa6d200eb","localBoundary":"receipt-autocommit-confirmed-business-not-started","receiptPresentAtProbe":true,"coverage":{"scope":"bound-instance","allDatabaseWritersProven":false}}]},"account":{"protocol":"qa-runtime-observation/1","leaseId":"742e5564-c56b-4bc8-b269-aae846195bdc","state":"released","expiresAt":"2026-10-01T06:31:10.563Z","binding":{"apiUrl":"http://127.0.0.1:51595","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":41574,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"account","accountId":"account-6","operation":"connect","intentId":"38ee7d55-3af4-44f0-96cb-0cc40338dd56"},"events":[{"seq":1,"at":"2026-10-01T06:30:50.594Z","kind":"remote-success","correlation":{"kind":"account","accountId":"account-6","operation":"connect","intentId":"38ee7d55-3af4-44f0-96cb-0cc40338dd56"},"attemptId":"bb6eef79-f901-4193-b64c-9c6ad5cfb1e1","instancePid":41574,"requestId":"1e27e353-2227-493d-a01f-9dd7b7e72fc4","transactionId":"732a8618-1156-46b1-a242-6cb625e6cbf1"},{"seq":2,"at":"2026-10-01T06:30:50.601Z","kind":"local-save-failed","correlation":{"kind":"account","accountId":"account-6","operation":"connect","intentId":"38ee7d55-3af4-44f0-96cb-0cc40338dd56"},"attemptId":"bb6eef79-f901-4193-b64c-9c6ad5cfb1e1","instancePid":41574,"requestId":"1e27e353-2227-493d-a01f-9dd7b7e72fc4","transactionId":"732a8618-1156-46b1-a242-6cb625e6cbf1","recoverableInOriginalTransaction":true},{"seq":3,"at":"2026-10-01T06:30:50.601Z","kind":"local-retry-held","correlation":{"kind":"account","accountId":"account-6","operation":"connect","intentId":"38ee7d55-3af4-44f0-96cb-0cc40338dd56"},"attemptId":"bb6eef79-f901-4193-b64c-9c6ad5cfb1e1","instancePid":41574,"requestId":"1e27e353-2227-493d-a01f-9dd7b7e72fc4","transactionId":"732a8618-1156-46b1-a242-6cb625e6cbf1"},{"seq":4,"at":"2026-10-01T06:30:50.755Z","kind":"local-save-committed","correlation":{"kind":"account","accountId":"account-6","operation":"connect","intentId":"38ee7d55-3af4-44f0-96cb-0cc40338dd56"},"attemptId":"bb6eef79-f901-4193-b64c-9c6ad5cfb1e1","instancePid":41574,"requestId":"1e27e353-2227-493d-a01f-9dd7b7e72fc4","transactionId":"732a8618-1156-46b1-a242-6cb625e6cbf1","commitBoundary":"outer-commit-confirmed"}]}}
+✔ MO01 production entry has no message bridge even with explicit QA variables (738.305125ms)
+ℹ Developer-owned UUID database /kapibala_test_166602144e6e47a1999ba9e7307dd207; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 41330; API http://127.0.0.1:51525; controller http://127.0.0.1:51524
+✔ MO02 committed receipt survives exact pre-business SIGKILL; old lease cannot control reused API (1636.589209ms)
+ℹ Developer-owned UUID database /kapibala_test_a245b70fa05542b7b84a4633e7afbdf7; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 41961; API http://127.0.0.1:51744; controller http://127.0.0.1:51743
+ℹ {"case":"MO02","held":{"protocol":"qa-message-observation/1","leaseId":"576adf02-d6a0-4167-918a-a8599fd0b72f","state":"held","expiresAt":"2026-10-01T06:31:00.489Z","binding":{"apiUrl":"http://127.0.0.1:51744","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":41961,"observedOwnerToken":"<redacted>"},"correlation":{"clientMsgId":"client-a","msgId":"remote-a","eventId":"701"},"events":[{"seq":1,"at":"2026-10-01T06:30:50.496Z","kind":"window-held","phase":"receipt-committed-before-business","attemptId":"a4185da6-6c7b-4587-8556-b6ebd6ffb6fe","clientMsgId":"client-a","msgId":"remote-a","eventId":"701","observedAt":"2026-10-01T06:30:50.492Z","receiptObservedAt":"2026-10-01T06:30:50.492Z","instancePid":41961,"databaseIdentity":"9e8dce3b1b765a2a5191c13db7063687d7f0cfb447a20143abce183a40fba98f","localBoundary":"receipt-autocommit-confirmed-business-not-started","receiptPresentAtProbe":true,"coverage":{"scope":"bound-instance","allDatabaseWritersProven":false}}]},"firstPersisted":"2026-10-01T06:30:50.492Z","after":{"delivery_status":"sent","message_sent_observed_at":"2026-10-01T06:30:50.492Z","timeout_at":null},"interpretation":"Developer exact-window check, not a QA product result."}
+✔ MO03 pre-INSERT window has no receipt; after SIGKILL replay cannot prove original physical timestamp (1212.095833ms)
+ℹ Developer-owned UUID database /kapibala_test_9bdc08e0fea841cf8619626c8ad7beed; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 43475; API http://127.0.0.1:52127; controller http://127.0.0.1:52126
+ℹ {"case":"MO03-known-pre-save-limit","held":{"protocol":"qa-message-observation/1","leaseId":"1022293b-c597-4053-8116-02aff36d7ce9","state":"held","expiresAt":"2026-10-01T06:31:02.050Z","binding":{"apiUrl":"http://127.0.0.1:52127","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":43475,"observedOwnerToken":"<redacted>"},"correlation":{"clientMsgId":"client-a","msgId":"remote-a","eventId":"701"},"events":[{"seq":1,"at":"2026-10-01T06:30:52.056Z","kind":"window-held","phase":"receipt-before-commit","attemptId":"5a4b1996-3ba7-42c7-932d-349c004b69a6","clientMsgId":"client-a","msgId":"remote-a","eventId":"701","observedAt":"2026-10-01T06:30:52.053Z","instancePid":43475,"databaseIdentity":"1c0e27b399554899e19a3987d0a46ae227d66db9432379df6142c3de17c83737","localBoundary":"receipt-insert-not-issued","receiptPresentAtProbe":false,"receiptObservedAt":null,"coverage":{"scope":"bound-instance","allDatabaseWritersProven":false}}]},"replayedReceipt":"2026-10-01T06:30:52.526Z","interpretation":"Original physical observation was not durable; this controller exposes the limit, not a strict recovery pass. Scope is this bound instance, no all-writers claim."}
+✔ MO04 real 504 is captured before local save; delay does not reset timeout timestamp (1042.074833ms)
+ℹ Developer-owned UUID database /kapibala_test_d7c98341cef14be2a4917762bc7f7a18; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 44034; API http://127.0.0.1:52355; controller http://127.0.0.1:52354
+ℹ {"case":"MO04","held":{"protocol":"qa-message-observation/1","leaseId":"c1429e53-3404-4ebb-9518-0b03ee931377","state":"held","expiresAt":"2026-10-01T06:31:03.198Z","binding":{"apiUrl":"http://127.0.0.1:52355","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":44034,"observedOwnerToken":"<redacted>"},"correlation":{"clientMsgId":"client-a"},"events":[{"seq":1,"at":"2026-10-01T06:30:53.288Z","kind":"window-held","phase":"timeout-observed-before-local-save","attemptId":"64c215b7-51e6-4d7c-8bd5-e4f45df88f66","groupId":"g","clientMsgId":"client-a","observedAt":"2026-10-01T06:30:53.287Z","instancePid":44034,"databaseIdentity":"8ec0c99d0ccff7ab13077dc52c1d44753abd5ee9bf2d061fd41eb075d5d8b50a","localBoundary":"504-recognized-local-result-save-not-started","receiptPresentAtProbe":false,"receiptObservedAt":null,"coverage":{"scope":"bound-instance","allDatabaseWritersProven":false}}]},"storedTimeout":"2026-10-01T06:30:53.287Z"}
+✔ MO05 TTL releases real held receipt; bad target and duplicate UUID cannot retarget or extend gate (5597.470667ms)
+ℹ Developer-owned UUID database /kapibala_test_1b8faacc4f6448c2b7bb45458588c14e; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 44629; API http://127.0.0.1:52564; controller http://127.0.0.1:52563
+✔ RT01 default main exposes no runtime controller and binding requires real guardian/port/revision (669.38575ms)
+ℹ Developer UUID DB /kapibala_test_c503959344e2463ebe01f179465533ba; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 42057; API http://127.0.0.1:51769
+✔ RT02 real savepoint fault preserves original transaction and observes newer HTTP waiting (1262.061458ms)
+ℹ Developer UUID DB /kapibala_test_2e67fdd85e244b378d14a0059a33ee45; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 42941; API http://127.0.0.1:51934
+ℹ {"protocol":"qa-runtime-observation/1","leaseId":"157598d6-96ab-4d2f-8fc4-a663ea87f10b","state":"armed","expiresAt":"2026-10-01T06:31:11.328Z","binding":{"apiUrl":"http://127.0.0.1:51934","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":42941,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"1359bce9-8976-4c95-b56a-d223449aa605"},"events":[{"seq":1,"at":"2026-10-01T06:30:51.364Z","kind":"remote-success","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"1359bce9-8976-4c95-b56a-d223449aa605"},"attemptId":"d8aa76f0-8387-44e9-b508-64689b28dc27","instancePid":42941,"requestId":"bb01d9ac-c8fc-47e8-b53b-43ff026e8dcb","transactionId":"7773cc63-e30c-42d6-bdd9-99556391688c"},{"seq":2,"at":"2026-10-01T06:30:51.371Z","kind":"local-save-failed","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"1359bce9-8976-4c95-b56a-d223449aa605"},"attemptId":"d8aa76f0-8387-44e9-b508-64689b28dc27","instancePid":42941,"requestId":"bb01d9ac-c8fc-47e8-b53b-43ff026e8dcb","transactionId":"7773cc63-e30c-42d6-bdd9-99556391688c","recoverableInOriginalTransaction":true},{"seq":3,"at":"2026-10-01T06:30:51.371Z","kind":"local-retry-held","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"1359bce9-8976-4c95-b56a-d223449aa605"},"attemptId":"d8aa76f0-8387-44e9-b508-64689b28dc27","instancePid":42941,"requestId":"bb01d9ac-c8fc-47e8-b53b-43ff026e8dcb","transactionId":"7773cc63-e30c-42d6-bdd9-99556391688c"},{"seq":4,"at":"2026-10-01T06:30:51.404Z","kind":"newer-account-intent-waiting","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"1359bce9-8976-4c95-b56a-d223449aa605"},"attemptId":"d8aa76f0-8387-44e9-b508-64689b28dc27","instancePid":42941,"requestId":"bb01d9ac-c8fc-47e8-b53b-43ff026e8dcb","transactionId":"7773cc63-e30c-42d6-bdd9-99556391688c","waitingIntent":{"requestId":"e84d07b7-a1a3-4f03-8f0e-8a25f9111944","accountId":"account-1","expectedFrom":"online","to":"disconnected","waitingForTransactionId":"7773cc63-e30c-42d6-bdd9-99556391688c"}},{"seq":5,"at":"2026-10-01T06:30:51.459Z","kind":"local-save-committed","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"1359bce9-8976-4c95-b56a-d223449aa605"},"attemptId":"d8aa76f0-8387-44e9-b508-64689b28dc27","instancePid":42941,"requestId":"bb01d9ac-c8fc-47e8-b53b-43ff026e8dcb","transactionId":"7773cc63-e30c-42d6-bdd9-99556391688c","commitBoundary":"outer-commit-confirmed"}]}
+✔ RT03 persistent SQL failure exhausts native retries, real rollback, no automatic remote replay (1126.685291ms)
+ℹ Developer UUID DB /kapibala_test_1d04587e92e04086a0a804bf9a2eaff7; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 43683; API http://127.0.0.1:52210
+ℹ {"protocol":"qa-runtime-observation/1","leaseId":"e9a64aaa-8c13-49d8-b33b-8710119a625c","state":"armed","expiresAt":"2026-10-01T06:31:12.431Z","binding":{"apiUrl":"http://127.0.0.1:52210","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":43683,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"22f7efdd-a6d6-43b3-a6a2-cb8f76b9cc7d"},"events":[{"seq":1,"at":"2026-10-01T06:30:52.464Z","kind":"remote-success","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"22f7efdd-a6d6-43b3-a6a2-cb8f76b9cc7d"},"attemptId":"6997330a-f282-44bc-aecc-786bab105183","instancePid":43683,"requestId":"8501a4b2-ab51-43c2-8727-21712b459fe6","transactionId":"8c33e2a0-f44f-4186-a996-b1150fd303e4"},{"seq":2,"at":"2026-10-01T06:30:52.472Z","kind":"local-save-failed","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"22f7efdd-a6d6-43b3-a6a2-cb8f76b9cc7d"},"attemptId":"6997330a-f282-44bc-aecc-786bab105183","instancePid":43683,"requestId":"8501a4b2-ab51-43c2-8727-21712b459fe6","transactionId":"8c33e2a0-f44f-4186-a996-b1150fd303e4","recoverableInOriginalTransaction":true},{"seq":3,"at":"2026-10-01T06:30:52.508Z","kind":"local-save-failed","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"22f7efdd-a6d6-43b3-a6a2-cb8f76b9cc7d"},"attemptId":"6997330a-f282-44bc-aecc-786bab105183","instancePid":43683,"requestId":"8501a4b2-ab51-43c2-8727-21712b459fe6","transactionId":"8c33e2a0-f44f-4186-a996-b1150fd303e4","recoverableInOriginalTransaction":true},{"seq":4,"at":"2026-10-01T06:30:52.564Z","kind":"local-save-failed","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"22f7efdd-a6d6-43b3-a6a2-cb8f76b9cc7d"},"attemptId":"6997330a-f282-44bc-aecc-786bab105183","instancePid":43683,"requestId":"8501a4b2-ab51-43c2-8727-21712b459fe6","transactionId":"8c33e2a0-f44f-4186-a996-b1150fd303e4","recoverableInOriginalTransaction":true},{"seq":5,"at":"2026-10-01T06:30:52.564Z","kind":"transaction-rolled-back","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"22f7efdd-a6d6-43b3-a6a2-cb8f76b9cc7d"},"attemptId":"6997330a-f282-44bc-aecc-786bab105183","instancePid":43683,"requestId":"8501a4b2-ab51-43c2-8727-21712b459fe6","transactionId":"8c33e2a0-f44f-4186-a996-b1150fd303e4","rollbackBoundary":"outer-rollback-confirmed"}]}
+✔ RT04 module diagnostics follow real fail, before-start gate, running, success and release (972.851667ms)
+ℹ Developer UUID DB /kapibala_test_f3b7a436bc664e609cfd50fc63f40567; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 44182; API http://127.0.0.1:52396
+ℹ {"events":[{"seq":1,"at":"2026-10-01T06:30:53.546Z","kind":"module-failed","correlation":{"kind":"module","module":"gateway","attemptLabel":"bc7c67ec-e973-4cd4-94e8-584bbed1c3ac"},"attemptId":"479961b8-4dd8-4c3a-8805-9820f8381dee","instancePid":44182,"faultMarker":"qa-runtime-developer-check"},{"seq":2,"at":"2026-10-01T06:30:53.646Z","kind":"module-before-next-held","correlation":{"kind":"module","module":"gateway","attemptLabel":"bc7c67ec-e973-4cd4-94e8-584bbed1c3ac"},"attemptId":"2e0f5536-e419-4506-9cf0-bec115a3e93f","instancePid":44182,"tickBoundary":"before-activity-and-diagnostics-start"},{"seq":3,"at":"2026-10-01T06:30:53.655Z","kind":"module-running-held","correlation":{"kind":"module","module":"gateway","attemptLabel":"bc7c67ec-e973-4cd4-94e8-584bbed1c3ac"},"attemptId":"2e0f5536-e419-4506-9cf0-bec115a3e93f","instancePid":44182},{"seq":4,"at":"2026-10-01T06:30:53.692Z","kind":"module-succeeded","correlation":{"kind":"module","module":"gateway","attemptLabel":"bc7c67ec-e973-4cd4-94e8-584bbed1c3ac"},"attemptId":"2e0f5536-e419-4506-9cf0-bec115a3e93f","instancePid":44182}],"failed":{"name":"gateway","status":"failed","recovery":"succeeded","ticks":2,"successfulTicks":1,"consecutiveFailures":1,"lastStartedAt":"2026-10-01T06:30:53.546Z","lastCompletedAt":"2026-10-01T06:30:53.546Z","lastSucceededAt":"2026-10-01T06:30:53.452Z","lastFailedAt":"2026-10-01T06:30:53.546Z","lastDurationMs":0.04841699999997218,"runningForMs":null},"running":{"name":"gateway","status":"running","recovery":"succeeded","ticks":3,"successfulTicks":1,"consecutiveFailures":1,"lastStartedAt":"2026-10-01T06:30:53.655Z","lastCompletedAt":"2026-10-01T06:30:53.546Z","lastSucceededAt":"2026-10-01T06:30:53.452Z","lastFailedAt":"2026-10-01T06:30:53.546Z","lastDurationMs":0.04841699999997218,"runningForMs":2.060707999999977},"done":{"name":"gateway","status":"idle","recovery":"succeeded","ticks":3,"successfulTicks":2,"consecutiveFailures":0,"lastStartedAt":"2026-10-01T06:30:53.655Z","lastCompletedAt":"2026-10-01T06:30:53.692Z","lastSucceededAt":"2026-10-01T06:30:53.692Z","lastFailedAt":"2026-10-01T06:30:53.546Z","lastDurationMs":36.83470799999998,"runningForMs":null}}
+✔ RT05 UUID replay, lease conflicts, independent TTL release, body validation and old instance history (5940.622042ms)
+ℹ Developer UUID DB /kapibala_test_0de7bdb44cb54b8bbee08a37f981fcb8; revision 64afe925886d994b360d9327b5951e7371bfa4d3; guardian 44756; API http://127.0.0.1:52613
+ℹ {"old":{"protocol":"qa-runtime-observation/1","leaseId":"c42ecb92-cf65-4819-926b-f28e851bba60","state":"released","expiresAt":"2026-10-01T06:31:19.475Z","binding":{"apiUrl":"http://127.0.0.1:52613","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":44756,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"account","accountId":"account-2","operation":"connect","intentId":"3c2b4c0c-21a8-41b0-bfbd-159b81c99b17"},"events":[]},"current":{"protocol":"qa-runtime-observation/1","leaseId":"6d24728c-72a1-40a6-97d1-38e07b7de3c7","state":"armed","expiresAt":"2026-10-01T06:31:19.854Z","binding":{"apiUrl":"http://127.0.0.1:52613","revision":"64afe925886d994b360d9327b5951e7371bfa4d3","pid":45967,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"account","accountId":"account-2","operation":"connect","intentId":"8bdd7360-7bea-4773-9321-5c98bcb0ab88"},"events":[]}}
+✔ RT06 actual module operation failure after advance is never reported as success (0.966167ms)
+✔ shared sequence requests reject invalid bodies before database side effects (330.948375ms)
+ℹ Independent database: kapibala_test_cde0deb415894e018a2a1eac38e113cb
+✔ temporary database: failed CREATE response still drops the database and closes the admin pool (922.439916ms)
+✔ temporary database: cleanup failure cannot skip later resources and repeated close runs once (552.260333ms)
+✔ terminal send and concurrent member removal acquire event ordering only after domain writes (594.279375ms)
+✔ retrying a local terminal-result transaction never repeats the remote send (397.087208ms)
+✔ outgoing FIFO follows commit order when an older transaction enqueues first but commits last (449.794125ms)
+ℹ tests 458
+ℹ suites 0
+ℹ pass 458
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 115010.641208

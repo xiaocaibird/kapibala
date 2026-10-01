@@ -8,6 +8,8 @@
 
 ## 制品格式与独立预期
 
+BASE-001 的空库诊断也可通过同一个已绑定配置文件提供可选 `unmigratedSchema`：`{confirmed:true,candidateRevision,reviewReference,controlSchemaVersion,rejectionLogIncludes}`。必须固定本轮候选，reviewReference记录对既有公开诊断的实际审核；日志片段应明确识别空schema，不接受通用崩溃。此字段不修改业务要求，旧配置仍兼容；缺省时BASE-001保留独立拒启观察并BLOCKED。正式判断同时要求同命令迁移库前后健康及审核版本匹配、空库无健康、清理前自行退出且无终止信号、明确诊断匹配；任意非零退出不得单独算通过。示例与修正依据见[辅助启动修正记录](../requirements/qa-correction-auxiliary-startup-20261001.md)。历史库、空库的诊断不可混用。
+
 从 `config/fixtures.example.json` 复制一份到 QA 目录内。完成真实制品和页面适配后，计算配置文件的 SHA-256，将 `config/fixture-binding.example.json` 中的 `fixtureArtifacts` 项填入本轮目标配置的 `adapters`。该绑定是可选项；不使用夹具的用例无需填写，缺失时仅本节三项用例 BLOCKED。所有制品路径均相对 **qa-acceptance 根目录**；拒绝绝对路径、`..` 越界和文件符号链接。配置和 manifest 限 1 MiB，archive 限 64 MiB，均为夹具安全界限，不是产品容量指标。
 
 配置路径与完整内容哈希进入 `targetFingerprint`，随后按正常流程冻结目标并取得执行授权。三个入口先校验实际配置哈希，再读取 manifest 或页面定位；artifact 继续验证 manifest/archive 的嵌套哈希。任何配置、制品、定位改动都需要更新哈希链并重新冻结、授权。`QA_FIXTURE_CONFIG` 已停用；即使值与绑定路径相同也会明确拒绝，不能用环境变量覆盖冻结配置。制品与页面取证都保留实际配置哈希；不从 manifest 自报的 candidateRevision 代替目标授权。

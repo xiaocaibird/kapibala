@@ -13,6 +13,7 @@ export interface ReceivedFrame {
   textSha256?: string;
   groupId?: string;
   isOwn?: boolean;
+  inconsistency?: { kind: unknown; ref: unknown; message: unknown };
 }
 
 /** Partial observations may be incomplete, but already received violations fail immediately. */
@@ -83,6 +84,7 @@ export class ReceiptSocket {
   private readonly ws: WebSocket;
   readonly frames: ReceivedFrame[] = [];
   readonly errors: string[] = [];
+  readonly protocolErrors: string[] = [];
   closed?: { code: number; at: string };
   private opening: Promise<void>;
   private receivedSeq = 0;
@@ -128,6 +130,15 @@ export class ReceiptSocket {
           ...(typeof payload?.clientMsgId === 'string' ? { clientMsgId: payload.clientMsgId } : {}),
           ...(typeof payload?.groupId === 'string' ? { groupId: payload.groupId } : {}),
           ...(typeof payload?.isOwn === 'boolean' ? { isOwn: payload.isOwn } : {}),
+          ...(value.type === 'inconsistency'
+            ? {
+                inconsistency: {
+                  kind: payload?.kind,
+                  ref: payload?.ref,
+                  message: payload?.message,
+                },
+              }
+            : {}),
           ...(typeof payload?.text === 'string'
             ? { textSha256: createHash('sha256').update(payload.text).digest('hex') }
             : {}),
@@ -135,6 +146,7 @@ export class ReceiptSocket {
         if (typeof value.seq === 'number') this.receivedSeq = value.seq;
       } catch (e) {
         this.errors.push(String(e));
+        this.protocolErrors.push(String(e));
         this.ws.terminate();
       }
     });
@@ -177,6 +189,12 @@ export class ReceiptSocket {
     if (failures.length) throw new Error(`QA WS receipt errors: ${failures.join('; ')}`);
     if (this.errors.length)
       throw new BlockedError('QA receipt ledger budget exhausted; cannot infer peer closure');
+  }
+  /** Transport loss is allowed during an injected outage; malformed received frames are not. */
+  assertValidFrames(): void {
+    if (this.protocolErrors.some((error) => !error.includes('QA receipt ledger limit exceeded')))
+      throw new Error(`Invalid received WS frames: ${this.protocolErrors.join('; ')}`);
+    if (this.protocolErrors.length) throw new BlockedError('QA receipt ledger budget exhausted');
   }
   assertHealthy(): void {
     this.assertNoErrors();

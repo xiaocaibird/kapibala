@@ -1753,11 +1753,11 @@
     ],
     "data": {},
     "steps": [
-      "首个非群主leave返回500，其余leave正常",
+      "首个非群主leave返回500，其余leave正常；errors非空即failed不是处理完成证据，按公开job、实际leave请求和本地/网关成员一致观察后续处理",
       "按automation中逐项断言读取公开REST/WS结果并对照独立外部事实账本"
     ],
     "expected": ["job failed且errors标失败账号；其余非群主继续；群主不退；失败账号两侧都保留"],
-    "timing": ["轮询仅用于等待已约定异步结果；默认15秒诊断上限不替代原文时间边界"],
+    "timing": ["25秒仅为有限取证预算；每次观察立即检查群主保护和失败账号保留，未取得其余非群主处理及成员一致证据则BLOCKED；公开processing=false但遗漏账号为FAIL，不能把failed中间态当结束"],
     "faults": ["非群主leave500，无副作用"],
     "evidence": [
       "脱敏HTTP请求/响应与时间戳",
@@ -1815,12 +1815,12 @@
     ],
     "data": {},
     "steps": [
-      "在create响应屏障内预置目标已是网关成员，不推joined；再允许join",
+      "切断SSE传输，在create响应屏障内真实发布目标member_joined且保留历史，建立已宣布的既有成员事实；不给SUT递送该事件，放行create后允许join",
       "按automation中逐项断言读取公开REST/WS结果并对照独立外部事实账本"
     ],
     "expected": ["收到ALREADY_MEMBER后直接完成promote，无二次join/等待事件"],
     "timing": ["轮询仅用于等待已约定异步结果；默认15秒诊断上限不替代原文时间边界"],
-    "faults": ["成员列表已有该账号；joined事件不推送"],
+    "faults": ["成员已真实入群且已产生历史joined；SSE传输暂不可用，ALREADY_MEMBER不新增joined；finally恢复SSE并定向释放屏障"],
     "evidence": [
       "脱敏HTTP请求/响应与时间戳",
       "网关请求/实际副作用/事件历史与Agent原始协议记录",
@@ -2889,6 +2889,7 @@
     "data": {},
     "steps": [
       "连续安排14次相同参数read但不同tool_use.id",
+      "先确认首个合法read实际执行且tool_result返回历史、Agent至少实际返回两次相同入参的合法工具响应，避免协议错误直接终止冒充重复读场景",
       "按automation中逐项断言读取公开REST/WS结果并对照独立外部事实账本"
     ],
     "expected": ["12步内合理结束，不请求第13轮；满12步则failed/budget_exhausted"],
@@ -3594,16 +3595,17 @@
     ],
     "data": {},
     "steps": [
-      "切断QA数据库代理→投递消息→恢复，再发第二条消息",
+      "WS认证后先实际收到锚点消息和seq，再切断QA数据库代理→投递故障消息→恢复；记录真实close/error，以最后实际收到seq重建观察流，再发后续消息",
       "按automation中逐项断言读取公开REST/WS结果并对照独立外部事实账本"
     ],
     "expected": ["数据库失败事件不丢失、有inconsistency通知、后续事件继续消费"],
-    "timing": ["轮询仅用于等待已约定异步结果；默认15秒诊断上限不替代原文时间边界"],
+    "timing": ["15秒通知观察仅为取证预算；有确定协议违约则FAIL，缺相关通知或连接证据则BLOCKED，不将裸WS死连接超时或人为重连当作产品违反新SLA"],
     "faults": ["数据库连接强制中断"],
     "evidence": [
       "脱敏HTTP请求/响应与时间戳",
       "网关请求/实际副作用/事件历史与Agent原始协议记录",
-      "断言结果、进程日志和故障屏障/重启时间线（适用时）"
+      "断言结果、进程日志和故障屏障/重启时间线（适用时）",
+      "database-recovery-websocket保存所有连接认证/完整帧/实际close/errors/最后已收seq、重连原因及是否QA主动关闭；通知保留kind/ref/message与真实故障身份相关性"
     ],
     "cleanup": [
       "fixture仅清理本用例创建的进程、数据库、代理和测试桩；恢复数据库代理并释放所有屏障",

@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-10-01T06:04:44.069717+00:00",
+  "readOnly": true,
+  "reason": "Original cleanup deleted owned container and volume, but its case-sensitive no-such-object assertion rejected Docker CLI lowercase diagnostic. Preserve original BLOCKED record; this read-only follow-up independently confirms absence.",
+  "remainingOwnedResources": [],
+  "evidence": [
+    {
+      "args": [
+        "inspect",
+        "2ea08fa810c753f3d456cf7f9b0dd8f2d067baa24ae330d8a787e2bee5cd680a"
+      ],
+      "exitCode": 1,
+      "stdout": "[]\n",
+      "stderr": "error: no such object: 2ea08fa810c753f3d456cf7f9b0dd8f2d067baa24ae330d8a787e2bee5cd680a\n"
+    },
+    {
+      "args": [
+        "volume",
+        "inspect",
+        "8f9b8856d8f265356a22b268543c3ce15ea1c9f374ce9688b92653da6581faeb"
+      ],
+      "exitCode": 1,
+      "stdout": "[]\n",
+      "stderr": "Error response from daemon: get 8f9b8856d8f265356a22b268543c3ce15ea1c9f374ce9688b92653da6581faeb: no such volume\n"
+    }
+  ]
+}

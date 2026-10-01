@@ -1,0 +1,73 @@
+{
+  "kind": "DEVELOPER_REGRESSION_NOT_QA",
+  "revision": "64afe925886d994b360d9327b5951e7371bfa4d3",
+  "owner": "kapibala-qa-observation-batch3-c7c7de66-ba6",
+  "startedAt": "2026-10-01T06:30:39.794Z",
+  "checks": [
+    {
+      "name": "regression",
+      "command": [
+        "npm",
+        "test"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-observation-batch3-regression.log",
+      "bytes": 123461,
+      "sha256": "1657d864d14a92e7e42877050c8e536d1c3dd0082d23c61784804c28237db9e7"
+    },
+    {
+      "name": "build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-observation-batch3-build.log",
+      "bytes": 732,
+      "sha256": "093165cbc73badad5c187e54b58ae9acaabbbb3791c5b3bd44b8a12574ddfd6a"
+    },
+    {
+      "name": "original",
+      "command": [
+        "npm",
+        "run",
+        "verify:original"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-observation-batch3-original.log",
+      "bytes": 196,
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa"
+    },
+    {
+      "name": "fixture-guards",
+      "command": [
+        "node",
+        "--test",
+        "scripts/fixtures/producer-guards.test.mjs"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-observation-batch3-fixture-guards.log",
+      "bytes": 414,
+      "sha256": "b8c9573af87446fafcf241dd4ffc4952e5a29b9433424f31c085788a4334024a"
+    }
+  ],
+  "cleanup": {
+    "remainingDatabases": "",
+    "containerAbsent": true,
+    "remainingOwnedVolumes": []
+  },
+  "database": {
+    "container": "a00b663baff042501c22b9136f0b9f41e1c61fba666a31c73342bcf35e11c013",
+    "port": "50260",
+    "volumes": [
+      "e3d9d3da923de3270bfe4471c826ad6e9273ae9135a62b6e69c02e4252a34f3b"
+    ]
+  },
+  "passed": true,
+  "finishedAt": "2026-10-01T06:32:38.195Z"
+}

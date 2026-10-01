@@ -654,6 +654,65 @@ test('Agent rejects invalid four-tool schema without consuming a scripted respon
   assert.equal(agent.snapshot().turns.length, 3);
 });
 
+test('Agent accepts declared JSON Schema dialects and rejects malformed declarations without consuming plans', async (t) => {
+  const agent = await new AgentSimulator().start();
+  t.after(() => agent.close());
+  const dialects = [
+    undefined,
+    'http://json-schema.org/draft-07/schema#',
+    'https://json-schema.org/draft/2019-09/schema',
+    'https://json-schema.org/draft/2020-12/schema',
+  ];
+  for (const [index, dialect] of dialects.entries()) {
+    const declared = tools.map((tool) => ({
+      ...tool,
+      input_schema: {
+        ...tool.input_schema,
+        ...(dialect ? { $schema: dialect } : {}),
+      },
+    }));
+    // Invalid standard keyword types must remain invalid in each dialect.
+    const invalid = structuredClone(declared);
+    Object.assign(invalid[0]!.input_schema.properties.limit!, { minimum: 'bad-number' });
+    agent.enqueueTurns({ body: { marker: `script-${index}` } });
+    const rejected = await post(`${agent.url}/agent/turn`, {
+      runId: `dialect-${index}`,
+      tools: invalid,
+      messages: [],
+    });
+    assert.equal(rejected.status, 400);
+    assert.equal(rejected.body.code, 'TOOLS_INVALID');
+    const accepted = await post(`${agent.url}/agent/turn`, {
+      runId: `dialect-${index}`,
+      tools: declared,
+      messages: [],
+    });
+    assert.equal(accepted.status, 200);
+    assert.equal(
+      accepted.body.marker,
+      `script-${index}`,
+      'invalid declarations must not consume the plan',
+    );
+  }
+  for (const dialect of ['https://example.invalid/unavailable-schema', 2020]) {
+    const declared = tools.map((tool) => ({
+      ...tool,
+      input_schema: { ...tool.input_schema, $schema: dialect },
+    }));
+    assert.equal(
+      (
+        await post(`${agent.url}/agent/turn`, {
+          runId: 'invalid-dialect',
+          tools: declared,
+          messages: [],
+        })
+      ).status,
+      400,
+    );
+  }
+  assert.equal(agent.snapshot().sessions.length, dialects.length);
+});
+
 test('Agent preserves raw malformed responses and run history without turn deduplication', async (t) => {
   const agent = await new AgentSimulator().start();
   t.after(() => agent.close());

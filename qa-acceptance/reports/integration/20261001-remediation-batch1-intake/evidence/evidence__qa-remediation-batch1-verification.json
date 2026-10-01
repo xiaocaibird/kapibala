@@ -1,0 +1,100 @@
+{
+  "kind": "DEVELOPER_REGRESSION_NOT_QA",
+  "revision": "6d5fdef0121b7627eaeca09b388fd3c3ddf4becd",
+  "owner": "kapibala-qa-remediation-batch1-9eec3cc0-4b2",
+  "startedAt": "2026-10-01T06:08:36.009Z",
+  "checks": [
+    {
+      "name": "regression",
+      "command": [
+        "npm",
+        "test"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-remediation-batch1-regression.log",
+      "bytes": 87947,
+      "sha256": "0ff84785bf7e1b1e77d389d79e7e13b51d7ae662b5675143bdd4841e6dfcf6d3"
+    },
+    {
+      "name": "build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-remediation-batch1-build.log",
+      "bytes": 732,
+      "sha256": "011a0ac88b392135c03cf3eba1959a7256181fd25ea8505b8f3a3d08bc311c31"
+    },
+    {
+      "name": "original",
+      "command": [
+        "npm",
+        "run",
+        "verify:original"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-remediation-batch1-original.log",
+      "bytes": 196,
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa"
+    },
+    {
+      "name": "fixture-guards",
+      "command": [
+        "node",
+        "--test",
+        "scripts/fixtures/producer-guards.test.mjs"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-remediation-batch1-fixture-guards.log",
+      "bytes": 415,
+      "sha256": "d382d24c552b8591e08c198c355f0e65ec0fc20b75c74c3e496a4eef3c02f147"
+    }
+  ],
+  "cleanup": {
+    "remainingDatabases": "",
+    "containerAbsent": true,
+    "remainingOwnedVolumes": []
+  },
+  "database": {
+    "container": "4535fb9dffd94de7376c38c5eb7c5384fe6b6489ce315b509ce3c9ecf4e461d1",
+    "port": "54733",
+    "volumes": [
+      "e7088e0c8db8f23a69450a0aa6446e71451a71abca1eb1ff107a5739d89ae00a"
+    ]
+  },
+  "passed": true,
+  "finishedAt": "2026-10-01T06:10:33.633Z",
+  "candidateRevision": "ffdc8b018be6c20cba2a9d34afda5225187df7cd",
+  "timingFlags": {
+    "AUTOMATION_TIMING_TESTS": "1",
+    "CORE_AUTOMATION_TIMING_TESTS": "1",
+    "SESSION_COOKIE_TIMING_TESTS": "1"
+  },
+  "resultSummary": {
+    "tests": 438,
+    "pass": 438,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "durationMs": 114267.316,
+    "notQAResult": true,
+    "allBusinessRequirementsPassed": false
+  },
+  "remainingIssues": [
+    "CAP003 strict 60000ms upper limit remains unresolved; observed persisted 60005ms and interval [60005,60081].",
+    "Receipt pre-persistence hard-crash timestamp and all-writers scope are not fully guaranteed.",
+    "Runtime observation next batch not yet included."
+  ],
+  "finalCandidateDelta": {
+    "source": "Add protocol identifier to shared observation capabilities response",
+    "test": "Assert protocol and actual resource token in receipt observation integration",
+    "focusedVerification": "docs/evidence/qa-message-observation-final-verification.json",
+    "fullRegressionRevision": "6d5fdef0121b7627eaeca09b388fd3c3ddf4becd"
+  }
+}

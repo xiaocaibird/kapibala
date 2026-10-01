@@ -7,7 +7,13 @@ import { PlatformClient } from './platform-client.js';
 import { OwnedDatabaseCluster } from './database.js';
 import { availablePort, DatabaseProxy, BrowserProxy } from './network.js';
 import { OwnedProcess, isolatedEnv, waitHttp } from './process.js';
-import { capacityRegistryEnvironment, redact, requireAuthorization } from './security.js';
+import {
+  capacityRegistryEnvironment,
+  runtimeRegistryEnvironment,
+  messageRegistryEnvironment,
+  redact,
+  requireAuthorization,
+} from './security.js';
 import type { TargetConfig, Command } from './types.js';
 
 export class QaEnvironment {
@@ -41,13 +47,18 @@ export class QaEnvironment {
       ),
     };
   }
-  private async env(port = this.apiPort): Promise<NodeJS.ProcessEnv> {
+  private async env(
+    port = this.apiPort,
+    databaseUrl = this.cluster.url(this.database, this.proxy!.port),
+  ): Promise<NodeJS.ProcessEnv> {
     return isolatedEnv({
       ...this.config.sut.env,
       ...(await capacityRegistryEnvironment(this.config)),
+      ...(await runtimeRegistryEnvironment(this.config)),
+      ...(await messageRegistryEnvironment(this.config)),
       QA_ACCEPTANCE_RESOURCE_TOKEN: this.resourceToken,
       PORT: String(port),
-      DATABASE_URL: this.cluster.url(this.database, this.proxy!.port),
+      DATABASE_URL: databaseUrl,
       GATEWAY_URL: this.gateway.url,
       AGENT_URL: this.agent.url,
     });
@@ -73,6 +84,11 @@ export class QaEnvironment {
     if (!this.cluster.ownsDatabase(this.database))
       throw new Error('当前用例没有已确认归属的数据库');
     return { cluster: this.cluster, database: this.database };
+  }
+  async ownedDatabaseEnvironment(database: string, port: number): Promise<NodeJS.ProcessEnv> {
+    if (!this.cluster.ownsDatabase(database)) throw new Error('拒绝为未持有数据库生成探针环境');
+    await requireAuthorization(this.config);
+    return this.env(port, this.cluster.url(database));
   }
   capacityControlTarget(): { apiUrl: string; revision: string; pid: number; ownerToken: string } {
     this.server?.assertRunning();

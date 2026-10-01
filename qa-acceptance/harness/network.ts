@@ -90,7 +90,7 @@ export class BrowserProxy {
     });
     const asset =
       /^\/(?:@vite\/|@id\/|@fs\/|src\/|node_modules\/|assets\/)/.test(path) ||
-      /^\/(?:favicon[^/]*|vite\.svg|index\.html)$/.test(path);
+      /^\/(?:@react-refresh|favicon[^/]*|vite\.svg|index\.html)$/.test(path);
     if (page || asset || (upgrade && path === '/')) return this.webPort;
     throw new Error('未声明的前端路径不能通过开发代理访问其他服务');
   }

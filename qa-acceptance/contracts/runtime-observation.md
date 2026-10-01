@@ -29,8 +29,8 @@ QA 使用既有 `capacityControlTarget()` 的 `{apiUrl,revision,pid,ownerToken}`
 模式 `observe-activity`，关联 `{kind:'activity',groupId,runId,toolUseId:'all-run-steps'}`。此模式只观察，不暂停／修改时钟或引入新持久幂等保证。返回 `activity-checkpoint / activity-terminal`，附：
 
 - `activeElapsedMs:[lower,upper]`：原run从创建到该实际观测点（终态事件则到真实终止判定）的**实际活动总量区间**，包括多个实例epoch，排除有证据的停机。不是当前观测请求起点或最终一次重试的年龄。
-- `epochIds`：真实活动所有权段标识，新pid接管必须保留原run关联；`persistedActiveMs`可额外说明持久采样量，但不能替代活动真值。
-- `includesUnsavedTail`：只有确实测量／约束全部epoch及未保存尾段才为true。无法提供完整活动区间时必须为false，并报告BLOCKED；不能因D040登记了风险就补造500ms容差。
+- `epochIds`：真实观察到的活动所有权段标识，始终为字符串数组。`includesUnsavedTail=true` 时必须非空且覆盖完整原run；false时可以是空数组，诚实表示尚未见任何epoch，不因此屏蔽独立恢复暂停事实。新pid接管必须保留原run关联，但不得伪造不可观测的旧epoch；缺跨实例完整关联仍阻塞重启预算通过。`persistedActiveMs`可额外说明持久采样量，但不能替代活动真值。
+- `includesUnsavedTail`：只有确实测量／约束全部epoch及未保存尾段才为true，此时 `activeElapsedMs` 必须是有效完整区间。无法提供完整活动区间时必须为false，`activeElapsedMs` 可为null或缺省；这是合法的不完整证据，不是格式错误。如果仍提供非null区间，其格式仍须有效，但不得据此判预算通过。`observedEpochActiveMs`、`persistedActiveMs` 等局部采样及缺失原因只作为原始诊断保存，不能替代跨epoch总量，未固定的附加字段不作判定依据。不能因D040登记了风险就补造500ms容差。
 - `activityState: active | recovery-paused | terminal | unknown`：实际执行状态。`recovery-paused` 专指等待人工／外部结果确认、无法自动续跑的恢复暂停，不是普通排队或自动调度暂未开始。未能确定真实状态用unknown。控制器必须按实际状态变化追加检查点；公开run的running和进程存活均不能用来伪造active。终态事件必须为terminal。
 
 纯预算用例另需 **activity-safe-boundary** 能力和 `hold-safe-activity-boundary` 模式。该模式只在当前Agent响应与继续执行所需状态已真实持久化、无外部请求在途、下一次外部派发之前保持原run；不补写状态、不清恢复标记、不替换响应、不改变产品时钟。返回真实 `activity-safe-held`，附 `stepId`（实际持久步骤的opaque身份）、`continuationDurable:true`、`remoteInFlightCount:0`、`activityState:active` 及上述活动字段。租约必须保持held且未到期，直到显式advance、DELETE、TTL释放或该被绑定进程退出。跨进程不可续用旧屏障。缺能力、实际安全窗口或因果证明为BLOCKED，不能只看到running就直接崩溃并声称完成纯预算覆盖。
@@ -41,7 +41,7 @@ QA用外部Agent各轮7秒的合法不同只读工具响应保持运行，17秒�
 
 裁判是一侧上限：完整活动见证下界已超过60000则FAIL；上界不超过60000才证明最大预算。若公开理由是wall_clock而实际活动上界（或独立在线上界）严格小于60000，则为提前错误宣告耗尽。实际活动区间跨过60000且下界未超过时证据不能确定，记BLOCKED；允许 `[59999,60000]` 这类有界证明，不要求物理采样精确成 `[60000,60000]`。缺完整epoch/尾段或真实活动状态记BLOCKED。若真实恢复见证表明等待人工／外部确认而无法自动续跑，准确记录**原A5.8强恢复不满足FAIL**，不归因成预算超时；这是独立恢复要求，不放宽原预算。
 
-85秒仅为终态诊断观察预算，超出而无确证违约记BLOCKED，不另设业务SLA。真实控制器和新增安全屏障仍是工程接入依赖，QA客户端自测不能证明已接入。该例只分离并验证安全阶段重启后的预算累计，不宣称覆盖任意在途崩溃、全部双实例所有权或未知外部结果窗口；后者仍保留原强恢复验收要求。
+不完整活动区间不能中止独立恢复观察。QA先检查整份快照中是否已经出现 `recovery-paused`，不能被较早的unknown或缺尾段检查点遮盖；对合法的不完整证据继续有限观察公开原run身份、终态、发送副作用和后续实际恢复状态。已经确认恢复暂停即为原A5.8的FAIL；没有独立违约但最终仍无完整活动证据才将预算判断记BLOCKED，绝不以局部采样推算通过。85秒仅为终态诊断观察预算，超出而无确证违约记BLOCKED，不另设业务SLA。真实控制器和新增安全屏障仍是工程接入依赖，QA客户端自测不能证明已接入。该例只分离并验证安全阶段重启后的预算累计，不宣称覆盖任意在途崩溃、全部双实例所有权或未知外部结果窗口；后者仍保留原强恢复验收要求。
 
 ## 账号原事务保存：INT-ACCOUNT-001／002
 

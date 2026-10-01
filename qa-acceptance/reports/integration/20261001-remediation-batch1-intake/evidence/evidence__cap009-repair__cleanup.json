@@ -1,0 +1,57 @@
+{
+  "container": "48d848383538ec91e02eda6b365e6ee998644fd17663d58f95674971de75d014",
+  "volume": "7b3ca174409555433a53da6c745b32399edacba6b4b5904f161356ef6d30d850",
+  "commands": [
+    {
+      "command": [
+        "docker",
+        "exec",
+        "48d848383538ec91e02eda6b365e6ee998644fd17663d58f95674971de75d014",
+        "psql",
+        "-U",
+        "kapibala",
+        "-d",
+        "postgres",
+        "-Atc",
+        "SELECT datname FROM pg_database WHERE datname LIKE 'kapibala_test_%'"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "rm",
+        "-f",
+        "-v",
+        "48d848383538ec91e02eda6b365e6ee998644fd17663d58f95674971de75d014"
+      ],
+      "exitCode": 0,
+      "stdout": "48d848383538ec91e02eda6b365e6ee998644fd17663d58f95674971de75d014\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "48d848383538ec91e02eda6b365e6ee998644fd17663d58f95674971de75d014"
+      ],
+      "exitCode": 1,
+      "stdout": "[]\n",
+      "stderr": "error: no such object: 48d848383538ec91e02eda6b365e6ee998644fd17663d58f95674971de75d014\n"
+    },
+    {
+      "command": [
+        "docker",
+        "volume",
+        "inspect",
+        "7b3ca174409555433a53da6c745b32399edacba6b4b5904f161356ef6d30d850"
+      ],
+      "exitCode": 1,
+      "stdout": "[]\n",
+      "stderr": "Error response from daemon: get 7b3ca174409555433a53da6c745b32399edacba6b4b5904f161356ef6d30d850: no such volume\n"
+    }
+  ],
+  "nodeModules": "Removed only this worktree symlink; source dependency directory retained."
+}

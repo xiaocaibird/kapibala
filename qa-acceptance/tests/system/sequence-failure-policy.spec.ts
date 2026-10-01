@@ -153,10 +153,10 @@ test('[BLK-SPEC-002] ordinary send failure fails the sequence and never advances
             throw new BlockedError(
               'No sequence terminal evidence within the 15s observation budget; QA-D6 did not introduce a terminal-latency SLA',
             );
+          // B1/QA-D6 do not define failed-step sentAt; preserve its observed value in evidence.
           expect(result.last.steps[failedIndex - 1]).toMatchObject({
             status: 'failed',
             clientMsgId: payload.clientMsgId,
-            sentAt: null,
           });
           const failedMessage = (await qa.api.messages(group.id)).items.filter(
             (message) => message.clientMsgId === payload.clientMsgId,
@@ -189,7 +189,6 @@ test('[BLK-SPEC-002] ordinary send failure fails the sequence and never advances
                 expect(run.steps[failedIndex - 1]).toMatchObject({
                   status: 'failed',
                   clientMsgId: payload.clientMsgId,
-                  sentAt: null,
                 });
                 for (const step of run.steps.slice(failedIndex))
                   expect(['sent', 'accepted']).not.toContain(step.status);

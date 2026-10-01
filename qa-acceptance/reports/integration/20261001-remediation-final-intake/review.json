@@ -1,0 +1,423 @@
+{
+  "kind": "INDEPENDENT_QA_READ_ONLY_INTAKE_NOT_PRODUCT_EXECUTION",
+  "at": "2026-10-01T06:49:18.694701+00:00",
+  "fromRevision": "003952188a3413152d73ae77bd1cb77ed7d66d2b",
+  "candidateRevision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+  "sourceCodeRevision": "8c92b3491ade262b2f81e3257d3809be02223529",
+  "mainObserved": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+  "mainWorktreeClean": true,
+  "originalRequirementSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+  "unchangedObjects": {
+    "apps/web": true,
+    "packages": true,
+    "db": true,
+    "package-lock.json": true,
+    "tsconfig.json": true,
+    "apps/server/src/main.ts": true,
+    "qa-acceptance": true,
+    "docs/original-interview-question.md": true
+  },
+  "codeToFinalOnlyDocs": [
+    "docs/README.md",
+    "docs/evidence/qa-final-delivery-build.log",
+    "docs/evidence/qa-final-delivery-isolated-smoke.log",
+    "docs/evidence/qa-final-delivery-original.log",
+    "docs/evidence/qa-final-delivery-verification.json",
+    "docs/evidence/qa-observation-batch3-build.log",
+    "docs/evidence/qa-observation-batch3-final-final-focused.log",
+    "docs/evidence/qa-observation-batch3-final-final-original.log",
+    "docs/evidence/qa-observation-batch3-final-final-typecheck.log",
+    "docs/evidence/qa-observation-batch3-final-final-verification.json",
+    "docs/evidence/qa-observation-batch3-fixture-guards.log",
+    "docs/evidence/qa-observation-batch3-original.log",
+    "docs/evidence/qa-observation-batch3-regression.log",
+    "docs/evidence/qa-observation-batch3-verification.json",
+    "docs/isolated-local-reproduction.md",
+    "docs/qa-remediation-final-20261001.md",
+    "docs/qa-runtime-observation-adapter.md",
+    "docs/qa-stream-snapshot-triage-20261001.md"
+  ],
+  "developerEvidenceVerification": [
+    {
+      "index": "docs/evidence/qa-observation-batch3-verification.json",
+      "executionRevision": "64afe925886d994b360d9327b5951e7371bfa4d3",
+      "checks": [
+        {
+          "name": "regression",
+          "path": "docs/evidence/qa-observation-batch3-regression.log",
+          "command": [
+            "npm",
+            "test"
+          ],
+          "code": 0,
+          "actual": {
+            "bytes": 123461,
+            "sha256": "1657d864d14a92e7e42877050c8e536d1c3dd0082d23c61784804c28237db9e7"
+          },
+          "hashMatched": true,
+          "summary": [
+            "ℹ tests 458",
+            "ℹ pass 458",
+            "ℹ fail 0",
+            "ℹ cancelled 0",
+            "ℹ skipped 0",
+            "ℹ duration_ms 115010.641208"
+          ]
+        },
+        {
+          "name": "build",
+          "path": "docs/evidence/qa-observation-batch3-build.log",
+          "command": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "code": 0,
+          "actual": {
+            "bytes": 732,
+            "sha256": "093165cbc73badad5c187e54b58ae9acaabbbb3791c5b3bd44b8a12574ddfd6a"
+          },
+          "hashMatched": true,
+          "summary": []
+        },
+        {
+          "name": "original",
+          "path": "docs/evidence/qa-observation-batch3-original.log",
+          "command": [
+            "npm",
+            "run",
+            "verify:original"
+          ],
+          "code": 0,
+          "actual": {
+            "bytes": 196,
+            "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa"
+          },
+          "hashMatched": true,
+          "summary": []
+        },
+        {
+          "name": "fixture-guards",
+          "path": "docs/evidence/qa-observation-batch3-fixture-guards.log",
+          "command": [
+            "node",
+            "--test",
+            "scripts/fixtures/producer-guards.test.mjs"
+          ],
+          "code": 0,
+          "actual": {
+            "bytes": 414,
+            "sha256": "b8c9573af87446fafcf241dd4ffc4952e5a29b9433424f31c085788a4334024a"
+          },
+          "hashMatched": true,
+          "summary": [
+            "ℹ tests 3",
+            "ℹ pass 3",
+            "ℹ fail 0",
+            "ℹ cancelled 0",
+            "ℹ skipped 0",
+            "ℹ duration_ms 663.111041"
+          ]
+        }
+      ],
+      "cleanupSourceOnly": {
+        "remainingDatabases": "",
+        "containerAbsent": true,
+        "remainingOwnedVolumes": []
+      }
+    },
+    {
+      "index": "docs/evidence/qa-observation-batch3-final-final-verification.json",
+      "executionRevision": "e783c6f9ce994216f6a8f1eac765ca75ad2f9829",
+      "checks": [
+        {
+          "name": "focused",
+          "path": "docs/evidence/qa-observation-batch3-final-final-focused.log",
+          "command": [
+            "node",
+            "--import",
+            "tsx",
+            "--test",
+            "tests/integration/qa-activity-control.test.ts",
+            "tests/integration/qa-activity-witness.test.ts",
+            "tests/integration/qa-combined-observation.test.ts",
+            "tests/integration/qa-runtime-observation.test.ts",
+            "tests/integration/account-remote-boundary.test.ts",
+            "tests/integration/core-resource-observability.test.ts",
+            "tests/integration/qa-message-observation.test.ts",
+            "tests/integration/agent-dispatch-budget.test.ts",
+            "tests/integration/agent-kick-recovery.test.ts"
+          ],
+          "code": 0,
+          "actual": {
+            "bytes": 53083,
+            "sha256": "ce8032c8f3adfda65c94fb2e3f9129416f2eb02b2c5e44ba68ed299e5aed809d"
+          },
+          "hashMatched": true,
+          "summary": [
+            "ℹ tests 56",
+            "ℹ pass 56",
+            "ℹ fail 0",
+            "ℹ cancelled 0",
+            "ℹ skipped 0",
+            "ℹ duration_ms 9830.001291"
+          ]
+        },
+        {
+          "name": "typecheck",
+          "path": "docs/evidence/qa-observation-batch3-final-final-typecheck.log",
+          "command": [
+            "npm",
+            "run",
+            "typecheck"
+          ],
+          "code": 0,
+          "actual": {
+            "bytes": 187,
+            "sha256": "30e005d1a7d2022100d69e674fdc8d0abac49571306d528064a9c19c76300bfd"
+          },
+          "hashMatched": true,
+          "summary": []
+        },
+        {
+          "name": "original",
+          "path": "docs/evidence/qa-observation-batch3-final-final-original.log",
+          "command": [
+            "npm",
+            "run",
+            "verify:original"
+          ],
+          "code": 0,
+          "actual": {
+            "bytes": 196,
+            "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa"
+          },
+          "hashMatched": true,
+          "summary": []
+        }
+      ],
+      "cleanupSourceOnly": {
+        "remainingDatabases": "",
+        "containerAbsent": true,
+        "remainingOwnedVolumes": []
+      }
+    },
+    {
+      "index": "docs/evidence/qa-final-delivery-verification.json",
+      "executionRevision": "8c92b3491ade262b2f81e3257d3809be02223529",
+      "checks": [
+        {
+          "name": "build",
+          "path": "docs/evidence/qa-final-delivery-build.log",
+          "command": [
+            "npm",
+            "run",
+            "build"
+          ],
+          "code": 0,
+          "actual": {
+            "bytes": 732,
+            "sha256": "093165cbc73badad5c187e54b58ae9acaabbbb3791c5b3bd44b8a12574ddfd6a"
+          },
+          "hashMatched": true,
+          "summary": []
+        },
+        {
+          "name": "original",
+          "path": "docs/evidence/qa-final-delivery-original.log",
+          "command": [
+            "npm",
+            "run",
+            "verify:original"
+          ],
+          "code": 0,
+          "actual": {
+            "bytes": 196,
+            "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa"
+          },
+          "hashMatched": true,
+          "summary": []
+        },
+        {
+          "name": "isolated-smoke",
+          "path": "docs/evidence/qa-final-delivery-isolated-smoke.log",
+          "command": [
+            "npm",
+            "run",
+            "dev:isolated",
+            "--",
+            "--smoke"
+          ],
+          "code": 0,
+          "actual": {
+            "bytes": 1597,
+            "sha256": "a155deece7ee07519edcdaa94f24b48afad2186638e822cdca9a63e33b2b241d"
+          },
+          "hashMatched": true,
+          "summary": []
+        }
+      ],
+      "cleanupSourceOnly": {
+        "runId": "9e73a122-9cb0-48a7-a998-9fd09e09337f",
+        "containers": "",
+        "volumes": "",
+        "manifestExists": false
+      }
+    }
+  ],
+  "sources": [
+    {
+      "file": "README.md",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "48cdaebcfefda0cb3ce5921d3d96d1b7f71ddff1f4c59337059543d4b4acc924",
+      "bytes": 5316,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/README.md"
+    },
+    {
+      "file": "package.json",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "d03606d54c179a6fff24bf3b3ae658780f6c353dc0352242c62197bd384cba16",
+      "bytes": 1193,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/package.json"
+    },
+    {
+      "file": "docs/qa-remediation-final-20261001.md",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "a0fed8804cdbf6375362730d3ccd2b2371e37bbe773fc71ed4912a6b9b73fb34",
+      "bytes": 7966,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__qa-remediation-final-20261001.md"
+    },
+    {
+      "file": "docs/qa-runtime-observation-adapter.md",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "acebf3b77655ed1d91311c4473c514047bd716c2f77e6908d2618dca79e3c817",
+      "bytes": 11080,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__qa-runtime-observation-adapter.md"
+    },
+    {
+      "file": "docs/qa-activity-witness-20261001.md",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "a46083f6b5036fcacd4cd28042e3c55433707e89f0fec0f21e8ca3258231f941",
+      "bytes": 9440,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__qa-activity-witness-20261001.md"
+    },
+    {
+      "file": "docs/isolated-local-reproduction.md",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "847d047ee6510d5f2a939885284f06559eb9fe50c6847de2946a17b6f55e23f0",
+      "bytes": 6910,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__isolated-local-reproduction.md"
+    },
+    {
+      "file": "docs/evidence/isolated-local-reproduction.json",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "79a46212420c82df9c8ce368458273ad830c2ef1e9b7f72f9b9d19fcc7545e98",
+      "bytes": 5461,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__evidence__isolated-local-reproduction.json"
+    },
+    {
+      "file": "docs/qa-stream-snapshot-triage-20261001.md",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "3dd9c001fad5096c63d1ac2bc5c13649a6de2226d9c66498077d84cc3103af61",
+      "bytes": 2890,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__qa-stream-snapshot-triage-20261001.md"
+    },
+    {
+      "file": "docs/evidence/qa-observation-batch3-verification.json",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "3c9fdd0cc049ffba01dc493fcc7eaccb98692ab9acd6a9dbd70cfb27d0046fef",
+      "bytes": 1948,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__evidence__qa-observation-batch3-verification.json"
+    },
+    {
+      "file": "docs/evidence/qa-observation-batch3-regression.log",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "1657d864d14a92e7e42877050c8e536d1c3dd0082d23c61784804c28237db9e7",
+      "bytes": 123461,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__evidence__qa-observation-batch3-regression.log"
+    },
+    {
+      "file": "docs/evidence/qa-observation-batch3-build.log",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "093165cbc73badad5c187e54b58ae9acaabbbb3791c5b3bd44b8a12574ddfd6a",
+      "bytes": 732,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__evidence__qa-observation-batch3-build.log"
+    },
+    {
+      "file": "docs/evidence/qa-observation-batch3-original.log",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa",
+      "bytes": 196,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__evidence__qa-observation-batch3-original.log"
+    },
+    {
+      "file": "docs/evidence/qa-observation-batch3-fixture-guards.log",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "b8c9573af87446fafcf241dd4ffc4952e5a29b9433424f31c085788a4334024a",
+      "bytes": 414,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__evidence__qa-observation-batch3-fixture-guards.log"
+    },
+    {
+      "file": "docs/evidence/qa-observation-batch3-final-final-verification.json",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "8863a21d6115c84752f20bda970356863c31d7e0335c2bfb0111ad23fe82a3a8",
+      "bytes": 2197,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__evidence__qa-observation-batch3-final-final-verification.json"
+    },
+    {
+      "file": "docs/evidence/qa-observation-batch3-final-final-focused.log",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "ce8032c8f3adfda65c94fb2e3f9129416f2eb02b2c5e44ba68ed299e5aed809d",
+      "bytes": 53083,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__evidence__qa-observation-batch3-final-final-focused.log"
+    },
+    {
+      "file": "docs/evidence/qa-observation-batch3-final-final-typecheck.log",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "30e005d1a7d2022100d69e674fdc8d0abac49571306d528064a9c19c76300bfd",
+      "bytes": 187,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__evidence__qa-observation-batch3-final-final-typecheck.log"
+    },
+    {
+      "file": "docs/evidence/qa-observation-batch3-final-final-original.log",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa",
+      "bytes": 196,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__evidence__qa-observation-batch3-final-final-original.log"
+    },
+    {
+      "file": "docs/evidence/qa-final-delivery-verification.json",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "924fc021a164c44ea365ab28afcca117d62a0530e28657c2d3b73fb50f8c25d7",
+      "bytes": 1379,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__evidence__qa-final-delivery-verification.json"
+    },
+    {
+      "file": "docs/evidence/qa-final-delivery-build.log",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "093165cbc73badad5c187e54b58ae9acaabbbb3791c5b3bd44b8a12574ddfd6a",
+      "bytes": 732,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__evidence__qa-final-delivery-build.log"
+    },
+    {
+      "file": "docs/evidence/qa-final-delivery-original.log",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa",
+      "bytes": 196,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__evidence__qa-final-delivery-original.log"
+    },
+    {
+      "file": "docs/evidence/qa-final-delivery-isolated-smoke.log",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "sha256": "a155deece7ee07519edcdaa94f24b48afad2186638e822cdca9a63e33b2b241d",
+      "bytes": 1597,
+      "copy": "reports/integration/20261001-remediation-final-intake/sources/docs__evidence__qa-final-delivery-isolated-smoke.log"
+    }
+  ],
+  "productVerdict": "NOT_RUN_FOR_THIS_CANDIDATE",
+  "limits": [
+    "Only immutable Git objects and saved developer evidence inspected.",
+    "No product, database, browser or controller started or contacted.",
+    "Developer checks do not become QA acceptance results."
+  ]
+}
