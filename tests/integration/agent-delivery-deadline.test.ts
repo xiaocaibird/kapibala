@@ -14,6 +14,7 @@ import {
 async function prepared(
   t: Parameters<typeof automationFixture>[0],
   remaining = 60000,
+  hostFailure?: Error,
 ) {
   const f = await automationFixture(t);
   const messages = new Messages(f.ctx);
@@ -41,6 +42,7 @@ async function prepared(
   const tool = new AgentTools(f.ctx, messages, {
     completeStep: async (_run, _step, outcome) => {
       outcomes.push(outcome);
+      if (hostFailure) throw hostFailure;
     },
     remaining: () => remaining,
     readRun: f.readRun,
@@ -60,6 +62,49 @@ async function prepared(
   const run = await f.readRun("deadline-run");
   const [step] = await f.steps(run.id);
   return { ...f, outcomes, execute: () => tool.executeStep(run, step!) };
+}
+
+for (const edge of ["started", "returned", "failed"] as const) {
+  test(`Agent send save observer isolation: only ${edge} recorder throws`, async (t) => {
+    const originalError = new Error("original host persistence failure");
+    const recorderError = new Error("engineering recorder unavailable");
+    const f = await prepared(
+      t,
+      60000,
+      edge === "failed" ? originalError : undefined,
+    );
+    const observed: string[] = [];
+    const failingEvent = `send-tool-history-save-${edge}`;
+    f.ctx.testLifecycleObserver = {
+      record(fact) {
+        observed.push(fact.kind);
+        if (fact.kind === failingEvent) throw recorderError;
+      },
+    };
+    if (edge === "failed")
+      await assert.rejects(
+        f.execute(),
+        (error: unknown) => error === originalError,
+      );
+    else await f.execute();
+    assert.equal(
+      f.outcomes.length,
+      1,
+      "the observer cannot prevent or duplicate the host call",
+    );
+    assert.equal(f.outcomes[0]!.value.deliveryStatus, "accepted");
+    assert.equal(observed.filter((kind) => kind === failingEvent).length, 1);
+    assert.equal(
+      observed.includes("send-tool-history-save-failed"),
+      edge === "failed",
+    );
+    assert.equal(
+      observed.includes("send-tool-history-save-returned"),
+      edge !== "failed",
+    );
+    assert.equal(f.audits.length, 0);
+    assert.equal(f.gatewayRequests.length, 0);
+  });
 }
 
 function trackAccountReads(

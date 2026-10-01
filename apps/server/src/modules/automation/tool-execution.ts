@@ -234,8 +234,14 @@ export class AgentTools {
       attemptId: this.ctx.testLifecycleObserver ? randomUUID() : "",
       idempotencyKey: input.idempotency_key,
     };
-    const observe = (kind: string, fields: Record<string, unknown> = {}) =>
-      this.ctx.testLifecycleObserver?.record({ ...fact, kind, ...fields });
+    const observe = (kind: string, fields: Record<string, unknown> = {}) => {
+      try {
+        this.ctx.testLifecycleObserver?.record({ ...fact, kind, ...fields });
+      } catch {
+        // Evidence failure cannot prevent saving, turn a successful save into
+        // failure, or replace the host's original persistence error.
+      }
+    };
     observe("send-tool-entered");
     const complete = async (outcome: ToolOutcome) => {
       observe("send-tool-history-save-started");
