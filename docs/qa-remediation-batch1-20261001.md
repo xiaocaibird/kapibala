@@ -1,6 +1,6 @@
 # 联调修复第一批交接
 
-2026-10-01。固定开发候选 **`6d5fdef0121b7627eaeca09b388fd3c3ddf4becd`**；实际整套开发回归也在该提交执行。后续文档提交不改变此候选。初始 QA 候选 `0af6443` 的执行事实保持独立，修复后必须建立新的 QA run，不覆盖首次结果。
+2026-10-01。固定开发候选 **`ffdc8b018be6c20cba2a9d34afda5225187df7cd`**。整套开发回归在 `6d5fdef0121b7627eaeca09b388fd3c3ddf4becd` 执行；最终候选仅追加共享控制器 capabilities 的 protocol 字段和对应真实接入断言，消息控制器 5 项已在最终候选重新执行。后续文档提交不改变此候选。初始 QA 候选 `0af6443` 的执行事实保持独立，修复后必须建立新的 QA run，不覆盖首次结果。
 
 ## 本批结果
 
@@ -20,6 +20,8 @@ CAP009 详见 [修复证据](cap009-repair-handoff-20261001.md)；CAP003 详见 
 完整原始记录：[开发回归](evidence/qa-remediation-batch1-regression.log)、[机器索引](evidence/qa-remediation-batch1-verification.json)。控制器定向首轮夹具失败、修复后输出和各产品反例均保留，没有覆盖历史文件。完整回归包含提前 advance 拒绝及每窗口实际数据库身份的最终实现。
 
 438 项包括观察已知限制的测试，不等于全部业务要求通过。本轮 DC06 再次记录持久活动 **60005ms**、控制器区间 **[60005,60081]ms**、独立在线区间 **[60006.667375,60024.161625]ms**；本次区间相容且下界超过 60000，不记为预算通过。此前分支复验一次出现计量下界高于独立在线上界的矛盾，原记录仍保留并单列需核实，不选择性忽略。
+
+最终候选定向复验 **5/5，零跳过**，原文校验通过；实际 capabilities 协议标识和绑定 token 均被断言。独占 PG 59196 的 UUID 库、容器及匿名卷均已清理。见 [最终定向日志](evidence/qa-message-observation-final-focused.log) 与 [最终候选机器索引](evidence/qa-message-observation-final-verification.json)。本次没有把旧提交的整套回归误标为最终提交实跑。
 
 ## 保留边界与后续
 

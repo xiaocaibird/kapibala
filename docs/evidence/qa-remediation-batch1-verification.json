@@ -6,7 +6,10 @@
   "checks": [
     {
       "name": "regression",
-      "command": ["npm", "test"],
+      "command": [
+        "npm",
+        "test"
+      ],
       "code": 0,
       "signal": null,
       "path": "docs/evidence/qa-remediation-batch1-regression.log",
@@ -15,7 +18,11 @@
     },
     {
       "name": "build",
-      "command": ["npm", "run", "build"],
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
       "code": 0,
       "signal": null,
       "path": "docs/evidence/qa-remediation-batch1-build.log",
@@ -24,7 +31,11 @@
     },
     {
       "name": "original",
-      "command": ["npm", "run", "verify:original"],
+      "command": [
+        "npm",
+        "run",
+        "verify:original"
+      ],
       "code": 0,
       "signal": null,
       "path": "docs/evidence/qa-remediation-batch1-original.log",
@@ -59,7 +70,7 @@
   },
   "passed": true,
   "finishedAt": "2026-10-01T06:10:33.633Z",
-  "candidateRevision": "6d5fdef0121b7627eaeca09b388fd3c3ddf4becd",
+  "candidateRevision": "ffdc8b018be6c20cba2a9d34afda5225187df7cd",
   "timingFlags": {
     "AUTOMATION_TIMING_TESTS": "1",
     "CORE_AUTOMATION_TIMING_TESTS": "1",
@@ -79,5 +90,11 @@
     "CAP003 strict 60000ms upper limit remains unresolved; observed persisted 60005ms and interval [60005,60081].",
     "Receipt pre-persistence hard-crash timestamp and all-writers scope are not fully guaranteed.",
     "Runtime observation next batch not yet included."
-  ]
+  ],
+  "finalCandidateDelta": {
+    "source": "Add protocol identifier to shared observation capabilities response",
+    "test": "Assert protocol and actual resource token in receipt observation integration",
+    "focusedVerification": "docs/evidence/qa-message-observation-final-verification.json",
+    "fullRegressionRevision": "6d5fdef0121b7627eaeca09b388fd3c3ddf4becd"
+  }
 }
