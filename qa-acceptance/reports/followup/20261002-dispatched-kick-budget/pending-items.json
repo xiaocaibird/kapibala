@@ -1,0 +1,29 @@
+[
+  {
+    "id": "KB-CROSS",
+    "status": "BLOCKED",
+    "owner": "QA / engineering observation handoff",
+    "reason": "唯一确认GET #17关闭早于实际预算决定映射下界4.508292ms，未建立仍在途跨决定的正证。",
+    "next": "明确真实取消边界与终止决定记录的关系，按既有标准补观测正证；保留首次，不通过随机重跑修饰结果。"
+  },
+  {
+    "id": "KB-ACTIVITY",
+    "status": "BLOCKED",
+    "owner": "Engineering observation / QA",
+    "reason": "包含未保存尾段的活动区间[59999,60008]ms跨严格60000ms，且尾段暂停/continuous=false；不可判通过或活动超限。",
+    "next": "完善包含真实尾段的活动边界精度/连续性说明；不加尾差、不使用persistedActiveMs或在线时间代替。"
+  },
+  {
+    "id": "KB-CANCEL",
+    "status": "BLOCKED_DETAIL",
+    "owner": "Engineering observation / QA",
+    "reason": "GET关闭且未finish为实际传输事实；缺原请求取消来源，不能声明由预算主动取消，亦不新增取消SLA。",
+    "next": "若需因果结论，接入真实请求取消来源观测；仅诊断字段，不自创业务取消期限。"
+  },
+  {
+    "id": "KB-SECOND-INSTANCE",
+    "status": "NOT_RUN",
+    "owner": "Separate approved scope",
+    "reason": "本次仅两因素单实例，第二实例竞争单独登记，不能由端口/终态后样例证明。"
+  }
+]

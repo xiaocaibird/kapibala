@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-01T16:47:59.319769+00:00",
+  "basis": {
+    "runId": "2026-10-01T16-42-20.128Z-67fb4dd4",
+    "qaRevision": "60cd3dda117b9b38906902458175cd81bd42212a",
+    "sutRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+    "phase": "developer-preflight",
+    "targetSha256": "4ac2ac1d38208333653a6e5aadaecc46c6a0cf7c49ce92b082fe276d42bfd998",
+    "startedAt": "2026-10-01T16:42:20.175Z"
+  },
+  "productExecutedByReviewer": false,
+  "resourceMutationByReviewer": false,
+  "dockerEngineId": "1fbf2675-d415-458c-866c-28fd59cd7267",
+  "association": {
+    "qaWorkerPid": 33643,
+    "qaWorkerSource": "external-facts Gateway clockDomain plus snapshot ps/lsof",
+    "application": {
+      "pid": 33699,
+      "ppid": 33698,
+      "pgid": 33698,
+      "uid": 501,
+      "startAndCommandRaw": "Fri Oct  2 00:42:21 2026     node"
+    },
+    "apiPort": 61554,
+    "database": "qa_016f6b02cb5147d19e89d220",
+    "databasePublishedPort": 61541,
+    "container": {
+      "Id": "8e4b6ac29276f8eac720b6972ed76b17575cb7cf43d033bc3ed2f086921e2a30",
+      "Name": "/qa-acceptance-af919dff-a73d-4729-b271-7952b815bfc2",
+      "Created": "2026-10-01T16:42:20.826106875Z",
+      "Mounts": [
+        {
+          "Type": "volume",
+          "Name": "6c3e047291a14b0a748bdc1451e0ec93c8c542a39117c39c6d9aa4f71b79d950",
+          "Source": "/var/lib/docker/volumes/6c3e047291a14b0a748bdc1451e0ec93c8c542a39117c39c6d9aa4f71b79d950/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ],
+      "owner": "af919dff-a73d-4729-b271-7952b815bfc2",
+      "image": "postgres:17-alpine",
+      "State": {
+        "Running": true,
+        "Status": "running",
+        "Pid": 53923,
+        "StartedAt": "2026-10-01T16:42:20.8699095Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "Ports": {
+        "5432/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "61541"
+          }
+        ]
+      },
+      "observedAt": "2026-10-01T16:42:40.167741+00:00",
+      "attribution": "qa.owner+creation-window candidate; run association additionally requires run chronology/ports; not generic cleanup authority"
+    },
+    "anonymousVolume": "6c3e047291a14b0a748bdc1451e0ec93c8c542a39117c39c6d9aa4f71b79d950",
+    "controllers": [
+      {
+        "adapter": "runtimeObservation",
+        "registry": "/private/tmp/qa-rte-iTZ5C6",
+        "registryMode": "0o700",
+        "uid": 501,
+        "runner": {
+          "pid": 91982,
+          "ppid": 44813,
+          "pgid": 91982,
+          "uid": 501,
+          "startAndCommandRaw": "Fri Oct  2 00:25:26 2026     node"
+        },
+        "guardian": {
+          "pid": 92199,
+          "ppid": 91982,
+          "pgid": 92199,
+          "uid": 501,
+          "startAndCommandRaw": "Fri Oct  2 00:25:26 2026     /Users/zcm/.nvm/versions/node/v24.21.0/bin/node"
+        },
+        "listener": {
+          "pid": 92200,
+          "ppid": 92199,
+          "pgid": 92199,
+          "uid": 501,
+          "startAndCommandRaw": "Fri Oct  2 00:25:26 2026     /Users/zcm/.nvm/versions/node/v24.21.0/bin/node"
+        },
+        "port": 58891,
+        "registeredApplication": {
+          "appPid": 33699,
+          "appStarted": "Fri Oct  2 00:42:21 2026"
+        }
+      },
+      {
+        "adapter": "capacityControl",
+        "registry": "/private/tmp/qa-cap-7qa9qh",
+        "registryMode": "0o700",
+        "uid": 501,
+        "runner": {
+          "pid": 92682,
+          "ppid": 44813,
+          "pgid": 92682,
+          "uid": 501,
+          "startAndCommandRaw": "Fri Oct  2 00:25:39 2026     node"
+        },
+        "guardian": {
+          "pid": 92900,
+          "ppid": 92682,
+          "pgid": 92900,
+          "uid": 501,
+          "startAndCommandRaw": "Fri Oct  2 00:25:39 2026     /Users/zcm/.nvm/versions/node/v24.21.0/bin/node"
+        },
+        "listener": {
+          "pid": 92901,
+          "ppid": 92900,
+          "pgid": 92900,
+          "uid": 501,
+          "startAndCommandRaw": "Fri Oct  2 00:25:39 2026     /Users/zcm/.nvm/versions/node/v24.21.0/bin/node"
+        },
+        "port": 58915,
+        "registeredApplication": {
+          "appPid": 33699,
+          "appStarted": "Fri Oct  2 00:42:21 2026"
+        }
+      }
+    ]
+  },
+  "sourceIndex": [
+    {
+      "path": "reports/followup/20261002-dispatched-kick-budget/resource-audit/snapshot-20261001T164239.715654Z-during-run.json",
+      "sha256": "a91ed32e59d8e5003ca86c29e86aa2d2d0ebfe6912cb3826697cbb564bc76a2d",
+      "bytes": 32258
+    },
+    {
+      "path": "reports/followup/20261002-dispatched-kick-budget/resource-audit/snapshot-20261001T164455.497603Z-post-cleanup.json",
+      "sha256": "5abf1b58b17c5d230ded9da75a1344f8306427d4db177e46c42af0e9ab4c0510",
+      "bytes": 24660
+    },
+    {
+      "path": "reports/preflight/2026-10-01T16-42-20.128Z-67fb4dd4/manifest.json",
+      "sha256": "3598abe3e466fc370ccfcaa53e6815275a0b7ed90b57a89de1f94f8d04d9f56b",
+      "bytes": 69564
+    },
+    {
+      "path": "reports/preflight/2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/evidence/environment.json",
+      "sha256": "f3a8fd43e596c14f6adde0065a33320e30f900f5561e1828fd397af5e354fff5",
+      "bytes": 1165
+    },
+    {
+      "path": "reports/preflight/2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/evidence/external-facts.json",
+      "sha256": "d3cdb614a6a1c8a8be38339b026631b2194848faf6ea0643e18893abe7be4f15",
+      "bytes": 25101
+    },
+    {
+      "path": "reports/preflight/2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/evidence/capacity-binding-verified.json",
+      "sha256": "d849fd15dc3a4896f971f78539d6ad64f72cba7e4fd91561bab0fb4d0a7d2d94",
+      "bytes": 351
+    },
+    {
+      "path": "reports/preflight/2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/evidence/cleanup.json",
+      "sha256": "cba068aa696fc61a6a027ecd0940bb42f93c4bc29bb0456f61c9e6b80279eb78",
+      "bytes": 65
+    },
+    {
+      "path": "reports/followup/20261002-dispatched-kick-budget/resource-review/post-cleanup-remaining-process-ports.json",
+      "sha256": "6d7c02ebdd9c7e6ebc92cc6ec1ba3ec8176ef91553e7ecd0134463c87033f06e",
+      "bytes": 1531
+    },
+    {
+      "path": "reports/followup/20261002-dispatched-kick-budget/controllers/controller-e56fc3a2-0d49-48c5-8868-94480922b0df/ready.json",
+      "sha256": "8c8338e700099dbd4915aace8b9e46cb94add3fb935014bab825d0318b84739c",
+      "bytes": 606
+    },
+    {
+      "path": "reports/followup/20261002-dispatched-kick-budget/controllers/controller-eb1ea76c-b26a-4841-ae28-cf3080506391/ready.json",
+      "sha256": "5bb0a751761949d47e04ad4f1daadac0f6b7de284f8d4d6df142e843e9c96140",
+      "bytes": 607
+    },
+    {
+      "path": "reports/preflight/2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/evidence/capacity-http-e2a2180b-764d-4cd2-8a33-de979d7b757a.json",
+      "sha256": "b43750869aab112da95be113c05f5727555e8635d7ede610a533de532853ad2f",
+      "bytes": 531
+    },
+    {
+      "path": "reports/preflight/2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/evidence/runtime-control-59749f24-b2b9-4d1e-be42-52c67f22ea00.json",
+      "sha256": "d88fb7a489035703fc10a13a4976ab7e94df477ceb136ef9eb76f59224ffe2c4",
+      "bytes": 688
+    }
+  ],
+  "limits": [
+    "资源归属通过run/环境、真实worker连接、精确Docker映射交叉关联；environment.json未直接保存containerId/DBhostPort，不能声称单字段直接匹配。",
+    "ownerToken已脱敏，审阅核对绑定身份与已执行ownershipVerified记录，不复制或声称从脱敏字符独立恢复token相等。",
+    "仅本run已精确捕获的1容器/1匿名卷/2控制器与相关进程端口；不覆盖全部历史卷、他人QA资源或整台主机。",
+    "Docker Desktop后台59212属于共享引擎，运行后仍存在是预期，不是本例应清理的资源。",
+    "资源审定不改变本例业务raw FAIL；不执行信号/容器/卷删除，不回写旧报告。"
+  ],
+  "status": "PASS",
+  "scope": "This run precisely mapped resource ownership and post-cleanup absence only",
+  "postCleanup": {
+    "snapshotAt": "2026-10-01T16:44:55.497603+00:00",
+    "sameDockerEngine": true,
+    "containerIdAbsent": "8e4b6ac29276f8eac720b6972ed76b17575cb7cf43d033bc3ed2f086921e2a30",
+    "anonymousVolumeAbsent": "6c3e047291a14b0a748bdc1451e0ec93c8c542a39117c39c6d9aa4f71b79d950",
+    "controllerRegistriesAbsent": [
+      "/private/tmp/qa-rte-iTZ5C6",
+      "/private/tmp/qa-cap-7qa9qh"
+    ],
+    "controllerPortsUnoccupied": [
+      58891,
+      58915
+    ],
+    "recordedPidsAbsent": [
+      33643,
+      33699,
+      91982,
+      92199,
+      92200,
+      92682,
+      92900,
+      92901
+    ],
+    "additionalGuardianAbsent": 33698,
+    "additionalPortsUnoccupied": [
+      61541,
+      61550,
+      61552,
+      61554
+    ],
+    "qaCleanup": {
+      "completedAt": "2026-10-01T16:43:25.515Z",
+      "failures": []
+    }
+  },
+  "pending": []
+}
