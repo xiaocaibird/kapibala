@@ -621,6 +621,10 @@ try {
     assert.equal(await page.locator("nav a.active").innerText(), "Agent 运行");
     await back.click();
     await page.getByRole("combobox", { name: "查看群组" }).waitFor();
+    await page
+      .locator("a.run-list-item")
+      .filter({ hasText: "ui-run-a" })
+      .waitFor();
     assert.equal(
       await page.getByRole("combobox", { name: "查看群组" }).inputValue(),
       "ui-group-a",
@@ -631,6 +635,10 @@ try {
     await page.getByRole("combobox", { name: "查看群组" }).waitFor();
     await page.reload();
     await page.getByRole("combobox", { name: "查看群组" }).waitFor();
+    await page
+      .locator("a.run-list-item")
+      .filter({ hasText: "ui-run-a" })
+      .waitFor();
     assert.equal(
       await page.getByRole("combobox", { name: "查看群组" }).inputValue(),
       "ui-group-a",
@@ -687,6 +695,10 @@ try {
     await page.getByText("未能读取运行记录", { exact: true }).waitFor();
     await back.click();
     await page.getByRole("combobox", { name: "查看群组" }).waitFor();
+    await page
+      .locator("a.run-list-item")
+      .filter({ hasText: "ui-run-a" })
+      .waitFor();
     assert.equal(
       await page.getByRole("combobox", { name: "查看群组" }).inputValue(),
       "ui-group-a",
