@@ -1,0 +1,37 @@
+TAP version 13
+# Subtest: Agent stops a real capacity wait when the first kick stage no longer fits, without inventing an unknown effect
+not ok 1 - Agent stops a real capacity wait when the first kick stage no longer fits, without inventing an unknown effect
+  ---
+  duration_ms: 2794.3095
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-capacity.test.ts:132:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'running'
+    - 'failed'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'failed'
+  actual: 'running'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-capacity.test.ts:178:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Independent database: kapibala_test_5a8f2675aa6b4ff099dcf8e1faaaf5c8
+# {"case":"capacity-first-kick-stage","priorActiveMs":43800,"firstRefusalElapsedMs":54.32175000000001,"refusalCount":44,"waitBetweenRefusalsMs":2498.278917,"elapsedMs":2575.5148750000003,"status":"running","endReason":null,"persistedActiveMs":46302,"modelRequests":0,"audits":1,"kicks":0}
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3030.431083

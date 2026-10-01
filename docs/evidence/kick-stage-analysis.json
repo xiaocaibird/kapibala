@@ -1,0 +1,45 @@
+{
+  "testedProductRevision": "59865eea62007809f87a7971ad19c01d7c1ef028",
+  "source": "kick-stage-final-fixed.tap",
+  "scope": "developer verification; no independent QA PASS claimed",
+  "measurements": [
+    {
+      "case": "capacity-first-kick-stage",
+      "priorActiveMs": 43800,
+      "firstRefusalElapsedMs": 53.33425,
+      "refusalCount": 21,
+      "waitBetweenRefusalsMs": 1121.2572089999999,
+      "elapsedMs": 1245.258167,
+      "status": "failed",
+      "endReason": "wall_clock",
+      "persistedActiveMs": 45030,
+      "modelRequests": 0,
+      "audits": 1,
+      "kicks": 0
+    },
+    {
+      "case": "DC06-measurement-only",
+      "terminal": {
+        "groupId": "g",
+        "runId": "capacity-run",
+        "toolUseId": "kick-one",
+        "seq": 1620,
+        "at": "2026-10-01T14:40:02.056Z",
+        "kind": "run-terminal",
+        "status": "failed",
+        "endReason": "wall_clock",
+        "activeElapsedMs": [
+          45053,
+          45112
+        ],
+        "clockSource": "persisted active_ms through last sample; upper includes DB sample-to-terminal-observation tail plus 1ms timestamp resolution; prior hard-crash unsampled tail is not reconstructable"
+      },
+      "persisted": 45053,
+      "independentElapsedMs": [
+        45047.172083,
+        45063.542708
+      ],
+      "limit": "No 60000 clamp or new tolerance; QA classifies its own exact threshold. Valid only for this uninterrupted healthy clock epoch."
+    }
+  ]
+}

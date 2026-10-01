@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+ok 1 - Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+  ---
+  duration_ms: 297.831958
+  type: 'test'
+  ...
+# Independent database: kapibala_test_1707763c4d4b4ae59bf2f1a8ff8a1855
+# Subtest: Agent stops a real capacity wait when the first kick stage no longer fits, without inventing an unknown effect
+ok 2 - Agent stops a real capacity wait when the first kick stage no longer fits, without inventing an unknown effect
+  ---
+  duration_ms: 1429.640167
+  type: 'test'
+  ...
+# Independent database: kapibala_test_1f8de0ceec7f4fbb995726db2660becf
+# {"case":"capacity-first-kick-stage","priorActiveMs":43800,"firstRefusalElapsedMs":42.17654199999993,"refusalCount":21,"waitBetweenRefusalsMs":1132.044,"elapsedMs":1240.992583,"status":"failed","endReason":"wall_clock","persistedActiveMs":45030,"modelRequests":0,"audits":1,"kicks":0}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+ok 3 - Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+  ---
+  duration_ms: 346.79825
+  type: 'test'
+  ...
+# Independent database: kapibala_test_d9001118293341128da99119e327b316
+# Subtest: Agent cancellation while waiting for capacity ends after the current step without another turn
+ok 4 - Agent cancellation while waiting for capacity ends after the current step without another turn
+  ---
+  duration_ms: 247.784792
+  type: 'test'
+  ...
+# Independent database: kapibala_test_c37e598d6ae44d0e876977745b2b0618
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2488.047084

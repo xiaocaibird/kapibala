@@ -1,0 +1,168 @@
+TAP version 13
+# Subtest: Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+ok 1 - Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+  ---
+  duration_ms: 334.506209
+  type: 'test'
+  ...
+# Independent database: kapibala_test_413b8492745a46f1a6e088cd4dcd3582
+# Subtest: Agent stops a real capacity wait when the first kick stage no longer fits, without inventing an unknown effect
+ok 2 - Agent stops a real capacity wait when the first kick stage no longer fits, without inventing an unknown effect
+  ---
+  duration_ms: 1964.026042
+  type: 'test'
+  ...
+# Independent database: kapibala_test_040aed2a26254507b8484f23fe183228
+# {"case":"capacity-first-kick-stage","priorActiveMs":43800,"firstRefusalElapsedMs":41.77208299999995,"refusalCount":21,"waitBetweenRefusalsMs":1137.559375,"elapsedMs":1246.2157499999998,"status":"failed","endReason":"wall_clock","persistedActiveMs":45036,"modelRequests":0,"audits":1,"kicks":0}
+# Subtest: Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+ok 3 - Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+  ---
+  duration_ms: 268.221334
+  type: 'test'
+  ...
+# Independent database: kapibala_test_71638aeae064431e842b24af5455485b
+# Subtest: Agent cancellation while waiting for capacity ends after the current step without another turn
+ok 4 - Agent cancellation while waiting for capacity ends after the current step without another turn
+  ---
+  duration_ms: 243.278709
+  type: 'test'
+  ...
+# Independent database: kapibala_test_95cb5f59cf7344d4a1912d4fd1a4ee61
+# Subtest: pending kick cancellation retains current-step budget precedence while capacity never arrives
+ok 5 - pending kick cancellation retains current-step budget precedence while capacity never arrives
+  ---
+  duration_ms: 1316.290167
+  type: 'test'
+  ...
+# Independent database: kapibala_test_3d61dc3fae24477b836dc443232af1ee
+# Subtest: kick does not enter admission when real preparation consumes the first POST window
+ok 6 - kick does not enter admission when real preparation consumes the first POST window
+  ---
+  duration_ms: 675.68075
+  type: 'test'
+  ...
+# Independent database: kapibala_test_d1a77ad494534b7b995d7d59a0c3a8c6
+# {"admissions":0,"persistedActiveMs":45190,"recoveryNote":null,"intent":{"accountId":"account-2","dispatchState":"awaiting_admission","targetPlatformUserId":"external-target"}}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: kick blocked across its first POST window before fetch ends without inventing an unknown external effect
+ok 7 - kick blocked across its first POST window before fetch ends without inventing an unknown external effect
+  ---
+  duration_ms: 1754.250917
+  type: 'test'
+  ...
+# Independent database: kapibala_test_207af59ac6ad4392a640be48d404e0d2
+# {"blocked":true,"signalAbortedAfterBlock":false,"kickFetchCalls":0,"persistedActiveMs":45539,"recoveryNote":null,"intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}}
+# Subtest: RemoteClient checks the synchronous dispatch guard after real request serialization
+ok 8 - RemoteClient checks the synchronous dispatch guard after real request serialization
+  ---
+  duration_ms: 145.139708
+  type: 'test'
+  ...
+# Independent database: kapibala_test_390f411abce14cecabac677d88b224e7
+# {"serialized":true,"elapsedBeyondDeadlineMs":37.869083000000046,"remoteRequests":0}
+# Subtest: a deadline timer already fired before kick fetch is still a known non-dispatch
+ok 9 - a deadline timer already fired before kick fetch is still a known non-dispatch
+  ---
+  duration_ms: 15631.751416
+  type: 'test'
+  ...
+# Independent database: kapibala_test_4029578a1cc74ccd9d36e45f3e6c5a71
+# Subtest: failed terminal persistence after a local dispatch rejection keeps the saved intent non-replayable
+ok 10 - failed terminal persistence after a local dispatch rejection keeps the saved intent non-replayable
+  ---
+  duration_ms: 864.841084
+  type: 'test'
+  ...
+# Independent database: kapibala_test_4673ceeaac484902b269c962bfc848c6
+# {"attempts":1,"persistedActiveMs":45248,"stateAfterReplacement":"running","intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}}
+# Subtest: a real kick remains unknown when confirmation outlasts the original run deadline
+ok 11 - a real kick remains unknown when confirmation outlasts the original run deadline
+  ---
+  duration_ms: 15327.956333
+  type: 'test'
+  ...
+# Independent database: kapibala_test_51ced9ccce7c474e9bc9ccb7d78016fc
+# Subtest: kick with sufficient budget still dispatches once and preserves the one audit
+ok 12 - kick with sufficient budget still dispatches once and preserves the one audit
+  ---
+  duration_ms: 148.162375
+  type: 'test'
+  ...
+# Independent database: kapibala_test_80e334e35c244340a16b5ae3714facd1
+# Subtest: a confirmed first kick POST still refreshes members below its admission window
+ok 13 - a confirmed first kick POST still refreshes members below its admission window
+  ---
+  duration_ms: 497.337958
+  type: 'test'
+  ...
+# Independent database: kapibala_test_86c2faa462c14f97b890103cbceca4d0
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: kick admission preserves policy precedence with less than 15 seconds remaining
+not ok 14 - kick admission preserves policy precedence with less than 15 seconds remaining
+  ---
+  duration_ms: 227.429625
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/kick-dispatch-budget.test.ts:377:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'finished'
+    - 'failed'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'failed'
+  actual: 'finished'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/kick-dispatch-budget.test.ts:406:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Independent database: kapibala_test_8aed3caccd884807af1ed93335158147
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: kick admission preserves account precedence with less than 15 seconds remaining
+not ok 15 - kick admission preserves account precedence with less than 15 seconds remaining
+  ---
+  duration_ms: 237.558042
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/kick-dispatch-budget.test.ts:377:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'finished'
+    - 'failed'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'failed'
+  actual: 'finished'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/kick-dispatch-budget.test.ts:406:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Independent database: kapibala_test_be901fb1f7244b53af752ca8e0dd3302
+# Subtest: kick admission preserves cancel precedence with less than 15 seconds remaining
+ok 16 - kick admission preserves cancel precedence with less than 15 seconds remaining
+  ---
+  duration_ms: 131.668667
+  type: 'test'
+  ...
+# Independent database: kapibala_test_9e5810ace84e4f53b9717523a7074b1d
+1..16
+# tests 16
+# suites 0
+# pass 14
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 37460.962666

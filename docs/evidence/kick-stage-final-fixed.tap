@@ -1,0 +1,643 @@
+TAP version 13
+# Subtest: Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+ok 1 - Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+  ---
+  duration_ms: 393.648666
+  type: 'test'
+  ...
+# Independent database: kapibala_test_c00e289060494af9a319f31daf83d54a
+# Subtest: Agent stops a real capacity wait when the first kick stage no longer fits, without inventing an unknown effect
+ok 2 - Agent stops a real capacity wait when the first kick stage no longer fits, without inventing an unknown effect
+  ---
+  duration_ms: 1355.449
+  type: 'test'
+  ...
+# Independent database: kapibala_test_5f27763a5eaa4a93ab143feeecdc115e
+# {"case":"capacity-first-kick-stage","priorActiveMs":43800,"firstRefusalElapsedMs":53.33425,"refusalCount":21,"waitBetweenRefusalsMs":1121.2572089999999,"elapsedMs":1245.258167,"status":"failed","endReason":"wall_clock","persistedActiveMs":45030,"modelRequests":0,"audits":1,"kicks":0}
+# Subtest: Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+ok 3 - Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+  ---
+  duration_ms: 224.571875
+  type: 'test'
+  ...
+# Independent database: kapibala_test_2eb14757b9d7437790b78d08e20e3eaa
+# Subtest: Agent cancellation while waiting for capacity ends after the current step without another turn
+ok 4 - Agent cancellation while waiting for capacity ends after the current step without another turn
+  ---
+  duration_ms: 307.3205
+  type: 'test'
+  ...
+# Independent database: kapibala_test_e9ba7503f54c4ade803cf71a4516a40e
+# Subtest: pending kick cancellation retains current-step budget precedence while capacity never arrives
+ok 5 - pending kick cancellation retains current-step budget precedence while capacity never arrives
+  ---
+  duration_ms: 1357.771208
+  type: 'test'
+  ...
+# Independent database: kapibala_test_0c09200f3cc748c787b38c1237b84cc4
+# Subtest: Agent delivery discards a late messages read (accepted/online) after its original five-second deadline
+ok 6 - Agent delivery discards a late messages read (accepted/online) after its original five-second deadline
+  ---
+  duration_ms: 5339.733042
+  type: 'test'
+  ...
+# Independent database: kapibala_test_d37b296924234b35a9ae7d89242dcea3
+# {"table":"messages","messageStatus":"accepted","accountStatus":"online","elapsedMs":5111.342125,"accountReads":0,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+# Subtest: Agent delivery discards a late accounts read (accepted/online) after its original five-second deadline
+ok 7 - Agent delivery discards a late accounts read (accepted/online) after its original five-second deadline
+  ---
+  duration_ms: 5276.9895
+  type: 'test'
+  ...
+# Independent database: kapibala_test_24afc03776d04dff979fa2d0ea0b9422
+# {"table":"accounts","messageStatus":"accepted","accountStatus":"online","elapsedMs":5121.5287499999995,"accountReads":1,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+# Subtest: Agent delivery discards a late messages read (failed/online) after its original five-second deadline
+ok 8 - Agent delivery discards a late messages read (failed/online) after its original five-second deadline
+  ---
+  duration_ms: 5235.112916
+  type: 'test'
+  ...
+# Independent database: kapibala_test_21578eadd0934aa09900a8836863702f
+# {"table":"messages","messageStatus":"failed","accountStatus":"online","elapsedMs":5108.368292000001,"accountReads":0,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+# Subtest: Agent delivery discards a late accounts read (accepted/suspended) after its original five-second deadline
+ok 9 - Agent delivery discards a late accounts read (accepted/suspended) after its original five-second deadline
+  ---
+  duration_ms: 5313.586917
+  type: 'test'
+  ...
+# Independent database: kapibala_test_8e141194b6e547eca614d71dede05844
+# {"table":"accounts","messageStatus":"accepted","accountStatus":"suspended","elapsedMs":5117.209166999999,"accountReads":1,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+# Subtest: Agent delivery with no remaining wait does not start message or account reads
+ok 10 - Agent delivery with no remaining wait does not start message or account reads
+  ---
+  duration_ms: 87.747291
+  type: 'test'
+  ...
+# Independent database: kapibala_test_daa45a84516145018db9f9f047243e23
+# Subtest: Agent delivery retains the ownership failure after a blocked read and does not complete the step
+ok 11 - Agent delivery retains the ownership failure after a blocked read and does not complete the step
+  ---
+  duration_ms: 88.250625
+  type: 'test'
+  ...
+# Independent database: kapibala_test_8a7ec29420284438805a1e17d3a09cf8
+# Subtest: Agent delivery returns a timely sent observation without waiting for an unrelated account lock
+ok 12 - Agent delivery returns a timely sent observation without waiting for an unrelated account lock
+  ---
+  duration_ms: 91.579958
+  type: 'test'
+  ...
+# Independent database: kapibala_test_4e06fb9a43484023b6bfb436f471e4cf
+# {"case":"timely-sent","elapsedMs":6.17987500000163,"accountReads":0,"releasedAtResult":false}
+# Subtest: Agent does not dispatch a model request after its intent write leaves less than the configured turn budget
+ok 13 - Agent does not dispatch a model request after its intent write leaves less than the configured turn budget
+  ---
+  duration_ms: 528.852541
+  type: 'test'
+  ...
+# Independent database: kapibala_test_904b6c8c776a4d1493e04fb34e4462ac
+# {"runId":"expired-intent","elapsedMs":382.39425,"persistedActiveMs":48172,"modelRequests":0}
+# Subtest: Agent does not dispatch an audit request after its intent write consumes the remaining budget
+ok 14 - Agent does not dispatch an audit request after its intent write consumes the remaining budget
+  ---
+  duration_ms: 492.205958
+  type: 'test'
+  ...
+# Independent database: kapibala_test_06a788041a0545e49842c6799f15d954
+# {"runId":"expired-audit-intent","elapsedMs":392.81770800000004,"persistedActiveMs":60171,"auditRequests":0}
+# Subtest: tool definitions have all required arguments; invalid protocols are rejected
+ok 15 - tool definitions have all required arguments; invalid protocols are rejected
+  ---
+  duration_ms: 116.559458
+  type: 'test'
+  ...
+# Subtest: sequence variables persist overrides and report the first unresolved step
+ok 16 - sequence variables persist overrides and report the first unresolved step
+  ---
+  duration_ms: 0.316625
+  type: 'test'
+  ...
+# Subtest: PostgreSQL serializes concurrent sequence starts and failed preflight creates no run
+ok 17 - PostgreSQL serializes concurrent sequence starts and failed preflight creates no run
+  ---
+  duration_ms: 28.6025
+  type: 'test'
+  ...
+# Subtest: multiple workers create one agent run and same send key is audited and enqueued once
+ok 18 - multiple workers create one agent run and same send key is audited and enqueued once
+  ---
+  duration_ms: 303.54025
+  type: 'test'
+  ...
+# Subtest: bad JSON, unknown tool, duplicate tool id are recorded without corrupting history
+ok 19 - bad JSON, unknown tool, duplicate tool id are recorded without corrupting history
+  ---
+  duration_ms: 73.839708
+  type: 'test'
+  ...
+# Subtest: invalid finish inputs return INVALID_INPUT and allow a later valid completion
+    # Subtest: null followed by end_turn
+    ok 1 - null followed by end_turn
+      ---
+      duration_ms: 77.698
+      type: 'test'
+      ...
+    # Subtest: null followed by finish
+    ok 2 - null followed by finish
+      ---
+      duration_ms: 80.163667
+      type: 'test'
+      ...
+    # Subtest: missing summary followed by end_turn
+    ok 3 - missing summary followed by end_turn
+      ---
+      duration_ms: 79.676708
+      type: 'test'
+      ...
+    # Subtest: missing summary followed by finish
+    ok 4 - missing summary followed by finish
+      ---
+      duration_ms: 78.128792
+      type: 'test'
+      ...
+    # Subtest: wrong summary type followed by end_turn
+    ok 5 - wrong summary type followed by end_turn
+      ---
+      duration_ms: 80.538792
+      type: 'test'
+      ...
+    # Subtest: wrong summary type followed by finish
+    ok 6 - wrong summary type followed by finish
+      ---
+      duration_ms: 77.087291
+      type: 'test'
+      ...
+    1..6
+ok 20 - invalid finish inputs return INVALID_INPUT and allow a later valid completion
+  ---
+  duration_ms: 474.154125
+  type: 'test'
+  ...
+# Subtest: completed invalid finish recovery honors cancellation and execution limits
+    # Subtest: cancelled
+    ok 1 - cancelled
+      ---
+      duration_ms: 43.41275
+      type: 'test'
+      ...
+    # Subtest: wall_clock
+    ok 2 - wall_clock
+      ---
+      duration_ms: 41.484292
+      type: 'test'
+      ...
+    # Subtest: budget_exhausted
+    ok 3 - budget_exhausted
+      ---
+      duration_ms: 41.047708
+      type: 'test'
+      ...
+    # Subtest: protocol_errors
+    ok 4 - protocol_errors
+      ---
+      duration_ms: 41.590792
+      type: 'test'
+      ...
+    1..4
+ok 21 - completed invalid finish recovery honors cancellation and execution limits
+  ---
+  duration_ms: 168.115458
+  type: 'test'
+  ...
+# Subtest: a successful persisted finish completes recovery without another remote turn
+ok 22 - a successful persisted finish completes recovery without another remote turn
+  ---
+  duration_ms: 45.610375
+  type: 'test'
+  ...
+# Subtest: inconclusive audit blocks without side effects; rejection does not reserve a send key
+ok 23 - inconclusive audit blocks without side effects; rejection does not reserve a send key
+  ---
+  duration_ms: 338.662375
+  type: 'test'
+  ...
+# Subtest: messages arriving during a run become one next trigger and own messages never trigger
+ok 24 - messages arriving during a run become one next trigger and own messages never trigger
+  ---
+  duration_ms: 109.798458
+  type: 'test'
+  ...
+# Subtest: interrupted remote turn is visibly paused and never replayed
+ok 25 - interrupted remote turn is visibly paused and never replayed
+  ---
+  duration_ms: 52.554
+  type: 'test'
+  ...
+# Subtest: sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step
+ok 26 - sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step
+  ---
+  duration_ms: 53.967792
+  type: 'test'
+  ...
+# Subtest: persisted final and prepared send recover without replaying prior external work
+ok 27 - persisted final and prepared send recover without replaying prior external work
+  ---
+  duration_ms: 89.162583
+  type: 'test'
+  ...
+# Subtest: kick policy and persisted uncertain kick cannot produce a second side effect
+ok 28 - kick policy and persisted uncertain kick cannot produce a second side effect
+  ---
+  duration_ms: 88.3575
+  type: 'test'
+  ...
+# Subtest: repeated reads stop within twelve steps and result bytes remain bounded
+ok 29 - repeated reads stop within twelve steps and result bytes remain bounded
+  ---
+  duration_ms: 475.472417
+  type: 'test'
+  ...
+# Subtest: disabling Agent during its current step cancels after that step, without another turn
+ok 30 - disabling Agent during its current step cancels after that step, without another turn
+  ---
+  duration_ms: 77.077125
+  type: 'test'
+  ...
+# Subtest: activity budget refuses a new turn that cannot receive the configured timeout
+ok 31 - activity budget refuses a new turn that cannot receive the configured timeout
+  ---
+  duration_ms: 267.221583
+  type: 'test'
+  ...
+# Subtest: activity budget expires during audit without authorizing the prepared tool
+ok 32 - activity budget expires during audit without authorizing the prepared tool
+  ---
+  duration_ms: 330.826542
+  type: 'test'
+  ...
+# Subtest: an accepted send whose account becomes terminal yields SEND_FAILED without a resend
+ok 33 - an accepted send whose account becomes terminal yields SEND_FAILED without a resend
+  ---
+  duration_ms: 56.462
+  type: 'test'
+  ...
+# Subtest: restart catches up a committed send before rebasing the next unscheduled step
+ok 34 - restart catches up a committed send before rebasing the next unscheduled step
+  ---
+  duration_ms: 46.642042
+  type: 'test'
+  ...
+# Subtest: kick permission errors remain tool errors and a confirmed kick succeeds
+ok 35 - kick permission errors remain tool errors and a confirmed kick succeeds
+  ---
+  duration_ms: 214.946833
+  type: 'test'
+  ...
+# Subtest: SEND_TIMEOUT retries with the same key read the eventual send without re-auditing
+ok 36 - SEND_TIMEOUT retries with the same key read the eventual send without re-auditing
+  ---
+  duration_ms: 5074.689
+  type: 'test'
+  ...
+# Subtest: sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp
+ok 37 - sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp
+  ---
+  duration_ms: 62.391958
+  type: 'test'
+  ...
+# Subtest: loss of the advisory-lock connection aborts a turn without saving a false protocol error
+ok 38 - loss of the advisory-lock connection aborts a turn without saving a false protocol error
+  ---
+  duration_ms: 176.070917
+  type: 'test'
+  ...
+# Subtest: loss of a run lock during audit prevents old-worker effects and permits safe audit recovery
+ok 39 - loss of a run lock during audit prevents old-worker effects and permits safe audit recovery
+  ---
+  duration_ms: 218.194166
+  type: 'test'
+  ...
+# Subtest: kick budget exhaustion ends the run while retaining an uncertain non-replayable effect
+ok 40 - kick budget exhaustion ends the run while retaining an uncertain non-replayable effect
+  ---
+  duration_ms: 16038.872375
+  type: 'test'
+  ...
+# Subtest: a stale scheduler transaction cannot enqueue after its ownership connection is lost
+ok 41 - a stale scheduler transaction cannot enqueue after its ownership connection is lost
+  ---
+  duration_ms: 63.841542
+  type: 'test'
+  ...
+# Subtest: closing and recreating modules preserves activity while excluding actual downtime
+ok 42 - closing and recreating modules preserves activity while excluding actual downtime
+  ---
+  duration_ms: 1014.091417
+  type: 'test'
+  ...
+# Subtest: queued runs persist online activity across a real shutdown without counting downtime or a second clock
+ok 43 - queued runs persist online activity across a real shutdown without counting downtime or a second clock
+  ---
+  duration_ms: 2083.513417
+  type: 'test'
+  ...
+# Subtest: a follower cannot execute against a stale activity base while the new clock owner initializes
+ok 44 - a follower cannot execute against a stale activity base while the new clock owner initializes
+  ---
+  duration_ms: 1430.241583
+  type: 'test'
+  ...
+# Subtest: an initialization follower takes over after the blocked clock owner connection is terminated
+ok 45 - an initialization follower takes over after the blocked clock owner connection is terminated
+  ---
+  duration_ms: 2056.542125
+  type: 'test'
+  ...
+# Subtest: frequent activity samples retain subinterval time instead of losing rounded milliseconds
+ok 46 - frequent activity samples retain subinterval time instead of losing rounded milliseconds
+  ---
+  duration_ms: 30.338375
+  type: 'test'
+  ...
+# Subtest: activity clock survives loss of its own PostgreSQL session and only bills once after takeover
+ok 47 - activity clock survives loss of its own PostgreSQL session and only bills once after takeover
+  ---
+  duration_ms: 1529.051417
+  type: 'test'
+  ...
+# Subtest: inconclusive audit step and blocked run roll back together before recovery
+ok 48 - inconclusive audit step and blocked run roll back together before recovery
+  ---
+  duration_ms: 93.478458
+  type: 'test'
+  ...
+# Subtest: persisted legacy audit-block window cannot resume another Agent turn
+ok 49 - persisted legacy audit-block window cannot resume another Agent turn
+  ---
+  duration_ms: 43.90075
+  type: 'test'
+  ...
+# Subtest: timing: the default twelve-second turn timeout discards the late response
+ok 50 - timing: the default twelve-second turn timeout discards the late response # SKIP
+  ---
+  duration_ms: 0.122042
+  type: 'test'
+  ...
+# Subtest: timing: three five-second inconclusive audit attempts block without sending
+ok 51 - timing: three five-second inconclusive audit attempts block without sending # SKIP
+  ---
+  duration_ms: 0.040083
+  type: 'test'
+  ...
+# Subtest: timing: model admission stops within sixty seconds even below the twelve-step cap
+ok 52 - timing: model admission stops within sixty seconds even below the twelve-step cap # SKIP
+  ---
+  duration_ms: 0.031375
+  type: 'test'
+  ...
+# Subtest: R09: echo confirmation uses only message_sent observation, preserves it after duplicate and restart
+ok 53 - R09: echo confirmation uses only message_sent observation, preserves it after duplicate and restart
+  ---
+  duration_ms: 1261.994666
+  type: 'test'
+  ...
+# Independent database: kapibala_test_044f7ac4a79c439db77b838ba70debc4
+# Subtest: R09: query confirmation uses only message_sent observation, preserves it after duplicate and restart
+ok 54 - R09: query confirmation uses only message_sent observation, preserves it after duplicate and restart
+  ---
+  duration_ms: 1221.462959
+  type: 'test'
+  ...
+# Independent database: kapibala_test_d7da5f8452054f55bb3b2a2272c61247
+# Subtest: R09: event confirmation uses only message_sent observation, preserves it after duplicate and restart
+ok 55 - R09: event confirmation uses only message_sent observation, preserves it after duplicate and restart
+  ---
+  duration_ms: 642.837916
+  type: 'test'
+  ...
+# Independent database: kapibala_test_4fc024f74bf04b6aa3d95b1f53312051
+# Subtest: R05: a locked group cannot block another group's Agent or sequence; retry preserves one run and one enqueue
+ok 56 - R05: a locked group cannot block another group's Agent or sequence; retry preserves one run and one enqueue
+  ---
+  duration_ms: 277.340333
+  type: 'test'
+  ...
+# Independent database: kapibala_test_73c846aa34aa4f06862c680f52357bb2
+# tick with group lock held: 138ms
+# Subtest: R05: a real slow member reconciliation holds its group lock without stopping another group
+ok 57 - R05: a real slow member reconciliation holds its group lock without stopping another group
+  ---
+  duration_ms: 290.411292
+  type: 'test'
+  ...
+# Independent database: kapibala_test_f2bb55050120449da19e961f05bc35c6
+# Subtest: R05: busy takeover defers only that run and must rebase it before dispatch after unlock
+ok 58 - R05: busy takeover defers only that run and must rebase it before dispatch after unlock
+  ---
+  duration_ms: 526.050542
+  type: 'test'
+  ...
+# Independent database: kapibala_test_6556db4a098940119ce075f79f8979d4
+# Subtest: R09: skipped step still schedules from the actual skip time
+ok 59 - R09: skipped step still schedules from the actual skip time
+  ---
+  duration_ms: 215.197458
+  type: 'test'
+  ...
+# Independent database: kapibala_test_5a9d964402414002986b70bbf189880d
+# Subtest: R09: observation precedes row-lock wait and survives a failed transaction retry
+ok 60 - R09: observation precedes row-lock wait and survives a failed transaction retry
+  ---
+  duration_ms: 310.719375
+  type: 'test'
+  ...
+# Independent database: kapibala_test_b7f191144ae44a6985f84f325e73752c
+# Subtest: R09: migration refuses active old sequences and never fabricates historical observations
+ok 61 - R09: migration refuses active old sequences and never fabricates historical observations
+  ---
+  duration_ms: 77.875916
+  type: 'test'
+  ...
+# Subtest: kick does not enter admission when real preparation consumes the first POST window
+ok 62 - kick does not enter admission when real preparation consumes the first POST window
+  ---
+  duration_ms: 532.1795
+  type: 'test'
+  ...
+# Independent database: kapibala_test_3610814ffc824991821b21553e0a6c8e
+# {"admissions":0,"persistedActiveMs":45191,"recoveryNote":null,"intent":{"accountId":"account-2","dispatchState":"awaiting_admission","targetPlatformUserId":"external-target"}}
+# Subtest: kick blocked across its first POST window before fetch ends without inventing an unknown external effect
+ok 63 - kick blocked across its first POST window before fetch ends without inventing an unknown external effect
+  ---
+  duration_ms: 1654.147791
+  type: 'test'
+  ...
+# Independent database: kapibala_test_8eb23b73323942bdb35810f771a21d8e
+# {"blocked":true,"signalAbortedAfterBlock":false,"kickFetchCalls":0,"persistedActiveMs":45539,"recoveryNote":null,"intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}}
+# Subtest: RemoteClient checks the synchronous dispatch guard after real request serialization
+ok 64 - RemoteClient checks the synchronous dispatch guard after real request serialization
+  ---
+  duration_ms: 159.089875
+  type: 'test'
+  ...
+# Independent database: kapibala_test_757d9db61b1341c1a777d972fff7533a
+# {"serialized":true,"elapsedBeyondDeadlineMs":40.46591699999999,"remoteRequests":0}
+# Subtest: a deadline timer already fired before kick fetch is still a known non-dispatch
+ok 65 - a deadline timer already fired before kick fetch is still a known non-dispatch
+  ---
+  duration_ms: 15664.351959
+  type: 'test'
+  ...
+# Independent database: kapibala_test_777c15365ca841bfb4f91135e08c5cad
+# Subtest: failed terminal persistence after a local dispatch rejection keeps the saved intent non-replayable
+ok 66 - failed terminal persistence after a local dispatch rejection keeps the saved intent non-replayable
+  ---
+  duration_ms: 853.5965
+  type: 'test'
+  ...
+# Independent database: kapibala_test_8c8b7058e3b24ae694e13c8fc997bd35
+# {"attempts":1,"persistedActiveMs":45245,"stateAfterReplacement":"running","intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}}
+# Subtest: a real kick remains unknown when confirmation outlasts the original run deadline
+ok 67 - a real kick remains unknown when confirmation outlasts the original run deadline
+  ---
+  duration_ms: 15340.447334
+  type: 'test'
+  ...
+# Independent database: kapibala_test_5ba8c3b2b4f1466c886ee564e74c1c59
+# Subtest: kick with sufficient budget still dispatches once and preserves the one audit
+ok 68 - kick with sufficient budget still dispatches once and preserves the one audit
+  ---
+  duration_ms: 250.499042
+  type: 'test'
+  ...
+# Independent database: kapibala_test_0687053fb2e240de828e9551bd83b848
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: a confirmed first kick POST still refreshes members below its admission window
+ok 69 - a confirmed first kick POST still refreshes members below its admission window
+  ---
+  duration_ms: 586.404792
+  type: 'test'
+  ...
+# Independent database: kapibala_test_f017f2d1b56342e99de8fe22eeb96e14
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: kick admission preserves policy precedence with less than 15 seconds remaining
+ok 70 - kick admission preserves policy precedence with less than 15 seconds remaining
+  ---
+  duration_ms: 229.733333
+  type: 'test'
+  ...
+# Independent database: kapibala_test_37370eab90344ef0aca25f27ceb32301
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: kick admission preserves account precedence with less than 15 seconds remaining
+ok 71 - kick admission preserves account precedence with less than 15 seconds remaining
+  ---
+  duration_ms: 224.251875
+  type: 'test'
+  ...
+# Independent database: kapibala_test_39755059ae50409aada2d8d20f8a894c
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: kick admission preserves cancel precedence with less than 15 seconds remaining
+ok 72 - kick admission preserves cancel precedence with less than 15 seconds remaining
+  ---
+  duration_ms: 217.487
+  type: 'test'
+  ...
+# Independent database: kapibala_test_e1625f7015b54c55ac68c31979e6dee3
+# Subtest: audit-blocked lifecycle retains the real terminal transaction for a late subscription
+ok 73 - audit-blocked lifecycle retains the real terminal transaction for a late subscription
+  ---
+  duration_ms: 197.129334
+  type: 'test'
+  ...
+# Independent database: kapibala_test_1cee05d0fa094d21824aa7bca7987e02
+# {"sample":"audit-blocked-late-attachment","snapshot":{"protocol":"qa-runtime-observation/1","leaseId":"a87141e8-e26e-4b33-9b97-3549b4b7dffd","state":"armed","expiresAt":"2026-10-01T14:39:06.908Z","binding":{"apiUrl":"http://127.0.0.1:56830","revision":"59865eea62007809f87a7971ad19c01d7c1ef028","pid":46722,"observedOwnerToken":"c252213e-5aba-47b7-95ef-d99b48ba71ca"},"correlation":{"kind":"tool-wait","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","toolUseId":"all-run-steps"},"events":[{"seq":1,"at":"2026-10-01T14:39:01.910Z","kind":"lifecycle-observation-attached","attemptId":"be3fe537-d75b-47fa-96b9-771e4035cc8c","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[330.789625,330.789625],"applicationPid":46722,"instancePid":46722,"databaseIdentity":"0bb8e6ea3bfebe6d331ce5922c12ef10c6847258a19afd53af84b6b07761ab24","resourceId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","correlation":{"kind":"tool-wait","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","toolUseId":"all-run-steps"},"historyScope":"this-process-only","droppedThroughSourceSeq":0,"includesPriorProcessHistory":false},{"kind":"agent-run-created","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","attemptId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","creationWindowMs":[271.429,277.545875],"transactionBeginAcknowledgedByMs":271.981292,"creationInsertWindowMs":[274.239417,274.829209],"commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[277.579917,277.579917],"applicationPid":46722,"at":"2026-10-01T14:39:01.856Z","seq":2,"sourceSeq":1,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","toolUseId":"all-run-steps"}},{"kind":"agent-turn-dispatched","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","attemptId":"f661abc0-034a-4aa7-949a-467c15ef768b","stepId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a:1","ordinal":1,"clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[288.220167,288.220167],"applicationPid":46722,"at":"2026-10-01T14:39:01.867Z","seq":3,"sourceSeq":2,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","toolUseId":"all-run-steps"}},{"kind":"agent-turn-response-received","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","attemptId":"f661abc0-034a-4aa7-949a-467c15ef768b","stepId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a:1","responseStatus":200,"clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[296.037667,296.037667],"applicationPid":46722,"at":"2026-10-01T14:39:01.875Z","seq":4,"sourceSeq":3,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","toolUseId":"all-run-steps"}},{"kind":"send-tool-prepared","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","attemptId":"f661abc0-034a-4aa7-949a-467c15ef768b","stepId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a:1","toolUseId":"blocked-send","commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[301.395209,301.395209],"applicationPid":46722,"at":"2026-10-01T14:39:01.880Z","seq":5,"sourceSeq":4,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","stepId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a:1","toolUseId":"blocked-send","attemptId":"bc449a32-55e3-4214-9e41-966ac55a9f5c","idempotencyKey":"blocked","kind":"send-tool-entered","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[302.900209,302.900209],"applicationPid":46722,"at":"2026-10-01T14:39:01.882Z","seq":6,"sourceSeq":5,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","stepId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a:1","toolUseId":"blocked-send","attemptId":"bc449a32-55e3-4214-9e41-966ac55a9f5c","idempotencyKey":"blocked","kind":"send-audit-started","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[303.376792,303.376792],"applicationPid":46722,"at":"2026-10-01T14:39:01.882Z","seq":7,"sourceSeq":6,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","toolUseId":"all-run-steps"}},{"kind":"agent-termination-decided","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","attemptId":"bc449a32-55e3-4214-9e41-966ac55a9f5c","status":"blocked","reason":"audit_blocked","decisionWindowMs":[315.926042,315.930042],"clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[315.931459,315.931459],"applicationPid":46722,"at":"2026-10-01T14:39:01.895Z","seq":8,"sourceSeq":7,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","toolUseId":"all-run-steps"}},{"kind":"agent-terminal-committed","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","attemptId":"bc449a32-55e3-4214-9e41-966ac55a9f5c","status":"blocked","reason":"audit_blocked","commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[319.436875,319.436875],"applicationPid":46722,"at":"2026-10-01T14:39:01.898Z","seq":9,"sourceSeq":8,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","toolUseId":"all-run-steps"}},{"kind":"send-tool-history-committed","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","attemptId":"bc449a32-55e3-4214-9e41-966ac55a9f5c","stepId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a:1","toolUseId":"blocked-send","errorCode":"AUDIT_REJECTED","result":{"code":"AUDIT_REJECTED","message":"Audit service returned no conclusive verdict after three attempts.","hint":"The run is blocked; no side effect was executed."},"commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[319.463959,319.463959],"applicationPid":46722,"at":"2026-10-01T14:39:01.898Z","seq":10,"sourceSeq":9,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","stepId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a:1","toolUseId":"blocked-send","attemptId":"bc449a32-55e3-4214-9e41-966ac55a9f5c","idempotencyKey":"blocked","kind":"send-audit-completed","verdict":"blocked","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[322.788084,322.788084],"applicationPid":46722,"at":"2026-10-01T14:39:01.902Z","seq":11,"sourceSeq":10,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"d29f6fa6-c4e9-499c-9c00-c7e8f1f7e92a","toolUseId":"all-run-steps"}}]}}
+# Subtest: real send wait resolves before history/next turn; same key reuses one outbound after real 504 and positive query
+ok 74 - real send wait resolves before history/next turn; same key reuses one outbound after real 504 and positive query
+  ---
+  duration_ms: 5180.93375
+  type: 'test'
+  ...
+# Independent database: kapibala_test_42846b95072f433e89793d55fabefd30
+# {"sample":"tool-wait-real-504","snapshot":{"protocol":"qa-runtime-observation/1","leaseId":"45bc2043-91aa-4940-af12-758e39050ec7","state":"armed","expiresAt":"2026-10-01T14:39:12.050Z","binding":{"apiUrl":"http://127.0.0.1:56839","revision":"59865eea62007809f87a7971ad19c01d7c1ef028","pid":46722,"observedOwnerToken":"8f8c18ea-a163-429b-b8f9-348a6ddf76e0"},"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"events":[{"seq":1,"at":"2026-10-01T14:39:02.051Z","kind":"lifecycle-observation-attached","attemptId":"45b84d2f-511c-4579-a1bd-c0d947562cf1","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[472.317667,472.317667],"applicationPid":46722,"instancePid":46722,"databaseIdentity":"7bf29f98d718bdc17f0ca6efaecf6a5a14398de1081d8868027267029ab6a586","resourceId":"37bbb091-2a21-4e37-a971-212693d2f9b5","correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"historyScope":"this-process-only","droppedThroughSourceSeq":0,"includesPriorProcessHistory":false},{"kind":"agent-run-created","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","attemptId":"37bbb091-2a21-4e37-a971-212693d2f9b5","creationWindowMs":[418.565292,423.995792],"transactionBeginAcknowledgedByMs":419.100334,"creationInsertWindowMs":[421.055709,421.531209],"commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[423.997875,423.997875],"applicationPid":46722,"at":"2026-10-01T14:39:02.003Z","seq":2,"sourceSeq":1,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"kind":"agent-turn-dispatched","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","attemptId":"9c3b26de-2695-4f88-ae13-2ca98bc2b6c9","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:1","ordinal":1,"clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[433.479292,433.479292],"applicationPid":46722,"at":"2026-10-01T14:39:02.012Z","seq":3,"sourceSeq":2,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"kind":"agent-turn-response-received","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","attemptId":"9c3b26de-2695-4f88-ae13-2ca98bc2b6c9","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:1","responseStatus":200,"clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[434.839,434.839],"applicationPid":46722,"at":"2026-10-01T14:39:02.014Z","seq":4,"sourceSeq":3,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"kind":"send-tool-prepared","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","attemptId":"9c3b26de-2695-4f88-ae13-2ca98bc2b6c9","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:1","toolUseId":"send-1","commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[438.542042,438.542042],"applicationPid":46722,"at":"2026-10-01T14:39:02.017Z","seq":5,"sourceSeq":4,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:1","toolUseId":"send-1","attemptId":"c2a1654a-9d4b-4939-a3a6-11352ff287e0","idempotencyKey":"same-key","kind":"send-tool-entered","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[439.557709,439.557709],"applicationPid":46722,"at":"2026-10-01T14:39:02.018Z","seq":6,"sourceSeq":5,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:1","toolUseId":"send-1","attemptId":"c2a1654a-9d4b-4939-a3a6-11352ff287e0","idempotencyKey":"same-key","kind":"send-audit-started","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[439.969042,439.969042],"applicationPid":46722,"at":"2026-10-01T14:39:02.019Z","seq":7,"sourceSeq":6,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:1","toolUseId":"send-1","attemptId":"c2a1654a-9d4b-4939-a3a6-11352ff287e0","idempotencyKey":"same-key","kind":"send-audit-completed","verdict":"pass","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[445.135292,445.135292],"applicationPid":46722,"at":"2026-10-01T14:39:02.024Z","seq":8,"sourceSeq":7,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:1","toolUseId":"send-1","attemptId":"c2a1654a-9d4b-4939-a3a6-11352ff287e0","idempotencyKey":"same-key","kind":"send-key-resolved","clientMsgId":"084daa2e-2cbd-42c1-bd8d-86f311bb308b","keyReused":false,"clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[450.133459,450.133459],"applicationPid":46722,"at":"2026-10-01T14:39:02.029Z","seq":9,"sourceSeq":8,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:1","toolUseId":"send-1","attemptId":"c2a1654a-9d4b-4939-a3a6-11352ff287e0","idempotencyKey":"same-key","kind":"send-wait-started","clientMsgId":"084daa2e-2cbd-42c1-bd8d-86f311bb308b","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[450.16825,450.16825],"applicationPid":46722,"at":"2026-10-01T14:39:02.029Z","seq":10,"sourceSeq":9,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:1","toolUseId":"send-1","attemptId":"c2a1654a-9d4b-4939-a3a6-11352ff287e0","idempotencyKey":"same-key","kind":"send-wait-result-ready","clientMsgId":"084daa2e-2cbd-42c1-bd8d-86f311bb308b","errorCode":"SEND_TIMEOUT","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5451.27425,5451.27425],"applicationPid":46722,"at":"2026-10-01T14:39:07.030Z","seq":11,"sourceSeq":14,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:1","toolUseId":"send-1","attemptId":"c2a1654a-9d4b-4939-a3a6-11352ff287e0","idempotencyKey":"same-key","kind":"send-tool-result-returned","clientMsgId":"084daa2e-2cbd-42c1-bd8d-86f311bb308b","errorCode":"SEND_TIMEOUT","result":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."},"clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5451.435417,5451.435417],"applicationPid":46722,"at":"2026-10-01T14:39:07.030Z","seq":12,"sourceSeq":15,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"kind":"send-tool-history-committed","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","attemptId":"c2a1654a-9d4b-4939-a3a6-11352ff287e0","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:1","toolUseId":"send-1","errorCode":"SEND_TIMEOUT","result":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."},"commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5456.86725,5456.86725],"applicationPid":46722,"at":"2026-10-01T14:39:07.036Z","seq":13,"sourceSeq":16,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"kind":"agent-turn-dispatched","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","attemptId":"324b3af5-daef-4458-a3f6-e4d3c6647424","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:2","ordinal":2,"clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5461.585417,5461.585417],"applicationPid":46722,"at":"2026-10-01T14:39:07.040Z","seq":14,"sourceSeq":17,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"kind":"agent-turn-response-received","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","attemptId":"324b3af5-daef-4458-a3f6-e4d3c6647424","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:2","responseStatus":200,"clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5478.780125,5478.780125],"applicationPid":46722,"at":"2026-10-01T14:39:07.058Z","seq":15,"sourceSeq":23,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"kind":"send-tool-prepared","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","attemptId":"324b3af5-daef-4458-a3f6-e4d3c6647424","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:2","toolUseId":"send-2","commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5483.546625,5483.546625],"applicationPid":46722,"at":"2026-10-01T14:39:07.062Z","seq":16,"sourceSeq":24,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:2","toolUseId":"send-2","attemptId":"3be5fcad-5a30-4960-8533-e3db3627cc12","idempotencyKey":"same-key","kind":"send-tool-entered","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5484.851834,5484.851834],"applicationPid":46722,"at":"2026-10-01T14:39:07.064Z","seq":17,"sourceSeq":25,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:2","toolUseId":"send-2","attemptId":"3be5fcad-5a30-4960-8533-e3db3627cc12","idempotencyKey":"same-key","kind":"send-key-resolved","clientMsgId":"084daa2e-2cbd-42c1-bd8d-86f311bb308b","keyReused":true,"clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5485.267542,5485.267542],"applicationPid":46722,"at":"2026-10-01T14:39:07.064Z","seq":18,"sourceSeq":26,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:2","toolUseId":"send-2","attemptId":"3be5fcad-5a30-4960-8533-e3db3627cc12","idempotencyKey":"same-key","kind":"send-wait-started","clientMsgId":"084daa2e-2cbd-42c1-bd8d-86f311bb308b","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5485.284334,5485.284334],"applicationPid":46722,"at":"2026-10-01T14:39:07.064Z","seq":19,"sourceSeq":27,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:2","toolUseId":"send-2","attemptId":"3be5fcad-5a30-4960-8533-e3db3627cc12","idempotencyKey":"same-key","kind":"send-wait-result-ready","clientMsgId":"084daa2e-2cbd-42c1-bd8d-86f311bb308b","errorCode":null,"clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5485.724375,5485.724375],"applicationPid":46722,"at":"2026-10-01T14:39:07.065Z","seq":20,"sourceSeq":28,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:2","toolUseId":"send-2","attemptId":"3be5fcad-5a30-4960-8533-e3db3627cc12","idempotencyKey":"same-key","kind":"send-tool-result-returned","clientMsgId":"084daa2e-2cbd-42c1-bd8d-86f311bb308b","errorCode":null,"result":{"clientMsgId":"084daa2e-2cbd-42c1-bd8d-86f311bb308b","deliveryStatus":"sent"},"clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5485.7355,5485.7355],"applicationPid":46722,"at":"2026-10-01T14:39:07.065Z","seq":21,"sourceSeq":29,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"kind":"send-tool-history-committed","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","attemptId":"3be5fcad-5a30-4960-8533-e3db3627cc12","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:2","toolUseId":"send-2","errorCode":null,"result":{"clientMsgId":"084daa2e-2cbd-42c1-bd8d-86f311bb308b","deliveryStatus":"sent"},"commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5488.288125,5488.288125],"applicationPid":46722,"at":"2026-10-01T14:39:07.067Z","seq":22,"sourceSeq":30,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"kind":"agent-turn-dispatched","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","attemptId":"a903bc75-4f51-4462-a2b3-fcde8bcb12c8","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:3","ordinal":3,"clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5492.004667,5492.004667],"applicationPid":46722,"at":"2026-10-01T14:39:07.071Z","seq":23,"sourceSeq":31,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"kind":"agent-turn-response-received","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","attemptId":"a903bc75-4f51-4462-a2b3-fcde8bcb12c8","stepId":"37bbb091-2a21-4e37-a971-212693d2f9b5:3","responseStatus":200,"clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5493.916417,5493.916417],"applicationPid":46722,"at":"2026-10-01T14:39:07.073Z","seq":24,"sourceSeq":32,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"kind":"agent-termination-decided","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","attemptId":"514126ab-af01-4793-8cb2-33bb2b3d2145","decisionWindowMs":[5499.232167,5499.245584],"status":"finished","reason":"final","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5499.249042,5499.249042],"applicationPid":46722,"at":"2026-10-01T14:39:07.078Z","seq":25,"sourceSeq":33,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}},{"kind":"agent-terminal-committed","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","attemptId":"514126ab-af01-4793-8cb2-33bb2b3d2145","status":"finished","reason":"final","commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","monotonicMs":[5502.971042,5502.971042],"applicationPid":46722,"at":"2026-10-01T14:39:07.082Z","seq":26,"sourceSeq":34,"instancePid":46722,"correlation":{"kind":"tool-wait","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"}}]},"activity":{"protocol":"qa-runtime-observation/1","leaseId":"e9cac16d-cc33-48cc-84f0-fa28d7faca82","state":"armed","expiresAt":"2026-10-01T14:39:12.051Z","binding":{"apiUrl":"http://127.0.0.1:56839","revision":"59865eea62007809f87a7971ad19c01d7c1ef028","pid":46722,"observedOwnerToken":"8f8c18ea-a163-429b-b8f9-348a6ddf76e0"},"correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"events":[{"seq":1,"at":"2026-10-01T14:39:02.052Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":25,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[442.759959,443.227125],"persistedActiveMs":25},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[49,55]},{"seq":2,"at":"2026-10-01T14:39:02.491Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":492,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[910.5275,912.012167],"persistedActiveMs":492},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[488,494]},{"seq":3,"at":"2026-10-01T14:39:02.991Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":993,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[1410.629792,1412.010875],"persistedActiveMs":993},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[988,994]},{"seq":4,"at":"2026-10-01T14:39:03.493Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":1494,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[1912.427125,1913.892584],"persistedActiveMs":1494},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[1489,1496]},{"seq":5,"at":"2026-10-01T14:39:03.994Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":1996,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[2413.41875,2415.151625],"persistedActiveMs":1996},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[1991,1997]},{"seq":6,"at":"2026-10-01T14:39:04.496Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":2497,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[2915.073,2916.808792],"persistedActiveMs":2497},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[2492,2499]},{"seq":7,"at":"2026-10-01T14:39:04.995Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":2997,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[3415.168584,3416.261792],"persistedActiveMs":2997},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[2992,2998]},{"seq":8,"at":"2026-10-01T14:39:05.496Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":3498,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[3916.011875,3917.429542],"persistedActiveMs":3498},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[3493,3499]},{"seq":9,"at":"2026-10-01T14:39:05.998Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":4000,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[4417.523042,4418.927667],"persistedActiveMs":4000},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[3994,4001]},{"seq":10,"at":"2026-10-01T14:39:06.500Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":4502,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[4919.74875,4920.721917],"persistedActiveMs":4502},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[4496,4503]},{"seq":11,"at":"2026-10-01T14:39:07.001Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":5003,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[5420.297125,5422.026125],"persistedActiveMs":5003},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[4998,5004]},{"seq":12,"at":"2026-10-01T14:39:07.039Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":5042,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[5459.647,5460.380709],"persistedActiveMs":5042},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5036,5042]},{"seq":13,"at":"2026-10-01T14:39:07.059Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":5061,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[5479.309709,5480.146292],"persistedActiveMs":5061},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5056,5062]},{"seq":14,"at":"2026-10-01T14:39:07.070Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":5072,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[5490.213042,5490.837959],"persistedActiveMs":5072},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5066,5073]},{"seq":15,"at":"2026-10-01T14:39:07.074Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":5076,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[5494.464417,5495.075875],"persistedActiveMs":5076},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5071,5077]},{"seq":16,"at":"2026-10-01T14:39:07.079Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityState":"active","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":5081,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[5499.619459,5500.167792],"persistedActiveMs":5081},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5076,5082]},{"seq":17,"at":"2026-10-01T14:39:07.082Z","kind":"activity-terminal","correlation":{"kind":"activity","groupId":"g","runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","toolUseId":"all-run-steps"},"attemptId":"56794933-8505-4be9-a8fe-21868860486f","instancePid":46722,"runId":"37bbb091-2a21-4e37-a971-212693d2f9b5","groupId":"g","clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"creationOrEpochStartWindowMs":[418.565292,424.028209],"activityEndWindowMs":[5499.232167,5503.014292],"activityState":"terminal","includesUnsavedTail":true,"epochObservation":{"continuous":true,"startSource":"run-creation"},"epochIds":["efc560a8-6575-40d4-8630-d1a9f2f0eca1"],"persistedActiveMs":5081,"lastSuccessfulSample":{"epochId":"efc560a8-6575-40d4-8630-d1a9f2f0eca1","windowMs":[5499.619459,5500.167792],"persistedActiveMs":5081},"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5075,5085]}],"clockObservation":{"clockDomain":"process-performance:46722:cd12a55f-dbbe-49ff-b1e9-9c6f0d1aaba6","clockUnit":"ms","applicationPid":46722,"monotonicMs":5509.644917}},"measuredWaitMs":5001.267167,"resultReturnWindowMs":[5451.27425,5451.435417],"conclusion":"development observation only; no 5000ms tolerance or acceptance verdict"}
+# Subtest: real controller preserves lost-response dispatch identity across SIGKILL and observes automatic 404 queries without inventing absence
+ok 75 - real controller preserves lost-response dispatch identity across SIGKILL and observes automatic 404 queries without inventing absence
+  ---
+  duration_ms: 1332.208875
+  type: 'test'
+  ...
+# Developer UUID DB /kapibala_test_26481a0c9fcd4fedbd9e91e746968caa; revision 59865eea62007809f87a7971ad19c01d7c1ef028; guardian 46732; API http://127.0.0.1:56858
+# {"sample":"lost-response-real-restart","original":{"protocol":"qa-runtime-observation/1","leaseId":"5b52dfe9-0245-4060-81a7-8a92cae2c902","state":"armed","expiresAt":"2026-10-01T14:39:17.592Z","binding":{"apiUrl":"http://127.0.0.1:56858","revision":"59865eea62007809f87a7971ad19c01d7c1ef028","pid":46732,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"},"events":[{"seq":1,"at":"2026-10-01T14:39:07.595Z","kind":"lifecycle-observation-attached","attemptId":"35b1e4cc-ba7c-41da-8ccc-3a78acd71fe7","clockDomain":"process-performance:46733:93ae6b04-b175-44cd-b68e-9572db926a03","clockUnit":"ms","monotonicMs":[393.567875,393.567875],"applicationPid":46733,"instancePid":46732,"databaseIdentity":"144e6e8885474e974efb76588c6dbe0ec05c2052c80b5384525cdcb503eb36c0","resourceId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"},"historyScope":"this-process-only","droppedThroughSourceSeq":0,"includesPriorProcessHistory":false},{"kind":"message-send-dispatch","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"dispatch","clockDomain":"process-performance:46733:93ae6b04-b175-44cd-b68e-9572db926a03","clockUnit":"ms","monotonicMs":[315.225292,315.225292],"applicationPid":46733,"at":"2026-10-01T14:39:07.517Z","seq":2,"sourceSeq":1,"instancePid":46732,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}}],"snapshotProvenance":{"source":"live-bridge","applicationPid":46733,"applicationStarted":"Thu Oct  1 22:39:07 2026"}},"pending":{"protocol":"qa-runtime-observation/1","leaseId":"b9b9f95b-c2b7-4c10-8d6e-ad2ea29e732f","state":"armed","expiresAt":"2026-10-01T14:39:17.919Z","binding":{"apiUrl":"http://127.0.0.1:56858","revision":"59865eea62007809f87a7971ad19c01d7c1ef028","pid":46782,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"},"events":[{"seq":1,"at":"2026-10-01T14:39:07.923Z","kind":"lifecycle-observation-attached","attemptId":"a4ff9397-978f-4724-afd8-064b6fc4afd2","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[298.027333,298.027333],"applicationPid":46783,"instancePid":46782,"databaseIdentity":"144e6e8885474e974efb76588c6dbe0ec05c2052c80b5384525cdcb503eb36c0","resourceId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"},"historyScope":"this-process-only","droppedThroughSourceSeq":0,"includesPriorProcessHistory":false},{"kind":"message-recovery-adopted","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"recoveryState":"automatic-query-pending","originalResponseReceipt":"not-durably-recorded","recordedTimeoutAvailable":false,"commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[192.667333,192.667333],"applicationPid":46783,"at":"2026-10-01T14:39:07.818Z","seq":2,"sourceSeq":1,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-recovery-query-started","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"queryAttemptId":"a27516b0-4a00-4d3d-87fb-8bf0f7229896","recoveryState":"automatic-querying","timeoutReceivedAt":null,"recordedTimeoutAvailable":false,"clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[309.978125,309.978125],"applicationPid":46783,"at":"2026-10-01T14:39:07.935Z","seq":3,"sourceSeq":2,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-dispatch","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"dispatch","queryAttemptId":"a27516b0-4a00-4d3d-87fb-8bf0f7229896","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[310.110458,310.110458],"applicationPid":46783,"at":"2026-10-01T14:39:07.935Z","seq":4,"sourceSeq":3,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-response-headers","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"response-headers","responseStatus":404,"queryAttemptId":"a27516b0-4a00-4d3d-87fb-8bf0f7229896","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[311.262333,311.262333],"applicationPid":46783,"at":"2026-10-01T14:39:07.936Z","seq":5,"sourceSeq":4,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-response-body","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"response-body","responseStatus":404,"queryAttemptId":"a27516b0-4a00-4d3d-87fb-8bf0f7229896","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[311.571708,311.571708],"applicationPid":46783,"at":"2026-10-01T14:39:07.937Z","seq":6,"sourceSeq":5,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-recovery-query-inconclusive","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"queryAttemptId":"a27516b0-4a00-4d3d-87fb-8bf0f7229896","recoveryState":"automatic-query-pending","errorCode":"NOT_FOUND","recordedTimeoutAvailable":false,"clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[311.620792,311.620792],"applicationPid":46783,"at":"2026-10-01T14:39:07.937Z","seq":7,"sourceSeq":6,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-recovery-query-started","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"queryAttemptId":"f5645569-496c-4aa8-9b05-38f6f403b405","recoveryState":"automatic-querying","timeoutReceivedAt":null,"recordedTimeoutAvailable":false,"clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[406.873083,406.873083],"applicationPid":46783,"at":"2026-10-01T14:39:08.032Z","seq":8,"sourceSeq":7,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-dispatch","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"dispatch","queryAttemptId":"f5645569-496c-4aa8-9b05-38f6f403b405","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[406.942667,406.942667],"applicationPid":46783,"at":"2026-10-01T14:39:08.032Z","seq":9,"sourceSeq":8,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-response-headers","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"response-headers","responseStatus":404,"queryAttemptId":"f5645569-496c-4aa8-9b05-38f6f403b405","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[407.907917,407.907917],"applicationPid":46783,"at":"2026-10-01T14:39:08.033Z","seq":10,"sourceSeq":9,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-response-body","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"response-body","responseStatus":404,"queryAttemptId":"f5645569-496c-4aa8-9b05-38f6f403b405","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[408.040667,408.040667],"applicationPid":46783,"at":"2026-10-01T14:39:08.033Z","seq":11,"sourceSeq":10,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-recovery-query-inconclusive","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"queryAttemptId":"f5645569-496c-4aa8-9b05-38f6f403b405","recoveryState":"automatic-query-pending","errorCode":"NOT_FOUND","recordedTimeoutAvailable":false,"clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[408.078667,408.078667],"applicationPid":46783,"at":"2026-10-01T14:39:08.033Z","seq":12,"sourceSeq":11,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-recovery-query-started","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"queryAttemptId":"5ac53dc9-e373-4c21-b801-9c2c4061a357","recoveryState":"automatic-querying","timeoutReceivedAt":null,"recordedTimeoutAvailable":false,"clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[506.601875,506.601875],"applicationPid":46783,"at":"2026-10-01T14:39:08.132Z","seq":13,"sourceSeq":12,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-dispatch","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"dispatch","queryAttemptId":"5ac53dc9-e373-4c21-b801-9c2c4061a357","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[506.654458,506.654458],"applicationPid":46783,"at":"2026-10-01T14:39:08.132Z","seq":14,"sourceSeq":13,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-response-headers","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"response-headers","responseStatus":404,"queryAttemptId":"5ac53dc9-e373-4c21-b801-9c2c4061a357","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[507.24875,507.24875],"applicationPid":46783,"at":"2026-10-01T14:39:08.132Z","seq":15,"sourceSeq":14,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-response-body","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"response-body","responseStatus":404,"queryAttemptId":"5ac53dc9-e373-4c21-b801-9c2c4061a357","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[507.3255,507.3255],"applicationPid":46783,"at":"2026-10-01T14:39:08.132Z","seq":16,"sourceSeq":15,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-recovery-query-inconclusive","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"queryAttemptId":"5ac53dc9-e373-4c21-b801-9c2c4061a357","recoveryState":"automatic-query-pending","errorCode":"NOT_FOUND","recordedTimeoutAvailable":false,"clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[507.354833,507.354833],"applicationPid":46783,"at":"2026-10-01T14:39:08.132Z","seq":17,"sourceSeq":16,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}}],"snapshotProvenance":{"source":"live-bridge","applicationPid":46783,"applicationStarted":"Thu Oct  1 22:39:07 2026"}},"terminal":{"protocol":"qa-runtime-observation/1","leaseId":"b9b9f95b-c2b7-4c10-8d6e-ad2ea29e732f","state":"armed","expiresAt":"2026-10-01T14:39:17.919Z","binding":{"apiUrl":"http://127.0.0.1:56858","revision":"59865eea62007809f87a7971ad19c01d7c1ef028","pid":46782,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"},"events":[{"seq":1,"at":"2026-10-01T14:39:07.923Z","kind":"lifecycle-observation-attached","attemptId":"a4ff9397-978f-4724-afd8-064b6fc4afd2","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[298.027333,298.027333],"applicationPid":46783,"instancePid":46782,"databaseIdentity":"144e6e8885474e974efb76588c6dbe0ec05c2052c80b5384525cdcb503eb36c0","resourceId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"},"historyScope":"this-process-only","droppedThroughSourceSeq":0,"includesPriorProcessHistory":false},{"kind":"message-recovery-adopted","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"recoveryState":"automatic-query-pending","originalResponseReceipt":"not-durably-recorded","recordedTimeoutAvailable":false,"commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[192.667333,192.667333],"applicationPid":46783,"at":"2026-10-01T14:39:07.818Z","seq":2,"sourceSeq":1,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-recovery-query-started","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"queryAttemptId":"a27516b0-4a00-4d3d-87fb-8bf0f7229896","recoveryState":"automatic-querying","timeoutReceivedAt":null,"recordedTimeoutAvailable":false,"clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[309.978125,309.978125],"applicationPid":46783,"at":"2026-10-01T14:39:07.935Z","seq":3,"sourceSeq":2,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-dispatch","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"dispatch","queryAttemptId":"a27516b0-4a00-4d3d-87fb-8bf0f7229896","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[310.110458,310.110458],"applicationPid":46783,"at":"2026-10-01T14:39:07.935Z","seq":4,"sourceSeq":3,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-response-headers","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"response-headers","responseStatus":404,"queryAttemptId":"a27516b0-4a00-4d3d-87fb-8bf0f7229896","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[311.262333,311.262333],"applicationPid":46783,"at":"2026-10-01T14:39:07.936Z","seq":5,"sourceSeq":4,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-response-body","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"response-body","responseStatus":404,"queryAttemptId":"a27516b0-4a00-4d3d-87fb-8bf0f7229896","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[311.571708,311.571708],"applicationPid":46783,"at":"2026-10-01T14:39:07.937Z","seq":6,"sourceSeq":5,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-recovery-query-inconclusive","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"queryAttemptId":"a27516b0-4a00-4d3d-87fb-8bf0f7229896","recoveryState":"automatic-query-pending","errorCode":"NOT_FOUND","recordedTimeoutAvailable":false,"clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[311.620792,311.620792],"applicationPid":46783,"at":"2026-10-01T14:39:07.937Z","seq":7,"sourceSeq":6,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-recovery-query-started","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"queryAttemptId":"f5645569-496c-4aa8-9b05-38f6f403b405","recoveryState":"automatic-querying","timeoutReceivedAt":null,"recordedTimeoutAvailable":false,"clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[406.873083,406.873083],"applicationPid":46783,"at":"2026-10-01T14:39:08.032Z","seq":8,"sourceSeq":7,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-dispatch","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"dispatch","queryAttemptId":"f5645569-496c-4aa8-9b05-38f6f403b405","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[406.942667,406.942667],"applicationPid":46783,"at":"2026-10-01T14:39:08.032Z","seq":9,"sourceSeq":8,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-response-headers","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"response-headers","responseStatus":404,"queryAttemptId":"f5645569-496c-4aa8-9b05-38f6f403b405","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[407.907917,407.907917],"applicationPid":46783,"at":"2026-10-01T14:39:08.033Z","seq":10,"sourceSeq":9,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-response-body","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"response-body","responseStatus":404,"queryAttemptId":"f5645569-496c-4aa8-9b05-38f6f403b405","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[408.040667,408.040667],"applicationPid":46783,"at":"2026-10-01T14:39:08.033Z","seq":11,"sourceSeq":10,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-recovery-query-inconclusive","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"queryAttemptId":"f5645569-496c-4aa8-9b05-38f6f403b405","recoveryState":"automatic-query-pending","errorCode":"NOT_FOUND","recordedTimeoutAvailable":false,"clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[408.078667,408.078667],"applicationPid":46783,"at":"2026-10-01T14:39:08.033Z","seq":12,"sourceSeq":11,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-recovery-query-started","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"queryAttemptId":"5ac53dc9-e373-4c21-b801-9c2c4061a357","recoveryState":"automatic-querying","timeoutReceivedAt":null,"recordedTimeoutAvailable":false,"clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[506.601875,506.601875],"applicationPid":46783,"at":"2026-10-01T14:39:08.132Z","seq":13,"sourceSeq":12,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-dispatch","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"dispatch","queryAttemptId":"5ac53dc9-e373-4c21-b801-9c2c4061a357","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[506.654458,506.654458],"applicationPid":46783,"at":"2026-10-01T14:39:08.132Z","seq":14,"sourceSeq":13,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-response-headers","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"response-headers","responseStatus":404,"queryAttemptId":"5ac53dc9-e373-4c21-b801-9c2c4061a357","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[507.24875,507.24875],"applicationPid":46783,"at":"2026-10-01T14:39:08.132Z","seq":15,"sourceSeq":14,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-response-body","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"response-body","responseStatus":404,"queryAttemptId":"5ac53dc9-e373-4c21-b801-9c2c4061a357","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[507.3255,507.3255],"applicationPid":46783,"at":"2026-10-01T14:39:08.132Z","seq":16,"sourceSeq":15,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-recovery-query-inconclusive","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"queryAttemptId":"5ac53dc9-e373-4c21-b801-9c2c4061a357","recoveryState":"automatic-query-pending","errorCode":"NOT_FOUND","recordedTimeoutAvailable":false,"clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[507.354833,507.354833],"applicationPid":46783,"at":"2026-10-01T14:39:08.132Z","seq":17,"sourceSeq":16,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-recovery-query-started","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"queryAttemptId":"f98487ad-bedd-41ec-8051-95b01afc82d3","recoveryState":"automatic-querying","timeoutReceivedAt":null,"recordedTimeoutAvailable":false,"clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[612.115333,612.115333],"applicationPid":46783,"at":"2026-10-01T14:39:08.237Z","seq":18,"sourceSeq":17,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-dispatch","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"dispatch","queryAttemptId":"f98487ad-bedd-41ec-8051-95b01afc82d3","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[612.178625,612.178625],"applicationPid":46783,"at":"2026-10-01T14:39:08.237Z","seq":19,"sourceSeq":18,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-response-headers","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"response-headers","responseStatus":200,"queryAttemptId":"f98487ad-bedd-41ec-8051-95b01afc82d3","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[612.970208,612.970208],"applicationPid":46783,"at":"2026-10-01T14:39:08.238Z","seq":20,"sourceSeq":19,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-query-response-body","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"stage":"response-body","responseStatus":200,"queryAttemptId":"f98487ad-bedd-41ec-8051-95b01afc82d3","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[613.130792,613.130792],"applicationPid":46783,"at":"2026-10-01T14:39:08.238Z","seq":21,"sourceSeq":20,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}},{"kind":"message-recovery-result-committed","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82","messageId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2","accountId":"account-1","attemptId":"c6026473-1f6e-43ea-aa4b-aadd338e36f2:1","dispatchAttempt":1,"source":"manual","sourceRef":null,"queryAttemptId":"f98487ad-bedd-41ec-8051-95b01afc82d3","recoveryState":"terminal","deliveryStatus":"sent","msgId":"later-real-effect","decisionEvidence":"positive-query-result","commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:46783:3265bc10-88be-41ee-a276-0fd516d80228","clockUnit":"ms","monotonicMs":[620.963875,620.963875],"applicationPid":46783,"at":"2026-10-01T14:39:08.246Z","seq":22,"sourceSeq":21,"instancePid":46782,"correlation":{"kind":"message-recovery","groupId":"recovery-g","clientMsgId":"b7c0ceee-7ab5-4a3e-bd60-8624c0829e82"}}],"snapshotProvenance":{"source":"live-bridge","applicationPid":46783,"applicationStarted":"Thu Oct  1 22:39:07 2026"}},"sends":1,"queries":4}
+# Subtest: DC01 normal production main ignores test token and never opens a capacity bridge
+ok 76 - DC01 normal production main ignores test token and never opens a capacity bridge
+  ---
+  duration_ms: 392.97625
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_b11d7e430247417a8d0fad583ed55d37; revision 59865eea62007809f87a7971ad19c01d7c1ef028; guardian 46835; API http://127.0.0.1:56942; controller http://127.0.0.1:56941
+# Subtest: DC02 real SUT holders, ownership rejects, immutable lease identity and independent release
+ok 77 - DC02 real SUT holders, ownership rejects, immutable lease identity and independent release
+  ---
+  duration_ms: 901.933041
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_ca9e549d0cd944bc974aba3b45f82fd3; revision 59865eea62007809f87a7971ad19c01d7c1ef028; guardian 46839; API http://127.0.0.1:56973; controller http://127.0.0.1:56972
+# {"case":"DC02","eventCount":4,"refusal":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T14:39:09.658Z","kind":"admission-refused","attemptId":"ac382270-d8e1-48b1-b864-747070fae0d3","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},"terminal":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":4,"at":"2026-10-01T14:39:09.804Z","kind":"run-terminal","status":"finished","endReason":"final","activeElapsedMs":[290,363],"clockSource":"persisted active_ms through last sample; upper includes DB sample-to-terminal-observation tail plus 1ms timestamp resolution; prior hard-crash unsampled tail is not reconstructable"}}
+# Subtest: DC03 lost PUT response remains addressable; TTL and explicit release race preserve history
+ok 78 - DC03 lost PUT response remains addressable; TTL and explicit release race preserve history
+  ---
+  duration_ms: 1389.337416
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_7da5b4c92cab41d1a8e48a226c05609a; revision 59865eea62007809f87a7971ad19c01d7c1ef028; guardian 47032; API http://127.0.0.1:57016; controller http://127.0.0.1:57015
+# {"case":"DC03","expiresAt":"2026-10-01T14:39:11.183Z","final":{"protocol":"qa-capacity-control/1","leaseId":"467ec8ff-4fc7-4dc7-8276-b4821a8e6c6d","state":"released","expiresAt":"2026-10-01T14:39:11.183Z","binding":{"apiUrl":"http://127.0.0.1:57016","revision":"59865eea62007809f87a7971ad19c01d7c1ef028","pid":47032,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T14:39:10.396Z","kind":"capacity-held","holderKeys":["qa-capacity:7bbbce7f-eb26-472f-8cac-fa8a42ea5a2c:467ec8ff-4fc7-4dc7-8276-b4821a8e6c6d:0","qa-capacity:7bbbce7f-eb26-472f-8cac-fa8a42ea5a2c:467ec8ff-4fc7-4dc7-8276-b4821a8e6c6d:1","qa-capacity:7bbbce7f-eb26-472f-8cac-fa8a42ea5a2c:467ec8ff-4fc7-4dc7-8276-b4821a8e6c6d:2","qa-capacity:7bbbce7f-eb26-472f-8cac-fa8a42ea5a2c:467ec8ff-4fc7-4dc7-8276-b4821a8e6c6d:3","qa-capacity:7bbbce7f-eb26-472f-8cac-fa8a42ea5a2c:467ec8ff-4fc7-4dc7-8276-b4821a8e6c6d:4","qa-capacity:7bbbce7f-eb26-472f-8cac-fa8a42ea5a2c:467ec8ff-4fc7-4dc7-8276-b4821a8e6c6d:5","qa-capacity:7bbbce7f-eb26-472f-8cac-fa8a42ea5a2c:467ec8ff-4fc7-4dc7-8276-b4821a8e6c6d:6"]},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T14:39:10.408Z","kind":"admission-refused","attemptId":"3ecc2121-da55-4b97-8cfe-f3554ac3565d","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":3,"at":"2026-10-01T14:39:10.409Z","kind":"ready-persisted","attemptId":"3ecc2121-da55-4b97-8cfe-f3554ac3565d"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":4,"at":"2026-10-01T14:39:10.465Z","kind":"admission-refused","attemptId":"900e28fe-0f74-47c1-a720-e5cf141cfa3b","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":5,"at":"2026-10-01T14:39:10.465Z","kind":"ready-persisted","attemptId":"900e28fe-0f74-47c1-a720-e5cf141cfa3b"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":6,"at":"2026-10-01T14:39:10.523Z","kind":"admission-refused","attemptId":"16dbe35c-7387-4671-a209-94d783f3c4b3","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":7,"at":"2026-10-01T14:39:10.524Z","kind":"ready-persisted","attemptId":"16dbe35c-7387-4671-a209-94d783f3c4b3"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":8,"at":"2026-10-01T14:39:10.581Z","kind":"admission-refused","attemptId":"97af9695-5764-4314-968a-0c9e92782993","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":9,"at":"2026-10-01T14:39:10.582Z","kind":"ready-persisted","attemptId":"97af9695-5764-4314-968a-0c9e92782993"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":10,"at":"2026-10-01T14:39:10.639Z","kind":"admission-refused","attemptId":"173b9ee7-3f67-4250-a056-cd0a5ef0e965","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":11,"at":"2026-10-01T14:39:10.640Z","kind":"ready-persisted","attemptId":"173b9ee7-3f67-4250-a056-cd0a5ef0e965"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":12,"at":"2026-10-01T14:39:10.695Z","kind":"admission-refused","attemptId":"fc139fe3-224d-440e-813c-65795793c698","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":13,"at":"2026-10-01T14:39:10.696Z","kind":"ready-persisted","attemptId":"fc139fe3-224d-440e-813c-65795793c698"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":14,"at":"2026-10-01T14:39:10.751Z","kind":"admission-refused","attemptId":"6ec50a0f-a638-4c02-93df-028e1dcac56e","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":15,"at":"2026-10-01T14:39:10.752Z","kind":"ready-persisted","attemptId":"6ec50a0f-a638-4c02-93df-028e1dcac56e"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":16,"at":"2026-10-01T14:39:10.807Z","kind":"admission-refused","attemptId":"c50b3644-0c70-44cb-bf73-ae9f39fdd421","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":17,"at":"2026-10-01T14:39:10.807Z","kind":"ready-persisted","attemptId":"c50b3644-0c70-44cb-bf73-ae9f39fdd421"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":18,"at":"2026-10-01T14:39:10.864Z","kind":"admission-refused","attemptId":"99a6ff55-b2b0-4b38-a21a-67ad57fabf13","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":19,"at":"2026-10-01T14:39:10.865Z","kind":"ready-persisted","attemptId":"99a6ff55-b2b0-4b38-a21a-67ad57fabf13"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":20,"at":"2026-10-01T14:39:10.920Z","kind":"admission-refused","attemptId":"11226a08-9614-4a60-a2ea-28e7d85715d0","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":21,"at":"2026-10-01T14:39:10.920Z","kind":"ready-persisted","attemptId":"11226a08-9614-4a60-a2ea-28e7d85715d0"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":22,"at":"2026-10-01T14:39:10.976Z","kind":"admission-refused","attemptId":"ea7adec1-339a-45bf-b633-11905c4b27a1","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":23,"at":"2026-10-01T14:39:10.977Z","kind":"ready-persisted","attemptId":"ea7adec1-339a-45bf-b633-11905c4b27a1"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":24,"at":"2026-10-01T14:39:11.032Z","kind":"admission-refused","attemptId":"c22e0936-fca2-4798-ae52-c2d20aac24ed","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":25,"at":"2026-10-01T14:39:11.033Z","kind":"ready-persisted","attemptId":"c22e0936-fca2-4798-ae52-c2d20aac24ed"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":26,"at":"2026-10-01T14:39:11.087Z","kind":"admission-refused","attemptId":"5439ab86-34ab-4f40-ae67-c328c47ebe61","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":27,"at":"2026-10-01T14:39:11.088Z","kind":"ready-persisted","attemptId":"5439ab86-34ab-4f40-ae67-c328c47ebe61"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":28,"at":"2026-10-01T14:39:11.143Z","kind":"admission-refused","attemptId":"0d1d8500-14be-4173-8f64-fb3ff6960ea2","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":29,"at":"2026-10-01T14:39:11.144Z","kind":"ready-persisted","attemptId":"0d1d8500-14be-4173-8f64-fb3ff6960ea2"}]}}
+# Subtest: DC04 exact before-ready crash resumes the saved step and rebinds same API port to new guardian
+ok 79 - DC04 exact before-ready crash resumes the saved step and rebinds same API port to new guardian
+  ---
+  duration_ms: 2529.038916
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_ee35ddcae1354b90b41abebe615aa4f2; revision 59865eea62007809f87a7971ad19c01d7c1ef028; guardian 47316; API http://127.0.0.1:57062; controller http://127.0.0.1:57061
+# {"case":"DC04-repaired-product-recovery","oldGuardian":47316,"newGuardian":47391,"held":{"protocol":"qa-capacity-control/1","leaseId":"e9de97c7-2b04-49e5-9561-aedae46acdf0","state":"held","expiresAt":"2026-10-01T14:39:21.793Z","binding":{"apiUrl":"http://127.0.0.1:57062","revision":"59865eea62007809f87a7971ad19c01d7c1ef028","pid":47316,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T14:39:11.808Z","kind":"capacity-held","holderKeys":["qa-capacity:1b7adbd0-36d5-4d09-a1e6-2929941bbe0e:e9de97c7-2b04-49e5-9561-aedae46acdf0:0","qa-capacity:1b7adbd0-36d5-4d09-a1e6-2929941bbe0e:e9de97c7-2b04-49e5-9561-aedae46acdf0:1","qa-capacity:1b7adbd0-36d5-4d09-a1e6-2929941bbe0e:e9de97c7-2b04-49e5-9561-aedae46acdf0:2","qa-capacity:1b7adbd0-36d5-4d09-a1e6-2929941bbe0e:e9de97c7-2b04-49e5-9561-aedae46acdf0:3","qa-capacity:1b7adbd0-36d5-4d09-a1e6-2929941bbe0e:e9de97c7-2b04-49e5-9561-aedae46acdf0:4","qa-capacity:1b7adbd0-36d5-4d09-a1e6-2929941bbe0e:e9de97c7-2b04-49e5-9561-aedae46acdf0:5","qa-capacity:1b7adbd0-36d5-4d09-a1e6-2929941bbe0e:e9de97c7-2b04-49e5-9561-aedae46acdf0:6"]},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T14:39:11.821Z","kind":"admission-refused","attemptId":"767aa557-fdd5-4fd6-bace-7f5b8ec406d5","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":3,"at":"2026-10-01T14:39:11.821Z","kind":"before-ready-held","attemptId":"767aa557-fdd5-4fd6-bace-7f5b8ec406d5","reason":"capacity","callbackEntered":false,"remoteRequestCount":0}]},"recovered":{"id":"capacity-run","groupId":"g","status":"finished","endReason":"final","summary":"done","recoveryNote":null,"steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"{\\"kicked\\":true}","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\\"stop_reason\\":\\"tool_use\\",\\"content\\":[{\\"type\\":\\"tool_use\\",\\"id\\":\\"kick-one\\",\\"name\\":\\"kick_user\\",\\"input\\":{\\"platform_user_id\\":\\"external-target\\",\\"reason\\":\\"engineering capacity observation\\"}}]}"},{"ordinal":2,"kind":"final","toolUseId":null,"name":null,"input":null,"resultSummary":"\\"done\\"","isError":false,"errorCode":null,"auditVerdict":null,"rawResponse":"{\\"stop_reason\\":\\"end_turn\\",\\"content\\":[{\\"type\\":\\"text\\",\\"text\\":\\"done\\"}]}"}]},"limit":"Development regression: the saved pre-dispatch intent resumes without repeating its audit or model response. The controller does not repair state. This is not a QA result."}
+# Subtest: DC05 pressure after dispatch holds remaining real slots without attributing a zero-effect refusal
+ok 80 - DC05 pressure after dispatch holds remaining real slots without attributing a zero-effect refusal
+  ---
+  duration_ms: 2787.791
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_b1cc5759288c4665b642afc9352885f7; revision 59865eea62007809f87a7971ad19c01d7c1ef028; guardian 47484; API http://127.0.0.1:57142; controller http://127.0.0.1:57141
+# {"case":"DC05","snapshot":{"protocol":"qa-capacity-control/1","leaseId":"b33abc09-b6b0-450c-b3da-30831c23ed27","state":"held","expiresAt":"2026-10-01T14:39:24.334Z","binding":{"apiUrl":"http://127.0.0.1:57142","revision":"59865eea62007809f87a7971ad19c01d7c1ef028","pid":47484,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T14:39:14.345Z","kind":"capacity-held","holderKeys":["qa-capacity:8d3ca0f5-5dca-49bd-bea8-f7626c9ba32b:b33abc09-b6b0-450c-b3da-30831c23ed27:0","qa-capacity:8d3ca0f5-5dca-49bd-bea8-f7626c9ba32b:b33abc09-b6b0-450c-b3da-30831c23ed27:1","qa-capacity:8d3ca0f5-5dca-49bd-bea8-f7626c9ba32b:b33abc09-b6b0-450c-b3da-30831c23ed27:2","qa-capacity:8d3ca0f5-5dca-49bd-bea8-f7626c9ba32b:b33abc09-b6b0-450c-b3da-30831c23ed27:3","qa-capacity:8d3ca0f5-5dca-49bd-bea8-f7626c9ba32b:b33abc09-b6b0-450c-b3da-30831c23ed27:4","qa-capacity:8d3ca0f5-5dca-49bd-bea8-f7626c9ba32b:b33abc09-b6b0-450c-b3da-30831c23ed27:5"]}]},"kicks":1,"publicRun":{"id":"capacity-run","groupId":"g","status":"finished","endReason":"final","summary":"done","recoveryNote":null,"steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"{\\"kicked\\":true}","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\\"stop_reason\\":\\"tool_use\\",\\"content\\":[{\\"type\\":\\"tool_use\\",\\"id\\":\\"kick-one\\",\\"name\\":\\"kick_user\\",\\"input\\":{\\"platform_user_id\\":\\"external-target\\",\\"reason\\":\\"engineering capacity observation\\"}}]}"},{"ordinal":2,"kind":"final","toolUseId":null,"name":null,"input":null,"resultSummary":"\\"done\\"","isError":false,"errorCode":null,"auditVerdict":null,"rawResponse":"{\\"stop_reason\\":\\"end_turn\\",\\"content\\":[{\\"type\\":\\"text\\",\\"text\\":\\"done\\"}]}"}]}}
+# Subtest: DC06 real uninterrupted budget reports measured active interval without clamping to 60000
+ok 81 - DC06 real uninterrupted budget reports measured active interval without clamping to 60000
+  ---
+  duration_ms: 47025.72975
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_bf3a4f16e9c042189ed7fe50a34ec470; revision 59865eea62007809f87a7971ad19c01d7c1ef028; guardian 47536; API http://127.0.0.1:57191; controller http://127.0.0.1:57190
+# {"case":"DC06-measurement-only","terminal":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1620,"at":"2026-10-01T14:40:02.056Z","kind":"run-terminal","status":"failed","endReason":"wall_clock","activeElapsedMs":[45053,45112],"clockSource":"persisted active_ms through last sample; upper includes DB sample-to-terminal-observation tail plus 1ms timestamp resolution; prior hard-crash unsampled tail is not reconstructable"},"persisted":45053,"independentElapsedMs":[45047.172083,45063.542708],"limit":"No 60000 clamp or new tolerance; QA classifies its own exact threshold. Valid only for this uninterrupted healthy clock epoch."}
+# Subtest: DC07 TTL releases the precise ready barrier without controller state writes
+ok 82 - DC07 TTL releases the precise ready barrier without controller state writes
+  ---
+  duration_ms: 1307.466792
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_9ccf7d75787d49bf989e6002cc53690a; revision 59865eea62007809f87a7971ad19c01d7c1ef028; guardian 50108; API http://127.0.0.1:57395; controller http://127.0.0.1:57394
+# {"case":"DC07","snapshot":{"protocol":"qa-capacity-control/1","leaseId":"cc5e2d56-ff9e-47ab-aa55-7ff27a37519e","state":"released","expiresAt":"2026-10-01T14:40:04.827Z","binding":{"apiUrl":"http://127.0.0.1:57395","revision":"59865eea62007809f87a7971ad19c01d7c1ef028","pid":50108,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T14:40:04.138Z","kind":"capacity-held","holderKeys":["qa-capacity:39c861d2-3bf2-4b47-a146-b11ed1fcedca:cc5e2d56-ff9e-47ab-aa55-7ff27a37519e:0","qa-capacity:39c861d2-3bf2-4b47-a146-b11ed1fcedca:cc5e2d56-ff9e-47ab-aa55-7ff27a37519e:1","qa-capacity:39c861d2-3bf2-4b47-a146-b11ed1fcedca:cc5e2d56-ff9e-47ab-aa55-7ff27a37519e:2","qa-capacity:39c861d2-3bf2-4b47-a146-b11ed1fcedca:cc5e2d56-ff9e-47ab-aa55-7ff27a37519e:3","qa-capacity:39c861d2-3bf2-4b47-a146-b11ed1fcedca:cc5e2d56-ff9e-47ab-aa55-7ff27a37519e:4","qa-capacity:39c861d2-3bf2-4b47-a146-b11ed1fcedca:cc5e2d56-ff9e-47ab-aa55-7ff27a37519e:5","qa-capacity:39c861d2-3bf2-4b47-a146-b11ed1fcedca:cc5e2d56-ff9e-47ab-aa55-7ff27a37519e:6"]},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T14:40:04.151Z","kind":"admission-refused","attemptId":"be924b79-3a30-4b54-9fdb-abd07ddb5c9d","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":3,"at":"2026-10-01T14:40:04.151Z","kind":"before-ready-held","attemptId":"be924b79-3a30-4b54-9fdb-abd07ddb5c9d","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":4,"at":"2026-10-01T14:40:04.833Z","kind":"ready-persisted","attemptId":"be924b79-3a30-4b54-9fdb-abd07ddb5c9d"}]}}
+# Subtest: DC08 a holder connection loss releases only its lease and does not fabricate a target refusal
+ok 83 - DC08 a holder connection loss releases only its lease and does not fabricate a target refusal
+  ---
+  duration_ms: 567.516792
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_7fb63c069a5143b2bbb2d769723ef96f; revision 59865eea62007809f87a7971ad19c01d7c1ef028; guardian 50160; API http://127.0.0.1:57444; controller http://127.0.0.1:57443
+# {"case":"DC08","terminatedHolderPid":661,"snapshot":{"protocol":"qa-capacity-control/1","leaseId":"b3ca9598-743b-4edb-a431-68c529378908","state":"released","expiresAt":"2026-10-01T14:40:15.431Z","binding":{"apiUrl":"http://127.0.0.1:57444","revision":"59865eea62007809f87a7971ad19c01d7c1ef028","pid":50160,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T14:40:05.445Z","kind":"capacity-held","holderKeys":["qa-capacity:1832aa42-4d70-494e-957e-0ccb7af25e63:b3ca9598-743b-4edb-a431-68c529378908:0","qa-capacity:1832aa42-4d70-494e-957e-0ccb7af25e63:b3ca9598-743b-4edb-a431-68c529378908:1","qa-capacity:1832aa42-4d70-494e-957e-0ccb7af25e63:b3ca9598-743b-4edb-a431-68c529378908:2","qa-capacity:1832aa42-4d70-494e-957e-0ccb7af25e63:b3ca9598-743b-4edb-a431-68c529378908:3","qa-capacity:1832aa42-4d70-494e-957e-0ccb7af25e63:b3ca9598-743b-4edb-a431-68c529378908:4","qa-capacity:1832aa42-4d70-494e-957e-0ccb7af25e63:b3ca9598-743b-4edb-a431-68c529378908:5","qa-capacity:1832aa42-4d70-494e-957e-0ccb7af25e63:b3ca9598-743b-4edb-a431-68c529378908:6"]}]}}
+1..83
+# tests 93
+# suites 0
+# pass 90
+# fail 0
+# cancelled 0
+# skipped 3
+# todo 0
+# duration_ms 102485.466291
