@@ -84,7 +84,7 @@ export function AgentRunList({ groupId }: { groupId: string }) {
               </span>
               {run.status === "blocked" && (
                 <strong className="warning-text small">
-                  审计未得到明确结论，副作用已阻止。
+                  本次工具的审计未得到明确结论，未执行其副作用。此前步骤可能已执行。
                 </strong>
               )}
             </a>

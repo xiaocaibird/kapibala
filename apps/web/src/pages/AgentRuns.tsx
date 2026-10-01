@@ -159,9 +159,9 @@ export function AgentRunDetail({ id }: { id: string }) {
         </div>
         {run.status === "blocked" && (
           <div className="notice warning prominent">
-            <strong>审计阻塞 · 副作用未执行</strong>
+            <strong>审计阻塞 · 本次工具未执行</strong>
             <span>
-              审计服务在重试后仍未给出明确结论。请检查下面的步骤与审计服务状态。
+              本次工具的审计在重试后仍未得到明确结论，未执行其副作用。此前步骤可能已执行，请检查下面的执行轨迹与审计服务状态。
             </span>
           </div>
         )}
@@ -192,7 +192,14 @@ export function AgentRunDetail({ id }: { id: string }) {
       </div>
       {!run.steps?.length ? (
         <section className="panel">
-          <Empty title="正在等待第一步结果" icon="activity" />
+          <Empty
+            title={
+              run.status === "running" && !run.recoveryNote
+                ? "正在等待第一步结果"
+                : "暂无步骤记录"
+            }
+            icon="activity"
+          />
         </section>
       ) : (
         <div className="step-list">

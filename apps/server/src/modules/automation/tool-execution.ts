@@ -215,7 +215,7 @@ export class AgentTools {
       toolError(
         "AUDIT_REJECTED",
         "Audit service returned no conclusive verdict after three attempts.",
-        "The run is blocked; no side effect was executed.",
+        "This tool was blocked before its side effect; earlier completed steps are not rolled back.",
       ),
       "audit_blocked",
       executionAttemptId,
