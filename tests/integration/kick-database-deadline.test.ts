@@ -16,6 +16,77 @@ import {
 } from "../../apps/server/src/core/test-transaction-observer.js";
 import { temporaryDatabase } from "../support/temporary-database.js";
 import { delay, until } from "../support/core-automation-fixture.js";
+import {
+  ObservedRuntimeDatabase,
+  RuntimeObservation,
+} from "../../scripts/qa-runtime-observation/runtime.js";
+
+test(
+  "combined runtime observation restores native query before a deadline client is reused through pg callbacks",
+  { timeout: 5000 },
+  async (t) => {
+    const temporary = await temporaryDatabase(t);
+    const db = new ObservedRuntimeDatabase(temporary.url);
+    db.pool.options.max = 1;
+    temporary.onCleanup(() => db.close());
+    const observer = new RuntimeObservation(db);
+    const settled: boolean[] = [];
+    const transactionSettled = observer.transactionSettled.bind(observer);
+    t.mock.method(
+      observer,
+      "transactionSettled",
+      (client: PoolClient, committed: boolean) => {
+        settled.push(committed);
+        transactionSettled(client, committed);
+      },
+    );
+    const original = await db.pool.connect();
+    const nativeQuery = original.query;
+    const backendPid = (await original.query("SELECT pg_backend_pid() AS pid"))
+      .rows[0]!.pid;
+    original.release();
+    for (const outcome of ["commit", "rollback"] as const) {
+      const operation = withDatabaseDeadline(performance.now() + 1000, () =>
+        db.transaction(async (tx) => {
+          await tx.query(outcome === "commit" ? "SELECT 1" : "SELECT 1/0");
+        }),
+      );
+      if (outcome === "commit") await operation;
+      else
+        await assert.rejects(
+          operation,
+          (error) =>
+            error instanceof Error && "code" in error && error.code === "22012",
+        );
+      const reused = await db.pool.connect();
+      const restored = reused.query === nativeQuery;
+      // Fail before issuing the old callback query if restoration is broken;
+      // keep the regression bounded instead of leaving a hung pool checkout.
+      reused.release(!restored);
+      assert.equal(
+        restored,
+        true,
+        "the observer must not reinstall the expired deadline query during release",
+      );
+      // This unscoped path really uses pg-pool's client.query(sql, values, callback).
+      assert.equal(
+        (await db.query("SELECT pg_backend_pid() AS pid")).rows[0]!.pid,
+        backendPid,
+      );
+      assert.equal(
+        await db.transaction(
+          async (tx) => (await tx.query("SELECT 7 AS n")).rows[0]!.n,
+        ),
+        7,
+      );
+    }
+    assert.deepEqual(
+      settled,
+      [true, true, false, true],
+      "actual COMMIT/ROLLBACK observations survive wrapper cleanup",
+    );
+  },
+);
 
 async function createProbe(db: Database) {
   await db.query(
