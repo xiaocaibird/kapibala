@@ -1,0 +1,547 @@
+TAP version 13
+# Subtest: Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+ok 1 - Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+  ---
+  duration_ms: 352.028041
+  type: 'test'
+  ...
+# Independent database: kapibala_test_f1be6e2b41fb4cc5aa7f74a4bc88b193
+# Subtest: Agent capacity wait keeps the original activity budget and does not invent an unknown kick
+not ok 2 - Agent capacity wait keeps the original activity budget and does not invent an unknown kick
+  ---
+  duration_ms: 1307.948208
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-capacity.test.ts:113:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'executing'
+    - 'ready'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'ready'
+  actual: 'executing'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-capacity.test.ts:121:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Independent database: kapibala_test_5c8f1da286944d698e43f0770acdb366
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+ok 3 - Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+  ---
+  duration_ms: 318.019208
+  type: 'test'
+  ...
+# Independent database: kapibala_test_ae574712affc408fb71e77e3f7c305ce
+# Subtest: Agent cancellation while waiting for capacity ends after the current step without another turn
+ok 4 - Agent cancellation while waiting for capacity ends after the current step without another turn
+  ---
+  duration_ms: 214.472875
+  type: 'test'
+  ...
+# Independent database: kapibala_test_90798cdd6186482fbf5c242e1696f1fb
+# Subtest: Agent delivery discards a messages read that completes after its original five-second deadline
+ok 5 - Agent delivery discards a messages read that completes after its original five-second deadline
+  ---
+  duration_ms: 5342.908417
+  type: 'test'
+  ...
+# Independent database: kapibala_test_5297059f3f8e4e44b0f7f1f5ff23c0c3
+# {"table":"messages","elapsedMs":5108.364417000001,"accountReads":0,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+# Subtest: Agent delivery discards a accounts read that completes after its original five-second deadline
+ok 6 - Agent delivery discards a accounts read that completes after its original five-second deadline
+  ---
+  duration_ms: 5252.270209
+  type: 'test'
+  ...
+# Independent database: kapibala_test_897ba0cad2224f2d8ff8b6787e694307
+# {"table":"accounts","elapsedMs":5121.300000000001,"accountReads":1,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+# Subtest: Agent does not dispatch a model request after its intent write consumes the remaining budget
+ok 7 - Agent does not dispatch a model request after its intent write consumes the remaining budget
+  ---
+  duration_ms: 542.117833
+  type: 'test'
+  ...
+# Independent database: kapibala_test_8b5fe6db29f04e3eaf0ad7ebe41d56d2
+# {"runId":"expired-intent","elapsedMs":397.71575,"persistedActiveMs":60183,"modelRequests":0}
+# Subtest: Agent does not dispatch an audit request after its intent write consumes the remaining budget
+ok 8 - Agent does not dispatch an audit request after its intent write consumes the remaining budget
+  ---
+  duration_ms: 512.86375
+  type: 'test'
+  ...
+# Independent database: kapibala_test_c222d656f4264fc48e4c1b371771249a
+# {"runId":"expired-audit-intent","elapsedMs":411.952041,"persistedActiveMs":60197,"auditRequests":0}
+# Subtest: tool definitions have all required arguments; invalid protocols are rejected
+ok 9 - tool definitions have all required arguments; invalid protocols are rejected
+  ---
+  duration_ms: 105.897917
+  type: 'test'
+  ...
+# Subtest: sequence variables persist overrides and report the first unresolved step
+ok 10 - sequence variables persist overrides and report the first unresolved step
+  ---
+  duration_ms: 0.296792
+  type: 'test'
+  ...
+# Subtest: PostgreSQL serializes concurrent sequence starts and failed preflight creates no run
+ok 11 - PostgreSQL serializes concurrent sequence starts and failed preflight creates no run
+  ---
+  duration_ms: 25.475875
+  type: 'test'
+  ...
+# Subtest: multiple workers create one agent run and same send key is audited and enqueued once
+ok 12 - multiple workers create one agent run and same send key is audited and enqueued once
+  ---
+  duration_ms: 287.345875
+  type: 'test'
+  ...
+# Subtest: bad JSON, unknown tool, duplicate tool id are recorded without corrupting history
+ok 13 - bad JSON, unknown tool, duplicate tool id are recorded without corrupting history
+  ---
+  duration_ms: 74.10475
+  type: 'test'
+  ...
+# Subtest: invalid finish inputs return INVALID_INPUT and allow a later valid completion
+    # Subtest: null followed by end_turn
+    ok 1 - null followed by end_turn
+      ---
+      duration_ms: 80.4155
+      type: 'test'
+      ...
+    # Subtest: null followed by finish
+    ok 2 - null followed by finish
+      ---
+      duration_ms: 77.139417
+      type: 'test'
+      ...
+    # Subtest: missing summary followed by end_turn
+    ok 3 - missing summary followed by end_turn
+      ---
+      duration_ms: 80.015542
+      type: 'test'
+      ...
+    # Subtest: missing summary followed by finish
+    ok 4 - missing summary followed by finish
+      ---
+      duration_ms: 218.163959
+      type: 'test'
+      ...
+    # Subtest: wrong summary type followed by end_turn
+    ok 5 - wrong summary type followed by end_turn
+      ---
+      duration_ms: 82.485208
+      type: 'test'
+      ...
+    # Subtest: wrong summary type followed by finish
+    ok 6 - wrong summary type followed by finish
+      ---
+      duration_ms: 104.476959
+      type: 'test'
+      ...
+    1..6
+ok 14 - invalid finish inputs return INVALID_INPUT and allow a later valid completion
+  ---
+  duration_ms: 643.655709
+  type: 'test'
+  ...
+# Subtest: completed invalid finish recovery honors cancellation and execution limits
+    # Subtest: cancelled
+    ok 1 - cancelled
+      ---
+      duration_ms: 41.430375
+      type: 'test'
+      ...
+    # Subtest: wall_clock
+    ok 2 - wall_clock
+      ---
+      duration_ms: 41.468459
+      type: 'test'
+      ...
+    # Subtest: budget_exhausted
+    ok 3 - budget_exhausted
+      ---
+      duration_ms: 42.649583
+      type: 'test'
+      ...
+    # Subtest: protocol_errors
+    ok 4 - protocol_errors
+      ---
+      duration_ms: 42.825458
+      type: 'test'
+      ...
+    1..4
+ok 15 - completed invalid finish recovery honors cancellation and execution limits
+  ---
+  duration_ms: 169.23025
+  type: 'test'
+  ...
+# Subtest: a successful persisted finish completes recovery without another remote turn
+ok 16 - a successful persisted finish completes recovery without another remote turn
+  ---
+  duration_ms: 43.9575
+  type: 'test'
+  ...
+# Subtest: inconclusive audit blocks without side effects; rejection does not reserve a send key
+ok 17 - inconclusive audit blocks without side effects; rejection does not reserve a send key
+  ---
+  duration_ms: 309.908834
+  type: 'test'
+  ...
+# Subtest: messages arriving during a run become one next trigger and own messages never trigger
+ok 18 - messages arriving during a run become one next trigger and own messages never trigger
+  ---
+  duration_ms: 110.943542
+  type: 'test'
+  ...
+# Subtest: interrupted remote turn is visibly paused and never replayed
+ok 19 - interrupted remote turn is visibly paused and never replayed
+  ---
+  duration_ms: 51.8565
+  type: 'test'
+  ...
+# Subtest: sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step
+ok 20 - sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step
+  ---
+  duration_ms: 57.021916
+  type: 'test'
+  ...
+# Subtest: persisted final and prepared send recover without replaying prior external work
+ok 21 - persisted final and prepared send recover without replaying prior external work
+  ---
+  duration_ms: 83.609458
+  type: 'test'
+  ...
+# Subtest: kick policy and persisted uncertain kick cannot produce a second side effect
+ok 22 - kick policy and persisted uncertain kick cannot produce a second side effect
+  ---
+  duration_ms: 83.397459
+  type: 'test'
+  ...
+# Subtest: repeated reads stop within twelve steps and result bytes remain bounded
+ok 23 - repeated reads stop within twelve steps and result bytes remain bounded
+  ---
+  duration_ms: 478.091583
+  type: 'test'
+  ...
+# Subtest: disabling Agent during its current step cancels after that step, without another turn
+ok 24 - disabling Agent during its current step cancels after that step, without another turn
+  ---
+  duration_ms: 80.13225
+  type: 'test'
+  ...
+# Subtest: activity budget interrupts a late turn and discards the eventual response
+ok 25 - activity budget interrupts a late turn and discards the eventual response
+  ---
+  duration_ms: 337.456042
+  type: 'test'
+  ...
+# Subtest: activity budget expires during audit without authorizing the prepared tool
+ok 26 - activity budget expires during audit without authorizing the prepared tool
+  ---
+  duration_ms: 327.881583
+  type: 'test'
+  ...
+# Subtest: an accepted send whose account becomes terminal yields SEND_FAILED without a resend
+ok 27 - an accepted send whose account becomes terminal yields SEND_FAILED without a resend
+  ---
+  duration_ms: 140.545125
+  type: 'test'
+  ...
+# Subtest: restart catches up a committed send before rebasing the next unscheduled step
+ok 28 - restart catches up a committed send before rebasing the next unscheduled step
+  ---
+  duration_ms: 50.283041
+  type: 'test'
+  ...
+# Subtest: kick permission errors remain tool errors and a confirmed kick succeeds
+ok 29 - kick permission errors remain tool errors and a confirmed kick succeeds
+  ---
+  duration_ms: 207.214792
+  type: 'test'
+  ...
+# Subtest: SEND_TIMEOUT retries with the same key read the eventual send without re-auditing
+ok 30 - SEND_TIMEOUT retries with the same key read the eventual send without re-auditing
+  ---
+  duration_ms: 5077.971209
+  type: 'test'
+  ...
+# Subtest: sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp
+ok 31 - sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp
+  ---
+  duration_ms: 56.612916
+  type: 'test'
+  ...
+# Subtest: loss of the advisory-lock connection aborts a turn without saving a false protocol error
+ok 32 - loss of the advisory-lock connection aborts a turn without saving a false protocol error
+  ---
+  duration_ms: 179.79625
+  type: 'test'
+  ...
+# Subtest: loss of a run lock during audit prevents old-worker effects and permits safe audit recovery
+ok 33 - loss of a run lock during audit prevents old-worker effects and permits safe audit recovery
+  ---
+  duration_ms: 221.6895
+  type: 'test'
+  ...
+# Subtest: kick budget exhaustion ends the run while retaining an uncertain non-replayable effect
+ok 34 - kick budget exhaustion ends the run while retaining an uncertain non-replayable effect
+  ---
+  duration_ms: 147.094083
+  type: 'test'
+  ...
+# Subtest: a stale scheduler transaction cannot enqueue after its ownership connection is lost
+ok 35 - a stale scheduler transaction cannot enqueue after its ownership connection is lost
+  ---
+  duration_ms: 59.863875
+  type: 'test'
+  ...
+# Subtest: closing and recreating modules preserves activity while excluding actual downtime
+ok 36 - closing and recreating modules preserves activity while excluding actual downtime
+  ---
+  duration_ms: 1016.083958
+  type: 'test'
+  ...
+# Subtest: queued runs persist online activity across a real shutdown without counting downtime or a second clock
+ok 37 - queued runs persist online activity across a real shutdown without counting downtime or a second clock
+  ---
+  duration_ms: 2808.482209
+  type: 'test'
+  ...
+# Subtest: a follower cannot execute against a stale activity base while the new clock owner initializes
+ok 38 - a follower cannot execute against a stale activity base while the new clock owner initializes
+  ---
+  duration_ms: 1420.755583
+  type: 'test'
+  ...
+# Subtest: an initialization follower takes over after the blocked clock owner connection is terminated
+ok 39 - an initialization follower takes over after the blocked clock owner connection is terminated
+  ---
+  duration_ms: 2055.430708
+  type: 'test'
+  ...
+# Subtest: frequent activity samples retain subinterval time instead of losing rounded milliseconds
+ok 40 - frequent activity samples retain subinterval time instead of losing rounded milliseconds
+  ---
+  duration_ms: 27.119333
+  type: 'test'
+  ...
+# Subtest: activity clock survives loss of its own PostgreSQL session and only bills once after takeover
+ok 41 - activity clock survives loss of its own PostgreSQL session and only bills once after takeover
+  ---
+  duration_ms: 1529.119709
+  type: 'test'
+  ...
+# Subtest: inconclusive audit step and blocked run roll back together before recovery
+ok 42 - inconclusive audit step and blocked run roll back together before recovery
+  ---
+  duration_ms: 110.005166
+  type: 'test'
+  ...
+# Subtest: persisted legacy audit-block window cannot resume another Agent turn
+ok 43 - persisted legacy audit-block window cannot resume another Agent turn
+  ---
+  duration_ms: 44.527083
+  type: 'test'
+  ...
+# Subtest: timing: the default twelve-second turn timeout discards the late response
+ok 44 - timing: the default twelve-second turn timeout discards the late response # SKIP
+  ---
+  duration_ms: 0.197334
+  type: 'test'
+  ...
+# Subtest: timing: three five-second inconclusive audit attempts block without sending
+ok 45 - timing: three five-second inconclusive audit attempts block without sending # SKIP
+  ---
+  duration_ms: 0.071584
+  type: 'test'
+  ...
+# Subtest: timing: sixty seconds of activity ends the run even below the twelve-step cap
+ok 46 - timing: sixty seconds of activity ends the run even below the twelve-step cap # SKIP
+  ---
+  duration_ms: 0.056417
+  type: 'test'
+  ...
+# Subtest: R09: echo confirmation uses only message_sent observation, preserves it after duplicate and restart
+ok 47 - R09: echo confirmation uses only message_sent observation, preserves it after duplicate and restart
+  ---
+  duration_ms: 1263.441542
+  type: 'test'
+  ...
+# Independent database: kapibala_test_c2cb5a2506634ed1b2cb549d27936594
+# Subtest: R09: query confirmation uses only message_sent observation, preserves it after duplicate and restart
+ok 48 - R09: query confirmation uses only message_sent observation, preserves it after duplicate and restart
+  ---
+  duration_ms: 1363.741042
+  type: 'test'
+  ...
+# Independent database: kapibala_test_0075b1c037424d398d2577ff94b8fb86
+# Subtest: R09: event confirmation uses only message_sent observation, preserves it after duplicate and restart
+ok 49 - R09: event confirmation uses only message_sent observation, preserves it after duplicate and restart
+  ---
+  duration_ms: 644.259792
+  type: 'test'
+  ...
+# Independent database: kapibala_test_7ded6d2b31ee4449aababbc9915e3098
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: R05: a locked group cannot block another group's Agent or sequence; retry preserves one run and one enqueue
+ok 50 - R05: a locked group cannot block another group's Agent or sequence; retry preserves one run and one enqueue
+  ---
+  duration_ms: 401.436917
+  type: 'test'
+  ...
+# Independent database: kapibala_test_12e6477c246240b0876bf805730815e0
+# tick with group lock held: 140ms
+# Subtest: R05: a real slow member reconciliation holds its group lock without stopping another group
+ok 51 - R05: a real slow member reconciliation holds its group lock without stopping another group
+  ---
+  duration_ms: 294.577
+  type: 'test'
+  ...
+# Independent database: kapibala_test_6e3489150d224ba4be43d17c0eca59b1
+# Subtest: R05: busy takeover defers only that run and must rebase it before dispatch after unlock
+ok 52 - R05: busy takeover defers only that run and must rebase it before dispatch after unlock
+  ---
+  duration_ms: 545.012208
+  type: 'test'
+  ...
+# Independent database: kapibala_test_966aa9a8ffb2458482c99565fdccd162
+# Subtest: R09: skipped step still schedules from the actual skip time
+ok 53 - R09: skipped step still schedules from the actual skip time
+  ---
+  duration_ms: 124.820292
+  type: 'test'
+  ...
+# Independent database: kapibala_test_f2c7b138305946a4beb3865253925336
+# Subtest: R09: observation precedes row-lock wait and survives a failed transaction retry
+ok 54 - R09: observation precedes row-lock wait and survives a failed transaction retry
+  ---
+  duration_ms: 318.219708
+  type: 'test'
+  ...
+# Independent database: kapibala_test_c3a9ea8d2a8e418aadd04bdc6d41b534
+# Subtest: R09: migration refuses active old sequences and never fabricates historical observations
+ok 55 - R09: migration refuses active old sequences and never fabricates historical observations
+  ---
+  duration_ms: 78.786583
+  type: 'test'
+  ...
+# Subtest: kick does not enter admission when its real preparation transaction consumes the remaining budget
+ok 56 - kick does not enter admission when its real preparation transaction consumes the remaining budget
+  ---
+  duration_ms: 654.211458
+  type: 'test'
+  ...
+# Independent database: kapibala_test_257e5915bfaa4274808e75f8eaf0021a
+# {"admissions":0,"persistedActiveMs":60198,"recoveryNote":null,"intent":{"accountId":"account-2","dispatchState":"awaiting_admission","targetPlatformUserId":"external-target"}}
+# Subtest: kick blocked across its deadline before fetch ends without inventing an unknown external effect
+ok 57 - kick blocked across its deadline before fetch ends without inventing an unknown external effect
+  ---
+  duration_ms: 1649.508709
+  type: 'test'
+  ...
+# Independent database: kapibala_test_10d4d18a4ab64d0cacbbcb4bbb2e39c8
+# {"blocked":true,"signalAbortedAfterBlock":false,"kickFetchCalls":0,"persistedActiveMs":60537,"recoveryNote":null,"intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}}
+# Subtest: RemoteClient checks the synchronous dispatch guard after real request serialization
+ok 58 - RemoteClient checks the synchronous dispatch guard after real request serialization
+  ---
+  duration_ms: 150.403292
+  type: 'test'
+  ...
+# Independent database: kapibala_test_69a21c1fee89428a91c1c84e827ad628
+# {"serialized":true,"elapsedBeyondDeadlineMs":32.66724999999997,"remoteRequests":0}
+# Subtest: a deadline timer already fired before kick fetch is still a known non-dispatch
+ok 59 - a deadline timer already fired before kick fetch is still a known non-dispatch
+  ---
+  duration_ms: 844.657833
+  type: 'test'
+  ...
+# Independent database: kapibala_test_57f7f8e648ec413a911d6510d461cffe
+# Subtest: failed terminal persistence after a local dispatch rejection keeps the saved intent non-replayable
+ok 60 - failed terminal persistence after a local dispatch rejection keeps the saved intent non-replayable
+  ---
+  duration_ms: 882.86225
+  type: 'test'
+  ...
+# Independent database: kapibala_test_e0829e3755cc4cf083f5e1b4d97be722
+# {"attempts":1,"persistedActiveMs":60266,"stateAfterReplacement":"failed","intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}}
+# Subtest: a real kick sent before its deadline remains an unknown effect if its response times out
+ok 61 - a real kick sent before its deadline remains an unknown effect if its response times out
+  ---
+  duration_ms: 622.904667
+  type: 'test'
+  ...
+# Independent database: kapibala_test_5d28644d02724fe3bb55380764fa3d01
+# Subtest: kick with sufficient budget still dispatches once and preserves the one audit
+ok 62 - kick with sufficient budget still dispatches once and preserves the one audit
+  ---
+  duration_ms: 153.657625
+  type: 'test'
+  ...
+# Independent database: kapibala_test_298c1d10613f4ceb9abab598ab338744
+# Subtest: audit-blocked lifecycle retains the real terminal transaction for a late subscription
+ok 63 - audit-blocked lifecycle retains the real terminal transaction for a late subscription
+  ---
+  duration_ms: 218.082
+  type: 'test'
+  ...
+# Independent database: kapibala_test_b01da50e470f429bb643c95c511fd454
+# {"sample":"audit-blocked-late-attachment","snapshot":{"protocol":"qa-runtime-observation/1","leaseId":"46b916c4-5919-4d62-9f20-a70406a894ee","state":"armed","expiresAt":"2026-10-01T13:17:51.872Z","binding":{"apiUrl":"http://127.0.0.1:62700","revision":"92ddc1db983e8454ee363a4b75998df8998b904a","pid":11105,"observedOwnerToken":"0b5b0ac4-2267-480d-b750-17f265025d8f"},"correlation":{"kind":"tool-wait","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","toolUseId":"all-run-steps"},"events":[{"seq":1,"at":"2026-10-01T13:17:46.874Z","kind":"lifecycle-observation-attached","attemptId":"e551e148-6bac-4ab6-b488-74fd92eee8af","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[353.532208,353.532208],"applicationPid":11105,"instancePid":11105,"databaseIdentity":"b471b08752829cf5d1358d6e77b6de13ae019c3682d2a4721101f3e66ef35ca0","resourceId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","correlation":{"kind":"tool-wait","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","toolUseId":"all-run-steps"},"historyScope":"this-process-only","droppedThroughSourceSeq":0,"includesPriorProcessHistory":false},{"kind":"agent-run-created","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","attemptId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","creationWindowMs":[284.019166,290.173083],"transactionBeginAcknowledgedByMs":284.602916,"creationInsertWindowMs":[286.947875,287.516875],"commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[290.215375,290.215375],"applicationPid":11105,"at":"2026-10-01T13:17:46.811Z","seq":2,"sourceSeq":1,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","toolUseId":"all-run-steps"}},{"kind":"agent-turn-dispatched","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","attemptId":"e02a6300-425e-4bcd-a0d3-098e9c39cfd9","stepId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060:1","ordinal":1,"clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[301.46875,301.46875],"applicationPid":11105,"at":"2026-10-01T13:17:46.822Z","seq":3,"sourceSeq":2,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","toolUseId":"all-run-steps"}},{"kind":"agent-turn-response-received","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","attemptId":"e02a6300-425e-4bcd-a0d3-098e9c39cfd9","stepId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060:1","responseStatus":200,"clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[309.1355,309.1355],"applicationPid":11105,"at":"2026-10-01T13:17:46.830Z","seq":4,"sourceSeq":3,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","toolUseId":"all-run-steps"}},{"kind":"send-tool-prepared","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","attemptId":"e02a6300-425e-4bcd-a0d3-098e9c39cfd9","stepId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060:1","toolUseId":"blocked-send","commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[315.214875,315.214875],"applicationPid":11105,"at":"2026-10-01T13:17:46.836Z","seq":5,"sourceSeq":4,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","stepId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060:1","toolUseId":"blocked-send","attemptId":"cc362da4-0ba8-4ba4-9e58-ad67f6475ec3","idempotencyKey":"blocked","kind":"send-tool-entered","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[316.673208,316.673208],"applicationPid":11105,"at":"2026-10-01T13:17:46.837Z","seq":6,"sourceSeq":5,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","stepId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060:1","toolUseId":"blocked-send","attemptId":"cc362da4-0ba8-4ba4-9e58-ad67f6475ec3","idempotencyKey":"blocked","kind":"send-audit-started","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[317.154541,317.154541],"applicationPid":11105,"at":"2026-10-01T13:17:46.838Z","seq":7,"sourceSeq":6,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","toolUseId":"all-run-steps"}},{"kind":"agent-termination-decided","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","attemptId":"cc362da4-0ba8-4ba4-9e58-ad67f6475ec3","status":"blocked","reason":"audit_blocked","decisionWindowMs":[331.40675,331.410666],"clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[331.412,331.412],"applicationPid":11105,"at":"2026-10-01T13:17:46.852Z","seq":8,"sourceSeq":7,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","toolUseId":"all-run-steps"}},{"kind":"agent-terminal-committed","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","attemptId":"cc362da4-0ba8-4ba4-9e58-ad67f6475ec3","status":"blocked","reason":"audit_blocked","commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[335.164541,335.164541],"applicationPid":11105,"at":"2026-10-01T13:17:46.856Z","seq":9,"sourceSeq":8,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","toolUseId":"all-run-steps"}},{"kind":"send-tool-history-committed","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","attemptId":"cc362da4-0ba8-4ba4-9e58-ad67f6475ec3","stepId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060:1","toolUseId":"blocked-send","errorCode":"AUDIT_REJECTED","result":{"code":"AUDIT_REJECTED","message":"Audit service returned no conclusive verdict after three attempts.","hint":"The run is blocked; no side effect was executed."},"commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[335.188541,335.188541],"applicationPid":11105,"at":"2026-10-01T13:17:46.856Z","seq":10,"sourceSeq":9,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","stepId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060:1","toolUseId":"blocked-send","attemptId":"cc362da4-0ba8-4ba4-9e58-ad67f6475ec3","idempotencyKey":"blocked","kind":"send-audit-completed","verdict":"blocked","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[338.578541,338.578541],"applicationPid":11105,"at":"2026-10-01T13:17:46.859Z","seq":11,"sourceSeq":10,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"3b98bb20-f420-4b4a-aa1e-19752f6b5060","toolUseId":"all-run-steps"}}]}}
+# Subtest: real send wait resolves before history/next turn; same key reuses one outbound after real 504 and positive query
+ok 64 - real send wait resolves before history/next turn; same key reuses one outbound after real 504 and positive query
+  ---
+  duration_ms: 5200.123542
+  type: 'test'
+  ...
+# Independent database: kapibala_test_bc15ffe7b4d14a7bb443219190be983d
+# {"sample":"tool-wait-real-504","snapshot":{"protocol":"qa-runtime-observation/1","leaseId":"1eb3a762-5998-4fb7-8c84-119d2f028ec9","state":"armed","expiresAt":"2026-10-01T13:17:57.019Z","binding":{"apiUrl":"http://127.0.0.1:62709","revision":"92ddc1db983e8454ee363a4b75998df8998b904a","pid":11105,"observedOwnerToken":"8bfd9fcd-06a1-477c-ace9-b99cab6bf3c9"},"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"events":[{"seq":1,"at":"2026-10-01T13:17:47.020Z","kind":"lifecycle-observation-attached","attemptId":"0a02f8be-7109-40ab-861f-6d26c73df700","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[499.15025,499.15025],"applicationPid":11105,"instancePid":11105,"databaseIdentity":"239ce105d5e47ac69b93b94cc05e2a819482079338fc14c023885e14b6fb6467","resourceId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"historyScope":"this-process-only","droppedThroughSourceSeq":0,"includesPriorProcessHistory":false},{"kind":"agent-run-created","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","attemptId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","creationWindowMs":[445.785916,451.294958],"transactionBeginAcknowledgedByMs":446.246583,"creationInsertWindowMs":[448.14475,448.67425],"commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[451.296833,451.296833],"applicationPid":11105,"at":"2026-10-01T13:17:46.972Z","seq":2,"sourceSeq":1,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"kind":"agent-turn-dispatched","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","attemptId":"beef4ba8-c37b-4565-ad55-957f6592d8cf","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:1","ordinal":1,"clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[461.662041,461.662041],"applicationPid":11105,"at":"2026-10-01T13:17:46.982Z","seq":3,"sourceSeq":2,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"kind":"agent-turn-response-received","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","attemptId":"beef4ba8-c37b-4565-ad55-957f6592d8cf","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:1","responseStatus":200,"clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[462.87075,462.87075],"applicationPid":11105,"at":"2026-10-01T13:17:46.983Z","seq":4,"sourceSeq":3,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"kind":"send-tool-prepared","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","attemptId":"beef4ba8-c37b-4565-ad55-957f6592d8cf","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:1","toolUseId":"send-1","commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[467.304166,467.304166],"applicationPid":11105,"at":"2026-10-01T13:17:46.988Z","seq":5,"sourceSeq":4,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:1","toolUseId":"send-1","attemptId":"96a050c6-1988-4c6b-aabb-14b53f028f41","idempotencyKey":"same-key","kind":"send-tool-entered","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[468.543083,468.543083],"applicationPid":11105,"at":"2026-10-01T13:17:46.989Z","seq":6,"sourceSeq":5,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:1","toolUseId":"send-1","attemptId":"96a050c6-1988-4c6b-aabb-14b53f028f41","idempotencyKey":"same-key","kind":"send-audit-started","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[468.872875,468.872875],"applicationPid":11105,"at":"2026-10-01T13:17:46.989Z","seq":7,"sourceSeq":6,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:1","toolUseId":"send-1","attemptId":"96a050c6-1988-4c6b-aabb-14b53f028f41","idempotencyKey":"same-key","kind":"send-audit-completed","verdict":"pass","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[474.774041,474.774041],"applicationPid":11105,"at":"2026-10-01T13:17:46.995Z","seq":8,"sourceSeq":7,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:1","toolUseId":"send-1","attemptId":"96a050c6-1988-4c6b-aabb-14b53f028f41","idempotencyKey":"same-key","kind":"send-key-resolved","clientMsgId":"6791b7cc-43cf-4edd-83cd-c761c7938855","keyReused":false,"clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[480.037875,480.037875],"applicationPid":11105,"at":"2026-10-01T13:17:47.000Z","seq":9,"sourceSeq":8,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:1","toolUseId":"send-1","attemptId":"96a050c6-1988-4c6b-aabb-14b53f028f41","idempotencyKey":"same-key","kind":"send-wait-started","clientMsgId":"6791b7cc-43cf-4edd-83cd-c761c7938855","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[480.071125,480.071125],"applicationPid":11105,"at":"2026-10-01T13:17:47.001Z","seq":10,"sourceSeq":9,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:1","toolUseId":"send-1","attemptId":"96a050c6-1988-4c6b-aabb-14b53f028f41","idempotencyKey":"same-key","kind":"send-wait-result-ready","clientMsgId":"6791b7cc-43cf-4edd-83cd-c761c7938855","errorCode":"SEND_TIMEOUT","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5483.633666,5483.633666],"applicationPid":11105,"at":"2026-10-01T13:17:52.004Z","seq":11,"sourceSeq":14,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:1","toolUseId":"send-1","attemptId":"96a050c6-1988-4c6b-aabb-14b53f028f41","idempotencyKey":"same-key","kind":"send-tool-result-returned","clientMsgId":"6791b7cc-43cf-4edd-83cd-c761c7938855","errorCode":"SEND_TIMEOUT","result":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."},"clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5483.737,5483.737],"applicationPid":11105,"at":"2026-10-01T13:17:52.004Z","seq":12,"sourceSeq":15,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"kind":"send-tool-history-committed","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","attemptId":"96a050c6-1988-4c6b-aabb-14b53f028f41","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:1","toolUseId":"send-1","errorCode":"SEND_TIMEOUT","result":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."},"commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5487.986208,5487.986208],"applicationPid":11105,"at":"2026-10-01T13:17:52.009Z","seq":13,"sourceSeq":16,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"kind":"agent-turn-dispatched","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","attemptId":"ad031613-d42c-49b6-9ff8-98b7b603d1db","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:2","ordinal":2,"clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5492.88525,5492.88525],"applicationPid":11105,"at":"2026-10-01T13:17:52.013Z","seq":14,"sourceSeq":17,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"kind":"agent-turn-response-received","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","attemptId":"ad031613-d42c-49b6-9ff8-98b7b603d1db","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:2","responseStatus":200,"clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5516.184,5516.184],"applicationPid":11105,"at":"2026-10-01T13:17:52.037Z","seq":15,"sourceSeq":23,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"kind":"send-tool-prepared","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","attemptId":"ad031613-d42c-49b6-9ff8-98b7b603d1db","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:2","toolUseId":"send-2","commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5520.571125,5520.571125],"applicationPid":11105,"at":"2026-10-01T13:17:52.041Z","seq":16,"sourceSeq":24,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:2","toolUseId":"send-2","attemptId":"5a9c0c5c-4154-4555-b75b-d4ba6f86f386","idempotencyKey":"same-key","kind":"send-tool-entered","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5521.839208,5521.839208],"applicationPid":11105,"at":"2026-10-01T13:17:52.042Z","seq":17,"sourceSeq":25,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:2","toolUseId":"send-2","attemptId":"5a9c0c5c-4154-4555-b75b-d4ba6f86f386","idempotencyKey":"same-key","kind":"send-key-resolved","clientMsgId":"6791b7cc-43cf-4edd-83cd-c761c7938855","keyReused":true,"clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5522.22325,5522.22325],"applicationPid":11105,"at":"2026-10-01T13:17:52.043Z","seq":18,"sourceSeq":26,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:2","toolUseId":"send-2","attemptId":"5a9c0c5c-4154-4555-b75b-d4ba6f86f386","idempotencyKey":"same-key","kind":"send-wait-started","clientMsgId":"6791b7cc-43cf-4edd-83cd-c761c7938855","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5522.2425,5522.2425],"applicationPid":11105,"at":"2026-10-01T13:17:52.043Z","seq":19,"sourceSeq":27,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:2","toolUseId":"send-2","attemptId":"5a9c0c5c-4154-4555-b75b-d4ba6f86f386","idempotencyKey":"same-key","kind":"send-wait-result-ready","clientMsgId":"6791b7cc-43cf-4edd-83cd-c761c7938855","errorCode":null,"clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5523.035625,5523.035625],"applicationPid":11105,"at":"2026-10-01T13:17:52.044Z","seq":20,"sourceSeq":28,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:2","toolUseId":"send-2","attemptId":"5a9c0c5c-4154-4555-b75b-d4ba6f86f386","idempotencyKey":"same-key","kind":"send-tool-result-returned","clientMsgId":"6791b7cc-43cf-4edd-83cd-c761c7938855","errorCode":null,"result":{"clientMsgId":"6791b7cc-43cf-4edd-83cd-c761c7938855","deliveryStatus":"sent"},"clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5523.051125,5523.051125],"applicationPid":11105,"at":"2026-10-01T13:17:52.044Z","seq":21,"sourceSeq":29,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"kind":"send-tool-history-committed","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","attemptId":"5a9c0c5c-4154-4555-b75b-d4ba6f86f386","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:2","toolUseId":"send-2","errorCode":null,"result":{"clientMsgId":"6791b7cc-43cf-4edd-83cd-c761c7938855","deliveryStatus":"sent"},"commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5525.1785,5525.1785],"applicationPid":11105,"at":"2026-10-01T13:17:52.046Z","seq":22,"sourceSeq":30,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"kind":"agent-turn-dispatched","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","attemptId":"15cbc82c-b7c8-41ef-97ea-9565076b8681","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:3","ordinal":3,"clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5528.928041,5528.928041],"applicationPid":11105,"at":"2026-10-01T13:17:52.049Z","seq":23,"sourceSeq":31,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"kind":"agent-turn-response-received","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","attemptId":"15cbc82c-b7c8-41ef-97ea-9565076b8681","stepId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f:3","responseStatus":200,"clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5530.870208,5530.870208],"applicationPid":11105,"at":"2026-10-01T13:17:52.051Z","seq":24,"sourceSeq":32,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"kind":"agent-termination-decided","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","attemptId":"235dbe92-772a-4f6e-996c-f94c0a5212f9","decisionWindowMs":[5536.199375,5536.218416],"status":"finished","reason":"final","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5536.223458,5536.223458],"applicationPid":11105,"at":"2026-10-01T13:17:52.057Z","seq":25,"sourceSeq":33,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}},{"kind":"agent-terminal-committed","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","attemptId":"235dbe92-772a-4f6e-996c-f94c0a5212f9","status":"finished","reason":"final","commitBoundary":"outer-commit-confirmed","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","monotonicMs":[5539.865208,5539.865208],"applicationPid":11105,"at":"2026-10-01T13:17:52.060Z","seq":26,"sourceSeq":34,"instancePid":11105,"correlation":{"kind":"tool-wait","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"}}]},"activity":{"protocol":"qa-runtime-observation/1","leaseId":"54a9dba4-91ea-4fef-90ec-476a26f9ceb8","state":"armed","expiresAt":"2026-10-01T13:17:57.020Z","binding":{"apiUrl":"http://127.0.0.1:62709","revision":"92ddc1db983e8454ee363a4b75998df8998b904a","pid":11105,"observedOwnerToken":"8bfd9fcd-06a1-477c-ace9-b99cab6bf3c9"},"correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"events":[{"seq":1,"at":"2026-10-01T13:17:47.020Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":27,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[48,55]},{"seq":2,"at":"2026-10-01T13:17:47.459Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":491,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[486,493]},{"seq":3,"at":"2026-10-01T13:17:47.959Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":991,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[986,993]},{"seq":4,"at":"2026-10-01T13:17:48.460Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":1493,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[1488,1494]},{"seq":5,"at":"2026-10-01T13:17:48.961Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":1993,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[1989,1995]},{"seq":6,"at":"2026-10-01T13:17:49.461Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":2494,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[2489,2495]},{"seq":7,"at":"2026-10-01T13:17:49.962Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":2995,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[2990,2997]},{"seq":8,"at":"2026-10-01T13:17:50.462Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":3495,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[3490,3496]},{"seq":9,"at":"2026-10-01T13:17:50.966Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":3997,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[3994,4000]},{"seq":10,"at":"2026-10-01T13:17:51.464Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":4497,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[4492,4498]},{"seq":11,"at":"2026-10-01T13:17:51.966Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":4998,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[4993,5000]},{"seq":12,"at":"2026-10-01T13:17:52.012Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":5046,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5040,5046]},{"seq":13,"at":"2026-10-01T13:17:52.038Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":5072,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5066,5072]},{"seq":14,"at":"2026-10-01T13:17:52.049Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":5082,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5076,5083]},{"seq":15,"at":"2026-10-01T13:17:52.052Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":5086,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5080,5087]},{"seq":16,"at":"2026-10-01T13:17:52.058Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityState":"active","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":5092,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5085,5092]},{"seq":17,"at":"2026-10-01T13:17:52.060Z","kind":"activity-terminal","correlation":{"kind":"activity","groupId":"g","runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","toolUseId":"all-run-steps"},"attemptId":"6ce42503-2760-42f2-b86d-a22eabe1b506","instancePid":11105,"runId":"02d61768-2bea-46d6-8c6e-d0c16c0f645f","groupId":"g","clockDomain":"process-performance:11105:75c5b514-31c7-4ff6-b3d0-fab7bda67bb5","clockUnit":"ms","applicationPid":11105,"creationOrEpochStartWindowMs":[445.785916,451.325125],"activityEndWindowMs":[5536.199375,5539.914916],"activityState":"terminal","includesUnsavedTail":true,"epochIds":["561d4876-d6a9-44b2-af6a-28bc462da379"],"persistedActiveMs":5092,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5084,5095]}]},"measuredWaitMs":5003.665875,"resultReturnWindowMs":[5483.633666,5483.737],"conclusion":"development observation only; no 5000ms tolerance or acceptance verdict"}
+# Subtest: real controller preserves lost-response dispatch identity across SIGKILL and observes automatic 404 queries without inventing absence
+not ok 65 - real controller preserves lost-response dispatch identity across SIGKILL and observes automatic 404 queries without inventing absence
+  ---
+  duration_ms: 268.701125
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/qa-backend-lifecycle.test.ts:288:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Start failure: /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/ownership.ts:61
+        throw new ControlError(
+              ^
+    
+    ControlError: Commit engineering and product sources before starting the controlled SUT
+        at sourceRevision (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-observation-server.ts:45:18) {
+      status: 409
+    }
+    
+    Node.js v24.21.0
+    
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    sourceRevision (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-observation-server.ts:45:18) {
+    <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/runtime-observation-fixture.ts:117:13)
+    async start (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/runtime-observation-fixture.ts:111:5)
+    async runtimeFixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/runtime-observation-fixture.ts:145:3)
+    async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/qa-backend-lifecycle.test.ts:294:13)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+1..65
+# tests 75
+# suites 0
+# pass 70
+# fail 2
+# cancelled 0
+# skipped 3
+# todo 0
+# duration_ms 28025.810708

@@ -1,0 +1,78 @@
+{
+  "testedProductRevision": "9d701a4e2e86a6f0544b63f47a2d3ba4670141f2",
+  "source": "strict-deadline-final-fixed.tap",
+  "sourceRole": "development measurement, not independent QA",
+  "records": [
+    {
+      "case": "AGENT-025-development-minute",
+      "activityTerminal": {
+        "seq": 729,
+        "at": "2026-10-01T13:24:46.713Z",
+        "kind": "activity-terminal",
+        "correlation": {
+          "kind": "activity",
+          "groupId": "minute-g",
+          "runId": "f5db3713-f878-4b2c-a81e-c3857b1a8159",
+          "toolUseId": "all-run-steps"
+        },
+        "attemptId": "7c352d3f-e356-42ca-a28c-f9c8d52ea96f",
+        "instancePid": 25289,
+        "runId": "f5db3713-f878-4b2c-a81e-c3857b1a8159",
+        "groupId": "minute-g",
+        "clockDomain": "process-performance:25290:2f9364cb-e27c-4cc9-bf94-e396088c4442",
+        "clockUnit": "ms",
+        "applicationPid": 25290,
+        "creationOrEpochStartWindowMs": [
+          314.535208,
+          321.235125
+        ],
+        "activityEndWindowMs": [
+          60324.151708,
+          60327.711083
+        ],
+        "activityState": "terminal",
+        "includesUnsavedTail": true,
+        "epochIds": [
+          "66174ddc-6842-4009-82d9-07622a587077"
+        ],
+        "persistedActiveMs": 60012,
+        "clockSource": "process performance.now brackets around confirmed product creation, ownership and terminal boundaries",
+        "activeElapsedMs": [
+          60002,
+          60014
+        ]
+      },
+      "creationToDecisionMs": [
+        60003.017541999994,
+        60009.628875
+      ],
+      "turns": 8,
+      "strict60000Result": "FAIL"
+    },
+    {
+      "case": "DC06-measurement-only",
+      "terminal": {
+        "groupId": "g",
+        "runId": "capacity-run",
+        "toolUseId": "kick-one",
+        "seq": 2164,
+        "at": "2026-10-01T13:25:02.980Z",
+        "kind": "run-terminal",
+        "status": "failed",
+        "endReason": "wall_clock",
+        "activeElapsedMs": [
+          60003,
+          60078
+        ],
+        "clockSource": "persisted active_ms through last sample; upper includes DB sample-to-terminal-observation tail plus 1ms timestamp resolution; prior hard-crash unsampled tail is not reconstructable"
+      },
+      "persisted": 60003,
+      "independentElapsedMs": [
+        60002.66379199999,
+        60018.422957999996
+      ],
+      "limit": "No 60000 clamp or new tolerance; QA classifies its own exact threshold. Valid only for this uninterrupted healthy clock epoch.",
+      "strict60000Result": "FAIL"
+    }
+  ]
+}

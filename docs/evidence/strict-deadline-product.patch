@@ -1,0 +1,30 @@
+diff --git a/apps/server/src/modules/automation/tool-execution.ts b/apps/server/src/modules/automation/tool-execution.ts
+index 77a52b3..ed4ef08 100644
+--- a/apps/server/src/modules/automation/tool-execution.ts
++++ b/apps/server/src/modules/automation/tool-execution.ts
+@@ -360 +360 @@ export class AgentTools {
+-    do {
++    while (Date.now() < deadline) {
+@@ -361,0 +362,9 @@ export class AgentTools {
++      // A read may wait behind database locks beyond the original deadline.
++      // Do not authorize another read or use a late observation as this tool's
++      // result. The durable message is unchanged and the same key can read it
++      // again on a later invocation. Reads stay serial; no abandoned query races.
++      if (Date.now() >= deadline) break;
++      // A timely confirmed send is final even if the account later becomes
++      // terminal. Its outcome does not depend on another account read.
++      if (message?.deliveryStatus === "sent")
++        return { value: { clientMsgId, deliveryStatus: "sent" } };
+@@ -367,0 +377 @@ export class AgentTools {
++      if (Date.now() >= deadline) break;
+@@ -369 +378,0 @@ export class AgentTools {
+-        message?.deliveryStatus !== "sent" &&
+@@ -377,4 +386 @@ export class AgentTools {
+-      if (
+-        message &&
+-        ["accepted", "sent"].includes(message.deliveryStatus ?? "")
+-      )
++      if (message?.deliveryStatus === "accepted")
+@@ -400 +406 @@ export class AgentTools {
+-    } while (Date.now() < deadline);
++    }

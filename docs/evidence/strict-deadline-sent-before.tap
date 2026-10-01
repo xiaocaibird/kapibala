@@ -1,0 +1,35 @@
+TAP version 13
+# Subtest: Agent delivery returns a timely sent observation without waiting for an unrelated account lock
+not ok 1 - Agent delivery returns a timely sent observation without waiting for an unrelated account lock
+  ---
+  duration_ms: 405.131583
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-delivery-deadline.test.ts:244:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    sent already proves delivery and is exempt from account-terminal rejection
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-delivery-deadline.test.ts:297:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Independent database: kapibala_test_a4eaa0d9efd842559822a8a5a3afaec4
+# {"case":"timely-sent","elapsedMs":256.21608399999997,"accountReads":1,"releasedAtResult":true}
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 562.959125

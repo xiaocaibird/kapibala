@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: Agent delivery discards a late messages read (accepted/online) after its original five-second deadline
+ok 1 - Agent delivery discards a late messages read (accepted/online) after its original five-second deadline
+  ---
+  duration_ms: 5278.378667
+  type: 'test'
+  ...
+# Independent database: kapibala_test_41178e63493b441ebb2287e4017705ac
+# {"table":"messages","messageStatus":"accepted","accountStatus":"online","elapsedMs":5112.585416999999,"accountReads":0,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+# Subtest: Agent delivery discards a late accounts read (accepted/online) after its original five-second deadline
+ok 2 - Agent delivery discards a late accounts read (accepted/online) after its original five-second deadline
+  ---
+  duration_ms: 5238.990084
+  type: 'test'
+  ...
+# Independent database: kapibala_test_03b27d033b8d41daa576e0302da44fe1
+# {"table":"accounts","messageStatus":"accepted","accountStatus":"online","elapsedMs":5122.359042000001,"accountReads":1,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+# Subtest: Agent delivery discards a late messages read (failed/online) after its original five-second deadline
+ok 3 - Agent delivery discards a late messages read (failed/online) after its original five-second deadline
+  ---
+  duration_ms: 5227.318333
+  type: 'test'
+  ...
+# Independent database: kapibala_test_6c1736bb05a94af0b8473179ea06abad
+# {"table":"messages","messageStatus":"failed","accountStatus":"online","elapsedMs":5111.015165999999,"accountReads":0,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+# Subtest: Agent delivery discards a late accounts read (accepted/suspended) after its original five-second deadline
+ok 4 - Agent delivery discards a late accounts read (accepted/suspended) after its original five-second deadline
+  ---
+  duration_ms: 5248.413083
+  type: 'test'
+  ...
+# Independent database: kapibala_test_873a0b8109df467ebf5539c8ae395bc2
+# {"table":"accounts","messageStatus":"accepted","accountStatus":"suspended","elapsedMs":5122.504375000002,"accountReads":1,"outcome":{"errorCode":"SEND_TIMEOUT","value":{"code":"SEND_TIMEOUT","message":"Delivery could not be confirmed within five seconds.","hint":"Retrying this idempotency key reads the same outbound message."}}}
+# Subtest: Agent delivery with no remaining wait does not start message or account reads
+ok 5 - Agent delivery with no remaining wait does not start message or account reads
+  ---
+  duration_ms: 95.404583
+  type: 'test'
+  ...
+# Independent database: kapibala_test_df65d0eb50d542bba0cdd64b7bae06ea
+# Subtest: Agent delivery retains the ownership failure after a blocked read and does not complete the step
+ok 6 - Agent delivery retains the ownership failure after a blocked read and does not complete the step
+  ---
+  duration_ms: 88.469375
+  type: 'test'
+  ...
+# Independent database: kapibala_test_9832729c8e37421a917a562b6d125278
+# Subtest: Agent delivery returns a timely sent observation without waiting for an unrelated account lock
+ok 7 - Agent delivery returns a timely sent observation without waiting for an unrelated account lock
+  ---
+  duration_ms: 88.42775
+  type: 'test'
+  ...
+# Independent database: kapibala_test_09384ad9ede6450ca0ee6dccd1eb0fb4
+# {"case":"timely-sent","elapsedMs":5.823292000000947,"accountReads":0,"releasedAtResult":false}
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 21426.311375

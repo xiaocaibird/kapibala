@@ -1,0 +1,62 @@
+TAP version 13
+# Subtest: Agent delivery discards a messages read that completes after its original five-second deadline
+not ok 1 - Agent delivery discards a messages read that completes after its original five-second deadline
+  ---
+  duration_ms: 5308.678792
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-delivery-deadline.test.ts:61:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - 'SEND_TIMEOUT'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'SEND_TIMEOUT'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-delivery-deadline.test.ts:119:14)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Independent database: kapibala_test_1635581c50e44ff3ba372b8566de1e95
+# {"table":"messages","elapsedMs":5115.416167,"accountReads":1,"outcome":{"value":{"clientMsgId":"d729b9bb-a6f3-4f4c-9659-aaac606f476e","deliveryStatus":"accepted"}}}
+# Subtest: Agent delivery discards a accounts read that completes after its original five-second deadline
+not ok 2 - Agent delivery discards a accounts read that completes after its original five-second deadline
+  ---
+  duration_ms: 5240.059084
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-delivery-deadline.test.ts:61:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + undefined
+    - 'SEND_TIMEOUT'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'SEND_TIMEOUT'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-delivery-deadline.test.ts:119:14)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Independent database: kapibala_test_3ff3a1eedbb847c5adab6cff27915cac
+# {"table":"accounts","elapsedMs":5121.5176249999995,"accountReads":1,"outcome":{"value":{"clientMsgId":"f249705b-2e67-46c5-83d9-0668338925ef","deliveryStatus":"accepted"}}}
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10785.914416
