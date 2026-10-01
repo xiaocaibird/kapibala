@@ -33,14 +33,14 @@ export function AgentRuns({
     "/api/groups",
     groupsSchema,
   );
-  const [initialGroup, setInitialGroup] = useState("");
-  const groupId = selectedGroup ?? (initialGroup || data?.[0]?.id || "");
+  const [localChoice, setLocalChoice] = useState("");
+  const groupId = selectedGroup ?? (localChoice || data?.[0]?.id || "");
   const selectedMissing = Boolean(
     data && groupId && !data.some((group) => group.id === groupId),
   );
   useLayoutEffect(() => {
-    if (!initialGroup && groupId) setInitialGroup(groupId);
-  }, [groupId, initialGroup]);
+    if (!localChoice && groupId) setLocalChoice(groupId);
+  }, [groupId, localChoice]);
   return (
     <PageAttentionScope
       key={groupId}
@@ -71,6 +71,9 @@ export function AgentRuns({
             <select
               value={groupId}
               onChange={(event) => {
+                // Navigation persistence is optional; list selection must still
+                // work when storage is unavailable and links have no context.
+                setLocalChoice(event.target.value);
                 location.hash = agentListHref(event.target.value);
               }}
             >

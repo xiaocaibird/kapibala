@@ -11,8 +11,13 @@ import {
   refreshAccessToken,
   request,
   ApiError,
+  getSessionGeneration,
 } from "../api/client";
 import { userSchema, type User } from "../api/schemas";
+import {
+  activateAgentNavigationSession,
+  clearAgentNavigationSession,
+} from "./agentNavigationSession";
 interface AuthState {
   user: User | null;
   restoring: boolean;
@@ -27,12 +32,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [restoreError, setRestoreError] = useState<string | null>(null);
   useEffect(() => {
     let active = true;
-    const expired = () => setUser(null);
+    const generation = getSessionGeneration();
+    const expired = () => {
+      clearAgentNavigationSession();
+      setUser(null);
+    };
     window.addEventListener("session-expired", expired);
     void refreshAccessToken()
       .then(() => request("/api/auth/me", userSchema))
       .then((value) => {
-        if (active) setUser(value);
+        if (active && getSessionGeneration() === generation) {
+          activateAgentNavigationSession(value, true);
+          setUser(value);
+        }
       })
       .catch((error: unknown) => {
         if (active && !(error instanceof ApiError && error.status === 401))
@@ -47,8 +59,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
   const login = async (username: string, password: string): Promise<void> => {
+    // Invalidate before either request: a successful login followed by /me
+    // failure must not revive the preceding login's hints on refresh.
+    clearAgentNavigationSession();
     await loginSession(username, password);
-    setUser(await request("/api/auth/me", userSchema));
+    const current = await request("/api/auth/me", userSchema);
+    activateAgentNavigationSession(current, false);
+    setUser(current);
     setRestoreError(null);
   };
   const logout = async (): Promise<void> => {

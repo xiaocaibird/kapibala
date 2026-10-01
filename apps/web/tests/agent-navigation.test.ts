@@ -6,10 +6,14 @@ import {
   agentReturnLink,
   parseRoute,
 } from "../src/hooks/useRoute";
+const context = "this-login-context";
 
 test("Agent detail carries only a whitelisted origin and leaves identifiers intact", () => {
   for (const origin of ["groups", "agent-runs"] as const) {
-    const route = parseRoute(agentDetailHref("run/含?&#", origin));
+    const route = parseRoute(
+      agentDetailHref("run/含?&#", origin, undefined, context),
+      context,
+    );
     assert.equal(route.id, "run/含?&#");
     assert.equal(route.agentOrigin, origin);
     assert.equal(route.agentGroup, null);
@@ -26,16 +30,36 @@ test("Agent detail carries only a whitelisted origin and leaves identifiers inta
 });
 
 test("Agent list selection survives internal return with reserved characters", () => {
-  const back = agentReturnLink("agent-runs", "group/含?&#");
-  assert.equal(parseRoute(back.href).agentGroup, "group/含?&#");
+  const back = agentReturnLink("agent-runs", "group/含?&#", context);
+  assert.equal(parseRoute(back.href, context).agentGroup, "group/含?&#");
   assert.equal(parseRoute(back.href).id, null);
-  assert.equal(back.href, agentListHref("group/含?&#"));
-  const pending = parseRoute(agentDetailHref("r", "agent-runs", "group/含?&#"));
+  assert.equal(back.href, agentListHref("group/含?&#", context));
+  const pending = parseRoute(
+    agentDetailHref("r", "agent-runs", "group/含?&#", context),
+    context,
+  );
   assert.equal(pending.agentGroup, "group/含?&#");
   assert.equal(
-    agentReturnLink(pending.agentOrigin, pending.agentGroup!).href,
+    agentReturnLink(pending.agentOrigin, pending.agentGroup!, context).href,
     back.href,
   );
+});
+
+test("old or missing login contexts discard both detail origin and list selection", () => {
+  const detail = agentDetailHref("r", "groups", "g", "old-login");
+  const list = agentListHref("g", "old-login");
+  for (const current of ["new-login", null]) {
+    assert.equal(parseRoute(detail, current).id, "r");
+    assert.equal(parseRoute(detail, current).agentOrigin, null);
+    assert.equal(parseRoute(detail, current).agentGroup, null);
+    assert.equal(parseRoute(list, current).agentGroup, null);
+  }
+  assert.equal(
+    parseRoute("#/agent-runs/r?from=groups&group=g", context).agentOrigin,
+    null,
+  );
+  assert.equal(agentDetailHref("r", "groups", "g", null), "#/agent-runs/r");
+  assert.equal(agentListHref("g", null), "#/agent-runs");
 });
 
 test("group-origin return and direct links have internal loading/failure fallbacks", () => {

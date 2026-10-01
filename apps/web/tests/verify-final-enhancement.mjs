@@ -31,6 +31,8 @@ const files = [
   "apps/web/src/pages/AgentRuns.tsx",
   "apps/web/src/components/AgentRunList.tsx",
   "apps/web/src/App.tsx",
+  "apps/web/src/state/auth.tsx",
+  "apps/web/src/state/agentNavigationSession.ts",
 ];
 const hash = (body) => createHash("sha256").update(body).digest("hex");
 const report = {
@@ -81,9 +83,24 @@ const checkEventually = async (check, timeout = 5000) => {
   } while (Date.now() < end);
   assert.fail("Condition did not become true");
 };
-async function open(hashRoute = "#/groups/ui-group-a") {
+async function open(hashRoute = "#/groups/ui-group-a", denyStorage = false) {
   await page?.close();
   page = await context.newPage();
+  if (denyStorage)
+    await page.addInitScript(() => {
+      const write = Storage.prototype.setItem;
+      Storage.prototype.setItem = function (key, value) {
+        if (
+          this === sessionStorage &&
+          key === "kapibala:agentNavigationSession"
+        )
+          throw new DOMException(
+            "Navigation storage quota in isolated development check",
+            "QuotaExceededError",
+          );
+        return write.call(this, key, value);
+      };
+    });
   page.setDefaultTimeout(7000);
   page.on("pageerror", (error) => report.pageErrors.push(error.message));
   await page.goto(`${vite.resolvedUrls.local[0]}${hashRoute}`);
@@ -156,6 +173,29 @@ const capture = async (name) => {
   await page.screenshot({ path, fullPage: true });
   report.screenshots.push({ name, path, sha256: hash(await readFile(path)) });
 };
+async function loginAs(username) {
+  if (await page.getByRole("button", { name: "退出登录", exact: true }).count())
+    await page.getByRole("button", { name: "退出登录", exact: true }).click();
+  await page.getByLabel("用户名", { exact: true }).fill(username);
+  await page.getByLabel("密码", { exact: true }).fill(username);
+  await page.getByRole("button", { name: "进入工作台" }).click();
+  await page
+    .getByRole("navigation")
+    .getByRole("link", { name: "定时序列", exact: true })
+    .waitFor();
+}
+async function sourceHash(path) {
+  // Take the context from an actual rendered link; do not invent a login token.
+  const href = await page
+    .locator("a.run-list-item")
+    .first()
+    .getAttribute("href");
+  const source = new URLSearchParams(href.split("?")[1] ?? "");
+  const [pathname, raw = ""] = path.split("?");
+  const params = new URLSearchParams(raw);
+  if (source.has("context")) params.set("context", source.get("context"));
+  return `${pathname}?${params}`;
+}
 try {
   await mkdir(dirname(output), { recursive: true });
   fixture = await temporaryDatabase({
@@ -646,7 +686,11 @@ try {
     return { selected: "ui-group-a", backForwardAndRefresh: true };
   });
   await run("navigation-deep-link-fallbacks", async () => {
-    await open("#/agent-runs/missing?from=groups");
+    await open();
+    const validSource = await sourceHash("/agent-runs/missing?from=groups");
+    await page.evaluate((hash) => {
+      location.hash = hash;
+    }, validSource);
     await page.getByText("未能读取运行记录", { exact: true }).waitFor();
     assert.equal(
       await page
@@ -676,11 +720,15 @@ try {
   });
   await run("navigation-loading-failure-retains-group", async () => {
     await open("#/agent-runs");
+    await page.locator("a.run-list-item").first().waitFor();
+    const validSource = await sourceHash(
+      "/agent-runs/missing?from=agent-runs&group=ui-group-a",
+    );
     const held = hold("/api/agent-runs/missing", "GET");
     await held.ready;
-    await page.evaluate(() => {
-      location.hash = "/agent-runs/missing?from=agent-runs&group=ui-group-a";
-    });
+    await page.evaluate((hash) => {
+      location.hash = hash;
+    }, validSource);
     assert.equal(await held.received, 404);
     const back = page.getByRole("link", {
       name: "← 返回 Agent 运行列表",
@@ -688,8 +736,10 @@ try {
     });
     await back.waitFor();
     assert.equal(
-      await back.getAttribute("href"),
-      "#/agent-runs?group=ui-group-a",
+      new URLSearchParams((await back.getAttribute("href")).split("?")[1]).get(
+        "group",
+      ),
+      "ui-group-a",
     );
     held.release();
     await page.getByText("未能读取运行记录", { exact: true }).waitFor();
@@ -703,7 +753,13 @@ try {
       await page.getByRole("combobox", { name: "查看群组" }).inputValue(),
       "ui-group-a",
     );
-    await open("#/agent-runs/ui-run-a?from=groups&group=ui-group-b");
+    await open();
+    const editedSource = await sourceHash(
+      "/agent-runs/ui-run-a?from=groups&group=ui-group-b",
+    );
+    await page.evaluate((hash) => {
+      location.hash = hash;
+    }, editedSource);
     const groupBack = page.getByRole("link", {
       name: "← 返回原群组",
       exact: true,
@@ -716,7 +772,11 @@ try {
     };
   });
   await run("navigation-identity-clears-context", async () => {
-    await open("#/agent-runs/ui-run-a?from=groups");
+    await open();
+    await page
+      .locator("a.run-list-item")
+      .filter({ hasText: "ui-run-a" })
+      .click();
     await page
       .getByRole("link", { name: "← 返回原群组", exact: true })
       .waitFor();
@@ -730,6 +790,196 @@ try {
     assert.equal(new URL(page.url()).hash, "#/agent-runs/ui-run-a");
     assert.equal(await page.locator("nav a.active").innerText(), "Agent 运行");
     return { oldOriginCleared: true, identity: "viewer" };
+  });
+  for (const origin of ["groups", "agent-runs"])
+    await run(`navigation-old-history-${origin}`, async () => {
+      await loginAs("admin");
+      await open(origin === "groups" ? "#/groups/ui-group-a" : "#/agent-runs");
+      if (origin === "agent-runs")
+        await page
+          .getByRole("combobox", { name: "查看群组" })
+          .selectOption("ui-group-a");
+      await page
+        .locator("a.run-list-item")
+        .filter({ hasText: "ui-run-a" })
+        .click();
+      await page
+        .getByRole("link", { name: "查看所属群", exact: true })
+        .waitFor();
+      const oldUrl = page.url();
+      await page
+        .getByRole("navigation")
+        .getByRole("link", { name: "服务账号", exact: true })
+        .click();
+      await page
+        .getByRole("heading", { name: "服务账号", exact: true })
+        .waitFor();
+      await loginAs("viewer");
+      await page.goBack();
+      await checkEventually(() => page.url() === oldUrl);
+      await page
+        .getByRole("link", { name: "查看所属群", exact: true })
+        .waitFor();
+      const back = page.getByRole("link", {
+        name: "← 返回 Agent 运行列表",
+        exact: true,
+      });
+      await back.waitFor({ timeout: 1500 });
+      assert.equal(await back.getAttribute("href"), "#/agent-runs");
+      assert.equal(
+        await page.locator("nav a.active").innerText(),
+        "Agent 运行",
+      );
+      return {
+        realLogoutAndViewerLogin: true,
+        oldHistoryRevisited: true,
+        oldOriginIgnored: true,
+        origin,
+      };
+    });
+  await run("navigation-expired-refresh-before-workspace", async () => {
+    await loginAs("admin");
+    await open();
+    await page
+      .locator("a.run-list-item")
+      .filter({ hasText: "ui-run-a" })
+      .click();
+    await page.getByRole("link", { name: "查看所属群", exact: true }).waitFor();
+    await fixture.db.query(
+      "UPDATE auth_sessions SET revoked_at=now() WHERE username='admin' AND revoked_at IS NULL",
+    );
+    const denied = page.waitForResponse(
+      (response) =>
+        response.url().endsWith("/api/auth/refresh") &&
+        response.status() === 401,
+    );
+    await page.reload();
+    await denied;
+    await page.getByRole("button", { name: "进入工作台" }).waitFor();
+    await loginAs("viewer");
+    const back = page.getByRole("link", {
+      name: "← 返回 Agent 运行列表",
+      exact: true,
+    });
+    await back.waitFor({ timeout: 1500 });
+    assert.equal(await back.getAttribute("href"), "#/agent-runs");
+    assert.equal(await page.locator("nav a.active").innerText(), "Agent 运行");
+    return {
+      actualRefreshStatus: 401,
+      viewerFallback: true,
+      priorWorkspaceNeverMountedInReloadedDocument: true,
+    };
+  });
+  await run("navigation-same-user-relogin-and-tampered-context", async () => {
+    await loginAs("admin");
+    await open();
+    await page
+      .locator("a.run-list-item")
+      .filter({ hasText: "ui-run-a" })
+      .click();
+    await page.getByRole("link", { name: "查看所属群", exact: true }).waitFor();
+    const oldUrl = page.url();
+    await page
+      .getByRole("navigation")
+      .getByRole("link", { name: "服务账号", exact: true })
+      .click();
+    await loginAs("admin");
+    await page.goBack();
+    await checkEventually(() => page.url() === oldUrl);
+    const back = page.getByRole("link", {
+      name: "← 返回 Agent 运行列表",
+      exact: true,
+    });
+    await back.waitFor();
+    assert.equal(await back.getAttribute("href"), "#/agent-runs");
+    await page.goForward();
+    await page.goBack();
+    await back.waitFor();
+    assert.equal(await back.getAttribute("href"), "#/agent-runs");
+    await page.evaluate(() => {
+      location.hash =
+        "/agent-runs/ui-run-a?from=groups&group=ui-group-a&context=wrong-context";
+    });
+    await back.waitFor();
+    assert.equal(await page.locator("nav a.active").innerText(), "Agent 运行");
+    return {
+      sameUserNewLoginIsSeparate: true,
+      backForward: true,
+      tamperedContextIgnored: true,
+    };
+  });
+  await run("navigation-login-success-me-failure-refresh", async () => {
+    await loginAs("admin");
+    await open();
+    await page
+      .locator("a.run-list-item")
+      .filter({ hasText: "ui-run-a" })
+      .click();
+    await page.getByRole("link", { name: "查看所属群", exact: true }).waitFor();
+    await page.route("**/api/auth/me", (route) => route.abort("failed"));
+    await page.reload();
+    await page.getByRole("button", { name: "进入工作台" }).waitFor();
+    await page.getByLabel("用户名", { exact: true }).fill("admin");
+    await page.getByLabel("密码", { exact: true }).fill("admin");
+    const loginAccepted = page.waitForResponse(
+      (response) =>
+        response.url().endsWith("/api/auth/login") && response.status() === 200,
+    );
+    const meFailed = page.waitForEvent("requestfailed", (request) =>
+      request.url().endsWith("/api/auth/me"),
+    );
+    await page.getByRole("button", { name: "进入工作台" }).click();
+    await loginAccepted;
+    await meFailed;
+    await page.getByRole("alert").waitFor();
+    await page.unroute("**/api/auth/me");
+    await page.reload();
+    const back = page.getByRole("link", {
+      name: "← 返回 Agent 运行列表",
+      exact: true,
+    });
+    await back.waitFor();
+    assert.equal(await back.getAttribute("href"), "#/agent-runs");
+    return {
+      actualLoginStatus: 200,
+      meTransportFailure: true,
+      refreshedNewLoginDoesNotRestoreOldOrigin: true,
+    };
+  });
+  await run("navigation-storage-blocked-list-selection", async () => {
+    await open("#/agent-runs", true);
+    await page.locator("a.run-list-item").first().waitFor();
+    const original = await page
+      .getByRole("combobox", { name: "查看群组" })
+      .inputValue();
+    const next = original === "ui-group-a" ? "ui-group-b" : "ui-group-a";
+    await page.getByRole("combobox", { name: "查看群组" }).selectOption(next);
+    const row = page
+      .locator("a.run-list-item")
+      .filter({ hasText: next.replace("group", "run") });
+    await row.waitFor({ timeout: 1500 });
+    assert.equal(
+      await page.getByRole("combobox", { name: "查看群组" }).inputValue(),
+      next,
+    );
+    assert.equal(
+      await row.getAttribute("href"),
+      `#/agent-runs/${next.replace("group", "run")}`,
+    );
+    await row.click();
+    const back = page.getByRole("link", {
+      name: "← 返回 Agent 运行列表",
+      exact: true,
+    });
+    await back.waitFor();
+    assert.equal(await back.getAttribute("href"), "#/agent-runs");
+    return {
+      original,
+      selected: next,
+      navigationStorageWriteDenied: true,
+      listRemainsUsable: true,
+      detailFallsBack: true,
+    };
   });
 } catch (error) {
   report.fatal = String(error?.stack ?? error);

@@ -1,14 +1,8 @@
-import {
-  Component,
-  useEffect,
-  useState,
-  type ErrorInfo,
-  type ReactNode,
-} from "react";
+import { Component, useState, type ErrorInfo, type ReactNode } from "react";
 import { AuthProvider, useAuth } from "./state/auth";
 import { LiveProvider, useLive } from "./state/live";
 import { GroupDirectoryProvider } from "./directory/GroupDirectoryProvider";
-import { parseRoute, useRoute } from "./hooks/useRoute";
+import { useRoute } from "./hooks/useRoute";
 import { Login } from "./pages/Login";
 import { Accounts } from "./pages/Accounts";
 import { Groups } from "./pages/Groups";
@@ -51,20 +45,6 @@ function Workspace() {
   const { connection, notices, dismiss } = useLive();
   const [error, setError] = useState<unknown>(null);
   const [busy, setBusy] = useState(false);
-  useEffect(() => {
-    const clearNavigationContext = () => {
-      const current = parseRoute(location.hash);
-      if (
-        current.page === "agent-runs" &&
-        (current.agentOrigin || current.agentGroup)
-      ) {
-        location.hash = `/agent-runs${current.id ? `/${encodeURIComponent(current.id)}` : ""}`;
-      }
-    };
-    window.addEventListener("session-expired", clearNavigationContext);
-    return () =>
-      window.removeEventListener("session-expired", clearNavigationContext);
-  }, []);
   const signOut = async (): Promise<void> => {
     setBusy(true);
     setError(null);
