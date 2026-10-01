@@ -81,7 +81,7 @@ async function savedSnapshot(ui: PublicUiDriver, qa: QaEnvironment, profile: UiP
   const matches = sequences.filter((s) => s.name === expected.name);
   assert.equal(matches.length, 1);
   assert.deepEqual(matches[0]!.steps, expected.steps);
-  await ui.page.getByLabel('消息序列', { exact: true }).selectOption(matches[0]!.id);
+  await ui.page.getByRole('combobox', { name: '消息序列', exact: true }).selectOption(matches[0]!.id);
   await expect(ui.page.locator('.sequence-definition')).toContainText('Hello {name}');
   await ui.evidence('saved-snapshot', { submitted: expected, stored: matches[0], savingEditDisabled: true });
 }
@@ -208,8 +208,8 @@ async function groupGuards(ui: PublicUiDriver, qa: QaEnvironment, profile: UiPro
     if (mode === 'create') {
       const accounts = (await qa.api.accounts()).filter((account) => account.status === 'online');
       assert.ok(accounts.length >= 2);
-      await ui.dialog(title).getByLabel('群主账号', { exact: true }).selectOption(accounts[0]!.id);
-      await ui.dialog(title).getByLabel('管理员账号', { exact: true }).selectOption(accounts[1]!.id);
+      await ui.dialog(title).getByRole('combobox', { name: '群主账号', exact: true }).selectOption(accounts[0]!.id);
+      await ui.dialog(title).getByRole('combobox', { name: '管理员账号', exact: true }).selectOption(accounts[1]!.id);
     }
     const gate = await ui.holdNextResponse(mode === 'create' ? 'group-create' : 'group-save');
     await ui.dialog(title).getByRole('button', { name: mode === 'create' ? '创建群组' : '保存资料', exact: true }).click();
@@ -225,7 +225,7 @@ async function groupGuards(ui: PublicUiDriver, qa: QaEnvironment, profile: UiPro
   }
 }
 async function invalidTarget(ui: PublicUiDriver, qa: QaEnvironment, profile: UiProfile, defaultFirst: boolean): Promise<void> {
-  if (defaultFirst) { await ui.navigate('#/sequences'); await expect(ui.page.getByLabel('目标群组', { exact: true })).toBeVisible(); await ui.evidence('first-default', { selected: await ui.page.getByLabel('目标群组', { exact: true }).inputValue() }); }
+  if (defaultFirst) { await ui.navigate('#/sequences'); await expect(ui.page.getByRole('combobox', { name: '目标群组', exact: true })).toBeVisible(); await ui.evidence('first-default', { selected: await ui.page.getByRole('combobox', { name: '目标群组', exact: true }).inputValue() }); }
   await ui.navigate(`#/sequences/${encodeURIComponent(profile.groupA)}`);
   await ui.setPrecheckContext(profile.precheckInitial);
   const result = await qa.api.post<{ jobId: string }>(`/api/groups/${profile.groupA}/leave-all`);
@@ -233,11 +233,11 @@ async function invalidTarget(ui: PublicUiDriver, qa: QaEnvironment, profile: UiP
   await qa.api.waitJob(result.body.jobId);
   await qa.api.waitFor<Group>(`/api/groups/${profile.groupA}`, (g) => g.status === 'left');
   await expect(ui.page.getByRole('button', { name: '预检所有步骤', exact: true })).toBeDisabled();
-  assert.equal(await ui.page.getByLabel('目标群组', { exact: true }).inputValue(), profile.groupA);
+  assert.equal(await ui.page.getByRole('combobox', { name: '目标群组', exact: true }).inputValue(), profile.groupA);
   await ui.page.reload({ waitUntil: 'domcontentloaded' });
-  await expect(ui.page.getByLabel('目标群组', { exact: true })).toHaveValue(profile.groupA);
+  await expect(ui.page.getByRole('combobox', { name: '目标群组', exact: true })).toHaveValue(profile.groupA);
   await expect(ui.page.getByRole('button', { name: '预检所有步骤', exact: true })).toBeDisabled();
-  assert.notEqual(await ui.page.getByLabel('目标群组', { exact: true }).inputValue(), profile.groupB);
+  assert.notEqual(await ui.page.getByRole('combobox', { name: '目标群组', exact: true }).inputValue(), profile.groupB);
 }
 async function navigateUnsafe(ui: PublicUiDriver, profile: UiProfile): Promise<void> {
   const variants = ['', '?from=', '?from=unknown&group=invalid', '?from=https%3A%2F%2Fexample.invalid&returnTo=https%3A%2F%2Fexample.invalid', '?from=groups&group=%ZZ', '?from=groups&group=missing&context=forged'];
@@ -291,7 +291,7 @@ async function expiryColdStart(ui: PublicUiDriver, profile: UiProfile): Promise<
   await ui.page.getByRole('button', { name: '退出登录', exact: true }).click();
   await expect(ui.page.getByPlaceholder('输入用户名')).toBeVisible();
   const refresh = ui.page.waitForResponse((r) => new URL(r.url()).pathname === '/api/auth/refresh');
-  await ui.page.goto(oldUrl, { waitUntil: 'domcontentloaded' });
+  await ui.reloadAt(oldUrl);
   assert.equal((await refresh).status(), 401);
   await ui.login('admin', 'after-actual-refresh-401');
   await expect(ui.page.locator('a.back-link')).toBeVisible();
@@ -314,7 +314,7 @@ async function meFailure(ui: PublicUiDriver, profile: UiProfile): Promise<void> 
   assert.equal((await login).status(), 200); await gate.received;
   assert.equal(await ui.page.getByRole('button', { name: '退出登录', exact: true }).isVisible(), false);
   await gate.release('unknown'); await ui.paint();
-  await ui.page.goto(oldUrl, { waitUntil: 'domcontentloaded' });
+  await ui.reloadAt(oldUrl);
   await expect(ui.page.getByRole('button', { name: '退出登录', exact: true })).toBeVisible();
   await expect(ui.page.locator('a.back-link')).toBeVisible();
   await ui.returnToSource(); assert.equal((await ui.location()).kind, 'run-list');
@@ -343,7 +343,7 @@ async function storageWriteFailure(ui: PublicUiDriver, profile: UiProfile): Prom
   if (groupReturned.kind === 'group') assert.equal(groupReturned.groupId, profile.groupA);
   for (const group of [profile.groupA, profile.groupB]) {
     await ui.navigate('#/agent-runs');
-    await ui.page.getByLabel('查看群组', { exact: true }).selectOption(group);
+    await ui.page.getByRole('combobox', { name: '查看群组', exact: true }).selectOption(group);
     await expect(ui.page.locator('a.run-list-item')).not.toHaveCount(0);
     await ui.page.locator('a.run-list-item').first().click();
     await expect(ui.page.locator('a.back-link')).toBeVisible();

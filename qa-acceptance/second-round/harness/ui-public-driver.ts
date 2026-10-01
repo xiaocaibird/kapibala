@@ -208,6 +208,7 @@ export class PublicUiDriver implements UiDriver {
   async sequenceFields(): Promise<Record<string, string>> { return { json: await this.dialog('新建消息序列').getByLabel('序列 JSON').inputValue() }; }
   async requestFormClose(action: string): Promise<void> {
     const dialog = this.dialog('新建消息序列');
+    await this.evidence('form-close-before', { action, state: await this.formState(), fields: await this.sequenceFields() });
     if (action === 'escape') await this.page.keyboard.press('Escape');
     else if (action === 'close') await dialog.getByRole('button', { name: '关闭弹窗', exact: true }).click();
     else if (action === 'cancel') {
@@ -217,6 +218,8 @@ export class PublicUiDriver implements UiDriver {
       else await this.evidence('disabled-close-entry', { action, disabled: true });
     } else throw new BlockedError(`Unknown observed closing action ${action}`);
     await this.paint();
+    const state = await this.formState();
+    await this.evidence('form-close-after', { action, state, fields: state.open ? await this.sequenceFields() : null });
   }
   async cancelDiscard(): Promise<void> { await this.dialog('放弃未保存的修改？').getByRole('button', { name: '继续编辑', exact: true }).click(); }
   async confirmDiscard(): Promise<void> { await this.dialog('放弃未保存的修改？').getByRole('button', { name: '放弃修改', exact: true }).click(); }
@@ -227,11 +230,13 @@ export class PublicUiDriver implements UiDriver {
   async setPrecheckContext(value: Record<string, string>): Promise<void> {
     if (!this.page.url().includes('#/sequences')) await this.navigate('#/sequences');
     for (const [field, label] of [['group', '目标群组'], ['sequence', '消息序列']] as const) {
-      const control = this.page.getByLabel(label, { exact: true });
+      // A native label wraps its select/options. getByLabel exact text includes
+      // option descendants, while the accessible combobox name excludes them.
+      const control = this.page.getByRole('combobox', { name: label, exact: true });
       if (value[field] !== undefined && await control.inputValue() !== value[field]) await control.selectOption(value[field]);
     }
     for (const [field, label] of [['vars', '默认变量 vars'], ['stepVars', '分步变量 stepVars']] as const) {
-      const control = this.page.getByLabel(label, { exact: true });
+      const control = this.page.getByRole('textbox', { name: label, exact: true });
       if (value[field] !== undefined && await control.inputValue() !== value[field]) await control.fill(value[field]);
     }
     await this.paint();
@@ -245,9 +250,15 @@ export class PublicUiDriver implements UiDriver {
   }
   async openRunFromList(groupId: string, runId: string): Promise<void> {
     await this.navigate('#/agent-runs');
-    await this.page.getByLabel('查看群组', { exact: true }).selectOption(groupId);
+    await this.page.getByRole('combobox', { name: '查看群组', exact: true }).selectOption(groupId);
     await this.page.locator('a.run-list-item').filter({ hasText: runId }).click();
     await expect(this.page.getByRole('heading', { name: '运行详情', exact: true })).toBeVisible();
+  }
+  /** Hash-only navigation can reuse the existing document. Authentication cold
+   * start cases require an actual document reload at the preserved history URL. */
+  async reloadAt(url: string): Promise<void> {
+    await this.page.goto(url, { waitUntil: 'domcontentloaded' });
+    await this.page.reload({ waitUntil: 'domcontentloaded' });
   }
   async returnToSource(): Promise<void> { await this.page.locator('a.back-link').click(); await this.paint(); }
   async location(): Promise<UiLocation> {
@@ -256,7 +267,7 @@ export class PublicUiDriver implements UiDriver {
     if (/^#\/groups\//.test(path)) return { kind: 'group', groupId: decodeURIComponent(path.slice('#/groups/'.length)), url, title, activeNavigation };
     if (/^#\/agent-runs\//.test(path)) return { kind: 'run', url, title, activeNavigation };
     if (path === '#/agent-runs') {
-      const select = this.page.getByLabel('查看群组', { exact: true });
+      const select = this.page.getByRole('combobox', { name: '查看群组', exact: true });
       await expect(select).toBeVisible();
       await expect(select.locator('option').nth(1)).toBeAttached();
       return { kind: 'run-list', selectedGroupId: await select.inputValue(), url, title, activeNavigation };
@@ -265,7 +276,7 @@ export class PublicUiDriver implements UiDriver {
   }
   async evidence(label: string, facts: unknown): Promise<void> {
     const record = { ordinal: ++this.sequence, at: new Date().toISOString(), label, facts };
-    this.writes = this.writes.then(() => appendFile(resolve(this.options.outputDir, 'ui.ndjson'), redact(record) + '\n'));
+    this.writes = this.writes.then(() => appendFile(resolve(this.options.outputDir, 'ui.ndjson'), JSON.stringify(JSON.parse(redact(record))) + '\n'));
     await this.writes;
   }
   assertHealthy(): void {

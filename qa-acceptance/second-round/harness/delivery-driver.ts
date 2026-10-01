@@ -7,6 +7,7 @@ import { secondRoundRoot } from './scope.js';
 import type { QaEnvironment } from '../../harness/environment.js';
 import type { RoundResult } from './result.js';
 import { BlockedError } from '../../harness/security.js';
+import { readmeIsolatedDelivery } from './delivery-isolated.js';
 
 const signedReports: Record<string,string>={
   'reports/acceptance/20261002-current-delivery/report.md':'aa119fea808ee72d38eb21ef7f0022f3d7c36c69014dd204bb6d3bd5449d17c2',
@@ -15,6 +16,11 @@ const signedReports: Record<string,string>={
   'reports/followup/20261002-kick-work-retest/report.md':'f3326ca4eff572d4b0134bff70dcfb450c6d2b3dcf90506af99dc9758ddcf17a',
 };
 const sha=(bytes:Buffer|string)=>createHash('sha256').update(bytes).digest('hex');
+function businessAssertion(error:unknown):assert.AssertionError|undefined {
+  if(error instanceof assert.AssertionError)return error;
+  if(error instanceof AggregateError)for(const child of error.errors){const found=businessAssertion(child);if(found)return found;}
+  return undefined;
+}
 type MutationName='audit-fail-bypass'|'same-key-repeat-audit';
 const mutationTests={
   'audit-fail-bypass':'guard effects: audit fail creates no message/key and makes no remote send',
@@ -116,6 +122,7 @@ export function reviewMutationDiagnostics(name:MutationName,baseline:string,chan
 export async function runDeliveryCase(caseId:string,input:{sutDirectory:string;outputDir:string;manifest:Record<string,unknown>;qa?:QaEnvironment}):Promise<RoundResult> {
   const {sutDirectory,outputDir,manifest,qa}=input;
   const evidence=resolve(outputDir,'delivery-evidence.json');
+  const uncoveredVariants:string[]=[];
   const facts:Record<string,unknown>={caseId,reviewedAt:new Date().toISOString(),kind:'QA independent delivery evidence review'};
   if(caseId==='SR-BE-DEL-001'||caseId==='SR-BE-DEL-002') {
     const originals=[];
@@ -130,6 +137,7 @@ export async function runDeliveryCase(caseId:string,input:{sutDirectory:string;o
     facts.currentProductDiff=diff.stdout;facts.historyInterpretation='First-round historical FAIL/BLOCKED remain historical. Work-budget five-case pass closes only its actual fixed-source sample; new enhancements do not waive original limitations.';
     if(caseId.endsWith('001')) facts.impactMap={media:['C1','media migration/storage/lifecycle'],model:['C2','P1-05'],
       frontend:['P0-03','P0-04','P1-02'],guards:['P0-05','P1-04'],diagnostics:['P1-03'],timeline:['P1-01'],knownLocalPolicyBudgetFix:['P1-04 crossed with original kick work/settlement budget']};
+    if(caseId==='SR-BE-DEL-001')uncoveredVariants.push('材料hash、文件级diff和类别impactMap已经核查；逐条需求→实现/开发自测/独立QA证据/责任去向的完整人工核对表尚未附入，不能由类别映射宣告完成。');
   } else if(caseId==='SR-BE-DEL-003') {
     const original=await readFile(resolve(sutDirectory,'docs/original-interview-question.md'));
     assert.equal(sha(original),'c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75');
@@ -146,7 +154,15 @@ export async function runDeliveryCase(caseId:string,input:{sutDirectory:string;o
     const accounts=await qa.api.accounts();assert.ok(accounts.length);
     const created=await qa.api.createGroup(1);assert.equal(created.group.status,'active');
     facts.installation=install;facts.build=build;facts.health=health.body;facts.accounts=accounts;facts.group=created.group;
-    facts.resources=await qa.ownedStorage().database;facts.cleanup='runner finally closes this exact environment; resource cleanup failure downgrades this case';
+    facts.resources=await qa.ownedStorage().database;facts.cleanup='runner finally closes this exact QA environment; resource cleanup failure downgrades this case';
+    try {
+      facts.publicReadmeEntry=await readmeIsolatedDelivery({sutDirectory,outputDir,revision:String(manifest.sutRevision),qa});
+    } catch(error) {
+      facts.publicReadmeEntryError=String(error);
+      await writeFile(evidence,JSON.stringify(facts,null,2)+'\n');
+      const assertion=businessAssertion(error);if(assertion)throw assertion;
+      uncoveredVariants.push(`QA自有环境安装/迁移/API通过；公开README入口或其精确清理尚未形成完整通过证据：${String(error)}`);
+    }
   } else if(caseId.startsWith('SR-BE-MUT-')) {
     const base=resolve(sutDirectory,'docs/evidence/final-enhancement-backend-20261002/mutations');
     const m=JSON.parse(await readFile(resolve(base,'manifest.json'),'utf8'));
@@ -188,5 +204,7 @@ export async function runDeliveryCase(caseId:string,input:{sutDirectory:string;o
     }
   } else throw new Error(`Delivery case needs another driver: ${caseId}`);
   await writeFile(evidence,JSON.stringify(facts,null,2)+'\n');
-  return {caseId,status:'PASS',variants:[{id:'independent-delivery-review',status:'PASS',evidence:[evidence]}]};
+  const variants:RoundResult['variants']=[{id:caseId==='SR-BE-DEL-004'?'qa-environment-install-migrate-api':'independent-delivery-review',status:'PASS',evidence:[evidence]}];
+  if(caseId==='SR-BE-DEL-004'&&facts.publicReadmeEntry)variants.push({id:'public-readme-entry-and-exact-cleanup',status:'PASS',evidence:[(facts.publicReadmeEntry as {evidencePath:string}).evidencePath]});
+  return {caseId,status:uncoveredVariants.length?'BLOCKED':'PASS',variants,uncoveredVariants};
 }

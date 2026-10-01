@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import type { TargetConfig } from '../../harness/types.js';
 import type { OwnedDatabaseCluster } from '../../harness/database.js';
 import { eventually, type Group } from '../../harness/platform-client.js';
-import { exec } from '../../harness/process.js';
+import { exec, isolatedEnv, OwnedProcess } from '../../harness/process.js';
 import { redact } from '../../harness/security.js';
 import { C1_CAPABILITIES as M,C2_CAPABILITIES as P,PreparationBlocked,type Evidence,type Json,type ProviderDriver,type MediaDriver,type BackendFacts } from '../contracts/media-provider.js';
 import { SecondRoundEnvironment,OwnedOfflineProvider,actualListenerIdentity } from './environment.js';
@@ -27,7 +27,7 @@ export function mediaDriver(context:DriverContext):MediaDriver {
     await writeFile(resolve(directory,`${++serial}-${name}.json`),redact(value));
   };
   return createMediaHttpDriver({contractReference:fixture.contractReference,
-    capabilities:[M.age,M.cleanup,M.barriers,M.restart,M.multi,M.references],
+    capabilities:[M.age,M.cleanup,M.barriers,M.restart,M.multi,M.references,M.unlink],
     retentionContract:{reference:`${context.target.sut.revision}:docs/qa-media-scenarios-20261002.md`,zeroDaysSupported:true},
     open:async(options={})=>{
       env=new SecondRoundEnvironment(context.target,context.cluster,resolve(context.outputDir,`variant-${++variant}`),resolve(context.runtimeDir,`variant-${variant}`),options);
@@ -40,7 +40,7 @@ export function mediaDriver(context:DriverContext):MediaDriver {
       try{await fixture.cleanup();}catch(e){failures.push(String(e));}
       try{await env?.close();}catch(e){failures.push(String(e));}
       const value={failures,evidence:proof('media:cleanup',{failures,variant})};await evidence('cleanup-summary',value);env=undefined;return value;},
-    operations:{age:fixture.age.bind(fixture),cycle:fixture.cycle.bind(fixture),hold:fixture.hold.bind(fixture),secondInstance:fixture.secondInstance.bind(fixture),
+    operations:{failUnlink:fixture.failUnlink.bind(fixture),age:fixture.age.bind(fixture),cycle:fixture.cycle.bind(fixture),hold:fixture.hold.bind(fixture),secondInstance:fixture.secondInstance.bind(fixture),
       startReference:fixture.startReference.bind(fixture),run:fixture.run.bind(fixture),agentRequests:fixture.agentRequests.bind(fixture),finishReference:fixture.finishReference.bind(fixture),
       restart:async(mode)=>{const e=active(),before=await actualListenerIdentity(e.api.baseUrl),database=e.ownedStorage().database;
         await e.restart(mode);const after=await actualListenerIdentity(e.api.baseUrl);
@@ -49,6 +49,12 @@ export function mediaDriver(context:DriverContext):MediaDriver {
     }});
 }
 
+const providerEnvironments=new WeakMap<ProviderDriver,()=>Promise<SecondRoundEnvironment>>();
+export async function providerEnvironment(driver:ProviderDriver):Promise<SecondRoundEnvironment> {
+  const getter=providerEnvironments.get(driver);
+  if(!getter)throw new PreparationBlocked('Provider is not owned by this independent factory');
+  return getter();
+}
 export function providerDriver(context:DriverContext):ProviderDriver {
   let provider:OwnedOfflineProvider|undefined,env:SecondRoundEnvironment|undefined,relay:ServiceRelay|undefined,variant=0,serial=0,options:Record<string,Json>={};
   const groups=new Map<string,Group>();
@@ -83,17 +89,52 @@ export function providerDriver(context:DriverContext):ProviderDriver {
       try{if(relay)await evidence('agent-relay-ledger',relay.ledger);await relay?.close();}catch(e){failures.push(String(e));}relay=undefined;
       const result={failures,evidence:proof('provider:cleanup',{failures,variant,actualExit:provider?.lastStopOutcome})};await evidence('cleanup-summary',result);provider=undefined;return result;},
     operations:{usage:usage.usage.bind(usage),usageFiles:usage.usageFiles.bind(usage),settleUsage:usage.settleUsage.bind(usage),usageWriteFault:usage.usageWriteFault.bind(usage),diagnostics:usage.diagnostics.bind(usage),
+      competingSessionOwner:async()=>{
+        const primary=active(),before=await readFile(resolve(primary.sessionDirectory,'owner.lock'),'utf8');
+        const liveBefore=await actualListenerIdentity(primary.address),logPath=resolve(primary.outputDirectory,`competing-owner-${++serial}.log`);
+        const peer=new OwnedProcess({command:process.execPath,args:['--import','tsx','scripts/qa-gemini-agent.ts']},context.target.sut.cwd,
+          isolatedEnv({QA_GEMINI_OFFLINE:'true',QA_GEMINI_PROVIDER_URL:primary.providerOrigin,QA_GEMINI_SESSION_DIR:primary.sessionDirectory}),logPath);
+        let sawReady=false,rows:Record<string,unknown>[]=[];
+        try {
+          await peer.start();const deadline=performance.now()+10_000;
+          while(performance.now()<deadline&&!peer.exitOutcome){
+            let raw='';try{raw=await readFile(logPath,'utf8');}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
+            rows=raw.split('\n').flatMap(line=>{try{return [JSON.parse(line) as Record<string,unknown>];}catch{return [];}});
+            sawReady=rows.some(r=>r.event==='qa-gemini-agent-ready');if(sawReady)break;
+            await new Promise(r=>setTimeout(r,30));
+          }
+          const actualExit=peer.exitOutcome;await peer.stop();
+          const log=await readFile(logPath,'utf8');rows=log.split('\n').flatMap(line=>{try{return [JSON.parse(line) as Record<string,unknown>];}catch{return [];}});
+          const lockUnchanged=before===await readFile(resolve(primary.sessionDirectory,'owner.lock'),'utf8');
+          const primaryHealth=await fetch(`${primary.address}/health`,{signal:AbortSignal.timeout(2000)}),liveAfter=await actualListenerIdentity(primary.address);
+          const value={started:sawReady,actualExit,logPath,rows,liveBefore,liveAfter,lockUnchanged,primaryHealthStatus:primaryHealth.status};
+          await evidence('provider-competing-owner',value);
+          assert.equal(lockUnchanged,true,'Rejected peer must not replace the live owner lock');assert.equal(primaryHealth.status,200);
+          if(!sawReady&&(!actualExit||actualExit.code===0||!rows.some(r=>r.event==='qa-gemini-agent-start-failed'&&r.code==='SESSION_DIRECTORY_LOCKED')))
+            throw new PreparationBlocked('Second process did not establish the actual documented session-directory lock rejection');
+          return {started:sawReady,evidence:proof('provider:actual-competing-owner',value)};
+        } finally {await peer.stop();}
+      },
       deploymentBinding:async()=>{const e=await getEnvironment();return {selectedAgent:options.selectedAgent==='mock'?'mock':'independent',changedBackendSettings:options.selectedAgent==='mock'?[]:['AGENT_URL'],upstreamCalls:(await driver.calls()).length,
         evidence:proof('provider:backend-binding',{configuredAgent:e.externalAgentUrl??e.agent.url,defaultMock:e.agent.url,realProviderRelay:relay!.url})};},
       backendGroup:async(policy)=>{const e=await getEnvironment(),created=await e.api.createGroup(2),group=created.group;groups.set(group.id,group);
         const target=policy.managedTarget?created.accounts[1].platformUserId!:`qa-external-${randomUUID()}`;
         if(!policy.managedTarget)e.gateway.setMembership(group.gatewayGroupId,target,true);
         if(policy.executor==='none')for(const account of created.accounts)await e.api.require(e.api.post(`/api/accounts/${account.id}/transition`,{expectedFrom:'online',to:'disconnected'}));
-        if(policy.executor==='member')for(const account of created.accounts)e.gateway.setMemberRole(group.gatewayGroupId,account.platformUserId!,'member');
+        if(policy.executor==='member')for(const account of created.accounts) {
+          const member=group.members.find(m=>m.accountId===account.id);
+          if(member?.role!=='member')await e.api.require(e.api.post(`/api/accounts/${account.id}/transition`,{expectedFrom:'online',to:'disconnected'}));
+        }
         await e.api.require(e.api.patch(`/api/groups/${group.id}`,{autoKickEnabled:policy.autoKickEnabled,agentEnabled:true}));
         const observed=await eventually(()=>e.api.group(group.id),g=>g.members.some(m=>m.platformUserId===target)&&
-          (policy.executor!=='member'||g.members.filter(m=>m.accountId).every(m=>m.role==='member')));
-        return {groupId:group.id,target,evidence:proof('provider:backend-group',{policy,group:observed,accounts:await e.api.accounts()})};},
+          (policy.executor!=='member'||g.members.some(m=>m.accountId&&m.role==='member')));
+        const accounts=await e.api.accounts();
+        if(policy.executor==='member'){
+          const online=new Set(accounts.filter(a=>a.status==='online').map(a=>a.id));
+          assert.ok(observed.members.some(m=>m.accountId&&online.has(m.accountId)&&m.role==='member'));
+          assert.ok(!observed.members.some(m=>m.accountId&&online.has(m.accountId)&&['creator','admin'].includes(m.role)));
+        }
+        return {groupId:group.id,target,evidence:proof('provider:backend-group',{policy,group:observed,accounts})};},
       triggerBackend:async(groupId)=>{const e=await getEnvironment(),g=groups.get(groupId)!;
         e.gateway.emitMessage({groupId:g.gatewayGroupId,senderPlatformUserId:'qa-provider-trigger',text:`trigger-${randomUUID()}`});
         const rows=await eventually(()=>e.api.require(e.api.get<{id:string}[]>(`/api/groups/${groupId}/agent-runs`)),x=>x.length===1);return rows[0].id;},
@@ -111,5 +152,6 @@ export function providerDriver(context:DriverContext):ProviderDriver {
         const value={sends,kicks,audits,turns,effects,publicMessages};await evidence('provider-backend-facts',{...value,gateway:snap});return {...value,evidence:proof('provider:backend-facts',value)};},
     }});
   Object.defineProperty(driver,'usageContract',{get:()=>provider?usage.contract():null});
+  providerEnvironments.set(driver,getEnvironment);
   return driver;
 }

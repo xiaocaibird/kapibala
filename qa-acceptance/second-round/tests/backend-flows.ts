@@ -13,19 +13,23 @@ import { runManagedPolicyBudgetCase } from '../harness/backend-policy-window.js'
 import { profileCancellationRollback } from '../harness/backend-transaction-fault.js';
 import { capacityControlFor } from '../../harness/capacity-control.js';
 import { observeBackendEvents } from '../harness/backend-events.js';
+import { cancelAtKickWait, concurrentProfileCas, deferredPermissionChange, noDispatchBudget, dispatchedUnknownKick, sentKeyCrashRecovery, reuseAtMessageState, independentModuleRecovery } from '../harness/backend-boundaries.js';
+import { managedProviderRecovery } from '../harness/backend-provider-recovery.js';
+import type { ProviderDriver } from '../contracts/media-provider.js';
 
 export type BackendStatus = 'PASS' | 'FAIL' | 'BLOCKED';
 export interface BackendSubcheck { id: string; status: BackendStatus; evidence: string; reason?: string }
 export interface BackendCaseResult extends RoundResult { partial: boolean; subchecks: BackendSubcheck[]; uncoveredVariants: string[] }
 export interface BackendContext {
   qa: QaEnvironment; outputDir: string; sutDirectory?: string; deliveryEvidence?: unknown;
+  providerDriver?: ProviderDriver; providerEnvironment?: () => Promise<QaEnvironment>;
   /** Finite observation only. Never substitutes for a contractual SLA or actual fault-window witness. */
   observationMs?: number;
 }
 export const BACKEND_EXECUTABLE_IDS = [
-  'SR-BE-DIA-001', 'SR-BE-DIA-002', 'SR-BE-DIA-003', 'SR-BE-DIA-005',
-  'SR-BE-GRD-001', 'SR-BE-GRD-002', 'SR-BE-GRD-003', 'SR-BE-GRD-004', 'SR-BE-GRD-006', 'SR-BE-GRD-007', 'SR-BE-GRD-008',
-  'SR-BE-POL-001', 'SR-BE-POL-002', 'SR-BE-POL-003', 'SR-BE-POL-004', 'SR-BE-POL-006', 'SR-BE-POL-008',
+  'SR-BE-DIA-001', 'SR-BE-DIA-002', 'SR-BE-DIA-003', 'SR-BE-DIA-004', 'SR-BE-DIA-005',
+  'SR-BE-GRD-001', 'SR-BE-GRD-002', 'SR-BE-GRD-003', 'SR-BE-GRD-004', 'SR-BE-GRD-005', 'SR-BE-GRD-006', 'SR-BE-GRD-007', 'SR-BE-GRD-008',
+  'SR-BE-POL-001', 'SR-BE-POL-002', 'SR-BE-POL-003', 'SR-BE-POL-004', 'SR-BE-POL-005', 'SR-BE-POL-006', 'SR-BE-POL-007', 'SR-BE-POL-008',
 ] as const;
 const tool = (id: string, name: string, input: unknown): AgentResponsePlan => ({ body: {
   stop_reason: 'tool_use', content: [{ type: 'tool_use', id, name, input }],
@@ -81,8 +85,8 @@ function checkError(run: AgentRun, id: string, code: string) {
   const s = step(run, id); assert.equal(s.isError, true); assert.equal(s.errorCode, code);
 }
 export async function runBackendCase(caseId: string, context: BackendContext): Promise<BackendCaseResult> {
-  if (caseId === 'SR-BE-POL-008') {
-    const result = await runManagedPolicyBudgetCase(context);
+  if (caseId === 'SR-BE-POL-008' || caseId === 'SR-BE-POL-007') {
+    const result = caseId === 'SR-BE-POL-007' ? await managedProviderRecovery(context) : await runManagedPolicyBudgetCase(context);
     return { ...result, partial: result.status !== 'PASS' && result.variants.some((v) => v.status === 'PASS'), subchecks: result.variants.map((v) => ({ id: v.id, status: v.status as BackendStatus, evidence: v.evidence[0] ?? '', reason: v.reason })), uncoveredVariants: result.uncoveredVariants ?? [] };
   }
   const { qa } = context, ms = context.observationMs ?? 30_000;
@@ -143,7 +147,7 @@ export async function runBackendCase(caseId: string, context: BackendContext): P
       try {
         const cycles = caseId === 'SR-BE-DIA-002' ? 2 : 1;
         for (let i = 0; i < cycles; i++) {
-          const marker = `private-error-${randomUUID()}`, attemptLabel = randomUUID();
+          const marker = `qa-runtime-private-error-${randomUUID()}`, attemptLabel = randomUUID();
           const lease = await control.arm('module-fail-then-hold',
             { kind: 'module', module: profile.module, attemptLabel }, { faultMarker: marker });
           const failure = await lease.waitFor('module-before-next-held', ms);
@@ -187,7 +191,7 @@ export async function runBackendCase(caseId: string, context: BackendContext): P
         for (const m of after) assert.equal(m.lastFailure, null, 'old process failure history must not be fabricated in the new process');
         return { before, after, oldPid: old.pid, newPid: current.pid, noFailureMeans: 'no recorded failure in this process; not comprehensive dependency health' };
       });
-      missing('two-independent-modules-one-still-failing', 'One module and restart are observed; independently holding two modules and releasing only one needs the controller multi-module binding.');
+      await check('two-independent-modules-one-still-failing', () => independentModuleRecovery(qa));
     }
   } else if (caseId === 'SR-BE-POL-001') {
     for (const variant of ['creator', 'admin', 'member', 'offline-member']) await check(variant, async () => {
@@ -271,7 +275,7 @@ export async function runBackendCase(caseId: string, context: BackendContext): P
       assert.equal(requests(qa, group, 'kick').length, 0);
       return { accounts, group, target, run, kickCount: 0 };
     });
-    missing('pre-dispatch-budget-insufficient', 'Requires an actual work-budget and dispatch-capacity observation; no arbitrary wait or inferred deadline.');
+    await check('pre-dispatch-budget-insufficient', () => noDispatchBudget(qa));
   } else if (caseId === 'SR-BE-POL-006') {
     for (const failure of [false, true]) await check(failure ? 'leave-partial-failure' : 'leave-success-owner-last', async () => {
       const { group, accounts } = await qa.api.createGroup(); const outside = `keep-external-${randomUUID()}`;
@@ -346,7 +350,8 @@ export async function runBackendCase(caseId: string, context: BackendContext): P
         return { sent, run, firstResult, retryResult, another, auditCount: 2, sendCount: 2 };
       } finally { qa.agent.barriers.release(barrier); }
     });
-    missing('queued-accepted-failed-unknown-reuse', 'Actual public message states and retry boundary must each be observed before asserting. Sent-only cannot stand in for all delivery states.');
+    for (const state of ['queued', 'accepted', 'unknown'] as const) await check('same-key-at-' + state, () => reuseAtMessageState(qa, state));
+    missing('failed-message-reuse-with-live-agent-run', 'Existing terminal send failure paths may also cancel the run; no witnessed live same-run failed-message continuation fixture is bound, so sent/unknown variants cannot imply failed coverage.');
   } else if (caseId === 'SR-BE-GRD-006') {
     await check('current-audited-send-finishes-then-cancel', async () => {
       const { group } = await qa.api.createGroup(); const toolId = randomUUID(), barrier = `current-step-${randomUUID()}`, text = `current-${randomUUID()}`;
@@ -368,7 +373,13 @@ export async function runBackendCase(caseId: string, context: BackendContext): P
         return { hit, before, disabled, run, after, sendCount: 1, turnCount: 1 };
       } finally { qa.agent.barriers.release(barrier); }
     });
-    missing('concurrent-profile-update-atomicity', 'This subcheck establishes normal current-step cancellation; concurrent profile CAS and injected rollback remain GRD-007/008 evidence, not inferred from a normal PATCH.');
+    for (const wait of ['capacity', 'remote-response'] as const) await check('current-step-cancel-' + wait + '-and-profile', () => cancelAtKickWait(qa, wait));
+  } else if (caseId === 'SR-BE-GRD-005') {
+    for (const compete of [false, true]) await check(compete ? 'same-key-crash-dual-instance' : 'same-key-crash-single-instance', () => sentKeyCrashRecovery(qa, compete));
+  } else if (caseId === 'SR-BE-POL-005' || caseId === 'SR-BE-DIA-004') {
+    for (const effect of [false, true]) await check(effect ? 'dispatched-effect-unknown-restart' : 'dispatched-no-effect-unknown-restart', () => dispatchedUnknownKick(qa, effect, true));
+    if (caseId === 'SR-BE-DIA-004') missing('safe-next-step-semantic-review-and-final-completion', 'Actual unknown, diagnostic text and no-replay evidence retained; semantic review of safe next-step and authoritative completion must be separately concluded, never inferred from safety.');
+    else missing('second-instance-unknown-competition', 'Restart safety does not imply independently witnessed simultaneous owner competition after unknown external effects.');
   } else if (caseId === 'SR-BE-GRD-007') {
     await check('actual-event-insert-fault-atomic-rollback-and-next-success', () => profileCancellationRollback(qa));
   } else if (caseId === 'SR-BE-GRD-008') {
@@ -392,8 +403,8 @@ export async function runBackendCase(caseId: string, context: BackendContext): P
         return { hit, denied, protectedGroup, run, sendCount: 1 };
       } finally { qa.agent.barriers.release(barrier); }
     });
-    missing('simultaneous-CAS-with-real-lock-barrier', 'Ordered stale-CAS proves atomic rejection but does not claim simultaneous competing requests.');
-    missing('stale-worker-permission-change', 'Actual previous-worker permission loss requires a separate observed lease/dispatch boundary.');
+    await check('simultaneous-CAS-with-real-lock-barrier', () => concurrentProfileCas(qa));
+    await check('stale-worker-permission-change', () => deferredPermissionChange(qa));
   } else missing('driver-unbound', 'This ID has no actual independent operation driver in backend-flows; use the assigned delivery/DB/C2/fixture owner.');
   // A missing subvariant is never silently skipped or converted to success.
   const variants: VariantResult[] = subchecks.map((s) => ({ id: s.id, status: s.status, reason: s.reason, evidence: s.evidence ? [s.evidence] : [] }));

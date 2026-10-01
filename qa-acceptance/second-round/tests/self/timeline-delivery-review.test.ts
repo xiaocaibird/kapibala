@@ -54,3 +54,66 @@ test('missing diagnostic or incidental assertion cannot become mutation detectio
   assert.throws(()=>reviewMutationDiagnostics('audit-fail-bypass',baseline,missing,source),BlockedError);
   assert.throws(()=>reviewMutationDiagnostics('audit-fail-bypass',baseline,auditChanged.replace("code: 'ERR_ASSERTION'","code: 'ECONNREFUSED'"),source),BlockedError);
 });
+
+
+// Pure QA safety tests; no product process, database or Docker command runs.
+test('public README manifest validation rejects foreign roots, resource names and network targets', async () => {
+  const { validateDeliveryManifest } = await import('../../harness/delivery-isolated.js');
+  const runtimeRoot='/qa-owned/runtime',runId='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+  const directory=`${runtimeRoot}/kapibala-local-${runId}`,path=`${directory}/manifest.json`;
+  const m={runId,ownerToken:'a'.repeat(64),ownerPid:12345,ownerStarted:'Wed Oct 1 10:00:00 2026',directory,
+    containerName:`kapibala-local-${runId}`,volumeName:`kapibala-local-${runId}-data`,engineArgs:['--context','desktop-linux'],engineId:'owned-engine',revision:'qa-fixture',
+    gatewayState:`${directory}/gateway.json`,agentState:`${directory}/agent.json`,urls:{api:'http://127.0.0.1:20001',web:'http://127.0.0.1:20002',gateway:'http://127.0.0.1:20003',agent:'http://127.0.0.1:20004'}};
+  validateDeliveryManifest(m,path,runtimeRoot);
+  for(const changed of [{...m,directory:'/foreign'}, {...m,containerName:'existing-demo'}, {...m,volumeName:'foreign-data'}, {...m,ownerToken:'short'}, {...m,urls:{...m.urls,api:'https://example.invalid'}}])
+    assert.throws(()=>validateDeliveryManifest(changed,path,runtimeRoot));
+  assert.throws(()=>validateDeliveryManifest(m,'/foreign/manifest.json',runtimeRoot));
+});
+test('public README stdout parsing preserves actual events and ignores npm prose or partial JSON', async () => {
+  const { isolatedEvents } = await import('../../harness/delivery-isolated.js');
+  assert.deepEqual(isolatedEvents('> npm run dev:isolated\n{"event":"isolated-preparing","runId":"one"}\n{"event":\n{"event":"isolated-cleaned","runId":"one"}\n'),[
+    {event:'isolated-preparing',runId:'one'},{event:'isolated-cleaned',runId:'one'}]);
+});
+
+test('recovery discovers only this run private manifests without requiring stdout and retains unproven entries', async () => {
+  const { discoverDeliveryManifests } = await import('../../harness/delivery-isolated.js');
+  const { mkdtemp, mkdir, writeFile, readFile, symlink, rm, realpath } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const root = await realpath(await mkdtemp(join(tmpdir(), 'qa-delivery-discovery-')));
+  const foreign = await mkdtemp(join(tmpdir(), 'qa-delivery-foreign-sentinel-'));
+  const ids = ['aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb','cccccccc-cccc-4ccc-8ccc-cccccccccccc','dddddddd-dddd-4ddd-8ddd-dddddddddddd'];
+  try {
+    const directory = join(root, `kapibala-local-${ids[0]}`);
+    await mkdir(directory, { mode: 0o700 });
+    const manifest = { version: 1, runId: ids[0], ownerToken: 'a'.repeat(64), ownerPid: 12345, ownerStarted: 'QA self only', directory,
+      containerName: `kapibala-local-${ids[0]}`, volumeName: `kapibala-local-${ids[0]}-data`, engineArgs: ['--context','qa-self'], engineId: 'qa-self', revision: 'qa-frozen',
+      gatewayState: join(directory,'gateway.json'), agentState: join(directory,'agent.json') };
+    await writeFile(join(directory,'manifest.json'),JSON.stringify(manifest),{mode:0o600});
+    await writeFile(join(foreign,'sentinel'),'untouched',{mode:0o600});
+    await symlink(foreign,join(root,`kapibala-local-${ids[1]}`));
+    const missing=join(root,`kapibala-local-${ids[2]}`); await mkdir(missing,{mode:0o700});
+    const wrong=join(root,`kapibala-local-${ids[3]}`); await mkdir(wrong,{mode:0o700});
+    await writeFile(join(wrong,'manifest.json'),JSON.stringify({...manifest,revision:'foreign-revision'}),{mode:0o600});
+    // npm/tsx may leave unrelated temporary files: never treat these as Docker owners.
+    await mkdir(join(root,'tsx-cache'),{mode:0o700});
+    const result=await discoverDeliveryManifests(root,'qa-frozen');
+    assert.equal(result.manifests.length,1); assert.equal(result.manifests[0]!.manifest.runId,ids[0]);
+    assert.equal(result.unresolved.length,3);
+    assert.equal(await readFile(join(foreign,'sentinel'),'utf8'),'untouched');
+    assert.equal(await readFile(join(directory,'manifest.json'),'utf8'),JSON.stringify(manifest));
+    assert.equal(await readFile(join(wrong,'manifest.json'),'utf8'),JSON.stringify({...manifest,revision:'foreign-revision'}));
+  } finally { await rm(root,{recursive:true,force:true}); await rm(foreign,{recursive:true,force:true}); }
+});
+
+test('recovery rejects a symlinked or nonprivate discovery root before following it', async () => {
+  const { discoverDeliveryManifests } = await import('../../harness/delivery-isolated.js');
+  const { mkdtemp, mkdir, chmod, symlink, rm, realpath } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os'); const { join } = await import('node:path');
+  const root=await realpath(await mkdtemp(join(tmpdir(),'qa-delivery-root-')));
+  try {
+    const real=join(root,'real'),link=join(root,'link');await mkdir(real,{mode:0o700});await symlink(real,link);
+    await assert.rejects(discoverDeliveryManifests(link,'qa'),BlockedError);
+    await chmod(real,0o755);await assert.rejects(discoverDeliveryManifests(real,'qa'),BlockedError);
+  } finally {await rm(root,{recursive:true,force:true});}
+});

@@ -336,5 +336,66 @@
       "010",
       "011"
     ]
+  },
+  "retestPreparation": {
+    "baseQaRevision": "87f5aea2519554616301f403643020b46e1d8a09",
+    "productExecutionStartedByThisWork": false,
+    "candidateCases": [
+      "SR-C1-004",
+      "SR-C1-009",
+      "SR-C1-010",
+      "SR-C1-011",
+      "SR-C2-008"
+    ],
+    "changes": [
+      "failed-before-retry: real failed response, committed pending/attempt/error/future due timestamp, null public path and later HTTP response gate; no database or clock mutation",
+      "crash observation: documented media-<uuid>.bin path; short nontruncated pg application_name; exhausted-window raw evidence",
+      "path-cleared physical-unlink-not-complete: single-target owned-directory 0500 fault, actual EACCES/EPERM and retained file; no claim syscall not attempted",
+      "changed-directory startup: actual owned second process against same database; specific documented rejection required",
+      "single-file unlink failure: Darwin uchg flag produces actual EPERM, control remains deletable; preserve inode/UID/original flags and restore owned flag",
+      "private storage: actual same-directory second offline process; corrupt/owned symlink/wide permissions faults restore exact original bytes/inode/mode; foreign UID still BLOCKED and does not skip other variants"
+    ],
+    "qaSelfTests": {
+      "passed": 39,
+      "failed": 0,
+      "skipped": 0,
+      "typecheck": "PASS"
+    },
+    "remainingUnchanged": [
+      "complete process egress observation",
+      "reference-cleanup bidirectional competition",
+      "full legacy-schema lifecycle and conservative running-reference fixture",
+      "C2 factory/queue/time/foreign-owner scenarios and authorized live model"
+    ],
+    "migrationConnectionChecklist": [
+      {
+        "step": 1,
+        "need": "Export fixed old commit fb1589df08f00c10e9e62801007b1698d4d0155a into unique QA runtime; verify original 001-008 checksums against delivered contract and freeze old lock/runtime. Never derive an old schema by deleting migration9 from a current database."
+      },
+      {
+        "step": 2,
+        "need": "Allocate a separately owned database; execute old scripts/migrate.ts with explicit DATABASE_URL. Record real schema_migrations ledger and data dump/hash; isolate dependency preparation from product result."
+      },
+      {
+        "step": 3,
+        "need": "Load declared old-schema synthetic fixtures: retrievable media, expired-source media, plain history, running and terminal runs. Bind real source URL and explain synthetic running fixture is conservative-migration coverage, not Agent-trigger evidence."
+      },
+      {
+        "step": 4,
+        "need": "Before candidate migration, launch exact candidate in an owned process against that schema8 database and only accept its actual schema-version rejection; unrelated startup failure stays BLOCKED."
+      },
+      {
+        "step": 5,
+        "need": "Run candidate standard migration twice, preserve original fields/ledger, compare complete migration names/checksums and actual media/reference projection. Do not create ready/deleted/ref outcomes from QA."
+      },
+      {
+        "step": 6,
+        "need": "Wire an owned candidate lifecycle/API to upgraded database and persistent media directory. Keep declared active-reference fixture live with a bounded reviewed control while downloads/cleanup are exercised, end it through reviewed lifecycle, and independently observe deletion after completion."
+      },
+      {
+        "step": 7,
+        "need": "Connect finalSchemaContract/legacyFixture/startWithoutMigration/migrate and M.migration in factory only after every preceding observation is provided. Ensure lifecycle closes both old/preparatory and upgraded resources without resetting evidence."
+      }
+    ]
   }
 }

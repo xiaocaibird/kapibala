@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { randomUUID, createHash } from 'node:crypto';
 import { appendFile, mkdir, readFile, realpath, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { chromium, type Browser } from '@playwright/test';
+import { chromium, firefox, webkit, type Browser } from '@playwright/test';
 import { exec, isolatedEnv, OwnedProcess } from '../../harness/process.js';
 import { loadTarget, requireAuthorization, targetFingerprint, redact, BlockedError } from '../../harness/security.js';
 import { OwnedDatabaseCluster } from '../../harness/database.js';
@@ -10,7 +10,7 @@ import type { TargetConfig } from '../../harness/types.js';
 import { secondRoundCases, secondRoundFingerprint, secondRoundRoot } from './scope.js';
 import { OwnedControllers } from './controllers.js';
 import { SecondRoundEnvironment } from './environment.js';
-import { mediaDriver, providerDriver } from './driver-factories.js';
+import { mediaDriver, providerDriver, providerEnvironment } from './driver-factories.js';
 import { runUiCase } from './ui-runner.js';
 import { runBackendCase, BACKEND_EXECUTABLE_IDS } from '../tests/backend-flows.js';
 import { runTimelineCase } from './timeline-driver.js';
@@ -26,6 +26,8 @@ const args=process.argv.slice(2), value=(name:string)=>args[args.indexOf(name)+1
 if(!args.includes('--sut')||!args.includes('--revision'))throw new Error('Required --sut ABSOLUTE --revision FULL_SHA');
 const sut=await realpath(value('--sut')),revision=value('--revision');
 assert.match(revision,/^[a-f0-9]{40}$/);
+const browserName=args.includes('--browser')?value('--browser'):'chromium';
+assert.ok(['chromium','firefox','webkit'].includes(browserName),'supported independent browser engine required');
 const qaRoot=resolve(secondRoundRoot,'..'),workspace=resolve(qaRoot,'..');
 const git=async(cwd:string,...a:string[])=>(await exec('git',a,{cwd,maxBuffer:8*1024*1024})).stdout.trim();
 assert.notEqual(sut,workspace,'QA and SUT checkouts are separate');
@@ -41,11 +43,12 @@ await mkdir(out,{recursive:true});await mkdir(runtime,{recursive:true,mode:0o700
 const fingerprint=await secondRoundFingerprint(),cases=await secondRoundCases();
 const manifest:Record<string,unknown>={runId,sutRevision:revision,qaRevision,secondRoundSha256:fingerprint,
   startedAt:new Date().toISOString(),sutDirectory:sut,qaDirectory:qaRoot,authority:scope.authorization,
-  autoRetries:0,node:process.version,productionReadiness:'NOT_ASSESSED',runnerErrors:[],
+  autoRetries:0,browserName,node:process.version,productionReadiness:'NOT_ASSESSED',runnerErrors:[],
   originalRequirementSha256:createHash('sha256').update(await readFile(resolve(sut,'docs/original-interview-question.md'))).digest('hex')};
 const saveManifest=()=>writeFile(resolve(out,'manifest.json'),redact(manifest)+'\n');
 const event=async(v:unknown)=>{await appendFile(resolve(out,'events.ndjson'),JSON.stringify({at:new Date().toISOString(),...v as object})+'\n');};
 const results:RoundResult[]=[];let controllers:OwnedControllers|undefined,cluster:OwnedDatabaseCluster|undefined,browser:Browser|undefined;
+let ownedDatabaseResource:{id:string;volumes:string[]} | undefined;
 const errors=manifest.runnerErrors as string[];
 console.log(JSON.stringify({event:'run-created',runId,out,revision,qaRevision}));
 try {
@@ -61,7 +64,8 @@ try {
   target.sut.cwd=sut;target.sut.revision=revision;
   target.sut.start={command:process.execPath,args:['--import','tsx','scripts/qa-observation-server.ts']};
   target.sut.env={};target.sut.startupTimeoutMs=60000;
-  target.ui.adapterConfirmed=true;target.ui.headless=true;target.adapters=adapters;
+  (target.ui as typeof target.ui & {browserName:string}).browserName=browserName;
+  target.ui.adapterConfirmed=true;target.ui.headless=!args.includes('--headed');target.adapters=adapters;
   const targetPath=resolve(runtime,'target.json');await writeFile(targetPath,JSON.stringify(target,null,2));
   const validated=await loadTarget(targetPath,qaRoot);
   const authorization={version:1,scope:'second-round',approvedBy:'Project owner (verified direct user messages)',
@@ -76,10 +80,14 @@ try {
   await writeFile(resolve(out,'target.json'),JSON.stringify(validated,null,2));await writeFile(resolve(out,'authorization.json'),JSON.stringify(authorization,null,2));
   manifest.targetSha256=authorization.targetSha256;await saveManifest();
   cluster=new OwnedDatabaseCluster(validated.database.image);await cluster.start();
-  await writeFile(resolve(out,'database-owner.json'),JSON.stringify({name:cluster.name,owner:cluster.owner,port:cluster.port,image:cluster.image},null,2));
+  const dbInfo=JSON.parse((await exec('docker',['--host','unix:///var/run/docker.sock','inspect',cluster.name])).stdout)[0];
+  assert.equal(dbInfo.Config.Labels['qa.owner'],cluster.owner);
+  ownedDatabaseResource={id:dbInfo.Id,volumes:dbInfo.Mounts.filter((m:{Type:string})=>m.Type==='volume').map((m:{Name:string})=>m.Name)};
+  await writeFile(resolve(out,'database-owner.json'),JSON.stringify({name:cluster.name,owner:cluster.owner,port:cluster.port,image:cluster.image,...ownedDatabaseResource},null,2));
   const smoke=JSON.parse(await readFile(resolve(secondRoundRoot,'config/smoke-selection.json'),'utf8'));
   const smokeIds=new Set<string>(smoke.groups.flatMap((g:{cases:{id:string}[]})=>g.cases.map(c=>c.id)));
   const selected=args.includes('--cases')?new Set(value('--cases').split(',')):undefined;
+  if(selected)for(const id of selected)assert.ok(cases.some(c=>c.id===id),`Unknown selected case ${id}`);
   const ordered=[...cases.filter(c=>smokeIds.has(c.id)),...cases.filter(c=>!smokeIds.has(c.id))].filter(c=>!selected||selected.has(c.id));
   manifest.selectedCaseIds=ordered.map(c=>c.id);manifest.selection=selected?'explicit fixed retest batch':'all second-round cases';await saveManifest();
   for(const c of ordered) {
@@ -99,9 +107,13 @@ try {
       } else if(c.id.startsWith('SR-BE-USG-')) {
         await runUsageCase(c.id,providerDriver({target:validated,cluster,outputDir:dir,runtimeDir:rt}));result=pass('actual-provider-usage-case-obligations');
       } else if(c.id.startsWith('SR-UI-')||c.id==='SR-BE-DEL-006') {
-        if(!browser)browser=await chromium.launch({headless:true});
+        if(!browser)browser=await ({chromium,firefox,webkit}[browserName as 'chromium'|'firefox'|'webkit']).launch({headless:validated.ui.headless??true});
         const checks=await runUiCase(c.id,{qa:await environment(),browser,outputDir:dir});
         await writeFile(resolve(dir,'checks.json'),JSON.stringify(checks,null,2));result=pass('actual-browser-public-effects');
+      } else if(c.id==='SR-BE-POL-007') {
+        const driver=providerDriver({target:validated,cluster,outputDir:dir,runtimeDir:rt});
+        const placeholder=new SecondRoundEnvironment(validated,cluster,dir,rt);
+        result=await runBackendCase(c.id,{qa:placeholder,outputDir:dir,sutDirectory:sut,providerDriver:driver,providerEnvironment:()=>providerEnvironment(driver)});
       } else if((BACKEND_EXECUTABLE_IDS as readonly string[]).includes(c.id)) {
         result=await runBackendCase(c.id,{qa:await environment(),outputDir:dir,sutDirectory:sut});
       } else if(c.id.startsWith('SR-BE-DB-'))result=await runTimelineCase(c.id,await environment());
@@ -125,6 +137,16 @@ try {
 finally {
   for(const [name,close] of [['browser',()=>browser?.close()],['database',()=>cluster?.close()],['controllers',()=>controllers?.close()]] as const)
     try{await close();await event({event:'cleanup',resource:name,status:'complete'});}catch(e){errors.push(`${name}: ${String(e)}`);await event({event:'cleanup',resource:name,status:'failed',error:String(e)});}
+  if(ownedDatabaseResource) {
+    const observations=[];
+    for(const [kind,id] of [['container',ownedDatabaseResource.id],...ownedDatabaseResource.volumes.map(id=>['volume',id])]) {
+      try {await exec('docker',['--host','unix:///var/run/docker.sock',kind==='volume'?'volume':'container','inspect',id]);
+        errors.push(`Owned ${kind} remains after cleanup: ${id}`);observations.push({kind,id,absent:false});}
+      catch(e){const value=e as {code?:number;stderr?:string};if(value.code===1&&/no such (object|container|volume)|not found/i.test(value.stderr??''))observations.push({kind,id,absent:true});
+        else {errors.push(`Cleanup identity verification unavailable: ${kind} ${id}`);observations.push({kind,id,absent:null,error:String(e)});}}
+    }
+    await writeFile(resolve(out,'database-cleanup-verification.json'),JSON.stringify(observations,null,2));
+  }
   manifest.completedAt=new Date().toISOString();await saveManifest();const report=await writeSecondRoundReport(out,manifest,results);
   console.log(JSON.stringify({event:'report-complete',out,counts:report.counts,verdict:report.verdict,runnerErrors:errors}));
 }

@@ -6,7 +6,7 @@
 PLAYWRIGHT_BROWSERS_PATH=/absolute/owned/browser-cache node --import tsx second-round/harness/runner.ts --sut /absolute/isolated/sut --revision FULL_COMMIT_SHA
 ```
 
-入口冻结授权、完整范围和目标摘要，先执行冒烟子集，再执行其余用例；首次失败不自动重试。结果写入 `second-round/reports/runs/<run-id>/`；每轮保留 MD/JSON/JUnit、逐例原始证据和资源清理。真实付费模型与生产评估不在本入口范围。`--cases ID1,ID2` 仅用于独立复测批次，报告其余项保持 NOT_RUN，不替代全量结果。
+入口冻结授权、完整范围和目标摘要，先执行冒烟子集，再执行其余用例；首次失败不自动重试。结果写入 `second-round/reports/runs/<run-id>/`；每轮保留 MD/JSON/JUnit、逐例原始证据和资源清理。真实付费模型与生产评估不在本入口范围。`--cases ID1,ID2` 仅用于独立复测批次，报告其余项保持 NOT_RUN，不替代全量结果。 `--browser chromium|firefox|webkit` 为不同引擎分别创建绑定目标和证据的批次；`--headed` 使用实际有头浏览器观察自动焦点行为，不能代替真人 IME／系统焦点签字。
 
 # 第二轮独立 QA 准备
 

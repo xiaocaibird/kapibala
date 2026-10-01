@@ -335,9 +335,9 @@ export async function mediaDeletionFailure(driver?: MediaDriver) {
   await withOwnedDriver(driver, [M.basic, M.age, M.cleanup, M.unlink], 'media-unlink-failure', async (d) => {
     const a = await attachment(d), b = await attachment(d);
     const ar = await published(d, a.ref, a.content), br = await published(d, b.ref, b.content);
-    await expire(d, a.ref); await expire(d, b.ref);
     const fault = await d.failUnlink(a.ref);
     await cleanupPreserving(d, () => fault.restore(), async () => {
+      await expire(d, a.ref); await expire(d, b.ref);
       proof(await d.cycle('cleanup')); proof(await fault.failure());
       cleared(await d.read(a.ref)); cleared(await d.read(b.ref)); await absent(br.localFilePath!);
     });
@@ -549,12 +549,26 @@ export async function providerPrivateStorage(driver?: ProviderDriver) {
     assert.ok(relative(await realpath(owner.resourceRoot), await realpath(files.root)).split(sep)[0] !== '..');
     assert.ok(files.records.length > 0);
     for (const file of files.records) { const st = await lstat(file); assert.ok(st.isFile() && !st.isSymbolicLink()); assert.equal(st.mode & 0o777, 0o600); }
-    const second = await d.competingSessionOwner(); proof(second.evidence); assert.equal(second.started, false);
+    const results: { variant: string; error?: unknown }[] = [];
+    try { const second = await d.competingSessionOwner(); proof(second.evidence); assert.equal(second.started, false); results.push({ variant: 'competing-owner' }); }
+    catch (error) { results.push({ variant: 'competing-owner', error }); }
     for (const kind of ['corrupt', 'symlink', 'wide-permissions', 'foreign-owner'] as const) {
-      const fault = await d.installPrivateStateFault(kind); proof(fault.evidence);
-      await cleanupPreserving(d, () => fault.restore(), async () => { failure(await d.exchange('/agent/turn', request)); });
+      try {
+        const fault = await d.installPrivateStateFault(kind); proof(fault.evidence);
+        await cleanupPreserving(d, () => fault.restore(), async () => {
+          const before = (await d.calls()).length;
+          failure(await d.exchange('/agent/turn', request)); assert.equal((await d.calls()).length, before, '异常私有状态在购买新推理前拒绝');
+        });
+        results.push({ variant: kind });
+      } catch (error) { results.push({ variant: kind, error }); }
     }
+    await d.evidence('provider-private-storage-subscenario-results', results.map(({ variant, error }) => ({ variant,
+      status: error === undefined ? 'PASS' : error instanceof assert.AssertionError ? 'FAIL' : 'BLOCKED',
+      ...(error === undefined ? {} : { error: String(error) }) })));
     assert.ok(!(await d.logs()).join('\n').includes('QA-NOT-A-REAL-KEY'));
+    const failures = results.filter((r) => r.error !== undefined), failureObserved = failures.find((r) => r.error instanceof assert.AssertionError);
+    if (failureObserved) throw failureObserved.error;
+    if (failures.length) throw new PreparationBlocked(`Private storage subscenarios lack actual fixtures: ${failures.map((r) => r.variant).join(', ')}`);
   }, { syntheticCredentialCanary: 'QA-NOT-A-REAL-KEY' });
 }
 export async function providerBackendPolicies(driver?: ProviderDriver) {

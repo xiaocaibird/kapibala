@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { Client } from 'pg';
 import type { QaEnvironment } from '../../harness/environment.js';
-import { eventually, type Message } from '../../harness/platform-client.js';
+import { PlatformClient, eventually, type Message } from '../../harness/platform-client.js';
 import type { RoundResult } from './result.js';
 import { BlockedError } from '../../harness/security.js';
 
@@ -13,7 +13,7 @@ import { BlockedError } from '../../harness/security.js';
 const currentSql="SELECT jsonb_array_length(items) AS total, jsonb_path_query_array(items, '$[$start to $last]'::jsonpath, jsonb_build_object('start', LEAST($3::numeric, jsonb_array_length(items)), 'last', LEAST(jsonb_array_length(items), $3::numeric+$4::int)-1)) AS items FROM timeline_snapshots WHERE id=$1 AND group_id=$2";
 const oldSql="SELECT jsonb_array_length(items) AS total, COALESCE((SELECT jsonb_agg(items->position ORDER BY position) FROM generate_series(LEAST($3::numeric, jsonb_array_length(items))::int, LEAST(jsonb_array_length(items), $3::numeric+$4::int)::int-1) AS position), '[]'::jsonb) AS items FROM timeline_snapshots WHERE id=$1 AND group_id=$2";
 type MessagePage=Awaited<ReturnType<QaEnvironment['api']['messages']>>;
-export async function readFrozenPages(qa:QaEnvironment,groupId:string,initial?:MessagePage) {
+export async function readFrozenPages(qa:Pick<QaEnvironment,'api'>,groupId:string,initial?:MessagePage) {
   const first=initial ?? await qa.api.messages(groupId,undefined,17), items=[...first.items], cursors:string[]=[];
   const reads:{cursor:string;startedAt:string;completedAt:string;response:MessagePage}[]=[];
   let cursor=first.nextCursor;
@@ -65,13 +65,17 @@ async function measurement(qa:QaEnvironment,compare:boolean) {
       const prefix=randomUUID(), samples=[];
       // Explicit input-only fixture: two owned groups, deterministic identities,
       // ties, backdated timestamps and own messages. It seeds no derived outcome.
-      await db.query(`INSERT INTO messages(id,group_id,msg_id,sender_platform_user_id,is_own,text,sent_at,delivery_status,dispatch_state)
+      const inserted=await db.query(`INSERT INTO messages(id,group_id,msg_id,sender_platform_user_id,is_own,text,sent_at,delivery_status,dispatch_state)
         SELECT $1||'-'||g||'-'||i,g,$1||'-'||g||'-'||i,'qa-fixture',i%10=0,
         lpad(i::text,10,'0')||repeat('independent-qa-',16),
         '2026-01-01'::timestamptz + floor(i/3.0)*interval '1 millisecond' - CASE WHEN i%50=0 THEN interval '1 day' ELSE interval '0' END,
         'sent','done' FROM unnest($2::text[]) g CROSS JOIN generate_series(1,$3::int) i`,[prefix,[group.id,control.id],count]);
-      const distribution=(await db.query('SELECT group_id,count(*),count(DISTINCT sent_at),count(*) FILTER(WHERE is_own) AS own FROM messages GROUP BY group_id')).rows;
-      assert.equal(Number(distribution.find(x=>x.group_id===group.id)?.count),count);
+      // Duplicate count column names overwrite one another in node-postgres rows.
+      // Count identities and timestamp buckets separately, before any API call.
+      const distribution=(await db.query('SELECT group_id,count(*) AS message_count,count(DISTINCT sent_at) AS sent_at_count,count(*) FILTER(WHERE is_own) AS own FROM messages GROUP BY group_id')).rows;
+      await qa.evidence(`timeline-seed-${count}`,{count,prefix,groupIds:[group.id,control.id],insertedRows:inserted.rowCount,distribution});
+      assert.equal(inserted.rowCount,count*2);
+      for(const groupId of [group.id,control.id])assert.equal(Number(distribution.find(x=>x.group_id===groupId)?.message_count),count);
       await db.query('ANALYZE messages');
       for(const cursor of [undefined,'continuation']) {
         const start=performance.now(); const response=await qa.api.messages(group.id,cursor==='continuation' ? (samples[0].response.nextCursor??undefined) : undefined,50);
@@ -173,17 +177,30 @@ export async function runTimelineCase(caseId:string,qa:QaEnvironment):Promise<Ro
     }
     return {caseId,status:'PASS',variants:[{id:'frozen-confirmation-order-and-duplicate',status:'PASS',evidence:[resolve(qa.outputDir,'timeline-confirmation.json')]}]};
   }
-  const first=await qa.api.messages(group.id,undefined,13),second=await qa.api.messages(group.id,undefined,17);
-  const [firstBefore,secondBefore]=await Promise.all([pages(qa,group.id,first),pages(qa,group.id,second)]);
+  const separateSessions=caseId==='SR-BE-DB-005';
+  const readers:Pick<QaEnvironment,'api'>[]=separateSessions
+    ? ['first','second'].map(session=>({api:new PlatformClient(qa.api.baseUrl,{recorder:entry=>qa.recordHttp({...entry,qaReaderSession:session})})}))
+    : [qa,qa];
+  if(separateSessions) {
+    await Promise.all(readers.map(reader=>reader.api.login()));
+    assert.ok(readers[0]!.api.token&&readers[1]!.api.token);
+    assert.notEqual(readers[0]!.api.token,readers[1]!.api.token,'concurrent cursor readers need distinct actual login sessions');
+    assert.notEqual(readers[0]!.api.cookie,readers[1]!.api.cookie);
+    await qa.evidence('timeline-reader-sessions',{distinctAccessTokens:true,distinctRefreshCookies:true,sessionLabels:['first','second'],
+      evidence:'api.ndjson contains two actual login responses and every cursor request tagged with its reader session; credentials remain redacted'});
+  }
+  const [first,second]=await Promise.all([readers[0]!.api.messages(group.id,undefined,13),readers[1]!.api.messages(group.id,undefined,17)]);
+  const [firstBefore,secondBefore]=await Promise.all([pages(readers[0]!,group.id,first),pages(readers[1]!,group.id,second)]);
   qa.gateway.emitMessage({groupId:group.gatewayGroupId,msgId:'late-new',senderPlatformUserId:'qa-ext',text:'new',sentAt:'2027-01-01T00:00:00Z'});
   qa.gateway.emitMessage({groupId:group.gatewayGroupId,msgId:'late-old',senderPlatformUserId:'qa-ext',text:'old',sentAt:'2020-01-01T00:00:00Z'});
   if(caseId==='SR-BE-DB-005') await qa.restart();
-  const [a,b]=await Promise.all([pages(qa,group.id,first),pages(qa,group.id,second)]);
+  const [a,b]=await Promise.all([pages(readers[0]!,group.id,first),pages(readers[1]!,group.id,second)]);
   for(const chain of [a,b]) {assert.deepEqual(chain.items.map(m=>m.msgId).sort(),[...ids].sort());uniqueAndSorted(chain.items);}
   assertFrozenOrder(firstBefore.items,a.items);assertFrozenOrder(secondBefore.items,b.items);
   const fresh=await eventually(()=>pages(qa,group.id),x=>x.items.length===85);
   uniqueAndSorted(fresh.items);
-  await qa.evidence('timeline-fixed-set',{ids,first,second,firstBefore,secondBefore,a,b,fresh,restarted:caseId.endsWith('005'),
+  await qa.evidence('timeline-fixed-set',{ids,first,second,firstBefore,secondBefore,a,b,fresh,restarted:caseId.endsWith('005'),independentLoginSessions:separateSessions,
+    conditionalCrossVersionCursor:{status:'NOT_APPLICABLE',reason:'No delivered upgrade contract promises cross-version rollback cursor validity; this case checks only the same frozen version restart.'},
     tieRule:'No additional id ordering imposed; each original frozen chain retains its own observed order across equal sentAt values.'});
   return {caseId,status:'PASS',variants:[{id:'independent-cursor-chains-and-refresh',status:'PASS',evidence:[resolve(qa.outputDir,'timeline-fixed-set.json')]}]};
 }

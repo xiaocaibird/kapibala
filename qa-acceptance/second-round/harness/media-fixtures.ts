@@ -1,7 +1,10 @@
 import { Client } from 'pg';
 import { randomUUID } from 'node:crypto';
-import { lstat, realpath } from 'node:fs/promises';
+import { lstat, realpath, mkdir, readFile, chmod } from 'node:fs/promises';
 import { join } from 'node:path';
+import { availablePort } from '../../harness/network.js';
+import { OwnedProcess } from '../../harness/process.js';
+import { installOwnedUnlinkDenial } from './media-unlink.js';
 import type { SecondRoundEnvironment } from './environment.js';
 import { actualListenerIdentity } from './environment.js';
 import { PreparationBlocked, type Barrier, type Evidence, type Json, type MediaDriver, type MessageRef } from '../contracts/media-provider.js';
@@ -64,6 +67,94 @@ export class MediaDatabaseFixtures {
     throw new PreparationBlocked('Media background cycle did not reach observed settled state within diagnostic budget');
   }
   async hold(phase: Parameters<MediaDriver['hold']>[0], ref: MessageRef): Promise<Barrier> {
+    if (phase === 'path-cleared-before-unlink') {
+      const env = this.environment(), root = await realpath(env.mediaDirectory), before = await lstat(root);
+      if (!before.isDirectory() || before.isSymbolicLink() || before.uid !== process.getuid?.())
+        throw new PreparationBlocked('Unlink window requires an owned real media directory');
+      const originalMode = before.mode & 0o7777, readyGate = await this.hold('complete-before-path-commit', ref);
+      let changed = false, released = false;
+      const ready = (async () => {
+        const reached = await readyGate.reached(), rows = await this.snapshot();
+        if (rows.length !== 1 || rows[0]!.group_id !== ref.groupId || rows[0]!.msg_id !== ref.msgId)
+          throw new PreparationBlocked('Directory unlink denial requires exactly one owned target media task');
+        const current = await lstat(root);
+        if (current.ino !== before.ino || current.uid !== before.uid || current.isSymbolicLink())
+          throw new PreparationBlocked('Media directory changed before fault installation');
+        await chmod(root, 0o500); changed = true;
+        const permission = await lstat(root);
+        if ((permission.mode & 0o777) !== 0o500) throw new PreparationBlocked('Actual directory permission fault not installed');
+        await env.evidence('media-unlink-denial-installed', { ref, root, originalMode, actualMode: permission.mode & 0o777, readyWindow: reached });
+        await readyGate.release(); return reached;
+      })(); ready.catch(() => undefined);
+      const release = async () => {
+        if (released) return; released = true;
+        try {
+          await readyGate.release(); await ready.catch(() => undefined);
+          if (changed) {
+            const current = await lstat(root);
+            if (current.ino !== before.ino || current.uid !== before.uid || current.isSymbolicLink())
+              throw new PreparationBlocked('Refuse to restore permissions on a replaced directory');
+            await chmod(root, originalMode); changed = false;
+            await env.evidence('media-unlink-denial-restored', { ref, root, actualMode: (await lstat(root)).mode & 0o7777 });
+          }
+        } finally { this.leases.delete(lease); }
+      };
+      const lease = { release }; this.leases.add(lease);
+      return { id: readyGate.id, release, reached: async () => {
+        const readyWindow = await ready, deadline = performance.now() + 10_000; let last: unknown;
+        do {
+          const rows = await this.snapshot(ref), row = rows[0], publicMessage = (await env.api.messages(ref.groupId)).items.find((m) => m.msgId === ref.msgId);
+          const path = row ? join(root, `media-${row.id}.bin`) : undefined;
+          let file: { path: string; size: number } | undefined;
+          if (path) try { const st = await lstat(path); if (st.isFile() && !st.isSymbolicLink()) file = { path, size: st.size }; } catch (error) { if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error; }
+          last = { rows, publicMessage, file, mode: (await lstat(root)).mode & 0o777 };
+          if (row?.state === 'deleting' && row.local_file_path === null && publicMessage?.localFilePath === null && file &&
+              typeof row.last_error === 'string' && /EACCES|EPERM/.test(row.last_error)) {
+            const evidence = proof(`media:path-cleared-unlink-not-complete:${readyGate.id}`, { contractReference: this.contractReference, ref,
+              readyWindow, ...last as object, actualFault: 'owned single-file directory temporarily 0500; real unlink rejected by OS',
+              window: 'deletion intent and null projection committed; physical unlink not completed',
+              syscallNotAttemptedClaimed: false, businessRowsWrittenByFixture: false });
+            await env.evidence('media-path-cleared-unlink-window', evidence); return evidence;
+          }
+          await sleep(30);
+        } while (performance.now() < deadline && !released);
+        await env.evidence('media-path-cleared-window-not-established', { ref, last });
+        throw new PreparationBlocked('Actual committed null path plus denied unlink and retained file window not established');
+      } };
+    }
+    if (phase === 'failed-before-retry') {
+      const env = this.environment(), source = env.mediaSource;
+      if (!source) throw new PreparationBlocked('Missing owned media source');
+      const sourceUrl = `${source.url}/media/${ref.msgId}`, gate = source.holdAfterRequests(ref.msgId, 1, 30_000);
+      const lease = { release: async () => { await gate.release(); this.leases.delete(lease); } }; this.leases.add(lease);
+      return { id: gate.id, release: lease.release, reached: async () => {
+        const deadline = performance.now() + 10_000;
+        let last: unknown;
+        do {
+          const rows = await this.snapshot(ref), requests = source.snapshot().records.filter((r) => r.url === sourceUrl);
+          const row = rows[0], first = requests[0];
+          const publicReply = row ? await env.api.messages(ref.groupId) : undefined;
+          const publicMessage = publicReply?.items.find((m) => m.msgId === ref.msgId);
+          last = { rows, requests, publicMessage };
+          const actualFailure = first && (first.finishedAt || first.closedAt) &&
+            ([408, 429, 503].includes(first.responseStatus ?? 0) || (first.responseStatus === undefined && first.closedAt));
+          if (actualFailure && requests.length === 1 && rows.length === 1 && row?.state === 'pending' &&
+              Number(row.attempts) >= 1 && row.partial_name === null && row.local_file_path === null &&
+              typeof row.last_error === 'string' && row.last_error.length > 0 && publicMessage?.localFilePath === null &&
+              (row.next_attempt_at instanceof Date ? row.next_attempt_at.getTime() : Date.parse(String(row.next_attempt_at))) > Date.now()) {
+            const evidence = proof(`media:committed-retry-wait:${gate.id}`, { contractReference: this.contractReference, phase, ref,
+              row, requests, publicMessage, observedAt: new Date().toISOString(), responseGate: gate.id,
+              writes: [], clockAltered: false, pendingStateCommitted: true,
+              gateScope: 'later source responses only; actual committed next_attempt_at and first failure independently observed' });
+            await env.evidence('media-failed-before-retry-reached', evidence); return evidence;
+          }
+          if (requests.length > 1) break; // Never relabel a later request as the first committed waiting window.
+          await sleep(15);
+        } while (performance.now() < deadline);
+        await env.evidence('media-retry-window-not-established', { ref, last });
+        throw new PreparationBlocked('First failed download did not expose a committed retry wait before the next request');
+      } };
+    }
     if (phase === 'partial-written') {
       const source = this.environment().mediaSource; if (!source) throw new PreparationBlocked('Missing owned media source');
       const gate = source.holdPartial(ref.msgId);
@@ -83,7 +174,7 @@ export class MediaDatabaseFixtures {
       } };
     }
     if (phase !== 'complete-before-path-commit' && phase !== 'unlinked-before-completion') throw new PreparationBlocked(`Real ${phase} media fixture not connected`);
-    const client = await this.client(), id = `qa_media_${randomUUID().replaceAll('-', '')}`, marker = `${id}_${phase}`, lock = Math.floor(Math.random() * 0x7fffffff);
+    const client = await this.client(), id = `qa_media_${randomUUID().replaceAll('-', '')}`, marker = `qa_media_gate_${randomUUID().replaceAll('-', '').slice(0, 16)}`, lock = Math.floor(Math.random() * 0x7fffffff);
     const desired = phase === 'complete-before-path-commit' ? 'ready' : 'deleted';
     await client.query('SELECT pg_advisory_lock($1)', [lock]);
     await client.query(`CREATE FUNCTION ${id}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.group_id=${literal(ref.groupId)} AND NEW.msg_id=${literal(ref.msgId)} AND NEW.state=${literal(desired)} THEN PERFORM set_config('application_name',${literal(marker)},true); PERFORM pg_advisory_xact_lock(${lock}); END IF; RETURN NEW; END $$`);
@@ -97,19 +188,21 @@ export class MediaDatabaseFixtures {
     const lease = { release }; this.leases.add(lease);
     timer = setTimeout(() => { void release().catch((error: unknown) => envEvidence(this.environment(), 'media-barrier-expiry-error', String(error))); }, 30000);
     return { id, release, reached: async () => {
-      const deadline = performance.now() + 20000;
+      const deadline = performance.now() + 20000; let last: unknown;
       do {
         const blocked = await this.query("SELECT pid,application_name,state,wait_event_type,wait_event,query FROM pg_stat_activity WHERE datname=current_database() AND application_name=$1 AND wait_event_type='Lock' AND wait_event='advisory'", [marker]);
-        const rows = await this.snapshot(ref);
+        const rows = await this.snapshot(ref); last = { blocked: blocked.rows, rows, marker };
         if (blocked.rowCount && rows.length === 1) {
-          const row = rows[0]!, path = join(this.environment().mediaDirectory, `${row.id}.bin`); let exists = true, size: number | null = null;
+          const row = rows[0]!, path = join(this.environment().mediaDirectory, `media-${row.id}.bin`); let exists = true, size: number | null = null;
           try { size = (await lstat(path)).size; } catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') exists = false; else throw error; }
+          last = { blocked: blocked.rows, rows, marker, file: { path, exists, size } };
           if (phase === 'complete-before-path-commit' ? exists && row.local_file_path === null && row.state === 'downloading' : !exists && row.state === 'deleting' && row.local_file_path === null) {
             const evidence = proof(`media:real-barrier:${id}`, { contractReference: this.contractReference, id, phase, ref, pg: blocked.rows, row, file: { path, exists, size } }); await this.environment().evidence('media-barrier-reached', evidence); return evidence;
           }
         }
         await sleep(30);
       } while (performance.now() < deadline && !released);
+      await this.environment().evidence('media-transaction-window-not-established', { phase, ref, id, marker, released, last });
       throw new PreparationBlocked('Actual media transaction/file crash window not observed');
     } };
   }
@@ -137,11 +230,65 @@ export class MediaDatabaseFixtures {
     do { const after = await env.api.agentRun(runId); if (after.status !== 'running') return proof(`media:reference-finished:${runId}`, { before, after }); await sleep(30); } while (performance.now() < deadline);
     throw new PreparationBlocked('Actual referenced Agent run did not finish within diagnostic budget');
   }
+  async failUnlink(ref: MessageRef): ReturnType<MediaDriver['failUnlink']> {
+    const env = this.environment(), rows = await this.snapshot(ref), row = rows[0];
+    if (rows.length !== 1 || row?.state !== 'ready' || typeof row.local_file_path !== 'string')
+      throw new PreparationBlocked('Single-file unlink failure must be installed before target expiry');
+    const path = row.local_file_path, fault = await installOwnedUnlinkDenial(env.mediaDirectory, path);
+    const lease = { release: async () => { await fault.restore(); this.leases.delete(lease); await env.evidence('media-single-file-unlink-denial-restored', { ref, path }); } };
+    this.leases.add(lease);
+    await env.evidence('media-single-file-unlink-denial-installed', { ref, row, fault: fault.evidence });
+    return { restore: lease.release, failure: async () => {
+      const deadline = performance.now() + 10_000; let last: unknown;
+      do {
+        const rows = await this.snapshot(ref), row = rows[0], current = (await env.api.messages(ref.groupId)).items.find((m) => m.msgId === ref.msgId);
+        const file = await lstat(path); last = { rows, publicMessage: current, file: { path, inode: file.ino, size: file.size } };
+        if (row?.state === 'deleting' && row.local_file_path === null && current?.localFilePath === null &&
+            typeof row.last_error === 'string' && /EPERM/.test(row.last_error) && file.isFile() && !file.isSymbolicLink()) {
+          const evidence = proof(`media:actual-single-file-unlink-denial:${ref.msgId}`, { ref, fault: fault.evidence, ...last as object,
+            errorActuallyObserved: 'EPERM', claimedEacces: false });
+          await env.evidence('media-single-file-unlink-failure', evidence); return evidence;
+        }
+        await sleep(30);
+      } while (performance.now() < deadline);
+      await env.evidence('media-single-file-unlink-not-observed', { ref, last });
+      throw new PreparationBlocked('Actual product EPERM deletion failure was not observed');
+    } };
+  }
   async cleanup() { await Promise.all([...this.leases].map((lease) => lease.release())); }
   async secondInstance(directory: 'same-physical' | 'new-owned-directory'): ReturnType<MediaDriver['secondInstance']> {
-    if (directory !== 'same-physical') throw new PreparationBlocked('Independent changed-directory startup fixture not bound');
-    const env = this.environment(), api = await env.startSecondInstance(); const identities = await actualListenerIdentity(api.baseUrl), path = await realpath(env.mediaDirectory);
-    return { started: true, pid: identities[0]!.pid, actualMediaRealPath: path, evidence: proof('media:second-instance', { identities, publicHealth: await api.get('/api/health'), sharedConfiguredPhysicalPath: path }) };
+    const env = this.environment();
+    if (directory === 'same-physical') {
+      const api = await env.startSecondInstance(); const identities = await actualListenerIdentity(api.baseUrl), path = await realpath(env.mediaDirectory);
+      return { started: true, pid: identities[0]!.pid, actualMediaRealPath: path, evidence: proof('media:second-instance', { identities, publicHealth: await api.get('/api/health'), sharedConfiguredPhysicalPath: path }) };
+    }
+    const path = join(env.runtimeDirectory, `media-mismatch-${randomUUID()}`), port = await availablePort();
+    await mkdir(path, { mode: 0o700 });
+    const baseEnvironment = await env.ownedDatabaseEnvironment(env.ownedStorage().database, port);
+    const configured = env.config.sut.start;
+    const command = { command: configured.command, args: configured.args.map((arg) => arg.replaceAll('{API_PORT}', String(port))) };
+    const logPath = join(env.outputDir, `media-mismatch-${port}.log`), owner = new OwnedProcess(command, env.config.sut.cwd, { ...baseEnvironment, MEDIA_DIR: path }, logPath);
+    const beforeRows = await this.snapshot(); let ready = false, identities: Awaited<ReturnType<typeof actualListenerIdentity>> = [];
+    try {
+      await owner.start(); const deadline = performance.now() + Math.min(15_000, env.config.sut.startupTimeoutMs);
+      while (performance.now() < deadline && !owner.exitOutcome) {
+        try {
+          const response = await fetch(`http://127.0.0.1:${port}/api/health`, { signal: AbortSignal.timeout(200) });
+          if (response.status === 200) { ready = true; identities = await actualListenerIdentity(`http://127.0.0.1:${port}`); break; }
+        } catch { /* Actual exit or bounded health probe decides the outcome. */ }
+        await sleep(30);
+      }
+      const actualExit = owner.exitOutcome;
+      // Close the owned process group before reading its final flushed log.
+      await owner.stop(); const log = await readFile(logPath, 'utf8');
+      const evidence = proof('media:changed-directory-startup', { attemptedDirectory: path, port, command, beforeRows,
+        ready, identities, actualExit, logPath, log, afterRows: await this.snapshot() });
+      await env.evidence('media-changed-directory-startup', evidence);
+      if (!ready && (!actualExit || actualExit.code === 0 || !/MEDIA_DIR differs from persisted media storage/.test(log)))
+        throw new PreparationBlocked('Changed-directory probe did not produce the documented actual startup rejection');
+      return { started: ready, ...(ready ? { pid: identities[0]!.pid } : {}), actualMediaRealPath: await realpath(path), evidence };
+    } finally { await owner.stop(); }
+
   }
 }
 async function envEvidence(env: SecondRoundEnvironment, name: string, value: unknown) { await env.evidence(name, value); }

@@ -31,6 +31,8 @@ export interface Group {
   activeSequenceRunId: string | null;
 }
 export interface Message {
+  /** C1 public projection; absent on legacy ordinary messages, null when unavailable. */
+  localFilePath?: string | null;
   msgId: string | null;
   clientMsgId: string | null;
   senderPlatformUserId: string;

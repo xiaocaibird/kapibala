@@ -177,3 +177,17 @@ test('authentication failure evidence survives an earlier business assertion', a
   assert.equal(evidence.get('provider-offline-auth-validation')!.status, 'FAIL');
   assert.equal(evidence.get('provider-self-secondary-secondary-cleanup-error')!.primaryPresent, true);
 });
+
+test('media later-response barrier leaves the first real failure unchanged and holds retries across fault reset', async () => {
+  const backend = await gateway(), source = new MediaSourceProxy(backend.url); await source.start();
+  try {
+    const item = source.source({ id: 'retry-held', bytes: Uint8Array.of(1, 2, 3), fault: '503-once' });
+    const gate = source.holdAfterRequests('retry-held', 1, 2000);
+    assert.equal((await fetch(item.url)).status, 503);
+    const pending = fetch(item.url); await gate.reached();
+    assert.equal(source.requests().length, 2); assert.equal(source.requests()[1]!.responseStatus, undefined);
+    source.setFault(item.url, 'none'); await gate.release();
+    assert.deepEqual(new Uint8Array(await (await pending).arrayBuffer()), Uint8Array.of(1, 2, 3));
+    assert.equal(source.requests()[1]!.responseStatus, 200);
+  } finally { await source.close(); await backend.close(); }
+});

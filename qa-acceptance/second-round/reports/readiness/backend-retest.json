@@ -1,0 +1,32 @@
+{
+  "phase": "retest-assets-only",
+  "sutExecution": "NOT_RUN",
+  "priorQaRevision": "87f5aea2519554616301f403643020b46e1d8a09",
+  "newDrivers": [
+    "SR-BE-GRD-005",
+    "SR-BE-DIA-004",
+    "SR-BE-POL-005",
+    "SR-BE-POL-007"
+  ],
+  "expanded": [
+    "SR-BE-GRD-003",
+    "SR-BE-GRD-006",
+    "SR-BE-GRD-008",
+    "SR-BE-POL-004",
+    "SR-BE-DIA-005"
+  ],
+  "qaFix": [
+    "DIA001/DIA002/DIA005 fault marker now satisfies the reviewed qa-runtime prefix contract"
+  ],
+  "remaining": {
+    "SR-BE-GRD-003": "Failed-message same-run continuation still needs a live run after failure rather than a terminal cancellation.",
+    "SR-BE-DIA-004": "Retains actual unknown/diagnostics; safe next-step semantic review and authoritative final completion do not follow from no replay.",
+    "SR-BE-POL-005": "Unknown-effect second-instance competition remains unbound; single restart cannot stand in for it."
+  },
+  "selfChecks": {
+    "backendTests": 9,
+    "productsTested": 0
+  },
+  "evidencePolicy": "Each operation uses actual REST, gateway/provider request/effect ledgers, PostgreSQL lock witness, runtime budget facts or explicit public fault seam. No seed of completed steps, fake activity, or synthetic side effect.",
+  "newCapability": "module-tick-independent, gateway/automation independent lease UUID, 20s TTL, advance A only then same-instance B remains failed; actual new process reset afterward"
+}

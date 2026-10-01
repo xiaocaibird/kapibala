@@ -3,6 +3,7 @@ import { readdir, lstat, readFile, realpath, unlink } from 'node:fs/promises';
 import { join, relative, isAbsolute } from 'node:path';
 import { C2_CAPABILITIES as P, PreparationBlocked, type Evidence, type HttpFact, type Json, type Ownership, type ProviderDriver } from '../contracts/media-provider.js';
 import { ProviderWireStub } from './provider-wire.js';
+import { installOwnedPrivateStateFault } from './provider-storage.js';
 const proof = (reference: string, raw: unknown): Evidence => ({ reference, raw: JSON.parse(JSON.stringify(raw)) as Json });
 export interface ProviderHost { ownership: Ownership; agentUrl: string; sessionDirectory: string }
 export interface ProviderLifecycle {
@@ -26,10 +27,11 @@ function checkedOrigin(input: string) {
 export function createProviderHttpDriver(binding: ProviderLifecycle): ProviderDriver {
   let wire: ProviderWireStub | undefined, host: ProviderHost | undefined;
   let lastKilledPid: number | undefined;
+  const stateFaults = new Set<{ restore(): Promise<void> }>();
   const active = () => { if (!wire || !host) throw new PreparationBlocked('Provider process not opened'); return { wire, host }; };
   const core: Partial<ProviderDriver> = {
     contractReference: binding.contractReference,
-    capabilities: [P.protocol, P.upstream, P.history, P.restart, P.pending, ...(binding.capabilities ?? [])], usageContract: null,
+    capabilities: [P.protocol, P.upstream, P.history, P.restart, P.pending, P.storage, ...(binding.capabilities ?? [])], usageContract: null,
     async open(options) { wire = new ProviderWireStub(); await wire.start(); host = await binding.open(options ?? {}, wire.url); checkedOrigin(host.agentUrl); return host.ownership; },
     evidence: binding.evidence,
     async cleanup() {
@@ -37,6 +39,7 @@ export function createProviderHttpDriver(binding: ProviderLifecycle): ProviderDr
       // Stop the real service first so the final ledger includes every request
       // it actually dispatched, including requests made during graceful close.
       try { result = await binding.cleanup(); } catch (error) { original = error; }
+      for (const fault of [...stateFaults]) try { await fault.restore(); } catch (error) { original ??= error; }
       try {
         if (wire) {
           const snapshot = wire.snapshot();
@@ -98,6 +101,15 @@ export function createProviderHttpDriver(binding: ProviderLifecycle): ProviderDr
       const exit = await binding.verifyExited(actual.pid); const same = await lstat(path);
       if (same.ino !== before.ino || await readFile(path, 'utf8') !== original) throw new PreparationBlocked('Lock changed before reclaim');
       await unlink(path); return proof('provider:owned-stale-lock-reclaimed', { before: state, exit, pid: actual.pid, inode: before.ino });
+    },
+    async installPrivateStateFault(kind) {
+      const { host: h } = active();
+      const files = (await readdir(h.sessionDirectory)).filter((name) => /^[a-f0-9]{64}\.json$/.test(name));
+      if (files.length !== 1) throw new PreparationBlocked('Storage fault requires exactly one actual owned session record');
+      const fault = await installOwnedPrivateStateFault(h.ownership.resourceRoot, join(h.sessionDirectory, files[0]!), kind);
+      const lease = { restore: async () => { await fault.restore(); stateFaults.delete(lease); } }; stateFaults.add(lease);
+      await binding.evidence(`provider-private-state-${kind}-installed`, fault.evidence);
+      return { evidence: fault.evidence, restore: lease.restore };
     },
     async sessionFiles() { const { host: h } = active(); const records = (await readdir(h.sessionDirectory)).filter((name) => /^[a-f0-9]{64}\.json$/.test(name)).map((name) => join(h.sessionDirectory, name)); return { root: h.sessionDirectory, records, evidence: proof('provider:session-files', { root: h.sessionDirectory, records }) }; },
     logs: binding.logs,

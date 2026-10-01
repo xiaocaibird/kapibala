@@ -18,6 +18,7 @@ export class MediaSourceProxy {
   private sources = new Map<string, Source>();
   private records: RequestLedger[] = [];
   private holds = new Map<string, { id: string; reached?: RequestLedger; released: boolean; wait: Promise<void>; release(): void }>();
+  private requestHolds = new Map<string, { id: string; allowed: number; reached?: RequestLedger; released: boolean; wait: Promise<void>; release(): void }>();
   private downstreams = new Set<ReturnType<typeof httpRequest>>();
   readonly errors: string[] = [];
   url = '';
@@ -53,10 +54,28 @@ export class MediaSourceProxy {
       return proof(`media-source:partial:${lease.id}`, lease.reached);
     }, release: async () => { clearTimeout(timer); lease.release(); this.holds.delete(sourceId); } };
   }
+  /** Leaves the first real failure untouched; later HTTP responses are gated.
+   * This neither changes a product retry time nor claims it persisted a retry. */
+  holdAfterRequests(sourceId: string, allowed: number, diagnosticMs = 20_000): Barrier {
+    if (!this.sources.has(sourceId) || this.requestHolds.has(sourceId) || !Number.isSafeInteger(allowed) || allowed < 0)
+      throw new Error('Later-response hold requires unique owned source and request count');
+    let done!: () => void;
+    const lease = { id: randomUUID(), allowed, reached: undefined as RequestLedger | undefined, released: false,
+      wait: new Promise<void>((resolve) => { done = resolve; }), release() { lease.released = true; done(); } };
+    this.requestHolds.set(sourceId, lease);
+    const timer = setTimeout(() => lease.release(), diagnosticMs); timer.unref();
+    return { id: lease.id, reached: async () => {
+      const deadline = performance.now() + diagnosticMs;
+      while (!lease.reached && !lease.released && performance.now() < deadline) await new Promise((resolve) => setTimeout(resolve, 10));
+      if (!lease.reached) throw new PreparationBlocked('No actual later media request reached response gate');
+      return proof(`media-source:later-response:${lease.id}`, lease.reached);
+    }, release: async () => { clearTimeout(timer); lease.release(); this.requestHolds.delete(sourceId); } };
+  }
   requests(): SourceRequest[] { return structuredClone(this.records); }
   snapshot() { return structuredClone({ records: this.records, errors: this.errors }); }
   async close() {
     for (const hold of this.holds.values()) hold.release();
+    for (const hold of this.requestHolds.values()) hold.release();
     for (const req of this.downstreams) req.destroy(); this.server.closeAllConnections();
     await new Promise<void>((resolve, reject) => this.server.close((error) => error ? reject(error) : resolve()));
     await Promise.allSettled([...this.pending]);
@@ -75,6 +94,13 @@ export class MediaSourceProxy {
     };
     if (!source) { send(404); return; }
     if (req.method !== 'GET') { send(405); return; }
+    const requestHold = match ? this.requestHolds.get(match[1]!) : undefined;
+    if (requestHold && !requestHold.released && this.records.filter((r) => r.url === record.url).length > requestHold.allowed) {
+      requestHold.reached = record;
+      let onClose!: () => void; const closed = new Promise<void>((resolve) => { onClose = resolve; res.once('close', onClose); });
+      await Promise.race([requestHold.wait, closed]); res.off('close', onClose);
+      if (res.destroyed) return;
+    }
     const first = source.seen++ === 0;
     if (source.fault === '404') { send(404); return; }
     if (first && ['503-once', '408-once', '429-once'].includes(source.fault)) { send(Number(source.fault.slice(0, 3))); return; }
