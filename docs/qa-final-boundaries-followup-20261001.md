@@ -49,7 +49,7 @@
 
 观察协议新增实际应用进程的单调时钟读数、最后成功采样以及快照来源；控制器将存活桥接读取与进程退出后保留的历史缓存明确区分。汇总工具按父进程请求/响应区间校准不同进程时钟，关联真实强杀与退出、恢复接管和终止区间。它不假定不同进程 `performance.now()` 原点相同或网络往返对称。
 
-完整性检查要求从真实创建/接管起连续观察；晚订阅重建、所有权中断、恢复暂停及缓存时钟均不能充当完整区间。最后确认采样到退出的尾段只是有上下界的不确定区间；成功写库后通知尚未送达也可能发生，因此其零下界不表示实际没有丢计量。单进程恢复帧的 `includesUnsavedTail=false` 保持原意，不被改成全程完整。
+完整性检查要求从真实创建/接管起连续观察；晚订阅重建、所有权中断、恢复暂停及缓存时钟均不能充当完整区间。这里检查的是所覆盖 epoch 的连续性，启动到接管之间尚缺整段 `inactive` 见证，不能因求和时未纳入就默认按原文扣除。已观察段下界超过上限能证明失败，反向不能据此证明整个 run 通过。最后确认采样到退出的尾段只是有上下界的不确定区间；成功写库后通知尚未送达也可能发生，因此其零下界不表示实际没有丢计量。单进程恢复帧的 `includesUnsavedTail=false` 保持原意，不被改成全程完整。
 
 该能力仅支持记录中明确的同机、稳定速率单调时钟、连续单所有权、真实无远端在途的持久安全点实验。它不提供任意停电/多实例精确计量保证，旧 QA 缺失帧也不会因此被补造。[接入说明、完整原始帧及最终强杀证据](qa-cross-epoch-evidence-20261001.md)另行固定版本，由 QA 决定能否补足 INT-ACT-001。
 
@@ -90,7 +90,7 @@ QA_RUNTIME_REGISTRY_DIR='<owned runtime registry>' QA_RUNTIME_PORT='<runtime por
 | 证据流 | 请求及关联 | 用途 |
 |---|---|---|
 | capacity | `qa-capacity-control/1`，`hold-admission-capacity`，`{groupId,runId,toolUseId}` | 证明真正容量拒绝、无回调/外部派发以及后续 ready |
-| 活动计量 | `qa-runtime-observation/1`，`observe-activity`，`{kind:"activity",groupId,runId,toolUseId:"all-run-steps"}` | 完整实际活动区间；不能用 capacity 流的持久采样替代 |
+| 活动计量 | `qa-runtime-observation/1`，`observe-activity`，`{kind:"activity",groupId,runId,toolUseId:"all-run-steps"}` | 所覆盖 epoch 的实际活动区间；跨 epoch 另核初始化缺口，不能用 capacity 持久采样替代 |
 | 运行生命周期 | `qa-runtime-observation/1`，`observe-agent-lifecycle`，`{kind:"tool-wait",groupId,runId,toolUseId:"all-run-steps"}` | 实际终止决定、同 attempt 的真实 COMMIT 以及新派发顺序 |
 | 强杀安全点 | `qa-runtime-observation/1`，`hold-safe-activity-boundary`，同活动关联 | 无远端在途的持久点及新跨 epoch 取证；完整步骤见专项说明 |
 
