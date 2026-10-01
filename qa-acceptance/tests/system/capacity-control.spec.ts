@@ -3,6 +3,7 @@ import { test, expect } from '../fixtures.js';
 import type { QaEnvironment } from '../../harness/environment.js';
 import { eventually, type AgentRun } from '../../harness/platform-client.js';
 import { BlockedError } from '../../harness/security.js';
+import { observe } from '../../harness/observation.js';
 import {
   CapacityControl,
   type CapacityLease,
@@ -61,6 +62,10 @@ async function observeNoLateKick(
   qa: QaEnvironment,
   kick: PreparedKick,
   expected: Pick<AgentRun, 'status' | 'endReason'>,
+  completedCurrentStep: { requests: number; effects: number; turns?: number } = {
+    requests: 0,
+    effects: 0,
+  },
 ): Promise<void> {
   // A finite QA observation window, not a product scheduling SLA or proof about all future time.
   const observationMs = 1_500;
@@ -71,10 +76,19 @@ async function observeNoLateKick(
       const run = await qa.api.agentRun(kick.runId);
       samples.push({ at: new Date().toISOString(), status: run.status, endReason: run.endReason });
       expect(run).toMatchObject({ id: kick.runId, ...expected });
-      noKick(qa, kick);
+      expect(kickRequests(qa, kick.group)).toHaveLength(completedCurrentStep.requests);
+      expect(kickEffects(qa, kick)).toHaveLength(completedCurrentStep.effects);
       onceAudited(qa, kick);
+      if (completedCurrentStep.turns !== undefined)
+        expect(
+          qa.agent
+            .snapshot()
+            .turns.filter((turn) => (turn.body as { runId?: string }).runId === kick.runId),
+          '终态之后不得开始新turn',
+        ).toHaveLength(completedCurrentStep.turns);
       expect((await qa.api.group(kick.group.id)).activeAgentRunId).toBeNull();
-      noKick(qa, kick);
+      expect(kickRequests(qa, kick.group)).toHaveLength(completedCurrentStep.requests);
+      expect(kickEffects(qa, kick)).toHaveLength(completedCurrentStep.effects);
       if (performance.now() - started >= observationMs) break;
       await new Promise<void>((resolve) => setTimeout(resolve, 100));
     } while (true);
@@ -83,8 +97,99 @@ async function observeNoLateKick(
       observationMs,
       elapsedMs: performance.now() - started,
       scope: '只证明本次释放后的有限持续观察期；不宣称排除无限期迟发',
+      completedCurrentStep,
       samples,
     });
+  }
+}
+async function cancellationAfterRelease(
+  qa: QaEnvironment,
+  kick: PreparedKick,
+  lease: CapacityLease,
+  creationBounds: [number, number],
+  allowCurrentKick: boolean,
+): Promise<void> {
+  let primary: unknown;
+  try {
+    await held(lease, '关闭自动化/群不可写后的释放前检查');
+    const before = await qa.api.agentRun(kick.runId);
+    noKick(qa, kick);
+    onceAudited(qa, kick);
+    expect(['running', 'cancelled']).toContain(before.status);
+    if (before.status === 'cancelled') expect(before.endReason).toBe('cancelled');
+    await captureKickEvidence(qa, 'capacity-cancellation-before-release', [kick]);
+    await lease.release();
+    // A5.10 permits the current step to finish. It does not require a terminal
+    // run while the fixture is still denying capacity, nor impose a 30s SLA.
+    const allowedRequests = allowCurrentKick && before.status === 'running' ? 1 : 0;
+    const samples: { at: string; run: AgentRun; requests: number; effects: number }[] = [];
+    const observationMs = Math.min(
+      30_000,
+      Math.max(0, creationBounds[0] + 60_000 - performance.now()),
+    );
+    const result = await observe({
+      read: () => qa.api.agentRun(kick.runId),
+      durationMs: observationMs,
+      invariant: (run) => {
+        const requests = kickRequests(qa, kick.group).length;
+        const effects = kickEffects(qa, kick).length;
+        samples.push({ at: new Date().toISOString(), run, requests, effects });
+        expect(run.id).toBe(kick.runId);
+        onceAudited(qa, kick);
+        expect(
+          qa.agent
+            .snapshot()
+            .turns.filter((turn) => (turn.body as { runId?: string }).runId === kick.runId),
+          '关闭自动化后不得开始下一turn',
+        ).toHaveLength(1);
+        expect(run.steps.every((step) => step.toolUseId === kick.toolUseId)).toBe(true);
+        expect(run.steps.length).toBeLessThanOrEqual(1);
+        expect(requests, '只允许尚未结束的原当前步合法执行一次').toBeLessThanOrEqual(
+          allowedRequests,
+        );
+        expect(effects).toBeLessThanOrEqual(allowedRequests);
+        if (run.status !== 'running')
+          expect(run).toMatchObject({ status: 'cancelled', endReason: 'cancelled' });
+      },
+      complete: (run) => run.status !== 'running',
+    });
+    await qa.evidence('capacity-cancellation-after-release', {
+      before,
+      allowCurrentKick,
+      allowedRequests,
+      creationBounds,
+      observationMs,
+      samples,
+      result,
+      boundary:
+        '诊断观察不晚于保守原60秒窗口；未见完成/取消不等于证明永久不取消；当前步合法完成不算迟发',
+    });
+    if (!result.complete)
+      throw new BlockedError('容量已释放，但有限观察内未取得当前步完成及取消终态；不自造取消SLA');
+    await observeNoLateKick(
+      qa,
+      kick,
+      { status: 'cancelled', endReason: 'cancelled' },
+      {
+        requests: kickRequests(qa, kick.group).length,
+        effects: kickEffects(qa, kick).length,
+        turns: 1,
+      },
+    );
+  } catch (error) {
+    primary = error;
+    throw error;
+  } finally {
+    try {
+      await lease.release();
+      await captureKickEvidence(qa, 'capacity-cancellation-final-ledger', [kick]);
+    } catch (cleanup) {
+      await qa.evidence('capacity-cancellation-cleanup-failure', {
+        error: String(cleanup),
+        primary: String(primary),
+      });
+      if (!primary) throw cleanup;
+    }
   }
 }
 function finalStep(
@@ -144,7 +249,11 @@ async function deferred(
     control: CapacityControl,
     creationBounds: [number, number],
   ) => Promise<void>,
-  options: { beforeReady?: boolean; clock?: boolean } = {},
+  options: {
+    beforeReady?: boolean;
+    clock?: boolean;
+    beforeAdmissionHold?: (kick: PreparedKick) => Promise<void>;
+  } = {},
 ): Promise<void> {
   const control = capacityControlFor(qa);
   await control.verify([
@@ -162,6 +271,7 @@ async function deferred(
     const beforeTriggerPreparation = performance.now();
     kick = await prepareKickAtAudit(qa, group, label);
     const afterActiveAuditObservation = performance.now();
+    await options.beforeAdmissionHold?.(kick);
     const lease = await control.hold(
       { groupId: kick.group.id, runId: kick.runId, toolUseId: kick.toolUseId },
       { beforeReady: options.beforeReady },
@@ -216,22 +326,13 @@ test('[CAP-001] confirmed capacity refusal makes no request and release resumes 
   });
 });
 
-test('[CAP-002] cancellation while admission is unavailable cannot dispatch the deferred kick after release', async ({
+test('[CAP-002] cancellation after admission refusal lets only the current step finish and prevents later work', async ({
   qa,
 }) => {
-  await deferred(qa, 'capacity-cancel', async (kick, lease) => {
+  await deferred(qa, 'capacity-cancel', async (kick, lease, _control, creationBounds) => {
     await qa.api.require(qa.api.patch(`/api/groups/${kick.group.id}`, { agentEnabled: false }));
-    const run = await terminal(qa, kick);
-    expect(run).toMatchObject({ id: kick.runId, status: 'cancelled', endReason: 'cancelled' });
-    noKick(qa, kick);
-    onceAudited(qa, kick);
-    expect(
-      qa.agent
-        .snapshot()
-        .turns.filter((turn) => (turn.body as { runId?: string }).runId === kick.runId),
-    ).toHaveLength(1);
-    await lease.release();
-    await observeNoLateKick(qa, kick, { status: run.status, endReason: run.endReason });
+    expect((await qa.api.group(kick.group.id)).agentEnabled).toBe(false);
+    await cancellationAfterRelease(qa, kick, lease, creationBounds, true);
     await captureKickEvidence(qa, 'capacity-cancel-final', [kick]);
   });
 });
@@ -329,7 +430,7 @@ test('[CAP-003] persistent admission refusal consumes the original active budget
       ).toBeLessThanOrEqual(Math.min(independentElapsedBounds[1], bounds[1]));
       expect(bounds[0], '已确定超过活动预算才停止').toBeLessThanOrEqual(60_000);
       expect(bounds[1], '已确定提前冒充预算耗尽').toBeGreaterThanOrEqual(60_000);
-      if (bounds[0] !== 60_000 || bounds[1] !== 60_000)
+      if (bounds[1] > 60_000)
         throw new BlockedError('预算决定测量区间跨60秒边界；保留证据，不擅加计时容差');
       expect(
         run.steps.filter((step) => step.toolUseId === kick.toolUseId).length,
@@ -359,20 +460,152 @@ test('[CAP-004] policy is rechecked after confirmed zero-effect admission deferr
 test('[CAP-005] group unreachability during admission wait cancels without a late kick', async ({
   qa,
 }) => {
-  await deferred(qa, 'capacity-unreachable', async (kick, lease) => {
-    qa.gateway.emitStatus(kick.group.creatorAccountId, 'suspended');
-    await eventually(
-      () => qa.api.group(kick.group.id),
-      (group) => group.status === 'unreachable',
+  let staged: { clientMsgId: string; eventId: number } | undefined;
+  try {
+    await deferred(
+      qa,
+      'capacity-unreachable',
+      async (kick, lease, _control, creationBounds) => {
+        if (!staged) throw new Error('QA accepted-failure setup was not recorded');
+        const { clientMsgId, eventId } = staged;
+        await held(lease, '补投真实群不可写事件前');
+        noKick(qa, kick);
+        expect(qa.gateway.snapshot().connectedStreams).toBe(0);
+        if ((await qa.api.group(kick.group.id)).status !== 'active')
+          throw new BlockedError('恢复SSE前群已不再active，未命中容量拒绝后才处理失败事件的窗口');
+        // The send was accepted before saturation. Restore retained SSE history;
+        // do not release capacity or invent a failure for work still queued locally.
+        qa.gateway.configure({ sseUnavailable: false });
+        const observation = await observe({
+          read: async () => ({
+            group: await qa.api.group(kick.group.id),
+            messages: await qa.api.messages(kick.group.id),
+          }),
+          durationMs: 15_000,
+          invariant: ({ messages }) => {
+            noKick(qa, kick);
+            expect(
+              messages.items.filter((message) => message.clientMsgId === clientMsgId),
+            ).toHaveLength(1);
+            expect(
+              qa.gateway.snapshot().messages.some((message) => message.clientMsgId === clientMsgId),
+            ).toBe(false);
+          },
+          complete: ({ group, messages }) =>
+            group.status === 'unreachable' &&
+            messages.items.some(
+              (message) =>
+                message.clientMsgId === clientMsgId &&
+                message.deliveryStatus === 'failed' &&
+                message.failCode === 'GROUP_WRITE_FORBIDDEN',
+            ),
+        });
+        await qa.evidence('capacity-group-write-forbidden-prerequisite', {
+          clientMsgId,
+          eventId,
+          observation,
+          gateway: qa.gateway.snapshot(),
+        });
+        if (!observation.complete)
+          throw new BlockedError('有限观察内未建立真实失败事件补投后的消息failed及群不可写前提');
+        expect(
+          qa.gateway.snapshot().events.find((event) => event.eventId === eventId),
+        ).toMatchObject({
+          type: 'message_failed',
+          data: { clientMsgId, code: 'GROUP_WRITE_FORBIDDEN' },
+        });
+        expect(
+          qa.gateway.snapshot().groups.find((group) => group.groupId === kick.group.gatewayGroupId)
+            ?.writable,
+        ).toBe(false);
+        await cancellationAfterRelease(qa, kick, lease, creationBounds, false);
+        await captureKickEvidence(qa, 'capacity-unreachable-final', [kick]);
+      },
+      {
+        beforeAdmissionHold: async (kick) => {
+          qa.gateway.configure({ sseUnavailable: true });
+          qa.gateway.disconnectStreams();
+          const path = `/groups/${kick.group.gatewayGroupId}/send`;
+          qa.gateway.enqueue(path, { failureCode: 'GROUP_WRITE_FORBIDDEN' });
+          const sent = await qa.api.send(
+            kick.group.id,
+            kick.group.creatorAccountId,
+            'capacity accepted group forbidden probe',
+          );
+          const accepted = await observe({
+            read: async () => ({
+              group: await qa.api.group(kick.group.id),
+              messages: await qa.api.messages(kick.group.id),
+              gateway: qa.gateway.snapshot(),
+              run: await qa.api.agentRun(kick.runId),
+            }),
+            durationMs: 10_000,
+            invariant: ({ gateway }) => {
+              expect(gateway.connectedStreams).toBe(0);
+              expect(
+                gateway.messages.some((message) => message.clientMsgId === sent.clientMsgId),
+              ).toBe(false);
+            },
+            complete: ({ messages, gateway }) =>
+              messages.items.some(
+                (message) =>
+                  message.clientMsgId === sent.clientMsgId && message.deliveryStatus === 'accepted',
+              ) &&
+              gateway.requests.some(
+                (request) =>
+                  request.path === path &&
+                  (request.body as { clientMsgId?: string }).clientMsgId === sent.clientMsgId &&
+                  request.responseStatus === 202 &&
+                  Boolean(request.completedAt),
+              ) &&
+              gateway.events.some(
+                (event) =>
+                  event.type === 'message_failed' &&
+                  event.data.clientMsgId === sent.clientMsgId &&
+                  event.data.code === 'GROUP_WRITE_FORBIDDEN',
+              ),
+          });
+          await qa.evidence('capacity-unreachable-accepted-before-hold', {
+            clientMsgId: sent.clientMsgId,
+            accepted,
+          });
+          // If setup takes too long, a legitimate audit timeout/retry can finish
+          // the kick. That misses our fixture window; it is not a product violation.
+          if (
+            !accepted.complete ||
+            accepted.last.group.status !== 'active' ||
+            accepted.last.run.status !== 'running' ||
+            auditRequests(qa, kick.group).length !== 1 ||
+            kickRequests(qa, kick.group).length !== 0 ||
+            kickEffects(qa, kick).length !== 0
+          )
+            throw new BlockedError(
+              '未在原审计保持、零kick且群仍active窗口建立真实202/accepted和待补投失败事件；不能用queued消息代替',
+            );
+          const events = accepted.last.gateway.events.filter(
+            (event) =>
+              event.type === 'message_failed' && event.data.clientMsgId === sent.clientMsgId,
+          );
+          expect(events).toHaveLength(1);
+          expect(
+            accepted.last.gateway.requests.filter(
+              (request) =>
+                request.path === path &&
+                (request.body as { clientMsgId?: string }).clientMsgId === sent.clientMsgId,
+            ),
+          ).toHaveLength(1);
+          expect(
+            accepted.last.gateway.groups.find(
+              (group) => group.groupId === kick.group.gatewayGroupId,
+            )?.writable,
+          ).toBe(false);
+          staged = { clientMsgId: sent.clientMsgId, eventId: events[0]!.eventId };
+        },
+      },
     );
-    const run = await terminal(qa, kick);
-    expect(run).toMatchObject({ status: 'cancelled', endReason: 'cancelled' });
-    noKick(qa, kick);
-    onceAudited(qa, kick);
-    await lease.release();
-    await observeNoLateKick(qa, kick, { status: run.status, endReason: run.endReason });
-    await captureKickEvidence(qa, 'capacity-unreachable-final', [kick]);
-  });
+  } finally {
+    qa.gateway.configure({ sseUnavailable: false });
+  }
 });
 
 test('[CAP-006] deferred execution rechecks online membership and administrator qualification', async ({

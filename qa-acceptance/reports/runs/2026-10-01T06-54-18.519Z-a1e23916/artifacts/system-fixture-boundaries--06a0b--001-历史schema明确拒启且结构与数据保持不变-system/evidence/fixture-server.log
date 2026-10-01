@@ -1,0 +1,16 @@
+/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/migrations.ts:63
+  return new Error(`Schema mismatch: ${message}`);
+         ^
+
+Error: Schema mismatch: installed=7, required=8; run npm run db:migrate
+    at mismatch (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/migrations.ts:63:10)
+    at verifyLedger (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/migrations.ts:106:11)
+    at <anonymous> (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/migrations.ts:119:5)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async <anonymous> (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/db.ts:141:24)
+    at async ObservedRuntimeDatabase.transaction (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/db.ts:137:14)
+    at async assertSchemaCurrent (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/migrations.ts:116:3)
+    at async createApp (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/app.ts:36:15)
+    at async <anonymous> (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/scripts/qa-observation-server.ts:79:9)
+
+Node.js v24.21.0

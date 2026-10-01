@@ -1,0 +1,69 @@
+{
+  "kind": "DEVELOPER_REGRESSION_NOT_QA",
+  "revision": "003952188a3413152d73ae77bd1cb77ed7d66d2b",
+  "owner": "kapibala-qa-combined-batch2-4138f077-13c",
+  "startedAt": "2026-10-01T06:23:04.502Z",
+  "checks": [
+    {
+      "name": "focused",
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "--test",
+        "tests/integration/qa-combined-observation.test.ts",
+        "tests/integration/qa-runtime-observation.test.ts",
+        "tests/integration/account-remote-boundary.test.ts",
+        "tests/integration/core-resource-observability.test.ts",
+        "tests/integration/qa-message-observation.test.ts",
+        "tests/integration/agent-dispatch-budget.test.ts",
+        "tests/integration/agent-kick-recovery.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-combined-batch2-final-focused.log",
+      "bytes": 31937,
+      "sha256": "ac48c5af083b1d9ff70374d8cb387c883880d4539747451e7f150585adf9d71d"
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-combined-batch2-final-typecheck.log",
+      "bytes": 187,
+      "sha256": "30e005d1a7d2022100d69e674fdc8d0abac49571306d528064a9c19c76300bfd"
+    },
+    {
+      "name": "original",
+      "command": [
+        "npm",
+        "run",
+        "verify:original"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-combined-batch2-final-original.log",
+      "bytes": 196,
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa"
+    }
+  ],
+  "cleanup": {
+    "remainingDatabases": "",
+    "containerAbsent": true,
+    "remainingOwnedVolumes": []
+  },
+  "database": {
+    "container": "1d30bb0deb1d22a42ca9de6d3b0aa3e280d1fe03638d0abc109920366fd958ad",
+    "port": "62167",
+    "volumes": [
+      "504a931d9ec0256dde627551887c3abf5f0c15abb9380b41445fa8c095b30b45"
+    ]
+  },
+  "passed": true,
+  "finishedAt": "2026-10-01T06:23:15.587Z"
+}

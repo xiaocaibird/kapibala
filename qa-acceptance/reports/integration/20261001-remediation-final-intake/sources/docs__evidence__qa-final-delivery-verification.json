@@ -1,0 +1,56 @@
+{
+  "kind": "DEVELOPER_DELIVERY_CHECK_NOT_QA",
+  "revision": "8c92b3491ade262b2f81e3257d3809be02223529",
+  "startedAt": "2026-10-01T06:41:35.612Z",
+  "checks": [
+    {
+      "name": "build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-final-delivery-build.log",
+      "bytes": 732,
+      "sha256": "093165cbc73badad5c187e54b58ae9acaabbbb3791c5b3bd44b8a12574ddfd6a"
+    },
+    {
+      "name": "original",
+      "command": [
+        "npm",
+        "run",
+        "verify:original"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-final-delivery-original.log",
+      "bytes": 196,
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa"
+    },
+    {
+      "name": "isolated-smoke",
+      "command": [
+        "npm",
+        "run",
+        "dev:isolated",
+        "--",
+        "--smoke"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-final-delivery-isolated-smoke.log",
+      "bytes": 1597,
+      "sha256": "a155deece7ee07519edcdaa94f24b48afad2186638e822cdca9a63e33b2b241d"
+    }
+  ],
+  "cleanup": {
+    "runId": "9e73a122-9cb0-48a7-a998-9fd09e09337f",
+    "containers": "",
+    "volumes": "",
+    "manifestExists": false
+  },
+  "passed": true,
+  "finishedAt": "2026-10-01T06:41:43.351Z"
+}

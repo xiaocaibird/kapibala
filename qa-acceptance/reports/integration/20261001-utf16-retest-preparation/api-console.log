@@ -1,0 +1,52 @@
+npm notice run kapibala-independent-qa@0.1.0 preflight
+npm notice run tsx harness/cli.ts preflight --suite utf16-remediation-api-20261001 --target .runtime/target.utf16.json --authorization .runtime/authorization.utf16-api.json
+
+Running 7 tests using 1 worker
+
+(node:83289) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [system] › tests/extensions/api.spec.ts:23:1 › [EXT-001] 群资料可选、名称回退基础数据、局部编辑与简介清空 (2.3s)
+  ✓  2 [system] › tests/extensions/api.spec.ts:51:1 › [EXT-002] viewer不能修改群资料与原值条件 (1.7s)
+  ✓  3 [system] › tests/extensions/api.spec.ts:184:1 › [EXT-008] 同字段竞争只一成功，冲突返回当前快照 (1.6s)
+  ✓  4 [system] › tests/extensions/api.spec.ts:200:1 › [EXT-009] 冲突整请求无资料和开关副作用 (1.7s)
+  ✓  5 [system] › tests/extensions/api.spec.ts:255:1 › [EXT-010] 不同字段编辑共存，旧调用继续兼容 (1.6s)
+  ✓  6 [system] › tests/extensions/api.spec.ts:281:1 › [EXT-012] 资料创建时间与条件更新跨重启保留 (2.2s)
+  ✘  7 [system] › tests/system/spec-boundaries.spec.ts:532:1 › [BLK-SPEC-006] versioned profile rules and explicit tool limits have independent boundary oracles (3.0s)
+
+
+  1) [system] › tests/system/spec-boundaries.spec.ts:532:1 › [BLK-SPEC-006] versioned profile rules and explicit tool limits have independent boundary oracles › limit 100000 clamps to fifty independently of the advertised schema 
+
+    Error: no schema with key or ref "https://json-schema.org/draft/2020-12/schema"
+
+      623 |       (item) => item.name === 'get_recent_messages',
+      624 |     )!.input_schema;
+    > 625 |     const validate = new Ajv({ strict: false }).compile(schema);
+          |                                                 ^
+      626 |     expect(
+      627 |       validate({ limit: 100000 }),
+      628 |       'SUT advertised schema must permit the original explicit clamp example',
+        at Ajv.validate (/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/node_modules/ajv/lib/core.ts:363:21)
+        at Ajv.validateSchema (/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/node_modules/ajv/lib/core.ts:520:24)
+        at Ajv._addSchema (/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/node_modules/ajv/lib/core.ts:726:30)
+        at Ajv.compile (/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/node_modules/ajv/lib/core.ts:389:22)
+        at /Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/tests/system/spec-boundaries.spec.ts:625:49
+        at /Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/tests/system/spec-boundaries.spec.ts:590:3
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/trace.zip
+    Usage:
+
+        npx playwright show-trace reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [system] › tests/system/spec-boundaries.spec.ts:532:1 › [BLK-SPEC-006] versioned profile rules and explicit tool limits have independent boundary oracles 
+  6 passed (15.4s)
+开发预跑（不构成正式验收）证据: /Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612

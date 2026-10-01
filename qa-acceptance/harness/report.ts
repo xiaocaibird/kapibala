@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { constants } from 'node:fs';
 import { resolve } from 'node:path';
-import { isDeepStrictEqual } from 'node:util';
+import { isDeepStrictEqual, stripVTControlCharacters } from 'node:util';
 import type { CaseDefinition, CaseResult, Requirement, ResultStatus } from './types.js';
 import { redact } from './security.js';
 import { caseProjects } from './catalog.js';
@@ -89,7 +89,10 @@ export function verdict(
 }
 
 const xml = (s: string) =>
-  s
+  stripVTControlCharacters(s)
+    // XML 1.0 forbids these code points even when written as character references.
+    // Unicode mode keeps valid surrogate pairs (including emoji) intact.
+    .replace(/[^\u0009\u000a\u000d\u0020-\ud7ff\ue000-\ufffd\u{10000}-\u{10ffff}]/gu, '')
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')

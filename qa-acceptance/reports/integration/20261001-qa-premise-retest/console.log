@@ -1,0 +1,224 @@
+npm notice run kapibala-independent-qa@0.1.0 preflight
+npm notice run tsx harness/cli.ts preflight --suite qa-premise-retest-20261001 --target .runtime/target.premise.json --authorization .runtime/authorization.premise.json
+
+Running 16 tests using 1 worker
+
+(node:48419) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   1 [system] › tests/system/capacity-control.spec.ts:324:1 › [CAP-002] cancellation after admission refusal lets only the current step finish and prevents later work (4.8s)
+  ✘   2 [system] › tests/system/capacity-control.spec.ts:455:1 › [CAP-005] group unreachability during admission wait cancels without a late kick (17.2s)
+(node:50218) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   3 [chromium] › tests/ui/console.spec.ts:405:1 › [UI-011] 多个页面请求同时401只续期一次并恢复加载 (5.0s)
+  ✓   4 [chromium] › tests/ui/console.spec.ts:782:1 › [UI-020] 当前群失焦只提示相关更新，聚焦本身不确认 (8.0s)
+  ✓   5 [chromium] › tests/ui/console.spec.ts:803:1 › [UI-021] 离开群详情销毁提醒范围，旧群变化不污染新页 (5.7s)
+  ✓   6 [chromium] › tests/ui/console.spec.ts:898:1 › [UI-024] 单页五秒刷新、并发失效合并且无关消息不遍历目录 (15.7s)
+  ✓   7 [chromium] › tests/ui/console.spec.ts:993:1 › [UI-025] 同标签返回保留条件与已加载页，整页刷新清空目录内存 (33.7s)
+  ✘   8 [chromium] › tests/ui/console.spec.ts:1199:1 › [UI-028] 前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除 (14.8s)
+(node:59481) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   9 [chromium] › tests/ui/console.spec.ts:1237:1 › [UI-029] 内容加载失败不能确认，成功呈现后相关操作才清提醒 (5.0s)
+  ✘  10 [chromium] › tests/ui/console.spec.ts:1288:1 › [UI-030] 搜索范围记录消失先展示成功结果，再明确确认范围变化 (2.9s)
+(node:61680) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  11 [chromium] › tests/ui/console.spec.ts:1315:1 › [UI-031] 状态先改变后还原仍保留期间变化候选 (3.2s)
+  ✘  12 [chromium] › tests/ui/console.spec.ts:1343:1 › [UI-032] 提醒确认不能恢复多页过期旧游标 (28.8s)
+(node:65372) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  13 [chromium] › tests/ui/console.spec.ts:1437:1 › [UI-033] 本地手动发送先带clientMsgId，回流早于响应不误标远端未读 (6.8s)
+  ✓  14 [chromium] › tests/ui/console.spec.ts:1493:1 › [UI-034] Agent自己的自动消息仍参与失焦提醒 (3.2s)
+  ✓  15 [chromium] › tests/ui/console.spec.ts:1539:1 › [UI-035] 序列自动发送不因isOwn被排除提醒 (5.1s)
+  ✓  16 [chromium] › tests/ui/observation-boundaries.spec.ts:53:1 › [ARC-UI-BLK-001] 通用账号资源读取失败不能提前确认未呈现的新状态 (6.4s)
+
+
+  1) [system] › tests/system/capacity-control.spec.ts:455:1 › [CAP-005] group unreachability during admission wait cancels without a late kick 
+
+    BlockedError: [BLOCKED] 有限观察内未建立真实GROUP_WRITE_FORBIDDEN消息及群不可写前提；不能由群主终态推导
+
+      505 |     });
+      506 |     if (!observation.complete)
+    > 507 |       throw new BlockedError(
+          |             ^
+      508 |         '有限观察内未建立真实GROUP_WRITE_FORBIDDEN消息及群不可写前提；不能由群主终态推导',
+      509 |       );
+      510 |     expect(request?.responseStatus).toBe(403);
+        at /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/system/capacity-control.spec.ts:507:13
+        at deferred (/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/system/capacity-control.spec.ts:284:5)
+        at /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/system/capacity-control.spec.ts:458:3
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/trace.zip
+    Usage:
+
+        npx playwright show-trace reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › tests/ui/console.spec.ts:1199:1 › [UI-028] 前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除 ─────────
+
+    Error: expect(page).toHaveTitle(expected) failed
+
+    Expected: "群详情 · Kapibala"
+    Received: "[有更新] 群详情 · Kapibala"
+    Timeout:  8000ms
+
+    Call log:
+      - Expect "toHaveTitle" with timeout 8000ms
+        20 × locator resolved to <html lang="zh-CN">…</html>
+           - unexpected value "[有更新] 群详情 · Kapibala"
+
+
+      1228 |     await remains(async () => expect(await page.title()).toBe(markedTitle));
+      1229 |     await page.getByText('失焦静态内容', { exact: true }).click();
+    > 1230 |     await expect(page).toHaveTitle(quietTitle);
+           |                        ^
+      1231 |     await expect.poll(() => favicon(page)).toBe(quietIcon);
+      1232 |   } finally {
+      1233 |     await background.close();
+        at /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/ui/console.spec.ts:1230:24
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: ui-final-screenshot (image/png) ─────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/attachments/ui-final-screenshot-942e7eefec06b8674371a3dbb71cfbbb62993383.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: ui-final-state (application/json) ───────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/attachments/ui-final-state-a93cd4ea019a7d6026b211a002793400e50a0bf5.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #7: video (video/webm) ──────────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/error-context.md
+
+    attachment #9: trace (application/zip) ─────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › tests/ui/console.spec.ts:1288:1 › [UI-030] 搜索范围记录消失先展示成功结果，再明确确认范围变化 ─────────────
+
+    Error: expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "群组工作台 · Kapibala"
+
+      1299 |     await expect(page).not.toHaveTitle(quietTitle);
+      1300 |     await page.bringToFront();
+    > 1301 |     await remains(async () => expect(await page.title()).not.toBe(quietTitle));
+           |                                                              ^
+      1302 |     const refresh = element(page, qa, 'attentionRefresh');
+      1303 |     if (await refresh.isVisible()) await refresh.click();
+      1304 |     await expect(element(page, qa, 'directoryEmpty')).toBeVisible();
+        at /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/ui/console.spec.ts:1301:62
+        at remains (/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/ui/console.spec.ts:96:5)
+        at /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/ui/console.spec.ts:1301:5
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: ui-final-screenshot (image/png) ─────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/attachments/ui-final-screenshot-41388dcb8309c85e9e274200370e3900743d1b05.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: ui-final-state (application/json) ───────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/attachments/ui-final-state-8ae065cf25b8f5d69573c51b35c50b7f64927b49.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #7: video (video/webm) ──────────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/error-context.md
+
+    attachment #9: trace (application/zip) ─────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [chromium] › tests/ui/console.spec.ts:1343:1 › [UI-032] 提醒确认不能恢复多页过期旧游标 ───────────────────────
+
+    BlockedError: [BLOCKED] 需要适配独立于整体刷新、且只确认已呈现相关变化的公开操作，不能伪造已读状态绕过目录过期
+
+      1412 |       const confirm = element(page, qa, 'attentionConfirm');
+      1413 |       if (!(await confirm.isVisible()))
+    > 1414 |         throw new BlockedError(
+           |               ^
+      1415 |           '需要适配独立于整体刷新、且只确认已呈现相关变化的公开操作，不能伪造已读状态绕过目录过期',
+      1416 |         );
+      1417 |       await confirm.click();
+        at /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/ui/console.spec.ts:1414:15
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: ui-final-screenshot (image/png) ─────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/attachments/ui-final-screenshot-62d8d3d5797a27d2bd1781f6d9c11983fe0240c8.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: ui-final-state (application/json) ───────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/attachments/ui-final-state-84eb309c2263af0ad000dce44d1e6cc811c60cbe.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #7: video (video/webm) ──────────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/error-context.md
+
+    attachment #9: trace (application/zip) ─────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    [system] › tests/system/capacity-control.spec.ts:455:1 › [CAP-005] group unreachability during admission wait cancels without a late kick 
+    [chromium] › tests/ui/console.spec.ts:1199:1 › [UI-028] 前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除 ──────────
+    [chromium] › tests/ui/console.spec.ts:1288:1 › [UI-030] 搜索范围记录消失先展示成功结果，再明确确认范围变化 ──────────────
+    [chromium] › tests/ui/console.spec.ts:1343:1 › [UI-032] 提醒确认不能恢复多页过期旧游标 ────────────────────────
+  12 passed (2.9m)
+开发预跑（不构成正式验收）证据: /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279

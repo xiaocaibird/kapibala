@@ -1,0 +1,74 @@
+{
+  "method": "GET",
+  "path": "/qa/runtime/v1/leases/95e78fa9-6a6f-41b8-8dd1-ab93dc88a820",
+  "status": 200,
+  "response": {
+    "protocol": "qa-runtime-observation/1",
+    "leaseId": "95e78fa9-6a6f-41b8-8dd1-ab93dc88a820",
+    "state": "held",
+    "expiresAt": "2026-10-01T06:55:33.081Z",
+    "binding": {
+      "apiUrl": "http://127.0.0.1:49288",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "pid": 96121,
+      "observedOwnerToken": "[REDACTED]"
+    },
+    "correlation": {
+      "kind": "module",
+      "module": "gateway",
+      "attemptLabel": "83f9dfe4-60f9-4f4d-aefb-01638bc3953d"
+    },
+    "events": [
+      {
+        "seq": 1,
+        "at": "2026-10-01T06:53:43.152Z",
+        "kind": "module-failed",
+        "correlation": {
+          "kind": "module",
+          "module": "gateway",
+          "attemptLabel": "83f9dfe4-60f9-4f4d-aefb-01638bc3953d"
+        },
+        "attemptId": "3b5606b8-6acf-43fa-8404-a545d32787b1",
+        "instancePid": 96121,
+        "faultMarker": "qa-runtime-9bff6bf7-d4db-406c-ae81-19546d1ffc7c"
+      },
+      {
+        "seq": 2,
+        "at": "2026-10-01T06:53:43.254Z",
+        "kind": "module-before-next-held",
+        "correlation": {
+          "kind": "module",
+          "module": "gateway",
+          "attemptLabel": "83f9dfe4-60f9-4f4d-aefb-01638bc3953d"
+        },
+        "attemptId": "b20678ff-d3c7-4326-98e9-f94435bcad7e",
+        "instancePid": 96121,
+        "tickBoundary": "before-activity-and-diagnostics-start"
+      },
+      {
+        "seq": 3,
+        "at": "2026-10-01T06:53:43.306Z",
+        "kind": "module-running-held",
+        "correlation": {
+          "kind": "module",
+          "module": "gateway",
+          "attemptLabel": "83f9dfe4-60f9-4f4d-aefb-01638bc3953d"
+        },
+        "attemptId": "b20678ff-d3c7-4326-98e9-f94435bcad7e",
+        "instancePid": 96121
+      },
+      {
+        "seq": 4,
+        "at": "2026-10-01T06:53:43.485Z",
+        "kind": "module-succeeded",
+        "correlation": {
+          "kind": "module",
+          "module": "gateway",
+          "attemptLabel": "83f9dfe4-60f9-4f4d-aefb-01638bc3953d"
+        },
+        "attemptId": "b20678ff-d3c7-4326-98e9-f94435bcad7e",
+        "instancePid": 96121
+      }
+    ]
+  }
+}

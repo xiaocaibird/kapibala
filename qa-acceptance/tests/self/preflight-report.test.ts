@@ -120,6 +120,44 @@ function notOfficial(report: any): void {
   assert.equal(report.conclusions.unconditionalPass, false);
 }
 
+test('JUnit removes terminal styling and XML-illegal text without changing the raw failed result', async (t) => {
+  const dir = await directory(t);
+  const illegal = '\u0000\u0008\u000b\u000c\u001b\u001f\ud800\u0001\udfff\ufffe\uffff';
+  const reason =
+    '\u001b[31m中文 😀 <expected> & "actual"\u001b[0m ' +
+    '\u001b]8;;https://example.invalid\u001b\\visible link\u001b]8;;\u001b\\' +
+    illegal;
+  const { report, junit } = await output(dir, [result('UI-001', 'chromium', 'FAIL', { reason })]);
+  assert.ok(
+    junit.includes(
+      '<failure message="中文 😀 &lt;expected&gt; &amp; &quot;actual&quot; visible link"/>',
+    ),
+    'terminal escape bytes and illegal XML characters must not reach the failure attribute',
+  );
+  assert.match(junit, /failures="1"/);
+  assert.equal(report.preflight.results[0].status, 'FAIL');
+  assert.equal(report.preflight.results[0].reason, reason, 'JSON keeps the original diagnostic');
+});
+
+test('JUnit preserves legal XML Unicode boundaries and sanitizes skipped and integrity messages', async (t) => {
+  const dir = await directory(t);
+  // Legal XML 1.0 characters at each range boundary, including astral pairs.
+  const legal = '\t\n\r \ud7ff\ue000\ufffd\u{10000}\u{10ffff}中文😀';
+  const reason = `\u001b[2m${legal}\u001b[22m\u0001`;
+  const runnerError = '\u001b[31m清理 <failed> & "quoted" 😀\u001b[0m\u0002';
+  const { report, junit } = await output(
+    dir,
+    [result('UI-001', 'chromium', 'BLOCKED', { reason })],
+    { runnerStatus: runnerError },
+  );
+  assert.ok(junit.includes(`<skipped message="BLOCKED: ${legal}"/>`));
+  assert.ok(junit.includes('清理 &lt;failed&gt; &amp; &quot;quoted&quot; 😀'));
+  assert.ok(!junit.includes('\u001b') && !junit.includes('\u0001') && !junit.includes('\u0002'));
+  assert.match(junit, /errors="1"/);
+  assert.equal(report.preflight.results[0].status, 'BLOCKED');
+  assert.equal(report.preflight.results[0].reason, reason);
+});
+
 test('Chromium-only preflight passes its selected project while full browser case remains NOT_RUN', async (t) => {
   const dir = await directory(t);
   const { report, markdown, junit } = await output(dir, [result('UI-001', 'chromium')]);

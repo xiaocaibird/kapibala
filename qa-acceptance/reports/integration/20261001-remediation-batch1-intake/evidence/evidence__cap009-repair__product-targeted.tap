@@ -1,0 +1,373 @@
+TAP version 13
+# Subtest: Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+ok 1 - Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+  ---
+  duration_ms: 429.6815
+  type: 'test'
+  ...
+# Independent database: kapibala_test_a3ddaa0e3769437b931309528e6f404e
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: Agent capacity wait keeps the original activity budget and does not invent an unknown kick
+ok 2 - Agent capacity wait keeps the original activity budget and does not invent an unknown kick
+  ---
+  duration_ms: 1438.925166
+  type: 'test'
+  ...
+# Independent database: kapibala_test_676e44b86f93481eb67405f9da27f873
+# Subtest: Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+ok 3 - Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+  ---
+  duration_ms: 324.172708
+  type: 'test'
+  ...
+# Independent database: kapibala_test_4daeb73daa994b9a96a9da497f1aab75
+# Subtest: Agent cancellation while waiting for capacity ends after the current step without another turn
+ok 4 - Agent cancellation while waiting for capacity ends after the current step without another turn
+  ---
+  duration_ms: 208.899875
+  type: 'test'
+  ...
+# Independent database: kapibala_test_3f43ea0b774e4eb1942659ebc92c200c
+# Subtest: tool definitions have all required arguments; invalid protocols are rejected
+ok 5 - tool definitions have all required arguments; invalid protocols are rejected
+  ---
+  duration_ms: 129.978875
+  type: 'test'
+  ...
+# Subtest: sequence variables persist overrides and report the first unresolved step
+ok 6 - sequence variables persist overrides and report the first unresolved step
+  ---
+  duration_ms: 0.464333
+  type: 'test'
+  ...
+# Subtest: PostgreSQL serializes concurrent sequence starts and failed preflight creates no run
+ok 7 - PostgreSQL serializes concurrent sequence starts and failed preflight creates no run
+  ---
+  duration_ms: 30.195292
+  type: 'test'
+  ...
+# Subtest: multiple workers create one agent run and same send key is audited and enqueued once
+ok 8 - multiple workers create one agent run and same send key is audited and enqueued once
+  ---
+  duration_ms: 347.021291
+  type: 'test'
+  ...
+# Subtest: bad JSON, unknown tool, duplicate tool id are recorded without corrupting history
+ok 9 - bad JSON, unknown tool, duplicate tool id are recorded without corrupting history
+  ---
+  duration_ms: 85.507834
+  type: 'test'
+  ...
+# Subtest: invalid finish inputs return INVALID_INPUT and allow a later valid completion
+    # Subtest: null followed by end_turn
+    ok 1 - null followed by end_turn
+      ---
+      duration_ms: 212.686541
+      type: 'test'
+      ...
+    # Subtest: null followed by finish
+    ok 2 - null followed by finish
+      ---
+      duration_ms: 76.839125
+      type: 'test'
+      ...
+    # Subtest: missing summary followed by end_turn
+    ok 3 - missing summary followed by end_turn
+      ---
+      duration_ms: 78.028292
+      type: 'test'
+      ...
+    # Subtest: missing summary followed by finish
+    ok 4 - missing summary followed by finish
+      ---
+      duration_ms: 211.937625
+      type: 'test'
+      ...
+    # Subtest: wrong summary type followed by end_turn
+    ok 5 - wrong summary type followed by end_turn
+      ---
+      duration_ms: 79.369166
+      type: 'test'
+      ...
+    # Subtest: wrong summary type followed by finish
+    ok 6 - wrong summary type followed by finish
+      ---
+      duration_ms: 79.944542
+      type: 'test'
+      ...
+    1..6
+ok 10 - invalid finish inputs return INVALID_INPUT and allow a later valid completion
+  ---
+  duration_ms: 739.560667
+  type: 'test'
+  ...
+# Subtest: completed invalid finish recovery honors cancellation and execution limits
+    # Subtest: cancelled
+    ok 1 - cancelled
+      ---
+      duration_ms: 42.546666
+      type: 'test'
+      ...
+    # Subtest: wall_clock
+    ok 2 - wall_clock
+      ---
+      duration_ms: 45.249875
+      type: 'test'
+      ...
+    # Subtest: budget_exhausted
+    ok 3 - budget_exhausted
+      ---
+      duration_ms: 46.274417
+      type: 'test'
+      ...
+    # Subtest: protocol_errors
+    ok 4 - protocol_errors
+      ---
+      duration_ms: 44.793542
+      type: 'test'
+      ...
+    1..4
+ok 11 - completed invalid finish recovery honors cancellation and execution limits
+  ---
+  duration_ms: 179.336458
+  type: 'test'
+  ...
+# Subtest: a successful persisted finish completes recovery without another remote turn
+ok 12 - a successful persisted finish completes recovery without another remote turn
+  ---
+  duration_ms: 41.241125
+  type: 'test'
+  ...
+# Subtest: inconclusive audit blocks without side effects; rejection does not reserve a send key
+ok 13 - inconclusive audit blocks without side effects; rejection does not reserve a send key
+  ---
+  duration_ms: 112.664875
+  type: 'test'
+  ...
+# Subtest: messages arriving during a run become one next trigger and own messages never trigger
+ok 14 - messages arriving during a run become one next trigger and own messages never trigger
+  ---
+  duration_ms: 105.558084
+  type: 'test'
+  ...
+# Subtest: interrupted remote turn is visibly paused and never replayed
+ok 15 - interrupted remote turn is visibly paused and never replayed
+  ---
+  duration_ms: 50.9275
+  type: 'test'
+  ...
+# Subtest: sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step
+ok 16 - sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step
+  ---
+  duration_ms: 58.386417
+  type: 'test'
+  ...
+# Subtest: persisted final and prepared send recover without replaying prior external work
+ok 17 - persisted final and prepared send recover without replaying prior external work
+  ---
+  duration_ms: 83.233209
+  type: 'test'
+  ...
+# Subtest: kick policy and persisted uncertain kick cannot produce a second side effect
+ok 18 - kick policy and persisted uncertain kick cannot produce a second side effect
+  ---
+  duration_ms: 83.656833
+  type: 'test'
+  ...
+# Subtest: repeated reads stop within twelve steps and result bytes remain bounded
+ok 19 - repeated reads stop within twelve steps and result bytes remain bounded
+  ---
+  duration_ms: 454.372666
+  type: 'test'
+  ...
+# Subtest: disabling Agent during its current step cancels after that step, without another turn
+ok 20 - disabling Agent during its current step cancels after that step, without another turn
+  ---
+  duration_ms: 74.28925
+  type: 'test'
+  ...
+# Subtest: activity budget interrupts a late turn and discards the eventual response
+ok 21 - activity budget interrupts a late turn and discards the eventual response
+  ---
+  duration_ms: 370.267125
+  type: 'test'
+  ...
+# Subtest: activity budget expires during audit without authorizing the prepared tool
+ok 22 - activity budget expires during audit without authorizing the prepared tool
+  ---
+  duration_ms: 330.467042
+  type: 'test'
+  ...
+# Subtest: an accepted send whose account becomes terminal yields SEND_FAILED without a resend
+ok 23 - an accepted send whose account becomes terminal yields SEND_FAILED without a resend
+  ---
+  duration_ms: 124.110208
+  type: 'test'
+  ...
+# Subtest: restart catches up a committed send before rebasing the next unscheduled step
+ok 24 - restart catches up a committed send before rebasing the next unscheduled step
+  ---
+  duration_ms: 45.184792
+  type: 'test'
+  ...
+# Subtest: kick permission errors remain tool errors and a confirmed kick succeeds
+ok 25 - kick permission errors remain tool errors and a confirmed kick succeeds
+  ---
+  duration_ms: 203.331375
+  type: 'test'
+  ...
+# Subtest: SEND_TIMEOUT retries with the same key read the eventual send without re-auditing
+ok 26 - SEND_TIMEOUT retries with the same key read the eventual send without re-auditing
+  ---
+  duration_ms: 5104.928417
+  type: 'test'
+  ...
+# Subtest: sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp
+ok 27 - sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp
+  ---
+  duration_ms: 58.120791
+  type: 'test'
+  ...
+# Subtest: loss of the advisory-lock connection aborts a turn without saving a false protocol error
+ok 28 - loss of the advisory-lock connection aborts a turn without saving a false protocol error
+  ---
+  duration_ms: 180.090459
+  type: 'test'
+  ...
+# Subtest: loss of a run lock during audit prevents old-worker effects and permits safe audit recovery
+ok 29 - loss of a run lock during audit prevents old-worker effects and permits safe audit recovery
+  ---
+  duration_ms: 229.676959
+  type: 'test'
+  ...
+# Subtest: kick budget exhaustion ends the run while retaining an uncertain non-replayable effect
+ok 30 - kick budget exhaustion ends the run while retaining an uncertain non-replayable effect
+  ---
+  duration_ms: 132.316792
+  type: 'test'
+  ...
+# Subtest: a stale scheduler transaction cannot enqueue after its ownership connection is lost
+ok 31 - a stale scheduler transaction cannot enqueue after its ownership connection is lost
+  ---
+  duration_ms: 52.512291
+  type: 'test'
+  ...
+# Subtest: closing and recreating modules preserves activity while excluding actual downtime
+ok 32 - closing and recreating modules preserves activity while excluding actual downtime
+  ---
+  duration_ms: 997.963875
+  type: 'test'
+  ...
+# Subtest: queued runs persist online activity across a real shutdown without counting downtime or a second clock
+ok 33 - queued runs persist online activity across a real shutdown without counting downtime or a second clock
+  ---
+  duration_ms: 2786.580875
+  type: 'test'
+  ...
+# Subtest: a follower cannot execute against a stale activity base while the new clock owner initializes
+ok 34 - a follower cannot execute against a stale activity base while the new clock owner initializes
+  ---
+  duration_ms: 1442.699833
+  type: 'test'
+  ...
+# Subtest: an initialization follower takes over after the blocked clock owner connection is terminated
+ok 35 - an initialization follower takes over after the blocked clock owner connection is terminated
+  ---
+  duration_ms: 2073.154
+  type: 'test'
+  ...
+# Subtest: frequent activity samples retain subinterval time instead of losing rounded milliseconds
+ok 36 - frequent activity samples retain subinterval time instead of losing rounded milliseconds
+  ---
+  duration_ms: 39.625833
+  type: 'test'
+  ...
+# Subtest: activity clock survives loss of its own PostgreSQL session and only bills once after takeover
+ok 37 - activity clock survives loss of its own PostgreSQL session and only bills once after takeover
+  ---
+  duration_ms: 1532.096959
+  type: 'test'
+  ...
+# Subtest: inconclusive audit step and blocked run roll back together before recovery
+ok 38 - inconclusive audit step and blocked run roll back together before recovery
+  ---
+  duration_ms: 109.381792
+  type: 'test'
+  ...
+# Subtest: persisted legacy audit-block window cannot resume another Agent turn
+ok 39 - persisted legacy audit-block window cannot resume another Agent turn
+  ---
+  duration_ms: 43.967791
+  type: 'test'
+  ...
+# Subtest: timing: the default twelve-second turn timeout discards the late response
+ok 40 - timing: the default twelve-second turn timeout discards the late response # SKIP
+  ---
+  duration_ms: 0.135458
+  type: 'test'
+  ...
+# Subtest: timing: three five-second inconclusive audit attempts block without sending
+ok 41 - timing: three five-second inconclusive audit attempts block without sending # SKIP
+  ---
+  duration_ms: 0.082625
+  type: 'test'
+  ...
+# Subtest: timing: sixty seconds of activity ends the run even below the twelve-step cap
+ok 42 - timing: sixty seconds of activity ends the run even below the twelve-step cap # SKIP
+  ---
+  duration_ms: 0.055375
+  type: 'test'
+  ...
+# Subtest: PostgreSQL lock admission distinguishes local capacity, entity contention, and an undefined callback result
+ok 43 - PostgreSQL lock admission distinguishes local capacity, entity contention, and an undefined callback result
+  ---
+  duration_ms: 264.023708
+  type: 'test'
+  ...
+# Subtest: Gateway kick maps only actual entity contention to the existing member conflict
+ok 44 - Gateway kick maps only actual entity contention to the existing member conflict
+  ---
+  duration_ms: 176.722125
+  type: 'test'
+  ...
+# Independent database: kapibala_test_47cb8c01d34b4ecaa4d69cbb05a19dd3
+# Subtest: kick 200 arriving after a committed rejoin preserves current membership without kicking twice
+ok 45 - kick 200 arriving after a committed rejoin preserves current membership without kicking twice
+  ---
+  duration_ms: 304.035459
+  type: 'test'
+  ...
+# Subtest: leave 200 arriving after rejoin retains the member and prevents the creator from leaving
+ok 46 - leave 200 arriving after rejoin retains the member and prevents the creator from leaving
+  ---
+  duration_ms: 151.844167
+  type: 'test'
+  ...
+# Subtest: member refresh failure after confirmed kick remains success and converges through event retry
+ok 47 - member refresh failure after confirmed kick remains success and converges through event retry
+  ---
+  duration_ms: 160.538083
+  type: 'test'
+  ...
+# Subtest: leave refresh failure preserves confirmed progress and prevents unsafe creator departure
+ok 48 - leave refresh failure preserves confirmed progress and prevents unsafe creator departure
+  ---
+  duration_ms: 100.754542
+  type: 'test'
+  ...
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: leave completion reads current members after acquiring the group projection lock
+ok 49 - leave completion reads current members after acquiring the group projection lock
+  ---
+  duration_ms: 199.530583
+  type: 'test'
+  ...
+1..49
+# tests 59
+# suites 0
+# pass 56
+# fail 0
+# cancelled 0
+# skipped 3
+# todo 0
+# duration_ms 18636.531

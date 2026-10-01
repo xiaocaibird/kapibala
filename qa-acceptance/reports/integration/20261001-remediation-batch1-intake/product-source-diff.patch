@@ -1,0 +1,296 @@
+diff --git a/apps/server/src/core/context.ts b/apps/server/src/core/context.ts
+index 9f8f9a8..de4591f 100644
+--- a/apps/server/src/core/context.ts
++++ b/apps/server/src/core/context.ts
+@@ -2,10 +2,12 @@ import type { FastifyBaseLogger } from "fastify";
+ import type { Database } from "./db.js";
+ import type { RemoteClient } from "./remote.js";
+ import type { TestExecutionObserver } from "./test-execution-observer.js";
++import type { TestMessageObserver } from "./test-message-observer.js";
+ export interface AppContext {
+   db: Database;
+   gateway: RemoteClient;
+   agent: RemoteClient;
+   log: FastifyBaseLogger;
+   testExecutionObserver?: TestExecutionObserver;
++  testMessageObserver?: TestMessageObserver;
+ }
+diff --git a/apps/server/src/core/messaging.ts b/apps/server/src/core/messaging.ts
+index 8d7d0dc..d3895e2 100644
+--- a/apps/server/src/core/messaging.ts
++++ b/apps/server/src/core/messaging.ts
+@@ -18,7 +18,12 @@ export interface MessagingService {
+       accountId: string;
+       targetPlatformUserId: string;
+     },
+-    options?: { signal?: AbortSignal },
++    options?: {
++      signal?: AbortSignal;
++      /** Runs after local admission and validation, before any remote kick. A
++       * rejection prevents dispatch; durable intent writes must commit here. */
++      beforeDispatch?: () => Promise<void>;
++    },
+   ): Promise<{ kicked: true }>;
+ }
+ export interface PlatformModule {
+diff --git a/apps/server/src/core/test-message-observer.ts b/apps/server/src/core/test-message-observer.ts
+new file mode 100644
+index 0000000..0ed0473
+--- /dev/null
++++ b/apps/server/src/core/test-message-observer.ts
+@@ -0,0 +1,18 @@
++/** Explicit engineering observer only. Hooks report an actual product boundary
++ * and can hold continuation; they do not provide business results or clocks. */
++export interface MessageObservation {
++  phase:
++    | "timeout-observed-before-local-save"
++    | "receipt-before-commit"
++    | "receipt-committed-before-business";
++  attemptId: string;
++  groupId?: string;
++  clientMsgId: string;
++  msgId?: string;
++  eventId?: string;
++  observedAt: string;
++  receiptObservedAt?: string | null;
++}
++export interface TestMessageObserver {
++  boundary(observation: MessageObservation): Promise<void>;
++}
+diff --git a/apps/server/src/modules/automation/agent.ts b/apps/server/src/modules/automation/agent.ts
+index d828633..b0140b8 100644
+--- a/apps/server/src/modules/automation/agent.ts
++++ b/apps/server/src/modules/automation/agent.ts
+@@ -421,25 +421,36 @@ export class AgentModule {
+   }
+   private async turn(run: RunRow): Promise<void> {
+     await this.activityClock.checkpoint(run.id, "model:before");
+-    const left = this.remaining(run);
+-    if (left <= 0) {
++    if (this.remaining(run) <= 0) {
+       await this.finish(run, "failed", "wall_clock");
+       return;
+     }
+-    const timeoutMs = Math.min(this.turnTimeoutMs, left);
+     await this.ctx.db.query(
+       "UPDATE agent_runs SET inflight_turn=true WHERE id=$1",
+       [run.id],
+     );
++    const body = JSON.stringify({
++      runId: run.id,
++      tools,
++      messages: run.history,
++    });
++    // The intent write and request serialization consume the same activity
++    // budget. Never dispatch with time captured before either operation.
++    const left = this.remaining(run);
++    if (left <= 0) {
++      await this.finish(run, "failed", "wall_clock");
++      return;
++    }
+     let raw = "";
+     let code: "BAD_JSON" | "TURN_TIMEOUT" | null = null;
+     const operation = currentOperationSignal();
++    const timeoutMs = Math.min(this.turnTimeoutMs, left);
+     const timeout = AbortSignal.timeout(Math.max(1, timeoutMs));
+     try {
+       const response = await fetch(`${this.ctx.agent.baseUrl}/agent/turn`, {
+         method: "POST",
+         headers: { "content-type": "application/json" },
+-        body: JSON.stringify({ runId: run.id, tools, messages: run.history }),
++        body,
+         signal: operation ? AbortSignal.any([timeout, operation]) : timeout,
+       });
+       raw = await response.text();
+diff --git a/apps/server/src/modules/automation/tool-execution.ts b/apps/server/src/modules/automation/tool-execution.ts
+index 8310f61..83eceff 100644
+--- a/apps/server/src/modules/automation/tool-execution.ts
++++ b/apps/server/src/modules/automation/tool-execution.ts
+@@ -142,14 +142,24 @@ export class AgentTools {
+         "UPDATE agent_steps SET state='auditing',audit_attempts=$3 WHERE run_id=$1 AND ordinal=$2",
+         [run.id, step.ordinal, attempts],
+       );
++      const body = JSON.stringify({ text, groupId: run.group_id });
++      // The durable attempt write and serialization may exhaust the original
++      // deadline. Their time cannot be granted again to the HTTP request.
++      const dispatchRemaining = this.host.remaining(current);
++      if (dispatchRemaining <= 0) {
++        await this.host.finish(current, "failed", "wall_clock");
++        return "expired";
++      }
+       let verdict: "pass" | "fail" | undefined;
+       const operation = currentOperationSignal();
+-      const timeout = AbortSignal.timeout(Math.min(5000, Math.max(1, left)));
++      const timeout = AbortSignal.timeout(
++        Math.min(5000, Math.max(1, dispatchRemaining)),
++      );
+       try {
+         const response = await fetch(`${this.ctx.agent.baseUrl}/agent/audit`, {
+           method: "POST",
+           headers: { "content-type": "application/json" },
+-          body: JSON.stringify({ text, groupId: run.group_id }),
++          body,
+           signal: operation ? AbortSignal.any([timeout, operation]) : timeout,
+         });
+         const raw = await response.text();
+@@ -345,7 +355,10 @@ export class AgentTools {
+   }
+   private async kick(run: RunRow, step: StepRow): Promise<void> {
+     const input = step.input as { platform_user_id: string; reason: string };
+-    if (step.state === "executing") {
++    if (
++      step.state === "executing" &&
++      step.intent?.dispatchState !== "awaiting_admission"
++    ) {
+       await this.host.pause(
+         run,
+         "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
+@@ -431,6 +444,7 @@ export class AgentTools {
+           JSON.stringify({
+             accountId,
+             targetPlatformUserId: input.platform_user_id,
++            dispatchState: "awaiting_admission",
+           }),
+         ],
+       );
+@@ -454,7 +468,21 @@ export class AgentTools {
+             accountId: accountId!,
+             targetPlatformUserId: input.platform_user_id,
+           },
+-          { signal: deadline },
++          {
++            signal: deadline,
++            beforeDispatch: async () => {
++              deadline.throwIfAborted();
++              // This autocommit runs only inside the admitted kick callback.
++              // Its acknowledged commit precedes HTTP dispatch; a crash or SQL
++              // failure here cannot turn a dispatched intent into replayable work.
++              const persisted = await this.ctx.db.query(
++                "UPDATE agent_steps SET intent=jsonb_set(intent,'{dispatchState}','\"dispatching\"'::jsonb) WHERE run_id=$1 AND ordinal=$2 AND state='executing' AND intent->>'dispatchState'='awaiting_admission'",
++                [run.id, step.ordinal],
++              );
++              if (persisted.rowCount !== 1)
++                throw new Error("Kick dispatch intent was not persisted");
++            },
++          },
+         );
+       if (this.ctx.testExecutionObserver)
+         await this.ctx.testExecutionObserver.kick(correlation, kick);
+@@ -462,12 +490,12 @@ export class AgentTools {
+     } catch (error) {
+       currentOperationSignal()?.throwIfAborted();
+       if (error instanceof LockCapacityUnavailableError) {
+-        // Admission failed before the gateway callback ran. Keep the same audited
+-        // step pending; only this proven no-effect path can discard an executing
+-        // intent. Unknown remote outcomes below must remain non-replayable.
++        // Admission failed before the gateway callback ran. The durable
++        // awaiting_admission intent is already safe to resume, even if this
++        // process dies before the optional ready cleanup below.
+         await this.ctx.testExecutionObserver?.ready(correlation, "before");
+         await this.ctx.db.query(
+-          "UPDATE agent_steps SET state='ready',intent=null WHERE run_id=$1 AND ordinal=$2 AND state='executing'",
++          "UPDATE agent_steps SET state='ready',intent=null WHERE run_id=$1 AND ordinal=$2 AND state='executing' AND intent->>'dispatchState'='awaiting_admission'",
+           [run.id, step.ordinal],
+         );
+         await this.ctx.testExecutionObserver?.ready(correlation, "after");
+diff --git a/apps/server/src/modules/automation/types.ts b/apps/server/src/modules/automation/types.ts
+index f4dd174..fa8d89b 100644
+--- a/apps/server/src/modules/automation/types.ts
++++ b/apps/server/src/modules/automation/types.ts
+@@ -31,7 +31,11 @@ export interface StepRow {
+   state: string;
+   result: Record<string, unknown> | null;
+   audit_attempts: number;
+-  intent: { accountId?: string; targetPlatformUserId?: string } | null;
++  intent: {
++    accountId?: string;
++    targetPlatformUserId?: string;
++    dispatchState?: "awaiting_admission" | "dispatching";
++  } | null;
+ }
+ export interface GroupRow {
+   id: string;
+diff --git a/apps/server/src/modules/gateway/events.ts b/apps/server/src/modules/gateway/events.ts
+index e88ae10..56c82b2 100644
+--- a/apps/server/src/modules/gateway/events.ts
++++ b/apps/server/src/modules/gateway/events.ts
+@@ -190,6 +190,18 @@ export class GatewayEvents {
+         event.type === "message" ? await this.findEcho(event) : null;
+       // Save the receipt independently before any dedup/business transaction.
+       // Replay after a failed transaction or process death reuses this clock.
++      const observationAttemptId = this.ctx.testMessageObserver
++        ? randomUUID()
++        : undefined;
++      if (event.type === "message_sent")
++        await this.ctx.testMessageObserver?.boundary({
++          phase: "receipt-before-commit",
++          attemptId: observationAttemptId!,
++          clientMsgId: event.clientMsgId,
++          msgId: event.msgId,
++          eventId: ref,
++          observedAt: observedAt!.toISOString(),
++        });
+       const reliableObservedAt =
+         event.type === "message_sent"
+           ? await recordConfirmationReceipt(
+@@ -200,6 +212,16 @@ export class GatewayEvents {
+               observedAt!,
+             )
+           : undefined;
++      if (event.type === "message_sent")
++        await this.ctx.testMessageObserver?.boundary({
++          phase: "receipt-committed-before-business",
++          attemptId: observationAttemptId!,
++          clientMsgId: event.clientMsgId,
++          msgId: event.msgId,
++          eventId: ref,
++          observedAt: observedAt!.toISOString(),
++          receiptObservedAt: reliableObservedAt?.toISOString() ?? null,
++        });
+       await this.ctx.db.transaction(async (tx) => {
+         // Membership reads current remote facts under the group lock. Defer a
+         // busy transaction through the existing retry path instead of holding
+diff --git a/apps/server/src/modules/gateway/messages.ts b/apps/server/src/modules/gateway/messages.ts
+index 5f06003..a21232c 100644
+--- a/apps/server/src/modules/gateway/messages.ts
++++ b/apps/server/src/modules/gateway/messages.ts
+@@ -321,6 +321,18 @@ export class Messages implements MessagingService {
+       // The gateway's convergence window starts when its 504 is received, not
+       // after local row-lock waits or a retry of result persistence completes.
+       const receivedTimeoutAt = knownTimeout ? new Date() : null;
++      if (
++        receivedTimeoutAt &&
++        error instanceof RemoteError &&
++        error.status === 504
++      )
++        await this.ctx.testMessageObserver?.boundary({
++          phase: "timeout-observed-before-local-save",
++          attemptId: randomUUID(),
++          groupId: row.group_id,
++          clientMsgId: row.client_msg_id!,
++          observedAt: receivedTimeoutAt.toISOString(),
++        });
+       await this.persistRemoteResult(async (tx) => {
+         await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
+           row.group_id,
+@@ -530,7 +542,10 @@ export class Messages implements MessagingService {
+   }
+   async kick(
+     input: { groupId: string; accountId: string; targetPlatformUserId: string },
+-    options?: { signal?: AbortSignal },
++    options?: {
++      signal?: AbortSignal;
++      beforeDispatch?: () => Promise<void>;
++    },
+   ): Promise<{ kicked: true }> {
+     options?.signal?.throwIfAborted();
+     const result = await this.ctx.db.tryWithLock(
+@@ -558,6 +573,8 @@ export class Messages implements MessagingService {
+           throw new AppError(409, "NO_AVAILABLE_ACCOUNT", "没有可执行的账号");
+         if (!["creator", "admin"].includes(member.role))
+           throw new AppError(403, "NO_PERMISSION", "账号没有移除成员权限");
++        await options?.beforeDispatch?.();
++        signal.throwIfAborted();
+         try {
+           z.object({ kicked: z.literal(true) }).parse(
+             await this.ctx.gateway.request(

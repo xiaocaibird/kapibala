@@ -1,0 +1,28 @@
+{
+  "input": {
+    "label": "step extra field",
+    "body": {
+      "name": "QA independent sequence contract",
+      "steps": [
+        {
+          "index": 1,
+          "accountRole": "admin",
+          "text": "QA valid sequence",
+          "delaySeconds": 1,
+          "unexpected": true
+        }
+      ]
+    }
+  },
+  "result": {
+    "status": 400,
+    "body": {
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Unrecognized key: \"unexpected\"",
+        "requestId": "a130addd-d837-4752-b4b5-ecbe7f99c449"
+      }
+    },
+    "headers": {}
+  }
+}

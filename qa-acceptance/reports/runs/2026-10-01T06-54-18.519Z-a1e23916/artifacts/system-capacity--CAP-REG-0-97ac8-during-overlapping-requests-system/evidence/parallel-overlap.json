@@ -1,0 +1,40 @@
+{
+  "hits": [
+    {
+      "name": "qa-kick-overlap-a",
+      "hits": 1,
+      "at": "2026-10-01T07:17:41.647Z",
+      "context": {
+        "id": 24,
+        "at": "2026-10-01T07:17:41.647Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-1/kick",
+        "body": {
+          "byAccountId": "account-2",
+          "targetPlatformUserId": "qa-shared-external-target"
+        },
+        "responsePreparedAt": "2026-10-01T07:17:41.647Z",
+        "preparedResponseStatus": 200
+      }
+    },
+    {
+      "name": "qa-kick-overlap-b",
+      "hits": 1,
+      "at": "2026-10-01T07:17:41.647Z",
+      "context": {
+        "id": 25,
+        "at": "2026-10-01T07:17:41.647Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-2/kick",
+        "body": {
+          "byAccountId": "account-2",
+          "targetPlatformUserId": "qa-shared-external-target"
+        },
+        "responsePreparedAt": "2026-10-01T07:17:41.647Z",
+        "preparedResponseStatus": 200
+      }
+    }
+  ],
+  "releasedAt": "2026-10-01T07:17:41.647Z",
+  "note": "Two different groups use the same external target identity; this is neither local-capacity refusal nor same-entity lock contention."
+}

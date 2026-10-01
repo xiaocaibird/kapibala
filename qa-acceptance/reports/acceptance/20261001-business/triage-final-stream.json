@@ -1,0 +1,24 @@
+{
+  "at": "2026-10-01T07:25:01.230650+00:00",
+  "caseId": "INT-STREAM-001",
+  "rawAndReviewedStatus": "BLOCKED",
+  "classification": "fault-window-not-established",
+  "source": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/evidence/real-reader-receipts.json",
+  "sha256": "aa4b2d538b35e434d9618ef5ef082875cc8ef1530052fa789ee51212b34acb7c",
+  "observations": {
+    "pauseCheckpoint": 13,
+    "injectionProfile": {
+      "maxMessages": 2048,
+      "textPaddingBytes": 8192,
+      "injectionBudgetMs": 45000
+    },
+    "emittedTargetMessages": 960,
+    "healthyFrames": 930,
+    "healthyMatchingTargetMessages": 928,
+    "slowFrames": 2,
+    "errors": [],
+    "replay": null
+  },
+  "conclusion": "真实暂停读取已建立，但有限注入期未得到完整健康消费者集合，未进入有证据的关闭/缺口/重放验证。不能据此声称消息丢失、吞吐不达标或慢消费者恢复已通过。",
+  "nextEvidence": "在明确批准的隔离容量配置中实际触发慢端关闭及接收游标缺口；保留健康端消息集合和关闭前后帧；不人为补SSE/WS收敛保证或用随机等待冒充故障命中。"
+}

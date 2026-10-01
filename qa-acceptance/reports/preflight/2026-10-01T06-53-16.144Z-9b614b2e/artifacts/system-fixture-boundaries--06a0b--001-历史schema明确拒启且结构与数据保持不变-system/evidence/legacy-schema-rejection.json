@@ -1,0 +1,23 @@
+{
+  "before": {
+    "schemaSha256": "63eb841c4a803c3f0153ae151a9b3b5a5d51fefff5f529a70cb1379f472e9de9",
+    "dataSha256": "efcfaa4f9d1fdb84438e7e77df4c22ac3b2276e4ec2ffe9d66aab411d597f1bf",
+    "schemaBytes": 23123,
+    "dataBytes": 6037
+  },
+  "after": {
+    "schemaSha256": "63eb841c4a803c3f0153ae151a9b3b5a5d51fefff5f529a70cb1379f472e9de9",
+    "dataSha256": "efcfaa4f9d1fdb84438e7e77df4c22ac3b2276e4ec2ffe9d66aab411d597f1bf",
+    "schemaBytes": 23123,
+    "dataBytes": 6037
+  },
+  "rejection": {
+    "ready": false,
+    "exit": {
+      "code": 1,
+      "signal": null
+    },
+    "log": "/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/migrations.ts:63\n  return new Error(`Schema mismatch: ${message}`);\n         ^\n\nError: Schema mismatch: installed=7, required=8; run npm run db:migrate\n    at mismatch (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/migrations.ts:63:10)\n    at verifyLedger (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/migrations.ts:106:11)\n    at <anonymous> (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/migrations.ts:119:5)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async <anonymous> (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/db.ts:141:24)\n    at async ObservedRuntimeDatabase.transaction (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/db.ts:137:14)\n    at async assertSchemaCurrent (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/migrations.ts:116:3)\n    at async createApp (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/app.ts:36:15)\n    at async <anonymous> (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/scripts/qa-observation-server.ts:79:9)\n\nNode.js v24.21.0\n"
+  },
+  "dataGuarantee": "拒启尝试前后规范化pg_dump结构和数据相同；不宣称排除任何先写后回滚的瞬时操作"
+}

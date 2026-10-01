@@ -1,0 +1,1684 @@
+diff --git a/scripts/qa-observation-server.ts b/scripts/qa-observation-server.ts
+new file mode 100644
+index 0000000..f5362aa
+--- /dev/null
++++ b/scripts/qa-observation-server.ts
+@@ -0,0 +1,116 @@
++// Explicit, combined engineering entry. Production main never imports this.
++import "dotenv/config";
++import { createApp } from "../apps/server/src/app.js";
++import { createGatewayModule } from "../apps/server/src/modules/gateway/index.js";
++import { createAutomationModule } from "../apps/server/src/modules/automation/index.js";
++import { CapacityRuntime } from "./qa-capacity/runtime.js";
++import { registryDirectory, sourceRevision } from "./qa-capacity/ownership.js";
++import { MessageObservationRuntime } from "./qa-message-observation/runtime.js";
++import { createObservationBridge } from "./qa-observation/bridge.js";
++import {
++  ObservedRuntimeDatabase,
++  RuntimeObservation,
++} from "./qa-runtime-observation/runtime.js";
++
++const directories = {
++  capacity: process.env.QA_CAPACITY_REGISTRY_DIR,
++  message: process.env.QA_MESSAGE_REGISTRY_DIR,
++  runtime: process.env.QA_RUNTIME_REGISTRY_DIR,
++};
++const configured = Object.values(directories).filter((value): value is string =>
++  Boolean(value),
++);
++const port = Number(process.env.PORT);
++if (
++  !configured.length ||
++  !process.env.QA_ACCEPTANCE_RESOURCE_TOKEN ||
++  !process.env.DATABASE_URL ||
++  !Number.isInteger(port) ||
++  port < 1 ||
++  port > 65535
++)
++  throw new Error(
++    "At least one explicit QA registry, owner token, DATABASE_URL and PORT required",
++  );
++const canonical = await Promise.all(configured.map(registryDirectory));
++if (new Set(canonical).size !== canonical.length)
++  throw new Error(
++    "Each observation protocol requires a distinct registry directory",
++  );
++const revision = await sourceRevision();
++const db = new ObservedRuntimeDatabase(process.env.DATABASE_URL);
++const capacity = directories.capacity ? new CapacityRuntime(db) : undefined;
++const message = directories.message
++  ? new MessageObservationRuntime(db)
++  : undefined;
++const runtime = directories.runtime ? new RuntimeObservation(db) : undefined;
++let app: Awaited<ReturnType<typeof createApp>> | undefined;
++const bridges: Awaited<ReturnType<typeof createObservationBridge>>[] = [];
++let closing: Promise<void> | undefined;
++function close(): Promise<void> {
++  return (closing ??= (async () => {
++    const failures: unknown[] = [];
++    for (const cleanup of [
++      () => runtime?.close(),
++      () => message?.close(),
++      () => capacity?.close(),
++      ...bridges.map((bridge) => () => bridge.close()),
++      () => app?.close(),
++      () => db.close(),
++    ]) {
++      try {
++        await cleanup();
++      } catch (error) {
++        failures.push(error);
++      }
++    }
++    if (failures.length)
++      throw new AggregateError(failures, "Combined observation cleanup failed");
++  })());
++}
++try {
++  app = await createApp({
++    db,
++    modules: (ctx) => {
++      ctx.testExecutionObserver = capacity;
++      ctx.testMessageObserver = message;
++      ctx.testRuntimeObserver = runtime;
++      const gateway = createGatewayModule(ctx);
++      return [gateway, createAutomationModule(ctx, gateway)];
++    },
++  });
++  await app.listen({ host: "127.0.0.1", port });
++  if (capacity)
++    await capacity.listen(directories.capacity!, app.listeningOrigin, revision);
++  if (message)
++    bridges.push(
++      await createObservationBridge({
++        directory: directories.message!,
++        apiUrl: app.listeningOrigin,
++        revision,
++        runtime: message,
++      }),
++    );
++  if (runtime)
++    bridges.push(
++      await createObservationBridge({
++        directory: directories.runtime!,
++        apiUrl: app.listeningOrigin,
++        revision,
++        runtime,
++      }),
++    );
++  for (const signal of ["SIGINT", "SIGTERM"] as const)
++    process.once(signal, () => {
++      void close().then(
++        () => process.exit(0),
++        (error) => {
++          console.error(error);
++          process.exit(1);
++        },
++      );
++    });
++} catch (error) {
++  await close().catch((cleanupError) => console.error(cleanupError));
++  throw error;
++}
+diff --git a/scripts/qa-runtime-observation-controller.ts b/scripts/qa-runtime-observation-controller.ts
+new file mode 100644
+index 0000000..c377cc2
+--- /dev/null
++++ b/scripts/qa-runtime-observation-controller.ts
+@@ -0,0 +1,20 @@
++import { createRuntimeObservationController } from "./qa-runtime-observation/controller.js";
++const directory = process.env.QA_RUNTIME_REGISTRY_DIR;
++const port = Number(process.env.QA_RUNTIME_PORT);
++if (!directory || !Number.isInteger(port) || port < 1 || port > 65535)
++  throw new Error(
++    "Explicit QA_RUNTIME_REGISTRY_DIR and QA_RUNTIME_PORT required",
++  );
++const app = await createRuntimeObservationController(directory);
++await app.listen({ host: "127.0.0.1", port });
++console.log(
++  JSON.stringify({
++    component: "qa-runtime-observation-controller",
++    url: app.listeningOrigin,
++    pid: process.pid,
++  }),
++);
++for (const signal of ["SIGINT", "SIGTERM"] as const)
++  process.once(signal, () => {
++    void app.close().then(() => process.exit(0));
++  });
+diff --git a/scripts/qa-runtime-observation-server.ts b/scripts/qa-runtime-observation-server.ts
+new file mode 100644
+index 0000000..b63df4b
+--- /dev/null
++++ b/scripts/qa-runtime-observation-server.ts
+@@ -0,0 +1,87 @@
++// Explicit isolated engineering entry. Normal main never imports this module.
++import "dotenv/config";
++import { createApp } from "../apps/server/src/app.js";
++import { createGatewayModule } from "../apps/server/src/modules/gateway/index.js";
++import { createAutomationModule } from "../apps/server/src/modules/automation/index.js";
++import { sourceRevision } from "./qa-capacity/ownership.js";
++import { createObservationBridge } from "./qa-observation/bridge.js";
++import {
++  ObservedRuntimeDatabase,
++  RuntimeObservation,
++} from "./qa-runtime-observation/runtime.js";
++const directory = process.env.QA_RUNTIME_REGISTRY_DIR;
++const port = Number(process.env.PORT);
++if (
++  !directory ||
++  !process.env.QA_ACCEPTANCE_RESOURCE_TOKEN ||
++  !process.env.DATABASE_URL ||
++  !Number.isInteger(port) ||
++  port < 1 ||
++  port > 65535
++)
++  throw new Error(
++    "Explicit registry, resource token, DATABASE_URL and PORT required",
++  );
++const revision = await sourceRevision();
++const db = new ObservedRuntimeDatabase(process.env.DATABASE_URL);
++const runtime = new RuntimeObservation(db);
++let app: Awaited<ReturnType<typeof createApp>> | undefined;
++let bridge: Awaited<ReturnType<typeof createObservationBridge>> | undefined;
++let closing: Promise<void> | undefined;
++function close(): Promise<void> {
++  return (closing ??= (async () => {
++    const failures: unknown[] = [];
++    for (const cleanup of [
++      () => runtime.close(),
++      async () => {
++        await bridge?.close();
++      },
++      async () => {
++        await app?.close();
++      },
++      () => db.close(),
++    ]) {
++      try {
++        await cleanup();
++      } catch (error) {
++        failures.push(error);
++      }
++    }
++    if (failures.length)
++      throw new AggregateError(failures, "Runtime observation cleanup failed");
++  })());
++}
++try {
++  app = await createApp({
++    db,
++    modules: (ctx) => {
++      ctx.testRuntimeObserver = runtime;
++      const gateway = createGatewayModule(ctx);
++      return [gateway, createAutomationModule(ctx, gateway)];
++    },
++  });
++  await app.listen({ host: "127.0.0.1", port });
++  bridge = await createObservationBridge({
++    directory,
++    apiUrl: app.listeningOrigin,
++    revision,
++    runtime,
++  });
++  for (const signal of ["SIGINT", "SIGTERM"] as const)
++    process.once(signal, () => {
++      void close().then(
++        () => process.exit(0),
++        (error) => {
++          console.error(error);
++          process.exit(1);
++        },
++      );
++    });
++} catch (error) {
++  try {
++    await close();
++  } catch (cleanupError) {
++    console.error(cleanupError);
++  }
++  throw error;
++}
+diff --git a/scripts/qa-runtime-observation/controller.ts b/scripts/qa-runtime-observation/controller.ts
+new file mode 100644
+index 0000000..70d61c6
+--- /dev/null
++++ b/scripts/qa-runtime-observation/controller.ts
+@@ -0,0 +1,9 @@
++import { createObservationController } from "../qa-observation/controller.js";
++import { protocol, requestSchema } from "./protocol.js";
++export const createRuntimeObservationController = (directory: string) =>
++  createObservationController({
++    directory,
++    prefix: "/qa/runtime/v1",
++    protocol,
++    requestSchema,
++  });
+diff --git a/scripts/qa-runtime-observation/protocol.ts b/scripts/qa-runtime-observation/protocol.ts
+new file mode 100644
+index 0000000..3f77710
+--- /dev/null
++++ b/scripts/qa-runtime-observation/protocol.ts
+@@ -0,0 +1,47 @@
++import { z } from "zod";
++import { targetSchema } from "../qa-capacity/protocol.js";
++export const protocol = "qa-runtime-observation/1" as const;
++const base = {
++  protocol: z.literal(protocol),
++  target: targetSchema,
++  ttlMs: z.number().int().min(5_000).max(120_000),
++};
++const account = z
++  .object({
++    kind: z.literal("account"),
++    accountId: z.string().min(1).max(200),
++    operation: z.literal("connect"),
++    intentId: z.uuid(),
++  })
++  .strict();
++export const requestSchema = z.discriminatedUnion("mode", [
++  z
++    .object({
++      ...base,
++      mode: z.literal("account-save-once"),
++      correlation: account,
++    })
++    .strict(),
++  z
++    .object({
++      ...base,
++      mode: z.literal("account-save-persistent"),
++      correlation: account,
++    })
++    .strict(),
++  z
++    .object({
++      ...base,
++      mode: z.literal("module-fail-then-hold"),
++      correlation: z
++        .object({
++          kind: z.literal("module"),
++          module: z.string().min(1).max(100),
++          attemptLabel: z.uuid(),
++        })
++        .strict(),
++      faultMarker: z.string().startsWith("qa-runtime-").max(96),
++    })
++    .strict(),
++]);
++export type RuntimeRequest = z.infer<typeof requestSchema>;
+diff --git a/scripts/qa-runtime-observation/runtime.ts b/scripts/qa-runtime-observation/runtime.ts
+new file mode 100644
+index 0000000..bc18336
+--- /dev/null
++++ b/scripts/qa-runtime-observation/runtime.ts
+@@ -0,0 +1,479 @@
++import { randomUUID } from "node:crypto";
++import { isDeepStrictEqual } from "node:util";
++import type { PoolClient } from "pg";
++import type { Queryable } from "../../apps/server/src/core/db.js";
++import { ControlledDatabase } from "../qa-capacity/runtime.js";
++import type {
++  TestAccountObservation,
++  TestAccountRequest,
++  TestRuntimeObserver,
++} from "../../apps/server/src/core/test-runtime-observer.js";
++import { ControlError, type Binding } from "../qa-capacity/protocol.js";
++import type {
++  ObservationRuntime,
++  ObservationSnapshot,
++} from "../qa-observation/types.js";
++import { protocol, requestSchema, type RuntimeRequest } from "./protocol.js";
++
++type Stage =
++  | "armed"
++  | "injected"
++  | "failed"
++  | "before-next"
++  | "running"
++  | "executing"
++  | "succeeded";
++interface Lease {
++  request: RuntimeRequest;
++  snapshot: ObservationSnapshot;
++  timer: NodeJS.Timeout;
++  probe?: AccountProbe;
++  stage: Stage;
++  attemptId?: string;
++  gate?: { promise: Promise<void>; release: () => void; next?: Stage };
++}
++const delay = (ms: number) =>
++  new Promise<void>((resolve) => setTimeout(resolve, ms));
++
++/** Only this explicit test entry observes raw COMMIT/ROLLBACK acknowledgements.
++ * Business transaction/savepoint/event buffering remain Database's implementation. */
++export class ObservedRuntimeDatabase extends ControlledDatabase {
++  observer?: RuntimeObservation;
++  override async transaction<T>(
++    fn: (tx: PoolClient) => Promise<T>,
++  ): Promise<T> {
++    return super.transaction(async (tx) => {
++      const query = tx.query;
++      const release = tx.release;
++      // Database and domain code use the Promise query overload. Restore before
++      // returning this pooled client, including broken-connection cleanup.
++      tx.query = (async (...args: unknown[]) => {
++        const result = await Reflect.apply(query, tx, args);
++        const sql = args[0];
++        if (sql === "COMMIT" || sql === "ROLLBACK")
++          this.observer?.transactionSettled(tx, sql === "COMMIT");
++        return result;
++      }) as PoolClient["query"];
++      tx.release = (...args) => {
++        tx.query = query;
++        tx.release = release;
++        this.observer?.transactionReleased(tx);
++        return release.apply(tx, args);
++      };
++      return fn(tx);
++    });
++  }
++}
++
++export class RuntimeObservation
++  implements TestRuntimeObserver, ObservationRuntime<RuntimeRequest>
++{
++  readonly protocol = protocol;
++  private readonly leases = new Map<string, Lease>();
++  private readonly transactions = new WeakMap<PoolClient, AccountProbe>();
++  private names = new Set<string>();
++  private closed = false;
++  constructor(readonly db: ObservedRuntimeDatabase) {
++    db.observer = this;
++  }
++  capabilities(): string[] {
++    return ["account-local-save", "account-intent-wait", "module-tick"];
++  }
++  modules(names: string[]): void {
++    this.names = new Set(names);
++  }
++  async establish(
++    id: string,
++    raw: RuntimeRequest,
++    expiresAt: string,
++    binding: Binding,
++  ): Promise<ObservationSnapshot> {
++    const request = requestSchema.parse(raw);
++    if (this.closed) throw new ControlError(503, "Runtime observer is closed");
++    const previous = this.leases.get(id);
++    if (previous) {
++      if (!isDeepStrictEqual(previous.request, request))
++        throw new ControlError(409, "Lease identity cannot be rebound");
++      return this.snapshot(id);
++    }
++    if (Date.parse(expiresAt) <= Date.now())
++      throw new ControlError(409, "Lease expired before establishment");
++    const target = request.correlation;
++    for (const lease of this.leases.values()) {
++      if (lease.snapshot.state === "released") continue;
++      const other = lease.request.correlation;
++      if (
++        (target.kind === "account" &&
++          other.kind === "account" &&
++          target.accountId === other.accountId) ||
++        (target.kind === "module" &&
++          other.kind === "module" &&
++          target.module === other.module)
++      )
++        throw new ControlError(
++          409,
++          "Target already has an active observation lease",
++        );
++    }
++    if (target.kind === "account") {
++      const row = await this.db.query("SELECT 1 FROM accounts WHERE id=$1", [
++        target.accountId,
++      ]);
++      if (!row.rowCount) throw new ControlError(404, "Account does not exist");
++    } else if (!this.names.has(target.module))
++      throw new ControlError(404, "Module does not exist");
++    // Recheck after the account lookup: concurrent PUTs must not both arm a target.
++    for (const lease of this.leases.values()) {
++      const other = lease.request.correlation;
++      if (
++        lease.snapshot.state !== "released" &&
++        target.kind === "account" &&
++        other.kind === "account" &&
++        target.accountId === other.accountId
++      )
++        throw new ControlError(
++          409,
++          "Target already has an active observation lease",
++        );
++    }
++    if (this.closed || Date.parse(expiresAt) <= Date.now())
++      throw new ControlError(409, "Lease unavailable after target lookup");
++    const lease: Lease = {
++      request,
++      stage: "armed",
++      snapshot: {
++        protocol,
++        leaseId: id,
++        state: "armed",
++        expiresAt,
++        binding,
++        correlation: target,
++        events: [],
++      },
++      timer: setTimeout(
++        () => {
++          void this.release(id);
++        },
++        Math.max(1, Date.parse(expiresAt) - Date.now()),
++      ),
++    };
++    lease.timer.unref();
++    this.leases.set(id, lease);
++    return this.snapshot(id);
++  }
++  snapshot(id: string): ObservationSnapshot {
++    return structuredClone(this.get(id).snapshot);
++  }
++  async advance(id: string): Promise<ObservationSnapshot> {
++    const lease = this.get(id);
++    if (lease.snapshot.state === "released") return this.snapshot(id);
++    const gate = lease.gate;
++    if (lease.stage === "succeeded") return this.snapshot(id);
++    if (gate) {
++      lease.gate = undefined;
++      if (gate.next) lease.stage = gate.next;
++      lease.snapshot.state = "armed";
++      gate.release();
++    }
++    return this.snapshot(id);
++  }
++  async release(id: string): Promise<ObservationSnapshot> {
++    const lease = this.get(id);
++    clearTimeout(lease.timer);
++    lease.snapshot.state = "released";
++    lease.gate?.release();
++    lease.gate = undefined;
++    return this.snapshot(id);
++  }
++  async close(): Promise<void> {
++    this.closed = true;
++    await Promise.all([...this.leases.keys()].map((id) => this.release(id)));
++  }
++  private get(id: string): Lease {
++    const lease = this.leases.get(id);
++    if (!lease)
++      throw new ControlError(404, "Unknown runtime observation lease");
++    return lease;
++  }
++  private active(lease: Lease): boolean {
++    return lease.snapshot.state !== "released";
++  }
++  private gate(lease: Lease, next?: Stage): Promise<void> {
++    if (!this.active(lease)) return Promise.resolve();
++    if (lease.gate) return lease.gate.promise;
++    let release!: () => void;
++    const promise = new Promise<void>((resolve) => {
++      release = resolve;
++    });
++    lease.gate = { promise, release, next };
++    lease.snapshot.state = "held";
++    return promise;
++  }
++  event(
++    lease: Lease,
++    kind: string,
++    fields: Record<string, unknown> = {},
++  ): void {
++    lease.snapshot.events.push({
++      seq: lease.snapshot.events.length + 1,
++      at: new Date().toISOString(),
++      kind,
++      correlation: lease.snapshot.correlation,
++      attemptId: lease.attemptId,
++      instancePid: lease.snapshot.binding.pid,
++      ...fields,
++    });
++  }
++  account(request: TestAccountRequest): TestAccountObservation | undefined {
++    if (this.closed) return undefined;
++    let selected: Lease | undefined;
++    for (const lease of this.leases.values()) {
++      const c = lease.request.correlation;
++      if (
++        this.active(lease) &&
++        c.kind === "account" &&
++        c.accountId === request.accountId &&
++        !lease.probe &&
++        request.operation === "connect"
++      ) {
++        selected = lease;
++        break;
++      }
++    }
++    // New transition probes prove actual blocking on the held original account.
++    if (
++      !selected &&
++      ![...this.leases.values()].some(
++        (lease) =>
++          this.active(lease) &&
++          lease.request.correlation.kind === "account" &&
++          lease.request.correlation.accountId === request.accountId &&
++          lease.probe,
++      )
++    )
++      return undefined;
++    const probe = new AccountProbe(this, request, selected);
++    if (selected) {
++      selected.probe = probe;
++      selected.attemptId = probe.attemptId;
++    }
++    return probe;
++  }
++  register(tx: PoolClient, probe: AccountProbe): void {
++    this.transactions.set(tx, probe);
++  }
++  transactionSettled(tx: PoolClient, committed: boolean): void {
++    const probe = this.transactions.get(tx);
++    if (!probe) return;
++    probe.settled(committed);
++    this.transactions.delete(tx);
++  }
++  transactionReleased(tx: PoolClient): void {
++    this.transactions.delete(tx);
++  }
++  async waitEvidence(probe: AccountProbe): Promise<void> {
++    if (
++      probe.request.operation !== "transition" ||
++      probe.request.expectedFrom !== "online" ||
++      probe.request.to !== "disconnected"
++    )
++      return;
++    for (const lease of this.leases.values()) {
++      const original = lease.probe;
++      if (
++        !original ||
++        !this.active(lease) ||
++        lease.snapshot.state !== "held" ||
++        original.request.accountId !== probe.request.accountId ||
++        original.request.requestId === probe.request.requestId ||
++        !original.backendPid ||
++        !probe.backendPid ||
++        original.waiters.has(probe.request.requestId)
++      )
++        continue;
++      const query = {
++        text: "SELECT pg_blocking_pids($1) AS blockers",
++        values: [probe.backendPid],
++        query_timeout: 500,
++      };
++      const result = await this.db.pool.query<{ blockers: number[] }>(query);
++      if (
++        !probe.waiting ||
++        !this.active(lease) ||
++        !lease.gate ||
++        !result.rows[0]?.blockers.includes(original.backendPid)
++      )
++        continue;
++      original.waiters.add(probe.request.requestId);
++      original.emit("newer-account-intent-waiting", {
++        waitingIntent: {
++          requestId: probe.request.requestId,
++          accountId: probe.request.accountId,
++          expectedFrom: "online",
++          to: "disconnected",
++          waitingForTransactionId: original.transactionId,
++        },
++      });
++    }
++  }
++  holdAccount(lease: Lease): Promise<void> {
++    const gate = this.gate(lease);
++    this.event(lease, "local-retry-held", lease.probe!.identity());
++    return gate;
++  }
++  private moduleLease(name: string): Lease | undefined {
++    return [...this.leases.values()].find(
++      (l) =>
++        this.active(l) &&
++        l.request.correlation.kind === "module" &&
++        l.request.correlation.module === name,
++    );
++  }
++  async beforeTick(name: string): Promise<void> {
++    const lease = this.moduleLease(name);
++    if (!lease) return;
++    if (lease.stage === "failed") {
++      lease.stage = "before-next";
++      lease.attemptId = randomUUID();
++      const hold = this.gate(lease, "running");
++      this.event(lease, "module-before-next-held", {
++        tickBoundary: "before-activity-and-diagnostics-start",
++      });
++      await hold;
++    } else if (lease.stage === "succeeded") await this.gate(lease);
++  }
++  async tick(name: string, operation: () => Promise<void>): Promise<void> {
++    const lease = this.moduleLease(name);
++    if (lease?.stage === "armed") {
++      lease.attemptId = randomUUID();
++      lease.stage = "injected";
++      // This is the fault thrown by the actual scheduler tick, not a diagnostics rewrite.
++      throw new Error(
++        lease.request.mode === "module-fail-then-hold"
++          ? lease.request.faultMarker
++          : "qa-runtime-module-failure",
++      );
++    }
++    if (lease?.stage === "running") {
++      const hold = this.gate(lease, "executing");
++      this.event(lease, "module-running-held");
++      await hold;
++    }
++    await operation();
++  }
++  tickFinished(name: string, succeeded: boolean): void {
++    const lease = this.moduleLease(name);
++    if (!lease) return;
++    if (!succeeded && lease.stage === "injected") {
++      lease.stage = "failed";
++      this.event(lease, "module-failed", {
++        faultMarker:
++          lease.request.mode === "module-fail-then-hold"
++            ? lease.request.faultMarker
++            : undefined,
++      });
++    } else if (!succeeded && lease.stage === "executing") {
++      lease.stage = "failed";
++      this.event(lease, "module-failed", { failureSource: "module-operation" });
++    } else if (succeeded && lease.stage === "executing") {
++      lease.stage = "succeeded";
++      void this.gate(lease);
++      this.event(lease, "module-succeeded");
++    }
++  }
++}
++
++class AccountProbe implements TestAccountObservation {
++  readonly attemptId = randomUUID();
++  readonly transactionId = randomUUID();
++  readonly waiters = new Set<string>();
++  backendPid?: number;
++  waiting = false;
++  private remote = false;
++  private injected = 0;
++  private outstandingFault = false;
++  constructor(
++    private readonly runtime: RuntimeObservation,
++    readonly request: TestAccountRequest,
++    private readonly lease?: Lease,
++  ) {}
++  identity(): Record<string, unknown> {
++    return {
++      requestId: this.request.requestId,
++      transactionId: this.transactionId,
++      attemptId: this.attemptId,
++    };
++  }
++  emit(kind: string, extra: Record<string, unknown> = {}): void {
++    if (this.lease)
++      this.runtime.event(this.lease, kind, { ...this.identity(), ...extra });
++  }
++  async transaction(tx: PoolClient): Promise<void> {
++    this.runtime.register(tx, this);
++    this.backendPid = (
++      await tx.query<{ pid: number }>("SELECT pg_backend_pid() AS pid")
++    ).rows[0]!.pid;
++  }
++  async lock<T>(acquire: () => Promise<T>): Promise<T> {
++    this.waiting = true;
++    const operation = acquire().finally(() => {
++      this.waiting = false;
++    });
++    const monitor = (async () => {
++      while (this.waiting) {
++        await delay(20);
++        if (this.waiting)
++          await this.runtime.waitEvidence(this).catch(() => undefined);
++      }
++    })();
++    try {
++      return await operation;
++    } finally {
++      await monitor;
++    }
++  }
++  remoteSucceeded(): void {
++    this.remote = true;
++    this.emit("remote-success");
++  }
++  async save(tx: Queryable): Promise<void> {
++    if (
++      !this.lease ||
++      this.lease.snapshot.state === "released" ||
++      (this.lease.request.mode === "account-save-once" && this.injected > 0)
++    )
++      return;
++    this.injected++;
++    this.outstandingFault = true;
++    await tx.query(
++      "DO $$ BEGIN RAISE EXCEPTION 'qa runtime local save fault' USING ERRCODE='55P03'; END $$",
++    );
++  }
++  async saveFailed(error: unknown, willRetry: boolean): Promise<void> {
++    if (
++      !this.outstandingFault ||
++      !error ||
++      typeof error !== "object" ||
++      !("code" in error) ||
++      error.code !== "55P03"
++    )
++      return;
++    this.outstandingFault = false;
++    this.emit("local-save-failed", { recoverableInOriginalTransaction: true });
++    if (
++      willRetry &&
++      this.lease?.request.mode === "account-save-once" &&
++      this.lease.snapshot.state !== "released"
++    )
++      await this.runtime.holdAccount(this.lease);
++  }
++  settled(committed: boolean): void {
++    if (!this.remote) return;
++    this.emit(
++      committed ? "local-save-committed" : "transaction-rolled-back",
++      committed
++        ? { commitBoundary: "outer-commit-confirmed" }
++        : { rollbackBoundary: "outer-rollback-confirmed" },
++    );
++  }
++}
+diff --git a/tests/integration/qa-combined-observation.test.ts b/tests/integration/qa-combined-observation.test.ts
+new file mode 100644
+index 0000000..a499ed8
+--- /dev/null
++++ b/tests/integration/qa-combined-observation.test.ts
+@@ -0,0 +1,229 @@
++import assert from "node:assert/strict";
++import { randomUUID } from "node:crypto";
++import { mkdtemp, rm } from "node:fs/promises";
++import type { ServerResponse } from "node:http";
++import { test } from "node:test";
++import { createObservationController } from "../../scripts/qa-observation/controller.js";
++import type { ObservationSnapshot } from "../../scripts/qa-observation/types.js";
++import {
++  protocol as messageProtocol,
++  requestSchema,
++} from "../../scripts/qa-message-observation/protocol.js";
++import { createRuntimeObservationController } from "../../scripts/qa-runtime-observation/controller.js";
++import { capacityFixture } from "../support/capacity-control-fixture.js";
++import { until } from "../support/core-automation-fixture.js";
++
++test("CO01 one real SUT preserves capacity, receipt and account observers simultaneously", async (t) => {
++  const messageDir = await mkdtemp("/tmp/kap-cm-");
++  const runtimeDir = await mkdtemp("/tmp/kap-cr-");
++  t.after(async () => {
++    await rm(messageDir, { recursive: true, force: true });
++    await rm(runtimeDir, { recursive: true, force: true });
++  });
++  const messageControl = await createObservationController({
++    directory: messageDir,
++    prefix: "/qa/message/v1",
++    protocol: messageProtocol,
++    requestSchema,
++  });
++  t.after(() => messageControl.close());
++  await messageControl.listen({ host: "127.0.0.1", port: 0 });
++  const runtimeControl = await createRuntimeObservationController(runtimeDir);
++  t.after(() => runtimeControl.close());
++  await runtimeControl.listen({ host: "127.0.0.1", port: 0 });
++  const streams = new Set<ServerResponse>();
++  let connects = 0;
++  const f = await capacityFixture(t, false, {
++    entry: "scripts/qa-observation-server.ts",
++    extraEnv: {
++      QA_MESSAGE_REGISTRY_DIR: messageDir,
++      QA_RUNTIME_REGISTRY_DIR: runtimeDir,
++    },
++    configureRemote: (remote) => {
++      remote.post("/accounts/account-6/connect", () => {
++        connects++;
++        return { platformUserId: "account-6" };
++      });
++      remote.addHook("onRequest", (request, reply, done) => {
++        if (request.url.split("?")[0] === "/events") {
++          streams.add(reply.raw);
++          reply.raw.once("close", () => streams.delete(reply.raw));
++        }
++        done();
++      });
++    },
++  });
++  async function request(
++    origin: string,
++    prefix: string,
++    path: string,
++    method = "GET",
++    body?: unknown,
++  ) {
++    const response = await fetch(origin + prefix + path, {
++      method,
++      headers: { "content-type": "application/json" },
++      body: body === undefined ? undefined : JSON.stringify(body),
++    });
++    const value: unknown = await response.json();
++    assert.equal(response.status, 200, JSON.stringify(value));
++    return value as ObservationSnapshot;
++  }
++  const mr = (path: string, method = "GET", body?: unknown) =>
++    request(
++      messageControl.listeningOrigin,
++      "/qa/message/v1",
++      path,
++      method,
++      body,
++    );
++  const rr = (path: string, method = "GET", body?: unknown) =>
++    request(
++      runtimeControl.listeningOrigin,
++      "/qa/runtime/v1",
++      path,
++      method,
++      body,
++    );
++  const query = new URLSearchParams({
++    ...f.target(),
++    pid: String(f.target().pid),
++  });
++  await until(async () => {
++    try {
++      await mr("/capabilities?" + query);
++      await rr("/capabilities?" + query);
++      return true;
++    } catch {
++      return false;
++    }
++  });
++  const caps = await f.capabilities();
++  assert.equal(caps.status, 200);
++  for (const snapshot of [
++    await mr("/capabilities?" + query),
++    await rr("/capabilities?" + query),
++  ]) {
++    assert.equal(snapshot.binding.observedOwnerToken, f.token);
++    assert.equal(snapshot.binding.pid, f.target().pid);
++  }
++  await f.prepare();
++  const capacity = await f.hold();
++  f.auditResponse.resolve();
++  await until(async () =>
++    (await f.snapshot(capacity.id)).events.some(
++      (e) => e.kind === "admission-refused",
++    ),
++  );
++  assert.equal(f.kicks(), 0);
++
++  await f.db.query(
++    "UPDATE accounts SET status='idle', platform_user_id=NULL WHERE id='account-6'",
++  );
++  const accountLease = randomUUID();
++  await rr(`/leases/${accountLease}`, "PUT", {
++    protocol: "qa-runtime-observation/1",
++    target: f.target(),
++    mode: "account-save-once",
++    ttlMs: 20000,
++    correlation: {
++      kind: "account",
++      accountId: "account-6",
++      operation: "connect",
++      intentId: randomUUID(),
++    },
++  });
++  const connecting = f.api("/api/accounts/account-6/connect", {
++    method: "POST",
++  });
++  await until(async () =>
++    (await rr(`/leases/${accountLease}`)).events.some(
++      (e) => e.kind === "local-retry-held",
++    ),
++  );
++  assert.equal(connects, 1);
++  assert.equal(
++    (await f.db.query("SELECT status FROM accounts WHERE id='account-6'"))
++      .rows[0]!.status,
++    "idle",
++  );
++
++  await f.db.query(
++    "INSERT INTO messages(id,group_id,client_msg_id,account_id,sender_platform_user_id,is_own,text,delivery_status,dispatch_state) VALUES('combined-m','g','combined-client','account-2','account-2',true,'combined observation','accepted','waiting_event')",
++  );
++  const messageLease = randomUUID();
++  await mr(`/leases/${messageLease}`, "PUT", {
++    protocol: messageProtocol,
++    target: f.target(),
++    mode: "receipt-committed-before-business",
++    ttlMs: 20000,
++    correlation: {
++      clientMsgId: "combined-client",
++      msgId: "combined-remote",
++      eventId: "9001",
++    },
++  });
++  await until(async () => streams.size > 0);
++  const event = {
++    eventId: 9001,
++    type: "message_sent",
++    clientMsgId: "combined-client",
++    msgId: "combined-remote",
++    sentAt: new Date().toISOString(),
++  };
++  for (const stream of streams)
++    stream.write(`id: 9001\ndata: ${JSON.stringify(event)}\n\n`);
++  await until(
++    async () => (await mr(`/leases/${messageLease}`)).state === "held",
++  );
++  assert.equal(
++    (
++      await f.db.query(
++        "SELECT count(*)::int AS n FROM message_sent_receipts WHERE client_msg_id='combined-client'",
++      )
++    ).rows[0]!.n,
++    1,
++  );
++  assert.equal(
++    (
++      await f.db.query(
++        "SELECT delivery_status FROM messages WHERE id='combined-m'",
++      )
++    ).rows[0]!.delivery_status,
++    "accepted",
++  );
++  assert.equal((await f.snapshot(capacity.id)).state, "held");
++  assert.equal((await rr(`/leases/${accountLease}`)).state, "held");
++
++  await mr(`/leases/${messageLease}/advance`, "POST");
++  await until(
++    async () =>
++      (
++        await f.db.query(
++          "SELECT delivery_status FROM messages WHERE id='combined-m'",
++        )
++      ).rows[0]!.delivery_status === "sent",
++  );
++  await rr(`/leases/${accountLease}/advance`, "POST");
++  assert.equal((await connecting).status, 200);
++  await until(async () =>
++    (await rr(`/leases/${accountLease}`)).events.some(
++      (e) => e.kind === "local-save-committed",
++    ),
++  );
++  const committed = (await rr(`/leases/${accountLease}`)).events.find(
++    (e) => e.kind === "local-save-committed",
++  )!;
++  assert.equal(committed.commitBoundary, "outer-commit-confirmed");
++  await f.snapshot(capacity.id, "DELETE");
++  await until(async () => (await f.run()).status === "finished");
++  assert.equal(f.kicks(), 1);
++  assert.equal(connects, 1);
++  await mr(`/leases/${messageLease}`, "DELETE");
++  await rr(`/leases/${accountLease}`, "DELETE");
++  f.evidence({
++    capacity: await f.snapshot(capacity.id),
++    message: await mr(`/leases/${messageLease}`),
++    account: await rr(`/leases/${accountLease}`),
++  });
++});
+diff --git a/tests/integration/qa-runtime-observation.test.ts b/tests/integration/qa-runtime-observation.test.ts
+new file mode 100644
+index 0000000..7c69748
+--- /dev/null
++++ b/tests/integration/qa-runtime-observation.test.ts
+@@ -0,0 +1,344 @@
++import assert from "node:assert/strict";
++import { test } from "node:test";
++import { randomUUID } from "node:crypto";
++import { readdir } from "node:fs/promises";
++import { runtimeFixture } from "../support/runtime-observation-fixture.js";
++import { delay, until } from "../support/core-automation-fixture.js";
++
++test("RT01 default main exposes no runtime controller and binding requires real guardian/port/revision", async (t) => {
++  const f = await runtimeFixture(t, true);
++  assert.deepEqual(await readdir(f.directory), []);
++  assert.equal((await f.capabilities()).status, 409);
++});
++
++test("RT02 real savepoint fault preserves original transaction and observes newer HTTP waiting", async (t) => {
++  const f = await runtimeFixture(t);
++  const caps = await f.capabilities();
++  assert.equal(caps.status, 200, JSON.stringify(caps.value));
++  assert.equal(
++    (caps.value as { protocol: string }).protocol,
++    "qa-runtime-observation/1",
++  );
++  assert.equal(
++    (caps.value as { binding: { observedOwnerToken: string } }).binding
++      .observedOwnerToken,
++    f.token,
++  );
++  assert.deepEqual((caps.value as { capabilities: string[] }).capabilities, [
++    "account-local-save",
++    "account-intent-wait",
++    "module-tick",
++  ]);
++  for (const target of [
++    { ...f.target(), pid: process.pid },
++    { ...f.target(), revision: "0".repeat(40) },
++    { ...f.target(), apiUrl: "http://127.0.0.1:1" },
++  ])
++    assert.equal((await f.capabilities(target)).status, 409);
++  const lease = await f.hold();
++  const connect = f.api("/api/accounts/account-1/connect", "POST", {});
++  const held = await f.event(lease.id, "local-retry-held");
++  assert.equal(held.state, "held");
++  assert.equal(f.connects(), 1);
++  assert.equal((await f.account()).status, "idle");
++  assert.equal((await f.stateEvents()).length, 0);
++  const disconnect = f.api("/api/accounts/account-1/transition", "POST", {
++    expectedFrom: "online",
++    to: "disconnected",
++  });
++  const waiting = await f.event(lease.id, "newer-account-intent-waiting");
++  assert.equal(waiting.state, "held");
++  assert.equal(f.disconnects(), 0);
++  assert.equal((await f.account()).status, "idle");
++  assert.equal((await f.stateEvents()).length, 0);
++  assert.equal(
++    f.frames.some((frame) =>
++      JSON.stringify(frame).includes("account_status_changed"),
++    ),
++    false,
++  );
++  const original = waiting.events.find((e) => e.kind === "remote-success")!;
++  const actualWait = waiting.events.find(
++    (e) => e.kind === "newer-account-intent-waiting",
++  )!;
++  const newer = actualWait.waitingIntent as {
++    requestId: string;
++    waitingForTransactionId: string;
++  };
++  assert.notEqual(newer.requestId, original.requestId);
++  assert.equal(newer.waitingForTransactionId, original.transactionId);
++  await f.advance(lease.id);
++  const results = await Promise.all([connect, disconnect]);
++  assert.deepEqual(
++    results.map((r) => r.status),
++    [200, 200],
++  );
++  const final = await f.event(lease.id, "local-save-committed");
++  assert.equal((await f.account()).status, "disconnected");
++  assert.equal(f.connects(), 1);
++  assert.equal(f.disconnects(), 1);
++  assert.deepEqual(
++    final.events.map((e) => e.kind),
++    [
++      "remote-success",
++      "local-save-failed",
++      "local-retry-held",
++      "newer-account-intent-waiting",
++      "local-save-committed",
++    ],
++  );
++  for (const e of final.events) {
++    assert.equal(e.transactionId, original.transactionId);
++    assert.equal(e.requestId, original.requestId);
++    assert.equal(e.attemptId, original.attemptId);
++  }
++  assert.equal(final.events.at(-1)!.commitBoundary, "outer-commit-confirmed");
++  assert.equal((await f.stateEvents()).length, 2);
++  f.evidence(final);
++  await f.snapshot(lease.id, "DELETE");
++});
++
++test("RT03 persistent SQL failure exhausts native retries, real rollback, no automatic remote replay", async (t) => {
++  const f = await runtimeFixture(t);
++  const lease = await f.hold("account-save-persistent");
++  const result = await f.api("/api/accounts/account-1/connect", "POST", {});
++  assert.equal(result.status, 500);
++  assert.equal(
++    (result.value as { error: { code: string } }).error.code,
++    "INTERNAL_ERROR",
++  );
++  const final = await f.event(lease.id, "transaction-rolled-back");
++  assert.equal(
++    final.events.filter((e) => e.kind === "local-save-failed").length,
++    3,
++  );
++  assert.equal(
++    final.events.some((e) => e.kind === "local-save-committed"),
++    false,
++  );
++  assert.equal((await f.account()).status, "idle");
++  assert.equal((await f.stateEvents()).length, 0);
++  await delay(200);
++  assert.equal(f.connects(), 1);
++  assert.equal(f.disconnects(), 0);
++  assert.equal(
++    f.frames.some((frame) =>
++      JSON.stringify(frame).includes("account_status_changed"),
++    ),
++    false,
++  );
++  await f.snapshot(lease.id, "DELETE");
++  assert.equal(
++    (await f.api("/api/accounts/account-1/connect", "POST", {})).status,
++    200,
++  );
++  assert.equal(
++    (
++      await f.api("/api/accounts/account-1/transition", "POST", {
++        expectedFrom: "online",
++        to: "disconnected",
++      })
++    ).status,
++    200,
++  );
++  assert.equal(f.connects(), 2);
++  assert.equal(f.disconnects(), 1);
++  assert.equal((await f.account()).status, "disconnected");
++  f.evidence(final);
++});
++
++test("RT04 module diagnostics follow real fail, before-start gate, running, success and release", async (t) => {
++  const f = await runtimeFixture(t);
++  const diagnostics = async () => {
++    const r = await f.api("/api/diagnostics/background");
++    assert.equal(r.status, 200);
++    assert.equal(
++      JSON.stringify(r.value).includes("qa-runtime-developer-check"),
++      false,
++    );
++    return (
++      r.value as {
++        modules: {
++          name: string;
++          status: string;
++          ticks: number;
++          consecutiveFailures: number;
++          lastFailedAt: string;
++          lastSucceededAt: string | null;
++          runningForMs: number | null;
++        }[];
++      }
++    ).modules.find((m) => m.name === "gateway")!;
++  };
++  const lease = await f.hold("module-fail-then-hold");
++  const failedSnapshot = await f.event(lease.id, "module-before-next-held");
++  assert.equal(failedSnapshot.state, "held");
++  const failed = await diagnostics();
++  assert.equal(failed.status, "failed");
++  assert.ok(failed.consecutiveFailures >= 1);
++  assert.ok(failed.lastFailedAt);
++  await f.advance(lease.id);
++  await f.event(lease.id, "module-running-held");
++  const running = await diagnostics();
++  assert.equal(running.status, "running");
++  assert.equal(running.lastSucceededAt, failed.lastSucceededAt);
++  await delay(30);
++  const later = await diagnostics();
++  assert.ok(later.runningForMs! >= running.runningForMs!);
++  await f.advance(lease.id);
++  const finished = await f.event(lease.id, "module-succeeded");
++  const done = await diagnostics();
++  assert.equal(done.status, "idle");
++  assert.equal(done.consecutiveFailures, 0);
++  assert.equal(done.lastFailedAt, failed.lastFailedAt);
++  assert.notEqual(done.lastSucceededAt, failed.lastSucceededAt);
++  assert.ok(done.ticks > failed.ticks);
++  assert.equal(
++    (await f.advance(lease.id)).state,
++    "held",
++    "Completed lifecycle remains held until DELETE/TTL",
++  );
++  await delay(150);
++  assert.equal((await diagnostics()).ticks, done.ticks);
++  await f.snapshot(lease.id, "DELETE");
++  await until(async () => (await diagnostics()).ticks > done.ticks);
++  f.evidence({ events: finished.events, failed, running, done });
++});
++
++test("RT05 UUID replay, lease conflicts, independent TTL release, body validation and old instance history", async (t) => {
++  const f = await runtimeFixture(t);
++  const lease = await f.hold("account-save-once", 5000);
++  assert.deepEqual(
++    (await f.request("PUT", `/leases/${lease.id}`, lease.input)).value,
++    lease.snapshot,
++  );
++  assert.equal(
++    (
++      await f.request("PUT", `/leases/${lease.id}`, {
++        ...lease.input,
++        ttlMs: 5001,
++      })
++    ).status,
++    409,
++  );
++  assert.equal(
++    (await f.request("PUT", `/leases/${randomUUID()}`, f.body())).status,
++    409,
++  );
++  assert.equal(
++    (await f.request("POST", `/leases/${lease.id}/advance`, {})).status,
++    400,
++  );
++  assert.equal(
++    (
++      await f.request("PUT", `/leases/${randomUUID()}`, {
++        ...f.body(),
++        sql: "select 1",
++      })
++    ).status,
++    400,
++  );
++  assert.equal(
++    (
++      await f.request(
++        "PUT",
++        `/leases/${randomUUID()}`,
++        f.body("account-save-once", 20000, "account-2"),
++      )
++    ).status,
++    409,
++  );
++  const connect = f.api("/api/accounts/account-1/connect", "POST", {});
++  await f.event(lease.id, "local-retry-held");
++  await until(
++    async () => (await f.snapshot(lease.id)).state === "released",
++    10000,
++  );
++  assert.equal((await connect).status, 200);
++  await f.event(lease.id, "local-save-committed");
++  const second = await f.hold("account-save-once", 20000, "account-2");
++  assert.equal((await f.snapshot(second.id)).state, "armed");
++  await f.kill();
++  const oldTarget = second.input.target;
++  const dead = await f.snapshot(second.id);
++  assert.equal(dead.state, "released");
++  await f.start();
++  assert.notEqual(f.target().pid, oldTarget.pid);
++  assert.equal((await f.capabilities(oldTarget)).status, 409);
++  assert.deepEqual(await f.snapshot(second.id, "DELETE"), dead);
++  assert.equal((await f.capabilities()).status, 200);
++  const current = await f.hold("account-save-once", 20000, "account-2");
++  await f.snapshot(second.id, "DELETE");
++  assert.equal((await f.snapshot(current.id)).state, "armed");
++  await f.snapshot(current.id, "DELETE");
++  f.evidence({ old: dead, current: current.snapshot });
++});
++
++test("RT06 actual module operation failure after advance is never reported as success", async () => {
++  const { ObservedRuntimeDatabase, RuntimeObservation } =
++    await import("../../scripts/qa-runtime-observation/runtime.js");
++  // No connection or business fixture is needed to drive the scheduler hook's
++  // negative callback path. The real REST lifecycle is exercised by RT04.
++  const db = new ObservedRuntimeDatabase(
++    "postgres://unused@127.0.0.1:1/unused",
++  );
++  const runtime = new RuntimeObservation(db);
++  const id = randomUUID();
++  runtime.modules(["failing-module"]);
++  const target = {
++    apiUrl: "http://127.0.0.1:1",
++    revision: "0".repeat(40),
++    pid: process.pid,
++  };
++  try {
++    await runtime.establish(
++      id,
++      {
++        protocol: "qa-runtime-observation/1",
++        target,
++        ttlMs: 5000,
++        mode: "module-fail-then-hold",
++        correlation: {
++          kind: "module",
++          module: "failing-module",
++          attemptLabel: randomUUID(),
++        },
++        faultMarker: "qa-runtime-real-failure",
++      },
++      new Date(Date.now() + 5000).toISOString(),
++      { ...target, observedOwnerToken: "test-only" },
++    );
++    await assert.rejects(
++      runtime.tick("failing-module", async () => {}),
++      /qa-runtime-real-failure/,
++    );
++    runtime.tickFinished("failing-module", false);
++    const before = runtime.beforeTick("failing-module");
++    await runtime.advance(id);
++    await before;
++    const execution = runtime.tick("failing-module", async () => {
++      throw new Error("real operation failed");
++    });
++    await runtime.advance(id);
++    await assert.rejects(execution, /real operation failed/);
++    runtime.tickFinished("failing-module", false);
++    const snapshot = runtime.snapshot(id);
++    assert.equal(
++      snapshot.events.some((e) => e.kind === "module-succeeded"),
++      false,
++    );
++    assert.equal(snapshot.events.at(-1)!.failureSource, "module-operation");
++    const failed = snapshot.events.find((e) => e.kind === "module-failed")!;
++    const running = snapshot.events.find(
++      (e) => e.kind === "module-running-held",
++    )!;
++    assert.notEqual(
++      failed.attemptId,
++      running.attemptId,
++      "Distinct real ticks have distinct attempt identities",
++    );
++  } finally {
++    await runtime.close();
++    await db.close();
++  }
++});
+diff --git a/tests/support/capacity-control-fixture.ts b/tests/support/capacity-control-fixture.ts
+index 0488f7e..33e6893 100644
+--- a/tests/support/capacity-control-fixture.ts
++++ b/tests/support/capacity-control-fixture.ts
+@@ -25,6 +25,7 @@ export async function capacityFixture(
+     registryVariable?: string;
+     controllerFactory?: typeof createCapacityController;
+     configureRemote?: (remote: FastifyInstance) => void;
++    extraEnv?: Record<string, string>;
+   } = {},
+ ) {
+   assert.ok(
+@@ -137,6 +138,7 @@ export async function capacityFixture(
+         stdio: ["ignore", "pipe", "pipe", "ipc"],
+         env: {
+           ...process.env,
++          ...options.extraEnv,
+           DATABASE_URL: temporary.url,
+           PORT: String(port),
+           GATEWAY_URL: remote.listeningOrigin,
+diff --git a/tests/support/runtime-observation-fixture.ts b/tests/support/runtime-observation-fixture.ts
+new file mode 100644
+index 0000000..5d47d95
+--- /dev/null
++++ b/tests/support/runtime-observation-fixture.ts
+@@ -0,0 +1,279 @@
++import assert from "node:assert/strict";
++import { spawn, execFileSync, type ChildProcess } from "node:child_process";
++import { once } from "node:events";
++import { mkdtemp, rm, readdir, readFile } from "node:fs/promises";
++import { join } from "node:path";
++import { createServer } from "node:net";
++import { randomUUID } from "node:crypto";
++import type { TestContext } from "node:test";
++import Fastify from "fastify";
++import { WebSocket } from "ws";
++import { createRuntimeObservationController } from "../../scripts/qa-runtime-observation/controller.js";
++import {
++  protocol,
++  type RuntimeRequest,
++} from "../../scripts/qa-runtime-observation/protocol.js";
++import type { ObservationSnapshot } from "../../scripts/qa-observation/types.js";
++import type { Target } from "../../scripts/qa-capacity/protocol.js";
++import { migrate } from "../../scripts/migrate.js";
++import { temporaryDatabase } from "./temporary-database.js";
++import { until } from "./core-automation-fixture.js";
++
++export async function runtimeFixture(t: TestContext, normal = false) {
++  assert.ok(
++    process.env.DATABASE_URL,
++    "Explicit disposable PostgreSQL required",
++  );
++  const temporary = await temporaryDatabase(t);
++  await migrate(temporary.db);
++  const directory = await mkdtemp("/tmp/kap-run-");
++  temporary.onCleanup(() => rm(directory, { recursive: true }));
++  const remote = Fastify({ logger: false, forceCloseConnections: true });
++  temporary.onCleanup(() => remote.close());
++  let connects = 0;
++  let disconnects = 0;
++  remote.post("/accounts/:id/connect", (request) => {
++    connects++;
++    return { platformUserId: (request.params as { id: string }).id };
++  });
++  remote.post("/accounts/:id/disconnect", () => {
++    disconnects++;
++    return { disconnected: true };
++  });
++  remote.get("/events", (_request, reply) => {
++    reply.hijack();
++    reply.raw.writeHead(200, { "content-type": "text/event-stream" });
++    reply.raw.write(": runtime observation fixture\n\n");
++  });
++  await remote.listen({ host: "127.0.0.1", port: 0 });
++  const controller = await createRuntimeObservationController(directory);
++  await controller.listen({ host: "127.0.0.1", port: 0 });
++  temporary.onCleanup(() => controller.close());
++  const server = createServer();
++  server.listen(0, "127.0.0.1");
++  await once(server, "listening");
++  const address = server.address();
++  assert.ok(address && typeof address !== "string");
++  const port = address.port;
++  await new Promise<void>((resolve, reject) =>
++    server.close((error) => (error ? reject(error) : resolve())),
++  );
++  const apiUrl = `http://127.0.0.1:${port}`;
++  const revision = execFileSync("git", ["rev-parse", "HEAD"], {
++    encoding: "utf8",
++  }).trim();
++  const token = randomUUID();
++  let guardian: ChildProcess | undefined;
++  let output = "";
++  let accessToken = "";
++  const guardianCode = `const {spawn}=require('node:child_process');const keep=setInterval(()=>{},1000);process.on('SIGTERM',()=>{});process.on('disconnect',()=>{try{process.kill(-process.pid,'SIGKILL')}catch{}});const child=spawn(process.execPath,['--import','tsx',process.argv[1]],{stdio:['ignore','inherit','inherit'],env:process.env});child.on('exit',code=>{clearInterval(keep);process.exit(code??1)});`;
++  async function start() {
++    output = "";
++    guardian = spawn(
++      process.execPath,
++      [
++        "-e",
++        guardianCode,
++        normal
++          ? "apps/server/src/main.ts"
++          : "scripts/qa-runtime-observation-server.ts",
++      ],
++      {
++        cwd: process.cwd(),
++        detached: true,
++        stdio: ["ignore", "pipe", "pipe", "ipc"],
++        env: {
++          ...process.env,
++          DATABASE_URL: temporary.url,
++          PORT: String(port),
++          GATEWAY_URL: remote.listeningOrigin,
++          AGENT_URL: remote.listeningOrigin,
++          QA_ACCEPTANCE_RESOURCE_TOKEN: token,
++          QA_RUNTIME_REGISTRY_DIR: directory,
++        },
++      },
++    );
++    guardian.stdout!.on("data", (chunk: Buffer) => {
++      output += chunk.toString();
++    });
++    guardian.stderr!.on("data", (chunk: Buffer) => {
++      output += chunk.toString();
++    });
++    await until(async () => {
++      if (guardian!.exitCode !== null) throw new Error(`SUT exited: ${output}`);
++      return fetch(apiUrl + "/api/health")
++        .then((r) => r.ok)
++        .catch(() => false);
++    }, 12000).catch((cause: unknown) => {
++      throw new Error(`Start failure: ${output}`, { cause });
++    });
++    if (!normal)
++      await until(async () => {
++        for (const file of await readdir(directory)) {
++          if (!file.endsWith(".json")) continue;
++          const value = JSON.parse(
++            await readFile(join(directory, file), "utf8"),
++          ) as { binding: { pid: number } };
++          if (value.binding.pid === guardian!.pid) return true;
++        }
++        return false;
++      });
++    const login = await fetch(apiUrl + "/api/auth/login", {
++      method: "POST",
++      headers: { "content-type": "application/json" },
++      body: JSON.stringify({ username: "admin", password: "admin" }),
++    });
++    assert.equal(login.status, 200);
++    accessToken = ((await login.json()) as { accessToken: string }).accessToken;
++  }
++  async function kill() {
++    if (!guardian || guardian.exitCode !== null) return;
++    const ended = once(guardian, "exit");
++    process.kill(-guardian.pid!, "SIGKILL");
++    await ended;
++  }
++  temporary.onCleanup(kill);
++  await start();
++  const target = (): Target => ({ apiUrl, revision, pid: guardian!.pid! });
++  const prefix = "/qa/runtime/v1";
++  async function request(method: string, path: string, body?: unknown) {
++    const r = await fetch(controller.listeningOrigin + prefix + path, {
++      method,
++      headers: { "content-type": "application/json" },
++      body: body === undefined ? undefined : JSON.stringify(body),
++    });
++    return { status: r.status, value: (await r.json()) as unknown };
++  }
++  function body(
++    mode: RuntimeRequest["mode"] = "account-save-once",
++    ttlMs = 20000,
++    accountId = "account-1",
++  ): RuntimeRequest {
++    const base = { protocol, target: target(), ttlMs };
++    return mode === "module-fail-then-hold"
++      ? {
++          ...base,
++          mode,
++          correlation: {
++            kind: "module",
++            module: "gateway",
++            attemptLabel: randomUUID(),
++          },
++          faultMarker: "qa-runtime-developer-check",
++        }
++      : {
++          ...base,
++          mode,
++          correlation: {
++            kind: "account",
++            accountId,
++            operation: "connect",
++            intentId: randomUUID(),
++          },
++        };
++  }
++  async function hold(
++    mode?: RuntimeRequest["mode"],
++    ttl?: number,
++    accountId?: string,
++  ) {
++    const id = randomUUID(),
++      input = body(mode, ttl, accountId);
++    const result = await request("PUT", `/leases/${id}`, input);
++    assert.equal(result.status, 200, JSON.stringify(result.value));
++    return { id, input, snapshot: result.value as ObservationSnapshot };
++  }
++  async function snapshot(id: string, method = "GET") {
++    const r = await request(method, `/leases/${id}`);
++    assert.equal(r.status, 200, JSON.stringify(r.value));
++    return r.value as ObservationSnapshot;
++  }
++  async function advance(id: string) {
++    const r = await request("POST", `/leases/${id}/advance`);
++    assert.equal(r.status, 200, JSON.stringify(r.value));
++    return r.value as ObservationSnapshot;
++  }
++  async function event(id: string, kind: string, timeout = 5000) {
++    let value!: ObservationSnapshot;
++    await until(async () => {
++      value = await snapshot(id);
++      return value.events.some((e) => e.kind === kind);
++    }, timeout);
++    return value;
++  }
++  async function api(path: string, method = "GET", body?: unknown) {
++    const response = await fetch(apiUrl + path, {
++      method,
++      headers: {
++        "content-type": "application/json",
++        authorization: `Bearer ${accessToken}`,
++      },
++      body: body === undefined ? undefined : JSON.stringify(body),
++    });
++    return {
++      status: response.status,
++      value: (await response.json()) as unknown,
++    };
++  }
++  async function account(accountId = "account-1") {
++    const result = await api("/api/accounts");
++    assert.equal(result.status, 200);
++    return (result.value as { id: string; status: string }[]).find(
++      (a) => a.id === accountId,
++    )!;
++  }
++  async function stateEvents() {
++    const rows = await temporary.db.query(
++      "SELECT type,payload FROM events WHERE type='account_status_changed' ORDER BY seq",
++    );
++    return rows.rows;
++  }
++  const socket = new WebSocket(apiUrl.replace("http:", "ws:") + "/ws");
++  temporary.onCleanup(async () => {
++    socket.terminate();
++  });
++  const frames: unknown[] = [];
++  socket.on("message", (raw) => {
++    frames.push(JSON.parse(raw.toString()));
++  });
++  await once(socket, "open");
++  socket.send(JSON.stringify({ type: "auth", accessToken, sinceSeq: 0 }));
++  await until(async () =>
++    frames.some(
++      (f) =>
++        (f as { type: string; success?: boolean }).type === "auth" &&
++        (f as { success?: boolean }).success === true,
++    ),
++  );
++  t.diagnostic(
++    `Developer UUID DB ${new URL(temporary.url).pathname}; revision ${revision}; guardian ${guardian!.pid}; API ${apiUrl}`,
++  );
++  return {
++    ...temporary,
++    directory,
++    target,
++    token,
++    request,
++    body,
++    hold,
++    snapshot,
++    advance,
++    event,
++    api,
++    account,
++    stateEvents,
++    frames,
++    start,
++    kill,
++    capabilities: (value = target()) =>
++      request(
++        "GET",
++        "/capabilities?" +
++          new URLSearchParams({ ...value, pid: String(value.pid) }),
++      ),
++    connects: () => connects,
++    disconnects: () => disconnects,
++    evidence: (value: unknown) =>
++      t.diagnostic(JSON.stringify(value).replaceAll(token, "<redacted>")),
++  };
++}

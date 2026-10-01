@@ -1,18 +1,20 @@
 # 独立 QA 验收体系
 
-本目录维护需求追踪、用例、独立协议桩、自动化脚本和报告工具。**2026-10-01 已获授权完成首轮六条隔离联调，6/6 首轮通过；正式业务验收与上线评估未执行。** 脚本已实现与环境已接入分开统计；产品结果统一从 `NOT_RUN` 开始，开发自测和旧报告不计入本轮证据。
+本目录维护需求追踪、用例、独立协议桩、自动化脚本和报告工具。**2026-10-01 已按用户授权完成隔离联调、完整业务基线和补充复测，并签发报告：业务验收不通过，上线评估未执行。** 86ad同版本审定236 PASS /8 FAIL /10 BLOCKED；后续a6b资料修复11项独立复测通过、关闭1个缺陷。原13项工程接入已全部取证，仍有6个未解决产品缺陷。产品版本、QA版本及各轮范围在报告中分别记录。
 
 ## 阅读入口
 
-- [工程接入候选接收记录](requirements/engineering-candidate-intake-20261001.md)：新候选0af6443的版本和证据核对；工程已交付与QA实际接入分别记录，两条开发复现仍未修复。
+- **[本轮正式验收报告](reports/acceptance/20261001-business/report.md)**：[逐项审定](reports/acceptance/20261001-business/adjudicated-baseline.md)、[缺陷](reports/acceptance/20261001-business/defects.json)、[需决策与补证项](reports/acceptance/20261001-business/pending-decisions.json)。这是当前结论；以下接收/准备/首轮记录按各自历史时间解读。
+
+- [工程接入候选接收记录](requirements/engineering-candidate-intake-20261001.md)：新候选0af6443的版本和证据核对；当时工程已交付与QA实际接入分别记录，后续修复/复测见正式报告。
 
 - [下一轮专项准备与交接](requirements/next-integration-preparation-20261001.md)、[完整业务验收入口](sharing/business-acceptance.md)：风险组合补强及仍需真实工程接入的边界；上线评估继续单列。
 
 - [首轮隔离联调报告](reports/integration/20261001-smoke.md)、[证据索引](reports/integration/20261001-smoke-evidence.json)：六条首轮通过、完整证据及资源清理；不构成正式验收。
 
-- [开发交接接收与首轮联调](requirements/integration-intake-20261001.md)、[候选风险与剩余覆盖准备](requirements/integration-risk-review-20261001.md)：固定993f758；六条 system 冒烟已执行通过，原13项接入与新评审专项仍待完成。
+- [开发交接接收与首轮联调](requirements/integration-intake-20261001.md)、[候选风险与剩余覆盖准备](requirements/integration-risk-review-20261001.md)：固定993f758；六条 system 冒烟已执行通过，当时原13项接入仍待完成；现已全部取证，见正式报告。
 
-- [原24条设计阻塞复核](requirements/blocker-reassessment.md)：24条均有脚本，13条工程/夹具依赖未接入，11条script-ready，0条业务决策待定；不以 automated 数量冒充就绪度。
+- [原24条设计阻塞复核](requirements/blocker-reassessment.md)：准备期历史快照：当时13条工程依赖与11条script-ready分开记录；不能作为当前接入/决策状态，当前以正式报告为准。
 - [普通序列失败裁定](requirements/sequence-failure-policy.md)：用户已批准普通发送失败使整条运行failed、后续不发送；保留原跳过、限流等待、结果确认及群不可写停止规则。
 - [共享用例与开发提测入口](sharing/README.md)：QA 维护一份标准，开发只读选取预跑，报告与正式验收隔离。
 - [本轮方案影响评估](requirements/architecture-impact.md)、[横向风险覆盖复核](requirements/risk-coverage-review.md)、[跨职责交接流程](requirements/collaboration.md)。
@@ -20,7 +22,7 @@
 - [用例格式与分组](cases/README.md)，人工可阅读 `cases/generated/` 中各分组 Markdown；JSON 是维护源。
 - [已确认与待澄清口径](requirements/clarifications.md)、[上线门禁](requirements/release-gates.md)。
 - [独立外部协议桩](contracts/simulator.md)、[公开响应契约](contracts/public-api.ts)。
-- [准备状态报告](reports/preparation/acceptance.md)、[结构化结果](reports/preparation/results.json)。
+- [工具生成的准备快照](reports/preparation/acceptance.md)、[准备JSON](reports/preparation/results.json)：不代表最新产品测试结果。
 
 范围为原始 A/B 与已明确批准的追加需求。C1 媒体、C2 真实模型只列候选；浏览器自动化为本次 QA 的交付方法。消息分页采用固定遍历集合及实时合并，leave-all 比较服务账号成员投影。未知语义保留阻塞，不能从当前实现反推预期。
 
@@ -30,7 +32,7 @@
 
 准备阶段允许：TypeScript 检查、用例追踪检查、用例注册清单、独立协议桩与报告器自测。它们不会进入 SUT fixture。`test:self` 只用本进程创建的模拟器／临时本地服务器，不运行产品或真实 PostgreSQL。
 
-验收阶段须先取得你的**另一次明确执行授权**，固定完成开发的候选提交。授权 JSON 只是记录和防误操作闸门，不会验证授权人身份，也不能替代你的实际授权。当前示例的 REQUIRED 字段无效，不能用来执行产品。
+每次产品执行须核对有效的用户授权及冻结候选提交。本轮已获全权执行至报告的明确授权，授权及各轮绑定清单随原始报告留存。授权 JSON 只是记录和防误操作闸门，不会验证授权人身份，也不能替代你的实际授权。当前示例的 REQUIRED 字段无效，不能用来执行产品。
 
 全部 QA 资产和运行报告留在本目录。产品源码和原始需求不因测试准备而改变。QA 分支独立提交，按明确授权合回 main；不自动推送。
 

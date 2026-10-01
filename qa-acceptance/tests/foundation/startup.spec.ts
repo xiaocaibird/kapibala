@@ -1,5 +1,10 @@
-import { test, expect } from '../fixtures.js';
-import { completeCleanup, launchOwnedDatabase } from '../../harness/recovery-drill.js';
+import { test, expect, qaRoot } from '../fixtures.js';
+import {
+  completeCleanup,
+  launchOwnedDatabase,
+  observeOwnedStartupRejection,
+} from '../../harness/recovery-drill.js';
+import { loadUnmigratedSchema, assessUnmigratedSchema } from '../../harness/fixture-artifacts.js';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { BlockedError } from '../../harness/security.js';
@@ -27,34 +32,37 @@ test('[BASE-001] 全新未迁移数据库拒绝正常启动', async ({ qa }) => 
         '空schema探针未能启动，尚不能排除命令/依赖/监督器错误；不能将任意启动失败当成schema拒启',
       );
     }
-    let readinessError: unknown;
-    try {
-      await probe.ready();
-    } catch (error) {
-      readinessError = error;
-    }
-    if (readinessError instanceof BlockedError) throw readinessError;
-    const running = probe.process.running;
-    await probe.close(); // Flush process logs before preserving evidence.
-    const log = await readFile(probe.process.log, 'utf8').catch(() => '');
+    const observation = await observeOwnedStartupRejection(
+      probe.process,
+      probe.api.baseUrl,
+      qa.config.sut.startupTimeoutMs,
+    );
+    // Preserve independent refusal evidence even when the reviewed mapping is absent.
     await qa.evidence('unmigrated-refusal', {
       database,
-      control: control.body,
-      readinessError: readinessError ? String(readinessError) : null,
-      runningAfterProbe: running,
-      log,
+      controlBefore: control.body,
+      observation,
       requirement: 'R-A0-02',
-      note: '对照只改变为本轮空数据库；原文无固定拒启诊断码。历史旧schema升级仍属于独立用例。',
+      note: '仅改变为本轮空数据库和独立端口；清理信号不计入自行退出证据。',
     });
-    if (!readinessError)
-      expect(readinessError, '空schema仍正常提供健康服务，未拒绝启动').toBeTruthy();
-    if (running)
-      throw new BlockedError(
-        '空schema进程仍存在但未就绪；没有已批准的拒启时限或诊断，不能仅凭健康超时判断正确拒启',
-      );
-    throw new BlockedError(
-      '已观察空schema退出并保留与迁移库健康对照；缺少已批准的schema拒启诊断，退出原因仍需人工核实，不把通用崩溃算PASS',
+    expect(observation.ready, '空schema仍提供可用健康端点，未拒绝启动').toBe(false);
+    const profile = await loadUnmigratedSchema(qaRoot, qa.config);
+    const controlAfter = await qa.api.get<{ ok: boolean; schemaVersion: unknown }>('/api/health');
+    const assessment = assessUnmigratedSchema(
+      profile,
+      control.body,
+      { ...controlAfter.body, ok: controlAfter.status === 200 && controlAfter.body.ok },
+      observation,
     );
+    await qa.evidence('unmigrated-assessment', {
+      profile,
+      controlBefore: control.body,
+      controlAfter,
+      observation,
+      assessment,
+    });
+    if (assessment.status === 'BLOCKED') throw new BlockedError(assessment.reason);
+    expect(assessment.status, assessment.reason).toBe('PASS');
   } finally {
     await completeCleanup([
       async () => probe?.close(),

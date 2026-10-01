@@ -1,0 +1,17 @@
+{
+  "database": "qa_25ff026a361d40398a93ef3d",
+  "controlBefore": {
+    "ok": true,
+    "schemaVersion": 8
+  },
+  "observation": {
+    "ready": false,
+    "exit": {
+      "code": 1,
+      "signal": null
+    },
+    "log": "/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/migrations.ts:63\n  return new Error(`Schema mismatch: ${message}`);\n         ^\n\nError: Schema mismatch: installed=0, required=8; run npm run db:migrate\n    at mismatch (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/migrations.ts:63:10)\n    at verifyLedger (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/migrations.ts:106:11)\n    at <anonymous> (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/migrations.ts:119:5)\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\n    at async <anonymous> (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/db.ts:141:24)\n    at async ObservedRuntimeDatabase.transaction (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/db.ts:137:14)\n    at async assertSchemaCurrent (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/core/migrations.ts:116:3)\n    at async createApp (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/apps/server/src/app.ts:36:15)\n    at async <anonymous> (/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala/scripts/qa-observation-server.ts:79:9)\n\nNode.js v24.21.0\n"
+  },
+  "requirement": "R-A0-02",
+  "note": "仅改变为本轮空数据库和独立端口；清理信号不计入自行退出证据。"
+}

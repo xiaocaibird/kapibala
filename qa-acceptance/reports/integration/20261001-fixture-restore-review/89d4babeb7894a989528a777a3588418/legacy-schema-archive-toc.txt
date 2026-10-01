@@ -1,0 +1,108 @@
+;
+; Archive created at 2026-10-01 05:08:55 UTC
+;     dbname: fixture_legacy_5d1885e76871460bb0c146fd4cc90032
+;     TOC Entries: 97
+;     Compression: gzip
+;     Dump Version: 1.16-0
+;     Format: CUSTOM
+;     Integer: 4 bytes
+;     Offset: 8 bytes
+;     Dumped from database version: 17.11
+;     Dumped by pg_dump version: 17.11
+;
+;
+; Selected TOC Entries:
+;
+218; 1259 16397 TABLE public accounts qa
+230; 1259 16572 TABLE public agent_pending qa
+229; 1259 16548 TABLE public agent_runs qa
+232; 1259 16618 TABLE public agent_send_keys qa
+231; 1259 16597 TABLE public agent_steps qa
+227; 1259 16527 TABLE public auth_sessions qa
+228; 1259 16535 TABLE public auth_tokens qa
+225; 1259 16505 TABLE public events qa
+224; 1259 16504 SEQUENCE public events_seq_seq qa
+3688; 0 0 SEQUENCE OWNED BY public events_seq_seq qa
+223; 1259 16496 TABLE public gateway_events qa
+219; 1259 16409 TABLE public groups qa
+222; 1259 16478 TABLE public jobs qa
+220; 1259 16428 TABLE public members qa
+221; 1259 16448 TABLE public messages qa
+217; 1259 16386 TABLE public schema_migrations qa
+234; 1259 16645 TABLE public sequence_runs qa
+235; 1259 16668 TABLE public sequence_steps qa
+233; 1259 16637 TABLE public sequences qa
+226; 1259 16514 TABLE public timeline_snapshots qa
+3396; 2604 16508 DEFAULT public events seq qa
+3664; 0 16397 TABLE DATA public accounts qa
+3676; 0 16572 TABLE DATA public agent_pending qa
+3675; 0 16548 TABLE DATA public agent_runs qa
+3678; 0 16618 TABLE DATA public agent_send_keys qa
+3677; 0 16597 TABLE DATA public agent_steps qa
+3673; 0 16527 TABLE DATA public auth_sessions qa
+3674; 0 16535 TABLE DATA public auth_tokens qa
+3671; 0 16505 TABLE DATA public events qa
+3669; 0 16496 TABLE DATA public gateway_events qa
+3665; 0 16409 TABLE DATA public groups qa
+3668; 0 16478 TABLE DATA public jobs qa
+3666; 0 16428 TABLE DATA public members qa
+3667; 0 16448 TABLE DATA public messages qa
+3663; 0 16386 TABLE DATA public schema_migrations qa
+3680; 0 16645 TABLE DATA public sequence_runs qa
+3681; 0 16668 TABLE DATA public sequence_steps qa
+3679; 0 16637 TABLE DATA public sequences qa
+3672; 0 16514 TABLE DATA public timeline_snapshots qa
+3689; 0 0 SEQUENCE SET public events_seq_seq qa
+3443; 2606 16406 CONSTRAINT public accounts accounts_pkey qa
+3445; 2606 16408 CONSTRAINT public accounts accounts_platform_user_id_key qa
+3481; 2606 16580 CONSTRAINT public agent_pending agent_pending_pkey qa
+3479; 2606 16565 CONSTRAINT public agent_runs agent_runs_pkey qa
+3487; 2606 16626 CONSTRAINT public agent_send_keys agent_send_keys_client_msg_id_key qa
+3489; 2606 16624 CONSTRAINT public agent_send_keys agent_send_keys_pkey qa
+3484; 2606 16611 CONSTRAINT public agent_steps agent_steps_pkey qa
+3473; 2606 16534 CONSTRAINT public auth_sessions auth_sessions_pkey qa
+3475; 2606 16541 CONSTRAINT public auth_tokens auth_tokens_pkey qa
+3469; 2606 16513 CONSTRAINT public events events_pkey qa
+3466; 2606 16503 CONSTRAINT public gateway_events gateway_events_pkey qa
+3449; 2606 16422 CONSTRAINT public groups groups_gateway_group_id_key qa
+3451; 2606 16420 CONSTRAINT public groups groups_pkey qa
+3464; 2606 16490 CONSTRAINT public jobs jobs_pkey qa
+3453; 2606 16437 CONSTRAINT public members members_group_id_account_id_key qa
+3455; 2606 16435 CONSTRAINT public members members_pkey qa
+3457; 2606 16464 CONSTRAINT public messages messages_client_msg_id_key qa
+3459; 2606 16466 CONSTRAINT public messages messages_group_id_msg_id_key qa
+3461; 2606 16462 CONSTRAINT public messages messages_pkey qa
+3441; 2606 16396 CONSTRAINT public schema_migrations schema_migrations_pkey qa
+3494; 2606 16656 CONSTRAINT public sequence_runs sequence_runs_pkey qa
+3496; 2606 16680 CONSTRAINT public sequence_steps sequence_steps_client_msg_id_key qa
+3498; 2606 16678 CONSTRAINT public sequence_steps sequence_steps_pkey qa
+3491; 2606 16644 CONSTRAINT public sequences sequences_pkey qa
+3471; 2606 16521 CONSTRAINT public timeline_snapshots timeline_snapshots_pkey qa
+3477; 1259 16571 INDEX public agent_one_running_per_group qa
+3482; 1259 16596 INDEX public agent_pending_unclaimed qa
+3485; 1259 16617 INDEX public agent_tool_ids qa
+3476; 1259 16547 INDEX public auth_tokens_session qa
+3467; 1259 16692 INDEX public events_message_order qa
+3446; 1259 16693 INDEX public groups_directory_asc qa
+3447; 1259 16694 INDEX public groups_directory_desc qa
+3462; 1259 16477 INDEX public messages_queue qa
+3492; 1259 16667 INDEX public sequence_one_running_per_group qa
+3508; 2606 16586 FK CONSTRAINT public agent_pending agent_pending_group_id_fkey qa
+3509; 2606 16581 FK CONSTRAINT public agent_pending agent_pending_message_id_fkey qa
+3510; 2606 16591 FK CONSTRAINT public agent_pending agent_pending_run_id_fkey qa
+3507; 2606 16566 FK CONSTRAINT public agent_runs agent_runs_group_id_fkey qa
+3512; 2606 16632 FK CONSTRAINT public agent_send_keys agent_send_keys_client_msg_id_fkey qa
+3513; 2606 16627 FK CONSTRAINT public agent_send_keys agent_send_keys_run_id_fkey qa
+3511; 2606 16612 FK CONSTRAINT public agent_steps agent_steps_run_id_fkey qa
+3506; 2606 16542 FK CONSTRAINT public auth_tokens auth_tokens_session_id_fkey qa
+3499; 2606 16423 FK CONSTRAINT public groups groups_creator_account_id_fkey qa
+3504; 2606 16491 FK CONSTRAINT public jobs jobs_group_id_fkey qa
+3500; 2606 16443 FK CONSTRAINT public members members_account_id_fkey qa
+3501; 2606 16438 FK CONSTRAINT public members members_group_id_fkey qa
+3502; 2606 16472 FK CONSTRAINT public messages messages_account_id_fkey qa
+3503; 2606 16467 FK CONSTRAINT public messages messages_group_id_fkey qa
+3514; 2606 16657 FK CONSTRAINT public sequence_runs sequence_runs_group_id_fkey qa
+3515; 2606 16662 FK CONSTRAINT public sequence_runs sequence_runs_sequence_id_fkey qa
+3516; 2606 16686 FK CONSTRAINT public sequence_steps sequence_steps_client_msg_id_fkey qa
+3517; 2606 16681 FK CONSTRAINT public sequence_steps sequence_steps_run_id_fkey qa
+3505; 2606 16522 FK CONSTRAINT public timeline_snapshots timeline_snapshots_group_id_fkey qa

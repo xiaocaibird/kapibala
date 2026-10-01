@@ -1,0 +1,87 @@
+{
+  "reviewedAt": "2026-10-01T07:37:57.096Z",
+  "scope": "QA tooling correction only; no product test and no product source edits",
+  "finding": "Playwright 1.63.0 initializes Chromium main frames with Emulation.setFocusEmulationEnabled enabled:true. Native tab activation therefore did not establish loss of document focus.",
+  "sourceEvidence": {
+    "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/node_modules/playwright-core/lib/coreBundle.js",
+    "sha256": "549070af3acabb3efcc4f55bfe6210f9f7c2fcf633cf7eaa59bfe60719969171",
+    "matchingLines": [
+      {
+        "line": 37638,
+        "text": "            promises2.push(this._client.send(\"Emulation.setFocusEmulationEnabled\", { enabled: true }));"
+      }
+    ]
+  },
+  "browsers": [
+    {
+      "name": "Chromium",
+      "version": "153.0.8010.12",
+      "headed": true
+    }
+  ],
+  "probeFacts": {
+    "defaultBothPagesFocused": true,
+    "afterDisablingOverrideNativeExclusiveFocus": true,
+    "cdpDetachedBeforeSwitches": true,
+    "blurAndFocusEventsTrusted": true,
+    "visibilityRemainedVisibleOnBothPages": true,
+    "syntheticEvents": false,
+    "domAssignments": false,
+    "connectedToSut": false
+  },
+  "affectedCases": [
+    "UI-020",
+    "UI-021",
+    "UI-028",
+    "UI-029",
+    "UI-030",
+    "UI-031",
+    "UI-032",
+    "UI-033",
+    "UI-034",
+    "UI-035",
+    "ARC-UI-BLK-001"
+  ],
+  "correctionFiles": [
+    "tests/ui/native-focus.ts",
+    "tests/ui/console.spec.ts (import and backgroundTab definition only)",
+    "tests/ui/observation-boundaries.spec.ts (import and background tab setup only)"
+  ],
+  "limits": [
+    "This probe establishes real loss of focus and trusted blur/focus, not document.hidden or operating-system window switching.",
+    "Non-Chromium browsers are not sent Chromium CDP commands; actual exclusive focus remains a required premise and unavailable environments remain BLOCKED.",
+    "Product assertions, case expected outcomes, original run artifacts and raw BLOCKED statuses remain unchanged.",
+    "Two seconds is only the finite browser tool precondition budget, not a product SLA.",
+    "Product re-execution requires a separately frozen QA and an explicit retest record; the blank-page probe cannot supply a product PASS."
+  ],
+  "verification": {
+    "directCdpProbe": "PASS",
+    "actualHelperBlankPageProbe": "PASS",
+    "typecheck": "PASS",
+    "catalog": "PASS: 128 requirements, 266 cases; no product execution",
+    "suites": "PASS: Playwright list/catalog selection only",
+    "gitDiffCheck": "PASS"
+  },
+  "evidence": [
+    {
+      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/acceptance/20261001-business/focus-probe/probe.mjs",
+      "sha256": "29244d30e4b6d439bb0b60d4f1d483a12196422574985fbf8b4744085d9eaffb"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/acceptance/20261001-business/focus-probe/result-protocol.json",
+      "sha256": "27879df25d3d64132aa70884f7c8b02f8ce87c094ab74872b8d0519c397f3a02"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/acceptance/20261001-business/focus-probe/result-helper.json",
+      "sha256": "aca25606b95ccff2b14a79f35693e04195c31c6a8dcf58f2f143d7b774bda502"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/native-focus.ts",
+      "sha256": "ef918c3770635466fc65b99153dac7e041e5ecd60b21eb7ef58c97a59102d617"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/observation-boundaries.spec.ts",
+      "sha256": "1f7c5b3337c092da5eddbfe7f518ff41ef86d8458ec158ec5e47875da80438ec"
+    }
+  ]
+}

@@ -34,6 +34,24 @@ test('[API-001] 原始主要读取接口必需字段和类型符合独立契约'
     201,
   );
   assertContract('sequenceRun', await qa.api.sequenceRun(runId));
+  // Obtain the ordinary tool-use DTO as well as the final step; an unrelated
+  // protocol-error-only run cannot stand in for this contract sample.
+  qa.agent.enqueueTurns(
+    {
+      body: {
+        stop_reason: 'tool_use',
+        content: [
+          {
+            type: 'tool_use',
+            id: 'contract-read',
+            name: 'get_recent_messages',
+            input: { limit: 1 },
+          },
+        ],
+      },
+    },
+    { body: { stop_reason: 'end_turn', content: [{ type: 'text', text: 'contract-finished' }] } },
+  );
   await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { agentEnabled: true }));
   qa.gateway.emitMessage({
     groupId: group.gatewayGroupId,
@@ -45,7 +63,25 @@ test('[API-001] 原始主要读取接口必需字段和类型符合独立契约'
     (r) => r.length > 0 && r[0]!.status !== 'running',
   );
   assertContract('agentRuns', runs);
-  assertContract('agentRun', await qa.api.agentRun(runs[0]!.id));
+  const agentRun = await qa.api.agentRun(runs[0]!.id);
+  assertContract('agentRun', agentRun);
+  expect(agentRun).toMatchObject({
+    status: 'finished',
+    endReason: 'final',
+    summary: 'contract-finished',
+  });
+  expect(agentRun.steps).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({
+        kind: 'tool_use',
+        toolUseId: 'contract-read',
+        name: 'get_recent_messages',
+        input: { limit: 1 },
+        isError: false,
+      }),
+      expect.objectContaining({ kind: 'final' }),
+    ]),
+  );
   const unauth = await qa.api.get('/api/accounts', { token: null, cookie: null });
   expect(unauth.status).toBe(401);
   assertContract('error', unauth.body);

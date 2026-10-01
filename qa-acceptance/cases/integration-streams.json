@@ -11,12 +11,20 @@
       "证据写失败也必须尝试关闭所有本轮WS；保留首次业务失败，另记证据/清理问题",
       "仅清理本用例自有资源；单个WS关闭等待最多5000ms，未确认不能假装清理完成"
     ],
-    "evidence": ["HTTP/网关账本、真实接收帧序号与文本哈希、客户端暂停及关闭观察、完整断言取证"],
+    "evidence": [
+      "HTTP/网关账本、真实接收帧序号与文本哈希、客户端暂停及关闭观察、完整断言取证"
+    ],
     "id": "INT-STREAM-001",
     "title": "真实暂停TCP读取与健康消费者并行、按实际已收游标重放",
-    "requirements": ["ENG-STREAM-01", "R-A4-03", "R-A4-04"],
+    "requirements": [
+      "ENG-STREAM-01",
+      "R-A4-03",
+      "R-A4-04"
+    ],
     "data": {
-      "projects": ["system"],
+      "projects": [
+        "system"
+      ],
       "maxInjectedMessages": 2048,
       "textPaddingBytes": 8192,
       "injectionBudgetMs": 45000,
@@ -42,7 +50,9 @@
     "timing": [
       "45000ms注入、8000ms关闭、15000ms回放、30000ms公开历史遍历、1000ms负向采样是QA预算，不新增产品吞吐/延迟门槛"
     ],
-    "faults": ["仅暂停本用例真实ws/TCP reader；不伪造发送回调和服务端close"],
+    "faults": [
+      "仅暂停本用例真实ws/TCP reader；不伪造发送回调和服务端close"
+    ],
     "preparation": {
       "state": "script-ready",
       "owner": "QA",
@@ -60,23 +70,39 @@
       "后续绑定专项范围授权；真实专属PostgreSQL与QA网关，固定已确认D044候选",
       "不修改SUT内部WS发送器、缓冲常量或业务数据库来制造通过"
     ],
-    "cleanup": ["仅清理本用例自有WS、进程、数据库、协议桩；保留首轮证据"],
-    "evidence": ["HTTP/网关账本、真实接收帧序号与文本哈希、客户端暂停及关闭观察、完整断言取证"],
+    "cleanup": [
+      "仅清理本用例自有WS、进程、数据库、协议桩；保留首轮证据"
+    ],
+    "evidence": [
+      "HTTP/网关账本、真实接收帧序号与文本哈希、客户端暂停及关闭观察、完整断言取证"
+    ],
     "id": "INT-STREAM-002",
     "title": "续页改变页大小并交错发送确认、历史补投与新消息，冻结集合内容保持",
-    "requirements": ["ENG-STREAM-01", "R-A4-01", "R-A4-02"],
+    "requirements": [
+      "ENG-STREAM-01",
+      "R-A4-01",
+      "R-A4-02"
+    ],
     "data": {
-      "projects": ["system"],
+      "projects": [
+        "system"
+      ],
       "baselineExternalCount": 58,
       "acceptedOwnCount": 1,
       "firstPage": 7,
-      "pageSizes": [1, 9, 4, 17, 3]
+      "pageSizes": [
+        1,
+        9,
+        4,
+        17,
+        3
+      ]
     },
     "steps": [
-      "通过网关种入58条独立已知时间/文本消息并确认收齐；真实发送一条own消息，省略确认事件直到accepted可见",
-      "获取首屏7条冻结遍历；释放真实message_sent，同时补投一条旧历史和一条最新消息",
+      "通过网关种入58条已知时间/文本消息并收齐；在send请求屏障内为真实by-client-id响应设置屏障，省略SSE确认，accepted可见后再获取被测首屏",
+      "获取首屏7条，使用该首屏同一cursor的只读分支保存完整初始内容并确认own为accepted；释放真实查询和message_sent，再补投旧历史及最新消息",
       "确认新视图已合并两条消息与own状态，再用原游标交替1/9/4/17/3页大小遍历至末尾",
-      "对比QA独立构造的59条身份/顺序、原文本时间及未访问的accepted own快照；对比新视图61条完整集合"
+      "对比独立构造的59条身份/顺序/原文时间，以及同一被测cursor已取证的accepted own字段；对比新视图61条完整集合，禁止跨首屏快照比较"
     ],
     "expected": [
       "原游标只返回首次59条，顺序固定、无重复/遗漏；续页请求页大小变化仍有效，单页不超limit",
@@ -84,8 +110,12 @@
       "历史与最新消息只进入新快照；原游标不夹带新成员或错误身份",
       "每页及每次前提观察即检查身份唯一和已知内容，不将已观察到重复/未知身份/损坏字段误记为等待前提BLOCKED"
     ],
-    "timing": ["15000ms为种入/合并观察预算，未建立前提记BLOCKED，不新增业务SLA"],
-    "faults": ["真实落地但暂不发确认；首屏后释放确认、追加最新与旧历史；不改数据库快照"],
+    "timing": [
+      "15000ms为种入/合并观察预算，未建立前提记BLOCKED，不新增业务SLA"
+    ],
+    "faults": [
+      "真实发送请求屏障中布置查询响应门，控制SSE确认和真实查询响应；响应可能按实际落地时机为404或200，不伪造状态；同一游标初值取证后释放，不改数据库快照"
+    ],
     "preparation": {
       "state": "script-ready",
       "owner": "QA",

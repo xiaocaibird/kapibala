@@ -1,0 +1,27 @@
+{
+  "input": {
+    "label": "name is not text",
+    "body": {
+      "name": 123,
+      "steps": [
+        {
+          "index": 1,
+          "accountRole": "admin",
+          "text": "QA valid sequence",
+          "delaySeconds": 1
+        }
+      ]
+    }
+  },
+  "result": {
+    "status": 400,
+    "body": {
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid input: expected string, received number",
+        "requestId": "68b72414-747f-4521-9ad9-8aebed814225"
+      }
+    },
+    "headers": {}
+  }
+}

@@ -1,0 +1,589 @@
+{
+  "state": "IN_PROGRESS_NOT_FINAL",
+  "observedAt": "2026-10-01T06:41:25.186155+00:00",
+  "runId": "2026-10-01T06-10-21.458Z-1fdb6180",
+  "sutRevision": "0af644334b00eb13e2e56df33c70f22358a6a0f7",
+  "rows": [
+    {
+      "caseId": "GROUP-007",
+      "title": "api/groups.spec.ts >> [GROUP-007] failed noncreator leave preserves owner and continues remaining accounts",
+      "diagnostic": "Error: expect(received).toHaveLength(expected)\n\nExpected length: 2\nReceived length: 1\nReceived array:  [{\"at\": \"2026-10-01T06:26:27.746Z\", \"body\": {\"accountId\": \"account-2\"}, \"completedAt\": \"2026-10-01T06:26:27.746Z\", \"id\": 15, \"method\": \"POST\", \"path\": \"/groups/gateway-group-1/leave\", \"preparedResponseStatus\": 500, \"responseClosedAt\": \"2026-10-01T06:26:27.746Z\", \"responseClosedBeforeFinish\": false, \"responseFinishedAt\": \"2026-10-01T06:26:27.746Z\", \"responsePreparedAt\": \"2026-10-01T06:26:27.746Z\", \"responseStatus\": 500}]",
+      "evidence": "artifacts/api-groups--GROUP-007-fail-60c20-ontinues-remaining-accounts-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "GROUP-009",
+      "title": "api/groups.spec.ts >> [GROUP-009] ALREADY_MEMBER confirms existing membership without waiting for another event",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/api-groups--GROUP-009-ALRE-3ccd5-t-waiting-for-another-event-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "GROUP-010",
+      "title": "api/groups.spec.ts >> [GROUP-010] leave-all preserves public external members and keeps left groups inactive",
+      "diagnostic": "Error: Barrier left-current-turn was not reached within 5000ms",
+      "evidence": "artifacts/api-groups--GROUP-010-leav-d0f9c--keeps-left-groups-inactive-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "EXT-009",
+      "title": "extensions/api.spec.ts >> [EXT-009] 冲突整请求无资料和开关副作用",
+      "diagnostic": "Error: Barrier conflict-active-run was not reached within 5000ms",
+      "evidence": "artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "BASE-001",
+      "title": "foundation/startup.spec.ts >> [BASE-001] 全新未迁移数据库拒绝正常启动",
+      "diagnostic": "BlockedError: [BLOCKED] 已观察空schema退出并保留与迁移库健康对照；缺少已批准的schema拒启诊断，退出原因仍需人工核实，不把通用崩溃算PASS",
+      "evidence": "artifacts/foundation-startup--BASE-001-全新未迁移数据库拒绝正常启动-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-001",
+      "title": "system/agent.spec.ts >> [AGENT-001] four schema-complete tools and correct trigger context keep one run identity",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-001-fo-3c38c-ntext-keep-one-run-identity-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-002",
+      "title": "system/agent.spec.ts >> [AGENT-002] duplicate inbound and own echo never duplicate triggers",
+      "diagnostic": "Error: expect(received).toHaveLength(expected)\n\nExpected length: 1\nReceived length: 3\nReceived array:  [{\"messages\": [{\"content\": [{\"text\": \"{\\\"groupId\\\":\\\"8d852a26-ef1a-4d10-9048-4af96ae074f2\\\",\\\"triggerMessages\\\":[{\\\"msgId\\\":\\\"duplicate-trigger\\\",\\\"senderPlatformUserId\\\":\\\"external\\\",\\\"text\\\":\\\"once\\\",\\\"sentAt\\\":\\\"2026-10-01T06:28:49.691Z\\\"}],\\\"policy\\\":{\\\"autoKickEnabled\\\":false},\\\"ownPlatformUserIds\\\":[\\\"platform-account-1\\\",\\\"platform-account-2\\\",\\\"platform-account-3\\\",\\\"platform-account-4\\\",\\\"platform-account-5\\\",\\\"platform-account-6\\\"]}\", \"type\": \"text\"}], \"role\": \"user\"}], \"runId\": \"659fcf63-d297-4805-9313-1cea440558f3\", \"tools\": [{\"description\": \"Read recent group messages.\", \"input_schema\": {\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"additionalProperties\": false, \"properties\": {\"limit\": {\"exclusiveMinimum\": 0, \"maximum\": 9007199254740991, \"type\": \"integer\"}}, \"required\": [\"limit\"], \"type\": \"object\"}, \"name\": \"get_recent_messages\"}, {\"description\": \"Send an audited group message.\", \"input_schema\": {\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"additionalProperties\": false, \"properties\": {\"idempotency_key\": {\"maxLength\": 512, \"minLength\": 1, \"type\": \"string\"}, \"text\": {\"maxLength\": 20000, \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"text\", \"idempotency_key\"], \"type\": \"object\"}, \"name\": \"send_message\"}, {\"description\": \"Remove a group member if policy permits.\", \"input_schema\": {\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"additionalProperties\": false, \"properties\": {\"platform_user_id\": {\"maxLength\": 512, \"minLength\": 1, \"type\": \"string\"}, \"reason\": {\"maxLength\": 2000, \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"platform_user_id\", \"reason\"], \"type\": \"object\"}, \"name\": \"kick_user\"}, {\"description\": \"Finish this run without sending a group message.\", \"input_schema\": {\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"additionalProperties\": false, \"properties\": {\"summary\": {\"maxLength\": 20000, \"type\": \"string\"}}, \"required\": [\"summary\"], \"type\": \"object\"}, \"name\": \"finish\"}]}, {\"messages\": [{\"content\": [{\"text\": \"{\\\"groupId\\\":\\\"8d852a26-ef1a-4d10-9048-4af96ae074f2\\\",\\\"triggerMessages\\\":[{\\\"msgId\\\":\\\"duplicate-trigger\\\",\\\"senderPlatformUserId\\\":\\\"external\\\",\\\"text\\\":\\\"once\\\",\\\"sentAt\\\":\\\"2026-10-01T06:28:49.691Z\\\"}],\\\"policy\\\":{\\\"autoKickEnabled\\\":false},\\\"ownPlatformUserIds\\\":[\\\"platform-account-1\\\",\\\"platform-account-2\\\",\\\"platform-account-3\\\",\\\"platform-account-4\\\",\\\"platform-account-5\\\",\\\"platform-account-6\\\"]}\", \"type\": \"text\"}], \"role\": \"user\"}, {\"content\": [{\"text\": \"PROTOCOL_ERROR BAD_JSON: Return one valid tool_use or end_turn block with a new tool id.\", \"type\": \"text\"}], \"role\": \"user\"}], \"runId\": \"659fcf63-d297-4805-9313-1cea440558f3\", \"tools\": [{\"description\": \"Read recent group messages.\", \"input_schema\": {\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"additionalProperties\": false, \"properties\": {\"limit\": {\"exclusiveMinimum\": 0, \"maximum\": 9007199254740991, \"type\": \"integer\"}}, \"required\": [\"limit\"], \"type\": \"object\"}, \"name\": \"get_recent_messages\"}, {\"description\": \"Send an audited group message.\", \"input_schema\": {\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"additionalProperties\": false, \"properties\": {\"idempotency_key\": {\"maxLength\": 512, \"minLength\": 1, \"type\": \"string\"}, \"text\": {\"maxLength\": 20000, \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"text\", \"idempotency_key\"], \"type\": \"object\"}, \"name\": \"send_message\"}, {\"description\": \"Remove a group member if policy permits.\", \"input_schema\": {\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"additionalProperties\": false, \"properties\": {\"platform_user_id\": {\"maxLength\": 512, \"minLength\": 1, \"type\": \"string\"}, \"reason\": {\"maxLength\": 2000, \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"platform_user_id\", \"reason\"], \"type\": \"object\"}, \"name\": \"kick_user\"}, {\"description\": \"Finish this run without sending a group message.\", \"input_schema\": {\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"additionalProperties\": false, \"properties\": {\"summary\": {\"maxLength\": 20000, \"type\": \"string\"}}, \"required\": [\"summary\"], \"type\": \"object\"}, \"name\": \"finish\"}]}, {\"messages\": [{\"content\": [{\"text\": \"{\\\"groupId\\\":\\\"8d852a26-ef1a-4d10-9048-4af96ae074f2\\\",\\\"triggerMessages\\\":[{\\\"msgId\\\":\\\"duplicate-trigger\\\",\\\"senderPlatformUserId\\\":\\\"external\\\",\\\"text\\\":\\\"once\\\",\\\"sentAt\\\":\\\"2026-10-01T06:28:49.691Z\\\"}],\\\"policy\\\":{\\\"autoKickEnabled\\\":false},\\\"ownPlatformUserIds\\\":[\\\"platform-account-1\\\",\\\"platform-account-2\\\",\\\"platform-account-3\\\",\\\"platform-account-4\\\",\\\"platform-account-5\\\",\\\"platform-account-6\\\"]}\", \"type\": \"text\"}], \"role\": \"user\"}, {\"content\": [{\"text\": \"PROTOCOL_ERROR BAD_JSON: Return one valid tool_use or end_turn block with a new tool id.\", \"type\": \"text\"}], \"role\": \"user\"}, {\"content\": [{\"text\": \"PROTOCOL_ERROR BAD_JSON: Return one valid tool_use or end_turn block with a new tool id.\", \"type\": \"text\"}], \"role\": \"user\"}], \"runId\": \"659fcf63-d297-4805-9313-1cea440558f3\", \"tools\": [{\"description\": \"Read recent group messages.\", \"input_schema\": {\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"additionalProperties\": false, \"properties\": {\"limit\": {\"exclusiveMinimum\": 0, \"maximum\": 9007199254740991, \"type\": \"integer\"}}, \"required\": [\"limit\"], \"type\": \"object\"}, \"name\": \"get_recent_messages\"}, {\"description\": \"Send an audited group message.\", \"input_schema\": {\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"additionalProperties\": false, \"properties\": {\"idempotency_key\": {\"maxLength\": 512, \"minLength\": 1, \"type\": \"string\"}, \"text\": {\"maxLength\": 20000, \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"text\", \"idempotency_key\"], \"type\": \"object\"}, \"name\": \"send_message\"}, {\"description\": \"Remove a group member if policy permits.\", \"input_schema\": {\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"additionalProperties\": false, \"properties\": {\"platform_user_id\": {\"maxLength\": 512, \"minLength\": 1, \"type\": \"string\"}, \"reason\": {\"maxLength\": 2000, \"minLength\": 1, \"type\": \"string\"}}, \"required\": [\"platform_user_id\", \"reason\"], \"type\": \"object\"}, \"name\": \"kick_user\"}, {\"description\": \"Finish this run without sending a group message.\", \"input_schema\": {\"$schema\": \"https://json-schema.org/draft/2020-12/schema\", \"additionalProperties\": false, \"properties\": {\"summary\": {\"maxLength\": 20000, \"type\": \"string\"}}, \"required\": [\"summary\"], \"type\": \"object\"}, \"name\": \"finish\"}]}]",
+      "evidence": "artifacts/system-agent--AGENT-002-du-61c58-ho-never-duplicate-triggers-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-003",
+      "title": "system/agent.spec.ts >> [AGENT-003] multi-instance active run excludes competitors and batches all pending messages",
+      "diagnostic": "Error: Barrier first-run was not reached within 5000ms",
+      "evidence": "artifacts/system-agent--AGENT-003-mu-26f13-atches-all-pending-messages-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-004",
+      "title": "system/agent.spec.ts >> [AGENT-004] non-JSON produces BAD_JSON history without assistant block",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-004-no-035ee-ory-without-assistant-block-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-005",
+      "title": "system/agent.spec.ts >> [AGENT-005] fenced JSON produces BAD_JSON history without assistant block",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-005-fe-41252-ory-without-assistant-block-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-006",
+      "title": "system/agent.spec.ts >> [AGENT-006] multiple blocks produces BAD_JSON history without assistant block",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-006-mu-184f2-ory-without-assistant-block-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-007",
+      "title": "system/agent.spec.ts >> [AGENT-007] stop reason mismatch produces BAD_JSON history without assistant block",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-007-st-2b00a-ory-without-assistant-block-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-008",
+      "title": "system/agent.spec.ts >> [AGENT-008] non-2xx produces BAD_JSON history without assistant block",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-008-no-cf260-ory-without-assistant-block-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-009",
+      "title": "system/agent.spec.ts >> [AGENT-009] UNKNOWN_TOOL appends assistant tool use and error result",
+      "diagnostic": "Error: expect(received).toMatchObject(expected)\n\n- Expected  - 4\n+ Received  + 4\n\n  Object {\n-   \"errorCode\": \"UNKNOWN_TOOL\",\n+   \"errorCode\": \"BAD_JSON\",\n    \"isError\": true,\n-   \"kind\": \"tool_use\",\n-   \"name\": \"unlisted_tool\",\n-   \"toolUseId\": \"bad-tool\",\n+   \"kind\": \"protocol_error\",\n+   \"name\": null,\n+   \"toolUseId\": null,\n  }",
+      "evidence": "artifacts/system-agent--AGENT-009-UN-15074-t-tool-use-and-error-result-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-010",
+      "title": "system/agent.spec.ts >> [AGENT-010] INVALID_INPUT appends assistant tool use and error result",
+      "diagnostic": "Error: expect(received).toMatchObject(expected)\n\n- Expected  - 4\n+ Received  + 4\n\n  Object {\n-   \"errorCode\": \"INVALID_INPUT\",\n+   \"errorCode\": \"BAD_JSON\",\n    \"isError\": true,\n-   \"kind\": \"tool_use\",\n-   \"name\": \"send_message\",\n-   \"toolUseId\": \"bad-tool\",\n+   \"kind\": \"protocol_error\",\n+   \"name\": null,\n+   \"toolUseId\": null,\n  }",
+      "evidence": "artifacts/system-agent--AGENT-010-IN-ab91d-t-tool-use-and-error-result-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-011",
+      "title": "system/agent.spec.ts >> [AGENT-011] duplicate tool_use id is protocol error and has no repeated effect",
+      "diagnostic": "Error: expect(received).toMatchObject(expected)\n\n- Expected  - 1\n+ Received  + 1\n\n  Object {\n-   \"errorCode\": \"DUPLICATE_TOOL_USE_ID\",\n+   \"errorCode\": \"BAD_JSON\",\n    \"input\": null,\n    \"kind\": \"protocol_error\",\n    \"name\": null,\n    \"toolUseId\": null,\n  }",
+      "evidence": "artifacts/system-agent--AGENT-011-du-e3464--and-has-no-repeated-effect-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-012",
+      "title": "system/agent.spec.ts >> [AGENT-012] three consecutive protocol errors fail and a legal response resets the count",
+      "diagnostic": "Error: expect(received).toHaveLength(expected)\n\nExpected length: 6\nReceived length: 3\nReceived array:  [{\"auditVerdict\": null, \"errorCode\": \"BAD_JSON\", \"input\": null, \"isError\": true, \"kind\": \"protocol_error\", \"name\": null, \"ordinal\": 1, \"rawResponse\": \"{\\\"code\\\":\\\"TOOLS_INVALID\\\"}\", \"resultSummary\": \"BAD_JSON\", \"toolUseId\": null}, {\"auditVerdict\": null, \"errorCode\": \"BAD_JSON\", \"input\": null, \"isError\": true, \"kind\": \"protocol_error\", \"name\": null, \"ordinal\": 2, \"rawResponse\": \"{\\\"code\\\":\\\"TOOLS_INVALID\\\"}\", \"resultSummary\": \"BAD_JSON\", \"toolUseId\": null}, {\"auditVerdict\": null, \"errorCode\": \"BAD_JSON\", \"input\": null, \"isError\": true, \"kind\": \"protocol_error\", \"name\": null, \"ordinal\": 3, \"rawResponse\": \"{\\\"code\\\":\\\"TOOLS_INVALID\\\"}\", \"resultSummary\": \"BAD_JSON\", \"toolUseId\": null}]",
+      "evidence": "artifacts/system-agent--AGENT-012-th-ae58f-l-response-resets-the-count-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-014",
+      "title": "system/agent.spec.ts >> [AGENT-014] audit rejection blocks side effect and rejected key remains reusable",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-014-au-b96d2-jected-key-remains-reusable-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-015",
+      "title": "system/agent.spec.ts >> [AGENT-015] three inconclusive audit attempts block run without execution",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"blocked\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-015-th-aff5d-block-run-without-execution-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-016",
+      "title": "system/agent.spec.ts >> [AGENT-016] idempotency retry returns current sent state without another audit or send",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-016-id-ec0da-thout-another-audit-or-send-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-017",
+      "title": "system/agent.spec.ts >> [AGENT-017] kick denied by policy never calls external kick",
+      "diagnostic": "Error: expect(received).toMatchObject(expected)\n\n- Expected  - 1\n+ Received  + 1\n\n  Object {\n-   \"errorCode\": \"POLICY_DENIED\",\n+   \"errorCode\": \"BAD_JSON\",\n    \"isError\": true,\n  }",
+      "evidence": "artifacts/system-agent--AGENT-017-ki-1fc49-y-never-calls-external-kick-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-018",
+      "title": "system/agent.spec.ts >> [AGENT-018] permitted kick audits exact action and uses owner or promoted member",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-018-pe-7c6cb-es-owner-or-promoted-member-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-019",
+      "title": "system/agent.spec.ts >> [AGENT-019] OWNER_LEFT is returned as tool error without changing group or accounts",
+      "diagnostic": "Error: expect(received).toMatchObject(expected)\n\n- Expected  - 1\n+ Received  + 1\n\n  Object {\n-   \"errorCode\": \"OWNER_LEFT\",\n+   \"errorCode\": \"BAD_JSON\",\n    \"isError\": true,\n  }",
+      "evidence": "artifacts/system-agent--AGENT-019-OW-6c3fd--changing-group-or-accounts-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-020",
+      "title": "system/agent.spec.ts >> [AGENT-020] NO_PERMISSION is returned as tool error without changing group or accounts",
+      "diagnostic": "Error: expect(received).toMatchObject(expected)\n\n- Expected  - 1\n+ Received  + 1\n\n  Object {\n-   \"errorCode\": \"NO_PERMISSION\",\n+   \"errorCode\": \"BAD_JSON\",\n    \"isError\": true,\n  }",
+      "evidence": "artifacts/system-agent--AGENT-020-NO-b72af--changing-group-or-accounts-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-021",
+      "title": "system/agent.spec.ts >> [AGENT-021] recent messages include new arrivals and obey text, count, byte and summary limits",
+      "diagnostic": "Error: Barrier read-fresh was not reached within 5000ms",
+      "evidence": "artifacts/system-agent--AGENT-021-re-3d8de-unt-byte-and-summary-limits-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-022",
+      "title": "system/agent.spec.ts >> [AGENT-022] disabling agent lets current step complete then cancels",
+      "diagnostic": "Error: Barrier current-step was not reached within 5000ms",
+      "evidence": "artifacts/system-agent--AGENT-022-di-dd8bf--step-complete-then-cancels-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-023",
+      "title": "system/agent.spec.ts >> [AGENT-023] finish tool stores summary and does not ask another turn",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-023-fi-273f9-d-does-not-ask-another-turn-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-024",
+      "title": "system/agent.spec.ts >> [AGENT-024] turn timeout records error and late response never sends a message",
+      "diagnostic": "Error: Condition not reached: public API predicate; last={\"id\":\"938a4c31-e4cf-4dc6-80f1-be1d6d820922\",\"groupId\":\"8acfd404-1b11-481f-9f92-d0f431544a2f\",\"status\":\"failed\",\"endReason\":\"protocol_errors\",\"summary\":null,\"recoveryNote\":null,\"steps\":[{\"ordinal\":1,\"kind\":\"protocol_error\",\"toolUseId\":null,\"name\":null,\"input\":null,\"resultSummary\":\"BAD_JSON\",\"isError\":true,\"errorCode\":\"BAD_JSON\",\"auditVerdict\":null,\"rawResponse\":\"{\\\"code\\\":\\\"TOOLS_INVALID\\\"}\"},{\"ordinal\":2,\"kind\":\"protocol_error\",\"toolUseId\":null,\"name\":null,\"input\":null,\"resultSummary\":\"BAD_JSON\",\"isError\":true,\"errorCode\":\"BAD_JSON\",\"auditVerdict\":null,\"rawResponse\":\"{\\\"code\\\":\\\"TOOLS_INVALID\\\"}\"},{\"ordinal\":3,\"kind\":\"protocol_error\",\"toolUseId\":null,\"name\":null,\"input\":null,\"resultSummary\":\"BAD_JSON\",\"isError\":true,\"errorCode\":\"BAD_JSON\",\"auditVerdict\":null,\"rawResponse\":\"{\\\"code\\\":\\\"TOOLS_INVALID\\\"}\"}]}",
+      "evidence": "artifacts/system-agent--AGENT-024-tu-8a76f-ponse-never-sends-a-message-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-025",
+      "title": "system/agent.spec.ts >> [AGENT-025] run reaches sixty-second active wall-clock budget including slow turns",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"wall_clock\"\nReceived: \"protocol_errors\"",
+      "evidence": "artifacts/system-agent--AGENT-025-ru-6b311-budget-including-slow-turns-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-026",
+      "title": "system/agent.spec.ts >> [AGENT-026] no online member returns NO_AVAILABLE_ACCOUNT as ordinary tool error",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-026-no-659e7-OUNT-as-ordinary-tool-error-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-027",
+      "title": "system/agent.spec.ts >> [AGENT-027] raw protocol response truncates to two KiB and remains inspectable",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: true\nReceived: false",
+      "evidence": "artifacts/system-agent--AGENT-027-ra-3ac9e-KiB-and-remains-inspectable-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-028",
+      "title": "system/agent.spec.ts >> [AGENT-028] unknown send times out in five seconds and same key still cannot resend",
+      "diagnostic": "Error: Barrier query-down was not reached within 5000ms",
+      "evidence": "artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-029",
+      "title": "system/agent.spec.ts >> [AGENT-029] kick timeout reconciles membership and never executes twice",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-029-ki-acac5-ip-and-never-executes-twice-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-030",
+      "title": "system/agent.spec.ts >> [AGENT-030] account becoming terminal during send returns SEND_FAILED and run continues",
+      "diagnostic": "Error: Barrier send-before-effect was not reached within 5000ms",
+      "evidence": "artifacts/system-agent--AGENT-030-ac-c0a98-ND-FAILED-and-run-continues-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-031",
+      "title": "system/agent.spec.ts >> [AGENT-031] group write error cancels current run after its step and stops future triggers",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"cancelled\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-031-gr-9663c-p-and-stops-future-triggers-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-032",
+      "title": "system/agent.spec.ts >> [AGENT-032] twelve distinct turns exhaust budget without a thirteenth request",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"budget_exhausted\"\nReceived: \"protocol_errors\"",
+      "evidence": "artifacts/system-agent--AGENT-032-tw-507e6-ithout-a-thirteenth-request-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-033",
+      "title": "system/agent.spec.ts >> [AGENT-033] audit retries resolve before informing agent and do not consume turn budget",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-033-au-6fd44--do-not-consume-turn-budget-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-034",
+      "title": "system/agent.spec.ts >> [AGENT-034] missing stop reason produces BAD_JSON history without assistant block",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-034-mi-49d78-ory-without-assistant-block-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-035",
+      "title": "system/agent.spec.ts >> [AGENT-035] zero content blocks produces BAD_JSON history without assistant block",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-035-ze-77fd4-ory-without-assistant-block-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "AGENT-036",
+      "title": "system/agent.spec.ts >> [AGENT-036] text surrounding JSON produces BAD_JSON history without assistant block",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"finished\"\nReceived: \"failed\"",
+      "evidence": "artifacts/system-agent--AGENT-036-te-2265e-ory-without-assistant-block-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "CAP-REG-004",
+      "title": "system/capacity.spec.ts >> [CAP-REG-004] an online removed administrator and an online ordinary member cannot substitute for an eligible actor",
+      "diagnostic": "Error: Barrier qa-audit-membership was not reached within 5000ms",
+      "evidence": "artifacts/system-capacity--CAP-REG-0-0969c-itute-for-an-eligible-actor-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "CAP-REG-002",
+      "title": "system/capacity.spec.ts >> [CAP-REG-002] disabling kick policy while audit is pending prevents dispatch after audit passes",
+      "diagnostic": "Error: Barrier qa-audit-policy was not reached within 5000ms",
+      "evidence": "artifacts/system-capacity--CAP-REG-0-24249-dispatch-after-audit-passes-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "CAP-REG-001",
+      "title": "system/capacity.spec.ts >> [CAP-REG-001] independent groups preserve one audit and one kick per run during overlapping requests",
+      "diagnostic": "Error: Barrier qa-audit-overlap-0 was not reached within 5000ms",
+      "evidence": "artifacts/system-capacity--CAP-REG-0-97ac8-during-overlapping-requests-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "CAP-REG-003",
+      "title": "system/capacity.spec.ts >> [CAP-REG-003] offline actors are rechecked after a pending audit instead of dispatching a stale choice",
+      "diagnostic": "Error: Barrier qa-audit-offline was not reached within 5000ms",
+      "evidence": "artifacts/system-capacity--CAP-REG-0-d18b6--dispatching-a-stale-choice-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "CAP-006",
+      "title": "system/capacity-control.spec.ts >> [CAP-006] deferred execution rechecks online membership and administrator qualification",
+      "diagnostic": "Error: Barrier qa-audit-capacity-actor-creator-remains was not reached within 5000ms",
+      "evidence": "artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "CAP-010",
+      "title": "system/capacity-control.spec.ts >> [CAP-010] admission pressure after a dispatched convergent 504 does not reset and replay the unknown kick",
+      "diagnostic": "Error: Barrier qa-audit-capacity-already-dispatched was not reached within 5000ms",
+      "evidence": "artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "CAP-008",
+      "title": "system/capacity-control.spec.ts >> [CAP-008] capacity deferral does not replace a later explicit gateway ownership or permission error",
+      "diagnostic": "Error: Barrier qa-audit-capacity-error-OWNER_LEFT was not reached within 5000ms",
+      "evidence": "artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "CAP-009",
+      "title": "system/capacity-control.spec.ts >> [CAP-009] crash after proven zero-effect refusal before durable readiness resumes the original run without replaying audit",
+      "diagnostic": "Error: Barrier qa-audit-capacity-before-ready-crash was not reached within 5000ms",
+      "evidence": "artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "CAP-003",
+      "title": "system/capacity-control.spec.ts >> [CAP-003] persistent admission refusal consumes the original active budget without resetting the clock",
+      "diagnostic": "Error: Barrier qa-audit-capacity-budget was not reached within 5000ms",
+      "evidence": "artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "CAP-005",
+      "title": "system/capacity-control.spec.ts >> [CAP-005] group unreachability during admission wait cancels without a late kick",
+      "diagnostic": "Error: Barrier qa-audit-capacity-unreachable was not reached within 5000ms",
+      "evidence": "artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "CAP-002",
+      "title": "system/capacity-control.spec.ts >> [CAP-002] cancellation while admission is unavailable cannot dispatch the deferred kick after release",
+      "diagnostic": "Error: Barrier qa-audit-capacity-cancel was not reached within 5000ms",
+      "evidence": "artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "CAP-001",
+      "title": "system/capacity-control.spec.ts >> [CAP-001] confirmed capacity refusal makes no request and release resumes the original audited step once",
+      "diagnostic": "Error: Barrier qa-audit-capacity-release was not reached within 5000ms",
+      "evidence": "artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "CAP-004",
+      "title": "system/capacity-control.spec.ts >> [CAP-004] policy is rechecked after confirmed zero-effect admission deferral",
+      "diagnostic": "Error: Barrier qa-audit-capacity-policy was not reached within 5000ms",
+      "evidence": "artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "CAP-007",
+      "title": "system/capacity-control.spec.ts >> [CAP-007] departure or rejoin before deferred dispatch preserves one tool identity and the specified removed-member result",
+      "diagnostic": "Error: Barrier qa-audit-capacity-target-leave was not reached within 5000ms",
+      "evidence": "artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "BLK-MIG-001",
+      "title": "system/fixture-boundaries.spec.ts >> [BLK-MIG-001] 历史schema明确拒启且结构与数据保持不变",
+      "diagnostic": "BlockedError: [BLOCKED] 未同时观察到候选自行退出与审核过的明确schema拒启诊断；保留日志/退出/健康证据待归因，不能把依赖故障、外部终止或健康超时记作产品拒启结论",
+      "evidence": "artifacts/system-fixture-boundaries--06a0b--001-历史schema明确拒启且结构与数据保持不变-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "UI-037",
+      "title": "system/fixture-boundaries.spec.ts >> [UI-037] 确定性微秒与同时间ID夹具双向跨页无遗漏重复",
+      "diagnostic": "Error: 被测命令已退出，不能借用其他进程的健康端点: node",
+      "evidence": "artifacts/system-fixture-boundaries--UI-037-确定性微秒与同时间ID夹具双向跨页无遗漏重复-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "INT-ACT-001",
+      "title": "system/integration-runtime.spec.ts >> [INT-ACT-001] activity budget accumulates across restart and excludes proven downtime without tail tolerance",
+      "diagnostic": "BlockedError: [BLOCKED] 工程runtimeObservation控制器未接入；见contracts/runtime-observation.md",
+      "evidence": "artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "INT-DIAG-002",
+      "title": "system/integration-runtime.spec.ts >> [INT-DIAG-002] actual tick failure running hold and recovery have truthful restricted diagnostics",
+      "diagnostic": "BlockedError: [BLOCKED] 工程runtimeObservation控制器未接入；见contracts/runtime-observation.md",
+      "evidence": "artifacts/system-integration-runtime-76161-hful-restricted-diagnostics-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "INT-ACCOUNT-001",
+      "title": "system/integration-runtime.spec.ts >> [INT-ACCOUNT-001] remote success local transient save retries in the original transaction before a newer disconnect",
+      "diagnostic": "BlockedError: [BLOCKED] 工程runtimeObservation控制器未接入；见contracts/runtime-observation.md",
+      "evidence": "artifacts/system-integration-runtime-87a64-n-before-a-newer-disconnect-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "INT-ACCOUNT-002",
+      "title": "system/integration-runtime.spec.ts >> [INT-ACCOUNT-002] persistent local save failure rolls back without false status events or automatic remote replay",
+      "diagnostic": "BlockedError: [BLOCKED] 工程runtimeObservation控制器未接入；见contracts/runtime-observation.md",
+      "evidence": "artifacts/system-integration-runtime-9f043--or-automatic-remote-replay-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "INT-STREAM-001",
+      "title": "system/integration-streams.spec.ts >> [INT-STREAM-001] real paused reader leaves healthy consumer working and received-cursor replay complete",
+      "diagnostic": "BlockedError: [BLOCKED] Bounded slow-reader injection did not establish the complete healthy receipt set; no throughput SLA inferred",
+      "evidence": "artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "INT-STREAM-002",
+      "title": "system/integration-streams.spec.ts >> [INT-STREAM-002] changing continuation page size preserves frozen identity order and contents across confirmations and backfill",
+      "diagnostic": "Error: expect(received).toEqual(expected) // deep equality\n\n- Expected  - 3\n+ Received  + 3\n\n  Object {\n    \"clientMsgId\": \"c8401835-d92a-4c94-b30d-f436f5f9bba3\",\n-   \"deliveryStatus\": \"accepted\",\n+   \"deliveryStatus\": \"sent\",\n    \"failCode\": null,\n    \"id\": \"4e051f82-3d2e-49a8-8191-a05b640ee597\",\n    \"isOwn\": true,\n-   \"msgId\": null,\n+   \"msgId\": \"gateway-message-1\",\n    \"senderPlatformUserId\": \"platform-account-1\",\n-   \"sentAt\": \"2026-10-01T06:35:00.283Z\",\n+   \"sentAt\": \"2026-10-01T06:35:00.394Z\",\n    \"text\": \"accepted during snapshot\",\n  }",
+      "evidence": "artifacts/system-integration-streams-a7924--confirmations-and-backfill-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "BLK-EXT-004",
+      "title": "system/protocol-boundaries.spec.ts >> [BLK-EXT-004] an already effective kick is not repeated against a rejoined target after restart",
+      "diagnostic": "Error: Barrier kick-before-rejoin was not reached within 5000ms",
+      "evidence": "artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "BLK-EXT-001",
+      "title": "system/protocol-boundaries.spec.ts >> [BLK-EXT-001] unacknowledged send has paired pending prefixes without a fabricated two-second bound",
+      "diagnostic": "BlockedError: [BLOCKED] No terminal evidence within observation budget for does-not-land. The 10s probe is not a product deadline or proof of permanent non-recovery; retain CL-01 protocol risk.",
+      "evidence": "artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "BLK-EXT-002",
+      "title": "system/protocol-boundaries.spec.ts >> [BLK-EXT-002] a created group whose response was lost is reconciled without another create",
+      "diagnostic": "BlockedError: [BLOCKED] Created group job has no terminal evidence within 20s probe; CL-01 recovery still unresolved",
+      "evidence": "artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "BLK-EXT-005",
+      "title": "system/protocol-boundaries.spec.ts >> [BLK-EXT-005] a lost unexecuted model response may change while persisted history and effects survive",
+      "diagnostic": "Error: Barrier lost-model-response was not reached within 5000ms",
+      "evidence": "artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "BLK-EXT-003",
+      "title": "system/protocol-boundaries.spec.ts >> [BLK-EXT-003] promotion response loss preserves administrator facts and the two-call limit",
+      "diagnostic": "BlockedError: [BLOCKED] No next promotion or terminal job within 20s probe; not proof of infinite stall",
+      "evidence": "artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "REC-003",
+      "title": "system/recovery.spec.ts >> [REC-003] database write outage loses no event and produces inconsistency notice",
+      "diagnostic": "Error: Condition not reached: public API predicate; last=[{\"type\":\"auth\",\"success\":true}]",
+      "evidence": "artifacts/system-recovery--REC-003-d-13086-oduces-inconsistency-notice-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "REC-006",
+      "title": "system/recovery.spec.ts >> [REC-006] agent restarts with same run id and reconciles already-sent tool effect",
+      "diagnostic": "Error: Barrier agent-send-landed was not reached within 5000ms",
+      "evidence": "artifacts/system-recovery--REC-006-a-00f5a-es-already-sent-tool-effect-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "REC-007",
+      "title": "system/recovery.spec.ts >> [REC-007] agent restart after kick effect uses membership reconciliation without repeating kick",
+      "diagnostic": "Error: Barrier kick-landed was not reached within 5000ms",
+      "evidence": "artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "BLK-SPEC-002",
+      "title": "system/sequence-failure-policy.spec.ts >> [BLK-SPEC-002] ordinary send failure fails the sequence and never advances later steps",
+      "diagnostic": "Error: expect(received).toMatchObject(expected)\n\n- Expected  - 1\n+ Received  + 1\n\n  Object {\n    \"clientMsgId\": \"8ae9db54-71c1-4287-80c6-150fd6084d94\",\n-   \"sentAt\": null,\n+   \"sentAt\": \"2026-10-01T06:37:50.910Z\",\n    \"status\": \"failed\",\n  }",
+      "evidence": "artifacts/system-sequence-failure-po-2defb--never-advances-later-steps-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "BLK-SPEC-005",
+      "title": "system/spec-boundaries.spec.ts >> [BLK-SPEC-005] cancellation overlapping inconclusive audit ends stably without side effects or a new turn",
+      "diagnostic": "Error: Barrier spec-cancel-audit-first-turn was not reached within 5000ms",
+      "evidence": "artifacts/system-spec-boundaries--BL-3dc74--side-effects-or-a-new-turn-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "BLK-SPEC-004",
+      "title": "system/spec-boundaries.spec.ts >> [BLK-SPEC-004] mixed protocol errors accumulate while a legal business error resets the streak",
+      "diagnostic": "Error: Barrier spec-mixed-protocol-first-turn was not reached within 5000ms",
+      "evidence": "artifacts/system-spec-boundaries--BL-bc827-ess-error-resets-the-streak-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "BLK-SPEC-006",
+      "title": "system/spec-boundaries.spec.ts >> [BLK-SPEC-006] versioned profile rules and explicit tool limits have independent boundary oracles",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 400\nReceived: 200",
+      "evidence": "artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "ARC-UI-008",
+      "title": "ui/architecture.spec.ts >> [ARC-UI-008] 权限403不形成资源请求风暴",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 1\nReceived: 2",
+      "evidence": "artifacts/ui-architecture--ARC-UI-008-权限403不形成资源请求风暴-chromium/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "ARC-UI-009",
+      "title": "ui/architecture.spec.ts >> [ARC-UI-009] 429不无视限流进行通用重试",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 1\nReceived: 2",
+      "evidence": "artifacts/ui-architecture--ARC-UI-009-429不无视限流进行通用重试-chromium/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "ARC-UI-010",
+      "title": "ui/architecture.spec.ts >> [ARC-UI-010] 请求校验400不自动重试",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 1\nReceived: 2",
+      "evidence": "artifacts/ui-architecture--ARC-UI-010-请求校验400不自动重试-chromium/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "ARC-UI-011",
+      "title": "ui/architecture.spec.ts >> [ARC-UI-011] 成功HTTP的非法响应格式不按502临时错误重试",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 1\nReceived: 2",
+      "evidence": "artifacts/ui-architecture--ARC-UI-011-成功HTTP的非法响应格式不按502临时错误重试-chromium/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "ARC-UI-012",
+      "title": "ui/architecture.spec.ts >> [ARC-UI-012] 持续暂时失败耗尽后停止自动读取",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 4\nReceived: 5",
+      "evidence": "artifacts/ui-architecture--ARC-UI-012-持续暂时失败耗尽后停止自动读取-chromium/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "ARC-UI-013",
+      "title": "ui/architecture.spec.ts >> [ARC-UI-013] 切页取消旧读取及后续退避",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 1\nReceived: 2\n\nCall Log:\n- Timeout 8000ms exceeded while waiting on the predicate",
+      "evidence": "artifacts/ui-architecture--ARC-UI-013-切页取消旧读取及后续退避-chromium/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "ARC-UI-015",
+      "title": "ui/architecture.spec.ts >> [ARC-UI-015] 耗尽后显式同页刷新可开始新一轮",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 4\nReceived: 5",
+      "evidence": "artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "ARC-UI-017",
+      "title": "ui/architecture.spec.ts >> [ARC-UI-017] 在途读取期间多个实时失效合并且不能延长失败预算",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: 1\nReceived: 5\n\nCall Log:\n- Timeout 8000ms exceeded while waiting on the predicate",
+      "evidence": "artifacts/ui-architecture--ARC-UI-017-在途读取期间多个实时失效合并且不能延长失败预算-chromium/error-context.md",
+      "triage": "PENDING"
+    },
+    {
+      "caseId": "UI-007",
+      "title": "ui/console.spec.ts >> [UI-007] 审计阻断在群运行列表醒目可见",
+      "diagnostic": "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"blocked\"\nReceived: \"failed\"",
+      "evidence": "artifacts/ui-console--UI-007-审计阻断在群运行列表醒目可见-chromium/error-context.md",
+      "triage": "PENDING"
+    }
+  ]
+}

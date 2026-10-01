@@ -1,0 +1,27 @@
+{
+  "input": {
+    "label": "index is not an integer",
+    "body": {
+      "name": "QA independent sequence contract",
+      "steps": [
+        {
+          "index": 1.5,
+          "accountRole": "admin",
+          "text": "QA valid sequence",
+          "delaySeconds": 1
+        }
+      ]
+    }
+  },
+  "result": {
+    "status": 400,
+    "body": {
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Invalid input: expected int, received number",
+        "requestId": "f33ee35b-ee56-4fba-8e11-46244e07a8fa"
+      }
+    },
+    "headers": {}
+  }
+}

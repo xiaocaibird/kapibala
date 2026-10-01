@@ -1,0 +1,143 @@
+{
+  "frames": [
+    {
+      "type": "auth",
+      "success": true
+    },
+    {
+      "seq": 13,
+      "type": "account_status_changed",
+      "payload": {
+        "to": "rate_limited",
+        "from": "online",
+        "accountId": "account-2"
+      }
+    },
+    {
+      "seq": 14,
+      "type": "account_status_changed",
+      "payload": {
+        "to": "online",
+        "from": "rate_limited",
+        "accountId": "account-2"
+      }
+    },
+    {
+      "seq": 15,
+      "type": "account_status_changed",
+      "payload": {
+        "to": "disconnected",
+        "from": "online",
+        "accountId": "account-2"
+      }
+    },
+    {
+      "seq": 16,
+      "type": "account_status_changed",
+      "payload": {
+        "to": "online",
+        "from": "disconnected",
+        "accountId": "account-2"
+      }
+    },
+    {
+      "seq": 17,
+      "type": "account_status_changed",
+      "payload": {
+        "to": "idle",
+        "from": "online",
+        "accountId": "account-2"
+      }
+    },
+    {
+      "seq": 18,
+      "type": "account_status_changed",
+      "payload": {
+        "to": "online",
+        "from": "idle",
+        "accountId": "account-2"
+      }
+    }
+  ],
+  "observations": [
+    {
+      "frame": {
+        "seq": 13,
+        "type": "account_status_changed",
+        "payload": {
+          "to": "rate_limited",
+          "from": "online",
+          "accountId": "account-2"
+        }
+      },
+      "stateAtReceipt": "rate_limited"
+    },
+    {
+      "frame": {
+        "seq": 14,
+        "type": "account_status_changed",
+        "payload": {
+          "to": "online",
+          "from": "rate_limited",
+          "accountId": "account-2"
+        }
+      },
+      "stateAtReceipt": "online"
+    },
+    {
+      "frame": {
+        "seq": 15,
+        "type": "account_status_changed",
+        "payload": {
+          "to": "disconnected",
+          "from": "online",
+          "accountId": "account-2"
+        }
+      },
+      "stateAtReceipt": "disconnected"
+    },
+    {
+      "frame": {
+        "seq": 16,
+        "type": "account_status_changed",
+        "payload": {
+          "to": "online",
+          "from": "disconnected",
+          "accountId": "account-2"
+        }
+      },
+      "stateAtReceipt": "online"
+    },
+    {
+      "frame": {
+        "seq": 17,
+        "type": "account_status_changed",
+        "payload": {
+          "to": "idle",
+          "from": "online",
+          "accountId": "account-2"
+        }
+      },
+      "stateAtReceipt": "idle"
+    },
+    {
+      "frame": {
+        "seq": 18,
+        "type": "account_status_changed",
+        "payload": {
+          "to": "online",
+          "from": "idle",
+          "accountId": "account-2"
+        }
+      },
+      "stateAtReceipt": "online"
+    }
+  ],
+  "account": {
+    "id": "account-2",
+    "status": "online",
+    "platformUserId": "platform-account-2",
+    "rateLimitedUntil": null
+  },
+  "note": "不为手动 online 添加 connect 要求；不为无 retryAfterSeconds 的手动 rate_limited 添加自动恢复期限。"
+}

@@ -1,0 +1,193 @@
+# integration-message-boundaries.json 用例阅读版
+
+由JSON源自动生成；以JSON和脚本为维护入口。本文件没有执行结论。
+
+<a id="INT-MSG-006"></a>
+
+## INT-MSG-006 · 已识别504后延迟本地保存仍从原接收起按5秒确定状态
+
+- 需求：R-A2-01、R-A2-03
+- 优先级：P0；方法：automated
+- 自动化入口：tests/system/integration-message-boundaries.spec.ts
+
+**准备状态：dependency-pending；责任方：QA/工程**
+
+1. 客户端按ffdc8b018be6c20cba2a9d34afda5225187df7cd工程交接对齐，尚未与此候选实际联调
+2. 新例纳入后续完整业务分母，旧0af6443冻结验收不含本例，不能拼接成旧范围通过
+
+**前置条件**
+
+1. 后续授权并冻结包含本例的新QA版本、工程候选和隔离目标；不追溯修改旧251条业务验收范围
+2. qa-message-observation/1证明当前guardian、API、完整SHA和实际随机ownerToken；独立查询本用例PG系统元数据核对databaseIdentity
+3. 工程已交付timeout-observed-before-local-save真实挂点；缺配置、能力或归属时BLOCKED
+
+**执行步骤**
+
+1. 隔离SSE传输但保留真实落地和message_sent历史，在504响应发出前取得clientMsgId并注册armed租约
+2. 放行504，取得真实识别后、本地结果保存前的held事件；用网关HTTP完成至QA读回夹定实际接收时段并校对工程observedAt
+3. 保持约2500ms，仅在总准备窗口仍小于原5秒时放行；保持期间检查无错误失败、无重发及单一实际落地
+4. 按原504接收区间采样公开状态确定的上下界，核对原5秒，不能从放行/保存时刻重新计时
+5. 确认最终合并到真实网关msgId且一条消息/一个发送；finally定向释放已知租约并收取公开发送Promise
+
+**预期结果**
+
+1. 正常查询可用时从原504接收起5秒内确定为accepted/sent/failed之一；本例消息真实落地，不能错误failed/cancelled或重发
+2. 工程observedAt、实际HTTP和QA区间必须相容；没有真实held或数据库身份不符不能算覆盖
+3. 独立网关证明2秒内真实落地和生成确认；夹具不满足保证时BLOCKED，不能判产品FAIL
+4. 实际观察仍未确定的可信下界超过5秒为FAIL；只跨阈值或缺完成上界为BLOCKED
+5. 本例PASS只证明本次约2500ms本地延迟后仍按原5秒完成；因为放行后查询可立即取得真实落地结果，不能单独排除所有内部重置deadline实现。与INT-MSG-001..004的查询时间组合合并解读，不能以工程自报时间或伪造404扩大结论
+
+**时序要求**
+
+1. 2500ms是故障数据；4500ms准备保护与8/10秒采样只是夹具边界，不是业务SLA或放宽原时限
+2. 使用毫秒分辨上下界，不引入容差
+
+**故障注入**
+
+1. 真实504识别后、本地结果保存尚未开始时保持；SSE传输暂不可用但事件历史保留
+
+**取证**
+
+1. HTTP/网关落地与确认事件账本、租约完整历史、独立数据库身份hash
+2. 原接收/公开状态区间、放行时刻、所有采样与最终消息身份
+
+**清理**
+
+1. 只释放本例客户端UUID租约及网关屏障；保留首次失败和清理失败；不删除其他实例注册目录
+
+**数据**
+
+```json
+{
+  "gatewayStatus": 504,
+  "effectDelayMs": 1000,
+  "localHoldMs": 2500,
+  "originalDeadlineMs": 5000,
+  "mode": "timeout-observed-before-local-save"
+}
+```
+
+<a id="INT-MSG-007"></a>
+
+## INT-MSG-007 · 单实例首次确认已观察但INSERT未发出时崩溃的排期时间保留
+
+- 需求：R-A2-01、R-A2-08、R-B1-07、R-B1-09
+- 优先级：P0；方法：automated
+- 自动化入口：tests/system/integration-message-boundaries.spec.ts
+
+**准备状态：dependency-pending；责任方：QA/工程**
+
+1. ffdc8b018be6c20cba2a9d34afda5225187df7cd仅提供单实例精确窗口，QA脚本未跑产品
+2. 本例新增到后续验收分母；D041已知保存前风险不因工程自测通过而关闭
+
+**前置条件**
+
+1. 后续授权、固定新QA和工程候选；独立数据库、网关、单个SUT实例，不启动竞争写入实例
+2. receipt-before-commit必须证明receipt-insert-not-issued、receiptPresentAtProbe=false与实际观察时刻；已有receipt或window-unavailable时BLOCKED
+3. 能力仅bound-instance且allDatabaseWritersProven=false；不能据此声称多实例全局未提交或物理最早接收已证明
+
+**执行步骤**
+
+1. 独立网关真实落地首步但暂不递送确认；登记含真实clientMsgId/msgId/eventId字符串的armed门，再开启事件递送
+2. 取得接收时间已捕获、INSERT尚未发出的held窗口，保存首次独立递送至读回区间以及公开业务尚未应用状态
+3. 保持窗口和真实时间间隔，SIGKILL本实例；保留PG/网关/控制器，定向释放旧实例租约，启动新guardian并重新核验绑定
+4. 在原后步最早到期之前重放原确认，观察首步和后步公开排期；记录是否使用了丢失后的重放时间
+5. 追加相同eventId和不同eventId的同消息确认，检查排期稳定、前步不重发、第二步真实发出且无重复消息
+
+**预期结果**
+
+1. 严格原B1排期必须仍以上次实际首次接收时间加20秒为基准；已证明排期偏离该区间记FAIL，已知保存前限制不自动视为通过
+2. 不把网关sentAt、重放时刻或一次SQL发出当成原始接收/已提交证明；不声称杀客户端会使自动提交语句回滚
+3. 若恢复跨过原到期区间、真实窗口未命中、时间上下界重叠或有限观察未完成则BLOCKED；已观测到的重复、提前或错误终态仍FAIL
+4. 本次仅单实例受控窗口；D041披露的限制保留到报告，不扩成多实例全局证明或数学上的任意时刻保证
+
+**时序要求**
+
+1. 后步20秒为用例配置；1500ms拉开原接收与重放证据，不新增生产指标
+2. 采样10/30秒仅取证预算；毫秒边界交叠不能强判PASS/FAIL
+
+**故障注入**
+
+1. 首次接收记录INSERT尚未发出时SIGKILL；SSE受控重放保留原网关事实
+
+**取证**
+
+1. 原确认身份、受控递送区间、准确localBoundary、原PG系统身份hash、单实例覆盖声明
+2. kill/restart区间、旧租约历史、新guardian绑定、原/恢复公开排期、相同与不同eventId及实际消息账本
+
+**清理**
+
+1. 只终止本例持有进程并释放已知UUID；保留控制器与PG直至用例清理完成，清理失败不覆盖首次违约
+
+**数据**
+
+```json
+{
+  "firstDelaySeconds": 0,
+  "secondDelaySeconds": 20,
+  "minimumReplayGapMs": 1500,
+  "mode": "receipt-before-commit"
+}
+```
+
+<a id="INT-MSG-008"></a>
+
+## INT-MSG-008 · receipt自动提交已确认但业务未应用时崩溃后复用首次时间
+
+- 需求：R-A2-01、R-A2-08、R-B1-07、R-B1-09
+- 优先级：P0；方法：automated
+- 自动化入口：tests/system/integration-message-boundaries.spec.ts
+
+**准备状态：dependency-pending；责任方：QA/工程**
+
+1. 客户端按ffdc8b018be6c20cba2a9d34afda5225187df7cd的实际协议对齐，尚待QA联调
+2. 后续单独冻结/授权/执行留证，不向当前旧251条业务运行回填结果
+
+**前置条件**
+
+1. 后续授权并固定新QA/工程版本，保持同一独立数据库与网关，仅一个SUT实例
+2. receipt-committed-before-business准确处于receipt-autocommit-confirmed-business-not-started；receiptPresentAtProbe=true、实际receiptObservedAt可用
+3. 首次新身份须由实际接收时间获胜；历史未知/既有不同赢家时间不算本例前提，不自造commitWitness字段
+
+**执行步骤**
+
+1. 用真实首步消息身份注册门，递送message_sent并保持在独立receipt自动提交已确认、业务事务未开始的窗口
+2. 核对工程本地观察/持久记录时刻与QA递送区间、独立PG身份及公开未完成业务，再SIGKILL
+3. 保留PG/网关事实，以新guardian启动且复验归属；原排期尚未到期时重放确认
+4. 公开首步完成且后步仍依原接收区间排期；随后重放相同eventId与不同eventId检查不改时间/排期、不重复前步并完成后步
+
+**预期结果**
+
+1. 保存后重启复用原确认接收时间，不能采用数据库业务保存完成或重放时刻重新排期
+2. 同clientMsgId/msgId的不同eventId不会改写已确定公开时间和后步排期；实际两条消息各一次
+3. 时间与公开发送证据明确违反原B1/恢复要求为FAIL；窗口、原始时间、真实提交或独立区间不足为BLOCKED
+4. 仅验证绑定实例和实际本次轨迹，不替代全数据库所有写入者/多实例全局最早物理观察验证
+
+**时序要求**
+
+1. 后步20秒为配置输入；必须在原最早到期前恢复，避免混入B1合法过期重排
+2. 边界按独立上下界及毫秒分辨率裁判，取证预算不新增产品deadline
+
+**故障注入**
+
+1. 真实receipt自动提交已确认后、业务事务尚未开始时SIGKILL；同一和不同事件ID重放
+
+**取证**
+
+1. 完整归属/窗口事件、独立数据库身份、observedAt/receiptObservedAt及QA递送区间
+2. 旧实例kill、新实例启动、原与恢复排期、重复事件及实际远端落地账本
+
+**清理**
+
+1. 定向释放旧租约并由QA清理自己实例；不按复用端口操作旧租约，不抹除首次失败
+
+**数据**
+
+```json
+{
+  "firstDelaySeconds": 0,
+  "secondDelaySeconds": 20,
+  "minimumReplayGapMs": 1500,
+  "mode": "receipt-committed-before-business"
+}
+```

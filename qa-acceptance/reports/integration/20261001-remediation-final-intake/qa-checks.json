@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-01T06:51:22.603928+00:00",
+  "scope": "QA preparation and read-only Git review only; no product execution",
+  "checks": [
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0
+    },
+    {
+      "command": "tsx --test tests/self/runtime-observation.test.ts",
+      "exitCode": 0,
+      "tests": 16,
+      "pass": 16,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "command": "npm run check:impact",
+      "exitCode": 0,
+      "reviews": 6
+    },
+    {
+      "command": "reviewTargetChanges(...,86ad4e7e63786f652c965308b032b98415bdd7ac)",
+      "selectedReview": "QA-IMPACT-20261001-REMEDIATION-FINAL",
+      "changesOutsideAcceptanceScope": []
+    },
+    {
+      "command": "git diff --check (owned runtime/client and registry files)",
+      "exitCode": 0
+    }
+  ]
+}

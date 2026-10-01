@@ -310,103 +310,190 @@ test('[INT-STREAM-002] changing continuation page size preserves frozen identity
     durationMs: 15000,
   });
   if (!loaded.complete) throw new BlockedError('Initial frozen collection not fully materialized');
-  qa.gateway.enqueue(`/groups/${group.gatewayGroupId}/send`, { omitEvent: true });
-  const own = await qa.api.send(group.id, accounts[0]!.id, 'accepted during snapshot');
-  const acceptedExpected = new Map<string, { text: string; sentAt?: string }>(baselineExpected);
-  acceptedExpected.set(`client:${own.clientMsgId}`, { text: 'accepted during snapshot' });
-  const accepted = await observe({
-    read: () =>
-      allMessages(qa.api, group.id, { inspect: (items) => messageSubset(items, acceptedExpected) }),
-    invariant: () => {},
-    complete: (items) =>
-      items.some((m) => m.clientMsgId === own.clientMsgId && m.deliveryStatus === 'accepted'),
-    durationMs: 15000,
+  const sendBarrier = `snapshot-send-${group.id}`;
+  const queryBarrier = `snapshot-query-${group.id}`;
+  qa.gateway.enqueue(`/groups/${group.gatewayGroupId}/send`, {
+    omitEvent: true,
+    barrier: { phase: 'request', name: sendBarrier },
   });
-  if (!accepted.complete) throw new BlockedError('Accepted record not observable before snapshot');
-  const acceptedOwn = accepted.last.find((m) => m.clientMsgId === own.clientMsgId)!;
-  const first = await qa.api.messages(group.id, undefined, 7);
-  const expectedOrder = [...baseline]
-    .reverse()
-    .map((m) => `message:${m.msgId}`)
-    .concat(`client:${own.clientMsgId}`);
-  const frozen = [...first.items];
-  messageSubset(frozen, acceptedExpected);
-  let cursor = first.nextCursor;
-  const landed = qa.gateway.snapshot().messages.find((m) => m.clientMsgId === own.clientMsgId);
-  if (!landed) throw new BlockedError('Gateway has not landed held-confirmation fixture');
-  qa.gateway.emit('message_sent', {
-    clientMsgId: own.clientMsgId,
-    msgId: landed.msgId,
-    sentAt: landed.sentAt,
-  });
-  qa.gateway.emitMessage({
-    groupId: group.gatewayGroupId,
-    msgId: 'new-during-frozen',
-    senderPlatformUserId: 'outside',
-    text: 'new',
-    sentAt: new Date(Date.now() + 120000).toISOString(),
-  });
-  qa.gateway.emitMessage({
-    groupId: group.gatewayGroupId,
-    msgId: 'backfill-during-frozen',
-    senderPlatformUserId: 'outside',
-    text: 'old',
-    sentAt: '2010-01-01T00:00:00.000Z',
-  });
-  const mergedExpected = new Map(acceptedExpected);
-  mergedExpected.set('message:new-during-frozen', { text: 'new' });
-  mergedExpected.set('message:backfill-during-frozen', {
-    text: 'old',
-    sentAt: '2010-01-01T00:00:00.000Z',
-  });
-  const merged = await observe({
-    read: () =>
-      allMessages(qa.api, group.id, { inspect: (items) => messageSubset(items, mergedExpected) }),
-    invariant: () => {},
-    complete: (items) =>
-      items.length === 61 &&
-      items.some((m) => m.clientMsgId === own.clientMsgId && m.deliveryStatus === 'sent'),
-    durationMs: 15000,
-  });
-  if (!merged.complete)
-    throw new BlockedError('Concurrent update/backfill fixture did not become visible');
-  const cursors = new Set<string>();
-  const sizes = [1, 9, 4, 17, 3];
-  let pageIndex = 0;
-  while (cursor) {
-    expect(cursors.has(cursor)).toBe(false);
-    cursors.add(cursor);
-    const limit = sizes[pageIndex++ % sizes.length]!;
-    const page = await qa.api.messages(group.id, cursor, limit);
-    expect(page.items.length).toBeLessThanOrEqual(limit);
-    frozen.push(...page.items);
+  const pendingSend = qa.api
+    .post<{ clientMsgId: string }>(`/api/groups/${group.id}/send`, {
+      accountId: accounts[0]!.id,
+      text: 'accepted during snapshot',
+    })
+    .then(
+      (value) => ({ value }),
+      (error: unknown) => ({ error }),
+    );
+  let primaryError: unknown;
+  try {
+    let hit;
+    try {
+      hit = await qa.gateway.barriers.waitFor(sendBarrier);
+    } catch {
+      throw new BlockedError('Actual send request did not reach the prerequisite barrier');
+    }
+    const request = hit.context as { body?: { clientMsgId?: unknown } };
+    expect(request.body?.clientMsgId).toEqual(expect.any(String));
+    const requestClientMsgId = request.body!.clientMsgId as string;
+    const queryPath = `/groups/${group.gatewayGroupId}/messages/by-client-id/${encodeURIComponent(requestClientMsgId)}`;
+    // Suppressing SSE alone cannot keep accepted stable: a real successful
+    // by-client-id query can independently confirm the send. Hold those genuine
+    // responses until the exact cursor's initial contents have been recorded.
+    qa.gateway.enqueue(
+      queryPath,
+      ...Array.from({ length: 32 }, () => ({
+        method: 'GET',
+        barrier: { phase: 'before-response' as const, name: queryBarrier },
+      })),
+    );
+    qa.gateway.barriers.release(sendBarrier);
+    const outcome = await pendingSend;
+    if ('error' in outcome) throw outcome.error;
+    expect(outcome.value.status).toBe(202);
+    const own = outcome.value.body;
+    expect(own.clientMsgId).toBe(requestClientMsgId);
+    const acceptedExpected = new Map<string, { text: string; sentAt?: string }>(baselineExpected);
+    acceptedExpected.set(`client:${own.clientMsgId}`, { text: 'accepted during snapshot' });
+    const accepted = await observe({
+      read: () =>
+        allMessages(qa.api, group.id, {
+          inspect: (items) => messageSubset(items, acceptedExpected),
+        }),
+      invariant: () => {},
+      complete: (items) =>
+        items.some((m) => m.clientMsgId === own.clientMsgId && m.deliveryStatus === 'accepted'),
+      durationMs: 15000,
+    });
+    if (!accepted.complete)
+      throw new BlockedError('Accepted record not observable before snapshot');
+    const expectedOrder = [...baseline]
+      .reverse()
+      .map((m) => `message:${m.msgId}`)
+      .concat(`client:${own.clientMsgId}`);
+    const first = await qa.api.messages(group.id, undefined, 7);
+    expect(first.items.length).toBeLessThanOrEqual(7);
+    const initialSnapshot = [...first.items];
+    messageSubset(initialSnapshot, acceptedExpected);
+    let referenceCursor = first.nextCursor;
+    const referenceCursors = new Set<string>();
+    const referenceStarted = performance.now();
+    while (referenceCursor) {
+      expect(referenceCursors.has(referenceCursor)).toBe(false);
+      referenceCursors.add(referenceCursor);
+      const page = await qa.api.messages(group.id, referenceCursor, 50);
+      expect(page.items.length).toBeLessThanOrEqual(50);
+      initialSnapshot.push(...page.items);
+      messageSubset(initialSnapshot, acceptedExpected);
+      referenceCursor = page.nextCursor;
+      if (
+        referenceCursor &&
+        (referenceCursors.size >= 75 || performance.now() - referenceStarted > 15_000)
+      )
+        throw new BlockedError('Finite same-cursor reference traversal budget exhausted');
+    }
+    expect(initialSnapshot.map(identity)).toEqual(expectedOrder);
+    const acceptedOwn = initialSnapshot.find((m) => m.clientMsgId === own.clientMsgId)!;
+    if (acceptedOwn?.deliveryStatus !== 'accepted')
+      throw new BlockedError(
+        'The tested cursor did not freeze the intended accepted record before confirmation',
+      );
+    await qa.evidence('same-cursor-before-confirmation', {
+      first,
+      initialSnapshot,
+      acceptedOwn,
+      queryRequests: qa.gateway.snapshot().requests.filter((r) => r.path === queryPath),
+    });
+    const frozen = [...first.items];
     messageSubset(frozen, acceptedExpected);
-    cursor = page.nextCursor;
-    expect(pageIndex).toBeLessThan(30);
+    let cursor = first.nextCursor;
+    const landed = qa.gateway.snapshot().messages.find((m) => m.clientMsgId === own.clientMsgId);
+    if (!landed) throw new BlockedError('Gateway has not landed held-confirmation fixture');
+    qa.gateway.barriers.release(queryBarrier);
+    qa.gateway.emit('message_sent', {
+      clientMsgId: own.clientMsgId,
+      msgId: landed.msgId,
+      sentAt: landed.sentAt,
+    });
+    qa.gateway.emitMessage({
+      groupId: group.gatewayGroupId,
+      msgId: 'new-during-frozen',
+      senderPlatformUserId: 'outside',
+      text: 'new',
+      sentAt: new Date(Date.now() + 120000).toISOString(),
+    });
+    qa.gateway.emitMessage({
+      groupId: group.gatewayGroupId,
+      msgId: 'backfill-during-frozen',
+      senderPlatformUserId: 'outside',
+      text: 'old',
+      sentAt: '2010-01-01T00:00:00.000Z',
+    });
+    const mergedExpected = new Map(acceptedExpected);
+    mergedExpected.set('message:new-during-frozen', { text: 'new' });
+    mergedExpected.set('message:backfill-during-frozen', {
+      text: 'old',
+      sentAt: '2010-01-01T00:00:00.000Z',
+    });
+    const merged = await observe({
+      read: () =>
+        allMessages(qa.api, group.id, { inspect: (items) => messageSubset(items, mergedExpected) }),
+      invariant: () => {},
+      complete: (items) =>
+        items.length === 61 &&
+        items.some((m) => m.clientMsgId === own.clientMsgId && m.deliveryStatus === 'sent'),
+      durationMs: 15000,
+    });
+    if (!merged.complete)
+      throw new BlockedError('Concurrent update/backfill fixture did not become visible');
+    const cursors = new Set<string>();
+    const sizes = [1, 9, 4, 17, 3];
+    let pageIndex = 0;
+    while (cursor) {
+      expect(cursors.has(cursor)).toBe(false);
+      cursors.add(cursor);
+      const limit = sizes[pageIndex++ % sizes.length]!;
+      const page = await qa.api.messages(group.id, cursor, limit);
+      expect(page.items.length).toBeLessThanOrEqual(limit);
+      frozen.push(...page.items);
+      messageSubset(frozen, acceptedExpected);
+      cursor = page.nextCursor;
+      expect(pageIndex).toBeLessThan(30);
+    }
+    expect(frozen.map(identity)).toEqual(expectedOrder);
+    expect(new Set(frozen.map(identity)).size).toBe(59);
+    expect(frozen.find((m) => m.clientMsgId === own.clientMsgId)).toEqual(acceptedOwn);
+    for (const m of baseline) expect(frozen.find((row) => row.msgId === m.msgId)).toMatchObject(m);
+    const refreshed = merged.last;
+    expect(refreshed.map(identity)).toEqual([
+      'message:new-during-frozen',
+      ...expectedOrder,
+      'message:backfill-during-frozen',
+    ]);
+    expect(refreshed.filter((m) => m.clientMsgId === own.clientMsgId)).toHaveLength(1);
+    expect(refreshed.find((m) => m.clientMsgId === own.clientMsgId)).toMatchObject({
+      msgId: landed.msgId,
+      deliveryStatus: 'sent',
+      sentAt: landed.sentAt,
+    });
+    await qa.evidence('frozen-page-size-change', {
+      baseline,
+      expectedOrder,
+      pageSizes: sizes,
+      frozen,
+      refreshed,
+      acceptedOwn,
+      landed,
+    });
+  } catch (error) {
+    primaryError = error;
+    throw error;
+  } finally {
+    qa.gateway.barriers.release(sendBarrier);
+    qa.gateway.barriers.release(queryBarrier);
+    // The result is handled from creation, including a setup failure before clientMsgId was known.
+    const outcome = await pendingSend;
+    if (primaryError instanceof BlockedError && 'value' in outcome)
+      expect(outcome.value.status).toBe(202); // An actual invalid response must not hide behind setup BLOCKED.
   }
-  expect(frozen.map(identity)).toEqual(expectedOrder);
-  expect(new Set(frozen.map(identity)).size).toBe(59);
-  expect(frozen.find((m) => m.clientMsgId === own.clientMsgId)).toEqual(acceptedOwn);
-  for (const m of baseline) expect(frozen.find((row) => row.msgId === m.msgId)).toMatchObject(m);
-  const refreshed = merged.last;
-  expect(refreshed.map(identity)).toEqual([
-    'message:new-during-frozen',
-    ...expectedOrder,
-    'message:backfill-during-frozen',
-  ]);
-  expect(refreshed.filter((m) => m.clientMsgId === own.clientMsgId)).toHaveLength(1);
-  expect(refreshed.find((m) => m.clientMsgId === own.clientMsgId)).toMatchObject({
-    msgId: landed.msgId,
-    deliveryStatus: 'sent',
-    sentAt: landed.sentAt,
-  });
-  await qa.evidence('frozen-page-size-change', {
-    baseline,
-    expectedOrder,
-    pageSizes: sizes,
-    frozen,
-    refreshed,
-    acceptedOwn,
-    landed,
-  });
 });

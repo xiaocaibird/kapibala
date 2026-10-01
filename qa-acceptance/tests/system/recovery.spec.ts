@@ -1,6 +1,8 @@
-import WebSocket from 'ws';
 import { test, expect } from '../fixtures.js';
 import { eventually, type AgentRun, type SequenceRun } from '../../harness/platform-client.js';
+import { ReceiptSocket, finalizeReceipts } from '../../harness/receipt-socket.js';
+import { observe } from '../../harness/observation.js';
+import { BlockedError } from '../../harness/security.js';
 
 test('[REC-001] SSE reconnect recovers all retained events once including out-of-order delivery', async ({
   qa,
@@ -80,21 +82,95 @@ test('[REC-003] database write outage loses no event and produces inconsistency 
 }) => {
   await qa.api.login();
   const { group } = await qa.api.createGroup();
-  const frames: { type: string; payload?: unknown }[] = [];
-  const ws = new WebSocket(new URL('/ws', qa.api.baseUrl).toString().replace(/^http/, 'ws'));
-  ws.on('message', (raw) => frames.push(JSON.parse(raw.toString())));
-  await new Promise<void>((resolve, reject) => {
-    ws.once('open', resolve);
-    ws.once('error', reject);
+  const sockets: ReceiptSocket[] = [];
+  const connections: {
+    openedAt: string;
+    sinceSeq?: number;
+    purpose: string;
+    previousPeerClose?: unknown;
+    localCloseRequestedAt?: string;
+  }[] = [];
+  let active: ReceiptSocket;
+  let primaryFailed = false;
+  const evidence = () => ({
+    connections,
+    sockets: sockets.map((socket) => ({
+      frames: socket.frames,
+      closed: socket.closed,
+      errors: socket.errors,
+      protocolErrors: socket.protocolErrors,
+      lastReceivedSeq: socket.lastReceivedSeq,
+    })),
   });
-  ws.send(JSON.stringify({ type: 'auth', accessToken: qa.api.token }));
-  await eventually(
-    async () => frames,
-    (value) => value.some((frame) => frame.type === 'auth'),
-  );
+  const connect = async (purpose: string, previous?: ReceiptSocket) => {
+    for (const socket of sockets) socket.assertValidFrames();
+    // Only complete frames actually received by QA contribute to this cursor.
+    const sinceSeq = previous
+      ? Math.max(...sockets.map((socket) => socket.lastReceivedSeq))
+      : undefined;
+    const record = {
+      openedAt: new Date().toISOString(),
+      sinceSeq,
+      purpose,
+      previousPeerClose: previous?.closed,
+      localCloseRequestedAt: undefined as string | undefined,
+    };
+    if (previous && !previous.closed) {
+      record.localCloseRequestedAt = new Date().toISOString();
+      await previous.close();
+      // Closing can drain another complete frame. Never skip it or invent a cursor.
+      record.sinceSeq = Math.max(...sockets.map((socket) => socket.lastReceivedSeq));
+    }
+    connections.push(record);
+    active = new ReceiptSocket(qa.api.baseUrl);
+    sockets.push(active);
+    try {
+      await active.authenticate(qa.api.token!, record.sinceSeq);
+    } catch (error) {
+      active.assertValidFrames();
+      throw new BlockedError(`WS recovery connection/auth not established: ${String(error)}`);
+    }
+  };
+  const checkFrames = () => {
+    sockets.forEach((socket, index) => {
+      socket.assertValidFrames();
+      const cursor = connections[index]!.sinceSeq;
+      if (cursor !== undefined)
+        for (const frame of socket.frames)
+          if (frame.seq !== undefined) expect(frame.seq).toBeGreaterThan(cursor);
+      for (const frame of socket.frames.filter((value) => value.type === 'inconsistency')) {
+        expect(frame.seq).toEqual(expect.any(Number));
+        expect(frame.inconsistency?.kind).toEqual(expect.any(String));
+        expect(frame.inconsistency?.ref).toBeDefined();
+        expect(frame.inconsistency?.message).toEqual(expect.any(String));
+      }
+    });
+  };
   try {
-    await qa.interruptDatabase();
+    await connect('initial authenticated observation');
     qa.gateway.emitMessage({
+      groupId: group.gatewayGroupId,
+      msgId: 'before-db-outage-anchor',
+      senderPlatformUserId: 'external',
+      text: 'establish actual received seq',
+    });
+    const anchor = await observe({
+      read: async () => active.frames,
+      invariant: () => {
+        active.assertHealthy();
+        checkFrames();
+      },
+      complete: (frames) =>
+        frames.some(
+          (frame) => frame.type === 'message' && frame.msgId === 'before-db-outage-anchor',
+        ),
+      durationMs: 5_000,
+    });
+    if (!anchor.complete)
+      throw new BlockedError('No real pre-outage WS cursor; do not substitute a guessed seq');
+    await qa.evidence('database-recovery-ws-before-outage', evidence());
+    await qa.interruptDatabase();
+    const failedEvent = qa.gateway.emitMessage({
       groupId: group.gatewayGroupId,
       msgId: 'database-outage',
       senderPlatformUserId: 'external',
@@ -102,29 +178,76 @@ test('[REC-003] database write outage loses no event and produces inconsistency 
     });
     await new Promise((resolve) => setTimeout(resolve, 1_000));
     await qa.restoreDatabase();
+    await qa.evidence('database-recovery-ws-before-reconnect', evidence());
+    await connect(
+      'explicit recovery observation; actual peer close is recorded separately',
+      active!,
+    );
     const message = await eventually(
       () => qa.api.messages(group.id),
       (value) => value.items.some((item) => item.msgId === 'database-outage'),
     );
     expect(message.items.filter((item) => item.msgId === 'database-outage')).toHaveLength(1);
-    await eventually(
-      async () => frames,
-      (value) => value.some((frame) => frame.type === 'inconsistency'),
-    );
+    // Continue the independent consumption check even if no alert has yet arrived.
     qa.gateway.emitMessage({
       groupId: group.gatewayGroupId,
       msgId: 'after-db-recovery',
       senderPlatformUserId: 'external',
       text: 'still consuming',
     });
-    await eventually(
+    const recovered = await eventually(
       () => qa.api.messages(group.id),
-      (value) => value.items.length === 2,
+      (value) =>
+        ['before-db-outage-anchor', 'database-outage', 'after-db-recovery'].every((id) =>
+          value.items.some((item) => item.msgId === id),
+        ),
     );
-    await qa.evidence('database-recovery-websocket', frames);
+    for (const id of ['before-db-outage-anchor', 'database-outage', 'after-db-recovery'])
+      expect(recovered.items.filter((item) => item.msgId === id)).toHaveLength(1);
+    const identifiers = [
+      String(failedEvent.eventId),
+      'database-outage',
+      group.id,
+      group.gatewayGroupId,
+    ];
+    const notice = await observe({
+      read: async () => {
+        if (active.closed)
+          await connect(
+            'peer closed after database recovery; retry from last received seq',
+            active,
+          );
+        return sockets.flatMap((socket) => socket.frames);
+      },
+      invariant: checkFrames,
+      complete: (frames) =>
+        frames.some(
+          (frame) =>
+            frame.type === 'inconsistency' &&
+            identifiers.includes(String(frame.inconsistency?.ref)),
+        ),
+      durationMs: 15_000,
+    });
+    await qa.evidence('database-recovery-message-and-alert-observation', {
+      failedEvent,
+      recovered,
+      notice,
+      ws: evidence(),
+    });
+    if (!notice.complete)
+      throw new BlockedError(
+        'Recovered messages are present once, but no related inconsistency notice was proven on resumed WS; finite 15s is not a product SLA',
+      );
+  } catch (error) {
+    primaryFailed = true;
+    throw error;
   } finally {
-    await qa.restoreDatabase();
-    ws.close();
+    const cleanup = await finalizeReceipts(
+      () => qa.evidence('database-recovery-websocket', evidence()),
+      [...sockets, { close: () => qa.restoreDatabase() }],
+      primaryFailed,
+    );
+    if (cleanup.length) await qa.evidence('database-recovery-cleanup-errors', cleanup.map(String));
   }
 });
 

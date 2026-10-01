@@ -32,7 +32,7 @@
 
 **预期结果**
 
-1. run终态failed；失败消息deliveryStatus=failed、failCode为实际失败码、无伪造msgId；失败步骤sentAt为null，消息列表sentAt仍遵守原受理时间契约
+1. run终态failed；失败步骤status=failed并关联原clientMsgId；失败消息deliveryStatus=failed、failCode为实际失败码、无伪造msgId；消息列表sentAt仍遵守原受理时间契约
 2. 原要求明确的前序成功效果不重复且仍成功；同步失败及后续步骤没有实际消息，send账本仅含前序和一次失败请求；504分支单独检查同ID至多一次可选重发
 3. 普通失败后不得继续派发后续，即使外部失败条件解除或SUT重启；activeSequenceRunId=null
 4. 不规定后续未执行步骤的额外内部表示或预分配ID策略；只核对公开发送语义

@@ -149,6 +149,10 @@ test('authorization binds normalized full target and rejects mutation/expiry/mis
   const changed = structuredClone(c);
   changed.sut.start.args.push('--unreviewed');
   assert.throws(() => validateAuthorization(a, changed), BlockedError);
+  const headed = structuredClone(c);
+  headed.ui.headless = false;
+  assert.notEqual(targetFingerprint(headed), targetFingerprint(c));
+  assert.throws(() => validateAuthorization(a, headed), BlockedError);
   for (const patch of [
     { approvedBy: ' ' },
     { approvalReference: 'REQUIRED' },
@@ -181,6 +185,9 @@ test('target blocks injected database env, Node hooks, external routes and empty
     },
     (c: TargetConfig) => {
       c.ui.routes.login = '//example.test';
+    },
+    (c: TargetConfig) => {
+      (c.ui as unknown as Record<string, unknown>).headless = 'false';
     },
     (c: TargetConfig) => {
       c.sut.start.command = '';
@@ -365,7 +372,9 @@ test('browser proxy separates API/web and denies unreviewed proxy paths', async 
   assert.equal(await (await fetch(`${proxy.url}/%61pi/health`)).text(), 'owned-api');
   assert.equal(await (await fetch(`${proxy.url}/`)).text(), 'owned-web');
   assert.equal((await fetch(`${proxy.url}/unreviewed-proxy`)).status, 403);
-  assert.equal(webHits, 1);
+  assert.equal(await (await fetch(`${proxy.url}/@react-refresh`)).text(), 'owned-web');
+  assert.equal((await fetch(`${proxy.url}/@react-refresh/unreviewed-proxy`)).status, 403);
+  assert.equal(webHits, 2);
   for (const path of [
     'http://example.test/',
     '//example.test',

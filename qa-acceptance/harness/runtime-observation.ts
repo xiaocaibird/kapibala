@@ -50,7 +50,8 @@ export interface RuntimeEvent {
   transactionId?: string;
   requestId?: string;
   faultMarker?: string;
-  activeElapsedMs?: [number, number];
+  /** Null/absent is honest incomplete evidence only when includesUnsavedTail=false. */
+  activeElapsedMs?: [number, number] | null;
   persistedActiveMs?: number;
   epochIds?: string[];
   /** Required for activity evidence; false means lost tail has no proved bound. */
@@ -250,20 +251,28 @@ export function validateRuntimeSnapshot(
     }
     if (String(event.kind).startsWith('activity-')) {
       const bounds = event.activeElapsedMs;
+      const validBounds =
+        Array.isArray(bounds) &&
+        bounds.length === 2 &&
+        bounds.every((x) => typeof x === 'number' && Number.isFinite(x) && x >= 0) &&
+        bounds[0] <= bounds[1];
+      // Missing whole-run truth is valid incomplete evidence, not a malformed
+      // snapshot. A supplied interval still has to be well formed; completeness
+      // must never be inferred from persisted/current-epoch samples.
       if (
-        !Array.isArray(bounds) ||
-        bounds.length !== 2 ||
-        !bounds.every((x) => typeof x === 'number' && Number.isFinite(x) && x >= 0) ||
-        bounds[0] > bounds[1] ||
+        (bounds != null && !validBounds) ||
+        (event.includesUnsavedTail === true && !validBounds) ||
         typeof event.includesUnsavedTail !== 'boolean' ||
         !['active', 'recovery-paused', 'terminal', 'unknown'].includes(
           String(event.activityState),
         ) ||
         !Array.isArray(event.epochIds) ||
-        !event.epochIds.length ||
+        (event.includesUnsavedTail === true && !event.epochIds.length) ||
         !event.epochIds.every(text)
       )
-        throw new BlockedError('活动时间缺少可审计区间、真实活动状态、原始运行epoch或崩溃尾段说明');
+        throw new BlockedError(
+          '活动区间格式无效、完整性声明与区间矛盾，或缺少实际状态/epoch/尾段说明',
+        );
       if (
         event.kind === 'activity-safe-held' &&
         (!text(event.stepId) ||
@@ -280,12 +289,16 @@ export function validateRuntimeSnapshot(
 }
 /** recovery-paused means the real run cannot continue without operator/external
  * resolution; ordinary automatic scheduling delay must not be labelled this way. */
-export function assertRecoveredActivity(event: RuntimeEvent): void {
-  assert.notEqual(
-    event.activityState,
-    'recovery-paused',
+export function assertNoRecoveryPause(events: readonly RuntimeEvent[]): void {
+  // Check the whole snapshot before reporting missing budget/state evidence:
+  // an earlier incomplete checkpoint cannot hide a later proved recovery pause.
+  assert.ok(
+    !events.some((event) => event.activityState === 'recovery-paused'),
     '原A5.8强恢复未满足：原run等待人工或外部结果确认而不能自动续跑；这不是活动预算超时结论',
   );
+}
+export function assertRecoveredActivity(event: RuntimeEvent): void {
+  assertNoRecoveryPause([event]);
   if (!['active', 'terminal'].includes(String(event.activityState)))
     throw new BlockedError('实际活动/恢复状态没有可信见证，不能把进程在线或公开running当活动时间');
 }

@@ -13,6 +13,7 @@ import {
   diagnosticModule,
   assertActivityBudget,
   assertRecoveredActivity,
+  assertNoRecoveryPause,
   type RuntimeEvent,
   type RuntimeLease,
 } from '../../harness/runtime-observation.js';
@@ -213,7 +214,7 @@ test('[INT-ACT-001] activity budget accumulates across restart and excludes prov
       expect(next.target.pid).not.toBe(first.target.pid);
       const lease = await next.arm('observe-activity', correlation);
       const resumed = await lease.waitFor('activity-checkpoint');
-      for (const event of resumed.events) assertRecoveredActivity(event);
+      assertNoRecoveryPause(resumed.events);
       const offline: [number, number] = [startBefore - stopAfter, startAfter - stopBefore];
       let lastRunning: number | undefined, firstTerminal: number | undefined;
       const samples: { before: number; after: number; status: string }[] = [];
@@ -230,16 +231,16 @@ test('[INT-ACT-001] activity budget accumulates across restart and excludes prov
         },
         invariant: ({ run, witness }) => {
           expect(run.id).toBe(runId);
+          assertNoRecoveryPause(witness.events);
+          // An incomplete tail/unknown state blocks a budget conclusion, not
+          // the remaining bounded observation of independent recovery/public
+          // invariants. Never turn persisted/current-epoch time into run truth.
           for (const event of witness.events) {
-            assertRecoveredActivity(event);
-            if (!event.includesUnsavedTail)
-              throw new BlockedError(
-                '实际活动见证未包含完整epoch/崩溃尾段，不能用进程在线补造真值',
-              );
-            expect(
-              event.activeElapsedMs![0],
-              '实际活动下界已证明超过原始60秒预算',
-            ).toBeLessThanOrEqual(60_000);
+            if (event.includesUnsavedTail && event.activeElapsedMs)
+              expect(
+                event.activeElapsedMs[0],
+                '实际活动下界已证明超过原始60秒预算',
+              ).toBeLessThanOrEqual(60_000);
           }
           expect(
             qa.gateway.snapshot().requests.filter((request) => request.path.endsWith('/send')),
@@ -251,9 +252,21 @@ test('[INT-ACT-001] activity budget accumulates across restart and excludes prov
         durationMs: 85_000,
         intervalMs: 100,
       });
-      if (!result.complete)
-        throw new BlockedError('预算终态未在诊断观察期间出现；不增设85秒业务SLA');
+      if (!result.complete) {
+        await qa.evidence('activity-incomplete-observation', {
+          run: result.last.run,
+          witness: result.last.witness,
+          samples,
+          elapsedMs: result.elapsedMs,
+          claim:
+            '未观察到独立恢复违约；终态或完整活动证据不足，不能判预算通过，也不增设85秒业务SLA',
+        });
+        throw new BlockedError('预算终态或完整活动证据未在诊断观察期间获得；不增设85秒业务SLA');
+      }
+      // Public terminal cleanup is independent of activity interval availability.
+      expect((await qa.api.group(group.id)).activeAgentRunId).toBeNull();
       const witness = await lease.waitFor('activity-terminal');
+      assertNoRecoveryPause(witness.events);
       const event = witness.events.find((entry) => entry.kind === 'activity-terminal')!;
       const originalEpochs = safeBoundary.events.find(
         (entry) => entry.kind === 'activity-safe-held',
@@ -287,8 +300,8 @@ test('[INT-ACT-001] activity budget accumulates across restart and excludes prov
         claim:
           '进程在线仅给出实际活动上界；真实恢复状态和完整epoch/崩溃尾段另由独立见证证明，不接受固定误差容忍',
       });
+      for (const entry of witness.events) assertRecoveredActivity(entry);
       assertActivityBudget(event, processOnline);
-      expect((await qa.api.group(group.id)).activeAgentRunId).toBeNull();
     } catch (error) {
       primary = true;
       throw error;

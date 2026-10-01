@@ -1,0 +1,75 @@
+{
+  "connections": [
+    {
+      "openedAt": "2026-10-01T07:23:14.638Z",
+      "purpose": "initial authenticated observation"
+    },
+    {
+      "openedAt": "2026-10-01T07:23:15.795Z",
+      "sinceSeq": 13,
+      "purpose": "explicit recovery observation; actual peer close is recorded separately",
+      "previousPeerClose": {
+        "code": 4401,
+        "at": "2026-10-01T07:23:14.845Z"
+      }
+    }
+  ],
+  "sockets": [
+    {
+      "frames": [
+        {
+          "type": "auth",
+          "success": true
+        },
+        {
+          "type": "message",
+          "seq": 13,
+          "msgId": "before-db-outage-anchor",
+          "groupId": "55ace5e7-2102-4158-a686-c87e9449cc01",
+          "isOwn": false
+        }
+      ],
+      "closed": {
+        "code": 4401,
+        "at": "2026-10-01T07:23:14.845Z"
+      },
+      "errors": [],
+      "protocolErrors": [],
+      "lastReceivedSeq": 13
+    },
+    {
+      "frames": [
+        {
+          "type": "auth",
+          "success": true
+        },
+        {
+          "type": "message",
+          "seq": 14,
+          "msgId": "database-outage",
+          "groupId": "55ace5e7-2102-4158-a686-c87e9449cc01",
+          "isOwn": false
+        },
+        {
+          "type": "inconsistency",
+          "seq": 15,
+          "inconsistency": {
+            "kind": "gateway_event",
+            "ref": "4",
+            "message": "网关事件处理失败，事件保留在网关历史中并等待重试。"
+          }
+        },
+        {
+          "type": "message",
+          "seq": 16,
+          "msgId": "after-db-recovery",
+          "groupId": "55ace5e7-2102-4158-a686-c87e9449cc01",
+          "isOwn": false
+        }
+      ],
+      "errors": [],
+      "protocolErrors": [],
+      "lastReceivedSeq": 16
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "state": "ISSUED",
+  "reportPurpose": "当前冻结版本的正式业务验收；不扩大为上线评估",
+  "finalRun": "2026-10-01T06-54-18.519Z-a1e23916",
+  "originalRun": "2026-10-01T06-10-21.458Z-1fdb6180",
+  "sutRevision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+  "qaAssetCommit": "c529f31076f9c645b5b1b04a2184e641c81b031b",
+  "qaFrozenTreeSha256": "fb50f282f910d462545601e835db8fb10288c9c40718a4d5e0d0659f720fcb11",
+  "finalScope": {
+    "requirements": 116,
+    "cases": 254,
+    "automatedCases": 248,
+    "automatedProjectObligations": 256,
+    "manualCases": 6,
+    "totalProjectObligations": 262
+  },
+  "excluded": {
+    "releaseCases": 7,
+    "candidateCases": 5
+  },
+  "evidencePolicy": [
+    "原始结果不可改写；已证实QA前提错误单独纠正，在另行冻结的全量或定向运行中复测，逐次记录范围",
+    "PASS仅证明对应版本及本次有限故障窗口；不证明任意时刻重启的数学完备性",
+    "BLOCKED和NOT_RUN都不算通过；未解决问题不阻止独立测试继续",
+    "需求映射覆盖率不等于场景充分性；开发自测结果不计入QA通过数",
+    "报告模板中的preparationReadiness是冻结时历史注释，当前工程接入状态另有逐项台账"
+  ],
+  "priorRun": {
+    "sutRevision": "0af644334b00eb13e2e56df33c70f22358a6a0f7",
+    "cases": 251,
+    "PASS": 146,
+    "FAIL": 82,
+    "BLOCKED": 23,
+    "NOT_RUN": 0,
+    "qualification": "原始FAIL总数不是已确认产品缺陷数；若干PASS缺少场景前提，也已列入最终整轮重测"
+  },
+  "finalSmoke": {
+    "runId": "2026-10-01T06-53-16.144Z-9b614b2e",
+    "PASS": 15,
+    "FAIL": 0,
+    "retries": 0
+  },
+  "qaCorrections": [
+    "Agent桩按声明支持JSON Schema 2020-12/2019-09/draft07且保持非法协议拒绝",
+    "群退出等待实际处理中任务结束、已有成员事件前提修正",
+    "辅助启动继承明确归属的观测接入环境",
+    "删除无需求依据的failed step sentAt=null断言，保留发送与重启时序",
+    "历史分页改用同一冻结cursor参考集",
+    "数据库恢复场景记录真实WS关闭及从最后实际序号重连",
+    "使用正式构建、有头浏览器和经公开DOM确认的页面适配，保留原行为断言",
+    "CAP取消允许当前步完成；群不可写不得从群主终态推导",
+    "真实WS回放水位、分页响应及DOM身份核对；序列页面真实并发401",
+    "移除Playwright默认焦点仿真，验证原生标签焦点",
+    "SPEC006内联校验器按声明支持JSON Schema方言"
+  ],
+  "awaitingCompletion": [],
+  "qaAssetCommitQualification": "冻结196文件中195文件与c529f31一致，另1本地预跑授权配置；原始checkout Git为f63+dirty，精确内容以source tree hash为准",
+  "issuedAt": "2026-10-01T08:03:18.604689+00:00",
+  "verdict": "FAIL",
+  "reviewedBaselineCounts": {
+    "PASS": 236,
+    "FAIL": 8,
+    "BLOCKED": 10,
+    "NOT_RUN": 0
+  },
+  "reviewedBaselineRequirements": {
+    "PASS": 88,
+    "FAIL": 15,
+    "BLOCKED": 13
+  },
+  "laterProductRevision": "a6b14e73ec738b979b05510fdfac8c6fcbb09df7",
+  "remainingProductDefects": 6,
+  "fixedProductDefects": 1,
+  "supplementalSameVersionRuns": [
+    "2026-10-01T07-48-06.522Z-66d3a279",
+    "2026-10-01T07-58-48.233Z-e1e5e205"
+  ],
+  "cleanupEvidence": "cleanup-audit/audit-2026-10-01T08-01-54-298Z.json",
+  "engineeringIntake": {
+    "items": 13,
+    "established": 13,
+    "remainingIntegrationTasks": 0,
+    "qualifiedBusinessResults": {
+      "PASS": 12,
+      "FAIL": 1
+    },
+    "remainingFail": "CAP-003",
+    "evidence": "review-last-window.md"
+  },
+  "lastExecutedQaSourceCommit": "6525676",
+  "lastExecutedQaSourceTree": "70d89f8391f6c5975deff5cc124c667f8b9a95166227555b5798c0e1521e976c",
+  "reporterFixCommit": "709e7b003b69bcce4ee446471bf1a4c73a2eab85",
+  "finalToolVerification": {
+    "stages": 7,
+    "passedStages": 7,
+    "selfTests": 203,
+    "passedSelfTests": 203,
+    "evidence": "junit-reporter-tools.log"
+  }
+}

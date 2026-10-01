@@ -88,7 +88,14 @@ export interface TargetConfig {
     runtimeObservation?: {
       url: string;
       contractReference: string;
+      /** Optional engineering bridge directory, independently injected as QA_RUNTIME_REGISTRY_DIR. */
+      registryDirectory?: string;
       diagnostics?: RuntimeDiagnosticsProfile;
+    };
+    messageObservation?: {
+      url: string;
+      contractReference: string;
+      registryDirectory?: string;
     };
   };
   database: { image: string };
@@ -96,6 +103,8 @@ export interface TargetConfig {
     routes: Record<string, string>;
     selectors: Record<string, string>;
     adapterConfirmed: boolean;
+    /** Explicit false uses an owned visible browser for real tab focus; default true. */
+    headless?: boolean;
   };
   release: {
     approvedProfile: string | null;

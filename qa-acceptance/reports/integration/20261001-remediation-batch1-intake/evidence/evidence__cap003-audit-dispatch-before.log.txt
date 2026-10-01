@@ -1,0 +1,31 @@
+✖ Agent does not dispatch an audit request after its intent write consumes the remaining budget (558.515875ms)
+ℹ Independent database: kapibala_test_bbf877fd6fd046abb2ec09ebb9e32ec0
+ℹ {"runId":"expired-audit-intent","elapsedMs":422.14316700000006,"persistedActiveMs":60205,"auditRequests":1}
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 710.1325
+
+✖ failing tests:
+
+test at tests/integration/agent-dispatch-budget.test.ts:42:1
+✖ Agent does not dispatch an audit request after its intent write consumes the remaining budget (558.515875ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/agent-dispatch-budget.test.ts:71:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

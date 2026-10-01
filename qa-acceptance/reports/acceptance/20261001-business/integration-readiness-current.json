@@ -1,0 +1,2128 @@
+{
+  "formatVersion": 1,
+  "reviewedAt": "2026-10-01T07:45:32.055Z",
+  "stage": "POST_FORMAL_RUN_AND_SIX_MANUAL_RECORDS_PRE_QA_CORRECTION_RETEST",
+  "candidateRevision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+  "qaRevision": "f63b3e3b2b4f6e84b145dc03e724c0da03a4acdc",
+  "originalBaseline": {
+    "path": "requirements/blocker-reassessment.md",
+    "count": 13,
+    "caseIds": [
+      "CAP-001",
+      "CAP-002",
+      "CAP-003",
+      "CAP-004",
+      "CAP-005",
+      "CAP-006",
+      "CAP-007",
+      "CAP-008",
+      "CAP-009",
+      "CAP-010",
+      "BLK-MIG-001",
+      "UI-037",
+      "ARC-UI-BLK-001"
+    ],
+    "note": "历史preparation/dependency-pending按准备时刻保留，不作为今日13项仍未接入的结论。"
+  },
+  "evidenceBoundary": {
+    "readOnlyEvidenceReview": true,
+    "newProductTests": false,
+    "smokeRun": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e",
+    "formalRun": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916",
+    "formalResultAggregated": true,
+    "smokeCompletedAt": "2026-10-01T06:53:59.563Z",
+    "manualPerformedAt": "2026-10-01T07:04:58.328Z",
+    "note": "只读正式results、runner及逐用例现有证据；未新跑产品。16项QA前提补复测为后续独立批次，本表不预填通过。",
+    "formalResultGeneratedAt": "2026-10-01T07:33:53.298Z",
+    "formalRunnerCompletedAt": "2026-10-01T07:32:54.100Z",
+    "formalRunnerStatus": "failed",
+    "runnerErrors": [],
+    "manualRecordsRegistered": 6
+  },
+  "summary": {
+    "original13": 13,
+    "directScenarioVerifiedInFinalSmoke": 3,
+    "unchangedNoControllerClaimIsStale": true,
+    "businessAcceptanceConclusion": "NOT_UNCONDITIONALLY_ACCEPTABLE",
+    "smoke": {
+      "combinations": 15,
+      "passed": 15,
+      "attempt0": 15,
+      "projects": [
+        "system",
+        "chromium"
+      ],
+      "note": "UI001此处只有chromium组合PASS；不可改成含Firefox/WebKit的整用例通过。"
+    },
+    "configuredOrDelivered": 13,
+    "specificControlOrFixtureActuallyEstablished": 12,
+    "pageAdapterBoundButFaultWindowPending": 1,
+    "validScenarioConclusionCount": 10,
+    "formalRawCounts": {
+      "PASS": 9,
+      "FAIL": 3,
+      "BLOCKED": 1
+    },
+    "reviewedOriginal13": {
+      "PASS": 9,
+      "FAIL": 1,
+      "QA_CORRECTION_RETEST_PENDING": 3
+    },
+    "pendingQaCorrectionCases": [
+      "CAP-002",
+      "CAP-005",
+      "ARC-UI-BLK-001"
+    ],
+    "all13FullyVerified": false,
+    "meaning": "接入材料齐全不等于全场景已建立：12项实控/恢复制品，1项页面适配到达但真实失焦未建立。9项PASS、CAP003产品FAIL与3项QA纠正复测分开。"
+  },
+  "original13": [
+    {
+      "caseId": "CAP-001",
+      "title": "确证容量拒绝后零远端且释放后同一步只审计/踢人一次",
+      "baselineDependency": "真实容量控制器、目标进程归属、group/run/toolUseId关联拒绝及可释放占用；CAP003另需活动区间，CAP009另需before-ready窗口。",
+      "currentReadiness": "CONTROL_WINDOW_ACTUALLY_ESTABLISHED",
+      "validatedEvidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/api.ndjson",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/external-facts.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/cleanup.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-refusal.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-release-final.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-http-1fffadee-52d2-4e5c-a8cc-37f2b3df2c92.json"
+      ],
+      "observed": "本例独立绑定92574；真实held、2次关联capacity拒绝，callback未进入/远端0；释放后同step一次审计和kick，正常结束。",
+      "stillToVerify": "本次所列有限故障窗口已执行；不外推所有容量竞争与任意崩溃。",
+      "smokeStatus": "PASS",
+      "formalAssessment": "PASS",
+      "acceptanceInherited": false,
+      "rawFormalResult": {
+        "id": "CAP-001",
+        "status": "PASS",
+        "durationMs": 3220,
+        "evidence": [
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence"
+        ]
+      },
+      "smokeEvidenceRetained": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence"
+      ],
+      "specificScenarioControlObserved": true,
+      "formalIntegrationEvidence": {
+        "binding": {
+          "apiUrl": "http://127.0.0.1:55942",
+          "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+          "pid": 92574,
+          "ownershipVerified": true,
+          "contractReference": "docs/qa-remediation-final-20261001.md @ 86ad4e7e63786f652c965308b032b98415bdd7ac; QA capacity observation independent contract",
+          "capabilities": [
+            "admission-hold",
+            "before-ready-window",
+            "active-clock"
+          ]
+        },
+        "leases": [
+          {
+            "leaseId": "1268617e-daef-4b01-8549-af153483c80b",
+            "correlation": {
+              "groupId": "43c73f2f-b6a3-4d22-8157-7a7f31a47f55",
+              "runId": "f6066777-b20f-4032-ae58-eb283287dc3d",
+              "toolUseId": "qa-kick-capacity-release"
+            },
+            "eventKinds": [
+              "admission-refused",
+              "capacity-held",
+              "ready-persisted"
+            ],
+            "latestCount": 5,
+            "evidence": {
+              "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-http-1fffadee-52d2-4e5c-a8cc-37f2b3df2c92.json",
+              "sha256": "c9716b51670cd41774b5dd1f34d31b66824e79ae4aa227a295a799776f052ab2"
+            },
+            "distinctRefusedAttempts": 2
+          }
+        ],
+        "files": [
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-binding-verified.json",
+            "sha256": "1785504566ed01005f94eb45e0ed37fc1856c15e526ce09c8f91535e32685ef5"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/api.ndjson",
+            "sha256": "bf8b0568b423130ac089cdac2a65530e24f839d0a186b6bfdd1045bca95a6d67"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/external-facts.json",
+            "sha256": "85497b9d76fad1e3173ffc714642fde82ed6b62e57f3c4722b036e3109147838"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/cleanup.json",
+            "sha256": "00242f428002a69a3bdc77d3e193cf1a349253f35b1b29694a9a20cf293cabe6"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-refusal.json",
+            "sha256": "b11dec67f4f938da67c8ec25e8c66e30e92c87bcfba2fe3332571de4a9ad78a6"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-release-final.json",
+            "sha256": "cc7973d41e21d0d5d210198057b8161a57ec37b383edf78cec0da0da4932413f"
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "CAP-002",
+      "title": "容量等待期间关闭 Agent 的取消边界",
+      "baselineDependency": "真实容量控制器、目标进程归属、group/run/toolUseId关联拒绝及可释放占用；CAP003另需活动区间，CAP009另需before-ready窗口。",
+      "currentReadiness": "CONTROL_WINDOW_ACTUALLY_ESTABLISHED",
+      "validatedEvidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/evidence/api.ndjson",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/evidence/external-facts.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/evidence/cleanup.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/evidence/capacity-refusal.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/evidence/capacity-http-ed04d741-3642-4788-a788-e8d18caa3fb0.json"
+      ],
+      "observed": "本例独立绑定93005；真实held及515次关联capacity拒绝已发生。原脚本保持占用时等待30秒终态，违反当前步完成后取消的前提；控制器接入成立，业务取消结论须修正QA后重测。",
+      "stillToVerify": "控制窗口已实证；原FAIL保留，产品结论待16项QA修正子集独立复测。",
+      "smokeStatus": "OUTSIDE_SMOKE_SUBSET",
+      "formalAssessment": "QA_PREMISE_CORRECTION_RETEST_PENDING",
+      "acceptanceInherited": false,
+      "rawFormalResult": {
+        "id": "CAP-002",
+        "status": "FAIL",
+        "reason": "Error: Condition not reached: /api/agent-runs/62bc7cff-0c87-42be-9a4f-ed96166e2435; last={\"id\":\"62bc7cff-0c87-42be-9a4f-ed96166e2435\",\"groupId\":\"886635b0-b7a9-45d5-b445-5cd34c9bff4c\",\"status\":\"running\",\"endReason\":null,\"summary\":null,\"recoveryNote\":null,\"steps\":[{\"ordinal\":1,\"kind\":\"tool_use\",\"toolUseId\":\"qa-kick-capacity-cancel\",\"name\":\"kick_user\",\"input\":{\"reason\":\"QA boundary capacity-cancel\",\"platform_user_id\":\"qa-shared-external-target\"},\"resultSummary\":\"\",\"isError\":false,\"errorCode\":null,\"auditVerdict\":\"pass\",\"rawResponse\":\"{\\\"stop_reason\\\":\\\"tool_use\\\",\\\"content\\\":[{\\\"type\\\":\\\"tool_use\\\",\\\"id\\\":\\\"qa-kick-capacity-cancel\\\",\\\"name\\\":\\\"kick_user\\\",\\\"input\\\":{\\\"platform_user_id\\\":\\\"qa-shared-external-target\\\",\\\"reason\\\":\\\"QA boundary capacity-cancel\\\"}}]}\"}]}",
+        "durationMs": 33234,
+        "evidence": [
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/evidence",
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/error-context.md",
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/trace.zip"
+        ],
+        "defectId": "DEF-CAP-002"
+      },
+      "smokeEvidenceRetained": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-refusal.json"
+      ],
+      "specificScenarioControlObserved": true,
+      "formalIntegrationEvidence": {
+        "binding": {
+          "apiUrl": "http://127.0.0.1:55988",
+          "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+          "pid": 93005,
+          "ownershipVerified": true,
+          "contractReference": "docs/qa-remediation-final-20261001.md @ 86ad4e7e63786f652c965308b032b98415bdd7ac; QA capacity observation independent contract",
+          "capabilities": [
+            "admission-hold",
+            "before-ready-window",
+            "active-clock"
+          ]
+        },
+        "leases": [
+          {
+            "leaseId": "8f8f0d73-077e-4cc1-93ef-1a3412c91613",
+            "correlation": {
+              "groupId": "886635b0-b7a9-45d5-b445-5cd34c9bff4c",
+              "runId": "62bc7cff-0c87-42be-9a4f-ed96166e2435",
+              "toolUseId": "qa-kick-capacity-cancel"
+            },
+            "eventKinds": [
+              "admission-refused",
+              "capacity-held",
+              "ready-persisted"
+            ],
+            "latestCount": 1031,
+            "evidence": {
+              "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/evidence/capacity-http-ed04d741-3642-4788-a788-e8d18caa3fb0.json",
+              "sha256": "ea332568ca1a3fadbb9c882f132c3bf9a7dcd4976e5eeb8c4ac4c348db51df83"
+            },
+            "distinctRefusedAttempts": 515
+          }
+        ],
+        "files": [
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/evidence/capacity-binding-verified.json",
+            "sha256": "bfab087c91ec297eca4bb0a5aaddb0816fa64ee56493407281c547cc5c786132"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/evidence/api.ndjson",
+            "sha256": "05826de0476f437f30bb07da08bb5d42175c35f608ce370ce787cc754015a795"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/evidence/external-facts.json",
+            "sha256": "51617597835a5fc1ea1cc9dcaaed3b4f1aa4485d1faad60b5b007cc4c5c2400f"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/evidence/cleanup.json",
+            "sha256": "8ad54fcabe27834577b5c828e0a7ba035741ef2d0c39475ff6599c04e02098e9"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system/evidence/capacity-refusal.json",
+            "sha256": "ece76d7ae8a0999795bcc129adb1138fec3f34cabd74d303a85d4de09a566cae"
+          }
+        ]
+      },
+      "qaCorrectionReference": "requirements/qa-correction-capacity-cancellation-20261001.md"
+    },
+    {
+      "caseId": "CAP-003",
+      "title": "持续容量拒绝计入原 60 秒活动预算",
+      "baselineDependency": "真实容量控制器、目标进程归属、group/run/toolUseId关联拒绝及可释放占用；CAP003另需活动区间，CAP009另需before-ready窗口。",
+      "currentReadiness": "CONTROL_WINDOW_ACTUALLY_ESTABLISHED",
+      "validatedEvidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/api.ndjson",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/external-facts.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/cleanup.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-refusal.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-active-budget.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-http-72dab3f6-5c76-4625-b5ba-c7789e16525c.json"
+      ],
+      "observed": "本例独立绑定93839；持续真实拒绝921次并采得run-terminal活动区间[60010,60112]ms，独立公开界[59861.22225,60159.5885]相交；明确下界超过60000，产品FAIL，非缺控制器。",
+      "stillToVerify": "本次所列有限故障窗口已执行；不外推所有容量竞争与任意崩溃。",
+      "smokeStatus": "OUTSIDE_SMOKE_SUBSET",
+      "formalAssessment": "FAIL",
+      "acceptanceInherited": false,
+      "rawFormalResult": {
+        "id": "CAP-003",
+        "status": "FAIL",
+        "reason": "Error: 已确定超过活动预算才停止\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeLessThanOrEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected: <= \u001b[32m60000\u001b[39m\nReceived:    \u001b[31m60010\u001b[39m",
+        "durationMs": 62134,
+        "evidence": [
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence",
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/error-context.md",
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/trace.zip"
+        ],
+        "defectId": "DEF-CAP-003"
+      },
+      "smokeEvidenceRetained": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-refusal.json"
+      ],
+      "specificScenarioControlObserved": true,
+      "formalIntegrationEvidence": {
+        "binding": {
+          "apiUrl": "http://127.0.0.1:56090",
+          "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+          "pid": 93839,
+          "ownershipVerified": true,
+          "contractReference": "docs/qa-remediation-final-20261001.md @ 86ad4e7e63786f652c965308b032b98415bdd7ac; QA capacity observation independent contract",
+          "capabilities": [
+            "admission-hold",
+            "before-ready-window",
+            "active-clock"
+          ]
+        },
+        "leases": [
+          {
+            "leaseId": "9f4a0533-31e7-4f33-9689-5d4b13ef5fec",
+            "correlation": {
+              "groupId": "f656874a-c09e-44ff-8bf7-059da4dd9576",
+              "runId": "b812b9e7-5aba-4d52-a67c-c165be446c8d",
+              "toolUseId": "qa-kick-capacity-budget"
+            },
+            "eventKinds": [
+              "admission-refused",
+              "capacity-held",
+              "ready-persisted",
+              "run-terminal"
+            ],
+            "latestCount": 1844,
+            "evidence": {
+              "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-http-72dab3f6-5c76-4625-b5ba-c7789e16525c.json",
+              "sha256": "73afe460bc0fcedfd7dd6f2e7226413f310a3fef6a5efd136b1d6969bb30e1ec"
+            },
+            "distinctRefusedAttempts": 921
+          }
+        ],
+        "files": [
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-binding-verified.json",
+            "sha256": "ac91aa0aad3b27dc82c5716bfb1f16887024d90cbb63e6c9623a8c54e5028ff4"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/api.ndjson",
+            "sha256": "0110ffacc9e7c610a98e9623ac6fbea160ae852035345a6a5b8fd2e9a3177695"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/external-facts.json",
+            "sha256": "b027145ca2b710bda431330b2bf9e0a66446b68c4f558a34073d2a3923130004"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/cleanup.json",
+            "sha256": "dadc05f61c6eb411ed660bc0394925cdd5b99d0bb228560d90045e31ce1e5938"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-refusal.json",
+            "sha256": "3bbe9907a1dcaf0cbd89f9aca6be23b857dec0fa8eeb3ac83ae828b95d24b2e7"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-active-budget.json",
+            "sha256": "42fdb2acc573ac15432b0c58108c7e98b5633b8a81cab74d52f3a3dfcadc1018"
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "CAP-004",
+      "title": "容量等待期间关闭踢人政策再次检查",
+      "baselineDependency": "真实容量控制器、目标进程归属、group/run/toolUseId关联拒绝及可释放占用；CAP003另需活动区间，CAP009另需before-ready窗口。",
+      "currentReadiness": "CONTROL_WINDOW_ACTUALLY_ESTABLISHED",
+      "validatedEvidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence/api.ndjson",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence/external-facts.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence/cleanup.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence/capacity-refusal.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence/capacity-policy-final.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence/capacity-http-dc749e2f-7540-4af8-908e-e03583d23f8d.json"
+      ],
+      "observed": "本例独立held/2次拒绝后关闭autoKick，释放后真实POLICY_DENIED、零kick，原run正常结束。",
+      "stillToVerify": "本次所列有限故障窗口已执行；不外推所有容量竞争与任意崩溃。",
+      "smokeStatus": "OUTSIDE_SMOKE_SUBSET",
+      "formalAssessment": "PASS",
+      "acceptanceInherited": false,
+      "rawFormalResult": {
+        "id": "CAP-004",
+        "status": "PASS",
+        "durationMs": 2176,
+        "evidence": [
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence"
+        ]
+      },
+      "smokeEvidenceRetained": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-refusal.json"
+      ],
+      "specificScenarioControlObserved": true,
+      "formalIntegrationEvidence": {
+        "binding": {
+          "apiUrl": "http://127.0.0.1:56240",
+          "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+          "pid": 97136,
+          "ownershipVerified": true,
+          "contractReference": "docs/qa-remediation-final-20261001.md @ 86ad4e7e63786f652c965308b032b98415bdd7ac; QA capacity observation independent contract",
+          "capabilities": [
+            "admission-hold",
+            "before-ready-window",
+            "active-clock"
+          ]
+        },
+        "leases": [
+          {
+            "leaseId": "605100d9-e3de-4b62-a8d0-09b94fe431ed",
+            "correlation": {
+              "groupId": "44d4fd79-6ac6-4361-a8df-00652c401822",
+              "runId": "46e4916e-aac7-4c81-9852-ad1e0a1d4141",
+              "toolUseId": "qa-kick-capacity-policy"
+            },
+            "eventKinds": [
+              "admission-refused",
+              "capacity-held",
+              "ready-persisted"
+            ],
+            "latestCount": 5,
+            "evidence": {
+              "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence/capacity-http-dc749e2f-7540-4af8-908e-e03583d23f8d.json",
+              "sha256": "9821d55de159dc4ba04fb9f69b404d831cd3bb3a3a0694ec2ec09c6995b00274"
+            },
+            "distinctRefusedAttempts": 2
+          }
+        ],
+        "files": [
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence/capacity-binding-verified.json",
+            "sha256": "30c2a037c3fbc8fce56d9eee521b9555d5c7e95e29f2d64ae4dfd1ee90581ac0"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence/api.ndjson",
+            "sha256": "3594f6f5adf47366930f1f8a3abcd4ca25d92b4efcb6883703753e46b6131479"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence/external-facts.json",
+            "sha256": "7d425847a827287dfeca36e2867a48a0510dcb37d82622cfc76644ccec16f775"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence/cleanup.json",
+            "sha256": "8a2ed5af16d19c85ec6847cd6d0f393f53bf90503022b1a3a814609614f13468"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence/capacity-refusal.json",
+            "sha256": "1851716615ab083cd93a2e0671076db81382ac68a52230c8e4a7edb0f2a17088"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence/capacity-policy-final.json",
+            "sha256": "ce48bcdb04e0753039fe8d92c5f4c84cd58507d9e11cee8534732e457e0eda60"
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "CAP-005",
+      "title": "容量等待期间群变不可写阻止迟发踢人",
+      "baselineDependency": "真实容量控制器、目标进程归属、group/run/toolUseId关联拒绝及可释放占用；CAP003另需活动区间，CAP009另需before-ready窗口。",
+      "currentReadiness": "CONTROL_WINDOW_ACTUALLY_ESTABLISHED",
+      "validatedEvidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/api.ndjson",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/external-facts.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/cleanup.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-refusal.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-http-f3ceefc8-a60d-4828-a1dd-57f181b79b01.json"
+      ],
+      "observed": "本例真实held及262次拒绝已发生；原注入creator suspended不等同群不可写，公开群仍active且网关writable=true。控制器接入成立，须改为真实GROUP_WRITE_FORBIDDEN前提重测。",
+      "stillToVerify": "控制窗口已实证；原FAIL保留，产品结论待16项QA修正子集独立复测。",
+      "smokeStatus": "OUTSIDE_SMOKE_SUBSET",
+      "formalAssessment": "QA_PREMISE_CORRECTION_RETEST_PENDING",
+      "acceptanceInherited": false,
+      "rawFormalResult": {
+        "id": "CAP-005",
+        "status": "FAIL",
+        "reason": "Error: Condition not reached: public API predicate; last={\"id\":\"7f28e50a-97f2-4e75-9030-35c188ecd8fc\",\"name\":null,\"description\":null,\"createdAt\":\"2026-10-01T07:16:57.535Z\",\"gatewayGroupId\":\"gateway-group-1\",\"status\":\"active\",\"creatorAccountId\":\"account-1\",\"agentEnabled\":true,\"autoKickEnabled\":true,\"members\":[{\"accountId\":\"account-2\",\"platformUserId\":\"platform-account-2\",\"role\":\"admin\"},{\"accountId\":\"account-3\",\"platformUserId\":\"platform-account-3\",\"role\":\"member\"},{\"accountId\":null,\"platformUserId\":\"qa-shared-external-target\",\"role\":\"member\"}],\"activeAgentRunId\":\"4ed4f7e6-d6ea-4059-a86f-ff4724cc38aa\",\"activeSequenceRunId\":null}",
+        "durationMs": 17184,
+        "evidence": [
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence",
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/error-context.md",
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/trace.zip"
+        ],
+        "defectId": "DEF-CAP-005"
+      },
+      "smokeEvidenceRetained": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-refusal.json"
+      ],
+      "specificScenarioControlObserved": true,
+      "formalIntegrationEvidence": {
+        "binding": {
+          "apiUrl": "http://127.0.0.1:56314",
+          "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+          "pid": 97988,
+          "ownershipVerified": true,
+          "contractReference": "docs/qa-remediation-final-20261001.md @ 86ad4e7e63786f652c965308b032b98415bdd7ac; QA capacity observation independent contract",
+          "capabilities": [
+            "admission-hold",
+            "before-ready-window",
+            "active-clock"
+          ]
+        },
+        "leases": [
+          {
+            "leaseId": "d77ea0e3-943e-40de-966a-60513410a1aa",
+            "correlation": {
+              "groupId": "7f28e50a-97f2-4e75-9030-35c188ecd8fc",
+              "runId": "4ed4f7e6-d6ea-4059-a86f-ff4724cc38aa",
+              "toolUseId": "qa-kick-capacity-unreachable"
+            },
+            "eventKinds": [
+              "admission-refused",
+              "capacity-held",
+              "ready-persisted"
+            ],
+            "latestCount": 525,
+            "evidence": {
+              "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-http-f3ceefc8-a60d-4828-a1dd-57f181b79b01.json",
+              "sha256": "66dd024bb453d5723c6731ee9f6a77300740a6503aa48f5e436bed03bc058b4a"
+            },
+            "distinctRefusedAttempts": 262
+          }
+        ],
+        "files": [
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-binding-verified.json",
+            "sha256": "f5d3268d2814c8cfcdea8f440dbcd53015d2fca4d44ab46d07231b4566e1e45d"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/api.ndjson",
+            "sha256": "53455b0991f0cd4cdfc12f37ff387b423f03cdf9aac4c41cc8239de0249ae90d"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/external-facts.json",
+            "sha256": "82b7e1b13d899c4c64f54962bf3ab95ce45c9883bc6d34f420c28e953b4f2e0e"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/cleanup.json",
+            "sha256": "bd2133ba5d4c0c09c8835c65b0554a55c2a761f01cdd47c0d275d8d3a4beb628"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-refusal.json",
+            "sha256": "cc681162f41eae54d1ef86c22fa1f352ad5c60b228c91841525da0fdba8faba2"
+          }
+        ]
+      },
+      "qaCorrectionReference": "requirements/qa-correction-capacity-cancellation-20261001.md"
+    },
+    {
+      "caseId": "CAP-006",
+      "title": "容量等待后在线、成员与管理员资格复核",
+      "baselineDependency": "真实容量控制器、目标进程归属、group/run/toolUseId关联拒绝及可释放占用；CAP003另需活动区间，CAP009另需before-ready窗口。",
+      "currentReadiness": "CONTROL_WINDOW_ACTUALLY_ESTABLISHED",
+      "validatedEvidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/api.ndjson",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/external-facts.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/cleanup.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/capacity-refusal.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/capacity-actor-no-qualified-actor-final.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/capacity-actor-creator-remains-final.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/capacity-http-8687b94b-aeac-4c0c-bc1f-aeb5ca63ef38.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/capacity-http-968ffd7d-0674-4dc1-85ad-6f0d718c3cff.json"
+      ],
+      "observed": "两个独立lease均有真实拒绝，各3次：creator-remains与no-qualified-actor。在线/群成员/管理员资格变化后分别选剩余creator或NO_AVAILABLE_ACCOUNT，原始用例PASS。",
+      "stillToVerify": "本次所列有限故障窗口已执行；不外推所有容量竞争与任意崩溃。",
+      "smokeStatus": "OUTSIDE_SMOKE_SUBSET",
+      "formalAssessment": "PASS",
+      "acceptanceInherited": false,
+      "rawFormalResult": {
+        "id": "CAP-006",
+        "status": "PASS",
+        "durationMs": 4696,
+        "evidence": [
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence"
+        ]
+      },
+      "smokeEvidenceRetained": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-refusal.json"
+      ],
+      "specificScenarioControlObserved": true,
+      "formalIntegrationEvidence": {
+        "binding": {
+          "apiUrl": "http://127.0.0.1:56393",
+          "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+          "pid": 99777,
+          "ownershipVerified": true,
+          "contractReference": "docs/qa-remediation-final-20261001.md @ 86ad4e7e63786f652c965308b032b98415bdd7ac; QA capacity observation independent contract",
+          "capabilities": [
+            "admission-hold",
+            "before-ready-window",
+            "active-clock"
+          ]
+        },
+        "leases": [
+          {
+            "leaseId": "1d99c2cd-c110-480d-8289-e8342dd3729b",
+            "correlation": {
+              "groupId": "4d9b2824-ca5d-434b-8b08-00447732902b",
+              "runId": "879e19f0-bdca-4d48-8eed-2c26c3b6f992",
+              "toolUseId": "qa-kick-capacity-actor-creator-remains"
+            },
+            "eventKinds": [
+              "admission-refused",
+              "capacity-held",
+              "ready-persisted"
+            ],
+            "latestCount": 7,
+            "evidence": {
+              "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/capacity-http-8687b94b-aeac-4c0c-bc1f-aeb5ca63ef38.json",
+              "sha256": "281f5bb820a9bb35e240c45f9c9cac6355dc3e237cfa100a8d1d7946c3c884cf"
+            },
+            "distinctRefusedAttempts": 3
+          },
+          {
+            "leaseId": "95e3b276-6e90-44a5-a8ac-656dc44884a9",
+            "correlation": {
+              "groupId": "98288ffb-4e0c-435e-8281-78da3b7ac745",
+              "runId": "0375403d-852a-4d97-9983-24cd2c975d11",
+              "toolUseId": "qa-kick-capacity-actor-no-qualified-actor"
+            },
+            "eventKinds": [
+              "admission-refused",
+              "capacity-held",
+              "ready-persisted"
+            ],
+            "latestCount": 7,
+            "evidence": {
+              "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/capacity-http-968ffd7d-0674-4dc1-85ad-6f0d718c3cff.json",
+              "sha256": "28ced0e95280d975380ded8fc45aca5f780bc69a422e6e2685c19351a4c68ecf"
+            },
+            "distinctRefusedAttempts": 3
+          }
+        ],
+        "files": [
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/capacity-binding-verified.json",
+            "sha256": "abf16a2e7ffeecc64428ef970e5a6f371989c1d1779c07662051c270670d64a5"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/api.ndjson",
+            "sha256": "92c419296ae052c20dacef3c43e06310403041ac0658999f76b9fdfcbafced0b"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/external-facts.json",
+            "sha256": "6cf8f8d9474f95a3bd10aa18525090acccbad9e3bb7d279a8847ae67842e71b1"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/cleanup.json",
+            "sha256": "4cbc9573b4aa6f34e2fc5cb11a68f3d60470e6a1774b24e51bf96dfe88cc1c56"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/capacity-refusal.json",
+            "sha256": "1914b3d2be6edf0b04ac8ecc86d58b240d6baf9aa184b07f5f265c1300cd3baf"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/capacity-actor-no-qualified-actor-final.json",
+            "sha256": "836bcbc310f4215decc95c6aad34e4d5a6e839a2e479957a1a3350cdb9759243"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence/capacity-actor-creator-remains-final.json",
+            "sha256": "6393abe5d4617c6ed4ce091ddc5deec5632c305d6753210626607c63556154d9"
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "CAP-007",
+      "title": "容量等待中目标退出或重新加入后按同一用户身份完成移除且不重复",
+      "baselineDependency": "真实容量控制器、目标进程归属、group/run/toolUseId关联拒绝及可释放占用；CAP003另需活动区间，CAP009另需before-ready窗口。",
+      "currentReadiness": "CONTROL_WINDOW_ACTUALLY_ESTABLISHED",
+      "validatedEvidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence/api.ndjson",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence/external-facts.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence/cleanup.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence/capacity-refusal.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence/capacity-http-8cf7c2de-5ce0-4dba-af1f-297b26df9374.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence/capacity-http-76eaf79d-5c82-4c2e-8524-c106fddd3211.json"
+      ],
+      "observed": "leave/rejoin两个独立lease均各2次真实拒绝；目标离开或重入后按同一platformUserId完成检查，原始用例PASS。",
+      "stillToVerify": "本次所列有限故障窗口已执行；不外推所有容量竞争与任意崩溃。",
+      "smokeStatus": "OUTSIDE_SMOKE_SUBSET",
+      "formalAssessment": "PASS",
+      "acceptanceInherited": false,
+      "rawFormalResult": {
+        "id": "CAP-007",
+        "status": "PASS",
+        "durationMs": 5622,
+        "evidence": [
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence"
+        ]
+      },
+      "smokeEvidenceRetained": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-refusal.json"
+      ],
+      "specificScenarioControlObserved": true,
+      "formalIntegrationEvidence": {
+        "binding": {
+          "apiUrl": "http://127.0.0.1:56442",
+          "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+          "pid": 781,
+          "ownershipVerified": true,
+          "contractReference": "docs/qa-remediation-final-20261001.md @ 86ad4e7e63786f652c965308b032b98415bdd7ac; QA capacity observation independent contract",
+          "capabilities": [
+            "admission-hold",
+            "before-ready-window",
+            "active-clock"
+          ]
+        },
+        "leases": [
+          {
+            "leaseId": "1ce4cb60-c0ba-471f-8229-66c15c6af7da",
+            "correlation": {
+              "groupId": "429c02bd-f89f-4aa9-9e6f-a7ee9e20876e",
+              "runId": "78fcc454-b0cd-40a9-8018-06789fde566f",
+              "toolUseId": "qa-kick-capacity-target-leave"
+            },
+            "eventKinds": [
+              "admission-refused",
+              "capacity-held",
+              "ready-persisted"
+            ],
+            "latestCount": 5,
+            "evidence": {
+              "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence/capacity-http-8cf7c2de-5ce0-4dba-af1f-297b26df9374.json",
+              "sha256": "7e442d18be9f9fc2a4dc851889823b3d9f0131dd3730f3e5168388b262ab9a1e"
+            },
+            "distinctRefusedAttempts": 2
+          },
+          {
+            "leaseId": "0c60e87f-c405-4900-ae95-65a7771d97ea",
+            "correlation": {
+              "groupId": "97d3aafe-836e-4c03-852d-6dae3bbf3b9d",
+              "runId": "35ab348b-a0d5-4030-9d9c-2dfa74b365b3",
+              "toolUseId": "qa-kick-capacity-target-rejoin"
+            },
+            "eventKinds": [
+              "admission-refused",
+              "capacity-held",
+              "ready-persisted"
+            ],
+            "latestCount": 5,
+            "evidence": {
+              "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence/capacity-http-76eaf79d-5c82-4c2e-8524-c106fddd3211.json",
+              "sha256": "bd3d53883184b57cd598d3156d39be85d24ce4256977a2b016ab449fabaa8841"
+            },
+            "distinctRefusedAttempts": 2
+          }
+        ],
+        "files": [
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence/capacity-binding-verified.json",
+            "sha256": "aa336a86d76072c8289155632842ad581ad09c5990db414823e12b1ae9e6315b"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence/api.ndjson",
+            "sha256": "211a72de58bf955b9f896e698da60ac746f03968908bdae93c963f2dfececa68"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence/external-facts.json",
+            "sha256": "d0f628b7ff295b36ca1e900f898ecb373a2ce452a3ab5fc1fa99b87e145b2506"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence/cleanup.json",
+            "sha256": "2c82b98961f3e0eec02bc3eecae699d9c79226b82ddea7d3e696b0f8535ad892"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence/capacity-refusal.json",
+            "sha256": "8159c377930cb894bc053c318d7fc8d43ad11808c308331beb60078979735b3e"
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "CAP-008",
+      "title": "容量延期后真实网关群主或权限错误仍按原业务契约返回",
+      "baselineDependency": "真实容量控制器、目标进程归属、group/run/toolUseId关联拒绝及可释放占用；CAP003另需活动区间，CAP009另需before-ready窗口。",
+      "currentReadiness": "CONTROL_WINDOW_ACTUALLY_ESTABLISHED",
+      "validatedEvidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/api.ndjson",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/external-facts.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/cleanup.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/capacity-refusal.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/capacity-error-NO_PERMISSION-final.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/capacity-error-OWNER_LEFT-final.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/capacity-http-68595027-0f2e-4f68-b352-278349b394a3.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/capacity-http-d8bd831f-11ba-4861-930a-1eab8bae519b.json"
+      ],
+      "observed": "OWNER_LEFT与NO_PERMISSION两分支各自held并真实拒绝2/3次；释放后由真实网关请求返回既定业务错误，原始用例PASS。",
+      "stillToVerify": "本次所列有限故障窗口已执行；不外推所有容量竞争与任意崩溃。",
+      "smokeStatus": "OUTSIDE_SMOKE_SUBSET",
+      "formalAssessment": "PASS",
+      "acceptanceInherited": false,
+      "rawFormalResult": {
+        "id": "CAP-008",
+        "status": "PASS",
+        "durationMs": 5642,
+        "evidence": [
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence"
+        ]
+      },
+      "smokeEvidenceRetained": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-refusal.json"
+      ],
+      "specificScenarioControlObserved": true,
+      "formalIntegrationEvidence": {
+        "binding": {
+          "apiUrl": "http://127.0.0.1:56492",
+          "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+          "pid": 1643,
+          "ownershipVerified": true,
+          "contractReference": "docs/qa-remediation-final-20261001.md @ 86ad4e7e63786f652c965308b032b98415bdd7ac; QA capacity observation independent contract",
+          "capabilities": [
+            "admission-hold",
+            "before-ready-window",
+            "active-clock"
+          ]
+        },
+        "leases": [
+          {
+            "leaseId": "22ea4f9d-aab2-4dce-a8f6-46f7baa3b184",
+            "correlation": {
+              "groupId": "94017c41-892a-463f-bc3b-5d21201df039",
+              "runId": "d1980b9c-c065-441c-8dfe-84154bd76a94",
+              "toolUseId": "qa-kick-capacity-error-OWNER_LEFT"
+            },
+            "eventKinds": [
+              "admission-refused",
+              "capacity-held",
+              "ready-persisted"
+            ],
+            "latestCount": 5,
+            "evidence": {
+              "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/capacity-http-68595027-0f2e-4f68-b352-278349b394a3.json",
+              "sha256": "f987a1b5bddd5bbd02dff65badc162c611ee7c89e4bdc2074b1e3e1d9236c43d"
+            },
+            "distinctRefusedAttempts": 2
+          },
+          {
+            "leaseId": "36d9b930-c632-4d59-8f69-20c22a6df306",
+            "correlation": {
+              "groupId": "e1ba3fab-3d3c-42ae-adfe-74c94f0ca007",
+              "runId": "79054c9c-fab5-487a-ab5e-f99912aa8714",
+              "toolUseId": "qa-kick-capacity-error-NO_PERMISSION"
+            },
+            "eventKinds": [
+              "admission-refused",
+              "capacity-held",
+              "ready-persisted"
+            ],
+            "latestCount": 7,
+            "evidence": {
+              "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/capacity-http-d8bd831f-11ba-4861-930a-1eab8bae519b.json",
+              "sha256": "bf299d37d487f0781d1f3f6dc8ece7f04deb248acfc45999c850f9e038e6f33b"
+            },
+            "distinctRefusedAttempts": 3
+          }
+        ],
+        "files": [
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/capacity-binding-verified.json",
+            "sha256": "ca0d94c27e23c48479bc15b2108947ebefc1f6b507ae6478d35f45ce8ed671e2"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/api.ndjson",
+            "sha256": "1ba8a1b26382623fbb95f559879c3af566738bf9ab47c0967c2339c3d4c024b4"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/external-facts.json",
+            "sha256": "f62bfb81a16f5b6949da6d87fabaa2f69bcac671f169176c92d0f5561c3f53ba"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/cleanup.json",
+            "sha256": "5d4010bff5acab1420bc49a0ef95c19e30c7195ed9c70b2ff122d0c54fb8aa54"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/capacity-refusal.json",
+            "sha256": "33daa08604af4039d952a7cbd3a79c1aff5307042f2c9398334849884d4943d9"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/capacity-error-NO_PERMISSION-final.json",
+            "sha256": "6d27500a21f88d073aaa49ac09d2e0cc7ca76cc4d1a887cc8ecd81eb43c30589"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/capacity-error-OWNER_LEFT-final.json",
+            "sha256": "2585223085159675cfa526e6a0c7ce980b096fc78eeeec23a35230d0aaf67d03"
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "CAP-009",
+      "title": "容量已拒绝但 ready 持久化之前崩溃的恢复",
+      "baselineDependency": "真实容量控制器、目标进程归属、group/run/toolUseId关联拒绝及可释放占用；CAP003另需活动区间，CAP009另需before-ready窗口。",
+      "currentReadiness": "CONTROL_WINDOW_ACTUALLY_ESTABLISHED",
+      "validatedEvidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence/api.ndjson",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence/external-facts.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence/cleanup.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence/capacity-before-ready-crash-window.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence/capacity-crash-recovery-final.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence/capacity-http-f8a9d8ff-64b6-470b-8f6a-4083a19afc4a.json"
+      ],
+      "observed": "本例真实capacity-refused → before-ready-held，当前attempt尚无ready-persisted；强杀完成07:17:33.134Z早于租约07:19:02.988Z，原run/step恢复且不重审，PASS。",
+      "stillToVerify": "本次所列有限故障窗口已执行；不外推所有容量竞争与任意崩溃。",
+      "smokeStatus": "OUTSIDE_SMOKE_SUBSET",
+      "formalAssessment": "PASS",
+      "acceptanceInherited": false,
+      "rawFormalResult": {
+        "id": "CAP-009",
+        "status": "PASS",
+        "durationMs": 3592,
+        "evidence": [
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence"
+        ]
+      },
+      "smokeEvidenceRetained": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-refusal.json"
+      ],
+      "specificScenarioControlObserved": true,
+      "formalIntegrationEvidence": {
+        "binding": {
+          "apiUrl": "http://127.0.0.1:56543",
+          "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+          "pid": 2653,
+          "ownershipVerified": true,
+          "contractReference": "docs/qa-remediation-final-20261001.md @ 86ad4e7e63786f652c965308b032b98415bdd7ac; QA capacity observation independent contract",
+          "capabilities": [
+            "admission-hold",
+            "before-ready-window",
+            "active-clock"
+          ]
+        },
+        "leases": [
+          {
+            "leaseId": "c3b84947-04be-4cb1-ad39-aab78d26f2a2",
+            "correlation": {
+              "groupId": "78d63d04-5759-4815-acd4-f2ac4096f7a9",
+              "runId": "8c33f7e6-6ab2-49e7-96ba-df34199f08ff",
+              "toolUseId": "qa-kick-capacity-before-ready-crash"
+            },
+            "eventKinds": [
+              "admission-refused",
+              "before-ready-held",
+              "capacity-held"
+            ],
+            "latestCount": 3,
+            "evidence": {
+              "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence/capacity-http-f8a9d8ff-64b6-470b-8f6a-4083a19afc4a.json",
+              "sha256": "38c794fc70aab472aae89d7c489d8fdae0e8170a9396f1faeb79b2d1bdef8918"
+            },
+            "distinctRefusedAttempts": 1
+          }
+        ],
+        "files": [
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence/capacity-binding-verified.json",
+            "sha256": "a1866e8caba24eac04c0a5b65fefb1f40dda11b6d0ebbbe6ff78a89005f2778d"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence/api.ndjson",
+            "sha256": "a0522e62657c154d186604e74f5fe9d2de7b576a22aa0ff955f39ac4bf3db524"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence/external-facts.json",
+            "sha256": "27fd8de9f1474125408b7890c3fcc5b67cc9b708aa0ba5b0ebdd3e91b68d5cf1"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence/cleanup.json",
+            "sha256": "87a30fcdaec8da649d5046afedabcda80dea9dfeef13fb0a0ab6383f62e04ad4"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence/capacity-before-ready-crash-window.json",
+            "sha256": "b3442b9e5252167b4c2983f2847a1a9de738cd987ed4b5fe773d876400b0ac54"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence/capacity-crash-recovery-final.json",
+            "sha256": "41dff3219c76df9d3069866eb0b75692713250865a2c6e0e1cd479ae1a90ebd4"
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "CAP-010",
+      "title": "已派发且2秒内收敛的504踢人遇容量压力不退回重放",
+      "baselineDependency": "真实容量控制器、目标进程归属、group/run/toolUseId关联拒绝及可释放占用；CAP003另需活动区间，CAP009另需before-ready窗口。",
+      "currentReadiness": "CONTROL_WINDOW_ACTUALLY_ESTABLISHED",
+      "validatedEvidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/api.ndjson",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/external-facts.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/cleanup.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/capacity-after-dispatch-held.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/capacity-after-dispatch-terminal-held.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/capacity-after-dispatch-final.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/capacity-http-59af77f8-9c63-4ee6-93e9-889db8219f3b.json"
+      ],
+      "observed": "本例在kick真实派发后占用剩余容量，held贯穿终态；此场景不要求让已在途操作再触发admission-refused。真实504后成员效果收敛，同kick不回退重放，PASS。",
+      "stillToVerify": "本次所列有限故障窗口已执行；不外推所有容量竞争与任意崩溃。",
+      "smokeStatus": "OUTSIDE_SMOKE_SUBSET",
+      "formalAssessment": "PASS",
+      "acceptanceInherited": false,
+      "rawFormalResult": {
+        "id": "CAP-010",
+        "status": "PASS",
+        "durationMs": 4218,
+        "evidence": [
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence"
+        ]
+      },
+      "smokeEvidenceRetained": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-binding-verified.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-refusal.json"
+      ],
+      "specificScenarioControlObserved": true,
+      "formalIntegrationEvidence": {
+        "binding": {
+          "apiUrl": "http://127.0.0.1:56619",
+          "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+          "pid": 3582,
+          "ownershipVerified": true,
+          "contractReference": "docs/qa-remediation-final-20261001.md @ 86ad4e7e63786f652c965308b032b98415bdd7ac; QA capacity observation independent contract",
+          "capabilities": [
+            "admission-hold",
+            "before-ready-window",
+            "active-clock"
+          ]
+        },
+        "leases": [
+          {
+            "leaseId": "168553e9-ae7e-41e6-8fc5-c8c066d43c52",
+            "correlation": {
+              "groupId": "c7cc1f00-e092-4fde-a766-f519b7d69dee",
+              "runId": "40227bde-304c-4ab4-926b-d59dc7691698",
+              "toolUseId": "qa-kick-capacity-already-dispatched"
+            },
+            "eventKinds": [
+              "capacity-held"
+            ],
+            "latestCount": 1,
+            "evidence": {
+              "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/capacity-http-59af77f8-9c63-4ee6-93e9-889db8219f3b.json",
+              "sha256": "2d34038ebabbd232e35630b1ecd5f3b1814600d8d261df363f0a6a91b1dfe3e6"
+            },
+            "distinctRefusedAttempts": 0
+          }
+        ],
+        "files": [
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/capacity-binding-verified.json",
+            "sha256": "3b93d4d7e06640080b0a0c3841b4fa5d8be5e1f2629b3b4ffd7d314e41d62efc"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/api.ndjson",
+            "sha256": "85b2efe418d385c7d63230e291ce81163486f704045c14b9f9b9d6db9b54888c"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/external-facts.json",
+            "sha256": "1c17cd18ee0a7e069a21f5b93b76d4d95d601ceb111b1d0c95d5ec378d61e7b6"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/cleanup.json",
+            "sha256": "e37b437aef0e0f587a4ff7ceab4ddf2a72fc2d4905cb1a8bdd695f9e5a00cfd2"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/capacity-after-dispatch-held.json",
+            "sha256": "86c1e647ae658087caa9b2fb52c54f839b7f569d997d418919053692fa91df86"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/capacity-after-dispatch-terminal-held.json",
+            "sha256": "86c1e647ae658087caa9b2fb52c54f839b7f569d997d418919053692fa91df86"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/capacity-after-dispatch-final.json",
+            "sha256": "54ed8aa166ee2fabe6e19ee205efc019ef86dd4ee44ac07344b7ebe660c4a0f5"
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "BLK-MIG-001",
+      "title": "历史schema拒启与结构/数据保护",
+      "baselineDependency": "真实可追溯旧版数据库归档、哈希及QA独立审核",
+      "currentReadiness": "FIXTURE_RESTORATION_AND_SCENARIO_VERIFIED",
+      "observed": "正式run再次恢复真实schema7归档；候选明确拒绝启动，前后结构/数据指纹保持，PASS。",
+      "validatedEvidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-fixture-boundaries--06a0b--001-历史schema明确拒启且结构与数据保持不变-system/evidence/legacy-schema-rejection.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-fixture-boundaries--06a0b--001-历史schema明确拒启且结构与数据保持不变-system/evidence/fixture-source.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-fixture-boundaries--06a0b--001-历史schema明确拒启且结构与数据保持不变-system/evidence/fixture-cleanup.json"
+      ],
+      "stillToVerify": "正式用例已PASS；不继承为所有旧schema/目录浏览器/生产恢复能力通过。",
+      "smokeStatus": "PASS",
+      "formalAssessment": "PASS",
+      "acceptanceInherited": false,
+      "rawFormalResult": {
+        "id": "BLK-MIG-001",
+        "status": "PASS",
+        "durationMs": 1958,
+        "evidence": []
+      },
+      "smokeEvidenceRetained": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-fixture-boundaries--06a0b--001-历史schema明确拒启且结构与数据保持不变-system/evidence/legacy-schema-rejection.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-fixture-boundaries--06a0b--001-历史schema明确拒启且结构与数据保持不变-system/evidence/fixture-source.json"
+      ],
+      "specificScenarioControlObserved": true,
+      "formalIntegrationEvidence": {
+        "files": [
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-fixture-boundaries--06a0b--001-历史schema明确拒启且结构与数据保持不变-system/evidence/legacy-schema-rejection.json",
+            "sha256": "91d4fa5ac0635b936668c4781b51b9b30550fb11d9ed8ad92e2fbfc02ad52891"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-fixture-boundaries--06a0b--001-历史schema明确拒启且结构与数据保持不变-system/evidence/fixture-source.json",
+            "sha256": "f7f61695045e639ae4012ffc056d7e0040f3d9633a3ad92f7cd0d7246ea2cf39"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-fixture-boundaries--06a0b--001-历史schema明确拒启且结构与数据保持不变-system/evidence/fixture-cleanup.json",
+            "sha256": "67434423d794f20969b43e1117c9743c1b9b3d16ba6f8ddea2238cdb819f3701"
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "UI-037",
+      "title": "目录微秒及同时间ID双向跨页",
+      "baselineDependency": "真实数据库归档、独立微秒与同时间ID期望清单",
+      "currentReadiness": "FIXTURE_RESTORATION_AND_SCENARIO_VERIFIED",
+      "observed": "正式run再次恢复微秒/同时间ID归档；独立6行清单、双向pageSize2跨页匹配，system项目PASS，非浏览器视觉验证。",
+      "validatedEvidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-fixture-boundaries--UI-037-确定性微秒与同时间ID夹具双向跨页无遗漏重复-system/evidence/directory-precision-pages.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-fixture-boundaries--UI-037-确定性微秒与同时间ID夹具双向跨页无遗漏重复-system/evidence/fixture-source.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-fixture-boundaries--UI-037-确定性微秒与同时间ID夹具双向跨页无遗漏重复-system/evidence/fixture-cleanup.json"
+      ],
+      "stillToVerify": "正式用例已PASS；不继承为所有旧schema/目录浏览器/生产恢复能力通过。",
+      "smokeStatus": "PASS",
+      "formalAssessment": "PASS",
+      "acceptanceInherited": false,
+      "rawFormalResult": {
+        "id": "UI-037",
+        "status": "PASS",
+        "durationMs": 1830,
+        "evidence": []
+      },
+      "smokeEvidenceRetained": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-fixture-boundaries--UI-037-确定性微秒与同时间ID夹具双向跨页无遗漏重复-system/evidence/directory-precision-pages.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-fixture-boundaries--UI-037-确定性微秒与同时间ID夹具双向跨页无遗漏重复-system/evidence/fixture-source.json"
+      ],
+      "specificScenarioControlObserved": true,
+      "formalIntegrationEvidence": {
+        "files": [
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-fixture-boundaries--UI-037-确定性微秒与同时间ID夹具双向跨页无遗漏重复-system/evidence/directory-precision-pages.json",
+            "sha256": "52aa4811770164737abe8d6961137c262ddd5ffa74db420329c05e896cfeab4f"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-fixture-boundaries--UI-037-确定性微秒与同时间ID夹具双向跨页无遗漏重复-system/evidence/fixture-source.json",
+            "sha256": "68de5440998bf087f897ae38aa8be3e98461fb462d66ba617e2d43f2fb5ba8cf"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-fixture-boundaries--UI-037-确定性微秒与同时间ID夹具双向跨页无遗漏重复-system/evidence/fixture-cleanup.json",
+            "sha256": "67434423d794f20969b43e1117c9743c1b9b3d16ba6f8ddea2238cdb819f3701"
+          }
+        ]
+      }
+    },
+    {
+      "caseId": "ARC-UI-BLK-001",
+      "title": "通用账号资源失败不提交成功快照/不提前确认提醒",
+      "baselineDependency": "真实页面row/state/error/refresh/acknowledge适配及消费者关联",
+      "currentReadiness": "PAGE_ADAPTER_BOUND_NOT_FAULT_WINDOW",
+      "observed": "正式浏览器已登录并按真实row/state适配确认account-1在线；配置制品已绑定。但焦点仿真使真实失焦前提失败，requests=[]，尚未触发online→disconnected的失败快照/提醒确认组合。",
+      "validatedEvidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/evidence/resource-observation-adapter.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/evidence/resource-observation-final.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/evidence/cleanup.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/acceptance/20261001-business/focus-probe/review.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/acceptance/20261001-business/focus-probe/result-protocol.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/acceptance/20261001-business/focus-probe/result-helper.json"
+      ],
+      "stillToVerify": "空白页面已证明Playwright默认强制焦点及移除仿真后的可信blur/focus；这仅是工具修复证据，16项子集仍需在产品页面验证失败读取、呈现及确认入口。",
+      "smokeStatus": "OUTSIDE_SMOKE_SUBSET",
+      "formalAssessment": "QA_FOCUS_PREMISE_CORRECTION_RETEST_PENDING",
+      "acceptanceInherited": false,
+      "rawFormalResult": {
+        "id": "ARC-UI-BLK-001",
+        "status": "BLOCKED",
+        "reason": "BlockedError: [BLOCKED] 浏览器未建立真实失焦；该执行环境不能验证后台提醒",
+        "durationMs": 1846,
+        "evidence": [
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/attachments/resource-observation-final-8cfb1ab4f4e4a2ebb629eae045fb0b8ad9335917.png",
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/test-failed-1.png",
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/video-1.webm",
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/video.webm",
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/evidence",
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/error-context.md",
+          "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/trace.zip"
+        ]
+      },
+      "smokeEvidenceRetained": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/config/fixtures.integration-86ad4e7.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/ui-architecture--ARC-UI-007-无后续事件或轮询时两次503后自动呈现-chromium/attachments/architecture-final-881695fc99d62d4860c323789b1bd3d8b3cb541e.png",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/ui-architecture--ARC-UI-007-无后续事件或轮询时两次503后自动呈现-chromium/attachments/architecture-browser-5d31158d39070d420614df55e97f67cef0a6e0f0.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/ui-architecture--ARC-UI-007-无后续事件或轮询时两次503后自动呈现-chromium/attachments/architecture-final-70b78569e9ed715da80815400e26649fbfd62349.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/ui-architecture--ARC-UI-007-无后续事件或轮询时两次503后自动呈现-chromium/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-final-delivery-reproduction/browser-continuation-result.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/integration/20261001-fixture-rebind-86ad4e7/review.json"
+      ],
+      "specificScenarioControlObserved": false,
+      "formalIntegrationEvidence": {
+        "files": [
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/evidence/resource-observation-adapter.json",
+            "sha256": "4c5db425bfc47ef06f402472ca699a00e43707a1447bb057f08148168fef6bec"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/evidence/resource-observation-final.json",
+            "sha256": "769473ae2cc8ee77644a85386b448f4344cead1b149ad74803af16f77dd71185"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/evidence/cleanup.json",
+            "sha256": "755d13f448bbaa30872f92056d7a3440b674ac39984f37d8e20b8c89298f1b1a"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/error-context.md",
+            "sha256": "325a7ea5ece1d867ef940190b63dddc6f7afb967617efa8b8bab9921276288cd"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/acceptance/20261001-business/focus-probe/review.json",
+            "sha256": "75ef697cb67a587acd7dde391a46b6fa958693763865f9179de0aac8ab570155"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/acceptance/20261001-business/focus-probe/result-protocol.json",
+            "sha256": "27879df25d3d64132aa70884f7c8b02f8ce87c094ab74872b8d0519c397f3a02"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/acceptance/20261001-business/focus-probe/result-helper.json",
+            "sha256": "aca25606b95ccff2b14a79f35693e04195c31c6a8dcf58f2f143d7b774bda502"
+          }
+        ]
+      },
+      "qaCorrectionReference": "reports/acceptance/20261001-business/focus-probe/review.json"
+    }
+  ],
+  "additionalIntegrationRisks": [
+    {
+      "id": "INT-R01",
+      "current": "真实消息边界已逐例执行",
+      "verified": [
+        "INT-MSG-001",
+        "INT-MSG-002",
+        "INT-MSG-003",
+        "INT-MSG-004",
+        "INT-MSG-005",
+        "INT-MSG-006"
+      ],
+      "proof": "公开消息/独立网关与504已识别挂点均有本轮取证，六例PASS。",
+      "pending": "有限窗口不证明任意外部在途请求恢复。",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/results.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-2c24f-cannot-negate-a-landed-send-system/evidence",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-effdf-d-recover-on-real-responses-system/evidence",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-1235f-timed-from-the-original-504-system/evidence",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-ecaa1-e-original-two-second-bound-system/evidence",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-028ef-uence-timing-across-restart-system/evidence",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-2a93a-t-origin-across-local-delay-system/evidence"
+      ],
+      "formalAssessment": "ACTUAL_CURRENT_RUN_REVIEWED",
+      "caseStatuses": {
+        "INT-MSG-001": "PASS",
+        "INT-MSG-002": "PASS",
+        "INT-MSG-003": "PASS",
+        "INT-MSG-004": "PASS",
+        "INT-MSG-005": "PASS",
+        "INT-MSG-006": "PASS"
+      }
+    },
+    {
+      "id": "INT-R02",
+      "current": "安全屏障和真实恢复已接入；完整计量仍BLOCKED",
+      "verified": [],
+      "proof": "真实safe hold、TTL内强杀、同run恢复、terminal已观测；无recovery-paused。",
+      "pending": "跨epoch includesUnsavedTail=false，严格60000ms累计预算尚无完整真值。",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/results.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/trace.zip"
+      ],
+      "formalAssessment": "ACTUAL_CURRENT_RUN_REVIEWED",
+      "caseStatuses": {
+        "INT-ACT-001": "BLOCKED"
+      }
+    },
+    {
+      "id": "INT-R03",
+      "current": "两个receipt窗口实际命中",
+      "verified": [
+        "INT-MSG-008"
+      ],
+      "proof": "007保存前强杀公开排期至少后移2305ms，FAIL；008真实提交后恢复复用原接收时间PASS。",
+      "pending": "产品已丢失的首次时间不能变成QA缺接入；007原要求未满足。",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/results.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-64129--original-scheduling-origin-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-64129--original-scheduling-origin-system/trace.zip",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-26779-tities-without-rescheduling-system/evidence"
+      ],
+      "formalAssessment": "ACTUAL_CURRENT_RUN_REVIEWED",
+      "caseStatuses": {
+        "INT-MSG-007": "FAIL",
+        "INT-MSG-008": "PASS"
+      }
+    },
+    {
+      "id": "INT-R04",
+      "current": "两类真实局部保存故障均已接入并PASS",
+      "verified": [
+        "INT-ACCOUNT-001",
+        "INT-ACCOUNT-002"
+      ],
+      "proof": "暂错原事务恢复/后请求真实等待，以及持续错原事务回滚、无虚假成功WS、显式新操作均完成。",
+      "pending": "不是跨系统原子提交；远端成功/本地回滚差异仍记录。",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/results.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-87a64-n-before-a-newer-disconnect-system/evidence",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-9f043--or-automatic-remote-replay-system/evidence"
+      ],
+      "formalAssessment": "ACTUAL_CURRENT_RUN_REVIEWED",
+      "caseStatuses": {
+        "INT-ACCOUNT-001": "PASS",
+        "INT-ACCOUNT-002": "PASS"
+      }
+    },
+    {
+      "id": "INT-R05",
+      "current": "真实读暂停已接入；慢端关闭/重放缺口尚未确证",
+      "verified": [
+        "INT-STREAM-002"
+      ],
+      "proof": "001已暂停TCP读取，但有限负载未得到完整健康消费者集合，未进入已证实缺口重放，BLOCKED；002同冻结快照分页PASS。",
+      "pending": "不将未触发关闭的负载视为产品吞吐FAIL或完整慢端恢复PASS。",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/results.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/evidence",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/trace.zip",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-streams-a7924--confirmations-and-backfill-system/evidence"
+      ],
+      "formalAssessment": "ACTUAL_CURRENT_RUN_REVIEWED",
+      "caseStatuses": {
+        "INT-STREAM-001": "BLOCKED",
+        "INT-STREAM-002": "PASS"
+      }
+    },
+    {
+      "id": "INT-R06",
+      "current": "真实指定模块生命周期已接入并PASS",
+      "verified": [
+        "INT-DIAG-002"
+      ],
+      "proof": "真实失败/开始前保持/running保持/自然成功，公开诊断按实际变化。",
+      "pending": "仅gateway模块与有限秘密样本，不证明全部监控告警。",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/results.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-76161-hful-restricted-diagnostics-system/evidence"
+      ],
+      "formalAssessment": "ACTUAL_CURRENT_RUN_REVIEWED",
+      "caseStatuses": {
+        "INT-DIAG-002": "PASS"
+      }
+    }
+  ],
+  "delivery": {
+    "caseIds": [
+      "MAN-DELIVERY-001",
+      "MAN-DELIVERY-002",
+      "DOC-MAN-001"
+    ],
+    "status": "REGISTERED_FORMAL_CASE_REVIEWS_PASS",
+    "evidence": [
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-final-delivery-reproduction/review.md",
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-final-delivery-reproduction/npm-ci-result.json",
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-final-delivery-reproduction/receiver-result.json",
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-final-delivery-reproduction/browser-continuation-result.json",
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-final-delivery-reproduction/cleanup-verification.json"
+    ],
+    "boundary": "版本86ad、真实npmci/README启动/schema8、双身份REST+WS、Chromium主流程、独占清理。原临时QA工具错误保留；不代表安全/故障/全部业务/上线验收。",
+    "formalResults": [
+      {
+        "id": "MAN-DELIVERY-001",
+        "status": "PASS",
+        "reason": "人工执行 Independent QA / intake_member_scope @ 2026-10-01T07:04:58.328Z: 独立接收最终86ad干净源码与Git历史；原需求hash一致；8c92源码到86ad仅docs差异。实际核对9份文档、197个相对文件链接和60个提交引用，未继承开发测试通过。",
+        "durationMs": 0,
+        "evidence": [
+          "manual-input/final-delivery-reproduction/environment.json",
+          "manual-input/final-delivery-reproduction/document-review.json",
+          "manual-input/final-delivery-reproduction/review.md",
+          "manual/424eccef-41a0-4619-9d34-2d383082df91.json"
+        ]
+      },
+      {
+        "id": "MAN-DELIVERY-002",
+        "status": "PASS",
+        "reason": "人工执行 Independent QA / intake_member_scope @ 2026-10-01T07:04:58.328Z: 在新专属86ad工作区实际按README npm ci和dev:isolated启动新PG/模拟器/随机端口，迁移schema8；双身份REST+真实WS、Chromium登录/建群/消息sent/viewer只读/注销均完成。SIGINT退出0，独立核对精确容器/卷/目录/监听与owner清理，tracked源码不变。两处临时QA定位/正则错误原始记录与后续未完成步骤均保留；没有修改README或产品。",
+        "durationMs": 0,
+        "evidence": [
+          "manual-input/final-delivery-reproduction/review.md",
+          "manual-input/final-delivery-reproduction/npm-ci-result.json",
+          "manual-input/final-delivery-reproduction/startup.log",
+          "manual-input/final-delivery-reproduction/receiver-result.json",
+          "manual-input/final-delivery-reproduction/browser-continuation-result.json",
+          "manual-input/final-delivery-reproduction/cleanup-verification.json",
+          "manual-input/final-delivery-reproduction/qa-script-corrections.json",
+          "manual-input/final-delivery-reproduction/viewer-group-detail.png",
+          "manual-input/final-delivery-reproduction/artifact-hashes.json",
+          "manual/86dfd7ff-a9e1-4125-89f8-af9336c4e7a9.json"
+        ]
+      },
+      {
+        "id": "DOC-MAN-001",
+        "status": "PASS",
+        "reason": "人工执行 Independent QA / intake_member_scope @ 2026-10-01T07:04:58.328Z: 按批准基线复核CR001–014与后续D036–046，逐项来源/日期/影响/版本/验收可定位；历史建议、批准实施、开发检查、演示状态和用户验收分开，D042差异及D040未闭合计量边界如实记录。总述均09-30与CR014正文10-01的泛化日期文案记非阻塞备注，具体来源仍可追溯。",
+        "durationMs": 0,
+        "evidence": [
+          "manual-input/final-delivery-reproduction/review.md",
+          "manual-input/final-delivery-reproduction/document-review.json",
+          "manual-input/final-delivery-reproduction/sources/docs__change-requests.md",
+          "manual-input/final-delivery-reproduction/sources/docs__decisions.md",
+          "manual-input/final-delivery-reproduction/sources/docs__qa-remediation-final-20261001.md",
+          "manual/abe056f7-bfaf-425f-85f1-ff11900a2c1b.json"
+        ]
+      }
+    ]
+  },
+  "remainingEvidenceClasses": [
+    {
+      "kind": "protocol_or_unobservable_truth",
+      "cases": [
+        "BLK-EXT-001",
+        "BLK-EXT-002",
+        "BLK-EXT-003",
+        "BLK-EXT-004",
+        "BLK-EXT-005",
+        "INT-ACT-001",
+        "INT-MSG-007"
+      ],
+      "meaning": "本轮已实测：INT-MSG007明确排期FAIL；BLK-EXT002..005公开安全暂停审定原强恢复FAIL（raw BLOCKED保留）；BLK-EXT001和INT-ACT001仍为有限/不完整证据BLOCKED。见triage-final-recovery，不再写“待接入”。",
+      "notIncludedInOriginal13": true
+    },
+    {
+      "kind": "human_operating_system_or_judgment",
+      "cases": [
+        "MAN-IME-001",
+        "MAN-FOCUS-001",
+        "MAN-UX-001"
+      ],
+      "meaning": "三个真实人/操作系统场景已如实录入BLOCKED；不能用自动化composition、空白页焦点或AI阅读替代。",
+      "notIncludedInOriginal13": true
+    },
+    {
+      "kind": "release_targets_and_operations",
+      "meaning": "容量/延迟/持续运行/RPO/RTO/部署回滚/生产身份与告警证据属于单独上线评估，未混入本次业务接入13项，也未生成默认通过目标。",
+      "notIncludedInOriginal13": true
+    }
+  ],
+  "archiveNotes": [
+    {
+      "type": "REFERENCE_ARCHIVE_GAP_CLOSED",
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/integration/20261001-fixture-rebind-86ad4e7/review.json",
+      "referencedBy": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/config/fixtures.integration-86ad4e7.json",
+      "action": "已补齐真实review原字节；未改冻结配置/源码。该review仅是Git对象/旧实测证据兼容性重绑定，restoredAgain=false，不冒称本次重新恢复或浏览器功能通过。最终smoke中BLK-MIG/UI037动态执行另有独立证据。",
+      "closedAt": "2026-10-01T07:11:06.893Z",
+      "archivedReviewSha256": "f659340f3c774fdbbf5306df81f7625a8cd0017aa817f55884d530e697a9057a",
+      "reviewOriginallyPerformedAt": "2026-10-01T06:49:27.047Z",
+      "identicalToDevelopmentQaBytes": true,
+      "sourceCommit": "c529f31",
+      "verifiedAssociatedFiles": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/fixtures/20261001-0af6443/legacy.dump",
+          "sha256": "24f49db6ecfb7cf54e614d6d00a3e9f77e7ade2f5dfd040ba31bb7550990cb4f",
+          "match": true
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/fixtures/20261001-0af6443/precision.dump",
+          "sha256": "0554319ab7ad4483f0a03fcb78416168267a0cd46ecf77b3a204cdea7e23ea38",
+          "match": true
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/fixtures/20261001-86ad4e7/legacy-schema.json",
+          "sha256": "93985edc23351de52aa79c99015d02d67f862a1de507f57704b2a268f7a2f846",
+          "match": true
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/fixtures/20261001-86ad4e7/directory-precision.json",
+          "sha256": "b74456924618450e6471d054fb4b9a793664d1304f8a9277760dcbc582d98add",
+          "match": true
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/config/fixtures.integration-86ad4e7.json",
+          "sha256": "f9c8420f6890b76b6ef2485c7527a4035abbd94b13e9fb271d76a9d32f2d2346",
+          "match": true
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/requirements/blocker-reassessment.md",
+      "sha256": "f2c901aa22aaa72448673245574ff06f5a591ab9f5ddf74d444761c4e92e7404"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/events.json",
+      "sha256": "932e9e298d38c5cbfbc70dee261df67010aa86c889774e4470450cfd98a24a52"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/manifest.json",
+      "sha256": "ba0fb949113dc387bee965755ba348c0ca69b5f193760b812387c48574f1f6d2"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/runner-summary.json",
+      "sha256": "f097f27a300fed4a1b29cd5f1f64fa58acbea7cee04c806118bf1edf0d9e8092"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-binding-verified.json",
+      "sha256": "9ec8d99d15d73fa448bee682f3758d6e021e526a0ebedb4389d9b0392a05f444"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence/capacity-refusal.json",
+      "sha256": "22886596a50cedff1f83d461642085f8afc6bd7567d90c3d4c17879817800e43"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/config/fixtures.integration-86ad4e7.json",
+      "sha256": "f9c8420f6890b76b6ef2485c7527a4035abbd94b13e9fb271d76a9d32f2d2346"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-final-delivery-reproduction/review.md",
+      "sha256": "5ab291d6d55feace72c96483ccb24832423fa7738d9afb3dc10a1eab6c3a5401"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-final-delivery-reproduction/document-review.json",
+      "sha256": "f428e87abc1326ff5268e623f6e9ddd760f5df83fa2b8069e76b46cc0bb2720e"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-final-delivery-reproduction/browser-continuation-result.json",
+      "sha256": "de89ec266aa9baf6efd0c88a0cd9bb255b27d16fa14d76ea6be40abd88abf63d"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-final-delivery-reproduction/cleanup-verification.json",
+      "sha256": "0074448e8a62c05ad147a5a667334e1abf5df46e86841db8bb4625d154301064"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/requirements/remediation-final-intake-20261001.md",
+      "sha256": "b14aed1865a8f3a39395b6186f2d534cbe202704c9395a52fbece245070f5328"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/integration/20261001-fixture-rebind-86ad4e7/review.json",
+      "sha256": "f659340f3c774fdbbf5306df81f7625a8cd0017aa817f55884d530e697a9057a"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/results.json",
+      "sha256": "958eafd4680b30c15c9ec4f332d088b54d50fe267005e2ebb464250dac532e57"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/runner-summary.json",
+      "sha256": "cf043adf6d1679e451e8ccb843ae9b13cf28724f70b921a0b75faf00dc04f6aa"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/manifest.json",
+      "sha256": "80e53b918b20f775e9435912af923dfd95aa746ac9e3ed810344d251d3d31981"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/events.json",
+      "sha256": "219f26524254353c304d99d534f223a5873123bb89ec900e203da999f92d4544"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/integration/20261001-final-candidate/full-business-console.log",
+      "sha256": "532f9df56cb381093e712ad318f55ec59d89b49c9226c797a36b13afaf9a7e45"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/requirements/qa-correction-capacity-cancellation-20261001.md",
+      "sha256": "b0f7ec8acfe272e6f09b718cdcf194b0caf2654421b8330b3dfdb4403f987746"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/acceptance/20261001-business/focus-probe/review.json",
+      "sha256": "75ef697cb67a587acd7dde391a46b6fa958693763865f9179de0aac8ab570155"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/acceptance/20261001-business/triage-final-timing.json",
+      "sha256": "71a89e11eb77d7742a46db40b9a9ee3d0e599de31db600f45d16da5a5119428a"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/acceptance/20261001-business/triage-final-stream.json",
+      "sha256": "3132f0b6084cdcbbe593d78b42e4f21f16a02fd5657b8509a254ab0e989636bb"
+    }
+  ],
+  "smokeCombinations": [
+    {
+      "caseId": "AUTH-001",
+      "project": "system",
+      "status": "PASS",
+      "attempt": 0,
+      "completedAt": "2026-10-01T06:53:17.597Z",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/api-auth--AUTH-001-health-login-and-UTC-account-contract-system/evidence"
+      ]
+    },
+    {
+      "caseId": "AUTH-003",
+      "project": "system",
+      "status": "PASS",
+      "attempt": 0,
+      "completedAt": "2026-10-01T06:53:20.164Z",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/api-auth--AUTH-003-viewer--c1eaf-nal-business-write-endpoint-system/evidence"
+      ]
+    },
+    {
+      "caseId": "GROUP-009",
+      "project": "system",
+      "status": "PASS",
+      "attempt": 0,
+      "completedAt": "2026-10-01T06:53:21.498Z",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/api-groups--GROUP-009-ALRE-3ccd5-t-waiting-for-another-event-system/evidence"
+      ]
+    },
+    {
+      "caseId": "MSG-001",
+      "project": "system",
+      "status": "PASS",
+      "attempt": 0,
+      "completedAt": "2026-10-01T06:53:24.834Z",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/api-messages--MSG-001-acce-3d9ff--and-own-echo-stays-one-row-system/evidence"
+      ]
+    },
+    {
+      "caseId": "BASE-001",
+      "project": "system",
+      "status": "PASS",
+      "attempt": 0,
+      "completedAt": "2026-10-01T06:53:25.961Z",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/foundation-startup--BASE-001-全新未迁移数据库拒绝正常启动-system/evidence"
+      ]
+    },
+    {
+      "caseId": "AGENT-001",
+      "project": "system",
+      "status": "PASS",
+      "attempt": 0,
+      "completedAt": "2026-10-01T06:53:27.765Z",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-agent--AGENT-001-fo-3c38c-ntext-keep-one-run-identity-system/evidence"
+      ]
+    },
+    {
+      "caseId": "CAP-001",
+      "project": "system",
+      "status": "PASS",
+      "attempt": 0,
+      "completedAt": "2026-10-01T06:53:30.995Z",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence"
+      ]
+    },
+    {
+      "caseId": "BLK-MIG-001",
+      "project": "system",
+      "status": "PASS",
+      "attempt": 0,
+      "completedAt": "2026-10-01T06:53:32.951Z",
+      "evidence": []
+    },
+    {
+      "caseId": "UI-037",
+      "project": "system",
+      "status": "PASS",
+      "attempt": 0,
+      "completedAt": "2026-10-01T06:53:34.767Z",
+      "evidence": []
+    },
+    {
+      "caseId": "INT-MSG-006",
+      "project": "system",
+      "status": "PASS",
+      "attempt": 0,
+      "completedAt": "2026-10-01T06:53:39.616Z",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-integration-message-2a93a-t-origin-across-local-delay-system/evidence"
+      ]
+    },
+    {
+      "caseId": "INT-ACCOUNT-001",
+      "project": "system",
+      "status": "PASS",
+      "attempt": 0,
+      "completedAt": "2026-10-01T06:53:42.268Z",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-integration-runtime-87a64-n-before-a-newer-disconnect-system/evidence"
+      ]
+    },
+    {
+      "caseId": "INT-DIAG-002",
+      "project": "system",
+      "status": "PASS",
+      "attempt": 0,
+      "completedAt": "2026-10-01T06:53:43.606Z",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-integration-runtime-76161-hful-restricted-diagnostics-system/evidence"
+      ]
+    },
+    {
+      "caseId": "SEQ-001",
+      "project": "system",
+      "status": "PASS",
+      "attempt": 0,
+      "completedAt": "2026-10-01T06:53:46.991Z",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/system-sequence--SEQ-001-v-61909-erride-with-original-source-system/evidence"
+      ]
+    },
+    {
+      "caseId": "ARC-UI-007",
+      "project": "chromium",
+      "status": "PASS",
+      "attempt": 0,
+      "completedAt": "2026-10-01T06:53:53.740Z",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/ui-architecture--ARC-UI-007-无后续事件或轮询时两次503后自动呈现-chromium/attachments/architecture-final-881695fc99d62d4860c323789b1bd3d8b3cb541e.png",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/ui-architecture--ARC-UI-007-无后续事件或轮询时两次503后自动呈现-chromium/attachments/architecture-browser-5d31158d39070d420614df55e97f67cef0a6e0f0.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/ui-architecture--ARC-UI-007-无后续事件或轮询时两次503后自动呈现-chromium/attachments/architecture-final-70b78569e9ed715da80815400e26649fbfd62349.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/ui-architecture--ARC-UI-007-无后续事件或轮询时两次503后自动呈现-chromium/evidence"
+      ]
+    },
+    {
+      "caseId": "UI-001",
+      "project": "chromium",
+      "status": "PASS",
+      "attempt": 0,
+      "completedAt": "2026-10-01T06:53:59.283Z",
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-chromium/attachments/ui-final-screenshot-1ac632310d4f18b47aaf9c8bcffa8844baa267c8.png",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-chromium/attachments/ui-final-state-9338088b3004d1830c4b40a958eac729adac4f57.json",
+        "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-53-16.144Z-9b614b2e/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-chromium/evidence"
+      ]
+    }
+  ],
+  "updatedAt": "2026-10-01T07:45:32.055Z",
+  "qaIdentity": {
+    "gitBase": "f63b3e3b2b4f6e84b145dc03e724c0da03a4acdc",
+    "gitDirty": true,
+    "assetCommit": "c529f31076f9c645b5b1b04a2184e641c81b031b",
+    "frozenTreeSha256": "fb50f282f910d462545601e835db8fb10288c9c40718a4d5e0d0659f720fcb11",
+    "frozenFileCount": 196,
+    "assetCommitMatchingFiles": 195,
+    "localUncommittedFiles": [
+      {
+        "path": "config/preflight-authorization.local.json",
+        "sha256": "13baf6a171e4747871c3f9fc94aaaee5fd0f84d54a08fe319b58106549079db6"
+      }
+    ],
+    "mismatches": [],
+    "verifiedAt": "2026-10-01T07:45:32.055Z",
+    "meaning": "195份冻结QA资产与c529提交逐字节一致；另1份执行本地授权文件不在该提交。196文件整体由qaTree SHA绑定；执行checkout确为f63基点+dirty。"
+  },
+  "manualCurrent": {
+    "registered": 6,
+    "PASS": 3,
+    "BLOCKED": 3,
+    "cases": [
+      {
+        "id": "MAN-DELIVERY-001",
+        "status": "PASS",
+        "reason": "人工执行 Independent QA / intake_member_scope @ 2026-10-01T07:04:58.328Z: 独立接收最终86ad干净源码与Git历史；原需求hash一致；8c92源码到86ad仅docs差异。实际核对9份文档、197个相对文件链接和60个提交引用，未继承开发测试通过。",
+        "durationMs": 0,
+        "evidence": [
+          "manual-input/final-delivery-reproduction/environment.json",
+          "manual-input/final-delivery-reproduction/document-review.json",
+          "manual-input/final-delivery-reproduction/review.md",
+          "manual/424eccef-41a0-4619-9d34-2d383082df91.json"
+        ]
+      },
+      {
+        "id": "MAN-DELIVERY-002",
+        "status": "PASS",
+        "reason": "人工执行 Independent QA / intake_member_scope @ 2026-10-01T07:04:58.328Z: 在新专属86ad工作区实际按README npm ci和dev:isolated启动新PG/模拟器/随机端口，迁移schema8；双身份REST+真实WS、Chromium登录/建群/消息sent/viewer只读/注销均完成。SIGINT退出0，独立核对精确容器/卷/目录/监听与owner清理，tracked源码不变。两处临时QA定位/正则错误原始记录与后续未完成步骤均保留；没有修改README或产品。",
+        "durationMs": 0,
+        "evidence": [
+          "manual-input/final-delivery-reproduction/review.md",
+          "manual-input/final-delivery-reproduction/npm-ci-result.json",
+          "manual-input/final-delivery-reproduction/startup.log",
+          "manual-input/final-delivery-reproduction/receiver-result.json",
+          "manual-input/final-delivery-reproduction/browser-continuation-result.json",
+          "manual-input/final-delivery-reproduction/cleanup-verification.json",
+          "manual-input/final-delivery-reproduction/qa-script-corrections.json",
+          "manual-input/final-delivery-reproduction/viewer-group-detail.png",
+          "manual-input/final-delivery-reproduction/artifact-hashes.json",
+          "manual/86dfd7ff-a9e1-4125-89f8-af9336c4e7a9.json"
+        ]
+      },
+      {
+        "id": "DOC-MAN-001",
+        "status": "PASS",
+        "reason": "人工执行 Independent QA / intake_member_scope @ 2026-10-01T07:04:58.328Z: 按批准基线复核CR001–014与后续D036–046，逐项来源/日期/影响/版本/验收可定位；历史建议、批准实施、开发检查、演示状态和用户验收分开，D042差异及D040未闭合计量边界如实记录。总述均09-30与CR014正文10-01的泛化日期文案记非阻塞备注，具体来源仍可追溯。",
+        "durationMs": 0,
+        "evidence": [
+          "manual-input/final-delivery-reproduction/review.md",
+          "manual-input/final-delivery-reproduction/document-review.json",
+          "manual-input/final-delivery-reproduction/sources/docs__change-requests.md",
+          "manual-input/final-delivery-reproduction/sources/docs__decisions.md",
+          "manual-input/final-delivery-reproduction/sources/docs__qa-remediation-final-20261001.md",
+          "manual/abe056f7-bfaf-425f-85f1-ff11900a2c1b.json"
+        ]
+      },
+      {
+        "id": "MAN-IME-001",
+        "status": "BLOCKED",
+        "reason": "人工执行 AI QA（本任务） @ 2026-10-01T06:54:56.680Z: 本轮自动化composition事件不是实际操作系统中文输入法候选交互；当前无真实OS输入法录屏/键入请求时间线。",
+        "durationMs": 0,
+        "evidence": [
+          "manual-input/human-observation-limitations.json",
+          "manual/7a828353-a9ec-4860-b473-077f4ab6c9c6.json"
+        ]
+      },
+      {
+        "id": "MAN-FOCUS-001",
+        "status": "BLOCKED",
+        "reason": "人工执行 AI QA（本任务） @ 2026-10-01T06:54:56.680Z: 自动化DOM标题/favicon与页面焦点检查不等同真实系统应用失焦和浏览器标签栏呈现；当前未取得包含标签栏与系统焦点切换的实际屏幕证据。",
+        "durationMs": 0,
+        "evidence": [
+          "manual-input/human-observation-limitations.json",
+          "manual/6ba9a4a9-8cbf-4ab7-bb9a-6bf67160cf35.json"
+        ]
+      },
+      {
+        "id": "MAN-UX-001",
+        "status": "BLOCKED",
+        "reason": "人工执行 AI QA（本任务） @ 2026-10-01T06:54:56.680Z: 用例要求未预读实现说明的真实操作员描述理解结果；当前没有操作者观察记录，AI静态或自动化检查不替代该主观可理解性验收。",
+        "durationMs": 0,
+        "evidence": [
+          "manual-input/human-observation-limitations.json",
+          "manual/2b3632fd-65d4-4652-8232-ef3c2850debe.json"
+        ]
+      }
+    ],
+    "boundary": "已录入不等于全通过；实际系统输入法、系统窗口焦点/标签栏呈现和真实操作者理解证据仍缺。空白页焦点probe不替代MAN-FOCUS。"
+  },
+  "qaCorrectionRetestPending": {
+    "countInPlannedSubset": 16,
+    "original13Included": [
+      "CAP-002",
+      "CAP-005",
+      "ARC-UI-BLK-001"
+    ],
+    "state": "PENDING_SEPARATE_RETEST",
+    "note": "仅记录主任务已计划的独立16项子集，不按尚未完成或未冻结的新suite预填结果。后续由主任务另加附注。"
+  },
+  "postCorrectionRetestAddendum": {
+    "reviewedAt": "2026-10-01T08:04:55.854Z",
+    "readOnlyReview": true,
+    "newProductExecution": false,
+    "candidateRevision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+    "reviewFile": "reports/acceptance/20261001-business/review-last-window.md",
+    "historyPreserved": true,
+    "freezes": [
+      {
+        "name": "20261001-qa-premise-retest",
+        "treeSha256": "e1cb1318cc16c2d93992d9c891eb4a4f78861247ee19c9829c45a2d1b0db90a9",
+        "files": 207,
+        "beforeAfterEqual": true,
+        "sources": [
+          {
+            "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-qa-premise-retest/source-before.json",
+            "sha256": "ee45fd142a22f17ef02daf340fe2faa3c4009ac400ebbcea7e507825f09c5807"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-qa-premise-retest/source-after.json",
+            "sha256": "ee45fd142a22f17ef02daf340fe2faa3c4009ac400ebbcea7e507825f09c5807"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-qa-premise-retest/source.tar.gz",
+            "sha256": "d6fa1c48d70001adbaadd921072ad8bff53e4b3337b2ba8f3f01d894bc42942c"
+          }
+        ]
+      },
+      {
+        "name": "20261001-final-window-retest",
+        "treeSha256": "70d89f8391f6c5975deff5cc124c667f8b9a95166227555b5798c0e1521e976c",
+        "files": 208,
+        "beforeAfterEqual": true,
+        "sources": [
+          {
+            "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-final-window-retest/source-before.json",
+            "sha256": "51d1637cd596a8fc564d19fb14be0e1696d999b2b11e2a42032f616619763744"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-final-window-retest/source-after.json",
+            "sha256": "51d1637cd596a8fc564d19fb14be0e1696d999b2b11e2a42032f616619763744"
+          },
+          {
+            "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/integration/20261001-final-window-retest/source.tar.gz",
+            "sha256": "2f4560a1e4c4d17ef21fd2367a217a225c5790012b8dd6e19d3e29e664c27306"
+          }
+        ]
+      }
+    ],
+    "currentOriginal13": {
+      "configuredOrDelivered": 13,
+      "specificControlOrFixtureActuallyEstablished": 13,
+      "remainingEngineeringAccessPending": 0,
+      "reviewedBusinessResults": {
+        "PASS": 12,
+        "FAIL": 1
+      },
+      "remainingProductFailure": [
+        "CAP-003"
+      ],
+      "remainingQaCorrectionPending": [],
+      "businessAcceptanceConclusion": "NOT_UNCONDITIONALLY_ACCEPTABLE",
+      "boundary": "仅原13项接入关闭；不消除其他专项协议、预算、人工证据阻塞或产品FAIL，不替代上线门禁。"
+    },
+    "cases": [
+      {
+        "id": "CAP-002",
+        "runId": "2026-10-01T07-48-06.522Z-66d3a279",
+        "status": "PASS",
+        "originalFormalRaw": "FAIL",
+        "evidenceMeaning": "真实容量拒绝与取消后释放已建立；允许已审计当前step完成一次kick，取消后有限1554.629ms窗口未继续工作，不自创持锁30秒必须终态。"
+      },
+      {
+        "id": "CAP-005",
+        "runId": "2026-10-01T07-58-48.233Z-e1e5e205",
+        "status": "PASS",
+        "originalFormalRaw": "FAIL",
+        "intermediateRetestRaw": "BLOCKED",
+        "binding": {
+          "apiUrl": "http://127.0.0.1:54015",
+          "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+          "pid": 86509,
+          "observedOwnerToken": "[REDACTED]"
+        },
+        "correlation": {
+          "groupId": "4e5fdc12-3026-412c-af7e-4d3549cf82a0",
+          "runId": "0b65ca6d-615b-4a57-8784-6c1b0e3492ea",
+          "toolUseId": "qa-kick-capacity-unreachable"
+        },
+        "clientMsgId": "7227bef3-f70e-4c4f-80a6-61597213c0ae",
+        "remoteAcceptedAt": "2026-10-01T07:58:51.589Z",
+        "historyFailure": {
+          "eventId": 5,
+          "type": "message_failed",
+          "recordedAt": "2026-10-01T07:58:51.641Z",
+          "data": {
+            "clientMsgId": "7227bef3-f70e-4c4f-80a6-61597213c0ae",
+            "code": "GROUP_WRITE_FORBIDDEN",
+            "eventId": 5,
+            "type": "message_failed"
+          }
+        },
+        "realCapacityRefusals": 5,
+        "failurePublicStatus": {
+          "group": "unreachable",
+          "message": "failed",
+          "failCode": "GROUP_WRITE_FORBIDDEN"
+        },
+        "releaseConfirmed": true,
+        "terminalStatus": "cancelled",
+        "postReleaseObservationMs": 1528.2474589999997,
+        "kickRequests": 0,
+        "kickEffects": 0,
+        "boundary": "零kick仅对应真实释放后的有限观察；不宣称无限未来绝无迟发。kicks[].group是早期场景描述，不用其旧active值覆盖后续REST状态。"
+      },
+      {
+        "id": "ARC-UI-BLK-001",
+        "runId": "2026-10-01T07-48-06.522Z-66d3a279",
+        "status": "PASS",
+        "originalFormalRaw": "BLOCKED",
+        "browser": "chromium",
+        "requests": [
+          {
+            "at": "2026-10-01T07:50:55.509Z",
+            "status": 503
+          },
+          {
+            "at": "2026-10-01T07:50:55.763Z",
+            "status": 503
+          },
+          {
+            "at": "2026-10-01T07:50:56.266Z",
+            "status": 503
+          },
+          {
+            "at": "2026-10-01T07:50:57.269Z",
+            "status": 503
+          },
+          {
+            "at": "2026-10-01T07:50:59.386Z",
+            "status": 200
+          }
+        ],
+        "realTabFocusVerified": true,
+        "states": [
+          "online",
+          "disconnected"
+        ],
+        "assertions": [
+          "失败时只显示旧值",
+          "仅聚焦/错误/旧值操作不确认",
+          "真实新值成功呈现后明确操作才确认"
+        ],
+        "boundary": "页面真实tab焦点与DOM提醒确认，不等价于MAN-FOCUS的OS窗口/浏览器标签栏人证据。"
+      }
+    ],
+    "evidence": [
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/results.json",
+        "sha256": "907d79f0e3fab0aa87dbe2861251ac7505331e4c81cb84c1f7a1589f2b1eb634"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/runner-summary.json",
+        "sha256": "dd26fc17e364cfc9b9e8365b15ee3641ccfcfae25f53be8fefc54f077a999298"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-58-48.233Z-e1e5e205/results.json",
+        "sha256": "aa8b1b9fd372ab9bd0371e4cba54c4851fa74eff1b473f2e4d877b7314df2854"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-58-48.233Z-e1e5e205/runner-summary.json",
+        "sha256": "5f1e4c3d6f70b9882b479f93a72fca6f71abaf976ebd8b47392438692b62057c"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-58-48.233Z-e1e5e205/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-binding-verified.json",
+        "sha256": "2107fe0c5a2cf862830f1f0b59031ac205b66fb7061990bf7cb21859a0c5edf0"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-58-48.233Z-e1e5e205/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-refusal.json",
+        "sha256": "9f85680b2eeaba2c23e67170a2250c52d534eed826b8a94584d5b265c715a772"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-58-48.233Z-e1e5e205/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-unreachable-accepted-before-hold.json",
+        "sha256": "89c8132f1405bfc4bacf4249c3505650b7f477cf5d6512abeb26461984d934c5"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-58-48.233Z-e1e5e205/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-group-write-forbidden-prerequisite.json",
+        "sha256": "31b399cc3a616aedd8e47553ca0f188b5065081f84de379e402c204fedd9acc0"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-58-48.233Z-e1e5e205/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-cancellation-before-release.json",
+        "sha256": "a5561270739a3bd889545a6a0cde7cb744d840cbc9fb343987945052ee5594e8"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-58-48.233Z-e1e5e205/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-cancellation-after-release.json",
+        "sha256": "ef5e65f02ab72400f2e128d833c3292f8f93fb13fa162c74f2127d80b5905470"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-58-48.233Z-e1e5e205/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-cancellation-final-ledger.json",
+        "sha256": "d5f8d234c5847034b0d9713f48db5eb34240385380e7267e783917f551e8f598"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-58-48.233Z-e1e5e205/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-post-release-qa-kick-capacity-unreachable.json",
+        "sha256": "f649a98622331bc8f4b8ae4fe8f42ed9ce9cd00506fb4631734deb0fa5199852"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-58-48.233Z-e1e5e205/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-unreachable-final.json",
+        "sha256": "fa051f081f06be1ea052befb9baedb1d518a0d2feda76d8a9ce83af7176d1d3a"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-58-48.233Z-e1e5e205/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/external-facts.json",
+        "sha256": "86c13ab70e15c879a0c1afa16687a3eac3b0b2f227e77795de2f482fbb0c3d99"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-3baf2-ish-and-prevents-later-work-system/evidence/capacity-binding-verified.json",
+        "sha256": "bdbca26450d1c1f36217fbc9599ea5d939c863f43b86d674973aa8318cc02b6b"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-3baf2-ish-and-prevents-later-work-system/evidence/capacity-refusal.json",
+        "sha256": "0aa47e29a70200c363a39dad251921efc87db2ae34896f61c5ebb0a967631f35"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-3baf2-ish-and-prevents-later-work-system/evidence/capacity-cancellation-after-release.json",
+        "sha256": "657ea10f0aaa98d792eab9191e7dda6e89650d018f037551f608ee8e200d89ac"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-3baf2-ish-and-prevents-later-work-system/evidence/capacity-post-release-qa-kick-capacity-cancel.json",
+        "sha256": "6e8b6670dab9af6cec20074cc75da6671e6953cc62b01c375e0eccbe93d8372c"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/evidence/native-tab-focus.json",
+        "sha256": "7933b45927a911054564ce61371caf8e8cb3d23cc88dfd29ce544e3aa50c3c78"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/evidence/resource-observation-adapter.json",
+        "sha256": "4c5db425bfc47ef06f402472ca699a00e43707a1447bb057f08148168fef6bec"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/evidence/resource-observation-assertions.json",
+        "sha256": "b34b89bd85598b5a60944a6d975fd35465a119e9f3b2be3af5abda8c010b8808"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/evidence/resource-observation-final.json",
+        "sha256": "ded409960a369cc2fba9015bfc28803e6c1486acdfe3957c30d66abaa966571b"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/evidence/resource-observation-final.png",
+        "sha256": "9ac397f5319f4b80c2b007fbf9d45be90ee963bb123081c94ba57231e25739e0"
+      },
+      {
+        "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-58-48.233Z-e1e5e205/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/capacity-http-19eded8d-207e-4db4-bd21-612aae9a9799.json",
+        "sha256": "55ed0997fa1d60a97da2a6ddf4d31a5263751f8f3caaadc0902d3c1c3c63e9f4"
+      }
+    ]
+  }
+}

@@ -1,0 +1,381 @@
+{
+  "kind": "INDEPENDENT_QA_READ_ONLY_REMEDIATION_INTAKE",
+  "reviewedAt": "2026-10-01T06:32:15.112Z",
+  "reviewer": "Independent AI QA; source and evidence intake, not a product test run",
+  "fromRevision": "ffdc8b018be6c20cba2a9d34afda5225187df7cd",
+  "candidateRevision": "003952188a3413152d73ae77bd1cb77ed7d66d2b",
+  "evidenceRevision": "f63b3e3b2b4f6e84b145dc03e724c0da03a4acdc",
+  "candidateSourceAccess": "Immutable git show/diff only; dedicated SUT checkout remains at ffdc8b018be6c20cba2a9d34afda5225187df7cd",
+  "sutCheckoutObserved": {
+    "path": "/Users/zcm/.codex/worktrees/qa-sut-remediation/kapibala",
+    "head": "ffdc8b018be6c20cba2a9d34afda5225187df7cd",
+    "status": ""
+  },
+  "independentQaProductExecution": "NOT_RUN_FOR_THIS_CANDIDATE",
+  "originalRequirementSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+  "unchangedObjects": {
+    "apps/web": {
+      "fromObject": "3482f253e2d198b9546eb85598cbcfa75ff4a602",
+      "candidateObject": "3482f253e2d198b9546eb85598cbcfa75ff4a602",
+      "equal": true
+    },
+    "packages": {
+      "fromObject": "1aef12da967a63ce18eee2c0a378fd4307991f0f",
+      "candidateObject": "1aef12da967a63ce18eee2c0a378fd4307991f0f",
+      "equal": true
+    },
+    "db": {
+      "fromObject": "97062ad3c27011435392f3b0e4a00727e66a0787",
+      "candidateObject": "97062ad3c27011435392f3b0e4a00727e66a0787",
+      "equal": true
+    },
+    "package.json": {
+      "fromObject": "c3778623585e90a0e185d9f6446f8fa62c3428b4",
+      "candidateObject": "c3778623585e90a0e185d9f6446f8fa62c3428b4",
+      "equal": true
+    },
+    "package-lock.json": {
+      "fromObject": "dee35f9e9579ec1705d2f0267ecd4095f092746f",
+      "candidateObject": "dee35f9e9579ec1705d2f0267ecd4095f092746f",
+      "equal": true
+    },
+    "tsconfig.json": {
+      "fromObject": "3500adea5ffb880cbb5a66626078d04d2c0015cb",
+      "candidateObject": "3500adea5ffb880cbb5a66626078d04d2c0015cb",
+      "equal": true
+    },
+    "apps/server/src/main.ts": {
+      "fromObject": "7764e6b4dbb2ae97e9771a4116f080954cfbed3e",
+      "candidateObject": "7764e6b4dbb2ae97e9771a4116f080954cfbed3e",
+      "equal": true
+    },
+    "qa-acceptance": {
+      "fromObject": "4e4bbbe651031cedab920ec2b0729f3252d3b77b",
+      "candidateObject": "4e4bbbe651031cedab920ec2b0729f3252d3b77b",
+      "equal": true
+    }
+  },
+  "evidenceFollowupChangedPaths": [
+    "docs/evidence/qa-combined-batch2-final-focused.log",
+    "docs/evidence/qa-combined-batch2-final-original.log",
+    "docs/evidence/qa-combined-batch2-final-typecheck.log",
+    "docs/evidence/qa-combined-batch2-final-verification.json",
+    "docs/evidence/qa-runtime-batch2-final-focused.log",
+    "docs/evidence/qa-runtime-batch2-final-original.log",
+    "docs/evidence/qa-runtime-batch2-final-typecheck.log",
+    "docs/evidence/qa-runtime-batch2-final-verification.json",
+    "docs/qa-remediation-batch2-20261001.md"
+  ],
+  "indexedLogsChecked": 6,
+  "indexedChecks": [
+    {
+      "index": "docs/evidence/qa-runtime-batch2-final-verification.json",
+      "executedRevision": "06500491052b999c38d183102fbadb24c11e7015",
+      "name": "focused",
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "--test",
+        "tests/integration/qa-runtime-observation.test.ts",
+        "tests/integration/account-remote-boundary.test.ts",
+        "tests/integration/core-resource-observability.test.ts",
+        "tests/integration/qa-message-observation.test.ts",
+        "tests/integration/agent-dispatch-budget.test.ts",
+        "tests/integration/agent-kick-recovery.test.ts"
+      ],
+      "reportedExitCode": 0,
+      "reportedSignal": null,
+      "sourcePath": "docs/evidence/qa-runtime-batch2-final-focused.log",
+      "bytes": 25317,
+      "sha256": "adb81a5437ff2f9fb6d71f1e943dbe8f29e0f02175ad5194ee3c4b6ae3064c1f",
+      "matchesIndex": true,
+      "rawSummary": {
+        "tests": 41,
+        "suites": 0,
+        "pass": 41,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 8999.989583
+      },
+      "classification": "DEVELOPER_REGRESSION_NOT_QA"
+    },
+    {
+      "index": "docs/evidence/qa-runtime-batch2-final-verification.json",
+      "executedRevision": "06500491052b999c38d183102fbadb24c11e7015",
+      "name": "typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "reportedExitCode": 0,
+      "reportedSignal": null,
+      "sourcePath": "docs/evidence/qa-runtime-batch2-final-typecheck.log",
+      "bytes": 187,
+      "sha256": "30e005d1a7d2022100d69e674fdc8d0abac49571306d528064a9c19c76300bfd",
+      "matchesIndex": true,
+      "rawSummary": {},
+      "classification": "DEVELOPER_REGRESSION_NOT_QA"
+    },
+    {
+      "index": "docs/evidence/qa-runtime-batch2-final-verification.json",
+      "executedRevision": "06500491052b999c38d183102fbadb24c11e7015",
+      "name": "original",
+      "command": [
+        "npm",
+        "run",
+        "verify:original"
+      ],
+      "reportedExitCode": 0,
+      "reportedSignal": null,
+      "sourcePath": "docs/evidence/qa-runtime-batch2-final-original.log",
+      "bytes": 196,
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa",
+      "matchesIndex": true,
+      "rawSummary": {},
+      "classification": "DEVELOPER_REGRESSION_NOT_QA"
+    },
+    {
+      "index": "docs/evidence/qa-combined-batch2-final-verification.json",
+      "executedRevision": "003952188a3413152d73ae77bd1cb77ed7d66d2b",
+      "name": "focused",
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "--test",
+        "tests/integration/qa-combined-observation.test.ts",
+        "tests/integration/qa-runtime-observation.test.ts",
+        "tests/integration/account-remote-boundary.test.ts",
+        "tests/integration/core-resource-observability.test.ts",
+        "tests/integration/qa-message-observation.test.ts",
+        "tests/integration/agent-dispatch-budget.test.ts",
+        "tests/integration/agent-kick-recovery.test.ts"
+      ],
+      "reportedExitCode": 0,
+      "reportedSignal": null,
+      "sourcePath": "docs/evidence/qa-combined-batch2-final-focused.log",
+      "bytes": 31937,
+      "sha256": "ac48c5af083b1d9ff70374d8cb387c883880d4539747451e7f150585adf9d71d",
+      "matchesIndex": true,
+      "rawSummary": {
+        "tests": 42,
+        "suites": 0,
+        "pass": 42,
+        "fail": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "duration_ms": 9168.016416
+      },
+      "classification": "DEVELOPER_REGRESSION_NOT_QA"
+    },
+    {
+      "index": "docs/evidence/qa-combined-batch2-final-verification.json",
+      "executedRevision": "003952188a3413152d73ae77bd1cb77ed7d66d2b",
+      "name": "typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "reportedExitCode": 0,
+      "reportedSignal": null,
+      "sourcePath": "docs/evidence/qa-combined-batch2-final-typecheck.log",
+      "bytes": 187,
+      "sha256": "30e005d1a7d2022100d69e674fdc8d0abac49571306d528064a9c19c76300bfd",
+      "matchesIndex": true,
+      "rawSummary": {},
+      "classification": "DEVELOPER_REGRESSION_NOT_QA"
+    },
+    {
+      "index": "docs/evidence/qa-combined-batch2-final-verification.json",
+      "executedRevision": "003952188a3413152d73ae77bd1cb77ed7d66d2b",
+      "name": "original",
+      "command": [
+        "npm",
+        "run",
+        "verify:original"
+      ],
+      "reportedExitCode": 0,
+      "reportedSignal": null,
+      "sourcePath": "docs/evidence/qa-combined-batch2-final-original.log",
+      "bytes": 196,
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa",
+      "matchesIndex": true,
+      "rawSummary": {},
+      "classification": "DEVELOPER_REGRESSION_NOT_QA"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "sourceRevision": "f63b3e3b2b4f6e84b145dc03e724c0da03a4acdc",
+      "sourcePath": "docs/qa-remediation-batch2-20261001.md",
+      "bytes": 4250,
+      "sha256": "bc0f151517b9ff99157f73101d663beb74cce57aed9add9b79bcd306019854be",
+      "qaCopy": "reports/integration/20261001-remediation-batch2-intake/evidence/qa-remediation-batch2-20261001.md"
+    },
+    {
+      "sourceRevision": "003952188a3413152d73ae77bd1cb77ed7d66d2b",
+      "sourcePath": "docs/qa-runtime-observation-adapter.md",
+      "bytes": 10621,
+      "sha256": "d9285bccf7b52f6e66e7dc878f48e9b093c56114b46fd54aa5ad4a50ce5ce9fc",
+      "qaCopy": "reports/integration/20261001-remediation-batch2-intake/evidence/qa-runtime-observation-adapter.md"
+    },
+    {
+      "sourceRevision": "003952188a3413152d73ae77bd1cb77ed7d66d2b",
+      "sourcePath": "docs/evidence/qa-runtime-observation-development.txt",
+      "bytes": 13727,
+      "sha256": "b9fc0a7a4977d766996d082a494755ebfa3799e6321f23ba621d893960350e3f",
+      "qaCopy": "reports/integration/20261001-remediation-batch2-intake/evidence/qa-runtime-observation-development.txt"
+    },
+    {
+      "sourceRevision": "f63b3e3b2b4f6e84b145dc03e724c0da03a4acdc",
+      "sourcePath": "docs/evidence/qa-runtime-batch2-final-verification.json",
+      "bytes": 1982,
+      "sha256": "9115953065ae57f86cfc734ced72fe36598e2d8c10c29e8cd210f4082fe5d8c6",
+      "qaCopy": "reports/integration/20261001-remediation-batch2-intake/evidence/qa-runtime-batch2-final-verification.json"
+    },
+    {
+      "sourceRevision": "f63b3e3b2b4f6e84b145dc03e724c0da03a4acdc",
+      "sourcePath": "docs/evidence/qa-runtime-batch2-final-focused.log",
+      "bytes": 25317,
+      "sha256": "adb81a5437ff2f9fb6d71f1e943dbe8f29e0f02175ad5194ee3c4b6ae3064c1f",
+      "qaCopy": "reports/integration/20261001-remediation-batch2-intake/evidence/qa-runtime-batch2-final-focused.log.txt"
+    },
+    {
+      "sourceRevision": "f63b3e3b2b4f6e84b145dc03e724c0da03a4acdc",
+      "sourcePath": "docs/evidence/qa-runtime-batch2-final-typecheck.log",
+      "bytes": 187,
+      "sha256": "30e005d1a7d2022100d69e674fdc8d0abac49571306d528064a9c19c76300bfd",
+      "qaCopy": "reports/integration/20261001-remediation-batch2-intake/evidence/qa-runtime-batch2-final-typecheck.log.txt"
+    },
+    {
+      "sourceRevision": "f63b3e3b2b4f6e84b145dc03e724c0da03a4acdc",
+      "sourcePath": "docs/evidence/qa-runtime-batch2-final-original.log",
+      "bytes": 196,
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa",
+      "qaCopy": "reports/integration/20261001-remediation-batch2-intake/evidence/qa-runtime-batch2-final-original.log.txt"
+    },
+    {
+      "sourceRevision": "f63b3e3b2b4f6e84b145dc03e724c0da03a4acdc",
+      "sourcePath": "docs/evidence/qa-combined-batch2-final-verification.json",
+      "bytes": 2047,
+      "sha256": "dbae2dead799ed9f1f18cd0846ea8498397a3bb763dbd72a42b05122cdbb201c",
+      "qaCopy": "reports/integration/20261001-remediation-batch2-intake/evidence/qa-combined-batch2-final-verification.json"
+    },
+    {
+      "sourceRevision": "f63b3e3b2b4f6e84b145dc03e724c0da03a4acdc",
+      "sourcePath": "docs/evidence/qa-combined-batch2-final-focused.log",
+      "bytes": 31937,
+      "sha256": "ac48c5af083b1d9ff70374d8cb387c883880d4539747451e7f150585adf9d71d",
+      "qaCopy": "reports/integration/20261001-remediation-batch2-intake/evidence/qa-combined-batch2-final-focused.log.txt"
+    },
+    {
+      "sourceRevision": "f63b3e3b2b4f6e84b145dc03e724c0da03a4acdc",
+      "sourcePath": "docs/evidence/qa-combined-batch2-final-typecheck.log",
+      "bytes": 187,
+      "sha256": "30e005d1a7d2022100d69e674fdc8d0abac49571306d528064a9c19c76300bfd",
+      "qaCopy": "reports/integration/20261001-remediation-batch2-intake/evidence/qa-combined-batch2-final-typecheck.log.txt"
+    },
+    {
+      "sourceRevision": "f63b3e3b2b4f6e84b145dc03e724c0da03a4acdc",
+      "sourcePath": "docs/evidence/qa-combined-batch2-final-original.log",
+      "bytes": 196,
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa",
+      "qaCopy": "reports/integration/20261001-remediation-batch2-intake/evidence/qa-combined-batch2-final-original.log.txt"
+    }
+  ],
+  "diffArtifacts": [
+    {
+      "path": "candidate-diff-name-status.txt",
+      "bytes": 1022,
+      "sha256": "8a284911efa9b73a163e2386f1c0d4f553c325100374bfb808d2be4a562b4202",
+      "command": [
+        "git",
+        "diff",
+        "--name-status",
+        "--no-renames",
+        "ffdc8b018be6c20cba2a9d34afda5225187df7cd",
+        "003952188a3413152d73ae77bd1cb77ed7d66d2b"
+      ]
+    },
+    {
+      "path": "product-source-diff.patch",
+      "bytes": 9841,
+      "sha256": "8110deec7fbbae1a31d8edda98808ef72a9c32cd97677951bf7383b4cf65fa65",
+      "command": [
+        "git",
+        "diff",
+        "ffdc8b018be6c20cba2a9d34afda5225187df7cd",
+        "003952188a3413152d73ae77bd1cb77ed7d66d2b",
+        "--",
+        "apps/server/src"
+      ]
+    },
+    {
+      "path": "adapter-and-development-tests-diff.patch",
+      "bytes": 57766,
+      "sha256": "1240314258e4552c82f69eb5326b2871d7f1a2d918f1749a26a4213f88dbe6ae",
+      "command": [
+        "git",
+        "diff",
+        "ffdc8b018be6c20cba2a9d34afda5225187df7cd",
+        "003952188a3413152d73ae77bd1cb77ed7d66d2b",
+        "--",
+        "scripts",
+        "tests"
+      ]
+    },
+    {
+      "path": "evidence-followup-diff-name-status.txt",
+      "bytes": 479,
+      "sha256": "e8d6a77745552c59074f6399c74931aae147907c1fe8f9911c28f5150737d6b9",
+      "command": [
+        "git",
+        "diff",
+        "--name-status",
+        "--no-renames",
+        "003952188a3413152d73ae77bd1cb77ed7d66d2b",
+        "f63b3e3b2b4f6e84b145dc03e724c0da03a4acdc"
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "B2-R1",
+      "finding": "No added business requirement identified. Optional runtime account/module hooks and an explicit combined engineering entry affect verification access; public requirement expectations remain unchanged.",
+      "requiredFollowup": "Run independent account original-transaction and module-diagnostics cases against a newly frozen target."
+    },
+    {
+      "id": "B2-R2",
+      "finding": "account-save-once/persistent inject fixed SQLSTATE 55P03 inside the original savepoint after actual persistence. New intent waiting is observed with actual pg_blocking_pids; successful outer COMMIT acknowledgement produces the committed event.",
+      "limits": "A source mechanism and developer log do not prove QA runtime causal evidence. Remote success/local failure remains a cross-system mismatch; no new remote replay/idempotency guarantee."
+    },
+    {
+      "id": "B2-R3",
+      "finding": "module-fail-then-hold throws through the actual scheduler, holds before the next activity.start, then during the real tick; success is emitted only after normal tick completion.",
+      "limits": "A healthy/idle module means that scheduler tick completed, not business completion or global health. Profile is static mapping of public diagnostics fields."
+    },
+    {
+      "id": "B2-R4",
+      "finding": "scripts/qa-observation-server.ts installs capacity/message/runtime in one context with a single database, distinct canonical private registries and independent controllers; production main object unchanged.",
+      "requiredFollowup": "Rebind explicit combined entry, all registry variables/controller URLs, revision and authorization hashes; never assemble business hooks in QA."
+    },
+    {
+      "id": "B2-R5",
+      "finding": "Activity witness and safe activity boundary are absent from the candidate capabilities. INT-ACT-001 remains dependent on engineering delivery. Strict 60000ms and first-batch receipt/unknown-dispatch risks remain.",
+      "requiredFollowup": "Do not remove case from business denominator or infer activity truth from running/process uptime."
+    },
+    {
+      "id": "B2-R6",
+      "finding": "Six indexed log files exactly match recorded bytes and SHA256. 41 targeted checks belong to 0650049; 42 targeted checks belong to 0039521; earlier 27 belong to d614eba.",
+      "limits": "No new full 438-check run at 0039521 is evidenced. Developer cleanup claims are preserved as developer claims; not independently rerun or turned into QA PASS."
+    }
+  ],
+  "productVerdict": "NOT_ISSUED_BY_READ_ONLY_INTAKE",
+  "releaseVerdict": "NOT_ASSESSED"
+}

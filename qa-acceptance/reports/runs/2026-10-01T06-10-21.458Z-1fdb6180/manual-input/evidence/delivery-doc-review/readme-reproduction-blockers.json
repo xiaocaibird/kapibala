@@ -1,0 +1,28 @@
+{
+  "performedAt": "2026-10-01T06:15:17.675Z",
+  "caseId": "MAN-DELIVERY-002",
+  "stoppedAtStep": 1,
+  "rule": "冻结用例步骤1：存在默认演示地址则停止该步骤并记录阻塞",
+  "findings": [
+    {
+      "reference": "README.md:7–18",
+      "observation": "默认启动指令cd到/Users/zcm/Desktop/kapibala，并提示当前演示已运行；控制台5173/API3100/Gateway3101/Agent3102固定默认地址。",
+      "missingForThisCase": "只依README如何在全新独立目录使用独立端口且绝不复用演示服务。"
+    },
+    {
+      "reference": "README.md:13、18；compose.yaml:8–16",
+      "observation": "README要求默认docker compose up；compose绑定127.0.0.1:55432并使用platform_db持久卷；停止说明保留该卷。",
+      "missingForThisCase": "隔离容器/库/卷的唯一归属、动态端口、安全清理及不复用既有资源的文档步骤。"
+    },
+    {
+      "reference": "README.md:20",
+      "observation": "仅泛称可配置PORT、DATABASE_URL、GATEWAY_URL、AGENT_URL；没有完整隔离前端/模拟服务监听端口和状态目录的README配方。",
+      "missingForThisCase": "可由独立接收方照做的完整配置/迁移/服务启动与两身份访问路径。不能拿已搭建QA harness替代README复现。"
+    }
+  ],
+  "executedStartupCommands": [],
+  "networkRequests": [],
+  "createdResources": [],
+  "steps2And3": "NOT_EXECUTED due to required stop; no claim that actual application startup failed",
+  "remediationBoundary": "开发需在后续交付提供/明确安全独立复现配方；本次不补写候选文档，不凭实现逆向补步骤后称原README通过。"
+}

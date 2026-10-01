@@ -1,0 +1,84 @@
+✖ profile name limits use trimmed UTF-16 units on create and edit (1.42975ms)
+✖ profile description limits use trimmed UTF-16 units on create and edit (0.122833ms)
+✖ group metadata: name enforces UTF-16 units in both public write routes (128.410292ms)
+✖ group metadata: description enforces UTF-16 units in both public write routes (68.655042ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 0
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 365.116333
+
+✖ failing tests:
+
+test at apps/web/tests/group-profile.test.ts:1:1878
+✖ profile name limits use trimmed UTF-16 units on create and edit (1.42975ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/apps/web/tests/group-profile.test.ts:78:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at apps/web/tests/group-profile.test.ts:1:1878
+✖ profile description limits use trimmed UTF-16 units on create and edit (0.122833ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/apps/web/tests/group-profile.test.ts:78:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at tests/integration/group-metadata.test.ts:1:5757
+✖ group metadata: name enforces UTF-16 units in both public write routes (128.410292ms)
+  AssertionError [ERR_ASSERTION]: POST name units=81: {"jobId":"49772758-4339-4e75-9ec1-265ffce84dd3"}
+  
+  202 !== 400
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/tests/integration/group-metadata.test.ts:222:16)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 202,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/group-metadata.test.ts:1:5757
+✖ group metadata: description enforces UTF-16 units in both public write routes (68.655042ms)
+  AssertionError [ERR_ASSERTION]: POST description units=501: {"jobId":"952fcecf-a47f-4a71-95d3-37ab2d3d9cd8"}
+  
+  202 !== 400
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/tests/integration/group-metadata.test.ts:222:16)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 202,
+    expected: 400,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

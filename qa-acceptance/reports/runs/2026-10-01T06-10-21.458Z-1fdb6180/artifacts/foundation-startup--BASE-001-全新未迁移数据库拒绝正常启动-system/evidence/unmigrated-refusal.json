@@ -1,0 +1,12 @@
+{
+  "database": "qa_b044a71724d846609dadf823",
+  "control": {
+    "ok": true,
+    "schemaVersion": 8
+  },
+  "readinessError": "Error: 被测命令已退出，不能借用其他进程的健康端点: node",
+  "runningAfterProbe": false,
+  "log": "/Users/zcm/.codex/worktrees/qa-sut-integration/kapibala/scripts/qa-capacity-server.ts:15\n  throw new Error(\n        ^\n\nError: Explicit QA registry, owner token, DATABASE_URL and PORT required\n    at <anonymous> (/Users/zcm/.codex/worktrees/qa-sut-integration/kapibala/scripts/qa-capacity-server.ts:15:9)\n    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)\n    at async node:internal/modules/esm/loader:647:26\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)\n\nNode.js v24.21.0\n",
+  "requirement": "R-A0-02",
+  "note": "对照只改变为本轮空数据库；原文无固定拒启诊断码。历史旧schema升级仍属于独立用例。"
+}

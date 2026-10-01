@@ -1,0 +1,26 @@
+{
+  "input": {
+    "limit": 1.5
+  },
+  "schema": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "type": "object",
+    "properties": {
+      "limit": {
+        "type": "integer",
+        "exclusiveMinimum": 0,
+        "maximum": 9007199254740991
+      }
+    },
+    "required": [
+      "limit"
+    ],
+    "additionalProperties": false
+  },
+  "schemaAccepts": false,
+  "actual": {
+    "code": "INVALID_INPUT",
+    "message": "Tool input does not match its required schema."
+  },
+  "judgment": "公开schema自洽检查；不固定0/-1/1.5的长期归一化业务规则。50上限与100000截50仍由原文独立裁判。"
+}

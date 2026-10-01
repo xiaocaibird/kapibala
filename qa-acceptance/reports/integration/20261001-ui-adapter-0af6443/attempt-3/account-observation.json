@@ -1,0 +1,23 @@
+{
+  "adapter": {
+    "confirmed": true,
+    "candidateRevision": "0af644334b00eb13e2e56df33c70f22358a6a0f7",
+    "reviewReference": "reports/integration/20261001-ui-adapter-0af6443/attempt-3/account-observation.json",
+    "rowSelector": "section:has(> .panel-header > h2:text-is(\"账号列表\")) tbody > tr:has(strong:text-is(\"{id}\"))",
+    "stateSelector": "td:nth-child(3) .badge",
+    "errorSelector": "main > [role=\"alert\"]",
+    "refreshSelector": ".page-header button:text-is(\"刷新\")",
+    "acknowledgeSelector": "td:nth-child(3) .badge",
+    "stateText": {
+      "online": "在线",
+      "disconnected": "已离线"
+    }
+  },
+  "checks": {
+    "errorVisible": true,
+    "ackVisible": true,
+    "sameDocument": true,
+    "refreshSemantic": "Dedicated page header refresh performs GET accounts; no navigation or view-and-confirm notice used"
+  },
+  "scope": "Locator and pure-resource refresh only; unread acknowledgement behavior still NOT_RUN"
+}

@@ -1,0 +1,3112 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-01T07:12:18.169167+00:00",
+  "reviewer": "AI QA 独立原始证据复核 / intake_smoke_gate；BLK-SPEC-006由intake_risk_map交叉只读核对",
+  "scope": "仅原冻结run证据、原始需求、公开批准契约和冻结QA用例；没有新增产品测试，没有读取业务实现作为oracle，没有修改冻结资产。",
+  "originalRun": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/runs/2026-10-01T06-10-21.458Z-1fdb6180",
+  "sutRevision": "0af644334b00eb13e2e56df33c70f22358a6a0f7",
+  "rawStatusPolicy": "三项原始FAIL保持不变；本报告附加归因，不是复测结果，不生成PASS。",
+  "summary": {
+    "productContractFail": 1,
+    "qaPreconditionNotEstablished": 2,
+    "newProductTests": 0
+  },
+  "publicContractByteChecks": [
+    {
+      "path": "docs/original-interview-question.md",
+      "equalsCandidate": true,
+      "candidateSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75"
+    },
+    {
+      "path": "docs/decisions.md",
+      "equalsCandidate": true,
+      "candidateSha256": "e4189c2af1c3933346ac5d296d7ac6dd954f8c4785cc29cae9faef870c5cfa6f"
+    },
+    {
+      "path": "docs/group-directory-profile-proposal.md",
+      "equalsCandidate": true,
+      "candidateSha256": "c38470a4d68e6a84ab9dc94c09a4952f55dad875146eb30540577b884e2164f1"
+    },
+    {
+      "path": "docs/group-profile-conflict-review.md",
+      "equalsCandidate": true,
+      "candidateSha256": "81c47b552a5f76292816de3409443e2334018a5846534aba1b655cb702ab7ba7"
+    },
+    {
+      "path": "docs/feature-matrix.md",
+      "equalsCandidate": true,
+      "candidateSha256": "967bc8f0eebce288a0a356e258719b498f551d7b417e902f2a24850b3f05e839"
+    },
+    {
+      "path": "docs/page-update-notification-proposal.md",
+      "equalsCandidate": true,
+      "candidateSha256": "2c31b688b67d31b2454a2ee4f3e1445f5bae50a93071eeb17cdc11f712d6f21b"
+    }
+  ],
+  "cases": [
+    {
+      "id": "BLK-SPEC-006",
+      "project": "system",
+      "rawStatus": "FAIL",
+      "triage": "PRODUCT_CONTRACT_FAIL",
+      "severity": "S2",
+      "severityRationale": "资料输入公开版本化长度规则不一致；不涉及本轮已证明的数据丢失/权限越权。",
+      "requirementIds": [
+        "ADD-META-04"
+      ],
+      "basis": [
+        {
+          "path": "docs/group-directory-profile-proposal.md",
+          "line": 68,
+          "meaning": "本轮暂沿用trim后名称1–80、按JavaScript字符串长度计数。"
+        },
+        {
+          "path": "docs/decisions.md",
+          "line": 41,
+          "meaning": "D024本轮沿用的技术profile；并非永久业务限制。"
+        },
+        {
+          "path": "docs/group-profile-conflict-review.md",
+          "line": 20,
+          "meaning": "公开契约明确UTF-16单元。"
+        },
+        {
+          "path": "qa-acceptance/requirements/spec-boundaries-resolution.md",
+          "line": 60,
+          "meaning": "QA冻结预期明示versioned retained profile。"
+        }
+      ],
+      "observations": [
+        {
+          "line": 66,
+          "startedAt": "2026-10-01T06:38:55.737Z",
+          "qaRequestId": "eefc3f4c-f7a6-42db-b4de-fd7d425829d1",
+          "input": {
+            "name": {
+              "codePoints": 82,
+              "utf16Units": 82,
+              "sample": " 名名名名名"
+            },
+            "description": {
+              "codePoints": 502,
+              "utf16Units": 502,
+              "sample": " 介介介介介"
+            }
+          },
+          "status": 200,
+          "responseProfile": {
+            "name": {
+              "codePoints": 80,
+              "utf16Units": 80,
+              "sample": "名名名名名名"
+            },
+            "description": {
+              "codePoints": 500,
+              "utf16Units": 500,
+              "sample": "介介介介介介"
+            }
+          }
+        },
+        {
+          "line": 72,
+          "startedAt": "2026-10-01T06:38:55.755Z",
+          "qaRequestId": "31712edb-508a-4786-af13-25573ba270d0",
+          "input": {
+            "name": {
+              "codePoints": 81,
+              "utf16Units": 81,
+              "sample": "名名名名名名"
+            }
+          },
+          "status": 400,
+          "responseProfile": null
+        },
+        {
+          "line": 78,
+          "startedAt": "2026-10-01T06:38:55.766Z",
+          "qaRequestId": "6ebba633-2553-43a7-a20e-68c8b7472980",
+          "input": {
+            "name": {
+              "codePoints": 0,
+              "utf16Units": 0,
+              "sample": ""
+            }
+          },
+          "status": 400,
+          "responseProfile": null
+        },
+        {
+          "line": 84,
+          "startedAt": "2026-10-01T06:38:55.774Z",
+          "qaRequestId": "1be22a22-1e14-4b9a-a773-7c759ceb9918",
+          "input": {
+            "name": {
+              "codePoints": 3,
+              "utf16Units": 3,
+              "sample": "   "
+            }
+          },
+          "status": 400,
+          "responseProfile": null
+        },
+        {
+          "line": 90,
+          "startedAt": "2026-10-01T06:38:55.783Z",
+          "qaRequestId": "564d6038-6b40-485b-8cc2-b67c961de799",
+          "input": {
+            "name": null
+          },
+          "status": 400,
+          "responseProfile": null
+        },
+        {
+          "line": 96,
+          "startedAt": "2026-10-01T06:38:55.791Z",
+          "qaRequestId": "f225678c-374a-497e-a677-8c31b758a895",
+          "input": {
+            "description": {
+              "codePoints": 501,
+              "utf16Units": 501,
+              "sample": "介介介介介介"
+            }
+          },
+          "status": 400,
+          "responseProfile": null
+        },
+        {
+          "line": 102,
+          "startedAt": "2026-10-01T06:38:55.799Z",
+          "qaRequestId": "58d3368c-ac45-42cf-b928-e67bdfe5ef41",
+          "input": {
+            "description": null
+          },
+          "status": 400,
+          "responseProfile": null
+        },
+        {
+          "line": 106,
+          "startedAt": "2026-10-01T06:38:55.804Z",
+          "qaRequestId": "6710b007-66f6-4314-b01b-0ad87d92a76f",
+          "input": {
+            "name": {
+              "codePoints": 40,
+              "utf16Units": 80,
+              "sample": "😀😀😀😀😀😀"
+            }
+          },
+          "status": 200,
+          "responseProfile": {
+            "name": {
+              "codePoints": 40,
+              "utf16Units": 80,
+              "sample": "😀😀😀😀😀😀"
+            },
+            "description": {
+              "codePoints": 500,
+              "utf16Units": 500,
+              "sample": "介介介介介介"
+            }
+          }
+        },
+        {
+          "line": 110,
+          "startedAt": "2026-10-01T06:38:55.813Z",
+          "qaRequestId": "741ca757-ad2b-4941-a238-391632d81e2b",
+          "input": {
+            "name": {
+              "codePoints": 41,
+              "utf16Units": 82,
+              "sample": "😀😀😀😀😀😀"
+            }
+          },
+          "status": 200,
+          "responseProfile": {
+            "name": {
+              "codePoints": 41,
+              "utf16Units": 82,
+              "sample": "😀😀😀😀😀😀"
+            },
+            "description": {
+              "codePoints": 500,
+              "utf16Units": 500,
+              "sample": "介介介介介介"
+            }
+          }
+        }
+      ],
+      "failureLocation": "tests/system/spec-boundaries.spec.ts:572",
+      "finding": "41个😀为82个UTF-16单元；2026-10-01T06:38:55.813Z PATCH返回200，响应name保留完整41个emoji，违反本轮名称至多80 UTF-16单元的公开契约。此前40个emoji/80单元200正确；六条非法输入400均已执行。",
+      "notProven": [
+        "超长名称响应后的独立GET持久性未执行，不宣称完成独立持久化复核。",
+        "后续简介emoji251、简介清空与工具边界步骤未执行；不能由本次失败推出其结果。",
+        "未读业务源码定位根因；不把此问题泛化为永久业务长度需求。"
+      ],
+      "nextAction": "维持当前公开profile复测；若需要改变计数语义，必须先记录/批准版本化契约变更，QA不得按实际200改答案。"
+    },
+    {
+      "id": "UI-024",
+      "project": "chromium",
+      "rawStatus": "FAIL",
+      "triage": "QA_PRECONDITION_NOT_ESTABLISHED",
+      "productVerdict": "UNDETERMINED",
+      "requirementIds": [
+        "ADD-DIR-07",
+        "ADD-DIR-11"
+      ],
+      "basis": [
+        {
+          "path": "docs/group-directory-profile-proposal.md",
+          "line": 53,
+          "meaning": "单页每5秒及相关实时变化有界刷新并合并。"
+        },
+        {
+          "path": "docs/group-directory-profile-proposal.md",
+          "line": 56,
+          "meaning": "无关消息不遍历；相关字段或连接恢复允许有界读取。"
+        }
+      ],
+      "failureLocation": "tests/ui/console.spec.ts:832",
+      "observations": {
+        "directoryRequests": [
+          {
+            "monotonicMs": 2203789.691,
+            "startedAt": "2026-10-01T06:47:05.294Z",
+            "durationMs": 5.795,
+            "url": "http://127.0.0.1:62655/api/group-directory?pageSize=20&order=desc&q=",
+            "status": 200,
+            "bodyAvailable": true,
+            "bodyArchiveEntry": "resources/2241ec0576e62c6f4a173ce0f974f13fb02ac0a7.json",
+            "itemNames": [
+              "轮询起点"
+            ],
+            "itemIds": [
+              "a9a88cbb-af44-494b-8ea5-b11d11815af3"
+            ],
+            "nextCursor": null
+          },
+          {
+            "monotonicMs": 2203873.565,
+            "startedAt": "2026-10-01T06:47:05.378Z",
+            "durationMs": 5.915,
+            "url": "http://127.0.0.1:62655/api/group-directory?pageSize=20&order=desc&q=",
+            "status": 200,
+            "bodyAvailable": true,
+            "bodyArchiveEntry": "resources/2241ec0576e62c6f4a173ce0f974f13fb02ac0a7.json",
+            "itemNames": [
+              "轮询起点"
+            ],
+            "itemIds": [
+              "a9a88cbb-af44-494b-8ea5-b11d11815af3"
+            ],
+            "nextCursor": null
+          },
+          {
+            "monotonicMs": 2203973.316,
+            "startedAt": "2026-10-01T06:47:05.478Z",
+            "durationMs": 4.888,
+            "url": "http://127.0.0.1:62655/api/group-directory?pageSize=20&order=desc&q=",
+            "status": 200,
+            "bodyAvailable": true,
+            "bodyArchiveEntry": "resources/2241ec0576e62c6f4a173ce0f974f13fb02ac0a7.json",
+            "itemNames": [
+              "轮询起点"
+            ],
+            "itemIds": [
+              "a9a88cbb-af44-494b-8ea5-b11d11815af3"
+            ],
+            "nextCursor": null
+          }
+        ],
+        "scopeReady": [
+          {
+            "monotonicMs": 2203814.422,
+            "startSeq": 13,
+            "requestId": "5f803286-7d02-4687-8d7e-772305036cd6"
+          }
+        ],
+        "deliveredEvents": [
+          {
+            "monotonicMs": 2203907.379,
+            "seq": 1,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "online",
+              "from": "idle",
+              "accountId": "account-1"
+            }
+          },
+          {
+            "monotonicMs": 2203908.832,
+            "seq": 2,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "online",
+              "from": "idle",
+              "accountId": "account-2"
+            }
+          },
+          {
+            "monotonicMs": 2203908.931,
+            "seq": 3,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "online",
+              "from": "idle",
+              "accountId": "account-3"
+            }
+          },
+          {
+            "monotonicMs": 2203909.009,
+            "seq": 4,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "online",
+              "from": "idle",
+              "accountId": "account-4"
+            }
+          },
+          {
+            "monotonicMs": 2203909.079,
+            "seq": 5,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "online",
+              "from": "idle",
+              "accountId": "account-5"
+            }
+          },
+          {
+            "monotonicMs": 2203909.148,
+            "seq": 6,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "online",
+              "from": "idle",
+              "accountId": "account-6"
+            }
+          },
+          {
+            "monotonicMs": 2203909.322,
+            "seq": 7,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "a9a88cbb-af44-494b-8ea5-b11d11815af3",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2203909.395,
+            "seq": 8,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "adef441c-8dd8-486f-95c3-e859b714d1fa",
+              "status": "running",
+              "groupId": "a9a88cbb-af44-494b-8ea5-b11d11815af3",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2203909.614,
+            "seq": 9,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "a9a88cbb-af44-494b-8ea5-b11d11815af3",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2203909.792,
+            "seq": 10,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "a9a88cbb-af44-494b-8ea5-b11d11815af3",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2203910.013,
+            "seq": 11,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "a9a88cbb-af44-494b-8ea5-b11d11815af3",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2203911.446,
+            "seq": 12,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "adef441c-8dd8-486f-95c3-e859b714d1fa",
+              "status": "finished",
+              "groupId": "a9a88cbb-af44-494b-8ea5-b11d11815af3",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2203911.58,
+            "seq": 13,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "a9a88cbb-af44-494b-8ea5-b11d11815af3",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2204006.511,
+            "seq": 14,
+            "type": "message",
+            "payload": {
+              "id": "cb60f3ce-abfc-45ea-9303-c2391ccf7862",
+              "isOwn": false,
+              "msgId": "gateway-message-1",
+              "source": "gateway",
+              "groupId": "a9a88cbb-af44-494b-8ea5-b11d11815af3",
+              "changeKind": "created",
+              "attentionIdentity": "confirmed"
+            }
+          }
+        ],
+        "timeNote": "Playwright同一trace的monotonicMs；sendToPage仅证明真实帧转交浏览器，不擅自断言React已完成处理。请求信息不复制Authorization/Cookie。"
+      },
+      "finding": "开始负向观察前刚转交seq1–13初始资料/成员回放；第三次目录请求比测试注入消息seq14转交页面早33.195ms，不能归因为该消息触发。所谓周期请求在focus后约56.87ms发生，不证明5秒定时。失败早于并发屏障注册，后半段完全未执行。",
+      "minimalCorrection": [
+        "在登录之前订阅真实浏览器WebSocket与目录请求/完成/失败记录；保留同一document和连接代次，导航采用公开同文档路由，不以整页跳转另造初始化。",
+        "使用公开scope_ready.startSeq水位，验证本连接真实收到的初始回放已覆盖该水位（含已先收到的事件）；继续确认相关目录刷新已完成/没有在途请求。scope_ready自身先于回放到达，不能单凭它认为已收敛；无可靠完成证据则BLOCKED。",
+        "在初始化、回放、重连及相关变更均已排除的稳定页面，记录真实定时读取及后续周期；不能让几十毫秒的初始化读取满足五秒断言。周期要求仍为原5秒；不新增或放宽SLA。",
+        "在已识别周期完成后的窗口注入无关消息，先证明该消息实际到达浏览器，且该负向窗口不跨下一个已知周期，也无相关事件/重连；再断言没有因无关消息新增读取。",
+        "保留原并发屏障：真实首次资料变更触发一个在途读取后继续两次变更，记录请求数量、并发峰值与最终资料，finally释放。不屏蔽事件、不强制成功响应、不以重试后通过抹掉首次失败。"
+      ],
+      "unchangedAssertions": [
+        "真实5秒周期",
+        "保持输入焦点",
+        "无关消息不触发额外目录遍历",
+        "并发失效合并与maxActive=1",
+        "最终目录资料正确",
+        "最多两次合并读取",
+        "读取无后页cursor且pageSize不超过50"
+      ],
+      "notProven": [
+        "未从只读trace证明实际产品刷新调度的内部原因；只确认现有测试未排除允许的竞争触发。",
+        "不把QA归因改写为产品PASS。"
+      ]
+    },
+    {
+      "id": "UI-025",
+      "project": "chromium",
+      "rawStatus": "FAIL",
+      "triage": "QA_PRECONDITION_NOT_ESTABLISHED",
+      "productVerdict": "UNDETERMINED",
+      "requirementIds": [
+        "ADD-DIR-09",
+        "ADD-DIR-06"
+      ],
+      "basis": [
+        {
+          "path": "docs/group-directory-profile-proposal.md",
+          "line": 52,
+          "meaning": "当前条件cursor与稳定ID合并。"
+        },
+        {
+          "path": "docs/group-directory-profile-proposal.md",
+          "line": 54,
+          "meaning": "相关变化使多页过期，停止旧cursor；缓存仍受过期规则约束。"
+        },
+        {
+          "path": "docs/group-directory-profile-proposal.md",
+          "line": 58,
+          "meaning": "同标签本次登录内存恢复条件/已加载页/稳定ID位置。"
+        },
+        {
+          "path": "docs/group-directory-profile-proposal.md",
+          "line": 60,
+          "meaning": "整页刷新清空；不能把缓存当最新。"
+        }
+      ],
+      "failureLocation": "tests/ui/console.spec.ts:892",
+      "observations": {
+        "directoryRequests": [
+          {
+            "monotonicMs": 2229452.75,
+            "startedAt": "2026-10-01T06:47:30.957Z",
+            "durationMs": 7.117,
+            "url": "http://127.0.0.1:62722/api/group-directory?pageSize=20&order=desc&q=",
+            "status": 200,
+            "bodyAvailable": true,
+            "bodyArchiveEntry": "resources/70c80b6026c2bb75d584e4eb644b6b21e5bd88d6.json",
+            "itemNames": [
+              "cache-item-022",
+              "cache-item-021",
+              "cache-item-020",
+              "cache-item-019",
+              "cache-item-018",
+              "cache-item-017",
+              "cache-item-016",
+              "cache-item-015",
+              "cache-item-014",
+              "cache-item-013",
+              "cache-item-012",
+              "cache-item-011",
+              "cache-item-010",
+              "cache-item-009",
+              "cache-item-008",
+              "cache-item-007",
+              "cache-item-006",
+              "cache-item-005",
+              "cache-item-004",
+              "cache-item-003"
+            ],
+            "itemIds": [
+              "d1ac4fd8-1ec7-41c0-90fb-95eeb6fe4076",
+              "876f3778-1a96-4583-99e3-96caa4f75adb",
+              "66107b89-63b9-4aef-875e-e052f2218397",
+              "7d25ee4c-901f-49b2-b937-65d2c154c1d9",
+              "576bf0af-d538-4fe3-b9ce-19b35bfd798b",
+              "70626608-44da-4532-aaf2-52a4cce6c33a",
+              "b9767cb6-3cc8-42cf-b8f9-0eaa21b22c9d",
+              "e662a650-80eb-42a8-8f4a-036bd2aaa76c",
+              "baf2e60c-950a-431b-993e-a8cd232c1a31",
+              "27278446-8285-4716-b43b-a8153d130fc8",
+              "4fb5c4e8-5d1a-43c1-94bb-6a02416e84c7",
+              "ddc2d76f-02a4-4312-a7dc-ed0cb392b96f",
+              "cd4be868-7cfe-4fb1-983d-cd7bbb0a02ca",
+              "e9baab2e-5ebc-45c0-87c9-c9fcb0b8b388",
+              "dc2f1d2e-441d-463e-8ca1-c1e22bb73b68",
+              "afc5ea8d-333e-49db-9387-e87f10ef1f7a",
+              "631eed02-9129-4ce6-8a07-63bd2f70ddc9",
+              "05b861cc-8ef2-4573-84ee-56f9fa18fcde",
+              "fc09f6e3-7136-4cc9-a741-ec788d37ecec",
+              "504737a9-89e6-47e3-9e8a-ecd012bb5ad7"
+            ],
+            "nextCursor": "eyJ2IjoxLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTAxVDA2OjQ3OjExLjM0OTYzM1oiLCJpZCI6IjUwNDczN2E5LTg5ZTYtNDdlMy05ZThhLWVjZDAxMmJiNWFkNyIsInEiOiIiLCJvcmRlciI6ImRlc2MiLCJwYWdlU2l6ZSI6MjB9"
+          },
+          {
+            "monotonicMs": 2229512.742,
+            "startedAt": "2026-10-01T06:47:31.016Z",
+            "durationMs": 5.651,
+            "url": "http://127.0.0.1:62722/api/group-directory?pageSize=20&order=asc&q=cache-item",
+            "status": 200,
+            "bodyAvailable": true,
+            "bodyArchiveEntry": "resources/0064a56ca60f13487d9ce194c7adef178c765c70.json",
+            "itemNames": [
+              "cache-item-000",
+              "cache-item-001",
+              "cache-item-002",
+              "cache-item-003",
+              "cache-item-004",
+              "cache-item-005",
+              "cache-item-006",
+              "cache-item-007",
+              "cache-item-008",
+              "cache-item-009",
+              "cache-item-010",
+              "cache-item-011",
+              "cache-item-012",
+              "cache-item-013",
+              "cache-item-014",
+              "cache-item-015",
+              "cache-item-016",
+              "cache-item-017",
+              "cache-item-018",
+              "cache-item-019"
+            ],
+            "itemIds": [
+              "81a5e07c-89f3-47bb-a96e-ae1d9aecd520",
+              "0d3aea92-9a60-46ae-826e-4037e316c3f8",
+              "1110d77c-8fc6-4452-9c97-269e1c69f788",
+              "504737a9-89e6-47e3-9e8a-ecd012bb5ad7",
+              "fc09f6e3-7136-4cc9-a741-ec788d37ecec",
+              "05b861cc-8ef2-4573-84ee-56f9fa18fcde",
+              "631eed02-9129-4ce6-8a07-63bd2f70ddc9",
+              "afc5ea8d-333e-49db-9387-e87f10ef1f7a",
+              "dc2f1d2e-441d-463e-8ca1-c1e22bb73b68",
+              "e9baab2e-5ebc-45c0-87c9-c9fcb0b8b388",
+              "cd4be868-7cfe-4fb1-983d-cd7bbb0a02ca",
+              "ddc2d76f-02a4-4312-a7dc-ed0cb392b96f",
+              "4fb5c4e8-5d1a-43c1-94bb-6a02416e84c7",
+              "27278446-8285-4716-b43b-a8153d130fc8",
+              "baf2e60c-950a-431b-993e-a8cd232c1a31",
+              "e662a650-80eb-42a8-8f4a-036bd2aaa76c",
+              "b9767cb6-3cc8-42cf-b8f9-0eaa21b22c9d",
+              "70626608-44da-4532-aaf2-52a4cce6c33a",
+              "576bf0af-d538-4fe3-b9ce-19b35bfd798b",
+              "7d25ee4c-901f-49b2-b937-65d2c154c1d9"
+            ],
+            "nextCursor": "eyJ2IjoxLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTAxVDA2OjQ3OjI2Ljk0MTAyN1oiLCJpZCI6IjdkMjVlZTRjLTkwMWYtNDliMi1iOTM3LTY1ZDJjMTU0YzFkOSIsInEiOiJjYWNoZS1pdGVtIiwib3JkZXIiOiJhc2MiLCJwYWdlU2l6ZSI6MjB9"
+          },
+          {
+            "monotonicMs": 2229556.908,
+            "startedAt": "2026-10-01T06:47:31.062Z",
+            "durationMs": 5.108,
+            "url": "http://127.0.0.1:62722/api/group-directory?pageSize=20&order=asc&q=cache-item",
+            "status": 200,
+            "bodyAvailable": true,
+            "bodyArchiveEntry": "resources/0064a56ca60f13487d9ce194c7adef178c765c70.json",
+            "itemNames": [
+              "cache-item-000",
+              "cache-item-001",
+              "cache-item-002",
+              "cache-item-003",
+              "cache-item-004",
+              "cache-item-005",
+              "cache-item-006",
+              "cache-item-007",
+              "cache-item-008",
+              "cache-item-009",
+              "cache-item-010",
+              "cache-item-011",
+              "cache-item-012",
+              "cache-item-013",
+              "cache-item-014",
+              "cache-item-015",
+              "cache-item-016",
+              "cache-item-017",
+              "cache-item-018",
+              "cache-item-019"
+            ],
+            "itemIds": [
+              "81a5e07c-89f3-47bb-a96e-ae1d9aecd520",
+              "0d3aea92-9a60-46ae-826e-4037e316c3f8",
+              "1110d77c-8fc6-4452-9c97-269e1c69f788",
+              "504737a9-89e6-47e3-9e8a-ecd012bb5ad7",
+              "fc09f6e3-7136-4cc9-a741-ec788d37ecec",
+              "05b861cc-8ef2-4573-84ee-56f9fa18fcde",
+              "631eed02-9129-4ce6-8a07-63bd2f70ddc9",
+              "afc5ea8d-333e-49db-9387-e87f10ef1f7a",
+              "dc2f1d2e-441d-463e-8ca1-c1e22bb73b68",
+              "e9baab2e-5ebc-45c0-87c9-c9fcb0b8b388",
+              "cd4be868-7cfe-4fb1-983d-cd7bbb0a02ca",
+              "ddc2d76f-02a4-4312-a7dc-ed0cb392b96f",
+              "4fb5c4e8-5d1a-43c1-94bb-6a02416e84c7",
+              "27278446-8285-4716-b43b-a8153d130fc8",
+              "baf2e60c-950a-431b-993e-a8cd232c1a31",
+              "e662a650-80eb-42a8-8f4a-036bd2aaa76c",
+              "b9767cb6-3cc8-42cf-b8f9-0eaa21b22c9d",
+              "70626608-44da-4532-aaf2-52a4cce6c33a",
+              "576bf0af-d538-4fe3-b9ce-19b35bfd798b",
+              "7d25ee4c-901f-49b2-b937-65d2c154c1d9"
+            ],
+            "nextCursor": "eyJ2IjoxLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTAxVDA2OjQ3OjI2Ljk0MTAyN1oiLCJpZCI6IjdkMjVlZTRjLTkwMWYtNDliMi1iOTM3LTY1ZDJjMTU0YzFkOSIsInEiOiJjYWNoZS1pdGVtIiwib3JkZXIiOiJhc2MiLCJwYWdlU2l6ZSI6MjB9"
+          },
+          {
+            "monotonicMs": 2229633.753,
+            "startedAt": "2026-10-01T06:47:31.138Z",
+            "durationMs": 3.72,
+            "url": "http://127.0.0.1:62722/api/group-directory?pageSize=20&order=asc&q=cache-item&cursor=eyJ2IjoxLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTAxVDA2OjQ3OjI2Ljk0MTAyN1oiLCJpZCI6IjdkMjVlZTRjLTkwMWYtNDliMi1iOTM3LTY1ZDJjMTU0YzFkOSIsInEiOiJjYWNoZS1pdGVtIiwib3JkZXIiOiJhc2MiLCJwYWdlU2l6ZSI6MjB9",
+            "status": 200,
+            "bodyAvailable": false,
+            "bodyArchiveEntry": null,
+            "itemNames": null,
+            "itemIds": null,
+            "nextCursor": null
+          },
+          {
+            "monotonicMs": 2229644.668,
+            "startedAt": "2026-10-01T06:47:31.149Z",
+            "durationMs": 3.985,
+            "url": "http://127.0.0.1:62722/api/group-directory?pageSize=20&order=asc&q=cache-item",
+            "status": 200,
+            "bodyAvailable": true,
+            "bodyArchiveEntry": "resources/0064a56ca60f13487d9ce194c7adef178c765c70.json",
+            "itemNames": [
+              "cache-item-000",
+              "cache-item-001",
+              "cache-item-002",
+              "cache-item-003",
+              "cache-item-004",
+              "cache-item-005",
+              "cache-item-006",
+              "cache-item-007",
+              "cache-item-008",
+              "cache-item-009",
+              "cache-item-010",
+              "cache-item-011",
+              "cache-item-012",
+              "cache-item-013",
+              "cache-item-014",
+              "cache-item-015",
+              "cache-item-016",
+              "cache-item-017",
+              "cache-item-018",
+              "cache-item-019"
+            ],
+            "itemIds": [
+              "81a5e07c-89f3-47bb-a96e-ae1d9aecd520",
+              "0d3aea92-9a60-46ae-826e-4037e316c3f8",
+              "1110d77c-8fc6-4452-9c97-269e1c69f788",
+              "504737a9-89e6-47e3-9e8a-ecd012bb5ad7",
+              "fc09f6e3-7136-4cc9-a741-ec788d37ecec",
+              "05b861cc-8ef2-4573-84ee-56f9fa18fcde",
+              "631eed02-9129-4ce6-8a07-63bd2f70ddc9",
+              "afc5ea8d-333e-49db-9387-e87f10ef1f7a",
+              "dc2f1d2e-441d-463e-8ca1-c1e22bb73b68",
+              "e9baab2e-5ebc-45c0-87c9-c9fcb0b8b388",
+              "cd4be868-7cfe-4fb1-983d-cd7bbb0a02ca",
+              "ddc2d76f-02a4-4312-a7dc-ed0cb392b96f",
+              "4fb5c4e8-5d1a-43c1-94bb-6a02416e84c7",
+              "27278446-8285-4716-b43b-a8153d130fc8",
+              "baf2e60c-950a-431b-993e-a8cd232c1a31",
+              "e662a650-80eb-42a8-8f4a-036bd2aaa76c",
+              "b9767cb6-3cc8-42cf-b8f9-0eaa21b22c9d",
+              "70626608-44da-4532-aaf2-52a4cce6c33a",
+              "576bf0af-d538-4fe3-b9ce-19b35bfd798b",
+              "7d25ee4c-901f-49b2-b937-65d2c154c1d9"
+            ],
+            "nextCursor": "eyJ2IjoxLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTAxVDA2OjQ3OjI2Ljk0MTAyN1oiLCJpZCI6IjdkMjVlZTRjLTkwMWYtNDliMi1iOTM3LTY1ZDJjMTU0YzFkOSIsInEiOiJjYWNoZS1pdGVtIiwib3JkZXIiOiJhc2MiLCJwYWdlU2l6ZSI6MjB9"
+          },
+          {
+            "monotonicMs": 2234459.276,
+            "startedAt": "2026-10-01T06:47:35.963Z",
+            "durationMs": 9.443999999999999,
+            "url": "http://127.0.0.1:62722/api/group-directory?pageSize=20&order=asc&q=cache-item",
+            "status": 200,
+            "bodyAvailable": true,
+            "bodyArchiveEntry": "resources/0064a56ca60f13487d9ce194c7adef178c765c70.json",
+            "itemNames": [
+              "cache-item-000",
+              "cache-item-001",
+              "cache-item-002",
+              "cache-item-003",
+              "cache-item-004",
+              "cache-item-005",
+              "cache-item-006",
+              "cache-item-007",
+              "cache-item-008",
+              "cache-item-009",
+              "cache-item-010",
+              "cache-item-011",
+              "cache-item-012",
+              "cache-item-013",
+              "cache-item-014",
+              "cache-item-015",
+              "cache-item-016",
+              "cache-item-017",
+              "cache-item-018",
+              "cache-item-019"
+            ],
+            "itemIds": [
+              "81a5e07c-89f3-47bb-a96e-ae1d9aecd520",
+              "0d3aea92-9a60-46ae-826e-4037e316c3f8",
+              "1110d77c-8fc6-4452-9c97-269e1c69f788",
+              "504737a9-89e6-47e3-9e8a-ecd012bb5ad7",
+              "fc09f6e3-7136-4cc9-a741-ec788d37ecec",
+              "05b861cc-8ef2-4573-84ee-56f9fa18fcde",
+              "631eed02-9129-4ce6-8a07-63bd2f70ddc9",
+              "afc5ea8d-333e-49db-9387-e87f10ef1f7a",
+              "dc2f1d2e-441d-463e-8ca1-c1e22bb73b68",
+              "e9baab2e-5ebc-45c0-87c9-c9fcb0b8b388",
+              "cd4be868-7cfe-4fb1-983d-cd7bbb0a02ca",
+              "ddc2d76f-02a4-4312-a7dc-ed0cb392b96f",
+              "4fb5c4e8-5d1a-43c1-94bb-6a02416e84c7",
+              "27278446-8285-4716-b43b-a8153d130fc8",
+              "baf2e60c-950a-431b-993e-a8cd232c1a31",
+              "e662a650-80eb-42a8-8f4a-036bd2aaa76c",
+              "b9767cb6-3cc8-42cf-b8f9-0eaa21b22c9d",
+              "70626608-44da-4532-aaf2-52a4cce6c33a",
+              "576bf0af-d538-4fe3-b9ce-19b35bfd798b",
+              "7d25ee4c-901f-49b2-b937-65d2c154c1d9"
+            ],
+            "nextCursor": "eyJ2IjoxLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTAxVDA2OjQ3OjI2Ljk0MTAyN1oiLCJpZCI6IjdkMjVlZTRjLTkwMWYtNDliMi1iOTM3LTY1ZDJjMTU0YzFkOSIsInEiOiJjYWNoZS1pdGVtIiwib3JkZXIiOiJhc2MiLCJwYWdlU2l6ZSI6MjB9"
+          }
+        ],
+        "scopeReady": [
+          {
+            "monotonicMs": 2229503.207,
+            "startSeq": 167,
+            "requestId": "1adf97bc-3a07-4be6-85de-3e64c08cb771"
+          },
+          {
+            "monotonicMs": 2229516.253,
+            "startSeq": 167,
+            "requestId": "9a16f64a-162d-44e0-bf6f-d006d931f410"
+          },
+          {
+            "monotonicMs": 2229517.765,
+            "startSeq": 167,
+            "requestId": "be153652-f73b-491e-bf61-60e65cf6338f"
+          }
+        ],
+        "deliveredEvents": [
+          {
+            "monotonicMs": 2229575.194,
+            "seq": 1,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "online",
+              "from": "idle",
+              "accountId": "account-1"
+            }
+          },
+          {
+            "monotonicMs": 2229578.426,
+            "seq": 2,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "online",
+              "from": "idle",
+              "accountId": "account-2"
+            }
+          },
+          {
+            "monotonicMs": 2229578.554,
+            "seq": 3,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "online",
+              "from": "idle",
+              "accountId": "account-3"
+            }
+          },
+          {
+            "monotonicMs": 2229578.722,
+            "seq": 4,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "online",
+              "from": "idle",
+              "accountId": "account-4"
+            }
+          },
+          {
+            "monotonicMs": 2229578.97,
+            "seq": 5,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "online",
+              "from": "idle",
+              "accountId": "account-5"
+            }
+          },
+          {
+            "monotonicMs": 2229579.123,
+            "seq": 6,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "online",
+              "from": "idle",
+              "accountId": "account-6"
+            }
+          },
+          {
+            "monotonicMs": 2229579.203,
+            "seq": 7,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "81a5e07c-89f3-47bb-a96e-ae1d9aecd520",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229584.812,
+            "seq": 8,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "45bb78e3-11d7-47f6-8a41-fc017d0b42b3",
+              "status": "running",
+              "groupId": "81a5e07c-89f3-47bb-a96e-ae1d9aecd520",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229584.933,
+            "seq": 9,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "81a5e07c-89f3-47bb-a96e-ae1d9aecd520",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229585.012,
+            "seq": 10,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "81a5e07c-89f3-47bb-a96e-ae1d9aecd520",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229585.153,
+            "seq": 11,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "81a5e07c-89f3-47bb-a96e-ae1d9aecd520",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229585.258,
+            "seq": 12,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "45bb78e3-11d7-47f6-8a41-fc017d0b42b3",
+              "status": "finished",
+              "groupId": "81a5e07c-89f3-47bb-a96e-ae1d9aecd520",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229585.383,
+            "seq": 13,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "81a5e07c-89f3-47bb-a96e-ae1d9aecd520",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229585.502,
+            "seq": 14,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "0d3aea92-9a60-46ae-826e-4037e316c3f8",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229585.6,
+            "seq": 15,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "c79694e0-d9fa-4547-a27b-5963e3325154",
+              "status": "running",
+              "groupId": "0d3aea92-9a60-46ae-826e-4037e316c3f8",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229585.68,
+            "seq": 16,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "0d3aea92-9a60-46ae-826e-4037e316c3f8",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229585.786,
+            "seq": 17,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "0d3aea92-9a60-46ae-826e-4037e316c3f8",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229585.891,
+            "seq": 18,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "0d3aea92-9a60-46ae-826e-4037e316c3f8",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229585.978,
+            "seq": 19,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "c79694e0-d9fa-4547-a27b-5963e3325154",
+              "status": "finished",
+              "groupId": "0d3aea92-9a60-46ae-826e-4037e316c3f8",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229586.154,
+            "seq": 20,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "0d3aea92-9a60-46ae-826e-4037e316c3f8",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229586.255,
+            "seq": 21,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "1110d77c-8fc6-4452-9c97-269e1c69f788",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229586.354,
+            "seq": 22,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "d13ac22b-2cd5-4f64-9ea8-689fea2c9b8b",
+              "status": "running",
+              "groupId": "1110d77c-8fc6-4452-9c97-269e1c69f788",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229586.443,
+            "seq": 23,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "1110d77c-8fc6-4452-9c97-269e1c69f788",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229586.525,
+            "seq": 24,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "1110d77c-8fc6-4452-9c97-269e1c69f788",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229586.607,
+            "seq": 25,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "1110d77c-8fc6-4452-9c97-269e1c69f788",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229586.733,
+            "seq": 26,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "d13ac22b-2cd5-4f64-9ea8-689fea2c9b8b",
+              "status": "finished",
+              "groupId": "1110d77c-8fc6-4452-9c97-269e1c69f788",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229586.828,
+            "seq": 27,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "1110d77c-8fc6-4452-9c97-269e1c69f788",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229586.905,
+            "seq": 28,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "504737a9-89e6-47e3-9e8a-ecd012bb5ad7",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229586.987,
+            "seq": 29,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "782f0610-3e9b-4534-a762-cdc49faab2ab",
+              "status": "running",
+              "groupId": "504737a9-89e6-47e3-9e8a-ecd012bb5ad7",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229598.208,
+            "seq": 30,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "504737a9-89e6-47e3-9e8a-ecd012bb5ad7",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229598.319,
+            "seq": 31,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "504737a9-89e6-47e3-9e8a-ecd012bb5ad7",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229598.4,
+            "seq": 32,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "504737a9-89e6-47e3-9e8a-ecd012bb5ad7",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229598.484,
+            "seq": 33,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "782f0610-3e9b-4534-a762-cdc49faab2ab",
+              "status": "finished",
+              "groupId": "504737a9-89e6-47e3-9e8a-ecd012bb5ad7",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229598.562,
+            "seq": 34,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "504737a9-89e6-47e3-9e8a-ecd012bb5ad7",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229598.641,
+            "seq": 35,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "fc09f6e3-7136-4cc9-a741-ec788d37ecec",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229598.715,
+            "seq": 36,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "341fa744-6980-4311-90fd-0a8323cebde6",
+              "status": "running",
+              "groupId": "fc09f6e3-7136-4cc9-a741-ec788d37ecec",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229598.787,
+            "seq": 37,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "fc09f6e3-7136-4cc9-a741-ec788d37ecec",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229598.859,
+            "seq": 38,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "fc09f6e3-7136-4cc9-a741-ec788d37ecec",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229598.93,
+            "seq": 39,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "fc09f6e3-7136-4cc9-a741-ec788d37ecec",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229599.034,
+            "seq": 40,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "341fa744-6980-4311-90fd-0a8323cebde6",
+              "status": "finished",
+              "groupId": "fc09f6e3-7136-4cc9-a741-ec788d37ecec",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229599.119,
+            "seq": 41,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "fc09f6e3-7136-4cc9-a741-ec788d37ecec",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229599.2,
+            "seq": 42,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "05b861cc-8ef2-4573-84ee-56f9fa18fcde",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229599.297,
+            "seq": 43,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "a8741b8a-f797-44b4-99a3-a51fb27f4b4e",
+              "status": "running",
+              "groupId": "05b861cc-8ef2-4573-84ee-56f9fa18fcde",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229599.443,
+            "seq": 44,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "05b861cc-8ef2-4573-84ee-56f9fa18fcde",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229599.55,
+            "seq": 45,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "05b861cc-8ef2-4573-84ee-56f9fa18fcde",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229599.63,
+            "seq": 46,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "05b861cc-8ef2-4573-84ee-56f9fa18fcde",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229599.709,
+            "seq": 47,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "a8741b8a-f797-44b4-99a3-a51fb27f4b4e",
+              "status": "finished",
+              "groupId": "05b861cc-8ef2-4573-84ee-56f9fa18fcde",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229599.796,
+            "seq": 48,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "05b861cc-8ef2-4573-84ee-56f9fa18fcde",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229599.869,
+            "seq": 49,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "631eed02-9129-4ce6-8a07-63bd2f70ddc9",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229599.947,
+            "seq": 50,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "e86bb624-dad1-4e58-b111-35c0aee90edb",
+              "status": "running",
+              "groupId": "631eed02-9129-4ce6-8a07-63bd2f70ddc9",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229600.032,
+            "seq": 51,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "631eed02-9129-4ce6-8a07-63bd2f70ddc9",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229600.115,
+            "seq": 52,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "631eed02-9129-4ce6-8a07-63bd2f70ddc9",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229600.195,
+            "seq": 53,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "631eed02-9129-4ce6-8a07-63bd2f70ddc9",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229600.275,
+            "seq": 54,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "e86bb624-dad1-4e58-b111-35c0aee90edb",
+              "status": "finished",
+              "groupId": "631eed02-9129-4ce6-8a07-63bd2f70ddc9",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229600.353,
+            "seq": 55,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "631eed02-9129-4ce6-8a07-63bd2f70ddc9",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229600.439,
+            "seq": 56,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "afc5ea8d-333e-49db-9387-e87f10ef1f7a",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229600.52,
+            "seq": 57,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "a90c2b6f-9df7-46ce-adea-9f0a68318335",
+              "status": "running",
+              "groupId": "afc5ea8d-333e-49db-9387-e87f10ef1f7a",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229600.597,
+            "seq": 58,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "afc5ea8d-333e-49db-9387-e87f10ef1f7a",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229600.686,
+            "seq": 59,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "afc5ea8d-333e-49db-9387-e87f10ef1f7a",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229600.768,
+            "seq": 60,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "afc5ea8d-333e-49db-9387-e87f10ef1f7a",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229600.876,
+            "seq": 61,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "a90c2b6f-9df7-46ce-adea-9f0a68318335",
+              "status": "finished",
+              "groupId": "afc5ea8d-333e-49db-9387-e87f10ef1f7a",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229600.954,
+            "seq": 62,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "afc5ea8d-333e-49db-9387-e87f10ef1f7a",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229601.03,
+            "seq": 63,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "dc2f1d2e-441d-463e-8ca1-c1e22bb73b68",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229601.106,
+            "seq": 64,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "20820584-6059-492f-8b78-a9061912866a",
+              "status": "running",
+              "groupId": "dc2f1d2e-441d-463e-8ca1-c1e22bb73b68",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229601.181,
+            "seq": 65,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "dc2f1d2e-441d-463e-8ca1-c1e22bb73b68",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229601.268,
+            "seq": 66,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "dc2f1d2e-441d-463e-8ca1-c1e22bb73b68",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229601.346,
+            "seq": 67,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "dc2f1d2e-441d-463e-8ca1-c1e22bb73b68",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229601.419,
+            "seq": 68,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "20820584-6059-492f-8b78-a9061912866a",
+              "status": "finished",
+              "groupId": "dc2f1d2e-441d-463e-8ca1-c1e22bb73b68",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229601.499,
+            "seq": 69,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "dc2f1d2e-441d-463e-8ca1-c1e22bb73b68",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229601.577,
+            "seq": 70,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "e9baab2e-5ebc-45c0-87c9-c9fcb0b8b388",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229601.66,
+            "seq": 71,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "d4534432-d8c5-477f-b9fd-f73348057ab6",
+              "status": "running",
+              "groupId": "e9baab2e-5ebc-45c0-87c9-c9fcb0b8b388",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229601.736,
+            "seq": 72,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "e9baab2e-5ebc-45c0-87c9-c9fcb0b8b388",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229601.81,
+            "seq": 73,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "e9baab2e-5ebc-45c0-87c9-c9fcb0b8b388",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229601.886,
+            "seq": 74,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "e9baab2e-5ebc-45c0-87c9-c9fcb0b8b388",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229601.964,
+            "seq": 75,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "d4534432-d8c5-477f-b9fd-f73348057ab6",
+              "status": "finished",
+              "groupId": "e9baab2e-5ebc-45c0-87c9-c9fcb0b8b388",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229602.042,
+            "seq": 76,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "e9baab2e-5ebc-45c0-87c9-c9fcb0b8b388",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229602.124,
+            "seq": 77,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "cd4be868-7cfe-4fb1-983d-cd7bbb0a02ca",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229602.283,
+            "seq": 78,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "5389a4a1-0e07-4575-9542-1b6e9eb3b0a2",
+              "status": "running",
+              "groupId": "cd4be868-7cfe-4fb1-983d-cd7bbb0a02ca",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229602.404,
+            "seq": 79,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "cd4be868-7cfe-4fb1-983d-cd7bbb0a02ca",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229602.523,
+            "seq": 80,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "cd4be868-7cfe-4fb1-983d-cd7bbb0a02ca",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229602.635,
+            "seq": 81,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "cd4be868-7cfe-4fb1-983d-cd7bbb0a02ca",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229602.716,
+            "seq": 82,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "5389a4a1-0e07-4575-9542-1b6e9eb3b0a2",
+              "status": "finished",
+              "groupId": "cd4be868-7cfe-4fb1-983d-cd7bbb0a02ca",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229602.791,
+            "seq": 83,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "cd4be868-7cfe-4fb1-983d-cd7bbb0a02ca",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229602.865,
+            "seq": 84,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "ddc2d76f-02a4-4312-a7dc-ed0cb392b96f",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229602.939,
+            "seq": 85,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "c18f3f79-5908-4225-8b7b-ac5793901f6d",
+              "status": "running",
+              "groupId": "ddc2d76f-02a4-4312-a7dc-ed0cb392b96f",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229603.018,
+            "seq": 86,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "ddc2d76f-02a4-4312-a7dc-ed0cb392b96f",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229603.091,
+            "seq": 87,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "ddc2d76f-02a4-4312-a7dc-ed0cb392b96f",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229603.167,
+            "seq": 88,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "ddc2d76f-02a4-4312-a7dc-ed0cb392b96f",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229614.614,
+            "seq": 89,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "c18f3f79-5908-4225-8b7b-ac5793901f6d",
+              "status": "finished",
+              "groupId": "ddc2d76f-02a4-4312-a7dc-ed0cb392b96f",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229614.752,
+            "seq": 90,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "ddc2d76f-02a4-4312-a7dc-ed0cb392b96f",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229614.828,
+            "seq": 91,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "4fb5c4e8-5d1a-43c1-94bb-6a02416e84c7",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229614.893,
+            "seq": 92,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "70bbee44-b5f8-43d1-93f3-e6c4227ee620",
+              "status": "running",
+              "groupId": "4fb5c4e8-5d1a-43c1-94bb-6a02416e84c7",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229614.953,
+            "seq": 93,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "4fb5c4e8-5d1a-43c1-94bb-6a02416e84c7",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229615.056,
+            "seq": 94,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "4fb5c4e8-5d1a-43c1-94bb-6a02416e84c7",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229615.138,
+            "seq": 95,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "4fb5c4e8-5d1a-43c1-94bb-6a02416e84c7",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229615.256,
+            "seq": 96,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "70bbee44-b5f8-43d1-93f3-e6c4227ee620",
+              "status": "finished",
+              "groupId": "4fb5c4e8-5d1a-43c1-94bb-6a02416e84c7",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229615.354,
+            "seq": 97,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "4fb5c4e8-5d1a-43c1-94bb-6a02416e84c7",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229615.43,
+            "seq": 98,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "27278446-8285-4716-b43b-a8153d130fc8",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229615.502,
+            "seq": 99,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "088b6485-8849-4304-a55d-436fb9d0b14b",
+              "status": "running",
+              "groupId": "27278446-8285-4716-b43b-a8153d130fc8",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229615.606,
+            "seq": 100,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "27278446-8285-4716-b43b-a8153d130fc8",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229615.689,
+            "seq": 101,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "27278446-8285-4716-b43b-a8153d130fc8",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229615.757,
+            "seq": 102,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "27278446-8285-4716-b43b-a8153d130fc8",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229615.821,
+            "seq": 103,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "088b6485-8849-4304-a55d-436fb9d0b14b",
+              "status": "finished",
+              "groupId": "27278446-8285-4716-b43b-a8153d130fc8",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229615.901,
+            "seq": 104,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "27278446-8285-4716-b43b-a8153d130fc8",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229615.975,
+            "seq": 105,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "baf2e60c-950a-431b-993e-a8cd232c1a31",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229616.038,
+            "seq": 106,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "6947df8f-0ab2-402b-bd8e-df7826d13e69",
+              "status": "running",
+              "groupId": "baf2e60c-950a-431b-993e-a8cd232c1a31",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229616.11,
+            "seq": 107,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "baf2e60c-950a-431b-993e-a8cd232c1a31",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229616.173,
+            "seq": 108,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "baf2e60c-950a-431b-993e-a8cd232c1a31",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229616.238,
+            "seq": 109,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "baf2e60c-950a-431b-993e-a8cd232c1a31",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229616.342,
+            "seq": 110,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "6947df8f-0ab2-402b-bd8e-df7826d13e69",
+              "status": "finished",
+              "groupId": "baf2e60c-950a-431b-993e-a8cd232c1a31",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229616.417,
+            "seq": 111,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "baf2e60c-950a-431b-993e-a8cd232c1a31",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229616.479,
+            "seq": 112,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "e662a650-80eb-42a8-8f4a-036bd2aaa76c",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229616.539,
+            "seq": 113,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "0a461113-3268-4fef-b370-a5e699d5c428",
+              "status": "running",
+              "groupId": "e662a650-80eb-42a8-8f4a-036bd2aaa76c",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229616.601,
+            "seq": 114,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "e662a650-80eb-42a8-8f4a-036bd2aaa76c",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229616.661,
+            "seq": 115,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "e662a650-80eb-42a8-8f4a-036bd2aaa76c",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229616.721,
+            "seq": 116,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "e662a650-80eb-42a8-8f4a-036bd2aaa76c",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229616.782,
+            "seq": 117,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "0a461113-3268-4fef-b370-a5e699d5c428",
+              "status": "finished",
+              "groupId": "e662a650-80eb-42a8-8f4a-036bd2aaa76c",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229616.868,
+            "seq": 118,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "e662a650-80eb-42a8-8f4a-036bd2aaa76c",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229616.947,
+            "seq": 119,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "b9767cb6-3cc8-42cf-b8f9-0eaa21b22c9d",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229617.039,
+            "seq": 120,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "87960d84-b55a-4491-b946-d49a60d41bbb",
+              "status": "running",
+              "groupId": "b9767cb6-3cc8-42cf-b8f9-0eaa21b22c9d",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229617.106,
+            "seq": 121,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "b9767cb6-3cc8-42cf-b8f9-0eaa21b22c9d",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229617.239,
+            "seq": 122,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "b9767cb6-3cc8-42cf-b8f9-0eaa21b22c9d",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229617.347,
+            "seq": 123,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "b9767cb6-3cc8-42cf-b8f9-0eaa21b22c9d",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229617.425,
+            "seq": 124,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "87960d84-b55a-4491-b946-d49a60d41bbb",
+              "status": "finished",
+              "groupId": "b9767cb6-3cc8-42cf-b8f9-0eaa21b22c9d",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229617.491,
+            "seq": 125,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "b9767cb6-3cc8-42cf-b8f9-0eaa21b22c9d",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229617.558,
+            "seq": 126,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "70626608-44da-4532-aaf2-52a4cce6c33a",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229617.62,
+            "seq": 127,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "a7209b6d-bd19-4f8a-a5f4-10e1d25dd648",
+              "status": "running",
+              "groupId": "70626608-44da-4532-aaf2-52a4cce6c33a",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229617.685,
+            "seq": 128,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "70626608-44da-4532-aaf2-52a4cce6c33a",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229617.748,
+            "seq": 129,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "70626608-44da-4532-aaf2-52a4cce6c33a",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229617.847,
+            "seq": 130,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "70626608-44da-4532-aaf2-52a4cce6c33a",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229623.021,
+            "seq": 131,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "a7209b6d-bd19-4f8a-a5f4-10e1d25dd648",
+              "status": "finished",
+              "groupId": "70626608-44da-4532-aaf2-52a4cce6c33a",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229623.118,
+            "seq": 132,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "70626608-44da-4532-aaf2-52a4cce6c33a",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229623.186,
+            "seq": 133,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "576bf0af-d538-4fe3-b9ce-19b35bfd798b",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229623.327,
+            "seq": 134,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "5d32b154-b136-44b3-a24b-f0605091c6fd",
+              "status": "running",
+              "groupId": "576bf0af-d538-4fe3-b9ce-19b35bfd798b",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229623.42,
+            "seq": 135,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "576bf0af-d538-4fe3-b9ce-19b35bfd798b",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229623.515,
+            "seq": 136,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "576bf0af-d538-4fe3-b9ce-19b35bfd798b",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229623.655,
+            "seq": 137,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "576bf0af-d538-4fe3-b9ce-19b35bfd798b",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229623.785,
+            "seq": 138,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "5d32b154-b136-44b3-a24b-f0605091c6fd",
+              "status": "finished",
+              "groupId": "576bf0af-d538-4fe3-b9ce-19b35bfd798b",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229623.882,
+            "seq": 139,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "576bf0af-d538-4fe3-b9ce-19b35bfd798b",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229623.952,
+            "seq": 140,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "7d25ee4c-901f-49b2-b937-65d2c154c1d9",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229624.135,
+            "seq": 141,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "e9d32a87-7cfc-4807-a179-d143ea1b5c4c",
+              "status": "running",
+              "groupId": "7d25ee4c-901f-49b2-b937-65d2c154c1d9",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229624.203,
+            "seq": 142,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "7d25ee4c-901f-49b2-b937-65d2c154c1d9",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229624.312,
+            "seq": 143,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "7d25ee4c-901f-49b2-b937-65d2c154c1d9",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229624.398,
+            "seq": 144,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "7d25ee4c-901f-49b2-b937-65d2c154c1d9",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229624.478,
+            "seq": 145,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "e9d32a87-7cfc-4807-a179-d143ea1b5c4c",
+              "status": "finished",
+              "groupId": "7d25ee4c-901f-49b2-b937-65d2c154c1d9",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229624.578,
+            "seq": 146,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "7d25ee4c-901f-49b2-b937-65d2c154c1d9",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229624.65,
+            "seq": 147,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "66107b89-63b9-4aef-875e-e052f2218397",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229624.723,
+            "seq": 148,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "0532f463-f8ce-48c2-a0b5-f4627d03ce4d",
+              "status": "running",
+              "groupId": "66107b89-63b9-4aef-875e-e052f2218397",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229624.798,
+            "seq": 149,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "66107b89-63b9-4aef-875e-e052f2218397",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229624.859,
+            "seq": 150,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "66107b89-63b9-4aef-875e-e052f2218397",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229624.925,
+            "seq": 151,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "66107b89-63b9-4aef-875e-e052f2218397",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229625.025,
+            "seq": 152,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "0532f463-f8ce-48c2-a0b5-f4627d03ce4d",
+              "status": "finished",
+              "groupId": "66107b89-63b9-4aef-875e-e052f2218397",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229625.117,
+            "seq": 153,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "66107b89-63b9-4aef-875e-e052f2218397",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229625.195,
+            "seq": 154,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "876f3778-1a96-4583-99e3-96caa4f75adb",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229625.266,
+            "seq": 155,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "6839c9b0-d607-4884-a15b-5d0666538631",
+              "status": "running",
+              "groupId": "876f3778-1a96-4583-99e3-96caa4f75adb",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229625.345,
+            "seq": 156,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "876f3778-1a96-4583-99e3-96caa4f75adb",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229625.422,
+            "seq": 157,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "876f3778-1a96-4583-99e3-96caa4f75adb",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229625.498,
+            "seq": 158,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "876f3778-1a96-4583-99e3-96caa4f75adb",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229625.571,
+            "seq": 159,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "6839c9b0-d607-4884-a15b-5d0666538631",
+              "status": "finished",
+              "groupId": "876f3778-1a96-4583-99e3-96caa4f75adb",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229625.644,
+            "seq": 160,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "876f3778-1a96-4583-99e3-96caa4f75adb",
+              "changedFields": [
+                "name"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229625.713,
+            "seq": 161,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "d1ac4fd8-1ec7-41c0-90fb-95eeb6fe4076",
+              "changedFields": [
+                "created"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229625.841,
+            "seq": 162,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "3303c0bf-0919-4ab1-bb01-d0758f05375d",
+              "status": "running",
+              "groupId": "d1ac4fd8-1ec7-41c0-90fb-95eeb6fe4076",
+              "changedFields": [
+                "groupId"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229625.945,
+            "seq": 163,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "d1ac4fd8-1ec7-41c0-90fb-95eeb6fe4076",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229626.032,
+            "seq": 164,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "d1ac4fd8-1ec7-41c0-90fb-95eeb6fe4076",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": [
+                "memberCount"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229626.098,
+            "seq": 165,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "d1ac4fd8-1ec7-41c0-90fb-95eeb6fe4076",
+              "changedFields": [
+                "members"
+              ],
+              "directoryChangedFields": []
+            }
+          },
+          {
+            "monotonicMs": 2229626.173,
+            "seq": 166,
+            "type": "job_changed",
+            "payload": {
+              "jobId": "3303c0bf-0919-4ab1-bb01-d0758f05375d",
+              "status": "finished",
+              "groupId": "d1ac4fd8-1ec7-41c0-90fb-95eeb6fe4076",
+              "changedFields": [
+                "status",
+                "processing"
+              ]
+            }
+          },
+          {
+            "monotonicMs": 2229626.237,
+            "seq": 167,
+            "type": "group_changed",
+            "payload": {
+              "groupId": "d1ac4fd8-1ec7-41c0-90fb-95eeb6fe4076",
+              "changedFields": [
+                "name"
+              ]
+            }
+          }
+        ],
+        "timeNote": "Playwright同一trace的monotonicMs；sendToPage仅证明真实帧转交浏览器，不擅自断言React已完成处理。请求信息不复制Authorization/Cookie。"
+      },
+      "finding": "第一次23条断言失败，详情和返回尚未发生。点击调用跨越seq1–167回放；cursor请求200但trace没有正文，10.915ms后首页读取，最终可见20项。已知存在相关回放及刷新竞态，未建立本例要验证的稳定23项缓存前提，不能归因为返回丢页。",
+      "minimalCorrection": [
+        "沿用上述真实水位和目录刷新收敛前提；23次造数的历史事件全部到达且相关读取完成后再开始查询/分页，禁止仅见20行即推断准备完成。",
+        "修改q/order前先装response观察；保存对应exact q=cache-item、order=asc、pageSize=20的已完成首页响应、20个唯一ID及nextCursor，核对可见名称顺序，不能由旧条件20行满足新条件前提。",
+        "点击加载更多一次，保存使用该nextCursor的真实响应正文，核对第二页3个ID与首页不重叠、累计23唯一ID且可见23行；HTTP200但正文缺失不视为第二页成功。若并发相关失效未收敛，记录具体前提缺口；不反复点击到成功。",
+        "前提成立后执行原详情进入/后退/刷新流程。保持搜索、asc、23项、稳定ID位置、已加载文案、整页刷新默认条件和20项全部断言。",
+        "不为缓存用例丢弃实时事件。相关事件与加载更多竞争属于独立风险场景，应另行取证实际请求是否取消、是否提示过期与可恢复；首轮目前缺少第二页正文及取消/替换原因，不能推断已修复或不存在产品问题。"
+      ],
+      "unchangedAssertions": [
+        "exact查询条件/方向",
+        "第二页稳定ID不重叠且累计23项",
+        "从022进入详情并后退恢复23项及稳定ID可见位置",
+        "已加载计数23",
+        "整页刷新后空搜索/desc/20项"
+      ],
+      "notProven": [
+        "cursor响应正文缺失，不能断言该响应恰为3条或成功合并过。",
+        "没有充分取消/替换证据证明竞态下所有产品行为均合法；若稳定前提成立的新轮仍失败，需独立产品归因。",
+        "无详情/后退行为，不能判定内存缓存实现失败或通过。"
+      ]
+    }
+  ],
+  "sourceFiles": [
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/docs/original-interview-question.md",
+      "bytes": 33219,
+      "sha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/docs/decisions.md",
+      "bytes": 37903,
+      "sha256": "e4189c2af1c3933346ac5d296d7ac6dd954f8c4785cc29cae9faef870c5cfa6f"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/docs/group-directory-profile-proposal.md",
+      "bytes": 13525,
+      "sha256": "c38470a4d68e6a84ab9dc94c09a4952f55dad875146eb30540577b884e2164f1"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/docs/group-profile-conflict-review.md",
+      "bytes": 6383,
+      "sha256": "81c47b552a5f76292816de3409443e2334018a5846534aba1b655cb702ab7ba7"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/docs/feature-matrix.md",
+      "bytes": 37759,
+      "sha256": "967bc8f0eebce288a0a356e258719b498f551d7b417e902f2a24850b3f05e839"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/docs/page-update-notification-proposal.md",
+      "bytes": 50318,
+      "sha256": "2c31b688b67d31b2454a2ee4f3e1445f5bae50a93071eeb17cdc11f712d6f21b"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/requirements/spec-boundaries-resolution.md",
+      "bytes": 8855,
+      "sha256": "82de0ec1595d600033cd3a4661a89f6b508fa3067a3d823b7735334baab8e262"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/cases/spec-boundaries.json",
+      "bytes": 13585,
+      "sha256": "5a90daa846daa1678b6bdaaf7648588cd2113c0db2864994c3d0696d6cc2bb84"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/cases/ui-extra.json",
+      "bytes": 25842,
+      "sha256": "bee352cebfe1df23f6cb54e18611f86a07f9683fadc88c123304f425f2b75631"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests/system/spec-boundaries.spec.ts",
+      "bytes": 31101,
+      "sha256": "372161bb7b08813065e7b7168241f7ece148a275047bed93af9f9d0935566748"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests/ui/console.spec.ts",
+      "bytes": 57536,
+      "sha256": "b318f886a43ed028e2d62a1b4b3208698849bbfa1d2862639111e3ad2fb2e936"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/runs/2026-10-01T06-10-21.458Z-1fdb6180/manifest.json",
+      "bytes": 625817,
+      "sha256": "064b7f4df0cab731e479470a083c617a43408e79fec930216ea415ee2904aaaa"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/runs/2026-10-01T06-10-21.458Z-1fdb6180/results.json",
+      "bytes": 1833221,
+      "sha256": "585b72e23e1ac73d01cffe6fe31a8d82b7d49172dbecdd07b9c726e225727fdd"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/runs/2026-10-01T06-10-21.458Z-1fdb6180/closeout/final-integrity.json",
+      "bytes": 1754,
+      "sha256": "713de368c572816e9cf19a8bafd77b3b91cd24b47174c4d019acba57af655332"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/runs/2026-10-01T06-10-21.458Z-1fdb6180/artifacts/ui-console--UI-024-单页五秒刷新、并发失效合并且无关消息不遍历目录-chromium/trace.zip",
+      "bytes": 789348,
+      "sha256": "f352bbf90a7a4cd4aea8854ebee785258b9c54fc6417168cf6854511a9a124e5"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/runs/2026-10-01T06-10-21.458Z-1fdb6180/artifacts/ui-console--UI-024-单页五秒刷新、并发失效合并且无关消息不遍历目录-chromium/evidence/api.ndjson",
+      "bytes": 34918,
+      "sha256": "9dc567a53d4315e94578129f2cdba048c7256c9a760b33768130767b406949d2"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/runs/2026-10-01T06-10-21.458Z-1fdb6180/artifacts/ui-console--UI-024-单页五秒刷新、并发失效合并且无关消息不遍历目录-chromium/error-context.md",
+      "bytes": 14652,
+      "sha256": "ec1f478126b8a1edce49222b880ba3568d9f2f222d5d285506e6d783e7a17cea"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/runs/2026-10-01T06-10-21.458Z-1fdb6180/artifacts/ui-console--UI-024-单页五秒刷新、并发失效合并且无关消息不遍历目录-chromium/evidence/ui-final.json",
+      "bytes": 1010,
+      "sha256": "3751dcda05f2619d71b9fbc727fc2f2869ae766179799e271b099aac5b56dcb3"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/runs/2026-10-01T06-10-21.458Z-1fdb6180/artifacts/ui-console--UI-025-同标签返回保留条件与已加载页，整页刷新清空目录内存-chromium/trace.zip",
+      "bytes": 1889574,
+      "sha256": "844898f7e336ffa61379c1abed02a0c456f901e60cd3651a364a6c1688fb3298"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/runs/2026-10-01T06-10-21.458Z-1fdb6180/artifacts/ui-console--UI-025-同标签返回保留条件与已加载页，整页刷新清空目录内存-chromium/evidence/api.ndjson",
+      "bytes": 933466,
+      "sha256": "b81445d50ec82fb5296d3bc51701820f63171be54d8891d1ee5f1d4fc108571a"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/runs/2026-10-01T06-10-21.458Z-1fdb6180/artifacts/ui-console--UI-025-同标签返回保留条件与已加载页，整页刷新清空目录内存-chromium/error-context.md",
+      "bytes": 28569,
+      "sha256": "1471023f6a693f89b7391a3f65a32beb530db7f9bbd0126fdcb0149340d8bb22"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/runs/2026-10-01T06-10-21.458Z-1fdb6180/artifacts/ui-console--UI-025-同标签返回保留条件与已加载页，整页刷新清空目录内存-chromium/evidence/ui-final.json",
+      "bytes": 3630,
+      "sha256": "f5a7e85f6347fc8749a58a7dd81b449df42ba0c8930bf1ee8d2f6fb47da41e4f"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/runs/2026-10-01T06-10-21.458Z-1fdb6180/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/trace.zip",
+      "bytes": 16354,
+      "sha256": "f5b9de791febd01c2aaae023db67b93b0b656d430c2a8aeaf2439547dc0c6551"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/runs/2026-10-01T06-10-21.458Z-1fdb6180/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/api.ndjson",
+      "bytes": 105327,
+      "sha256": "2e98b83ab1d3e7c060cdcd7b9b0c9a3dc871897abbb892e2a9ccd332507fb038"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/runs/2026-10-01T06-10-21.458Z-1fdb6180/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/error-context.md",
+      "bytes": 10379,
+      "sha256": "52c86513bf05f283b4aa8e77cd0d0fd7869d3f1e0dac7259825f87221ba4b954"
+    }
+  ],
+  "integrity": "读取前后对本报告使用的全部源文件逐项SHA-256再核对，要求保持不变。"
+}

@@ -1,0 +1,62 @@
+{
+  "notBlockingOtherTestExecution": true,
+  "acceptedByUser": false,
+  "items": [
+    {
+      "id": "DEC-01",
+      "type": "requirement-or-protocol-decision",
+      "cases": [
+        "CAP-003",
+        "AGENT-025",
+        "INT-ACT-001"
+      ],
+      "currentRequirement": "活动累计严格不超过60秒；精确活动区间不能从模糊公开采样虚构",
+      "observed": "CAP003实测下界超限；另两例严格上界缺充分同run见证",
+      "options": [
+        "保持现标准并补足可证明的执行和终态时限能力",
+        "正式变更为到期禁止新派发而允许随后提交终态，并重新定义时钟/暂停语义"
+      ],
+      "qaRecommendation": "先保持FAIL/BLOCKED，评审可提供的硬边界；没有批准不能加容差或裁剪指标。"
+    },
+    {
+      "id": "DEC-02",
+      "type": "requirement-or-protocol-decision",
+      "cases": [
+        "INT-MSG-007"
+      ],
+      "currentRequirement": "按首次实际收到message_sent后的时间排后步且任意崩溃恢复",
+      "observed": "持久化前崩溃后原点后移，公开后步scheduledAt偏晚2305ms",
+      "options": [
+        "协议/入口提供可恢复的持久接收原点",
+        "明确批准以持久接收或恢复确认作为排期锚点并重新验收"
+      ],
+      "qaRecommendation": "优先评审可恢复锚点能力；不得把重放时刻说成原物理接收时刻。"
+    },
+    {
+      "id": "DEC-03",
+      "type": "requirement-or-protocol-decision",
+      "cases": [
+        "BLK-EXT-002",
+        "BLK-EXT-003",
+        "BLK-EXT-004",
+        "BLK-EXT-005",
+        "REC-007"
+      ],
+      "currentRequirement": "未知外部结果后仍正常恢复且不重复副作用",
+      "observed": "公开recoveryNote明确保守暂停，原自动完成要求不满足",
+      "options": [
+        "增加外部幂等键、操作结果查询或可持久恢复协议",
+        "批准未知结果保守暂停及人工处理为产品行为，补公开处置流程"
+      ],
+      "qaRecommendation": "先评审协议能力；维持不盲重试，保守暂停不能冒充自动完成。"
+    }
+  ],
+  "engineeringAndEvidenceFollowup": [
+    "AGENT028工具结果形成边界观测",
+    "BLKEXT001未落地504以外断连真值",
+    "INTSTREAM001慢消费者实际关闭/重放窗口与健康接收集合",
+    "ARCUI015同页显式恢复和UI032独立确认公开操作映射",
+    "真实输入法、跨应用/标签栏焦点呈现、未预读说明用户理解3项人工证据"
+  ],
+  "releaseAssessment": "另行准备生产指标、部署、容量、持续运行及备份恢复证据；不纳入本轮业务通过计数。"
+}

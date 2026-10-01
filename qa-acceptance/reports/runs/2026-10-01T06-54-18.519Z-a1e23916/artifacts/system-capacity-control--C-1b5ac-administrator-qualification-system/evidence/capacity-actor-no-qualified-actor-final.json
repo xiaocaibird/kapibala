@@ -1,0 +1,1461 @@
+{
+  "at": "2026-10-01T07:17:19.752Z",
+  "coverageBoundary": "This snapshot records public facts only; proof of capacity refusal requires separately associated controller events. No entity-lock contention is established here.",
+  "kicks": [
+    {
+      "group": {
+        "id": "98288ffb-4e0c-435e-8281-78da3b7ac745",
+        "name": null,
+        "description": null,
+        "createdAt": "2026-10-01T07:17:18.446Z",
+        "gatewayGroupId": "gateway-group-2",
+        "status": "active",
+        "creatorAccountId": "account-1",
+        "agentEnabled": false,
+        "autoKickEnabled": false,
+        "members": [
+          {
+            "accountId": "account-2",
+            "platformUserId": "platform-account-2",
+            "role": "admin"
+          },
+          {
+            "accountId": "account-1",
+            "platformUserId": "platform-account-1",
+            "role": "creator"
+          },
+          {
+            "accountId": "account-3",
+            "platformUserId": "platform-account-3",
+            "role": "member"
+          }
+        ],
+        "activeAgentRunId": null,
+        "activeSequenceRunId": null
+      },
+      "runId": "0375403d-852a-4d97-9983-24cd2c975d11",
+      "toolUseId": "qa-kick-capacity-actor-no-qualified-actor",
+      "target": "qa-shared-external-target",
+      "reason": "QA boundary capacity-actor-no-qualified-actor",
+      "auditBarrier": "qa-audit-capacity-actor-no-qualified-actor"
+    }
+  ],
+  "runs": [
+    {
+      "id": "0375403d-852a-4d97-9983-24cd2c975d11",
+      "groupId": "98288ffb-4e0c-435e-8281-78da3b7ac745",
+      "status": "finished",
+      "endReason": "final",
+      "summary": "finished capacity-actor-no-qualified-actor",
+      "recoveryNote": null,
+      "steps": [
+        {
+          "ordinal": 1,
+          "kind": "tool_use",
+          "toolUseId": "qa-kick-capacity-actor-no-qualified-actor",
+          "name": "kick_user",
+          "input": {
+            "reason": "QA boundary capacity-actor-no-qualified-actor",
+            "platform_user_id": "qa-shared-external-target"
+          },
+          "resultSummary": "{\"code\":\"NO_AVAILABLE_ACCOUNT\",\"message\":\"No online administrator is available.\"}",
+          "isError": true,
+          "errorCode": "NO_AVAILABLE_ACCOUNT",
+          "auditVerdict": "pass",
+          "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"qa-kick-capacity-actor-no-qualified-actor\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"qa-shared-external-target\",\"reason\":\"QA boundary capacity-actor-no-qualified-actor\"}}]}"
+        },
+        {
+          "ordinal": 2,
+          "kind": "final",
+          "toolUseId": null,
+          "name": null,
+          "input": null,
+          "resultSummary": "\"finished capacity-actor-no-qualified-actor\"",
+          "isError": false,
+          "errorCode": null,
+          "auditVerdict": null,
+          "rawResponse": "{\"stop_reason\":\"end_turn\",\"content\":[{\"type\":\"text\",\"text\":\"finished capacity-actor-no-qualified-actor\"}]}"
+        }
+      ]
+    }
+  ],
+  "gateway": {
+    "accounts": [
+      {
+        "id": "account-1",
+        "platformUserId": "platform-account-1",
+        "connected": false,
+        "status": "available",
+        "rateLimitedUntil": null
+      },
+      {
+        "id": "account-2",
+        "platformUserId": "platform-account-2",
+        "connected": false,
+        "status": "available",
+        "rateLimitedUntil": null
+      },
+      {
+        "id": "account-3",
+        "platformUserId": "platform-account-3",
+        "connected": true,
+        "status": "available",
+        "rateLimitedUntil": null
+      },
+      {
+        "id": "account-4",
+        "platformUserId": "platform-account-4",
+        "connected": true,
+        "status": "available",
+        "rateLimitedUntil": null
+      },
+      {
+        "id": "account-5",
+        "platformUserId": "platform-account-5",
+        "connected": true,
+        "status": "available",
+        "rateLimitedUntil": null
+      },
+      {
+        "id": "account-6",
+        "platformUserId": "platform-account-6",
+        "connected": true,
+        "status": "available",
+        "rateLimitedUntil": null
+      }
+    ],
+    "groups": [
+      {
+        "groupId": "gateway-group-1",
+        "creatorAccountId": "account-1",
+        "writable": true,
+        "members": [
+          {
+            "platformUserId": "platform-account-1",
+            "role": "creator"
+          },
+          {
+            "platformUserId": "platform-account-2",
+            "role": "admin"
+          },
+          {
+            "platformUserId": "platform-account-3",
+            "role": "member"
+          }
+        ]
+      },
+      {
+        "groupId": "gateway-group-2",
+        "creatorAccountId": "account-1",
+        "writable": true,
+        "members": [
+          {
+            "platformUserId": "platform-account-1",
+            "role": "creator"
+          },
+          {
+            "platformUserId": "platform-account-3",
+            "role": "member"
+          },
+          {
+            "platformUserId": "qa-shared-external-target",
+            "role": "member"
+          }
+        ]
+      }
+    ],
+    "messages": [
+      {
+        "groupId": "gateway-group-1",
+        "senderPlatformUserId": "qa-trigger-user",
+        "text": "start capacity-actor-creator-remains",
+        "accountId": null,
+        "clientMsgId": null,
+        "msgId": "gateway-message-1",
+        "sentAt": "2026-10-01T07:17:16.910Z"
+      },
+      {
+        "groupId": "gateway-group-2",
+        "senderPlatformUserId": "qa-trigger-user",
+        "text": "start capacity-actor-no-qualified-actor",
+        "accountId": null,
+        "clientMsgId": null,
+        "msgId": "gateway-message-2",
+        "sentAt": "2026-10-01T07:17:19.340Z"
+      }
+    ],
+    "requests": [
+      {
+        "id": 1,
+        "at": "2026-10-01T07:17:15.613Z",
+        "method": "GET",
+        "path": "/events",
+        "body": null,
+        "responseStatus": 200
+      },
+      {
+        "id": 2,
+        "at": "2026-10-01T07:17:15.904Z",
+        "method": "POST",
+        "path": "/accounts/account-1/connect",
+        "body": {},
+        "responsePreparedAt": "2026-10-01T07:17:15.904Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:15.904Z",
+        "responseFinishedAt": "2026-10-01T07:17:15.905Z",
+        "responseClosedAt": "2026-10-01T07:17:15.905Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 3,
+        "at": "2026-10-01T07:17:15.913Z",
+        "method": "POST",
+        "path": "/accounts/account-2/connect",
+        "body": {},
+        "responsePreparedAt": "2026-10-01T07:17:15.913Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:15.913Z",
+        "responseFinishedAt": "2026-10-01T07:17:15.913Z",
+        "responseClosedAt": "2026-10-01T07:17:15.913Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 4,
+        "at": "2026-10-01T07:17:15.920Z",
+        "method": "POST",
+        "path": "/accounts/account-3/connect",
+        "body": {},
+        "responsePreparedAt": "2026-10-01T07:17:15.920Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:15.920Z",
+        "responseFinishedAt": "2026-10-01T07:17:15.920Z",
+        "responseClosedAt": "2026-10-01T07:17:15.920Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 5,
+        "at": "2026-10-01T07:17:15.926Z",
+        "method": "POST",
+        "path": "/accounts/account-4/connect",
+        "body": {},
+        "responsePreparedAt": "2026-10-01T07:17:15.926Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:15.926Z",
+        "responseFinishedAt": "2026-10-01T07:17:15.927Z",
+        "responseClosedAt": "2026-10-01T07:17:15.927Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 6,
+        "at": "2026-10-01T07:17:15.932Z",
+        "method": "POST",
+        "path": "/accounts/account-5/connect",
+        "body": {},
+        "responsePreparedAt": "2026-10-01T07:17:15.932Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:15.932Z",
+        "responseFinishedAt": "2026-10-01T07:17:15.933Z",
+        "responseClosedAt": "2026-10-01T07:17:15.933Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 7,
+        "at": "2026-10-01T07:17:15.938Z",
+        "method": "POST",
+        "path": "/accounts/account-6/connect",
+        "body": {},
+        "responsePreparedAt": "2026-10-01T07:17:15.938Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:15.938Z",
+        "responseFinishedAt": "2026-10-01T07:17:15.938Z",
+        "responseClosedAt": "2026-10-01T07:17:15.938Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 8,
+        "at": "2026-10-01T07:17:16.019Z",
+        "method": "POST",
+        "path": "/groups",
+        "body": {
+          "creatorAccountId": "account-1"
+        },
+        "responsePreparedAt": "2026-10-01T07:17:16.019Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:16.019Z",
+        "responseFinishedAt": "2026-10-01T07:17:16.019Z",
+        "responseClosedAt": "2026-10-01T07:17:16.019Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 9,
+        "at": "2026-10-01T07:17:16.120Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-1/invite",
+        "body": {},
+        "responsePreparedAt": "2026-10-01T07:17:16.120Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:16.120Z",
+        "responseFinishedAt": "2026-10-01T07:17:16.120Z",
+        "responseClosedAt": "2026-10-01T07:17:16.120Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 10,
+        "at": "2026-10-01T07:17:16.227Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-1/join",
+        "body": {
+          "accountId": "account-2",
+          "inviteLink": "http://127.0.0.1:56389/invitations/1"
+        },
+        "responsePreparedAt": "2026-10-01T07:17:16.227Z",
+        "preparedResponseStatus": 202,
+        "responseStatus": 202,
+        "completedAt": "2026-10-01T07:17:16.227Z",
+        "responseFinishedAt": "2026-10-01T07:17:16.227Z",
+        "responseClosedAt": "2026-10-01T07:17:16.227Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 11,
+        "at": "2026-10-01T07:17:16.336Z",
+        "method": "GET",
+        "path": "/groups/gateway-group-1/members",
+        "body": null,
+        "responsePreparedAt": "2026-10-01T07:17:16.336Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:16.336Z",
+        "responseFinishedAt": "2026-10-01T07:17:16.336Z",
+        "responseClosedAt": "2026-10-01T07:17:16.336Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 12,
+        "at": "2026-10-01T07:17:16.531Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-1/join",
+        "body": {
+          "accountId": "account-3",
+          "inviteLink": "http://127.0.0.1:56389/invitations/1"
+        },
+        "responsePreparedAt": "2026-10-01T07:17:16.531Z",
+        "preparedResponseStatus": 202,
+        "responseStatus": 202,
+        "completedAt": "2026-10-01T07:17:16.531Z",
+        "responseFinishedAt": "2026-10-01T07:17:16.532Z",
+        "responseClosedAt": "2026-10-01T07:17:16.532Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 13,
+        "at": "2026-10-01T07:17:16.637Z",
+        "method": "GET",
+        "path": "/groups/gateway-group-1/members",
+        "body": null,
+        "responsePreparedAt": "2026-10-01T07:17:16.637Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:16.637Z",
+        "responseFinishedAt": "2026-10-01T07:17:16.637Z",
+        "responseClosedAt": "2026-10-01T07:17:16.637Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 14,
+        "at": "2026-10-01T07:17:16.842Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-1/promote",
+        "body": {
+          "byAccountId": "account-1",
+          "accountId": "account-2"
+        },
+        "responsePreparedAt": "2026-10-01T07:17:16.843Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:16.843Z",
+        "responseFinishedAt": "2026-10-01T07:17:16.843Z",
+        "responseClosedAt": "2026-10-01T07:17:16.843Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 15,
+        "at": "2026-10-01T07:17:16.907Z",
+        "method": "GET",
+        "path": "/groups/gateway-group-1/members",
+        "body": null,
+        "responsePreparedAt": "2026-10-01T07:17:16.907Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:16.907Z",
+        "responseFinishedAt": "2026-10-01T07:17:16.907Z",
+        "responseClosedAt": "2026-10-01T07:17:16.907Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 16,
+        "at": "2026-10-01T07:17:17.205Z",
+        "method": "POST",
+        "path": "/accounts/account-2/disconnect",
+        "body": {},
+        "responsePreparedAt": "2026-10-01T07:17:17.205Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:17.205Z",
+        "responseFinishedAt": "2026-10-01T07:17:17.205Z",
+        "responseClosedAt": "2026-10-01T07:17:17.205Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 17,
+        "at": "2026-10-01T07:17:17.267Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-1/kick",
+        "body": {
+          "byAccountId": "account-1",
+          "targetPlatformUserId": "qa-shared-external-target"
+        },
+        "responsePreparedAt": "2026-10-01T07:17:17.268Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:18.267Z",
+        "responseFinishedAt": "2026-10-01T07:17:18.268Z",
+        "responseClosedAt": "2026-10-01T07:17:18.268Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 18,
+        "at": "2026-10-01T07:17:18.271Z",
+        "method": "GET",
+        "path": "/groups/gateway-group-1/members",
+        "body": null,
+        "responsePreparedAt": "2026-10-01T07:17:18.271Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:18.271Z",
+        "responseFinishedAt": "2026-10-01T07:17:18.272Z",
+        "responseClosedAt": "2026-10-01T07:17:18.272Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 19,
+        "at": "2026-10-01T07:17:18.276Z",
+        "method": "GET",
+        "path": "/groups/gateway-group-1/members",
+        "body": null,
+        "responsePreparedAt": "2026-10-01T07:17:18.277Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:18.277Z",
+        "responseFinishedAt": "2026-10-01T07:17:18.277Z",
+        "responseClosedAt": "2026-10-01T07:17:18.277Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 20,
+        "at": "2026-10-01T07:17:18.432Z",
+        "method": "POST",
+        "path": "/accounts/account-2/connect",
+        "body": {},
+        "responsePreparedAt": "2026-10-01T07:17:18.432Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:18.432Z",
+        "responseFinishedAt": "2026-10-01T07:17:18.432Z",
+        "responseClosedAt": "2026-10-01T07:17:18.432Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 21,
+        "at": "2026-10-01T07:17:18.445Z",
+        "method": "POST",
+        "path": "/groups",
+        "body": {
+          "creatorAccountId": "account-1"
+        },
+        "responsePreparedAt": "2026-10-01T07:17:18.445Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:18.445Z",
+        "responseFinishedAt": "2026-10-01T07:17:18.445Z",
+        "responseClosedAt": "2026-10-01T07:17:18.445Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 22,
+        "at": "2026-10-01T07:17:18.545Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-2/invite",
+        "body": {},
+        "responsePreparedAt": "2026-10-01T07:17:18.545Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:18.545Z",
+        "responseFinishedAt": "2026-10-01T07:17:18.545Z",
+        "responseClosedAt": "2026-10-01T07:17:18.545Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 23,
+        "at": "2026-10-01T07:17:18.651Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-2/join",
+        "body": {
+          "accountId": "account-2",
+          "inviteLink": "http://127.0.0.1:56389/invitations/2"
+        },
+        "responsePreparedAt": "2026-10-01T07:17:18.651Z",
+        "preparedResponseStatus": 202,
+        "responseStatus": 202,
+        "completedAt": "2026-10-01T07:17:18.651Z",
+        "responseFinishedAt": "2026-10-01T07:17:18.651Z",
+        "responseClosedAt": "2026-10-01T07:17:18.651Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 24,
+        "at": "2026-10-01T07:17:18.756Z",
+        "method": "GET",
+        "path": "/groups/gateway-group-2/members",
+        "body": null,
+        "responsePreparedAt": "2026-10-01T07:17:18.756Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:18.756Z",
+        "responseFinishedAt": "2026-10-01T07:17:18.756Z",
+        "responseClosedAt": "2026-10-01T07:17:18.756Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 25,
+        "at": "2026-10-01T07:17:18.955Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-2/join",
+        "body": {
+          "accountId": "account-3",
+          "inviteLink": "http://127.0.0.1:56389/invitations/2"
+        },
+        "responsePreparedAt": "2026-10-01T07:17:18.955Z",
+        "preparedResponseStatus": 202,
+        "responseStatus": 202,
+        "completedAt": "2026-10-01T07:17:18.955Z",
+        "responseFinishedAt": "2026-10-01T07:17:18.955Z",
+        "responseClosedAt": "2026-10-01T07:17:18.955Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 26,
+        "at": "2026-10-01T07:17:19.061Z",
+        "method": "GET",
+        "path": "/groups/gateway-group-2/members",
+        "body": null,
+        "responsePreparedAt": "2026-10-01T07:17:19.061Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:19.061Z",
+        "responseFinishedAt": "2026-10-01T07:17:19.061Z",
+        "responseClosedAt": "2026-10-01T07:17:19.061Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 27,
+        "at": "2026-10-01T07:17:19.262Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-2/promote",
+        "body": {
+          "byAccountId": "account-1",
+          "accountId": "account-2"
+        },
+        "responsePreparedAt": "2026-10-01T07:17:19.262Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:19.262Z",
+        "responseFinishedAt": "2026-10-01T07:17:19.262Z",
+        "responseClosedAt": "2026-10-01T07:17:19.262Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 28,
+        "at": "2026-10-01T07:17:19.337Z",
+        "method": "GET",
+        "path": "/groups/gateway-group-2/members",
+        "body": null,
+        "responsePreparedAt": "2026-10-01T07:17:19.337Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:19.337Z",
+        "responseFinishedAt": "2026-10-01T07:17:19.337Z",
+        "responseClosedAt": "2026-10-01T07:17:19.337Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 29,
+        "at": "2026-10-01T07:17:19.621Z",
+        "method": "POST",
+        "path": "/accounts/account-2/disconnect",
+        "body": {},
+        "responsePreparedAt": "2026-10-01T07:17:19.621Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:19.621Z",
+        "responseFinishedAt": "2026-10-01T07:17:19.621Z",
+        "responseClosedAt": "2026-10-01T07:17:19.621Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 30,
+        "at": "2026-10-01T07:17:19.630Z",
+        "method": "POST",
+        "path": "/accounts/account-1/disconnect",
+        "body": {},
+        "responsePreparedAt": "2026-10-01T07:17:19.630Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:19.630Z",
+        "responseFinishedAt": "2026-10-01T07:17:19.630Z",
+        "responseClosedAt": "2026-10-01T07:17:19.630Z",
+        "responseClosedBeforeFinish": false
+      },
+      {
+        "id": 31,
+        "at": "2026-10-01T07:17:19.638Z",
+        "method": "GET",
+        "path": "/groups/gateway-group-2/members",
+        "body": null,
+        "responsePreparedAt": "2026-10-01T07:17:19.638Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T07:17:19.638Z",
+        "responseFinishedAt": "2026-10-01T07:17:19.638Z",
+        "responseClosedAt": "2026-10-01T07:17:19.638Z",
+        "responseClosedBeforeFinish": false
+      }
+    ],
+    "events": [
+      {
+        "eventId": 1,
+        "type": "member_joined",
+        "recordedAt": "2026-10-01T07:17:16.328Z",
+        "data": {
+          "groupId": "gateway-group-1",
+          "platformUserId": "platform-account-2",
+          "eventId": 1,
+          "type": "member_joined"
+        }
+      },
+      {
+        "eventId": 2,
+        "type": "member_joined",
+        "recordedAt": "2026-10-01T07:17:16.631Z",
+        "data": {
+          "groupId": "gateway-group-1",
+          "platformUserId": "platform-account-3",
+          "eventId": 2,
+          "type": "member_joined"
+        }
+      },
+      {
+        "eventId": 3,
+        "type": "member_joined",
+        "recordedAt": "2026-10-01T07:17:16.899Z",
+        "data": {
+          "groupId": "gateway-group-1",
+          "platformUserId": "qa-shared-external-target",
+          "eventId": 3,
+          "type": "member_joined"
+        }
+      },
+      {
+        "eventId": 4,
+        "type": "message",
+        "recordedAt": "2026-10-01T07:17:16.910Z",
+        "data": {
+          "groupId": "gateway-group-1",
+          "msgId": "gateway-message-1",
+          "senderPlatformUserId": "qa-trigger-user",
+          "text": "start capacity-actor-creator-remains",
+          "sentAt": "2026-10-01T07:17:16.910Z",
+          "eventId": 4,
+          "type": "message"
+        }
+      },
+      {
+        "eventId": 5,
+        "type": "member_left",
+        "recordedAt": "2026-10-01T07:17:18.268Z",
+        "data": {
+          "groupId": "gateway-group-1",
+          "platformUserId": "qa-shared-external-target",
+          "eventId": 5,
+          "type": "member_left"
+        }
+      },
+      {
+        "eventId": 6,
+        "type": "member_joined",
+        "recordedAt": "2026-10-01T07:17:18.752Z",
+        "data": {
+          "groupId": "gateway-group-2",
+          "platformUserId": "platform-account-2",
+          "eventId": 6,
+          "type": "member_joined"
+        }
+      },
+      {
+        "eventId": 7,
+        "type": "member_joined",
+        "recordedAt": "2026-10-01T07:17:19.056Z",
+        "data": {
+          "groupId": "gateway-group-2",
+          "platformUserId": "platform-account-3",
+          "eventId": 7,
+          "type": "member_joined"
+        }
+      },
+      {
+        "eventId": 8,
+        "type": "member_joined",
+        "recordedAt": "2026-10-01T07:17:19.330Z",
+        "data": {
+          "groupId": "gateway-group-2",
+          "platformUserId": "qa-shared-external-target",
+          "eventId": 8,
+          "type": "member_joined"
+        }
+      },
+      {
+        "eventId": 9,
+        "type": "message",
+        "recordedAt": "2026-10-01T07:17:19.340Z",
+        "data": {
+          "groupId": "gateway-group-2",
+          "msgId": "gateway-message-2",
+          "senderPlatformUserId": "qa-trigger-user",
+          "text": "start capacity-actor-no-qualified-actor",
+          "sentAt": "2026-10-01T07:17:19.340Z",
+          "eventId": 9,
+          "type": "message"
+        }
+      },
+      {
+        "eventId": 10,
+        "type": "member_left",
+        "recordedAt": "2026-10-01T07:17:19.635Z",
+        "data": {
+          "groupId": "gateway-group-2",
+          "platformUserId": "platform-account-2",
+          "eventId": 10,
+          "type": "member_left"
+        }
+      }
+    ],
+    "effects": [
+      {
+        "at": "2026-10-01T07:17:15.904Z",
+        "kind": "connect",
+        "accountId": "account-1"
+      },
+      {
+        "at": "2026-10-01T07:17:15.913Z",
+        "kind": "connect",
+        "accountId": "account-2"
+      },
+      {
+        "at": "2026-10-01T07:17:15.920Z",
+        "kind": "connect",
+        "accountId": "account-3"
+      },
+      {
+        "at": "2026-10-01T07:17:15.926Z",
+        "kind": "connect",
+        "accountId": "account-4"
+      },
+      {
+        "at": "2026-10-01T07:17:15.932Z",
+        "kind": "connect",
+        "accountId": "account-5"
+      },
+      {
+        "at": "2026-10-01T07:17:15.938Z",
+        "kind": "connect",
+        "accountId": "account-6"
+      },
+      {
+        "at": "2026-10-01T07:17:16.019Z",
+        "kind": "create",
+        "groupId": "gateway-group-1",
+        "accountId": "account-1"
+      },
+      {
+        "at": "2026-10-01T07:17:16.120Z",
+        "kind": "invite",
+        "groupId": "gateway-group-1"
+      },
+      {
+        "at": "2026-10-01T07:17:16.327Z",
+        "kind": "join",
+        "accountId": "account-2",
+        "groupId": "gateway-group-1",
+        "platformUserId": "platform-account-2"
+      },
+      {
+        "at": "2026-10-01T07:17:16.631Z",
+        "kind": "join",
+        "accountId": "account-3",
+        "groupId": "gateway-group-1",
+        "platformUserId": "platform-account-3"
+      },
+      {
+        "at": "2026-10-01T07:17:16.843Z",
+        "kind": "promote",
+        "groupId": "gateway-group-1",
+        "accountId": "account-2"
+      },
+      {
+        "at": "2026-10-01T07:17:17.205Z",
+        "kind": "disconnect",
+        "accountId": "account-2"
+      },
+      {
+        "at": "2026-10-01T07:17:17.268Z",
+        "kind": "kick",
+        "accountId": "account-1",
+        "groupId": "gateway-group-1",
+        "platformUserId": "qa-shared-external-target"
+      },
+      {
+        "at": "2026-10-01T07:17:18.432Z",
+        "kind": "connect",
+        "accountId": "account-2"
+      },
+      {
+        "at": "2026-10-01T07:17:18.445Z",
+        "kind": "create",
+        "groupId": "gateway-group-2",
+        "accountId": "account-1"
+      },
+      {
+        "at": "2026-10-01T07:17:18.545Z",
+        "kind": "invite",
+        "groupId": "gateway-group-2"
+      },
+      {
+        "at": "2026-10-01T07:17:18.752Z",
+        "kind": "join",
+        "accountId": "account-2",
+        "groupId": "gateway-group-2",
+        "platformUserId": "platform-account-2"
+      },
+      {
+        "at": "2026-10-01T07:17:19.056Z",
+        "kind": "join",
+        "accountId": "account-3",
+        "groupId": "gateway-group-2",
+        "platformUserId": "platform-account-3"
+      },
+      {
+        "at": "2026-10-01T07:17:19.262Z",
+        "kind": "promote",
+        "groupId": "gateway-group-2",
+        "accountId": "account-2"
+      },
+      {
+        "at": "2026-10-01T07:17:19.621Z",
+        "kind": "disconnect",
+        "accountId": "account-2"
+      },
+      {
+        "at": "2026-10-01T07:17:19.630Z",
+        "kind": "disconnect",
+        "accountId": "account-1"
+      }
+    ],
+    "barriers": [],
+    "backgroundErrors": [],
+    "connectedStreams": 1
+  },
+  "agent": {
+    "turns": [
+      {
+        "id": 1,
+        "at": "2026-10-01T07:17:16.963Z",
+        "path": "/agent/turn",
+        "body": {
+          "runId": "879e19f0-bdca-4d48-8eed-2c26c3b6f992",
+          "tools": [
+            {
+              "name": "get_recent_messages",
+              "description": "Read recent group messages.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "limit": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "limit"
+                ],
+                "additionalProperties": false
+              }
+            },
+            {
+              "name": "send_message",
+              "description": "Send an audited group message.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 20000
+                  },
+                  "idempotency_key": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  }
+                },
+                "required": [
+                  "text",
+                  "idempotency_key"
+                ],
+                "additionalProperties": false
+              }
+            },
+            {
+              "name": "kick_user",
+              "description": "Remove a group member if policy permits.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "platform_user_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  }
+                },
+                "required": [
+                  "platform_user_id",
+                  "reason"
+                ],
+                "additionalProperties": false
+              }
+            },
+            {
+              "name": "finish",
+              "description": "Finish this run without sending a group message.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "summary": {
+                    "type": "string",
+                    "maxLength": 20000
+                  }
+                },
+                "required": [
+                  "summary"
+                ],
+                "additionalProperties": false
+              }
+            }
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "text": "{\"groupId\":\"4d9b2824-ca5d-434b-8b08-00447732902b\",\"triggerMessages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"qa-trigger-user\",\"text\":\"start capacity-actor-creator-remains\",\"sentAt\":\"2026-10-01T07:17:16.910Z\"}],\"policy\":{\"autoKickEnabled\":true},\"ownPlatformUserIds\":[\"platform-account-1\",\"platform-account-2\",\"platform-account-3\",\"platform-account-4\",\"platform-account-5\",\"platform-account-6\"]}",
+                  "type": "text"
+                }
+              ]
+            }
+          ]
+        },
+        "responseStatus": 200,
+        "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"qa-kick-capacity-actor-creator-remains\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"qa-shared-external-target\",\"reason\":\"QA boundary capacity-actor-creator-remains\"}}]}",
+        "completedAt": "2026-10-01T07:17:16.977Z"
+      },
+      {
+        "id": 3,
+        "at": "2026-10-01T07:17:18.288Z",
+        "path": "/agent/turn",
+        "body": {
+          "runId": "879e19f0-bdca-4d48-8eed-2c26c3b6f992",
+          "tools": [
+            {
+              "name": "get_recent_messages",
+              "description": "Read recent group messages.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "limit": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "limit"
+                ],
+                "additionalProperties": false
+              }
+            },
+            {
+              "name": "send_message",
+              "description": "Send an audited group message.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 20000
+                  },
+                  "idempotency_key": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  }
+                },
+                "required": [
+                  "text",
+                  "idempotency_key"
+                ],
+                "additionalProperties": false
+              }
+            },
+            {
+              "name": "kick_user",
+              "description": "Remove a group member if policy permits.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "platform_user_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  }
+                },
+                "required": [
+                  "platform_user_id",
+                  "reason"
+                ],
+                "additionalProperties": false
+              }
+            },
+            {
+              "name": "finish",
+              "description": "Finish this run without sending a group message.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "summary": {
+                    "type": "string",
+                    "maxLength": 20000
+                  }
+                },
+                "required": [
+                  "summary"
+                ],
+                "additionalProperties": false
+              }
+            }
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "text": "{\"groupId\":\"4d9b2824-ca5d-434b-8b08-00447732902b\",\"triggerMessages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"qa-trigger-user\",\"text\":\"start capacity-actor-creator-remains\",\"sentAt\":\"2026-10-01T07:17:16.910Z\"}],\"policy\":{\"autoKickEnabled\":true},\"ownPlatformUserIds\":[\"platform-account-1\",\"platform-account-2\",\"platform-account-3\",\"platform-account-4\",\"platform-account-5\",\"platform-account-6\"]}",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "id": "qa-kick-capacity-actor-creator-remains",
+                  "name": "kick_user",
+                  "type": "tool_use",
+                  "input": {
+                    "reason": "QA boundary capacity-actor-creator-remains",
+                    "platform_user_id": "qa-shared-external-target"
+                  }
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "tool_result",
+                  "content": "{\"kicked\":true}",
+                  "tool_use_id": "qa-kick-capacity-actor-creator-remains"
+                }
+              ]
+            }
+          ]
+        },
+        "responseStatus": 200,
+        "rawResponse": "{\"stop_reason\":\"end_turn\",\"content\":[{\"type\":\"text\",\"text\":\"finished capacity-actor-creator-remains\"}]}",
+        "completedAt": "2026-10-01T07:17:18.289Z"
+      },
+      {
+        "id": 4,
+        "at": "2026-10-01T07:17:19.403Z",
+        "path": "/agent/turn",
+        "body": {
+          "runId": "0375403d-852a-4d97-9983-24cd2c975d11",
+          "tools": [
+            {
+              "name": "get_recent_messages",
+              "description": "Read recent group messages.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "limit": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "limit"
+                ],
+                "additionalProperties": false
+              }
+            },
+            {
+              "name": "send_message",
+              "description": "Send an audited group message.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 20000
+                  },
+                  "idempotency_key": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  }
+                },
+                "required": [
+                  "text",
+                  "idempotency_key"
+                ],
+                "additionalProperties": false
+              }
+            },
+            {
+              "name": "kick_user",
+              "description": "Remove a group member if policy permits.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "platform_user_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  }
+                },
+                "required": [
+                  "platform_user_id",
+                  "reason"
+                ],
+                "additionalProperties": false
+              }
+            },
+            {
+              "name": "finish",
+              "description": "Finish this run without sending a group message.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "summary": {
+                    "type": "string",
+                    "maxLength": 20000
+                  }
+                },
+                "required": [
+                  "summary"
+                ],
+                "additionalProperties": false
+              }
+            }
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "text": "{\"groupId\":\"98288ffb-4e0c-435e-8281-78da3b7ac745\",\"triggerMessages\":[{\"msgId\":\"gateway-message-2\",\"senderPlatformUserId\":\"qa-trigger-user\",\"text\":\"start capacity-actor-no-qualified-actor\",\"sentAt\":\"2026-10-01T07:17:19.340Z\"}],\"policy\":{\"autoKickEnabled\":true},\"ownPlatformUserIds\":[\"platform-account-1\",\"platform-account-2\",\"platform-account-3\",\"platform-account-4\",\"platform-account-5\",\"platform-account-6\"]}",
+                  "type": "text"
+                }
+              ]
+            }
+          ]
+        },
+        "responseStatus": 200,
+        "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"qa-kick-capacity-actor-no-qualified-actor\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"qa-shared-external-target\",\"reason\":\"QA boundary capacity-actor-no-qualified-actor\"}}]}",
+        "completedAt": "2026-10-01T07:17:19.403Z"
+      },
+      {
+        "id": 6,
+        "at": "2026-10-01T07:17:19.687Z",
+        "path": "/agent/turn",
+        "body": {
+          "runId": "0375403d-852a-4d97-9983-24cd2c975d11",
+          "tools": [
+            {
+              "name": "get_recent_messages",
+              "description": "Read recent group messages.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "limit": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "limit"
+                ],
+                "additionalProperties": false
+              }
+            },
+            {
+              "name": "send_message",
+              "description": "Send an audited group message.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 20000
+                  },
+                  "idempotency_key": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  }
+                },
+                "required": [
+                  "text",
+                  "idempotency_key"
+                ],
+                "additionalProperties": false
+              }
+            },
+            {
+              "name": "kick_user",
+              "description": "Remove a group member if policy permits.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "platform_user_id": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 512
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000
+                  }
+                },
+                "required": [
+                  "platform_user_id",
+                  "reason"
+                ],
+                "additionalProperties": false
+              }
+            },
+            {
+              "name": "finish",
+              "description": "Finish this run without sending a group message.",
+              "input_schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "summary": {
+                    "type": "string",
+                    "maxLength": 20000
+                  }
+                },
+                "required": [
+                  "summary"
+                ],
+                "additionalProperties": false
+              }
+            }
+          ],
+          "messages": [
+            {
+              "role": "user",
+              "content": [
+                {
+                  "text": "{\"groupId\":\"98288ffb-4e0c-435e-8281-78da3b7ac745\",\"triggerMessages\":[{\"msgId\":\"gateway-message-2\",\"senderPlatformUserId\":\"qa-trigger-user\",\"text\":\"start capacity-actor-no-qualified-actor\",\"sentAt\":\"2026-10-01T07:17:19.340Z\"}],\"policy\":{\"autoKickEnabled\":true},\"ownPlatformUserIds\":[\"platform-account-1\",\"platform-account-2\",\"platform-account-3\",\"platform-account-4\",\"platform-account-5\",\"platform-account-6\"]}",
+                  "type": "text"
+                }
+              ]
+            },
+            {
+              "role": "assistant",
+              "content": [
+                {
+                  "id": "qa-kick-capacity-actor-no-qualified-actor",
+                  "name": "kick_user",
+                  "type": "tool_use",
+                  "input": {
+                    "reason": "QA boundary capacity-actor-no-qualified-actor",
+                    "platform_user_id": "qa-shared-external-target"
+                  }
+                }
+              ]
+            },
+            {
+              "role": "user",
+              "content": [
+                {
+                  "type": "tool_result",
+                  "content": "{\"code\":\"NO_AVAILABLE_ACCOUNT\",\"message\":\"No online administrator is available.\"}",
+                  "is_error": true,
+                  "tool_use_id": "qa-kick-capacity-actor-no-qualified-actor"
+                }
+              ]
+            }
+          ]
+        },
+        "responseStatus": 200,
+        "rawResponse": "{\"stop_reason\":\"end_turn\",\"content\":[{\"type\":\"text\",\"text\":\"finished capacity-actor-no-qualified-actor\"}]}",
+        "completedAt": "2026-10-01T07:17:19.687Z"
+      }
+    ],
+    "audits": [
+      {
+        "id": 2,
+        "at": "2026-10-01T07:17:16.989Z",
+        "path": "/agent/audit",
+        "body": {
+          "text": "{\"action\":\"kick\",\"platform_user_id\":\"qa-shared-external-target\",\"reason\":\"QA boundary capacity-actor-creator-remains\"}",
+          "groupId": "4d9b2824-ca5d-434b-8b08-00447732902b"
+        },
+        "responseStatus": 200,
+        "rawResponse": "{\"verdict\":\"pass\",\"reason\":\"QA pass\"}",
+        "completedAt": "2026-10-01T07:17:17.081Z"
+      },
+      {
+        "id": 5,
+        "at": "2026-10-01T07:17:19.416Z",
+        "path": "/agent/audit",
+        "body": {
+          "text": "{\"action\":\"kick\",\"platform_user_id\":\"qa-shared-external-target\",\"reason\":\"QA boundary capacity-actor-no-qualified-actor\"}",
+          "groupId": "98288ffb-4e0c-435e-8281-78da3b7ac745"
+        },
+        "responseStatus": 200,
+        "rawResponse": "{\"verdict\":\"pass\",\"reason\":\"QA pass\"}",
+        "completedAt": "2026-10-01T07:17:19.503Z"
+      }
+    ],
+    "sessions": [
+      {
+        "runId": "879e19f0-bdca-4d48-8eed-2c26c3b6f992",
+        "requestIds": [
+          1,
+          3
+        ]
+      },
+      {
+        "runId": "0375403d-852a-4d97-9983-24cd2c975d11",
+        "requestIds": [
+          4,
+          6
+        ]
+      }
+    ],
+    "barriers": [
+      {
+        "name": "qa-audit-capacity-actor-creator-remains",
+        "hits": 1,
+        "at": "2026-10-01T07:17:16.989Z",
+        "context": {
+          "id": 2,
+          "at": "2026-10-01T07:17:16.989Z",
+          "path": "/agent/audit",
+          "body": {
+            "text": "{\"action\":\"kick\",\"platform_user_id\":\"qa-shared-external-target\",\"reason\":\"QA boundary capacity-actor-creator-remains\"}",
+            "groupId": "4d9b2824-ca5d-434b-8b08-00447732902b"
+          },
+          "responseStatus": 200,
+          "rawResponse": "{\"verdict\":\"pass\",\"reason\":\"QA pass\"}",
+          "completedAt": "2026-10-01T07:17:17.081Z"
+        }
+      },
+      {
+        "name": "qa-audit-capacity-actor-no-qualified-actor",
+        "hits": 1,
+        "at": "2026-10-01T07:17:19.416Z",
+        "context": {
+          "id": 5,
+          "at": "2026-10-01T07:17:19.416Z",
+          "path": "/agent/audit",
+          "body": {
+            "text": "{\"action\":\"kick\",\"platform_user_id\":\"qa-shared-external-target\",\"reason\":\"QA boundary capacity-actor-no-qualified-actor\"}",
+            "groupId": "98288ffb-4e0c-435e-8281-78da3b7ac745"
+          },
+          "responseStatus": 200,
+          "rawResponse": "{\"verdict\":\"pass\",\"reason\":\"QA pass\"}",
+          "completedAt": "2026-10-01T07:17:19.503Z"
+        }
+      }
+    ],
+    "backgroundErrors": []
+  }
+}

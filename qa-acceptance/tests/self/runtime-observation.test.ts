@@ -16,11 +16,13 @@ import {
   diagnosticModule,
   assertActivityBudget,
   assertRecoveredActivity,
+  assertNoRecoveryPause,
   type DiagnosticProfile,
   type RuntimeCorrelation,
   type RuntimeSnapshot,
 } from '../../harness/runtime-observation.js';
 import { loadTarget } from '../../harness/security.js';
+import { observe } from '../../harness/observation.js';
 
 const target = {
   apiUrl: 'http://127.0.0.1:38999',
@@ -324,6 +326,148 @@ test('runtime activity checks never turn a lost crash tail or uncertain interval
     () => assertActivityBudget({ ...event, activeElapsedMs: [60001, 60002] }, [61000, 61500]),
     /超过原始60秒/,
   );
+});
+test('runtime incomplete tail accepts null or absent total truth without accepting malformed intervals', () => {
+  const activity: RuntimeCorrelation = {
+    kind: 'activity',
+    runId: 'run',
+    groupId: 'group',
+    toolUseId: 'all-run-steps',
+  };
+  const event = {
+    ...snapshot().events[0]!,
+    kind: 'activity-checkpoint' as const,
+    correlation: activity,
+    activeElapsedMs: null,
+    includesUnsavedTail: false,
+    epochIds: ['recovered-epoch'],
+    activityState: 'active' as const,
+    observedEpochActiveMs: 150,
+    persistedActiveMs: 14000,
+    missingReason: 'hard-crash-tail-unavailable',
+  };
+  const value = { ...snapshot(), correlation: activity, events: [event] };
+  for (const bounds of [null, undefined, [150, 160]]) {
+    const parsed = validateRuntimeSnapshot(
+      { ...value, events: [{ ...event, activeElapsedMs: bounds }] },
+      target,
+      'lease',
+      activity,
+    );
+    assert.throws(() => assertActivityBudget(parsed.events[0]!, [61000, 62000]), /BLOCKED/);
+  }
+  // A newly observed single epoch can have genuine complete truth. Completeness
+  // is about the real run, not an artificial minimum count of epochs.
+  assert.doesNotThrow(() =>
+    validateRuntimeSnapshot(
+      { ...value, events: [{ ...event, includesUnsavedTail: true, activeElapsedMs: [150, 160] }] },
+      target,
+      'lease',
+      activity,
+    ),
+  );
+  for (const patch of [
+    { activeElapsedMs: [1] },
+    { activeElapsedMs: [-1, 1] },
+    { activeElapsedMs: [2, 1] },
+    { activeElapsedMs: [1, Number.NaN] },
+    { activeElapsedMs: '14000' },
+    { includesUnsavedTail: true },
+    { includesUnsavedTail: true, activeElapsedMs: undefined },
+  ])
+    assert.throws(
+      () =>
+        validateRuntimeSnapshot(
+          { ...value, events: [{ ...event, ...patch }] },
+          target,
+          'lease',
+          activity,
+        ),
+      /BLOCKED/,
+    );
+});
+test('runtime incomplete checkpoints cannot hide a later independently witnessed recovery pause', async () => {
+  const activity: RuntimeCorrelation = {
+    kind: 'activity',
+    runId: 'run',
+    groupId: 'group',
+    toolUseId: 'all-run-steps',
+  };
+  const event = {
+    ...snapshot().events[0]!,
+    kind: 'activity-checkpoint' as const,
+    correlation: activity,
+    activeElapsedMs: null,
+    includesUnsavedTail: false,
+    epochIds: ['original-epoch', 'recovered-epoch'],
+    activityState: 'unknown' as const,
+  };
+  const early = { ...snapshot(), correlation: activity, events: [event] };
+  const paused = {
+    ...early,
+    events: [
+      event,
+      {
+        ...event,
+        seq: 2,
+        activityState: 'recovery-paused' as const,
+      },
+    ],
+  };
+  let reads = 0;
+  await assert.rejects(
+    observe({
+      read: async () =>
+        validateRuntimeSnapshot(++reads === 1 ? early : paused, target, 'lease', activity),
+      invariant: (value) => assertNoRecoveryPause(value.events),
+      complete: () => false,
+      durationMs: 1000,
+      intervalMs: 0,
+    }),
+    /A5.8强恢复未满足/,
+  );
+  assert.equal(reads, 2, '不完整的先前记录不得提前阻塞独立恢复观察');
+  assert.throws(() => assertNoRecoveryPause(paused.events), /A5.8强恢复未满足/);
+  assert.throws(() => assertActivityBudget(event, [61000, 62000]), /BLOCKED/);
+});
+test('runtime empty observed epochs are honest incomplete evidence but never complete budget proof', () => {
+  const activity: RuntimeCorrelation = {
+    kind: 'activity',
+    runId: 'run',
+    groupId: 'group',
+    toolUseId: 'all-run-steps',
+  };
+  const event = {
+    ...snapshot().events[0]!,
+    kind: 'activity-checkpoint' as const,
+    correlation: activity,
+    includesUnsavedTail: false,
+    epochIds: [],
+    activityState: 'recovery-paused' as const,
+    observedEpochActiveMs: [0, 0],
+    persistedActiveMs: 14000,
+    incompleteReason: 'Run creation or earlier epoch tail was not witnessed by this process.',
+  };
+  const value = { ...snapshot(), correlation: activity, events: [event] };
+  const parsed = validateRuntimeSnapshot(value, target, 'lease', activity);
+  assert.throws(() => assertNoRecoveryPause(parsed.events), /A5.8强恢复未满足/);
+  assert.throws(() => assertActivityBudget(parsed.events[0]!, [61000, 62000]), /BLOCKED/);
+  for (const patch of [
+    { includesUnsavedTail: true, activeElapsedMs: [60000, 60000] },
+    { epochIds: undefined },
+    { epochIds: [null] },
+    { epochIds: [''] },
+  ])
+    assert.throws(
+      () =>
+        validateRuntimeSnapshot(
+          { ...value, events: [{ ...event, ...patch }] },
+          target,
+          'lease',
+          activity,
+        ),
+      /BLOCKED/,
+    );
 });
 test('runtime recovery pause is a recovery failure while unknown actual activity is blocked', () => {
   const base = snapshot().events[0]!;

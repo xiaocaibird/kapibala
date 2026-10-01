@@ -1,0 +1,57 @@
+{
+  "phase": "developer-preflight",
+  "suite": {
+    "id": "qa-final-window-retest-20261001",
+    "title": "真实失败事件与提醒前提定向复测",
+    "purpose": "在已结束的16项复测后，修正403触发排队、搜索防抖及旧消息候选前提，复测既有三个正式用例。",
+    "caseIds": [
+      "CAP-005",
+      "UI-028",
+      "UI-030"
+    ],
+    "projects": [
+      "system",
+      "chromium"
+    ],
+    "riskBoundaries": [
+      "仍使用86ad原产品版本和真实公开协议；不重写前轮失败/阻塞。",
+      "先持久生成真实message_failed历史再通过断流恢复投递；必须实证容量拒绝与消息身份。",
+      "UI只通过真实输入/点击及网络回放收敛建立前提，不代产品清状态。"
+    ],
+    "grep": "(?:^|\\s)\\[(?:CAP-005|UI-028|UI-030)\\](?=\\s|$)",
+    "cases": [
+      {
+        "id": "CAP-005",
+        "title": "容量等待期间群变不可写阻止迟发踢人",
+        "automation": "tests/system/capacity-control.spec.ts",
+        "projects": [
+          "system"
+        ]
+      },
+      {
+        "id": "UI-028",
+        "title": "前台安静与失焦静态标题favicon",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "UI-030",
+        "title": "列表范围消失的两阶段确认",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      }
+    ]
+  },
+  "suiteSha256": "f70e577966a6c1b7496ba8f7a34e639ba6e49afc4faa8983ae7549a6d4471ab3",
+  "playwrightArgs": [
+    "test",
+    "--grep",
+    "(?:^|\\s)\\[(?:CAP-005|UI-028|UI-030)\\](?=\\s|$)",
+    "--project=system",
+    "--project=chromium"
+  ]
+}
