@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import { rename, readdir, readFile } from "node:fs/promises";
+import { join } from "node:path";
+import type { ActivityObservationSnapshot } from "../../scripts/qa-runtime-observation/activity-witness.js";
 import { randomUUID } from "node:crypto";
 import { test } from "node:test";
 import { runtimeFixture } from "../support/runtime-observation-fixture.js";
@@ -89,7 +92,51 @@ test("AC01 real controller permits witness plus same-run safe boundary and expos
   );
   const oldTarget = f.target();
   f.evidence({ witness: await f.snapshot(witness.id), safe: held });
-  const immediatelyBeforeKill = await f.snapshot(safe.id);
+  const live1 = (await f.snapshot(safe.id)) as ActivityObservationSnapshot;
+  const live2 = (await f.snapshot(safe.id)) as ActivityObservationSnapshot;
+  assert.equal(live2.snapshotProvenance?.source, "live-bridge");
+  assert.equal(
+    live2.snapshotProvenance?.applicationPid,
+    live2.clockObservation.applicationPid,
+  );
+  assert.notEqual(
+    live2.clockObservation.applicationPid,
+    oldTarget.pid,
+    "The controlled app is a guardian descendant, not the guardian itself",
+  );
+  assert.ok(
+    live2.clockObservation.monotonicMs > live1.clockObservation.monotonicMs,
+  );
+  assert.deepEqual(live2.events.slice(0, live1.events.length), live1.events);
+  // Losing bridge reachability while its process lives must fail, not claim a
+  // process exit or calibrate from an old retained snapshot.
+  const registrationFile = (await readdir(f.directory)).find((name) =>
+    name.endsWith(".json"),
+  )!;
+  const registration = JSON.parse(
+    await readFile(join(f.directory, registrationFile), "utf8"),
+  ) as { socket: string };
+  await rename(
+    registration.socket,
+    registration.socket + ".temporarily-unreachable",
+  );
+  try {
+    const unavailable = await f.request("GET", `/leases/${safe.id}`);
+    assert.equal(unavailable.status, 503);
+    assert.equal(
+      (unavailable.value as ObservationSnapshot).snapshotProvenance,
+      undefined,
+    );
+    process.kill(live2.clockObservation.applicationPid, 0);
+  } finally {
+    await rename(
+      registration.socket + ".temporarily-unreachable",
+      registration.socket,
+    );
+  }
+  const immediatelyBeforeKill = (await f.snapshot(
+    safe.id,
+  )) as ActivityObservationSnapshot;
   assert.equal(immediatelyBeforeKill.state, "held");
   const expiresAt = Date.parse(immediatelyBeforeKill.expiresAt);
   const killBefore = Date.now();
@@ -100,7 +147,17 @@ test("AC01 real controller permits witness plus same-run safe boundary and expos
     killAfter < expiresAt,
     "Kill must finish inside the actual held lease, not after TTL",
   );
-  f.evidence({ immediatelyBeforeKill, killBefore, killAfter });
+  const retained = (await f.snapshot(safe.id)) as ActivityObservationSnapshot;
+  assert.equal(
+    retained.snapshotProvenance?.source,
+    "retained-after-process-exit",
+  );
+  assert.deepEqual(
+    retained.clockObservation,
+    immediatelyBeforeKill.clockObservation,
+  );
+  assert.deepEqual(retained.events, immediatelyBeforeKill.events);
+  f.evidence({ immediatelyBeforeKill, retained, killBefore, killAfter });
   await f.start();
   assert.notEqual(f.target().pid, oldTarget.pid);
   const resumed = await arm("observe-activity");

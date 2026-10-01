@@ -39,6 +39,15 @@ export const activityRequestSchema = z
   })
   .strict();
 export type ActivityRequest = z.infer<typeof activityRequestSchema>;
+export interface ActivityObservationSnapshot extends ObservationSnapshot {
+  clockObservation: {
+    clockDomain: string;
+    clockUnit: "ms";
+    applicationPid: number;
+    monotonicMs: number;
+  };
+}
+
 type ActivityState = "active" | "recovery-paused" | "terminal" | "unknown";
 interface RunWitness extends ActivitySample {
   attemptId: string;
@@ -48,6 +57,11 @@ interface RunWitness extends ActivitySample {
   state: ActivityState;
   complete: boolean;
   reason?: string;
+  lastSuccessfulSample?: {
+    epochId: string;
+    at: ActivityWindow;
+    persistedActiveMs: number;
+  };
 }
 interface Lease {
   request: ActivityRequest;
@@ -117,6 +131,7 @@ export class ActivityWitness
       if (witness.state === "terminal" || witness.state === "recovery-paused")
         continue;
       witness.complete = false;
+      witness.lastSuccessfulSample = undefined;
       witness.began = at;
       witness.ended = undefined;
       witness.state = "active";
@@ -145,6 +160,11 @@ export class ActivityWitness
         witness.reason =
           "Activity resumed without a fully witnessed continuous interval.";
       }
+      witness.lastSuccessfulSample = {
+        epochId,
+        at: { ...at },
+        persistedActiveMs: row.persistedActiveMs,
+      };
       if (!witness.epochIds.includes(epochId)) witness.epochIds.push(epochId);
       this.changed(witness);
     }
@@ -219,6 +239,18 @@ export class ActivityWitness
       includesUnsavedTail: witness.complete,
       epochIds: [...witness.epochIds],
       persistedActiveMs: witness.persistedActiveMs,
+      ...(witness.lastSuccessfulSample
+        ? {
+            lastSuccessfulSample: {
+              epochId: witness.lastSuccessfulSample.epochId,
+              windowMs: [
+                witness.lastSuccessfulSample.at.before,
+                witness.lastSuccessfulSample.at.after,
+              ],
+              persistedActiveMs: witness.lastSuccessfulSample.persistedActiveMs,
+            },
+          }
+        : {}),
       clockSource:
         "process performance.now brackets around confirmed product creation, ownership and terminal boundaries",
       ...(witness.complete
@@ -380,8 +412,19 @@ export class ActivityWitness
       lease.snapshot.state = "released";
     }
   }
-  snapshot(id: string): ObservationSnapshot {
-    return structuredClone(this.get(id).snapshot);
+  snapshot(id: string): ActivityObservationSnapshot {
+    const snapshot = structuredClone(this.get(id).snapshot);
+    // This is a fresh transport observation, not a rewritten historic event.
+    // A caller's request/response brackets enclose this actual local clock read.
+    return {
+      ...snapshot,
+      clockObservation: {
+        clockDomain,
+        clockUnit: "ms",
+        applicationPid: process.pid,
+        monotonicMs: performance.now(),
+      },
+    };
   }
   async advance(id: string): Promise<ObservationSnapshot> {
     this.unhold(this.get(id));

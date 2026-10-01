@@ -47,6 +47,7 @@ process.on(
     leaseId?: string;
     runId?: string;
     mode?: ActivityRequest["mode"];
+    ttlMs?: number;
   }) => {
     try {
       let result: unknown;
@@ -66,12 +67,12 @@ process.on(
             toolUseId: "all-run-steps",
           },
           mode: message.mode!,
-          ttlMs: 10000,
+          ttlMs: message.ttlMs ?? 10000,
         };
         result = await witness.establish(
           message.leaseId!,
           request,
-          new Date(Date.now() + 10000).toISOString(),
+          new Date(Date.now() + request.ttlMs).toISOString(),
           binding,
         );
       } else if (message.command === "snapshot")

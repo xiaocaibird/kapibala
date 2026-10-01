@@ -20,6 +20,12 @@ export interface ObservationSnapshot {
   binding: Binding;
   correlation: object;
   events: ObservationEvent[];
+  /** Controller transport provenance, not a new business observation. */
+  snapshotProvenance?: {
+    source: "live-bridge" | "retained-after-process-exit";
+    applicationPid: number;
+    applicationStarted: string;
+  };
 }
 export interface ObservationRuntime<
   R extends ObservationRequest = ObservationRequest,

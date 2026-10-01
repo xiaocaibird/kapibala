@@ -150,6 +150,11 @@ export async function createObservationController<R extends LeaseRequest>({
         snapshot.events = old.events;
       if (old.state === "released") snapshot.state = "released";
     }
+    snapshot.snapshotProvenance = {
+      source: "live-bridge",
+      applicationPid: record.registration.appPid,
+      applicationStarted: record.registration.appStarted,
+    };
     record.snapshot = structuredClone(snapshot);
     return structuredClone(record.snapshot);
   }
@@ -216,6 +221,11 @@ export async function createObservationController<R extends LeaseRequest>({
       // The old process (and therefore all its JS slots) is gone. Never route
       // this cleanup by API port, which a subsequent SUT may already reuse.
       record.snapshot.state = "released";
+      record.snapshot.snapshotProvenance = {
+        source: "retained-after-process-exit",
+        applicationPid: record.registration.appPid,
+        applicationStarted: record.registration.appStarted,
+      };
       return structuredClone(record.snapshot);
     }
   }
