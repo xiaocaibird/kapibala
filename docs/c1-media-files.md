@@ -8,7 +8,7 @@
 
 `media_files` 按 `(group_id,msg_id)` 去重并保存来源、重试时间、完整文件位置和处理中状态。事件事务只登记任务；网络与文件 I/O 由后台独立处理。相同事件或历史重放不会重新下载已删除文件，也不会覆盖第一次记录的来源。旧消息的 `metadata.mediaUrl` 在升级时回填；网关已经过期时按真实 404 记录不可用，消息文本继续可读。
 
-媒体只接受配置的 `GATEWAY_URL` 同源 HTTP(S) `/media/:id`。拒绝其他源、其他路径、凭据、查询串、片段和危险路径字符，不跟随重定向。文件名由内部 UUID 生成，来源不能指定磁盘路径。目录 0700、文件 0600；打开文件使用 `O_NOFOLLOW`，完整文件通过独占硬链接发布，不覆盖既有文件。
+媒体只接受配置的 `GATEWAY_URL` 同源 HTTP(S) `/media/:id`。拒绝其他源、其他路径、凭据、查询串、片段和危险路径字符，不跟随重定向。文件名由内部 UUID 生成，来源不能指定磁盘路径。新建目录 0700、文件 0600；打开文件使用 `O_NOFOLLOW`，完整文件通过独占硬链接发布，不覆盖既有文件。
 
 同一数据库通过会话锁最多执行一条下载流，每轮最多两项，串行处理。默认单次 15 秒、单文件 20 MiB，同时检查声明长度和实际流中字节数。响应直接流到临时文件，不完整缓冲整个附件。网络错误、408、429、5xx 指数退避，最长间隔五分钟；其他 3xx/4xx、非法 URL、超限转为不可用。后台需要正常 tick 才会继续工作；这些数值不是数据库或操作系统任意阻塞下的物理时限承诺。
 
@@ -38,3 +38,27 @@ run 创建时登记触发消息附件，`get_recent_messages` 的读取事务登
 ## 开发验证
 
 测试使用专用 PostgreSQL 17 容器、逐用例 UUID 数据库、随机端口 HTTP 服务和逐用例临时文件目录。没有访问演示环境、用户 5173、QA 冻结服务或真实模型。详细测试日志及资源清理记录随本提交保存；这些属于开发验证，不代表独立 QA 已验收。
+
+产品来源：基于 `fb1589df08f00c10e9e62801007b1698d4d0155a`，主体提交 `9d0e81e0f86f41986bbd42bb006e751b2fadc8c6`，响应体释放补充提交 `5e3b5cecbe11e404c4d88a0189139bfb4ca37b47`。后者只确保文件打开失败时关闭尚未消费的 HTTP 响应，并增加对应开发反例。
+
+| 验证 | 结果与证据 |
+| --- | --- |
+| 最终 C1 专项 | [17 通过，0 失败/跳过](evidence/c1-media-focused-complete.tap)：旧版迁移、来源校验、重复事件及多 worker、退避/404/重定向/超限/超时、文件打开失败释放响应、自身消息确认合并与清理竞争、配置保留期、删除失败继续其他文件、旧游标路径清空、双向 run 引用竞争、实际 Agent 工具路径、三处真实 SIGKILL 恢复 |
+| 既有消费者合跑 | [280 通过、4 跳过、4 启动失败](evidence/c1-media-consumer-regression.tap)。覆盖全部前端单元测试及 gateway、gateway-stream-repair、platform、automation、agent-dispatch-budget、agent-kick-recovery、migration-integrity、core-resource-observability。4 项失败均是 CAP009 控制器拒绝未提交源码，未进入业务断言；原始日志保留 |
+| 提交后恢复专项重跑 | [23 通过，0 失败/跳过](evidence/c1-media-committed-regression.tap)，包括当时全部 16 项 C1 和 7 项 CAP009；前轮 4 项已实际通过，不修改控制器或断言 |
+| 构建与原文 | [最终 build](evidence/c1-media-build.txt) 和[原文校验](evidence/c1-media-original.txt)通过。测试观察包装器曾有一次泛型签名编译错误，[原日志](evidence/c1-media-build-test-wrapper-initial.txt)保留，修正后重新完整 build |
+| 隔离启动 | [真实 smoke](evidence/c1-media-isolated-smoke.txt)通过，健康返回 `schemaVersion: 9`，随机 web/api/gateway/agent 端口，自动清理完成 |
+| 清理 | [精确清理记录](evidence/c1-media-cleanup.json)：C1 容器及匿名卷已删除；删除前测试数据库与会话均为 0；日志内 68 个临时目录全部不存在；smoke 自有目录、容器、卷均不存在 |
+
+首轮 [10 项媒体日志](evidence/c1-media-focused-initial.tap)及补并发反例后的 [14 项日志](evidence/c1-media-focused-final.tap)亦保留。SIGKILL 用例使用真实子进程、真实 HTTP 和 PG 触发器：分别观察已写入临时文件、完成文件已落盘且 `ready` 未提交、物理删除完成且 `deleted` 未提交，再杀进程。PG 触发器的睡眠只用于固定观察窗口，恢复断言不依赖网关新增能力；完成文件的恢复将来源改为 404，仍验证只发生一次 HTTP 下载。
+
+复现最终专项（使用专用 PostgreSQL 连接，测试自行创建 UUID 数据库）：
+
+```sh
+DATABASE_URL='<专用测试 PostgreSQL 连接>' npx tsx --test tests/integration/media-files.test.ts
+npm run build
+npm run verify:original
+npm run dev:isolated -- --smoke
+```
+
+如果运行 `agent-kick-recovery.test.ts`，先提交工程源码；受控 SUT 的既有归属检查会拒绝未提交的产品/控制器代码。4 个既有跳过项为前端 20 秒 refresh 等待及三个需显式开启的长时间 automation timing 用例，本轮没有将它们计为通过。

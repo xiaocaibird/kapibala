@@ -1,0 +1,132 @@
+TAP version 13
+# Subtest: C1 validates gateway media URLs and the default retention
+ok 1 - C1 validates gateway media URLs and the default retention
+  ---
+  duration_ms: 0.638125
+  type: 'test'
+  ...
+# Subtest: C1 upgrade queues legacy attachments and preserves references of existing running sessions
+ok 2 - C1 upgrade queues legacy attachments and preserves references of existing running sessions
+  ---
+  duration_ms: 101.898
+  type: 'test'
+  ...
+# database=kapibala_test_96ceef37655649c0b342c56a1efbfc73 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-migrations-RAiLV5
+# Subtest: C1 downloads once across duplicate events/workers and keeps message text
+ok 3 - C1 downloads once across duplicate events/workers and keeps message text
+  ---
+  duration_ms: 156.069542
+  type: 'test'
+  ...
+# database=kapibala_test_9490a21f1be149b78494486c1f661931 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-GP6MQj
+# Subtest: C1 transient failure retries later; expired URL, redirect, and oversized body remain unavailable
+ok 4 - C1 transient failure retries later; expired URL, redirect, and oversized body remain unavailable
+  ---
+  duration_ms: 138.300667
+  type: 'test'
+  ...
+# database=kapibala_test_b13e8b45ea6c4b3d9193e91006176f7c files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-ZTWGGs
+# Subtest: C1 timeout leaves no pointer and a replacement worker retries the interrupted body
+ok 5 - C1 timeout leaves no pointer and a replacement worker retries the interrupted body
+  ---
+  duration_ms: 242.6015
+  type: 'test'
+  ...
+# database=kapibala_test_184c71484a0e4824ae3c4acff7ce8cbf files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-Y09Nnz
+# Subtest: C1 a local file-open failure closes the unconsumed HTTP response before its timeout
+ok 6 - C1 a local file-open failure closes the unconsumed HTTP response before its timeout
+  ---
+  duration_ms: 127.201958
+  type: 'test'
+  ...
+# database=kapibala_test_2a8623d6d9f9425caa4a9e93285a7625 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-BYkmhq
+# Subtest: C1 own-message reconciliation preserves media attached before its acknowledgement
+ok 7 - C1 own-message reconciliation preserves media attached before its acknowledgement
+  ---
+  duration_ms: 103.97775
+  type: 'test'
+  ...
+# database=kapibala_test_8d6a0ccd23a348f0aed341ec666b7c58 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-fK9vPO
+# Subtest: C1 own-message acknowledgement and expiry cannot restore a deleted file pointer
+ok 8 - C1 own-message acknowledgement and expiry cannot restore a deleted file pointer
+  ---
+  duration_ms: 117.933625
+  type: 'test'
+  ...
+# database=kapibala_test_6e8c6b922c6d47c89ea156d39c96a7a9 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-azdgM8
+# Subtest: C1 configured retention preserves younger files and rejects a changed storage root
+ok 9 - C1 configured retention preserves younger files and rejects a changed storage root
+  ---
+  duration_ms: 127.990959
+  type: 'test'
+  ...
+# database=kapibala_test_c29e836c447f488493682a063252cb58 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-wNNPuY
+# Subtest: C1 a failed unlink retains a retryable tombstone and does not stop other expired files
+ok 10 - C1 a failed unlink retains a retryable tombstone and does not stop other expired files
+  ---
+  duration_ms: 136.495625
+  type: 'test'
+  ...
+# database=kapibala_test_676490cd5ad346e68f7e0171b071adeb files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-1DXunG
+# Subtest: C1 deletion clears message references and old cursor file availability without changing frozen content
+ok 11 - C1 deletion clears message references and old cursor file availability without changing frozen content
+  ---
+  duration_ms: 250.549375
+  type: 'test'
+  ...
+# database=kapibala_test_6286bba3170848c4854af260568a4686 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-eWHTY8
+# Subtest: C1 durable references serialize with cleanup and protect paused running sessions after restart
+ok 12 - C1 durable references serialize with cleanup and protect paused running sessions after restart
+  ---
+  duration_ms: 154.066542
+  type: 'test'
+  ...
+# database=kapibala_test_fc2fea40309249a38d0e075f50097f0e files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-bNbXMj
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: C1 actual Agent trigger and get_recent_messages register the files their messages reference
+ok 13 - C1 actual Agent trigger and get_recent_messages register the files their messages reference
+  ---
+  duration_ms: 318.759375
+  type: 'test'
+  ...
+# database=kapibala_test_0031375eee4c430592f452b1b11067fb files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-plRv0l
+# Subtest: C1 cleanup winning the row lock prevents a new run from pinning an unavailable file
+ok 14 - C1 cleanup winning the row lock prevents a new run from pinning an unavailable file
+  ---
+  duration_ms: 550.2295
+  type: 'test'
+  ...
+# database=kapibala_test_dfd837ff648b47369ed4b4e75e4f7fd2 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-sL2Wl2
+# Subtest: C1 SIGKILL during a streamed body discards its partial and retries on restart
+ok 15 - C1 SIGKILL during a streamed body discards its partial and retries on restart
+  ---
+  duration_ms: 282.289708
+  type: 'test'
+  ...
+# database=kapibala_test_6acfb0a0a61942379767e721000065d9 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-jBerpS
+# confirmed SIGKILL with persisted partial; restarted body is complete and partial is gone
+# Subtest: C1 SIGKILL at ready DB save recovers from the durable filesystem/intent boundary
+ok 16 - C1 SIGKILL at ready DB save recovers from the durable filesystem/intent boundary
+  ---
+  duration_ms: 10251.83825
+  type: 'test'
+  ...
+# database=kapibala_test_b79a73a7168f425084dc6f556d78c7d1 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-9766II
+# confirmed child SIGKILL at ready; recovered state=ready; HTTP downloads=1
+# Subtest: C1 SIGKILL at deleted DB save recovers from the durable filesystem/intent boundary
+ok 17 - C1 SIGKILL at deleted DB save recovers from the durable filesystem/intent boundary
+  ---
+  duration_ms: 10298.024542
+  type: 'test'
+  ...
+# database=kapibala_test_9eb5d8d7da554710978c218db8933bbc files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-7io4fg
+# confirmed child SIGKILL at deleted; recovered state=deleted; HTTP downloads=1
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 23534.821083

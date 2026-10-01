@@ -1,0 +1,1902 @@
+TAP version 13
+# Subtest: an unavailable selected sender stays selected until the user explicitly chooses another identity
+ok 1 - an unavailable selected sender stays selected until the user explicitly chooses another identity
+  ---
+  duration_ms: 0.361667
+  type: 'test'
+  ...
+# Subtest: initial default and rate limited sender keep the existing queue policy
+ok 2 - initial default and rate limited sender keep the existing queue policy
+  ---
+  duration_ms: 0.066208
+  type: 'test'
+  ...
+# Subtest: sequence timestamps distinguish confirmed delivery, skipped handling and failed handling
+ok 3 - sequence timestamps distinguish confirmed delivery, skipped handling and failed handling
+  ---
+  duration_ms: 9.694125
+  type: 'test'
+  ...
+# Subtest: member count commit survives replay after REST and unrelated WS events already advanced the snapshot
+ok 4 - member count commit survives replay after REST and unrelated WS events already advanced the snapshot
+  ---
+  duration_ms: 0.402334
+  type: 'test'
+  ...
+# Subtest: active Agent and sequence identity commits survive REST-leading replay without treating steps as card changes
+ok 5 - active Agent and sequence identity commits survive REST-leading replay without treating steps as card changes
+  ---
+  duration_ms: 0.075875
+  type: 'test'
+  ...
+# Subtest: role-only membership, run recovery and step progression remain silent; polling alone creates no candidate
+ok 6 - role-only membership, run recovery and step progression remain silent; polling alone creates no candidate
+  ---
+  duration_ms: 0.065584
+  type: 'test'
+  ...
+# Subtest: legacy coarse events retain uncertainty as a range target instead of claiming an unchanged or read card
+ok 7 - legacy coarse events retain uncertainty as a range target instead of claiming an unchanged or read card
+  ---
+  duration_ms: 0.073916
+  type: 'test'
+  ...
+# Subtest: direct visible group changes remain definitive even with a simultaneous role-only projection marker
+ok 8 - direct visible group changes remain definitive even with a simultaneous role-only projection marker
+  ---
+  duration_ms: 0.045125
+  type: 'test'
+  ...
+# Subtest: directory requests use fixed page size and preserve literal search and opaque cursors
+ok 9 - directory requests use fixed page size and preserve literal search and opaque cursors
+  ---
+  duration_ms: 0.716917
+  type: 'test'
+  ...
+# Subtest: search debounce and order changes abort old requests and ignore late results
+ok 10 - search debounce and order changes abort old requests and ignore late results
+  ---
+  duration_ms: 5.867042
+  type: 'test'
+  ...
+# Subtest: directory query identity includes all server conditions but excludes cursor and request lifecycle
+ok 11 - directory query identity includes all server conditions but excludes cursor and request lifecycle
+  ---
+  duration_ms: 0.51525
+  type: 'test'
+  ...
+# Subtest: filter URL combinations send explicit booleans and omit unselected conditions
+ok 12 - filter URL combinations send explicit booleans and omit unselected conditions
+  ---
+  duration_ms: 0.227041
+  type: 'test'
+  ...
+# Subtest: changing filters abandons a loaded cursor and ignores both late page and prior-filter responses
+ok 13 - changing filters abandons a loaded cursor and ignores both late page and prior-filter responses
+  ---
+  duration_ms: 1.043959
+  type: 'test'
+  ...
+# Subtest: clear search preserves filters and ordering while reset restores every default and cancels late results
+ok 14 - clear search preserves filters and ordering while reset restores every default and cancels late results
+  ---
+  duration_ms: 0.850541
+  type: 'test'
+  ...
+# Subtest: choosing all in one filter preserves the other filter and the search
+ok 15 - choosing all in one filter preserves the other filter and the search
+  ---
+  duration_ms: 0.844334
+  type: 'test'
+  ...
+# Subtest: IME composition defers combined filters until committed and sends them in one first-page query
+ok 16 - IME composition defers combined filters until committed and sends them in one first-page query
+  ---
+  duration_ms: 0.4175
+  type: 'test'
+  ...
+# Subtest: filtered pagination retries and cached returns preserve conditions and stable location
+ok 17 - filtered pagination retries and cached returns preserve conditions and stable location
+  ---
+  duration_ms: 1.089833
+  type: 'test'
+  ...
+# Subtest: filter-only empty results are recognized as no matches including Agent disabled
+ok 18 - filter-only empty results are recognized as no matches including Agent disabled
+  ---
+  duration_ms: 0.069209
+  type: 'test'
+  ...
+# Subtest: IME composition suppresses debounce, sort requests and polling until committed
+ok 19 - IME composition suppresses debounce, sort requests and polling until committed
+  ---
+  duration_ms: 0.639792
+  type: 'test'
+  ...
+# Subtest: initial errors remain distinct from a successful empty directory and can retry
+ok 20 - initial errors remain distinct from a successful empty directory and can retry
+  ---
+  duration_ms: 0.464958
+  type: 'test'
+  ...
+# Subtest: next-page failure keeps items and cursor; exact-cursor retry merges stable IDs once
+ok 21 - next-page failure keeps items and cursor; exact-cursor retry merges stable IDs once
+  ---
+  duration_ms: 0.8505
+  type: 'test'
+  ...
+# Subtest: unchanged first-page probes preserve a failed next-page retry and never rotate its cursor
+ok 22 - unchanged first-page probes preserve a failed next-page retry and never rotate its cursor
+  ---
+  duration_ms: 2.384542
+  type: 'test'
+  ...
+# Subtest: changed first-page probes invalidate all cached pages without splicing new rows
+ok 23 - changed first-page probes invalidate all cached pages without splicing new rows
+  ---
+  duration_ms: 0.676334
+  type: 'test'
+  ...
+# Subtest: a relevant change aborts an in-flight next page and ignores its late response
+ok 24 - a relevant change aborts an in-flight next page and ignores its late response
+  ---
+  duration_ms: 0.407167
+  type: 'test'
+  ...
+# Subtest: a relevant change during first-page refresh discards that response and coalesces one fresh read
+ok 25 - a relevant change during first-page refresh discards that response and coalesces one fresh read
+  ---
+  duration_ms: 0.426166
+  type: 'test'
+  ...
+# Subtest: leaving and returning retains multi-page query, anchor and stale contents without automatic reset
+ok 26 - leaving and returning retains multi-page query, anchor and stale contents without automatic reset
+  ---
+  duration_ms: 0.439583
+  type: 'test'
+  ...
+# Subtest: off-page request completion is ignored and a one-page cache refreshes on return
+ok 27 - off-page request completion is ignored and a one-page cache refreshes on return
+  ---
+  duration_ms: 0.263459
+  type: 'test'
+  ...
+# Subtest: condition changes reset pagination and position without clearing the search silently
+ok 28 - condition changes reset pagination and position without clearing the search silently
+  ---
+  duration_ms: 0.32175
+  type: 'test'
+  ...
+# Subtest: a stopped session cancels pending debounce and late responses; a new session starts clean
+ok 29 - a stopped session cancels pending debounce and late responses; a new session starts clean
+  ---
+  duration_ms: 0.240042
+  type: 'test'
+  ...
+# Subtest: an unchanged non-null next cursor fails visibly instead of repeating a page forever
+ok 30 - an unchanged non-null next cursor fails visibly instead of repeating a page forever
+  ---
+  duration_ms: 0.257416
+  type: 'test'
+  ...
+# Subtest: synchronous loader failure cannot strand the flight or prevent manual retry
+ok 31 - synchronous loader failure cannot strand the flight or prevent manual retry
+  ---
+  duration_ms: 0.148375
+  type: 'test'
+  ...
+# Subtest: directory revision filters unrelated message traffic without changing directory-relevant events
+ok 32 - directory revision filters unrelated message traffic without changing directory-relevant events
+  ---
+  duration_ms: 0.049875
+  type: 'test'
+  ...
+# Subtest: directory runtime schema validates compact rows, dates, counts and cursor without a fake total
+ok 33 - directory runtime schema validates compact rows, dates, counts and cursor without a fake total
+  ---
+  duration_ms: 1.639666
+  type: 'test'
+  ...
+# Subtest: description and platform ID matches remain identifiable without HTML highlighting
+ok 34 - description and platform ID matches remain identifiable without HTML highlighting
+  ---
+  duration_ms: 0.095
+  type: 'test'
+  ...
+# Subtest: creating a group omits untouched metadata but rejects an explicitly blank name
+ok 35 - creating a group omits untouched metadata but rejects an explicitly blank name
+  ---
+  duration_ms: 0.906375
+  type: 'test'
+  ...
+# Subtest: metadata limits apply after trimming and reject excess input instead of truncating it
+ok 36 - metadata limits apply after trimming and reject excess input instead of truncating it
+  ---
+  duration_ms: 0.124209
+  type: 'test'
+  ...
+# Subtest: profile name limits use trimmed UTF-16 units on create and edit
+ok 37 - profile name limits use trimmed UTF-16 units on create and edit
+  ---
+  duration_ms: 0.153125
+  type: 'test'
+  ...
+# Subtest: profile description limits use trimmed UTF-16 units on create and edit
+ok 38 - profile description limits use trimmed UTF-16 units on create and edit
+  ---
+  duration_ms: 0.079791
+  type: 'test'
+  ...
+# Subtest: legacy over-limit responses stay readable and raw comparison values stay repairable
+ok 39 - legacy over-limit responses stay readable and raw comparison values stay repairable
+  ---
+  duration_ms: 1.604459
+  type: 'test'
+  ...
+# Subtest: profile patches preserve concurrently updated fields the user did not edit
+ok 40 - profile patches preserve concurrently updated fields the user did not edit
+  ---
+  duration_ms: 0.081291
+  type: 'test'
+  ...
+# Subtest: an existing description can be cleared without clearing a group name
+ok 41 - an existing description can be cleared without clearing a group name
+  ---
+  duration_ms: 0.653292
+  type: 'test'
+  ...
+# Subtest: conditional profile writes include raw expected values only for semantically changed fields
+ok 42 - conditional profile writes include raw expected values only for semantically changed fields
+  ---
+  duration_ms: 0.126625
+  type: 'test'
+  ...
+# Subtest: profile conflict parsing requires the exact 409 contract and does not normalize server values
+ok 43 - profile conflict parsing requires the exact 409 contract and does not normalize server values
+  ---
+  duration_ms: 0.481292
+  type: 'test'
+  ...
+# Subtest: a name conflict rebases untouched description without losing the raw submitted draft
+ok 44 - a name conflict rebases untouched description without losing the raw submitted draft
+  ---
+  duration_ms: 0.105417
+  type: 'test'
+  ...
+# Subtest: normalization-only untouched input follows the new snapshot instead of becoming a stale write
+ok 45 - normalization-only untouched input follows the new snapshot instead of becoming a stale write
+  ---
+  duration_ms: 0.054042
+  type: 'test'
+  ...
+# Subtest: multi-field conflict keeps every submitted draft and a reverted field leaves the next conditional write
+ok 46 - multi-field conflict keeps every submitted draft and a reverted field leaves the next conditional write
+  ---
+  duration_ms: 0.054167
+  type: 'test'
+  ...
+# Subtest: clearing a description keeps the raw empty draft and checks the newest description on reconfirmation
+ok 47 - clearing a description keeps the raw empty draft and checks the newest description on reconfirmation
+  ---
+  duration_ms: 0.042084
+  type: 'test'
+  ...
+# Subtest: adopting a matching server snapshot needs no write and invalid drafts retain original validation
+ok 48 - adopting a matching server snapshot needs no write and invalid drafts retain original validation
+  ---
+  duration_ms: 0.067125
+  type: 'test'
+  ...
+# Subtest: profile conflict comparison shows all submitted fields, their drafts and the atomic no-save boundary
+ok 49 - profile conflict comparison shows all submitted fields, their drafts and the atomic no-save boundary
+  ---
+  duration_ms: 1.722333
+  type: 'test'
+  ...
+# Subtest: profile conflict comparison distinguishes an empty server description from the draft clear intent
+ok 50 - profile conflict comparison distinguishes an empty server description from the draft clear intent
+  ---
+  duration_ms: 0.124958
+  type: 'test'
+  ...
+# Subtest: group responses require real metadata fields and a valid UTC creation timestamp
+ok 51 - group responses require real metadata fields and a valid UTC creation timestamp
+  ---
+  duration_ms: 0.199291
+  type: 'test'
+  ...
+# Subtest: group profile shows the server date and read-only content without a viewer edit entry
+ok 52 - group profile shows the server date and read-only content without a viewer edit entry
+  ---
+  duration_ms: 8.225667
+  type: 'test'
+  ...
+# Subtest: group choices retain gateway identity when human names collide
+ok 53 - group choices retain gateway identity when human names collide
+  ---
+  duration_ms: 0.075667
+  type: 'test'
+  ...
+# Subtest: refresh completing after blur and refocus cannot confirm an old view intent
+ok 54 - refresh completing after blur and refocus cannot confirm an old view intent
+  ---
+  duration_ms: 0.428167
+  type: 'test'
+  ...
+# Subtest: a frame paused while hidden remains invalid after refocus and cannot consume a newer action
+ok 55 - a frame paused while hidden remains invalid after refocus and cannot consume a newer action
+  ---
+  duration_ms: 0.051833
+  type: 'test'
+  ...
+# Subtest: same-batch member role changes preserve the original directory count evidence without reviving it after confirmation
+ok 56 - same-batch member role changes preserve the original directory count evidence without reviving it after confirmation
+  ---
+  duration_ms: 0.522917
+  type: 'test'
+  ...
+# Subtest: run creation directory evidence survives same-batch run steps or recovery updates
+ok 57 - run creation directory evidence survives same-batch run steps or recovery updates
+  ---
+  duration_ms: 0.261166
+  type: 'test'
+  ...
+# Subtest: directory projection classifications canonicalize fields and keep missing separate from known empty
+ok 58 - directory projection classifications canonicalize fields and keep missing separate from known empty
+  ---
+  duration_ms: 0.114875
+  type: 'test'
+  ...
+# Subtest: confirming a group name then changing a setting cannot revive profile attention
+ok 59 - confirming a group name then changing a setting cannot revive profile attention
+  ---
+  duration_ms: 0.096708
+  type: 'test'
+  ...
+# Subtest: late-mounted profile and settings retain separate original field sequences
+ok 60 - late-mounted profile and settings retain separate original field sequences
+  ---
+  duration_ms: 0.082542
+  type: 'test'
+  ...
+# Subtest: a definitive field upgrades the same pending event after an ambiguous field without reopening confirmed work
+ok 61 - a definitive field upgrades the same pending event after an ambiguous field without reopening confirmed work
+  ---
+  duration_ms: 0.075125
+  type: 'test'
+  ...
+# Subtest: group message marker excludes history; duplicate created event stays one candidate
+ok 62 - group message marker excludes history; duplicate created event stays one candidate
+  ---
+  duration_ms: 0.05625
+  type: 'test'
+  ...
+# Subtest: late identity confirmation cannot turn a pre-scope pending message into a new update
+ok 63 - late identity confirmation cannot turn a pre-scope pending message into a new update
+  ---
+  duration_ms: 0.09725
+  type: 'test'
+  ...
+# Subtest: ordinary created messages use their event sequence without inventing an older origin
+ok 64 - ordinary created messages use their event sequence without inventing an older origin
+  ---
+  duration_ms: 0.043375
+  type: 'test'
+  ...
+# Subtest: foreground is quiet; leaving pending content promotes a static reminder and focus cannot clear it
+ok 65 - foreground is quiet; leaving pending content promotes a static reminder and focus cannot clear it
+  ---
+  duration_ms: 0.047417
+  type: 'test'
+  ...
+# Subtest: failed reload and snapshots started before the event cannot acknowledge it
+ok 66 - failed reload and snapshots started before the event cannot acknowledge it
+  ---
+  duration_ms: 0.035709
+  type: 'test'
+  ...
+# Subtest: an account row interaction cannot consume another row or a later update
+ok 67 - an account row interaction cannot consume another row or a later update
+  ---
+  duration_ms: 0.034709
+  type: 'test'
+  ...
+# Subtest: same displayed status after a fresh snapshot does not create visible-change attention
+ok 68 - same displayed status after a fresh snapshot does not create visible-change attention
+  ---
+  duration_ms: 0.045792
+  type: 'test'
+  ...
+# Subtest: real account transitions remain pending when online goes away and returns before snapshot
+ok 69 - real account transitions remain pending when online goes away and returns before snapshot
+  ---
+  duration_ms: 0.032791
+  type: 'test'
+  ...
+# Subtest: a definitive replay after REST already rendered its version still requires confirmation
+ok 70 - a definitive replay after REST already rendered its version still requires confirmation
+  ---
+  duration_ms: 0.03
+  type: 'test'
+  ...
+# Subtest: current event classifier separates precise business changes from legacy invalidation
+ok 71 - current event classifier separates precise business changes from legacy invalidation
+  ---
+  duration_ms: 0.06725
+  type: 'test'
+  ...
+# Subtest: a precise update during first load survives absence of a comparison baseline
+ok 72 - a precise update during first load survives absence of a comparison baseline
+  ---
+  duration_ms: 0.028
+  type: 'test'
+  ...
+# Subtest: coalesced run status keeps latest sequence and ignores out-of-order arrivals
+ok 73 - coalesced run status keeps latest sequence and ignores out-of-order arrivals
+  ---
+  duration_ms: 0.021625
+  type: 'test'
+  ...
+# Subtest: a removed list row remains range-confirmable; one snapshot cannot clear a newer list change
+ok 74 - a removed list row remains range-confirmable; one snapshot cannot clear a newer list change
+  ---
+  duration_ms: 0.022334
+  type: 'test'
+  ...
+# Subtest: new scope model discards old group candidates without mutating old async callbacks
+ok 75 - new scope model discards old group candidates without mutating old async callbacks
+  ---
+  duration_ms: 0.01975
+  type: 'test'
+  ...
+# Subtest: a message taller than its 510px timeline needs a summary even inside a 1200px window
+ok 76 - a message taller than its 510px timeline needs a summary even inside a 1200px window
+  ---
+  duration_ms: 0.139917
+  type: 'test'
+  ...
+# Subtest: directory attention evidence advances only on applied refresh, never failed or stale reads
+ok 77 - directory attention evidence advances only on applied refresh, never failed or stale reads
+  ---
+  duration_ms: 2.443584
+  type: 'test'
+  ...
+# Subtest: directory query change clears old presentation evidence and never reuses a cursor as a scope
+ok 78 - directory query change clears old presentation evidence and never reuses a cursor as a scope
+  ---
+  duration_ms: 0.479334
+  type: 'test'
+  ...
+# Subtest: directory attention resets successful evidence for actual status and Agent filters
+ok 79 - directory attention resets successful evidence for actual status and Agent filters
+  ---
+  duration_ms: 0.505209
+  type: 'test'
+  ...
+# Subtest: group message attention distinguishes created content, delivery echoes and another group
+ok 80 - group message attention distinguishes created content, delivery echoes and another group
+  ---
+  duration_ms: 0.29825
+  type: 'test'
+  ...
+# Subtest: only the mounted run and exact step identity receive step changes
+ok 81 - only the mounted run and exact step identity receive step changes
+  ---
+  duration_ms: 0.069042
+  type: 'test'
+  ...
+# Subtest: account and group adapters reject unrelated page changes
+ok 82 - account and group adapters reject unrelated page changes
+  ---
+  duration_ms: 0.065667
+  type: 'test'
+  ...
+# Subtest: business projections ignore identity-neutral polling and include visible changes
+ok 83 - business projections ignore identity-neutral polling and include visible changes
+  ---
+  duration_ms: 0.066792
+  type: 'test'
+  ...
+# Subtest: current page journals exclude messages and events from other selected groups
+ok 84 - current page journals exclude messages and events from other selected groups
+  ---
+  duration_ms: 0.064458
+  type: 'test'
+  ...
+# Subtest: definitive changes follow the fields shown by each current-page summary
+ok 85 - definitive changes follow the fields shown by each current-page summary
+  ---
+  duration_ms: 0.073375
+  type: 'test'
+  ...
+# Subtest: concurrent REST 401s and WS refresh share one token rotation
+ok 86 - concurrent REST 401s and WS refresh share one token rotation
+  ---
+  duration_ms: 19.539917
+  type: 'test'
+  ...
+# Subtest: a delayed old-token 401 uses the already refreshed token
+ok 87 - a delayed old-token 401 uses the already refreshed token
+  ---
+  duration_ms: 37.159041
+  type: 'test'
+  ...
+# Subtest: logout first renews expired access and then reaches the server
+ok 88 - logout first renews expired access and then reaches the server
+  ---
+  duration_ms: 0.625333
+  type: 'test'
+  ...
+# Subtest: revoked refresh clears the access token and reports the server error
+ok 89 - revoked refresh clears the access token and reports the server error
+  ---
+  duration_ms: 0.325083
+  type: 'test'
+  ...
+# Subtest: a login or logout cannot be overwritten by an older refresh response
+ok 90 - a login or logout cannot be overwritten by an older refresh response
+  ---
+  duration_ms: 0.157833
+  type: 'test'
+  ...
+# Subtest: own-message return and sentAt correction keep one stable row
+ok 91 - own-message return and sentAt correction keep one stable row
+  ---
+  duration_ms: 0.110375
+  type: 'test'
+  ...
+# Subtest: old snapshot pagination cannot downgrade a row or lose backfilled history
+ok 92 - old snapshot pagination cannot downgrade a row or lose backfilled history
+  ---
+  duration_ms: 4.539583
+  type: 'test'
+  ...
+# Subtest: equal timestamps are ordered consistently by stable identity
+ok 93 - equal timestamps are ordered consistently by stable identity
+  ---
+  duration_ms: 0.070083
+  type: 'test'
+  ...
+# Subtest: a transient resource failure recovers without another event or polling tick
+ok 94 - a transient resource failure recovers without another event or polling tick
+  ---
+  duration_ms: 2.604
+  type: 'test'
+  ...
+# Subtest: backoff is bounded even with repeated invalidations and a later reload can recover
+ok 95 - backoff is bounded even with repeated invalidations and a later reload can recover
+  ---
+  duration_ms: 0.961416
+  type: 'test'
+  ...
+# Subtest: polls and event bursts share one flight and one serial follow-up
+ok 96 - polls and event bursts share one flight and one serial follow-up
+  ---
+  duration_ms: 0.478792
+  type: 'test'
+  ...
+# Subtest: an invalidation during completion is drained before reload resolves
+ok 97 - an invalidation during completion is drained before reload resolves
+  ---
+  duration_ms: 0.335542
+  type: 'test'
+  ...
+# Subtest: permission, contract, validation and rate-limit errors never schedule automatic retries
+ok 98 - permission, contract, validation and rate-limit errors never schedule automatic retries
+  ---
+  duration_ms: 2.156625
+  type: 'test'
+  ...
+# Subtest: disposing during backoff cancels the timer and resolves the outstanding reload
+ok 99 - disposing during backoff cancels the timer and resolves the outstanding reload
+  ---
+  duration_ms: 0.263042
+  type: 'test'
+  ...
+# Subtest: a replaced resource aborts its read and ignores late values and errors
+ok 100 - a replaced resource aborts its read and ignores late values and errors
+  ---
+  duration_ms: 0.142375
+  type: 'test'
+  ...
+# Subtest: a login while an automatic retry waits cannot issue an old read with the new identity
+ok 101 - a login while an automatic retry waits cannot issue an old read with the new identity
+  ---
+  duration_ms: 8.013042
+  type: 'test'
+  ...
+# Subtest: a login during an active read discards its late result without publishing or retrying
+ok 102 - a login during an active read discards its late result without publishing or retrying
+  ---
+  duration_ms: 0.221458
+  type: 'test'
+  ...
+# Subtest: normal token renewal within the same identity does not cancel a waiting recovery
+ok 103 - normal token renewal within the same identity does not cancel a waiting recovery
+  ---
+  duration_ms: 0.697167
+  type: 'test'
+  ...
+# Subtest: shared sequence definition preserves valid values and boundary sizes
+ok 104 - shared sequence definition preserves valid values and boundary sizes
+  ---
+  duration_ms: 2.674583
+  type: 'test'
+  ...
+# Subtest: shared sequence definition rejects extra fields, invalid order and server bounds
+ok 105 - shared sequence definition rejects extra fields, invalid order and server bounds
+  ---
+  duration_ms: 0.736541
+  type: 'test'
+  ...
+# Subtest: shared start request retains defaults, empty values and accepted variable keys
+ok 106 - shared start request retains defaults, empty values and accepted variable keys
+  ---
+  duration_ms: 0.451208
+  type: 'test'
+  ...
+# Subtest: both JSON editors use strict variable and positive canonical step keys
+ok 107 - both JSON editors use strict variable and positive canonical step keys
+  ---
+  duration_ms: 0.319917
+  type: 'test'
+  ...
+# Subtest: a delayed write 401 cannot replay under a newly logged-in identity
+ok 108 - a delayed write 401 cannot replay under a newly logged-in identity
+  ---
+  duration_ms: 9.480916
+  type: 'test'
+  ...
+# Subtest: an old retried request cannot clear the new identity on its delayed 401
+ok 109 - an old retried request cannot clear the new identity on its delayed 401
+  ---
+  duration_ms: 0.590792
+  type: 'test'
+  ...
+# Subtest: a late successful result is not returned into a different session
+ok 110 - a late successful result is not returned into a different session
+  ---
+  duration_ms: 0.181375
+  type: 'test'
+  ...
+# Subtest: a new session owns a new refresh flight and an old finalizer cannot release it
+ok 111 - a new session owns a new refresh flight and an old finalizer cannot release it
+  ---
+  duration_ms: 0.26675
+  type: 'test'
+  ...
+# Subtest: cookie serialization: an old refresh 200 finishes headers/body before logout and new login
+ok 112 - cookie serialization: an old refresh 200 finishes headers/body before logout and new login
+  ---
+  duration_ms: 11.116208
+  type: 'test'
+  ...
+# Subtest: cookie serialization: an old refresh 401 finishes headers/body before logout and new login
+ok 113 - cookie serialization: an old refresh 401 finishes headers/body before logout and new login
+  ---
+  duration_ms: 2.246083
+  type: 'test'
+  ...
+# Subtest: logout revokes the cookie even when an old successful refresh lost its generation before saving access
+ok 114 - logout revokes the cookie even when an old successful refresh lost its generation before saving access
+  ---
+  duration_ms: 0.551542
+  type: 'test'
+  ...
+# Subtest: a TypeError refresh rejection releases the auth queue for a new login
+ok 115 - a TypeError refresh rejection releases the auth queue for a new login
+  ---
+  duration_ms: 0.338709
+  type: 'test'
+  ...
+# Subtest: a TimeoutError refresh rejection releases the auth queue for a new login
+ok 116 - a TimeoutError refresh rejection releases the auth queue for a new login
+  ---
+  duration_ms: 0.268916
+  type: 'test'
+  ...
+# Subtest: logout alone renews expired access inside its queue, then revokes without deadlock
+ok 117 - logout alone renews expired access inside its queue, then revokes without deadlock
+  ---
+  duration_ms: 0.201625
+  type: 'test'
+  ...
+# Subtest: a queued obsolete refresh is rejected before it can rotate a newly logged-in cookie
+ok 118 - a queued obsolete refresh is rejected before it can rotate a newly logged-in cookie
+  ---
+  duration_ms: 0.166125
+  type: 'test'
+  ...
+# Subtest: timing: the real twenty-second refresh abort releases a queued login
+ok 119 - timing: the real twenty-second refresh abort releases a queued login # SKIP
+  ---
+  duration_ms: 0.0185
+  type: 'test'
+  ...
+# Subtest: a failed snapshot retains consumed invalidations and retries without a new event
+ok 120 - a failed snapshot retains consumed invalidations and retries without a new event
+  ---
+  duration_ms: 2.909625
+  type: 'test'
+  ...
+# Subtest: events during a snapshot coalesce into one serial follow-up snapshot
+ok 121 - events during a snapshot coalesce into one serial follow-up snapshot
+  ---
+  duration_ms: 0.378541
+  type: 'test'
+  ...
+# Subtest: snapshot retries use capped backoff and reset their delay after recovery
+ok 122 - snapshot retries use capped backoff and reset their delay after recovery
+  ---
+  duration_ms: 0.661833
+  type: 'test'
+  ...
+# Subtest: disposing a group clears retries and blocks late results from the old group
+ok 123 - disposing a group clears retries and blocks late results from the old group
+  ---
+  duration_ms: 0.297916
+  type: 'test'
+  ...
+# Subtest: an invalidation at snapshot completion cannot get stranded behind the finishing promise
+ok 124 - an invalidation at snapshot completion cannot get stranded behind the finishing promise
+  ---
+  duration_ms: 0.144834
+  type: 'test'
+  ...
+# Subtest: a complete snapshot defeats a late earlier-page cursor and a late earlier-page failure
+ok 125 - a complete snapshot defeats a late earlier-page cursor and a late earlier-page failure
+  ---
+  duration_ms: 0.135625
+  type: 'test'
+  ...
+# Subtest: normal earlier pages still merge, preserve a failed-page cursor and allow retry
+ok 126 - normal earlier pages still merge, preserve a failed-page cursor and allow retry
+  ---
+  duration_ms: 0.122458
+  type: 'test'
+  ...
+# Subtest: switching group invalidates an earlier-page completion without requiring another snapshot
+ok 127 - switching group invalidates an earlier-page completion without requiring another snapshot
+  ---
+  duration_ms: 0.056334
+  type: 'test'
+  ...
+# Subtest: Agent does not dispatch a model request after its intent write consumes the remaining budget
+ok 128 - Agent does not dispatch a model request after its intent write consumes the remaining budget
+  ---
+  duration_ms: 573.191708
+  type: 'test'
+  ...
+# Independent database: kapibala_test_9b38419152e54be7b6eba3630b441363
+# {"runId":"expired-intent","elapsedMs":391.81725,"persistedActiveMs":60175,"modelRequests":0}
+# Subtest: Agent does not dispatch an audit request after its intent write consumes the remaining budget
+ok 129 - Agent does not dispatch an audit request after its intent write consumes the remaining budget
+  ---
+  duration_ms: 573.877584
+  type: 'test'
+  ...
+# Independent database: kapibala_test_8bb6df04c3dd4bcca12955d2cc7ef936
+# {"runId":"expired-audit-intent","elapsedMs":422.847167,"persistedActiveMs":60208,"auditRequests":0}
+# Subtest: CAP009 exact refused-before-ready SIGKILL resumes the same audited step
+not ok 130 - CAP009 exact refused-before-ready SIGKILL resumes the same audited step
+  ---
+  duration_ms: 365.276792
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-kick-recovery.test.ts:19:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    SUT failed to start: /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/ownership.ts:61
+        throw new ControlError(
+              ^
+    
+    ControlError: Commit engineering and product sources before starting the controlled SUT
+        at sourceRevision (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity-server.ts:20:18) {
+      status: 409
+    }
+    
+    Node.js v24.21.0
+    
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    sourceRevision (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity-server.ts:20:18) {
+    <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:163:13)
+    async start (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+    async capacityFixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:195:3)
+    async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-kick-recovery.test.ts:20:13)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Subtest: CAP009 a dispatched kick killed before response remains paused without replay
+not ok 131 - CAP009 a dispatched kick killed before response remains paused without replay
+  ---
+  duration_ms: 337.364375
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-kick-recovery.test.ts:90:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    SUT failed to start: /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/ownership.ts:61
+        throw new ControlError(
+              ^
+    
+    ControlError: Commit engineering and product sources before starting the controlled SUT
+        at sourceRevision (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+        at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity-server.ts:20:18) {
+      status: 409
+    }
+    
+    Node.js v24.21.0
+    
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    sourceRevision (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+    async <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity-server.ts:20:18) {
+    <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:163:13)
+    async start (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+    async capacityFixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:195:3)
+    async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-kick-recovery.test.ts:91:13)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: CAP009 dispatch intent commit then pre-HTTP SIGKILL stays conservatively paused
+not ok 132 - CAP009 dispatch intent commit then pre-HTTP SIGKILL stays conservatively paused
+  ---
+  duration_ms: 274.264083
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-kick-recovery.test.ts:122:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    SUT failed to start: /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/ownership.ts:61
+        throw new ControlError(
+              ^
+    
+    ControlError: Commit engineering and product sources before starting the controlled SUT
+        at sourceRevision (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity-server.ts:20:18) {
+      status: 409
+    }
+    
+    Node.js v24.21.0
+    
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    sourceRevision (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity-server.ts:20:18) {
+    <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:163:13)
+    async start (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+    async capacityFixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:195:3)
+    async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-kick-recovery.test.ts:123:13)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: CAP009 legacy executing intents without a dispatch stage remain paused
+not ok 133 - CAP009 legacy executing intents without a dispatch stage remain paused
+  ---
+  duration_ms: 270.864417
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-kick-recovery.test.ts:162:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    SUT failed to start: /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/ownership.ts:61
+        throw new ControlError(
+              ^
+    
+    ControlError: Commit engineering and product sources before starting the controlled SUT
+        at sourceRevision (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity-server.ts:20:18) {
+      status: 409
+    }
+    
+    Node.js v24.21.0
+    
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    sourceRevision (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity-server.ts:20:18) {
+    <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:163:13)
+    async start (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+    async capacityFixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:195:3)
+    async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-kick-recovery.test.ts:163:13)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: CAP009 two live Agent instances recover one admitted step without duplicate audit or effect
+ok 134 - CAP009 two live Agent instances recover one admitted step without duplicate audit or effect
+  ---
+  duration_ms: 284.992583
+  type: 'test'
+  ...
+# Independent database: kapibala_test_b3642c3beabe41109a0844914889d58c
+# Subtest: CAP009 failed durable dispatch write never reaches the gateway
+ok 135 - CAP009 failed durable dispatch write never reaches the gateway
+  ---
+  duration_ms: 130.753667
+  type: 'test'
+  ...
+# Independent database: kapibala_test_3e42d22864ee4eaeb8010c01d26b018f
+# Subtest: CAP009 local kick validation runs before the durable dispatch hook
+ok 136 - CAP009 local kick validation runs before the durable dispatch hook
+  ---
+  duration_ms: 92.572375
+  type: 'test'
+  ...
+# Independent database: kapibala_test_c11a55e53e164a4dae6d3cd3e7acaed8
+# Subtest: tool definitions have all required arguments; invalid protocols are rejected
+ok 137 - tool definitions have all required arguments; invalid protocols are rejected
+  ---
+  duration_ms: 105.567834
+  type: 'test'
+  ...
+# Subtest: sequence variables persist overrides and report the first unresolved step
+ok 138 - sequence variables persist overrides and report the first unresolved step
+  ---
+  duration_ms: 0.343166
+  type: 'test'
+  ...
+# Subtest: PostgreSQL serializes concurrent sequence starts and failed preflight creates no run
+ok 139 - PostgreSQL serializes concurrent sequence starts and failed preflight creates no run
+  ---
+  duration_ms: 26.753917
+  type: 'test'
+  ...
+# Subtest: multiple workers create one agent run and same send key is audited and enqueued once
+ok 140 - multiple workers create one agent run and same send key is audited and enqueued once
+  ---
+  duration_ms: 308.910834
+  type: 'test'
+  ...
+# Subtest: bad JSON, unknown tool, duplicate tool id are recorded without corrupting history
+ok 141 - bad JSON, unknown tool, duplicate tool id are recorded without corrupting history
+  ---
+  duration_ms: 74.856125
+  type: 'test'
+  ...
+# Subtest: invalid finish inputs return INVALID_INPUT and allow a later valid completion
+    # Subtest: null followed by end_turn
+    ok 1 - null followed by end_turn
+      ---
+      duration_ms: 85.854208
+      type: 'test'
+      ...
+    # Subtest: null followed by finish
+    ok 2 - null followed by finish
+      ---
+      duration_ms: 110.322625
+      type: 'test'
+      ...
+    # Subtest: missing summary followed by end_turn
+    ok 3 - missing summary followed by end_turn
+      ---
+      duration_ms: 79.853833
+      type: 'test'
+      ...
+    # Subtest: missing summary followed by finish
+    ok 4 - missing summary followed by finish
+      ---
+      duration_ms: 208.691583
+      type: 'test'
+      ...
+    # Subtest: wrong summary type followed by end_turn
+    ok 5 - wrong summary type followed by end_turn
+      ---
+      duration_ms: 79.52025
+      type: 'test'
+      ...
+    # Subtest: wrong summary type followed by finish
+    ok 6 - wrong summary type followed by finish
+      ---
+      duration_ms: 79.944417
+      type: 'test'
+      ...
+    1..6
+ok 142 - invalid finish inputs return INVALID_INPUT and allow a later valid completion
+  ---
+  duration_ms: 644.974542
+  type: 'test'
+  ...
+# Subtest: completed invalid finish recovery honors cancellation and execution limits
+    # Subtest: cancelled
+    ok 1 - cancelled
+      ---
+      duration_ms: 67.72325
+      type: 'test'
+      ...
+    # Subtest: wall_clock
+    ok 2 - wall_clock
+      ---
+      duration_ms: 42.940875
+      type: 'test'
+      ...
+    # Subtest: budget_exhausted
+    ok 3 - budget_exhausted
+      ---
+      duration_ms: 68.245
+      type: 'test'
+      ...
+    # Subtest: protocol_errors
+    ok 4 - protocol_errors
+      ---
+      duration_ms: 43.613916
+      type: 'test'
+      ...
+    1..4
+ok 143 - completed invalid finish recovery honors cancellation and execution limits
+  ---
+  duration_ms: 223.029917
+  type: 'test'
+  ...
+# Subtest: a successful persisted finish completes recovery without another remote turn
+ok 144 - a successful persisted finish completes recovery without another remote turn
+  ---
+  duration_ms: 44.324083
+  type: 'test'
+  ...
+# Subtest: inconclusive audit blocks without side effects; rejection does not reserve a send key
+ok 145 - inconclusive audit blocks without side effects; rejection does not reserve a send key
+  ---
+  duration_ms: 153.882583
+  type: 'test'
+  ...
+# Subtest: messages arriving during a run become one next trigger and own messages never trigger
+ok 146 - messages arriving during a run become one next trigger and own messages never trigger
+  ---
+  duration_ms: 104.773792
+  type: 'test'
+  ...
+# Subtest: interrupted remote turn is visibly paused and never replayed
+ok 147 - interrupted remote turn is visibly paused and never replayed
+  ---
+  duration_ms: 53.17475
+  type: 'test'
+  ...
+# Subtest: sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step
+ok 148 - sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step
+  ---
+  duration_ms: 62.997625
+  type: 'test'
+  ...
+# Subtest: persisted final and prepared send recover without replaying prior external work
+ok 149 - persisted final and prepared send recover without replaying prior external work
+  ---
+  duration_ms: 161.166083
+  type: 'test'
+  ...
+# Subtest: kick policy and persisted uncertain kick cannot produce a second side effect
+ok 150 - kick policy and persisted uncertain kick cannot produce a second side effect
+  ---
+  duration_ms: 86.233458
+  type: 'test'
+  ...
+# Subtest: repeated reads stop within twelve steps and result bytes remain bounded
+ok 151 - repeated reads stop within twelve steps and result bytes remain bounded
+  ---
+  duration_ms: 536.082292
+  type: 'test'
+  ...
+# Subtest: disabling Agent during its current step cancels after that step, without another turn
+ok 152 - disabling Agent during its current step cancels after that step, without another turn
+  ---
+  duration_ms: 78.759291
+  type: 'test'
+  ...
+# Subtest: activity budget interrupts a late turn and discards the eventual response
+ok 153 - activity budget interrupts a late turn and discards the eventual response
+  ---
+  duration_ms: 366.802708
+  type: 'test'
+  ...
+# Subtest: activity budget expires during audit without authorizing the prepared tool
+ok 154 - activity budget expires during audit without authorizing the prepared tool
+  ---
+  duration_ms: 315.796459
+  type: 'test'
+  ...
+# Subtest: an accepted send whose account becomes terminal yields SEND_FAILED without a resend
+ok 155 - an accepted send whose account becomes terminal yields SEND_FAILED without a resend
+  ---
+  duration_ms: 119.602541
+  type: 'test'
+  ...
+# Subtest: restart catches up a committed send before rebasing the next unscheduled step
+ok 156 - restart catches up a committed send before rebasing the next unscheduled step
+  ---
+  duration_ms: 47.362709
+  type: 'test'
+  ...
+# Subtest: kick permission errors remain tool errors and a confirmed kick succeeds
+ok 157 - kick permission errors remain tool errors and a confirmed kick succeeds
+  ---
+  duration_ms: 215.665875
+  type: 'test'
+  ...
+# Subtest: SEND_TIMEOUT retries with the same key read the eventual send without re-auditing
+ok 158 - SEND_TIMEOUT retries with the same key read the eventual send without re-auditing
+  ---
+  duration_ms: 5186.86775
+  type: 'test'
+  ...
+# Subtest: sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp
+ok 159 - sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp
+  ---
+  duration_ms: 66.15725
+  type: 'test'
+  ...
+# Subtest: loss of the advisory-lock connection aborts a turn without saving a false protocol error
+ok 160 - loss of the advisory-lock connection aborts a turn without saving a false protocol error
+  ---
+  duration_ms: 176.71825
+  type: 'test'
+  ...
+# Subtest: loss of a run lock during audit prevents old-worker effects and permits safe audit recovery
+ok 161 - loss of a run lock during audit prevents old-worker effects and permits safe audit recovery
+  ---
+  duration_ms: 218.639625
+  type: 'test'
+  ...
+# Subtest: kick budget exhaustion ends the run while retaining an uncertain non-replayable effect
+ok 162 - kick budget exhaustion ends the run while retaining an uncertain non-replayable effect
+  ---
+  duration_ms: 149.369
+  type: 'test'
+  ...
+# Subtest: a stale scheduler transaction cannot enqueue after its ownership connection is lost
+ok 163 - a stale scheduler transaction cannot enqueue after its ownership connection is lost
+  ---
+  duration_ms: 63.579042
+  type: 'test'
+  ...
+# Subtest: closing and recreating modules preserves activity while excluding actual downtime
+ok 164 - closing and recreating modules preserves activity while excluding actual downtime
+  ---
+  duration_ms: 1018.100708
+  type: 'test'
+  ...
+# Subtest: queued runs persist online activity across a real shutdown without counting downtime or a second clock
+ok 165 - queued runs persist online activity across a real shutdown without counting downtime or a second clock
+  ---
+  duration_ms: 2822.4645
+  type: 'test'
+  ...
+# Subtest: a follower cannot execute against a stale activity base while the new clock owner initializes
+ok 166 - a follower cannot execute against a stale activity base while the new clock owner initializes
+  ---
+  duration_ms: 1444.84475
+  type: 'test'
+  ...
+# Subtest: an initialization follower takes over after the blocked clock owner connection is terminated
+ok 167 - an initialization follower takes over after the blocked clock owner connection is terminated
+  ---
+  duration_ms: 2059.601167
+  type: 'test'
+  ...
+# Subtest: frequent activity samples retain subinterval time instead of losing rounded milliseconds
+ok 168 - frequent activity samples retain subinterval time instead of losing rounded milliseconds
+  ---
+  duration_ms: 33.225625
+  type: 'test'
+  ...
+# Subtest: activity clock survives loss of its own PostgreSQL session and only bills once after takeover
+ok 169 - activity clock survives loss of its own PostgreSQL session and only bills once after takeover
+  ---
+  duration_ms: 1521.931041
+  type: 'test'
+  ...
+# Subtest: inconclusive audit step and blocked run roll back together before recovery
+ok 170 - inconclusive audit step and blocked run roll back together before recovery
+  ---
+  duration_ms: 89.265458
+  type: 'test'
+  ...
+# Subtest: persisted legacy audit-block window cannot resume another Agent turn
+ok 171 - persisted legacy audit-block window cannot resume another Agent turn
+  ---
+  duration_ms: 43.38625
+  type: 'test'
+  ...
+# Subtest: timing: the default twelve-second turn timeout discards the late response
+ok 172 - timing: the default twelve-second turn timeout discards the late response # SKIP
+  ---
+  duration_ms: 0.087417
+  type: 'test'
+  ...
+# Subtest: timing: three five-second inconclusive audit attempts block without sending
+ok 173 - timing: three five-second inconclusive audit attempts block without sending # SKIP
+  ---
+  duration_ms: 0.024084
+  type: 'test'
+  ...
+# Subtest: timing: sixty seconds of activity ends the run even below the twelve-step cap
+ok 174 - timing: sixty seconds of activity ends the run even below the twelve-step cap # SKIP
+  ---
+  duration_ms: 0.022875
+  type: 'test'
+  ...
+# Subtest: slow socket: an in-flight oversized frame cannot authorize further buffers, and stalled close is terminated
+ok 175 - slow socket: an in-flight oversized frame cannot authorize further buffers, and stalled close is terminated
+  ---
+  duration_ms: 453.9755
+  type: 'test'
+  ...
+# Subtest: slow socket: callback starvation closes even below the buffer watermark; ordinary close cancels the fallback
+ok 176 - slow socket: callback starvation closes even below the buffer watermark; ordinary close cancels the fallback
+  ---
+  duration_ms: 160.689083
+  type: 'test'
+  ...
+# Subtest: slow socket: a drained frame larger than the watermark still reaches an able consumer
+ok 177 - slow socket: a drained frame larger than the watermark still reaches an able consumer
+  ---
+  duration_ms: 0.25475
+  type: 'test'
+  ...
+# Subtest: slow socket: control replies wait for a permitted oversized frame instead of disconnecting it
+ok 178 - slow socket: control replies wait for a permitted oversized frame instead of disconnecting it
+  ---
+  duration_ms: 0.136792
+  type: 'test'
+  ...
+# Subtest: slow socket: pending frame admission is bounded and all waiters finish when closed
+ok 179 - slow socket: pending frame admission is bounded and all waiters finish when closed
+  ---
+  duration_ms: 10.515792
+  type: 'test'
+  ...
+# Subtest: realtime: a stopped TCP reader is disconnected without blocking a healthy peer; client cursor replays all remaining durable events
+ok 180 - realtime: a stopped TCP reader is disconnected without blocking a healthy peer; client cursor replays all remaining durable events
+  ---
+  duration_ms: 1796.030875
+  type: 'test'
+  ...
+# Independent database: kapibala_test_afa50097be0446e18b9b43d0ca476622
+# Paused TCP reader removed; 80 durable events reached healthy peer and reconnect in exact order
+# Subtest: realtime: marker bursts batch one database request at a time without dropping admitted scope replies or skipping durable replay
+ok 181 - realtime: marker bursts batch one database request at a time without dropping admitted scope replies or skipping durable replay
+  ---
+  duration_ms: 206.778
+  type: 'test'
+  ...
+# Independent database: kapibala_test_fe23bbb47bdb42c595dc1119f73eff93
+# Subtest: realtime: overflowing pending marker capacity closes without launching unbounded database work
+ok 182 - realtime: overflowing pending marker capacity closes without launching unbounded database work
+  ---
+  duration_ms: 275.366416
+  type: 'test'
+  ...
+# Independent database: kapibala_test_0838c8c4a565479d893f12aab6cbb2f7
+# Subtest: timeline: continuation transfers only its slice and preserves old frozen cursors across writes, page sizes and large offsets
+ok 183 - timeline: continuation transfers only its slice and preserves old frozen cursors across writes, page sizes and large offsets
+  ---
+  duration_ms: 216.545917
+  type: 'test'
+  ...
+# Independent database: kapibala_test_059e8673ad674cf3abc1f6a0d1378046
+# Frozen snapshot 1252279 bytes; continuation database transfer maximum 91661 bytes for at most 9 items
+# Subtest: diagnostics: only admin sees disabled process-local scheduler data; public health stays unchanged
+ok 184 - diagnostics: only admin sees disabled process-local scheduler data; public health stays unchanged
+  ---
+  duration_ms: 78.762292
+  type: 'test'
+  ...
+# Independent database: kapibala_test_62cc59d4c50a4ec58a48664d281ea431
+# Subtest: diagnostics: failures, hung ticks and later recovery are distinguishable without leaking error bodies or claiming business completion
+ok 185 - diagnostics: failures, hung ticks and later recovery are distinguishable without leaking error bodies or claiming business completion
+  ---
+  duration_ms: 414.3105
+  type: 'test'
+  ...
+# Independent database: kapibala_test_28793d6d2a7e4f1c923fe72fcfa72572
+# Subtest: KG01 SSE CRLF split across three chunks preserves both frames
+ok 186 - KG01 SSE CRLF split across three chunks preserves both frames
+  ---
+  duration_ms: 511.863
+  type: 'test'
+  ...
+# Subtest: KG02 SSE every byte boundary preserves UTF-8, comments and multiline data
+ok 187 - KG02 SSE every byte boundary preserves UTF-8, comments and multiline data
+  ---
+  duration_ms: 504.316333
+  type: 'test'
+  ...
+# Subtest: 真实PG：并发账号CAS只有一个成功，非法边优先于状态冲突
+ok 188 - 真实PG：并发账号CAS只有一个成功，非法边优先于状态冲突
+  ---
+  duration_ms: 121.944125
+  type: 'test'
+  ...
+# Subtest: 账号完整36种状态组合严格遵循允许转移表，终态无出边
+ok 189 - 账号完整36种状态组合严格遵循允许转移表，终态无出边
+  ---
+  duration_ms: 158.691584
+  type: 'test'
+  ...
+# Subtest: 限流到期前已手动离线，不得被过期调度恢复为online
+ok 190 - 限流到期前已手动离线，不得被过期调度恢复为online
+  ---
+  duration_ms: 76.690916
+  type: 'test'
+  ...
+# Subtest: ACCOUNT_OFFLINE及SENDER_NOT_IN_GROUP只失败当前消息，账号和群不变
+ok 191 - ACCOUNT_OFFLINE及SENDER_NOT_IN_GROUP只失败当前消息，账号和群不变
+  ---
+  duration_ms: 110.277334
+  type: 'test'
+  ...
+# Subtest: 同步SESSION_EXPIRED与异步account_status都执行相同终态后果
+ok 192 - 同步SESSION_EXPIRED与异步account_status都执行相同终态后果
+  ---
+  duration_ms: 235.314583
+  type: 'test'
+  ...
+# Subtest: 异步message_failed按错误传播账号终态或群不可写，不能混淆范围
+ok 193 - 异步message_failed按错误传播账号终态或群不可写，不能混淆范围
+  ---
+  duration_ms: 248.756583
+  type: 'test'
+  ...
+# Subtest: 真实PG：终态后果原子提交；步骤写失败整笔回滚
+ok 194 - 真实PG：终态后果原子提交；步骤写失败整笔回滚
+  ---
+  duration_ms: 93.905042
+  type: 'test'
+  ...
+# Subtest: 限流期间所有来源共用账号队列且恢复保持顺序
+ok 195 - 限流期间所有来源共用账号队列且恢复保持顺序
+  ---
+  duration_ms: 117.162417
+  type: 'test'
+  ...
+# Subtest: 503退避不能让同账号后续消息越过队首
+ok 196 - 503退避不能让同账号后续消息越过队首
+  ---
+  duration_ms: 107.286917
+  type: 'test'
+  ...
+# Subtest: 504已落地查询收敛为sent，不重发；自身回流去重且不触发Agent
+ok 197 - 504已落地查询收敛为sent，不重发；自身回流去重且不触发Agent
+  ---
+  duration_ms: 105.81925
+  type: 'test'
+  ...
+# Subtest: 504安全窗口后新查询明确未落地则failed，不采用可选重发
+ok 198 - 504安全窗口后新查询明确未落地则failed，不采用可选重发
+  ---
+  duration_ms: 208.726833
+  type: 'test'
+  ...
+# Subtest: 真实时钟：504后明确未落地，在5秒内确定失败并且不重发
+ok 199 - 真实时钟：504后明确未落地，在5秒内确定失败并且不重发
+  ---
+  duration_ms: 2228.140708
+  type: 'test'
+  ...
+# Subtest: 真实HTTP：窗口内取得的404延迟返回后不得触发重发，后续查询确认原消息
+ok 200 - 真实HTTP：窗口内取得的404延迟返回后不得触发重发，后续查询确认原消息
+  ---
+  duration_ms: 2424.739125
+  type: 'test'
+  ...
+# Subtest: 崩溃发送意图恢复为unknown，没有已知504不得重发
+ok 201 - 崩溃发送意图恢复为unknown，没有已知504不得重发
+  ---
+  duration_ms: 103.930167
+  type: 'test'
+  ...
+# Subtest: 发送持锁连接丢失后新worker就地接管，旧worker不能写accepted或重发
+ok 202 - 发送持锁连接丢失后新worker就地接管，旧worker不能写accepted或重发
+  ---
+  duration_ms: 131.775041
+  type: 'test'
+  ...
+# Subtest: 第二实例启动不能把活跃worker的发送标记为恢复未知
+ok 203 - 第二实例启动不能把活跃worker的发送标记为恢复未知
+  ---
+  duration_ms: 154.247208
+  type: 'test'
+  ...
+# Subtest: 504查询不可用期间保持unknown，恢复后确认不会重复发出
+ok 204 - 504查询不可用期间保持unknown，恢复后确认不会重复发出
+  ---
+  duration_ms: 209.887
+  type: 'test'
+  ...
+# Subtest: 已sent补投和重复确认不会重写首次确认时间
+ok 205 - 已sent补投和重复确认不会重写首次确认时间
+  ---
+  duration_ms: 99.081083
+  type: 'test'
+  ...
+# Subtest: kick同步终态错误也执行成员清理与取消，群错误只改变群
+ok 206 - kick同步终态错误也执行成员清理与取消，群错误只改变群
+  ---
+  duration_ms: 96.219917
+  type: 'test'
+  ...
+# Subtest: kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未知时不删除成员
+ok 207 - kick调用方预算贯穿HTTP请求、504收敛等待和成员查询，未知时不删除成员
+  ---
+  duration_ms: 2527.627125
+  type: 'test'
+  ...
+# Subtest: kick已确认删除等待群投影事务，旧成员快照不能覆盖删除结果
+ok 208 - kick已确认删除等待群投影事务，旧成员快照不能覆盖删除结果
+  ---
+  duration_ms: 218.28
+  type: 'test'
+  ...
+# Subtest: 真实PG双实例发送互斥，单个outbox只调用一次远端
+ok 209 - 真实PG双实例发送互斥，单个outbox只调用一次远端
+  ---
+  duration_ms: 101.081375
+  type: 'test'
+  ...
+# Subtest: 群不可写原子停止序列并取消Agent，不改变账号
+ok 210 - 群不可写原子停止序列并取消Agent，不改变账号
+  ---
+  duration_ms: 107.487709
+  type: 'test'
+  ...
+# Subtest: 真实PG事件写失败后重放，乱序eventId与任意历史补投均保留
+ok 211 - 真实PG事件写失败后重放，乱序eventId与任意历史补投均保留
+  ---
+  duration_ms: 103.387875
+  type: 'test'
+  ...
+# Subtest: 建群包括creator/admin，过期链接重申，promote仅一次
+ok 212 - 建群包括creator/admin，过期链接重申，promote仅一次
+  ---
+  duration_ms: 139.307459
+  type: 'test'
+  ...
+# Subtest: 邀请ready时间前不join，ALREADY_MEMBER无需等待事件，可重试一次promote
+ok 213 - 邀请ready时间前不join，ALREADY_MEMBER无需等待事件，可重试一次promote
+  ---
+  duration_ms: 674.05775
+  type: 'test'
+  ...
+# Subtest: 建群远端成功但本地写失败时记录待确认，禁止重复创建
+ok 214 - 建群远端成功但本地写失败时记录待确认，禁止重复创建
+  ---
+  duration_ms: 92.084459
+  type: 'test'
+  ...
+# Subtest: join事件超过10秒未到，任务失败且不提前promote
+ok 215 - join事件超过10秒未到，任务失败且不提前promote
+  ---
+  duration_ms: 93.6865
+  type: 'test'
+  ...
+# Subtest: 非群主退出失败继续其他成员，群主不退出
+ok 216 - 非群主退出失败继续其他成员，群主不退出
+  ---
+  duration_ms: 104.783291
+  type: 'test'
+  ...
+# Subtest: D042: leave-all服务账号全部退出，left公开视图保留远端外部成员
+ok 217 - D042: leave-all服务账号全部退出，left公开视图保留远端外部成员
+  ---
+  duration_ms: 119.358083
+  type: 'test'
+  ...
+# Subtest: 时间线快照在历史补投和queued.sentAt改写时保持原始分页无重漏
+ok 218 - 时间线快照在历史补投和queued.sentAt改写时保持原始分页无重漏
+  ---
+  duration_ms: 110.667375
+  type: 'test'
+  ...
+# Subtest: C1 validates gateway media URLs and the default retention
+ok 219 - C1 validates gateway media URLs and the default retention
+  ---
+  duration_ms: 0.652792
+  type: 'test'
+  ...
+# Subtest: C1 upgrade queues legacy attachments and preserves references of existing running sessions
+ok 220 - C1 upgrade queues legacy attachments and preserves references of existing running sessions
+  ---
+  duration_ms: 103.350125
+  type: 'test'
+  ...
+# database=kapibala_test_10997ba8e71a44b2ac3f5834210f43bd files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-migrations-00bsJo
+# Subtest: C1 downloads once across duplicate events/workers and keeps message text
+ok 221 - C1 downloads once across duplicate events/workers and keeps message text
+  ---
+  duration_ms: 261.433042
+  type: 'test'
+  ...
+# database=kapibala_test_87721e47d75b4088bcadce817b941074 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-dIMCaA
+# Subtest: C1 transient failure retries later; expired URL, redirect, and oversized body remain unavailable
+ok 222 - C1 transient failure retries later; expired URL, redirect, and oversized body remain unavailable
+  ---
+  duration_ms: 140.881167
+  type: 'test'
+  ...
+# database=kapibala_test_0517f28c38384e90871253aa347590e6 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-TWc3IS
+# Subtest: C1 timeout leaves no pointer and a replacement worker retries the interrupted body
+ok 223 - C1 timeout leaves no pointer and a replacement worker retries the interrupted body
+  ---
+  duration_ms: 132.943875
+  type: 'test'
+  ...
+# database=kapibala_test_2e46de592f2e4e22b6c5c73099258c83 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-WbKPRS
+# Subtest: C1 own-message reconciliation preserves media attached before its acknowledgement
+ok 224 - C1 own-message reconciliation preserves media attached before its acknowledgement
+  ---
+  duration_ms: 213.081625
+  type: 'test'
+  ...
+# database=kapibala_test_dd323d1632c446efbe4de969ba565b58 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-84UPCD
+# Subtest: C1 own-message acknowledgement and expiry cannot restore a deleted file pointer
+ok 225 - C1 own-message acknowledgement and expiry cannot restore a deleted file pointer
+  ---
+  duration_ms: 133.113292
+  type: 'test'
+  ...
+# database=kapibala_test_b77c540da78446529ddda1285d56fb8f files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-O7k7nM
+# Subtest: C1 configured retention preserves younger files and rejects a changed storage root
+ok 226 - C1 configured retention preserves younger files and rejects a changed storage root
+  ---
+  duration_ms: 121.94375
+  type: 'test'
+  ...
+# database=kapibala_test_3e57fa6b29664c428d5c7e420838826c files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-zVqAvU
+# Subtest: C1 a failed unlink retains a retryable tombstone and does not stop other expired files
+ok 227 - C1 a failed unlink retains a retryable tombstone and does not stop other expired files
+  ---
+  duration_ms: 137.504666
+  type: 'test'
+  ...
+# database=kapibala_test_0ae0812d971b4f599043c94958e71f93 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-3e0jZO
+# Subtest: C1 deletion clears message references and old cursor file availability without changing frozen content
+ok 228 - C1 deletion clears message references and old cursor file availability without changing frozen content
+  ---
+  duration_ms: 153.558666
+  type: 'test'
+  ...
+# database=kapibala_test_006617296721479bba940a248fa7ebf7 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-zcNxOV
+# Subtest: C1 durable references serialize with cleanup and protect paused running sessions after restart
+ok 229 - C1 durable references serialize with cleanup and protect paused running sessions after restart
+  ---
+  duration_ms: 144.410458
+  type: 'test'
+  ...
+# database=kapibala_test_95e856b8146743e1ae92b81af1890742 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-Hvy3qm
+# Subtest: C1 actual Agent trigger and get_recent_messages register the files their messages reference
+ok 230 - C1 actual Agent trigger and get_recent_messages register the files their messages reference
+  ---
+  duration_ms: 271.320625
+  type: 'test'
+  ...
+# database=kapibala_test_8e31f657fc8746dfa663a075f788e15f files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-b60cqk
+# Subtest: C1 cleanup winning the row lock prevents a new run from pinning an unavailable file
+ok 231 - C1 cleanup winning the row lock prevents a new run from pinning an unavailable file
+  ---
+  duration_ms: 440.136834
+  type: 'test'
+  ...
+# database=kapibala_test_7c1b5839cbce4443bd53b10283ac13f6 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-1sx3on
+# Subtest: C1 SIGKILL during a streamed body discards its partial and retries on restart
+ok 232 - C1 SIGKILL during a streamed body discards its partial and retries on restart
+  ---
+  duration_ms: 253.277958
+  type: 'test'
+  ...
+# database=kapibala_test_8e2f7faf5e5f43048d4418146a3033ae files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-JkVwLM
+# confirmed SIGKILL with persisted partial; restarted body is complete and partial is gone
+# Subtest: C1 SIGKILL at ready DB save recovers from the durable filesystem/intent boundary
+ok 233 - C1 SIGKILL at ready DB save recovers from the durable filesystem/intent boundary
+  ---
+  duration_ms: 10304.676667
+  type: 'test'
+  ...
+# database=kapibala_test_2c080edf194b4251a76d6d095462aded files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-7Kug4I
+# confirmed child SIGKILL at ready; recovered state=ready; HTTP downloads=1
+# Subtest: C1 SIGKILL at deleted DB save recovers from the durable filesystem/intent boundary
+ok 234 - C1 SIGKILL at deleted DB save recovers from the durable filesystem/intent boundary
+  ---
+  duration_ms: 10329.984833
+  type: 'test'
+  ...
+# database=kapibala_test_350abc6aa7584ceeb18dc1ab42d7b884 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-ZtF9hB
+# confirmed child SIGKILL at deleted; recovered state=deleted; HTTP downloads=1
+# Subtest: migration manifest uses explicit numeric identifiers and rejects invalid or duplicate versions
+ok 235 - migration manifest uses explicit numeric identifiers and rejects invalid or duplicate versions
+  ---
+  duration_ms: 8.944375
+  type: 'test'
+  ...
+# Subtest: history content changes with the same file count are rejected, while a fresh database gets the changed schema
+ok 236 - history content changes with the same file count are rejected, while a fresh database gets the changed schema
+  ---
+  duration_ms: 148.161208
+  type: 'test'
+  ...
+# Same count/version=1, old schema integer versus fresh schema text; old ledger rejected by checksum before writes
+# Subtest: complete ledger comparison rejects middle holes, renamed/deleted/inserted history and a newer database
+    # Subtest: middle-hole
+    ok 1 - middle-hole
+      ---
+      duration_ms: 110.847583
+      type: 'test'
+      ...
+    # Subtest: renamed-file
+    ok 2 - renamed-file
+      ---
+      duration_ms: 54.471542
+      type: 'test'
+      ...
+    # Subtest: deleted-file
+    ok 3 - deleted-file
+      ---
+      duration_ms: 48.884
+      type: 'test'
+      ...
+    # Subtest: inserted-file
+    ok 4 - inserted-file
+      ---
+      duration_ms: 48.909208
+      type: 'test'
+      ...
+    # Subtest: renumbered-file
+    ok 5 - renumbered-file
+      ---
+      duration_ms: 48.575584
+      type: 'test'
+      ...
+    # Subtest: newer-database
+    ok 6 - newer-database
+      ---
+      duration_ms: 51.763
+      type: 'test'
+      ...
+    1..6
+ok 237 - complete ledger comparison rejects middle holes, renamed/deleted/inserted history and a newer database
+  ---
+  duration_ms: 364.337375
+  type: 'test'
+  ...
+# Subtest: a failure after pending SQL and earlier ledger writes rolls the entire batch back before a successful retry
+ok 238 - a failure after pending SQL and earlier ledger writes rolls the entire batch back before a successful retry
+  ---
+  duration_ms: 69.7005
+  type: 'test'
+  ...
+# Version 2 SQL/ledger plus version 3 DDL/data all rolled back when the version 3 ledger INSERT failed; retry and repeat passed
+# Subtest: two migration processes wait on a real PostgreSQL advisory lock and apply a batch exactly once
+ok 239 - two migration processes wait on a real PostgreSQL advisory lock and apply a batch exactly once
+  ---
+  duration_ms: 244.656833
+  type: 'test'
+  ...
+# {"observedLocks":[{"application_name":"a0_migration_first","lock_key":"913456","granted":true},{"application_name":"a0_migration_first","lock_key":"913458","granted":false},{"application_name":"a0_migration_second","lock_key":"913456","granted":false}],"finalValue":2,"version2LedgerRows":1}
+# Subtest: the production entry refuses an actually lagging database before listening, then migration permits a healthy server and repeat
+ok 240 - the production entry refuses an actually lagging database before listening, then migration permits a healthy server and repeat
+  ---
+  duration_ms: 363.851708
+  type: 'test'
+  ...
+# {"laggingVersion":8,"requiredVersion":9,"refusedProcessExit":1,"randomRefusedPort":58661,"healthyUrl":"http://127.0.0.1:58669"}
+# Subtest: a real six-migration legacy ledger stays explicitly unverified and unchanged rather than gaining fabricated checksums
+ok 241 - a real six-migration legacy ledger stays explicitly unverified and unchanged rather than gaining fabricated checksums
+  ---
+  duration_ms: 79.603333
+  type: 'test'
+  ...
+# Historical 001–006 SQL was executed into the old ledger shape; migrate/startup rejected with no checksum column, DDL, ledger or account changes
+# Subtest: explicit legacy baseline compares a replayed release schema, records limited provenance, and permits subsequent migration
+ok 242 - explicit legacy baseline compares a replayed release schema, records limited provenance, and permits subsequent migration
+  ---
+  duration_ms: 305.980792
+  type: 'test'
+  ...
+# {"source":"git:fa1baa7d7524bf16f379c9c2837fa8cc9ef0bcac","schemaChecksum":"8dcbd355bde9d283034612c00f5f819a209adb588cd3ea18f33cf0d43f0a16bd","verifiedAt":"2026-10-01T11:28:27.984Z","versions":[1,2,3,4,5,6],"referenceDatabase":"kapibala_migration_reference_584fb828771140c3af3e5e910bba5560","referenceRemoved":true,"currentVersion":9,"pastExecutionBytesProven":false}
+# Subtest: legacy baseline rejects damaged ledgers, structural drift and untrusted source bytes without changing the target
+    # Subtest: middle-hole
+    ok 1 - middle-hole
+      ---
+      duration_ms: 183.969
+      type: 'test'
+      ...
+    # Subtest: name-mismatch
+    ok 2 - name-mismatch
+      ---
+      duration_ms: 193.841041
+      type: 'test'
+      ...
+    # Subtest: missing-index
+    ok 3 - missing-index
+      ---
+      duration_ms: 192.175
+      type: 'test'
+      ...
+    # Subtest: changed-default
+    ok 4 - changed-default
+      ---
+      duration_ms: 196.453625
+      type: 'test'
+      ...
+    # Subtest: extra-function
+    ok 5 - extra-function
+      ---
+      duration_ms: 195.065459
+      type: 'test'
+      ...
+    # Subtest: disabled-internal-constraint-triggers
+    ok 6 - disabled-internal-constraint-triggers
+      ---
+      duration_ms: 193.025917
+      type: 'test'
+      ...
+    # Subtest: altered-sequence
+    ok 7 - altered-sequence
+      ---
+      duration_ms: 196.941958
+      type: 'test'
+      ...
+    # Subtest: modified-source
+    ok 8 - modified-source
+      ---
+      duration_ms: 80.063917
+      type: 'test'
+      ...
+    1..8
+ok 243 - legacy baseline rejects damaged ledgers, structural drift and untrusted source bytes without changing the target
+  ---
+  duration_ms: 1433.264084
+  type: 'test'
+  ...
+# Subtest: legacy baseline lock contention and missing CREATEDB permission fail without target changes or reference leaks
+ok 244 - legacy baseline lock contention and missing CREATEDB permission fail without target changes or reference leaks
+  ---
+  duration_ms: 5232.901125
+  type: 'test'
+  ...
+# Subtest: legacy baseline and migration 007 preserve the running-sequence gate and leave historical observation time unknown
+ok 245 - legacy baseline and migration 007 preserve the running-sequence gate and leave historical observation time unknown
+  ---
+  duration_ms: 236.711917
+  type: 'test'
+  ...
+# Legacy 6 -> explicit baseline -> 007 rejects running sequence atomically -> completed-run fixture -> 007 succeeds; historical observed_at remains NULL
+# Subtest: a reference cleanup failure reports that the target baseline already committed, with its exact evidence and reference name
+ok 246 - a reference cleanup failure reports that the target baseline already committed, with its exact evidence and reference name
+  ---
+  duration_ms: 210.920541
+  type: 'test'
+  ...
+# Subtest: platform fixture: migration failure still releases acquired resources
+ok 247 - platform fixture: migration failure still releases acquired resources
+  ---
+  duration_ms: 92.434667
+  type: 'test'
+  ...
+# Subtest: platform fixture: simulator startup failure still releases acquired resources
+ok 248 - platform fixture: simulator startup failure still releases acquired resources
+  ---
+  duration_ms: 157.067167
+  type: 'test'
+  ...
+# Subtest: platform fixture: app startup failure still releases acquired resources
+ok 249 - platform fixture: app startup failure still releases acquired resources
+  ---
+  duration_ms: 133.334458
+  type: 'test'
+  ...
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: platform: message dedup, own echo, delayed delivery and historical pagination
+ok 250 - platform: message dedup, own echo, delayed delivery and historical pagination
+  ---
+  duration_ms: 7715.965625
+  type: 'test'
+  ...
+# Subtest: platform: explicit 504 absence fails without retry and account-wide rate limit queues
+ok 251 - platform: explicit 504 absence fails without retry and account-wide rate limit queues
+  ---
+  duration_ms: 11956.286166
+  type: 'test'
+  ...
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: platform: Agent exactly-once key, bad responses, audit blocking and no self-trigger
+ok 252 - platform: Agent exactly-once key, bad responses, audit blocking and no self-trigger
+  ---
+  duration_ms: 7822.035
+  type: 'test'
+  ...
+# Subtest: platform: sequence preflight, variable inheritance and concurrent single running
+ok 253 - platform: sequence preflight, variable inheritance and concurrent single running
+  ---
+  duration_ms: 6945.943792
+  type: 'test'
+  ...
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: platform: account CAS, terminal atomic effects and owner-last failed leave
+ok 254 - platform: account CAS, terminal atomic effects and owner-last failed leave
+  ---
+  duration_ms: 6011.024959
+  type: 'test'
+  ...
+# Subtest: platform: database write failure retains events, reports inconsistency and replays after outage
+ok 255 - platform: database write failure retains events, reports inconsistency and replays after outage
+  ---
+  duration_ms: 6865.747208
+  type: 'test'
+  ...
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: platform: two instances enforce one Agent and share durable event replay
+ok 256 - platform: two instances enforce one Agent and share durable event replay
+  ---
+  duration_ms: 8092.666334
+  type: 'test'
+  ...
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: platform: frozen pagination survives queued sentAt changes
+ok 257 - platform: frozen pagination survives queued sentAt changes
+  ---
+  duration_ms: 7307.696709
+  type: 'test'
+  ...
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: platform: authenticated WebSocket replays missed events and logout closes the stream
+ok 258 - platform: authenticated WebSocket replays missed events and logout closes the stream
+  ---
+  duration_ms: 6064.330083
+  type: 'test'
+  ...
+# Subtest: platform: SIGKILL during remote send recovers by evidence without resending
+ok 259 - platform: SIGKILL during remote send recovers by evidence without resending
+  ---
+  duration_ms: 5662.562458
+  type: 'test'
+  ...
+# Subtest: platform: S1 distinguishes accepted from sent and query recovery determines proven absence
+ok 260 - platform: S1 distinguishes accepted from sent and query recovery determines proven absence
+  ---
+  duration_ms: 9683.8705
+  type: 'test'
+  ...
+# Subtest: platform: schema lag refuses startup and viewer is denied all business write routes
+ok 261 - platform: schema lag refuses startup and viewer is denied all business write routes
+  ---
+  duration_ms: 109.469708
+  type: 'test'
+  ...
+# Subtest: platform: audited kick confirms 504 and propagates permission errors without account mutation
+ok 262 - platform: audited kick confirms 504 and propagates permission errors without account mutation
+  ---
+  duration_ms: 8299.801791
+  type: 'test'
+  ...
+# Subtest: platform: Agent SEND_TIMEOUT repeats the same key and reads proven failure without re-auditing
+ok 263 - platform: Agent SEND_TIMEOUT repeats the same key and reads proven failure without re-auditing
+  ---
+  duration_ms: 11005.361417
+  type: 'test'
+  ...
+# Subtest: platform: Agent kick deadline cancels real HTTP confirmation without replaying an uncertain effect
+ok 264 - platform: Agent kick deadline cancels real HTTP confirmation without replaying an uncertain effect
+  ---
+  duration_ms: 3694.79825
+  type: 'test'
+  ...
+1..264
+# tests 288
+# suites 0
+# pass 280
+# fail 4
+# cancelled 0
+# skipped 4
+# todo 0
+# duration_ms 137366.957417

@@ -1,0 +1,9 @@
+npm notice run kapibala-platform@0.1.0 build
+npm notice run npm run typecheck && npm run build -w apps/web
+npm notice run kapibala-platform@0.1.0 typecheck
+npm notice run tsc --noEmit && npm run typecheck -w apps/web
+tests/integration/media-files.test.ts(348,3): error TS2322: Type '<R extends QueryResultRow = QueryResultRow>(query: string, values: unknown[] | undefined) => Promise<QueryResult<QueryResultRow>>' is not assignable to type '<R extends QueryResultRow = QueryResultRow>(sql: string, values?: unknown[] | undefined) => Promise<QueryResult<R>>'.
+  Type 'Promise<QueryResult<QueryResultRow>>' is not assignable to type 'Promise<QueryResult<R>>'.
+    Type 'QueryResult<QueryResultRow>' is not assignable to type 'QueryResult<R>'.
+      Type 'QueryResultRow' is not assignable to type 'R'.
+        'QueryResultRow' is assignable to the constraint of type 'R', but 'R' could be instantiated with a different subtype of constraint 'QueryResultRow'.
