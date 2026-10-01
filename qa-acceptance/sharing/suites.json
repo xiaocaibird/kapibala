@@ -689,6 +689,27 @@
         "新QA源另冻；一次限定补测，零自动重试，原样保留首次QA驱动阻塞",
         "不改产品/原要求，不涉及第二轮/真实provider/上线门禁"
       ]
+    },
+    {
+      "id": "qa-first-round-kick-work",
+      "title": "首轮work与hard分离的独立有限补证",
+      "purpose": "固定7d53首轮有限影响复测：真实work GET取消与终态保守上界、正常成功、政策拒绝、两种明确外部拒绝和已派发504确认不重放；原五秒失败及旧hard结论不重签",
+      "caseIds": [
+        "AGENT-017",
+        "AGENT-018",
+        "CAP-008",
+        "CAP-010",
+        "INT-KICK-WORK-001"
+      ],
+      "projects": [
+        "system"
+      ],
+      "riskBoundaries": [
+        "正式工程交接已接收但开发PASS不代签QA；新QA/target/suite冻结，仅一次有限执行，0自动重试；有FAIL/BLOCKED则清理、出报告并暂停，不修正后产品重跑",
+        "原60000不加容差，无最低时长；跨保守COMMIT上界仅B，已证实际活动F优先",
+        "work信号与hard身份分开，hard没发生不补造；正常成功/拒绝回归不声称命中跨work投影或单连接observer复用",
+        "保留旧01f五秒FAIL/活动FAIL及所有历史原件；不执行第二轮、真实provider、真人或上线门禁"
+      ]
     }
   ]
 }

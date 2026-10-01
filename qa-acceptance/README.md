@@ -4,6 +4,7 @@
 
 ## 阅读入口
 
+- [7d53首轮work有限影响复测准备](reports/followup/20261002-kick-work-retest/intake.json)：已接收工程固定候选，独立源/目标/子集冻结后仅一次执行；未完成结果不可继承开发PASS，若不通过则清理、出报告并暂停。
 - **[01f固定候选最新独立补证报告](reports/followup/20261002-first-round-observation-retest/report.md)**：三条用例最新2 FAIL /1 PASS；5秒工具等待与60秒活动预算仍超限，真实保存失败及保留状态重启的限定场景通过。首次raw3 FAIL、独立2 FAIL /1 BLOCKED和修正后单例补测均保留，零自动重试；1559份原件逐文件核验。该补证不替代下面分版本全量结果；[范围澄清](reports/followup/20261002-first-round-observation-retest/scope-clarification.json)明确原阻塞、额外交叉覆盖与有限证据边界。
 - **[原活动预算 × 已派发 kick 独立补充报告](reports/followup/20261002-dispatched-kick-budget/report.md)**：固定8e单次实测、零重试，专项审定 BLOCKED（7项具体事实 PASS、3项 BLOCKED）；原始 FAIL 与强恢复观察原样保留。未证明确认在途跨决定或严格60秒预算符合，不改下方已签报告计数；第二实例仍单列未执行。
 - **[当前交付版本验收报告](reports/acceptance/20261002-current-delivery/report.md)**：[JSON](reports/acceptance/20261002-current-delivery/summary.json)、[缺陷与复现证据](reports/acceptance/20261002-current-delivery/defects.json)、[剩余事项](reports/acceptance/20261002-current-delivery/pending-items.json)。预算、容量及安全阶段崩溃恢复修复已通过；工具5秒与未知外部结果续跑要求仍未满足。历史未复测、真人缺证及上线范围单列。

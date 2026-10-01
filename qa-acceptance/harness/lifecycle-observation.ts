@@ -24,6 +24,7 @@ export const lifecycleKinds = [
   'delivery-read-connection-ended',
   'delivery-read-connection-error',
   'kick-budget-signal-aborted',
+  'kick-work-budget-signal-aborted',
   'kick-post-dispatch',
   'kick-post-response-headers',
   'kick-post-response-body',
@@ -153,7 +154,10 @@ export function validateLifecycleEvents(
     if (c.kind === 'tool-wait') {
       need(
         event.runId === c.runId &&
-          (event.kind.startsWith('agent-') || event.kind.startsWith('send-') || event.kind.startsWith('kick-') || event.kind.startsWith('delivery-read-')),
+          (event.kind.startsWith('agent-') ||
+            event.kind.startsWith('send-') ||
+            event.kind.startsWith('kick-') ||
+            event.kind.startsWith('delivery-read-')),
         'run流混入其他业务/实际run',
       );
       if (event.kind.startsWith('send-'))
