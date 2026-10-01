@@ -546,12 +546,16 @@ export function Sequences({
             以下是每一步的最终文本和变量来源。启动时服务会再次完整校验。
           </p>
           <div className="notice info">
-            <strong>目标群组：{preview.groupLabel}</strong>
-            <span>群 ID：{preview.groupId}</span>
-            <span>
-              消息序列：{preview.sequence.name} · {preview.sequence.id}
-            </span>
-            <span>角色可用性以执行时为准；没有匹配账号时仍按原规则跳过。</span>
+            <div>
+              <strong>目标群组：{preview.groupLabel}</strong>
+              <span>群 ID：{preview.groupId}</span>
+              <span>
+                消息序列：{preview.sequence.name} · {preview.sequence.id}
+              </span>
+              <span>
+                角色可用性以执行时为准；没有匹配账号时仍按原规则跳过。
+              </span>
+            </div>
           </div>
           <ErrorNotice error={error} />
           <div className="preview-steps">
