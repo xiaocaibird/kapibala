@@ -3265,13 +3265,16 @@
     ],
     "expected": ["从创建累计60秒后failed/wall_clock，未到12步预算"],
     "timing": [
-      "记录run创建区间与最后running/首次terminal观测区间；跨60秒门槛记BLOCKED，不能以容差PASS；预算后发起新turn为FAIL"
+      "记录run创建与最后running/首次terminal的独立单调时钟区间；触发前verify观测能力，取得真实runId后arm；只有工程从模块启动保留真实创建至终止且完整单epoch的activity-witness可判活动预算，不把订阅起点当创建",
+      "完整活动下界>60000为FAIL，上界<=60000证明最大预算；wall_clock而活动或独立在线上界<60000为提前耗尽FAIL；活动区间跨60000或缺完整见证为BLOCKED，不引入容差、不要求精确单点；预算后发起新turn仍为FAIL",
+      "观测缺失仍检查公开终态、steps、active引用与网关/Agent副作用；65秒为诊断观察预算，无独立违约的未终态不能凭此判产品超时"
     ],
     "faults": ["慢Agent响应"],
     "evidence": [
       "脱敏HTTP请求/响应与时间戳",
       "网关请求/实际副作用/事件历史与Agent原始协议记录",
-      "断言结果、进程日志和故障屏障/重启时间线（适用时）"
+      "断言结果、进程日志和故障屏障/重启时间线（适用时）",
+      "wall-clock-window保存独立计时区间、真实run/group与owner/epoch/attempt绑定的runtime快照、缺失原因；保存触发前网关全部mutation基线，缺配置或见证不覆盖已证明功能违约"
     ],
     "cleanup": [
       "fixture仅清理本用例创建的进程、数据库、代理和测试桩；恢复数据库代理并释放所有屏障",

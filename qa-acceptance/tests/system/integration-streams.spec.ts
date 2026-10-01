@@ -5,8 +5,14 @@ import {
   assertReceiptSubset,
   assertCompleteReceipts,
   finalizeReceipts,
+  injectBoundedReceiptWorkload,
+  matchesPeerClosePolicy,
   type ReceivedFrame,
 } from '../../harness/receipt-socket.js';
+import {
+  slowReaderProfile as profile,
+  slowReaderTimeoutMs,
+} from '../../config/slow-reader-profile.js';
 import { observe } from '../../harness/observation.js';
 import { BlockedError, redact } from '../../harness/security.js';
 import type { Message, PlatformClient } from '../../harness/platform-client.js';
@@ -36,7 +42,11 @@ function messageSubset(
 async function allMessages(
   api: PlatformClient,
   groupId: string,
-  options: { maxPages?: number; inspect?: (items: Message[]) => void; budgetMs?: number } = {},
+  options: {
+    maxPages?: number;
+    inspect?: (items: Message[], complete: boolean) => void;
+    budgetMs?: number;
+  } = {},
 ): Promise<Message[]> {
   const items: Message[] = [];
   let cursor: string | undefined;
@@ -46,12 +56,14 @@ async function allMessages(
     const page = await api.messages(groupId, cursor, 50);
     items.push(...page.items);
     uniqueMessages(items);
-    options.inspect?.(items);
+    options.inspect?.(items, !page.nextCursor);
+    // A complete response is available for full-set assertions even if it took
+    // longer than a QA observation budget. Do not hide a proved mismatch.
+    if (!page.nextCursor) return items;
     if (performance.now() - started > (options.budgetMs ?? 15000))
       throw new BlockedError(
         'QA snapshot traversal time budget exhausted; no product throughput SLA inferred',
       );
-    if (!page.nextCursor) return items;
     expect(cursors.has(page.nextCursor), 'cursor cycle').toBe(false);
     cursors.add(page.nextCursor);
     cursor = page.nextCursor;
@@ -62,15 +74,21 @@ async function allMessages(
 test('[INT-STREAM-001] real paused reader leaves healthy consumer working and received-cursor replay complete', async ({
   qa,
 }) => {
-  test.setTimeout(180_000);
+  test.setTimeout(slowReaderTimeoutMs);
   await qa.api.login();
   const { group } = await qa.api.createGroup();
-  const slow = new ReceiptSocket(qa.api.baseUrl);
-  const healthy = new ReceiptSocket(qa.api.baseUrl);
+  const slow = new ReceiptSocket(qa.api.baseUrl, profile.receipts);
+  const healthy = new ReceiptSocket(qa.api.baseUrl, profile.receipts);
   let replay: ReceiptSocket | undefined;
   const expected = new Map<string, string>();
   let checkpoint = 0;
   let primaryFailed = false;
+  let injectedTextBytes = 0;
+  const phases: { name: string; at: string; monotonicMs: number; detail?: unknown }[] = [];
+  const phase = (name: string, detail?: unknown) =>
+    phases.push({ name, at: new Date().toISOString(), monotonicMs: performance.now(), detail });
+  let closureAndReplayVerified = false;
+  let slowPolicyVerified = false;
   const ancillary = new Set(['pause-checkpoint']);
   const projectFrame = (frame: ReceivedFrame) => ({
     seq: frame.seq,
@@ -80,12 +98,40 @@ test('[INT-STREAM-001] real paused reader leaves healthy consumer working and re
     isOwn: frame.isOwn,
   });
   const receipts = (client: ReceiptSocket) => {
-    client.assertNoErrors();
-    const selected = assertReceiptSubset(client.frames, new Set(expected.keys()), ancillary);
+    client.assertProtocolViolations();
+    const selected = assertReceiptSubset(
+      client.observedFrames,
+      new Set(expected.keys()),
+      ancillary,
+    );
     for (const frame of selected) expect(frame).toMatchObject({ groupId: group.id, isOwn: false });
     return selected;
   };
+  const invariant = () => {
+    // Check every already received violation before any QA limit can BLOCK the sample.
+    for (const client of [healthy, slow, ...(replay ? [replay] : [])]) receipts(client);
+    healthy.assertHealthy();
+    replay?.assertHealthy();
+    // A slow transport error is not proof of a peer policy. Keep its valid frames
+    // for independent replay checks, then classify the unproven cause separately.
+    slow.assertValidFrames();
+  };
+  const evidence = () => ({
+    checkpoint,
+    profile,
+    expected: [...expected],
+    injectedTextBytes,
+    phases,
+    slow: slow.snapshot(),
+    healthy: healthy.snapshot(),
+    replay: replay?.snapshot() ?? null,
+    closureAndReplayVerified,
+    slowPolicyVerified,
+    limit:
+      'payloadBytes measures complete received WS application-message bytes, not TCP/WS wire bytes. Close/replay alone does not identify server buffer or timeout policy, memory bound, throughput SLA or browser three-second recovery.',
+  });
   try {
+    phase('authenticate');
     await Promise.all([slow.authenticate(qa.api.token!), healthy.authenticate(qa.api.token!)]);
     qa.gateway.emitMessage({
       groupId: group.gatewayGroupId,
@@ -93,13 +139,12 @@ test('[INT-STREAM-001] real paused reader leaves healthy consumer working and re
       senderPlatformUserId: 'outside',
       text: 'checkpoint',
     });
+    injectedTextBytes = Buffer.byteLength('checkpoint');
     const ready = await observe({
       read: async () => [slow.frames, healthy.frames],
       invariant: () => {
+        invariant();
         slow.assertHealthy();
-        healthy.assertHealthy();
-        receipts(slow);
-        receipts(healthy);
       },
       complete: (values) =>
         values.every((frames) => frames.some((f) => f.msgId === 'pause-checkpoint')),
@@ -109,12 +154,22 @@ test('[INT-STREAM-001] real paused reader leaves healthy consumer working and re
     checkpoint = slow.pause();
     expect(checkpoint).toBeGreaterThan(0);
     const receiptCount = slow.frames.length;
-    // A bounded QA injection profile, not a production capacity or latency target.
-    const end = performance.now() + 45000;
-    for (let offset = 0; offset < 2048; offset += 32) {
-      for (let i = offset; i < offset + 32; i++) {
+    const whilePaused = () => {
+      invariant();
+      slow.assertPausedWindow(checkpoint, receiptCount);
+    };
+    phase('inject-start');
+    const injection = await injectBoundedReceiptWorkload({
+      maxMessages: profile.maxMessages,
+      batchSize: profile.batchSize,
+      batchIntervalMs: profile.batchIntervalMs,
+      durationMs: profile.injectionBudgetMs,
+      invariant: whilePaused,
+      inject: (i) => {
         const msgId = `slow-stream-${i}`;
-        const text = `${msgId}:` + 'x'.repeat(8192);
+        const text = `${msgId}:` + 'x'.repeat(profile.textPaddingBytes);
+        if (injectedTextBytes + Buffer.byteLength(text) > profile.maxInjectedTextBytes)
+          throw new BlockedError('Authored QA injection text-byte limit reached');
         expected.set(msgId, hash(text));
         qa.gateway.emitMessage({
           groupId: group.gatewayGroupId,
@@ -122,62 +177,79 @@ test('[INT-STREAM-001] real paused reader leaves healthy consumer working and re
           senderPlatformUserId: 'outside',
           text,
         });
-      }
-      const observed = await observe({
-        read: async () => receipts(healthy),
-        invariant: () => {
-          healthy.assertHealthy();
-          receipts(slow);
-          expect(slow.lastReceivedSeq).toBe(checkpoint);
-        },
-        complete: (frames) => frames.length === expected.size,
-        durationMs: Math.max(0, Math.min(10000, end - performance.now())),
-      });
-      if (!observed.complete || performance.now() > end)
-        throw new BlockedError(
-          'Bounded slow-reader injection did not establish the complete healthy receipt set; no throughput SLA inferred',
-        );
-    }
-    expect(slow.frames).toHaveLength(receiptCount);
+        injectedTextBytes += Buffer.byteLength(text);
+      },
+    });
+    phase('inject-ended', injection);
+    phase('healthy-drain-start');
+    const drained = await observe({
+      read: async () => receipts(healthy),
+      invariant: whilePaused,
+      complete: (frames) => frames.length === expected.size,
+      durationMs: profile.healthyDrainMs,
+    });
+    phase('healthy-drain-ended', {
+      complete: drained.complete,
+      received: drained.last.length,
+      expected: expected.size,
+      elapsedMs: drained.elapsedMs,
+    });
+    if (!drained.complete || expected.size === 0)
+      throw new BlockedError(
+        'Bounded healthy drain did not establish the complete injected set; no throughput SLA inferred',
+      );
+    assertCompleteReceipts(drained.last, new Set(expected.keys()));
+    slow.assertPausedWindow(checkpoint, receiptCount);
     // WS requires message identity, not payload.text. Check text via public history.
     const apiExpected = new Map<string, { text: string }>([
       ['message:pause-checkpoint', { text: 'checkpoint' }],
     ]);
     for (const msgId of expected.keys())
-      apiExpected.set(`message:${msgId}`, { text: `${msgId}:` + 'x'.repeat(8192) });
+      apiExpected.set(`message:${msgId}`, {
+        text: `${msgId}:` + 'x'.repeat(profile.textPaddingBytes),
+      });
+    phase('history-start');
+    const historyStarted = performance.now();
     const history = await allMessages(qa.api, group.id, {
-      maxPages: 60,
-      budgetMs: 30000,
-      inspect: (items) => messageSubset(items, apiExpected),
+      maxPages: profile.historyMaxPages,
+      budgetMs: profile.historyObservationMs,
+      inspect: (items, complete) => {
+        messageSubset(items, apiExpected);
+        if (complete) expect(items).toHaveLength(expected.size + 1);
+        whilePaused();
+      },
     });
     expect(history).toHaveLength(expected.size + 1);
     for (const message of history.filter((entry) => entry.msgId?.startsWith('slow-stream-')))
       expect(hash(message.text)).toBe(expected.get(message.msgId!));
+    phase('history-complete', {
+      count: history.length,
+      elapsedMs: performance.now() - historyStarted,
+      observationBudgetExceeded: performance.now() - historyStarted > profile.historyObservationMs,
+    });
     // No reading or application-level discarding while waiting for a server-side close.
     await observe({
       read: async () => healthy.closed,
-      invariant: () => {
-        healthy.assertHealthy();
-        receipts(healthy);
-        receipts(slow);
-      },
+      invariant: whilePaused,
       complete: () => false,
-      durationMs: 8000,
+      durationMs: profile.pausedObservationMs,
     });
+    phase('resume-old-reader');
     slow.resume();
     const closure = await observe({
       read: async () => slow.closed,
-      invariant: () => {
-        healthy.assertHealthy();
-        receipts(healthy);
-        receipts(slow);
-      },
+      invariant,
       complete: (value) => !!value,
-      durationMs: 8000,
+      durationMs: profile.closeObservationMs,
     });
+    phase('close-observation-ended', { complete: closure.complete, closed: slow.closed });
     if (!closure.complete)
       throw new BlockedError(
         'Real reader was paused, but this bounded profile did not prove server-side closure; increase an explicitly reviewed workload or supply transport observation, never fake sender callbacks',
+      );
+    if (slow.closed?.source === 'local-termination')
+      throw new BlockedError(
+        'QA locally terminated the reader; it cannot establish server-side closure',
       );
 
     // Use the last actually received cursor after draining the old connection,
@@ -196,27 +268,27 @@ test('[INT-STREAM-001] real paused reader leaves healthy consumer working and re
     );
     if (!missing.length)
       throw new BlockedError(
-        'Peer closed but old buffered data fully drained; replay-gap prerequisite was not demonstrated',
+        'Old transport ended but buffered data fully drained; replay-gap prerequisite was not demonstrated',
       );
-    replay = new ReceiptSocket(qa.api.baseUrl);
+    phase('replay-start', { sinceSeq: receivedBeforeReconnect, missing: missing.length });
+    replay = new ReceiptSocket(qa.api.baseUrl, profile.receipts);
     await replay.authenticate(qa.api.token!, receivedBeforeReconnect);
     const replayClient = replay;
     const restored = await observe({
       read: async () => {
-        replayClient.assertNoErrors();
         return assertReceiptSubset(
           replayClient.frames,
           new Set(missing.map((frame) => frame.msgId!)),
         );
       },
-      invariant: () => {
-        replayClient.assertHealthy();
-        healthy.assertHealthy();
-        receipts(healthy);
-        receipts(slow);
-      },
+      invariant,
       complete: (frames) => frames.length === missing.length,
-      durationMs: 15000,
+      durationMs: profile.replayObservationMs,
+    });
+    phase('replay-observation-ended', {
+      complete: restored.complete,
+      received: restored.last.length,
+      missing: missing.length,
     });
     if (!restored.complete)
       throw new BlockedError(
@@ -234,10 +306,7 @@ test('[INT-STREAM-001] real paused reader leaves healthy consumer working and re
     await observe({
       read: async () => replayClient.frames,
       invariant: () => {
-        replayClient.assertHealthy();
-        healthy.assertHealthy();
-        receipts(healthy);
-        receipts(slow);
+        invariant();
         const later = assertReceiptSubset(
           replayClient.frames,
           new Set(missing.map((frame) => frame.msgId!)),
@@ -246,28 +315,24 @@ test('[INT-STREAM-001] real paused reader leaves healthy consumer working and re
         assertCompleteReceipts([...receivedSlow, ...later], new Set(expected.keys()));
       },
       complete: () => false,
-      durationMs: 1000,
+      durationMs: profile.postReplayObservationMs,
     });
+    closureAndReplayVerified = true;
+    slowPolicyVerified = matchesPeerClosePolicy(slow, profile.peerClosePolicy);
+    phase('external-replay-assertions-complete', { closureAndReplayVerified, slowPolicyVerified });
+    if (!slowPolicyVerified)
+      throw new BlockedError(
+        'External closure and full replay verified, but no published exact peer close signature establishes the slow-reader policy cause; a separate engineering connection-observation adapter would require review; do not infer policy from close alone',
+      );
   } catch (error) {
     primaryFailed = true;
     throw error;
   } finally {
     const secondary = await finalizeReceipts(
-      () =>
-        qa.evidence('real-reader-receipts', {
-          checkpoint,
-          profile: { maxMessages: 2048, textPaddingBytes: 8192, injectionBudgetMs: 45000 },
-          expected: [...expected],
-          slow: { frames: slow.frames, closed: slow.closed, errors: slow.errors },
-          healthy: { frames: healthy.frames, closed: healthy.closed, errors: healthy.errors },
-          replay: replay
-            ? { frames: replay.frames, closed: replay.closed, errors: replay.errors }
-            : null,
-          limit:
-            'Pause/closure/replay are observed externally; does not prove exact buffer high-water, memory bound, timeout cause or browser three-second recovery.',
-        }),
+      () => qa.evidence('real-reader-receipts', evidence()),
       [slow, healthy, ...(replay ? [replay] : [])],
       primaryFailed,
+      () => qa.evidence('real-reader-after-cleanup', evidence()),
     );
     if (secondary.length) {
       const detail = { errors: secondary.map(String), primaryFailurePreserved: true };

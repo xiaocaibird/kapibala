@@ -14,6 +14,95 @@ export interface ReceivedFrame {
   groupId?: string;
   isOwn?: boolean;
   inconsistency?: { kind: unknown; ref: unknown; message: unknown };
+  /** Bytes of the complete WS application message, excluding TCP/WS headers. */
+  payloadBytes?: number;
+  receivedAt?: string;
+  receivedMonotonicMs?: number;
+  readerPaused?: boolean;
+  readyStateAtReceipt?: 'connecting' | 'open' | 'closing' | 'closed';
+}
+
+export interface ReceiptLimits {
+  maxFrames: number;
+  maxPayloadBytes: number;
+  maxFramePayloadBytes: number;
+}
+export const defaultReceiptLimits: Readonly<ReceiptLimits> = Object.freeze({
+  maxFrames: 8192,
+  maxPayloadBytes: 64 * 1024 * 1024,
+  maxFramePayloadBytes: 16 * 1024 * 1024,
+});
+export interface ReceiptTransportEvent {
+  kind: 'open' | 'auth-sent' | 'pause' | 'resume' | 'local-terminate' | 'close' | 'error';
+  at: string;
+  monotonicMs: number;
+  lastReceivedSeq: number;
+  receivedFrames: number;
+  payloadBytes: number;
+  detail?: unknown;
+}
+export interface PeerClosePolicy {
+  /** Published engineering evidence identifying this exact close signature. */
+  contractReference: string;
+  code: number;
+  reason: string;
+}
+
+export function matchesPeerClosePolicy(
+  client: ReceiptSocket,
+  policy: PeerClosePolicy | null,
+): boolean {
+  return !!(
+    policy?.contractReference.trim() &&
+    policy.reason.trim() &&
+    client.closed?.source === 'peer-close-frame' &&
+    client.closed.code === policy.code &&
+    client.closed.reason === policy.reason &&
+    client.errors.length === 0 &&
+    client.protocolErrors.length === 0 &&
+    client.resourceErrors.length === 0
+  );
+}
+
+/** Injection completion and consumer completion are separate observations.
+ * Expiring this QA budget stops injection; it never discards an emitted identity
+ * or bypasses an invariant, including the final sample at the boundary. */
+export async function injectBoundedReceiptWorkload(options: {
+  maxMessages: number;
+  batchSize: number;
+  batchIntervalMs: number;
+  durationMs: number;
+  inject: (index: number) => void;
+  invariant: () => void;
+  now?: () => number;
+  wait?: (ms: number) => Promise<void>;
+}): Promise<{ injected: number; elapsedMs: number; stop: 'message-limit' | 'time-limit' }> {
+  for (const value of [
+    options.maxMessages,
+    options.batchSize,
+    options.batchIntervalMs,
+    options.durationMs,
+  ])
+    if (!Number.isSafeInteger(value) || value <= 0)
+      throw new Error('Invalid bounded injection profile');
+  const now = options.now ?? (() => performance.now());
+  const wait = options.wait ?? ((ms: number) => new Promise<void>((r) => setTimeout(r, ms)));
+  const start = now();
+  let injected = 0;
+  while (injected < options.maxMessages && now() - start < options.durationMs) {
+    options.invariant();
+    const batchEnd = Math.min(injected + options.batchSize, options.maxMessages);
+    while (injected < batchEnd && now() - start < options.durationMs) options.inject(injected++);
+    options.invariant();
+    if (injected < options.maxMessages && now() - start < options.durationMs)
+      await wait(Math.min(options.batchIntervalMs, options.durationMs - (now() - start)));
+  }
+  options.invariant();
+  return {
+    injected,
+    elapsedMs: now() - start,
+    stop: injected === options.maxMessages ? 'message-limit' : 'time-limit',
+  };
 }
 
 /** Partial observations may be incomplete, but already received violations fail immediately. */
@@ -64,6 +153,7 @@ export async function finalizeReceipts(
   evidence: () => Promise<void>,
   clients: readonly { close(): Promise<void> }[],
   primaryFailed: boolean,
+  afterCleanup?: () => Promise<void>,
 ): Promise<unknown[]> {
   const errors: unknown[] = [];
   try {
@@ -73,6 +163,11 @@ export async function finalizeReceipts(
   }
   const closed = await Promise.allSettled(clients.map((client) => client.close()));
   for (const result of closed) if (result.status === 'rejected') errors.push(result.reason);
+  try {
+    await afterCleanup?.();
+  } catch (error) {
+    errors.push(error);
+  }
   if (errors.length && !primaryFailed)
     throw new AggregateError(errors, 'Receipt evidence/owned cleanup did not complete');
   return errors;
@@ -85,10 +180,24 @@ export class ReceiptSocket {
   readonly frames: ReceivedFrame[] = [];
   readonly errors: string[] = [];
   readonly protocolErrors: string[] = [];
-  closed?: { code: number; at: string };
+  readonly transport: ReceiptTransportEvent[] = [];
+  readonly resourceErrors: string[] = [];
+  readonly limits: Readonly<ReceiptLimits>;
+  readonly totals = { messages: 0, payloadBytes: 0, largestPayloadBytes: 0 };
+  closed?: {
+    code: number;
+    reason: string;
+    at: string;
+    monotonicMs: number;
+    source: 'local-termination' | 'peer-close-frame' | 'transport-ended';
+    localTermination?: string;
+  };
   private opening: Promise<void>;
   private receivedSeq = 0;
-  constructor(baseUrl: string) {
+  private localTermination?: string;
+  /** At most one parsed over-budget message, retained for violation-first checks. */
+  private overBudgetFrame?: ReceivedFrame;
+  constructor(baseUrl: string, limits: ReceiptLimits = defaultReceiptLimits) {
     const base = new URL(baseUrl);
     if (
       base.protocol !== 'http:' ||
@@ -98,20 +207,65 @@ export class ReceiptSocket {
       base.password
     )
       throw new Error('ReceiptSocket requires an explicit QA loopback origin');
+    for (const value of [limits.maxFrames, limits.maxPayloadBytes, limits.maxFramePayloadBytes])
+      if (!Number.isSafeInteger(value) || value <= 0) throw new Error('Invalid QA receipt limits');
+    if (limits.maxFramePayloadBytes > limits.maxPayloadBytes)
+      throw new Error('QA frame payload limit exceeds total payload limit');
+    this.limits = Object.freeze({ ...limits });
     const url = new URL('/ws', base);
     url.protocol = 'ws:';
-    this.ws = new WebSocket(url, { handshakeTimeout: 5000 });
+    this.ws = new WebSocket(url, {
+      handshakeTimeout: 5000,
+      maxPayload: this.limits.maxFramePayloadBytes,
+    });
     this.opening = new Promise<void>((resolve, reject) => {
-      this.ws.once('open', resolve);
+      this.ws.once('open', () => {
+        this.record('open');
+        resolve();
+      });
       this.ws.once('error', reject);
     });
-    this.ws.on('error', (e) => this.errors.push(e.message));
-    this.ws.on('close', (code) => {
-      this.closed = { code, at: new Date().toISOString() };
+    this.ws.on('error', (e: Error & { code?: string }) => {
+      this.record('error', { message: e.message, code: e.code });
+      if (e.code === 'WS_ERR_UNSUPPORTED_MESSAGE_LENGTH') {
+        this.resourceErrors.push('QA receipt frame payload limit exceeded');
+        this.terminate('qa-resource-limit');
+      } else {
+        this.errors.push(e.message);
+        if (e.code?.startsWith('WS_ERR_')) {
+          this.protocolErrors.push(`${e.code}: ${e.message}`);
+          this.terminate('protocol-rejection');
+        }
+      }
+    });
+    this.ws.on('close', (code, reason) => {
+      this.closed = {
+        code,
+        reason: reason.toString(),
+        at: new Date().toISOString(),
+        monotonicMs: performance.now(),
+        source: this.localTermination
+          ? 'local-termination'
+          : code === 1006
+            ? 'transport-ended'
+            : 'peer-close-frame',
+        ...(this.localTermination ? { localTermination: this.localTermination } : {}),
+      };
+      this.record('close', this.closed);
     });
     this.ws.on('message', (raw) => {
+      const bytes = Array.isArray(raw)
+        ? Buffer.concat(raw)
+        : raw instanceof ArrayBuffer
+          ? Buffer.from(raw)
+          : raw;
+      const receivedAt = new Date().toISOString();
+      const receivedMonotonicMs = performance.now();
+      this.totals.messages++;
+      this.totals.payloadBytes += bytes.length;
+      this.totals.largestPayloadBytes = Math.max(this.totals.largestPayloadBytes, bytes.length);
       try {
-        const value = JSON.parse(raw.toString()) as Record<string, unknown>;
+        const value = JSON.parse(bytes.toString()) as Record<string, unknown>;
         if (!value || typeof value !== 'object' || typeof value.type !== 'string')
           throw new Error('Malformed WS frame');
         if (value.seq !== undefined && (!Number.isSafeInteger(value.seq) || Number(value.seq) < 1))
@@ -120,10 +274,16 @@ export class ReceiptSocket {
           throw new Error('Message event lacks required seq');
         if (typeof value.seq === 'number' && value.seq <= this.receivedSeq)
           throw new Error('Received event seq is not strictly increasing');
-        if (this.frames.length >= 8192) throw new BlockedError('QA receipt ledger limit exceeded');
         const payload = value.payload as Record<string, unknown> | undefined;
-        this.frames.push({
+        const frame: ReceivedFrame = {
           type: value.type,
+          payloadBytes: bytes.length,
+          receivedAt,
+          receivedMonotonicMs,
+          readerPaused: this.ws.isPaused,
+          readyStateAtReceipt: (['connecting', 'open', 'closing', 'closed'] as const)[
+            this.ws.readyState
+          ],
           ...(typeof value.seq === 'number' ? { seq: value.seq } : {}),
           ...(typeof value.success === 'boolean' ? { success: value.success } : {}),
           ...(typeof payload?.msgId === 'string' ? { msgId: payload.msgId } : {}),
@@ -142,17 +302,66 @@ export class ReceiptSocket {
           ...(typeof payload?.text === 'string'
             ? { textSha256: createHash('sha256').update(payload.text).digest('hex') }
             : {}),
-        });
+        };
+        if (
+          this.frames.length >= this.limits.maxFrames ||
+          this.totals.payloadBytes > this.limits.maxPayloadBytes
+        ) {
+          this.overBudgetFrame ??= frame;
+          throw new BlockedError('QA receipt ledger limit exceeded');
+        }
+        this.frames.push(frame);
         if (typeof value.seq === 'number') this.receivedSeq = value.seq;
       } catch (e) {
-        this.errors.push(String(e));
-        this.protocolErrors.push(String(e));
-        this.ws.terminate();
+        if (e instanceof BlockedError) {
+          this.resourceErrors.push(String(e));
+          this.terminate('qa-resource-limit');
+        } else {
+          this.errors.push(String(e));
+          this.protocolErrors.push(String(e));
+          this.terminate('protocol-rejection');
+        }
       }
     });
   }
+  private record(kind: ReceiptTransportEvent['kind'], detail?: unknown): void {
+    this.transport.push({
+      kind,
+      at: new Date().toISOString(),
+      monotonicMs: performance.now(),
+      lastReceivedSeq: this.receivedSeq,
+      receivedFrames: this.frames.length,
+      payloadBytes: this.totals.payloadBytes,
+      ...(detail === undefined ? {} : { detail }),
+    });
+  }
+  private terminate(reason: string): void {
+    if (!this.localTermination) {
+      this.localTermination = reason;
+      this.record('local-terminate', { reason });
+    }
+    this.ws.terminate();
+  }
+  snapshot() {
+    return {
+      frames: this.frames,
+      closed: this.closed,
+      errors: this.errors,
+      overBudgetFrame: this.overBudgetFrame,
+      protocolErrors: this.protocolErrors,
+      resourceErrors: this.resourceErrors,
+      transport: this.transport,
+      totals: this.totals,
+      limits: this.limits,
+      lastReceivedSeq: this.lastReceivedSeq,
+      paused: this.paused,
+      closureCause:
+        'No server policy cause inferred from the close code or paused-reader experiment',
+    };
+  }
   async authenticate(accessToken: string, sinceSeq?: number): Promise<void> {
     await this.opening;
+    this.record('auth-sent', { sinceSeq }); // Never record credentials.
     this.ws.send(
       JSON.stringify({
         type: 'auth',
@@ -171,9 +380,40 @@ export class ReceiptSocket {
   get lastReceivedSeq(): number {
     return this.receivedSeq;
   }
+  get observedFrames(): readonly ReceivedFrame[] {
+    return this.overBudgetFrame ? [...this.frames, this.overBudgetFrame] : this.frames;
+  }
+  assertPausedWindow(checkpoint: number, initialFrameCount: number): void {
+    const pauseIndex = this.transport.findLastIndex((entry) => entry.kind === 'pause');
+    const pause = this.transport[pauseIndex];
+    if (
+      !pause ||
+      pause.lastReceivedSeq !== checkpoint ||
+      pause.receivedFrames !== initialFrameCount ||
+      this.transport.slice(pauseIndex + 1).some((entry) => entry.kind === 'resume')
+    )
+      throw new BlockedError('QA pause checkpoint/unchanged read control was not established');
+    if (this.ws.readyState === WebSocket.OPEN && !this.ws.isPaused)
+      throw new BlockedError('QA reader no longer paused in the intended observation window');
+    // ws 8.22 drains readable buffered bytes from socketOnClose while CLOSING.
+    // Those complete frames are actual receipts and must advance the replay cursor.
+    // Receipt while still OPEN is an unproven pause premise, never a product FAIL.
+    if (
+      this.observedFrames
+        .slice(initialFrameCount)
+        .some(
+          (frame) =>
+            frame.readyStateAtReceipt !== 'closing' && frame.readyStateAtReceipt !== 'closed',
+        )
+    )
+      throw new BlockedError(
+        'Additional frames arrived outside closing-time drain during the QA paused-reader window',
+      );
+  }
   pause(): number {
     this.ws.pause();
     if (!this.ws.isPaused) throw new Error('Real WS reader was not paused');
+    this.record('pause');
     return this.lastReceivedSeq;
   }
   get paused(): boolean {
@@ -181,20 +421,22 @@ export class ReceiptSocket {
   }
   resume(): void {
     this.ws.resume();
+    this.record('resume');
+  }
+  assertProtocolViolations(): void {
+    if (this.protocolErrors.length)
+      throw new Error(`Invalid received WS frames: ${this.protocolErrors.join('; ')}`);
   }
   assertNoErrors(): void {
-    const failures = this.errors.filter(
-      (error) => !error.includes('QA receipt ledger limit exceeded'),
-    );
-    if (failures.length) throw new Error(`QA WS receipt errors: ${failures.join('; ')}`);
-    if (this.errors.length)
+    this.assertProtocolViolations();
+    if (this.errors.length) throw new Error(`QA WS receipt errors: ${this.errors.join('; ')}`);
+    if (this.resourceErrors.length)
       throw new BlockedError('QA receipt ledger budget exhausted; cannot infer peer closure');
   }
   /** Transport loss is allowed during an injected outage; malformed received frames are not. */
   assertValidFrames(): void {
-    if (this.protocolErrors.some((error) => !error.includes('QA receipt ledger limit exceeded')))
-      throw new Error(`Invalid received WS frames: ${this.protocolErrors.join('; ')}`);
-    if (this.protocolErrors.length) throw new BlockedError('QA receipt ledger budget exhausted');
+    this.assertProtocolViolations();
+    if (this.resourceErrors.length) throw new BlockedError('QA receipt ledger budget exhausted');
   }
   assertHealthy(): void {
     this.assertNoErrors();
@@ -214,7 +456,7 @@ export class ReceiptSocket {
         resolve();
       });
     });
-    this.ws.terminate();
+    this.terminate('cleanup');
     await closed;
   }
 }

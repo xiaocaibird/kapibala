@@ -4,6 +4,8 @@
 
 ## 阅读入口
 
+- [七项工程补证与三项真人体验](requirements/evidence-followup/README.md)：负责人已授权的后续接入；新候选、观测与正式人工运行分别绑定。[本次交付与体验收尾记录](reports/followup/20261001-seven-blockers/report.md)。准备和工具校验不改变原报告结论。
+
 - **[本轮正式验收报告](reports/acceptance/20261001-business/report.md)**：[逐项审定](reports/acceptance/20261001-business/adjudicated-baseline.md)、[缺陷](reports/acceptance/20261001-business/defects.json)、[需决策与补证项](reports/acceptance/20261001-business/pending-decisions.json)。这是当前结论；以下接收/准备/首轮记录按各自历史时间解读。
 
 - [工程接入候选接收记录](requirements/engineering-candidate-intake-20261001.md)：新候选0af6443的版本和证据核对；当时工程已交付与QA实际接入分别记录，后续修复/复测见正式报告。

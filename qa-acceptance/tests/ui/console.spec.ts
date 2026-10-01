@@ -12,6 +12,7 @@ import {
   directoryGroupIds,
 } from './directory-observer.js';
 import { nativeBackgroundTab } from './native-focus.js';
+import { observePageContinuity, withContinuityEvidence } from './page-continuity.js';
 
 const pageErrors = new WeakMap<Page, string[]>();
 test.beforeEach(async ({ page }) => {
@@ -1408,6 +1409,9 @@ test('[UI-032] 提醒确认不能恢复多页过期旧游标', async ({ qa, page
     await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { name: `游标提醒-${i}` }));
   }
   const observer = observeDirectory(page);
+  const continuity = observePageContinuity(page);
+  const actionEvidence: Record<string, unknown> = {};
+  let primary: unknown;
   try {
     await login(page, qa);
     await expect(element(page, qa, 'directoryItem')).toHaveCount(20);
@@ -1429,9 +1433,9 @@ test('[UI-032] 提醒确认不能恢复多页过期旧游标', async ({ qa, page
     } finally {
       observer.unchanged(version);
     }
-    const second = observer.ledger.reads.slice(beforeMore).find(
-      (read) => new URL(read.url).searchParams.get('cursor') === firstBody.nextCursor,
-    );
+    const second = observer.ledger.reads
+      .slice(beforeMore)
+      .find((read) => new URL(read.url).searchParams.get('cursor') === firstBody.nextCursor);
     expect(second, '多页前提必须使用当前首页公开cursor').toBeDefined();
     await directoryPremise(() => second!.endedAt !== undefined, '提醒用例第二页真实响应正文已完成');
     expect(second!.status).toBe(200);
@@ -1453,6 +1457,33 @@ test('[UI-032] 提醒确认不能恢复多页过期旧游标', async ({ qa, page
     await qa.evidence('ui-directory-stale-initial-identities', { expectedIds, actualIds, hrefs });
     expect(actualIds).toEqual(expectedIds);
     observer.unchanged(version);
+    const originalDocument = await continuity.capture();
+    const conditions = async () =>
+      Object.fromEntries(
+        await Promise.all(
+          ['search', 'order', 'statusFilter', 'agentFilter'].map(async (key) => [
+            key,
+            await element(page, qa, key).inputValue(),
+          ]),
+        ),
+      );
+    const renderedIds = async () =>
+      directoryGroupIds(
+        await Promise.all(
+          (await element(page, qa, 'directoryItem').all()).map((item) =>
+            child(item, qa, 'directoryLink').getAttribute('href'),
+          ),
+        ),
+        page.url(),
+      );
+    const originalConditions = await conditions();
+    actionEvidence.original = {
+      page: originalDocument.point,
+      conditions: originalConditions,
+      renderedIds: actualIds,
+      firstPageCursor: firstBody.nextCursor,
+      secondPageCursor: secondBody.nextCursor,
+    };
     const quietTitle = await page.title();
     const background = await backgroundTab(page);
     const cursorRequests: string[] = [];
@@ -1461,6 +1492,7 @@ test('[UI-032] 提醒确认不能恢复多页过期旧游标', async ({ qa, page
         cursorRequests.push(request.url());
     };
     page.on('request', onCursor);
+    let windowPrimary: unknown;
     try {
       await qa.api.require(qa.api.patch(`/api/groups/${changed!.id}`, { name: '游标提醒已变化' }));
       await expect(element(page, qa, 'directoryStale')).toBeVisible();
@@ -1471,23 +1503,101 @@ test('[UI-032] 提醒确认不能恢复多页过期旧游标', async ({ qa, page
         throw new BlockedError(
           '需要适配独立于整体刷新、且只确认已呈现相关变化的公开操作，不能伪造已读状态绕过目录过期',
         );
-      await confirm.click();
-      await expect(page).toHaveTitle(quietTitle);
-      await expect(element(page, qa, 'directoryStale')).toBeVisible();
-      await remains(async () => {
-        const more = element(page, qa, 'loadMoreGroups');
-        expect((await more.count()) === 0 || (await more.isDisabled())).toBe(true);
-        expect(cursorRequests).toEqual([]);
-      });
+      await continuity.unchanged(originalDocument);
+      await expect(page).not.toHaveTitle(quietTitle);
+      expect(await conditions()).toEqual(originalConditions);
+      expect(await renderedIds()).toEqual(expectedIds);
+      const beforeConfirmReads = observer.ledger.reads.length;
+      actionEvidence.beforeConfirm = {
+        at: performance.now(),
+        conditions: await conditions(),
+        renderedIds: await renderedIds(),
+        stale: await element(page, qa, 'directoryStale').isVisible(),
+        readIndex: beforeConfirmReads,
+        cursorRequests: [...cursorRequests],
+      };
+      try {
+        await withContinuityEvidence(
+          () => continuity.unchanged(originalDocument),
+          async (check) => {
+            await confirm.click();
+            await check('confirmation-title', () => expect(page).toHaveTitle(quietTitle));
+            await remains(async () =>
+              check('stale-cursor-and-rendered-identities', async () => {
+                await expect(element(page, qa, 'directoryStale')).toBeVisible();
+                const currentConditions = await conditions();
+                const currentIds = await renderedIds();
+                actionEvidence.lastConfirmationSample = {
+                  at: performance.now(),
+                  conditions: currentConditions,
+                  renderedIds: currentIds,
+                  stale: true,
+                  originalPublicCursor: firstBody.nextCursor,
+                  cursorRequests: [...cursorRequests],
+                };
+                expect(currentConditions).toEqual(originalConditions);
+                expect(currentIds).toEqual(expectedIds);
+                const more = element(page, qa, 'loadMoreGroups');
+                expect((await more.count()) === 0 || (await more.isDisabled())).toBe(true);
+                expect(cursorRequests).toEqual([]);
+              }),
+            );
+          },
+          (outcome) => {
+            actionEvidence.continuityOutcome = outcome;
+          },
+        );
+      } finally {
+        actionEvidence.afterConfirm = {
+          at: performance.now(),
+          url: page.url(),
+          directoryReads: observer.ledger.reads.slice(beforeConfirmReads),
+          cursorRequests: [...cursorRequests],
+          limitation:
+            '允许不替换旧多页的合法首屏探测；公开旧cursor与23项身份留证，不读取内部cursor/scope',
+        };
+      }
+    } catch (error) {
+      windowPrimary = error;
+      throw error;
     } finally {
       page.off('request', onCursor);
-      await background.close();
-      await qa.evidence('ui-directory-stale-cursor-requests', cursorRequests);
+      const results = await Promise.allSettled([
+        background.close(),
+        qa.evidence('ui-directory-stale-cursor-requests', cursorRequests),
+      ]);
+      const errors = results.filter((result) => result.status === 'rejected');
+      if (errors.length) {
+        if (!windowPrimary)
+          throw new Error(
+            `UI-032窗口清理/取证失败：${errors.map((result) => String(result.reason)).join('; ')}`,
+          );
+        console.error('UI-032 secondary window cleanup/evidence errors', errors);
+      }
     }
+  } catch (error) {
+    primary = error;
+    throw error;
   } finally {
     observer.dispose();
-    await qa.evidence('ui-directory-stale-premises', observer.ledger);
+    const outcomes = await Promise.allSettled([
+      continuity.dispose(),
+      qa.evidence('ui-directory-stale-premises', observer.ledger),
+      qa.evidence('ui-directory-confirmation-continuity', {
+        ...actionEvidence,
+        continuity: continuity.ledger.events,
+        continuityChecks: continuity.ledger.checks,
+      }),
+    ]);
     observer.assertProtocol();
+    const errors = outcomes.filter((result) => result.status === 'rejected');
+    if (errors.length) {
+      if (!primary)
+        throw new Error(
+          `UI-032取证/清理失败：${errors.map((result) => String(result.reason)).join('; ')}`,
+        );
+      console.error('UI-032 secondary evidence/cleanup errors', errors);
+    }
   }
 });
 

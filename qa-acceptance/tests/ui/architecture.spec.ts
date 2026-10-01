@@ -4,6 +4,11 @@ import { dirname } from 'node:path';
 import { test, expect } from '../fixtures.js';
 import { BlockedError } from '../../harness/security.js';
 import type { QaEnvironment } from '../../harness/environment.js';
+import {
+  observePageContinuity,
+  withContinuityEvidence,
+  type ContinuityOutcome,
+} from './page-continuity.js';
 
 /** Versioned regression profile, not original product requirements.
  * Source: docs/architecture-quality-closeout.md:19–20, approved scope D036 / AR-08–09.
@@ -551,9 +556,20 @@ test('[ARC-UI-015] 耗尽后显式同页刷新可开始新一轮', async ({ qa, 
   const item = await seed(qa);
   let attempts = 0;
   let recovered = false;
+  const continuity = observePageContinuity(page);
+  const reads: { at: number; url: string; attempt: number; phase: string }[] = [];
+  let actionEvidence: unknown;
+  let continuityOutcome: ContinuityOutcome | undefined;
+  let primary: unknown;
   await page.route('**/api/sequences', async (route) => {
     if (route.request().method() !== 'GET') return route.continue();
     attempts++;
+    reads.push({
+      at: performance.now(),
+      url: route.request().url(),
+      attempt: attempts,
+      phase: recovered ? 'explicit-refresh' : 'exhaustion',
+    });
     if (!recovered) await errorResponse(route);
     else await route.continue();
   });
@@ -571,15 +587,72 @@ test('[ARC-UI-015] 耗尽后显式同页刷新可开始新一轮', async ({ qa, 
       throw new BlockedError(
         '未找到公开可见的同页资源刷新操作；需适配真实入口，禁止直接调用业务reload或用整页重载冒充同控制器恢复',
       );
+    const document = await continuity.capture();
+    const beforeAttempts = attempts;
     recovered = true;
-    await refresh.click();
-    await expect(element(page, qa, 'sequence')).toHaveValue(item.id);
-    await remains(async () => {
-      expect(attempts).toBe(profile.maximumReadAttempts + 1);
-      noNewEvents(page, baseline);
-    });
+    await withContinuityEvidence(
+      async () => {
+        await continuity.unchanged(document);
+        noNewEvents(page, baseline);
+      },
+      async (check) => {
+        const [response] = await Promise.all([
+          page.waitForResponse(
+            (response) =>
+              response.request().method() === 'GET' &&
+              new URL(response.url()).pathname === '/api/sequences',
+          ),
+          refresh.click(),
+        ]);
+        await check('refresh-response', async () => {
+          const body: unknown = await response.json();
+          actionEvidence = {
+            before: document.point,
+            beforeAttempts,
+            afterAttempts: attempts,
+            response: { url: response.url(), status: response.status(), body },
+            expectedSequenceId: item.id,
+          };
+          expect(response.status()).toBe(200);
+          expect(body).toEqual(expect.arrayContaining([expect.objectContaining({ id: item.id })]));
+        });
+        await check('sequence-presented', () =>
+          expect(element(page, qa, 'sequence')).toHaveValue(item.id),
+        );
+        await remains(async () => {
+          await check('stable-request-count', () =>
+            expect(attempts).toBe(profile.maximumReadAttempts + 1),
+          );
+        });
+      },
+      (outcome) => {
+        continuityOutcome = outcome;
+      },
+    );
+  } catch (error) {
+    primary = error;
+    throw error;
   } finally {
-    await page.unrouteAll({ behavior: 'wait' });
+    const outcomes = await Promise.allSettled([
+      page.unrouteAll({ behavior: 'wait' }),
+      continuity.dispose(),
+      qa.evidence('architecture-explicit-refresh-continuity', {
+        reads,
+        actionEvidence,
+        continuityOutcome,
+        continuity: continuity.ledger.events,
+        continuityChecks: continuity.ledger.checks,
+        limitation: '公开document、URL、导航和scope_ready见证；不读取产品内部控制器身份',
+      }),
+    ]);
+    const errors = outcomes.filter((result) => result.status === 'rejected');
+    if (errors.length) {
+      if (!primary)
+        throw new Error(
+          `ARC-UI-015取证/清理失败：${errors.map((result) => String(result.reason)).join('; ')}`,
+        );
+      console.error('ARC-UI-015 secondary evidence/cleanup errors', errors);
+    }
   }
 });
 test('[ARC-UI-016] 错误后离页取消退避期间的后续读取', async ({ qa, page }) => {

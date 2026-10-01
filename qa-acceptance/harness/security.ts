@@ -4,7 +4,12 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
-import type { Authorization, TargetConfig, ExecutionPurpose } from './types.js';
+import type {
+  Authorization,
+  TargetConfig,
+  ExecutionPurpose,
+  ManualFollowupPurpose,
+} from './types.js';
 
 const exec = promisify(execFile);
 export class BlockedError extends Error {
@@ -229,16 +234,9 @@ export async function loadTarget(path: string, qaRoot: string): Promise<TargetCo
       throw new BlockedError('运行观测控制器URL无效');
     }
     if (
-      url.protocol !== 'http:' ||
-      url.hostname !== '127.0.0.1' ||
-      !url.port ||
-      url.username ||
-      url.password ||
-      url.search ||
-      url.hash ||
-      url.pathname !== '/' ||
-      typeof adapter.contractReference !== 'string' ||
-      !adapter.contractReference.trim() ||
+      url.protocol !== 'http:' || url.hostname !== '127.0.0.1' || !url.port ||
+      url.username || url.password || url.search || url.hash || url.pathname !== '/' ||
+      typeof adapter.contractReference !== 'string' || !adapter.contractReference.trim() ||
       /REQUIRED|REPLACE/.test(adapter.contractReference)
     )
       throw new BlockedError('运行观测控制器需显式loopback origin及已确认契约引用');
@@ -314,6 +312,8 @@ export async function loadTarget(path: string, qaRoot: string): Promise<TargetCo
 }
 export function executionPurpose(env: NodeJS.ProcessEnv = process.env): ExecutionPurpose {
   const phase = env.QA_EXECUTION_KIND ?? 'execution';
+  if (env.QA_EXECUTION_MANUAL_SHA256)
+    throw new BlockedError('人工续测摘要不能作为完整执行或预跑用途');
   if (phase === 'business-acceptance') {
     if (
       env.QA_EXECUTION_SUITE_ID ||
@@ -341,11 +341,22 @@ export function executionPurpose(env: NodeJS.ProcessEnv = process.env): Executio
     suiteSha256: env.QA_EXECUTION_SUITE_SHA256!,
   };
 }
+export function manualFollowupPurpose(env: NodeJS.ProcessEnv = process.env): ManualFollowupPurpose {
+  if (
+    env.QA_EXECUTION_KIND !== 'manual-followup' ||
+    env.QA_EXECUTION_SUITE_ID ||
+    env.QA_EXECUTION_SUITE_SHA256 ||
+    env.QA_EXECUTION_BUSINESS_SHA256 ||
+    !/^[a-f0-9]{64}$/.test(env.QA_EXECUTION_MANUAL_SHA256 ?? '')
+  )
+    throw new BlockedError('人工续测必须单独绑定固定三条人工用例摘要，不得混入预跑或全业务摘要');
+  return { phase: 'manual-followup', manualScopeSha256: env.QA_EXECUTION_MANUAL_SHA256! };
+}
 export function validateAuthorization(
   a: Authorization,
   target: TargetConfig,
   now = Date.now(),
-  purpose: ExecutionPurpose = { phase: 'execution' },
+  purpose: ExecutionPurpose | ManualFollowupPurpose = { phase: 'execution' },
   verifiedProjects?: readonly string[],
 ): void {
   if (
@@ -355,7 +366,9 @@ export function validateAuthorization(
         ? 'all-required'
         : purpose.phase === 'business-acceptance'
           ? 'all-business'
-          : 'developer-preflight') ||
+          : purpose.phase === 'manual-followup'
+            ? 'manual-followup'
+            : 'developer-preflight') ||
     typeof a.approvedBy !== 'string' ||
     !a.approvedBy.trim() ||
     /REQUIRED/.test(a.approvedBy) ||
@@ -384,6 +397,15 @@ export function validateAuthorization(
       throw new BlockedError('业务验收授权未绑定完整业务基线摘要');
   } else if (a.businessSha256 !== undefined)
     throw new BlockedError('非业务验收授权不可携带业务摘要');
+  if (purpose.phase === 'manual-followup') {
+    if (
+      !/^[a-f0-9]{64}$/.test(purpose.manualScopeSha256) ||
+      a.manualScopeSha256 !== purpose.manualScopeSha256
+    )
+      throw new BlockedError('人工续测授权未绑定固定三条人工用例摘要');
+    assertAuthorizedAction(a, 'record-manual-followup');
+  } else if (a.manualScopeSha256 !== undefined)
+    throw new BlockedError('非人工续测授权不可携带人工摘要');
   const from = Date.parse(a.approvedAt),
     until = Date.parse(a.expiresAt);
   if (
@@ -398,6 +420,10 @@ export function validateAuthorization(
     throw new BlockedError('授权与目标提交/目录不一致');
   if (a.targetSha256 !== targetFingerprint(target))
     throw new BlockedError('授权未绑定当前完整目标配置，或启动命令/环境/路由/门槛已改变');
+  if (purpose.phase === 'manual-followup') {
+    assertAuthorizedAction(a, 'observe-owned-environment');
+    return; // Existing environment only: this authority never permits starting or faulting it.
+  }
   const requiredActions = [
     'start-isolated-sut',
     'create-owned-database',
@@ -419,15 +445,29 @@ export function assertAuthorizedAction(a: Authorization, action: string): void {
   if (!Array.isArray(a.allowedActions) || !a.allowedActions.includes(action))
     throw new BlockedError(`授权范围缺少 ${action}`);
 }
-export async function requireAuthorization(target: TargetConfig): Promise<Authorization> {
+export async function requireAuthorization(
+  target: TargetConfig,
+  entry?: 'manual-followup',
+): Promise<Authorization> {
   const file = process.env.QA_EXECUTION_AUTHORIZATION;
   if (!file)
     throw new BlockedError('尚未授权执行产品验收；仅可运行 test:self/typecheck/check:catalog');
   const a = JSON.parse(await readFile(file, 'utf8')) as Authorization;
   a.sutDirectory = await realpath(a.sutDirectory);
-  const purpose = executionPurpose();
+  const purpose =
+    process.env.QA_EXECUTION_KIND === 'manual-followup'
+      ? manualFollowupPurpose()
+      : executionPurpose();
+  if ((purpose.phase === 'manual-followup') !== (entry === 'manual-followup'))
+    throw new BlockedError('人工续测窄授权仅可用于人工入口，不能借用现有产品启动/故障注入入口');
   let verifiedProjects: readonly string[] | undefined;
-  if (purpose.phase !== 'execution') {
+  if (purpose.phase === 'manual-followup') {
+    const { readManualFollowupScope, manualScopeFingerprint } =
+      await import('./manual-followup.js');
+    const scope = await readManualFollowupScope(fileURLToPath(new URL('../', import.meta.url)));
+    if (manualScopeFingerprint(scope) !== purpose.manualScopeSha256)
+      throw new BlockedError('人工续测三条用例或原需求摘要已改变');
+  } else if (purpose.phase !== 'execution') {
     // Resolve QA metadata and recheck the selected digest on every authorization
     // check, including fixture/restart calls. Never trust an environment project list.
     const { currentExecutionPlan } = await import('./execution-plan.js');

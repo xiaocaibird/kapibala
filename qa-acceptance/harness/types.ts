@@ -131,10 +131,16 @@ export interface Authorization {
   sutDirectory: string;
   targetSha256: string;
   allowedActions: string[];
-  scope: 'all-required' | 'all-business' | 'developer-preflight';
+  scope: 'all-required' | 'all-business' | 'developer-preflight' | 'manual-followup';
   suiteId?: string;
   suiteSha256?: string;
   businessSha256?: string;
+  manualScopeSha256?: string;
+}
+
+export interface ManualFollowupPurpose {
+  phase: 'manual-followup';
+  manualScopeSha256: string;
 }
 
 export type ExecutionPurpose =

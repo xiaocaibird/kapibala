@@ -2,6 +2,16 @@ import { test, expect } from '../fixtures.js';
 import { eventually, type AgentRun, type Group } from '../../harness/platform-client.js';
 import type { QaEnvironment } from '../../harness/environment.js';
 import { BlockedError } from '../../harness/security.js';
+import { observe } from '../../harness/observation.js';
+import {
+  runtimeObservationFor,
+  type RuntimeLease,
+  type RuntimeObservation,
+} from '../../harness/runtime-observation.js';
+import {
+  assertSingleEpochActivityBudget,
+  optionalActivityObservation,
+} from '../support/agent-activity-budget.js';
 
 type Block = {
   type: string;
@@ -771,7 +781,7 @@ test('[AGENT-024] turn timeout records error and late response never sends a mes
 test('[AGENT-025] run reaches sixty-second active wall-clock budget including slow turns', async ({
   qa,
 }) => {
-  test.setTimeout(80_000);
+  test.setTimeout(100_000);
   await qa.api.login();
   const { group } = await qa.api.createGroup();
   qa.agent.enqueueTurns(
@@ -780,32 +790,157 @@ test('[AGENT-025] run reaches sixty-second active wall-clock budget including sl
       responseDelayMs: 8_000,
     })),
   );
-  const creationLower = Date.now();
-  const id = await trigger(qa, group);
-  const creationUpper = Date.now();
-  const observed = await observeRun(
-    qa,
-    id,
-    (run) => run.status !== 'running',
-    creationLower,
-    65_000,
-  );
-  expect(observed.run.status).toBe('failed');
-  expect(observed.run.endReason).toBe('wall_clock');
-  expect(observed.run.steps.length).toBeLessThan(12);
-  for (const request of qa.agent.snapshot().turns)
-    expect(
-      Date.parse(request.at) - creationUpper,
-      'A new turn after the latest possible budget deadline is forbidden',
-    ).toBeLessThanOrEqual(60_000);
-  await timingInterval(
-    qa,
-    'wall-clock-window',
-    [creationLower, creationUpper],
-    [observed.lower, observed.upper],
-    60_000,
-    60_000,
-  );
+  const missing: string[] = [];
+  const gatewayBefore = qa.gateway.snapshot();
+  let control: RuntimeObservation | undefined;
+  let lease: RuntimeLease | undefined;
+  let failed = false;
+  try {
+    const verified = await optionalActivityObservation(
+      'verify before trigger',
+      async () => {
+        control = runtimeObservationFor(qa);
+        await control.verify(['activity-witness']);
+        return control;
+      },
+      missing,
+    );
+    const creationLower = Date.now();
+    const creationLowerMono = performance.now();
+    const id = await trigger(qa, group);
+    const creationUpperMono = performance.now();
+    const creationUpper = Date.now();
+    // The public trigger supplies the real runId. The reviewed engineering
+    // observer retains creation since module boot; a late subscription alone
+    // is NOT a complete witness and must never fabricate a creation event.
+    if (verified)
+      lease = await optionalActivityObservation(
+        'arm real run after creation',
+        () =>
+          verified.arm('observe-activity', {
+            kind: 'activity',
+            groupId: group.id,
+            runId: id,
+            toolUseId: 'all-run-steps',
+          }),
+        missing,
+      );
+    let lastRunningLower = creationLower;
+    let lastRunningLowerMono = creationLowerMono;
+    const observed = await observe({
+      read: async () => {
+        const before = Date.now(),
+          beforeMono = performance.now();
+        const run = await qa.api.agentRun(id);
+        if (run.status === 'running') {
+          lastRunningLower = before;
+          lastRunningLowerMono = beforeMono;
+        }
+        return { run, after: Date.now(), afterMono: performance.now() };
+      },
+      invariant: ({ run }) => {
+        expect(run.id).toBe(id);
+        expect(run.groupId).toBe(group.id);
+        expect(run.steps.length).toBeLessThanOrEqual(12);
+      },
+      complete: ({ run }) => run.status !== 'running',
+      durationMs: Math.max(0, 65_000 - (performance.now() - creationLowerMono)),
+    });
+    const { run } = observed.last;
+    // Check public facts even if no controller/configuration or complete time
+    // witness is available. An independent violation must remain FAIL.
+    const assertExternalFacts = () => {
+      expect(qa.agent.snapshot().audits).toHaveLength(0);
+      expect(
+        qa.gateway.snapshot().requests.filter((request) => /\/(send|kick)$/.test(request.path)),
+      ).toHaveLength(0);
+      expect(
+        qa.gateway
+          .snapshot()
+          .effects.filter((effect) => effect.kind === 'send' || effect.kind === 'kick'),
+      ).toHaveLength(0);
+      expect(qa.gateway.snapshot().effects).toEqual(gatewayBefore.effects);
+      expect(
+        qa.gateway
+          .snapshot()
+          .requests.filter((request) => request.method !== 'GET')
+          .map((request) => request.id),
+      ).toEqual(
+        gatewayBefore.requests
+          .filter((request) => request.method !== 'GET')
+          .map((request) => request.id),
+      );
+      for (const request of qa.agent.snapshot().turns)
+        expect(
+          Date.parse(request.at) - creationUpper,
+          'A new turn after the latest possible budget deadline is forbidden',
+        ).toBeLessThanOrEqual(60_000);
+    };
+    assertExternalFacts();
+    if (observed.complete) {
+      expect(run.status).toBe('failed');
+      expect(run.endReason).toBe('wall_clock');
+      expect(run.steps.length).toBeLessThan(12);
+      expect((await qa.api.group(group.id)).activeAgentRunId).toBeNull();
+    }
+    const witnessReadBeforeMono = performance.now();
+    const witness =
+      lease &&
+      (await optionalActivityObservation(
+        'final activity snapshot',
+        () => (observed.complete ? lease!.waitFor('activity-terminal', 5000) : lease!.snapshot()),
+        missing,
+      ));
+    const witnessReadAfterMono = performance.now();
+    assertExternalFacts();
+    const online: [number, number] = [
+      Math.max(0, lastRunningLowerMono - creationUpperMono),
+      (observed.complete ? observed.last.afterMono : witnessReadAfterMono) - creationLowerMono,
+    ];
+    await qa.evidence('wall-clock-window', {
+      start: [creationLower, creationUpper],
+      end: [lastRunningLower, observed.last.after],
+      monotonicStart: [creationLowerMono, creationUpperMono],
+      monotonicEnd: [lastRunningLowerMono, observed.last.afterMono],
+      independentOnlineMs: online,
+      witnessReadMonotonic: [witnessReadBeforeMono, witnessReadAfterMono],
+      publicTerminalObserved: observed.complete,
+      runId: id,
+      groupId: group.id,
+      status: run.status,
+      endReason: run.endReason,
+      observationMode: 'module-start-retention; subscribed after actual runId creation',
+      witness: witness ?? lease?.latest ?? null,
+      gatewayMutationBaseline: gatewayBefore.effects,
+      gatewayMutationRequestBaseline: gatewayBefore.requests
+        .filter((request) => request.method !== 'GET')
+        .map((request) => request.id),
+      missing,
+      diagnosticBudgetMs: 65_000,
+    });
+    assertSingleEpochActivityBudget(
+      (witness ?? lease?.latest)?.events ?? [],
+      online,
+      run.endReason ?? '',
+    );
+    if (!observed.complete)
+      throw new BlockedError('65秒诊断窗口内未观察到公开终态；未另设产品终态SLA');
+    if (missing.length) throw new BlockedError(missing.join('; '));
+  } catch (error) {
+    failed = true;
+    throw error;
+  } finally {
+    try {
+      await control?.close();
+    } catch (error) {
+      try {
+        await qa.evidence('activity-observation-cleanup-failure', { error: String(error) });
+      } catch {
+        /* Preserve the original failure if evidence storage also fails. */
+      }
+      if (!failed) throw error;
+    }
+  }
 });
 
 test('[AGENT-026] no online member returns NO_AVAILABLE_ACCOUNT as ordinary tool error', async ({

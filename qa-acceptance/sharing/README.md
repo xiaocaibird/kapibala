@@ -20,6 +20,8 @@
 
 新增用例不会因 ID 前缀相同而自动进入子集；QA 显式维护 ID 清单，审查子集变化。未选中的用例仍留在完整 catalog 与报告中，状态继续 `NOT_RUN`，不能从覆盖分母中无声消失。
 
+后续 `evidence-followup-20261001` 仅选七项工程补证，登记不表示已接入或执行；[交接与边界](../requirements/evidence-followup/README.md)列出具体依赖。三项真人体验使用[独立指引](manual-execution-20261001.md)，不计入七项预跑，也不把该预跑作为人工正式结果录入目标。
+
 ## 静态核对
 
 在 `qa-acceptance` 目录执行以下命令只读取 QA 数据并执行 Playwright `--list` 登记，不启动产品或 fixture：
