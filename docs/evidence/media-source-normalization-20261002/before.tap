@@ -1,0 +1,268 @@
+TAP version 13
+# Subtest: C1 rejects dangerous source syntax before URL normalization can erase it
+not ok 1 - C1 rejects dangerous source syntax before URL normalization can erase it
+  ---
+  duration_ms: 1.873
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-source-url.test.ts:1:1211'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+    +   'http://127.0.0.1:3101/media/escape',
+    +   'http://127.0.0.1:3101/media/escape',
+    +   'http://127.0.0.1:3101/media/from-private',
+    +   'http://127.0.0.1:3101/media/from-private',
+    +   'http://127.0.0.1:3101/media/encoded-escape',
+    +   'http://127.0.0.1:3101/media/encoded-escape',
+    +   'http://127.0.0.1:3101/media/mixed-escape',
+    +   'http://127.0.0.1:3101/media/mixed-escape',
+    +   'http://127.0.0.1:3101/media/upper-escape',
+    +   'http://127.0.0.1:3101/media/upper-escape',
+    +   'http://127.0.0.1:3101/media/single-dot',
+    +   'http://127.0.0.1:3101/media/single-dot',
+    +   'http://127.0.0.1:3101/media/encoded-single-dot',
+    +   'http://127.0.0.1:3101/media/encoded-single-dot',
+    +   'http://127.0.0.1:3101/media/backslash',
+    +   'http://127.0.0.1:3101/media/backslash',
+    +   'http://127.0.0.1:3101/media/slash-escape',
+    +   'http://127.0.0.1:3101/media/slash-escape',
+    +   'http://127.0.0.1:3101/media/tab-escape',
+    +   'http://127.0.0.1:3101/media/tab-escape',
+    +   'http://127.0.0.1:3101/media/newline',
+    +   'http://127.0.0.1:3101/media/newline',
+    +   'http://127.0.0.1:3101/media/carriagereturn',
+    +   'http://127.0.0.1:3101/media/carriagereturn'
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL',
+    -   'UNTRUSTED_MEDIA_URL'
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 'UNTRUSTED_MEDIA_URL'
+    1: 'UNTRUSTED_MEDIA_URL'
+    2: 'UNTRUSTED_MEDIA_URL'
+    3: 'UNTRUSTED_MEDIA_URL'
+    4: 'UNTRUSTED_MEDIA_URL'
+    5: 'UNTRUSTED_MEDIA_URL'
+    6: 'UNTRUSTED_MEDIA_URL'
+    7: 'UNTRUSTED_MEDIA_URL'
+    8: 'UNTRUSTED_MEDIA_URL'
+    9: 'UNTRUSTED_MEDIA_URL'
+    10: 'UNTRUSTED_MEDIA_URL'
+    11: 'UNTRUSTED_MEDIA_URL'
+    12: 'UNTRUSTED_MEDIA_URL'
+    13: 'UNTRUSTED_MEDIA_URL'
+    14: 'UNTRUSTED_MEDIA_URL'
+    15: 'UNTRUSTED_MEDIA_URL'
+    16: 'UNTRUSTED_MEDIA_URL'
+    17: 'UNTRUSTED_MEDIA_URL'
+    18: 'UNTRUSTED_MEDIA_URL'
+    19: 'UNTRUSTED_MEDIA_URL'
+    20: 'UNTRUSTED_MEDIA_URL'
+    21: 'UNTRUSTED_MEDIA_URL'
+    22: 'UNTRUSTED_MEDIA_URL'
+    23: 'UNTRUSTED_MEDIA_URL'
+  actual:
+    0: 'http://127.0.0.1:3101/media/escape'
+    1: 'http://127.0.0.1:3101/media/escape'
+    2: 'http://127.0.0.1:3101/media/from-private'
+    3: 'http://127.0.0.1:3101/media/from-private'
+    4: 'http://127.0.0.1:3101/media/encoded-escape'
+    5: 'http://127.0.0.1:3101/media/encoded-escape'
+    6: 'http://127.0.0.1:3101/media/mixed-escape'
+    7: 'http://127.0.0.1:3101/media/mixed-escape'
+    8: 'http://127.0.0.1:3101/media/upper-escape'
+    9: 'http://127.0.0.1:3101/media/upper-escape'
+    10: 'http://127.0.0.1:3101/media/single-dot'
+    11: 'http://127.0.0.1:3101/media/single-dot'
+    12: 'http://127.0.0.1:3101/media/encoded-single-dot'
+    13: 'http://127.0.0.1:3101/media/encoded-single-dot'
+    14: 'http://127.0.0.1:3101/media/backslash'
+    15: 'http://127.0.0.1:3101/media/backslash'
+    16: 'http://127.0.0.1:3101/media/slash-escape'
+    17: 'http://127.0.0.1:3101/media/slash-escape'
+    18: 'http://127.0.0.1:3101/media/tab-escape'
+    19: 'http://127.0.0.1:3101/media/tab-escape'
+    20: 'http://127.0.0.1:3101/media/newline'
+    21: 'http://127.0.0.1:3101/media/newline'
+    22: 'http://127.0.0.1:3101/media/carriagereturn'
+    23: 'http://127.0.0.1:3101/media/carriagereturn'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-source-url.test.ts:46:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.start (node:internal/test_runner/test:1262:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+  ...
+# {"facts":[{"source":"/media/denied/../escape","result":"http://127.0.0.1:3101/media/escape"},{"source":"http://127.0.0.1:3101/media/denied/../escape","result":"http://127.0.0.1:3101/media/escape"},{"source":"/private/../media/from-private","result":"http://127.0.0.1:3101/media/from-private"},{"source":"http://127.0.0.1:3101/private/../media/from-private","result":"http://127.0.0.1:3101/media/from-private"},{"source":"/media/denied/%2e%2e/encoded-escape","result":"http://127.0.0.1:3101/media/encoded-escape"},{"source":"http://127.0.0.1:3101/media/denied/%2e%2e/encoded-escape","result":"http://127.0.0.1:3101/media/encoded-escape"},{"source":"/media/denied/.%2e/mixed-escape","result":"http://127.0.0.1:3101/media/mixed-escape"},{"source":"http://127.0.0.1:3101/media/denied/.%2e/mixed-escape","result":"http://127.0.0.1:3101/media/mixed-escape"},{"source":"/media/denied/%2E./upper-escape","result":"http://127.0.0.1:3101/media/upper-escape"},{"source":"http://127.0.0.1:3101/media/denied/%2E./upper-escape","result":"http://127.0.0.1:3101/media/upper-escape"},{"source":"/media/./single-dot","result":"http://127.0.0.1:3101/media/single-dot"},{"source":"http://127.0.0.1:3101/media/./single-dot","result":"http://127.0.0.1:3101/media/single-dot"},{"source":"/media/%2e/encoded-single-dot","result":"http://127.0.0.1:3101/media/encoded-single-dot"},{"source":"http://127.0.0.1:3101/media/%2e/encoded-single-dot","result":"http://127.0.0.1:3101/media/encoded-single-dot"},{"source":"\\\\media\\\\backslash","result":"http://127.0.0.1:3101/media/backslash"},{"source":"http://127.0.0.1:3101\\\\media\\\\backslash","result":"http://127.0.0.1:3101/media/backslash"},{"source":"/media/denied\\\\..\\\\slash-escape","result":"http://127.0.0.1:3101/media/slash-escape"},{"source":"http://127.0.0.1:3101/media/denied\\\\..\\\\slash-escape","result":"http://127.0.0.1:3101/media/slash-escape"},{"source":"/med\\tia/tab-escape","result":"http://127.0.0.1:3101/media/tab-escape"},{"source":"http://127.0.0.1:3101/med\\tia/tab-escape","result":"http://127.0.0.1:3101/media/tab-escape"},{"source":"/media/new\\nline","result":"http://127.0.0.1:3101/media/newline"},{"source":"http://127.0.0.1:3101/media/new\\nline","result":"http://127.0.0.1:3101/media/newline"},{"source":"/media/carriage\\rreturn","result":"http://127.0.0.1:3101/media/carriagereturn"},{"source":"http://127.0.0.1:3101/media/carriage\\rreturn","result":"http://127.0.0.1:3101/media/carriagereturn"}]}
+# Subtest: C1 preserves supported same-origin media identifiers and the root endpoint
+ok 2 - C1 preserves supported same-origin media identifiers and the root endpoint
+  ---
+  duration_ms: 0.409209
+  type: 'test'
+  ...
+# Subtest: C1 real worker processes reject raw unsafe sources without owned HTTP dispatch and preserve text
+not ok 3 - C1 real worker processes reject raw unsafe sources without owned HTTP dispatch and preserve text
+  ---
+  duration_ms: 1841.623375
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-source-url.test.ts:1:2478'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        {
+          method: 'GET',
+          url: '/media/ok-start'
+        },
+        {
+          method: 'GET',
+    +     url: '/media/escape'
+    +   },
+    +   {
+    +     method: 'GET',
+    +     url: '/media/from-private'
+    +   },
+    +   {
+    +     method: 'GET',
+    +     url: '/media/encoded-escape'
+    +   },
+    +   {
+    +     method: 'GET',
+    +     url: '/media/mixed-escape'
+    +   },
+    +   {
+    +     method: 'GET',
+    +     url: '/media/upper-escape'
+    +   },
+    +   {
+    +     method: 'GET',
+    +     url: '/media/single-dot'
+    +   },
+    +   {
+    +     method: 'GET',
+    +     url: '/media/encoded-single-dot'
+    +   },
+    +   {
+    +     method: 'GET',
+    +     url: '/media/backslash'
+    +   },
+    +   {
+    +     method: 'GET',
+    +     url: '/media/slash-escape'
+    +   },
+    +   {
+    +     method: 'GET',
+    +     url: '/media/tab-escape'
+    +   },
+    +   {
+    +     method: 'GET',
+    +     url: '/media/newline'
+    +   },
+    +   {
+    +     method: 'GET',
+    +     url: '/media/carriagereturn'
+    +   },
+    +   {
+    +     method: 'GET',
+          url: '/media/ok-end'
+        }
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      method: 'GET'
+      url: '/media/ok-start'
+    1:
+      method: 'GET'
+      url: '/media/ok-end'
+  actual:
+    0:
+      method: 'GET'
+      url: '/media/ok-start'
+    1:
+      method: 'GET'
+      url: '/media/escape'
+    2:
+      method: 'GET'
+      url: '/media/from-private'
+    3:
+      method: 'GET'
+      url: '/media/encoded-escape'
+    4:
+      method: 'GET'
+      url: '/media/mixed-escape'
+    5:
+      method: 'GET'
+      url: '/media/upper-escape'
+    6:
+      method: 'GET'
+      url: '/media/single-dot'
+    7:
+      method: 'GET'
+      url: '/media/encoded-single-dot'
+    8:
+      method: 'GET'
+      url: '/media/backslash'
+    9:
+      method: 'GET'
+      url: '/media/slash-escape'
+    10:
+      method: 'GET'
+      url: '/media/tab-escape'
+    11:
+      method: 'GET'
+      url: '/media/newline'
+    12:
+      method: 'GET'
+      url: '/media/carriagereturn'
+    13:
+      method: 'GET'
+      url: '/media/ok-end'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-source-url.test.ts:200:12)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# {"database":"kapibala_test_49a1203e08444ca3ae4cc7c12cdac3f4","directory":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5","origin":"http://127.0.0.1:59403","processes":8,"requests":[{"method":"GET","url":"/media/ok-start"},{"method":"GET","url":"/media/escape"},{"method":"GET","url":"/media/from-private"},{"method":"GET","url":"/media/encoded-escape"},{"method":"GET","url":"/media/mixed-escape"},{"method":"GET","url":"/media/upper-escape"},{"method":"GET","url":"/media/single-dot"},{"method":"GET","url":"/media/encoded-single-dot"},{"method":"GET","url":"/media/backslash"},{"method":"GET","url":"/media/slash-escape"},{"method":"GET","url":"/media/tab-escape"},{"method":"GET","url":"/media/newline"},{"method":"GET","url":"/media/carriagereturn"},{"method":"GET","url":"/media/ok-end"}],"rows":[{"msg_id":"ok-end","source_url":"http://127.0.0.1:59403/media/ok-end","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-16876fcb-f9e9-481c-9482-a98b718d7de1.bin","text":"text-ok-end","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-16876fcb-f9e9-481c-9482-a98b718d7de1.bin"},{"msg_id":"ok-start","source_url":"/media/ok-start","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-a7c0c64d-bf92-4400-9757-aa83b7227f43.bin","text":"text-ok-start","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-a7c0c64d-bf92-4400-9757-aa83b7227f43.bin"},{"msg_id":"unsafe-0","source_url":"http://127.0.0.1:59403/media/denied/../escape","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-785b839e-ecdd-43b5-9bf7-f1853fe1230c.bin","text":"text-unsafe-0","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-785b839e-ecdd-43b5-9bf7-f1853fe1230c.bin"},{"msg_id":"unsafe-1","source_url":"/private/../media/from-private","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-0e37960b-11fd-4afe-abf7-5c62a465a0b9.bin","text":"text-unsafe-1","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-0e37960b-11fd-4afe-abf7-5c62a465a0b9.bin"},{"msg_id":"unsafe-10","source_url":"/media/new\\nline","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-8879114b-3530-47bb-801f-b2e4e9ed6106.bin","text":"text-unsafe-10","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-8879114b-3530-47bb-801f-b2e4e9ed6106.bin"},{"msg_id":"unsafe-11","source_url":"/media/carriage\\rreturn","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-cf38a725-8cb1-4c7d-b4f6-03b198e5375a.bin","text":"text-unsafe-11","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-cf38a725-8cb1-4c7d-b4f6-03b198e5375a.bin"},{"msg_id":"unsafe-2","source_url":"/media/denied/%2e%2e/encoded-escape","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-77c12779-5f28-4e43-883d-ef8d364f9f4c.bin","text":"text-unsafe-2","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-77c12779-5f28-4e43-883d-ef8d364f9f4c.bin"},{"msg_id":"unsafe-3","source_url":"/media/denied/.%2e/mixed-escape","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-34d994bc-c319-4843-8fb7-c46fe511c6c9.bin","text":"text-unsafe-3","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-34d994bc-c319-4843-8fb7-c46fe511c6c9.bin"},{"msg_id":"unsafe-4","source_url":"/media/denied/%2E./upper-escape","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-d74ac757-7bab-449c-bee7-e5f39233f1d6.bin","text":"text-unsafe-4","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-d74ac757-7bab-449c-bee7-e5f39233f1d6.bin"},{"msg_id":"unsafe-5","source_url":"/media/./single-dot","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-9408a4e9-d548-43e6-a83e-aa1c753c9744.bin","text":"text-unsafe-5","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-9408a4e9-d548-43e6-a83e-aa1c753c9744.bin"},{"msg_id":"unsafe-6","source_url":"/media/%2e/encoded-single-dot","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-1c187e8a-30fe-4793-8689-d43851f6cccc.bin","text":"text-unsafe-6","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-1c187e8a-30fe-4793-8689-d43851f6cccc.bin"},{"msg_id":"unsafe-7","source_url":"\\\\media\\\\backslash","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-46cc722c-894e-4d9d-8b1c-ac143beb5bf9.bin","text":"text-unsafe-7","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-46cc722c-894e-4d9d-8b1c-ac143beb5bf9.bin"},{"msg_id":"unsafe-8","source_url":"/media/denied\\\\..\\\\slash-escape","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-d88e0391-4a2b-459d-8ec1-ab7b4ca2e1a8.bin","text":"text-unsafe-8","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-d88e0391-4a2b-459d-8ec1-ab7b4ca2e1a8.bin"},{"msg_id":"unsafe-9","source_url":"/med\\tia/tab-escape","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-0e45c2cc-12de-4f8e-83ee-b08496c76a05.bin","text":"text-unsafe-9","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-0NDKx5/media-0e45c2cc-12de-4f8e-83ee-b08496c76a05.bin"}],"storedFiles":["media-0e37960b-11fd-4afe-abf7-5c62a465a0b9.bin","media-0e45c2cc-12de-4f8e-83ee-b08496c76a05.bin","media-16876fcb-f9e9-481c-9482-a98b718d7de1.bin","media-1c187e8a-30fe-4793-8689-d43851f6cccc.bin","media-34d994bc-c319-4843-8fb7-c46fe511c6c9.bin","media-46cc722c-894e-4d9d-8b1c-ac143beb5bf9.bin","media-77c12779-5f28-4e43-883d-ef8d364f9f4c.bin","media-785b839e-ecdd-43b5-9bf7-f1853fe1230c.bin","media-8879114b-3530-47bb-801f-b2e4e9ed6106.bin","media-9408a4e9-d548-43e6-a83e-aa1c753c9744.bin","media-a7c0c64d-bf92-4400-9757-aa83b7227f43.bin","media-cf38a725-8cb1-4c7d-b4f6-03b198e5375a.bin","media-d74ac757-7bab-449c-bee7-e5f39233f1d6.bin","media-d88e0391-4a2b-459d-8ec1-ab7b4ca2e1a8.bin"]}
+1..3
+# tests 3
+# suites 0
+# pass 1
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2044.254208

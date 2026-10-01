@@ -1,0 +1,177 @@
+TAP version 13
+# Subtest: C1 idle ticks leave execution capacity free, while due downloads and cleanup still acquire the real lock
+ok 1 - C1 idle ticks leave execution capacity free, while due downloads and cleanup still acquire the real lock
+  ---
+  duration_ms: 216.066458
+  type: 'test'
+  ...
+# database=kapibala_test_15d3ff7d35374ff4bb210a09345377f9 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-KgzB4S
+# Subtest: C1 validates gateway media URLs and the default retention
+ok 2 - C1 validates gateway media URLs and the default retention
+  ---
+  duration_ms: 0.496083
+  type: 'test'
+  ...
+# Subtest: C1 upgrade queues legacy attachments and preserves references of existing running sessions
+ok 3 - C1 upgrade queues legacy attachments and preserves references of existing running sessions
+  ---
+  duration_ms: 82.055958
+  type: 'test'
+  ...
+# database=kapibala_test_4c939072abfe4d1db15ebcac7139188f files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-migrations-F0rl7W
+# Subtest: C1 downloads once across duplicate events/workers and keeps message text
+ok 4 - C1 downloads once across duplicate events/workers and keeps message text
+  ---
+  duration_ms: 213.260875
+  type: 'test'
+  ...
+# database=kapibala_test_aa93d834c3824812a6ed7250e022368f files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-6mFRZC
+# Subtest: C1 transient failure retries later; expired URL, redirect, and oversized body remain unavailable
+ok 5 - C1 transient failure retries later; expired URL, redirect, and oversized body remain unavailable
+  ---
+  duration_ms: 171.404
+  type: 'test'
+  ...
+# database=kapibala_test_5127cd7f0d72460f96a8be44b5d56fdd files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-DVbX80
+# Subtest: C1 timeout leaves no pointer and a replacement worker retries the interrupted body
+ok 6 - C1 timeout leaves no pointer and a replacement worker retries the interrupted body
+  ---
+  duration_ms: 153.972083
+  type: 'test'
+  ...
+# database=kapibala_test_a0a0181c7e334aac8294904e9cb9a841 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-g7uKFg
+# Subtest: C1 a local file-open failure closes the unconsumed HTTP response before its timeout
+ok 7 - C1 a local file-open failure closes the unconsumed HTTP response before its timeout
+  ---
+  duration_ms: 99.825125
+  type: 'test'
+  ...
+# database=kapibala_test_91bcdc4714644943b1c4a635c6192960 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-lmeLo6
+# Subtest: C1 own-message reconciliation preserves media attached before its acknowledgement
+ok 8 - C1 own-message reconciliation preserves media attached before its acknowledgement
+  ---
+  duration_ms: 123.1765
+  type: 'test'
+  ...
+# database=kapibala_test_0190d5013580470c831e9d2b1fd8dab4 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-fZkWj4
+# Subtest: C1 own-message acknowledgement and expiry cannot restore a deleted file pointer
+ok 9 - C1 own-message acknowledgement and expiry cannot restore a deleted file pointer
+  ---
+  duration_ms: 125.69225
+  type: 'test'
+  ...
+# database=kapibala_test_b547c4b5eb3c43fcad89965ce393c759 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-7R8cAl
+# Subtest: C1 configured retention preserves younger files and rejects a changed storage root
+ok 10 - C1 configured retention preserves younger files and rejects a changed storage root
+  ---
+  duration_ms: 139.538916
+  type: 'test'
+  ...
+# database=kapibala_test_6a64ce4ed66c4c4299098aee734ccbc7 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-FsyjJM
+# Subtest: C1 a failed unlink retains a retryable tombstone and does not stop other expired files
+ok 11 - C1 a failed unlink retains a retryable tombstone and does not stop other expired files
+  ---
+  duration_ms: 252.649125
+  type: 'test'
+  ...
+# database=kapibala_test_f076bb58b7d647758548d4208394cac4 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-QBHNZl
+# Subtest: C1 deletion clears message references and old cursor file availability without changing frozen content
+ok 12 - C1 deletion clears message references and old cursor file availability without changing frozen content
+  ---
+  duration_ms: 252.847875
+  type: 'test'
+  ...
+# database=kapibala_test_685eb3d7e60f47e3a0f5c512e1dd4ffb files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-19sz8i
+# Subtest: C1 durable references serialize with cleanup and protect paused running sessions after restart
+ok 13 - C1 durable references serialize with cleanup and protect paused running sessions after restart
+  ---
+  duration_ms: 250.492334
+  type: 'test'
+  ...
+# database=kapibala_test_599dedc4151b41d89ffaccd8184eaffd files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-T7ljnd
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: C1 actual Agent trigger and get_recent_messages register the files their messages reference
+ok 14 - C1 actual Agent trigger and get_recent_messages register the files their messages reference
+  ---
+  duration_ms: 312.789
+  type: 'test'
+  ...
+# database=kapibala_test_6750bbf633af4e8eb3d711994426ed3c files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-5oeUwB
+# Subtest: C1 cleanup winning the row lock prevents a new run from pinning an unavailable file
+ok 15 - C1 cleanup winning the row lock prevents a new run from pinning an unavailable file
+  ---
+  duration_ms: 528.420125
+  type: 'test'
+  ...
+# database=kapibala_test_87477d38457e4026a67febfc983286f0 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-NhsXR9
+# Subtest: C1 SIGKILL during a streamed body discards its partial and retries on restart
+ok 16 - C1 SIGKILL during a streamed body discards its partial and retries on restart
+  ---
+  duration_ms: 367.965792
+  type: 'test'
+  ...
+# database=kapibala_test_ec3d62067c2440a6a389cab22eb79ec9 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-9uVCSn
+# confirmed SIGKILL with persisted partial; restarted body is complete and partial is gone
+# Subtest: C1 SIGKILL at ready DB save recovers from the durable filesystem/intent boundary
+ok 17 - C1 SIGKILL at ready DB save recovers from the durable filesystem/intent boundary
+  ---
+  duration_ms: 10293.331917
+  type: 'test'
+  ...
+# database=kapibala_test_76f97dd4e55b4d57af09a7d2b72a1c38 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-Trkk1l
+# confirmed child SIGKILL at ready; recovered state=ready; HTTP downloads=1
+# Subtest: C1 SIGKILL at deleted DB save recovers from the durable filesystem/intent boundary
+ok 18 - C1 SIGKILL at deleted DB save recovers from the durable filesystem/intent boundary
+  ---
+  duration_ms: 10277.669625
+  type: 'test'
+  ...
+# database=kapibala_test_107ce1ce47294d5dba1493bbbb0eb33e files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-IKlEut
+# confirmed child SIGKILL at deleted; recovered state=deleted; HTTP downloads=1
+# Subtest: C1 SIGKILL at rejected DB save recovers from the durable filesystem/intent boundary
+ok 19 - C1 SIGKILL at rejected DB save recovers from the durable filesystem/intent boundary
+  ---
+  duration_ms: 10305.522875
+  type: 'test'
+  ...
+# database=kapibala_test_da58ee87d232412c85006e7e104305c2 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-JoiUWC
+# {"checkpoint":"ready","loweredMaxBytes":4,"state":"deleted","runningPin":false,"fileStillExists":false,"localFilePath":null,"downloads":1}
+# rejected complete body removed through durable deletion, after any running reference ends
+# Subtest: C1 SIGKILL at rejected-pinned DB save recovers from the durable filesystem/intent boundary
+ok 20 - C1 SIGKILL at rejected-pinned DB save recovers from the durable filesystem/intent boundary
+  ---
+  duration_ms: 10348.573208
+  type: 'test'
+  ...
+# database=kapibala_test_4871157c5d5c4d2e8fa0c8f602bfa897 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-YYxECY
+# {"checkpoint":"ready","loweredMaxBytes":4,"state":"deleting","runningPin":true,"fileStillExists":true,"localFilePath":null,"downloads":1}
+# rejected complete body removed through durable deletion, after any running reference ends
+# Subtest: C1 rejects dangerous source syntax before URL normalization can erase it
+ok 21 - C1 rejects dangerous source syntax before URL normalization can erase it
+  ---
+  duration_ms: 2.434583
+  type: 'test'
+  ...
+# {"facts":[{"source":"/media/denied/../escape","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101/media/denied/../escape","result":"UNTRUSTED_MEDIA_URL"},{"source":"/private/../media/from-private","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101/private/../media/from-private","result":"UNTRUSTED_MEDIA_URL"},{"source":"/media/denied/%2e%2e/encoded-escape","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101/media/denied/%2e%2e/encoded-escape","result":"UNTRUSTED_MEDIA_URL"},{"source":"/media/denied/.%2e/mixed-escape","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101/media/denied/.%2e/mixed-escape","result":"UNTRUSTED_MEDIA_URL"},{"source":"/media/denied/%2E./upper-escape","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101/media/denied/%2E./upper-escape","result":"UNTRUSTED_MEDIA_URL"},{"source":"/media/./single-dot","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101/media/./single-dot","result":"UNTRUSTED_MEDIA_URL"},{"source":"/media/%2e/encoded-single-dot","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101/media/%2e/encoded-single-dot","result":"UNTRUSTED_MEDIA_URL"},{"source":"\\\\media\\\\backslash","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101\\\\media\\\\backslash","result":"UNTRUSTED_MEDIA_URL"},{"source":"/media/denied\\\\..\\\\slash-escape","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101/media/denied\\\\..\\\\slash-escape","result":"UNTRUSTED_MEDIA_URL"},{"source":"/med\\tia/tab-escape","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101/med\\tia/tab-escape","result":"UNTRUSTED_MEDIA_URL"},{"source":"/media/new\\nline","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101/media/new\\nline","result":"UNTRUSTED_MEDIA_URL"},{"source":"/media/carriage\\rreturn","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101/media/carriage\\rreturn","result":"UNTRUSTED_MEDIA_URL"},{"source":"http:../media/scheme-parent","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101http:../media/scheme-parent","result":"UNTRUSTED_MEDIA_URL"},{"source":"http:./media/scheme-dot","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101http:./media/scheme-dot","result":"UNTRUSTED_MEDIA_URL"},{"source":"http:%2e%2e/media/scheme-encoded-parent","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101http:%2e%2e/media/scheme-encoded-parent","result":"UNTRUSTED_MEDIA_URL"},{"source":"http:.%2e/media/scheme-mixed-parent","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101http:.%2e/media/scheme-mixed-parent","result":"UNTRUSTED_MEDIA_URL"},{"source":"HTTP:../media/uppercase-scheme","result":"UNTRUSTED_MEDIA_URL"},{"source":"http://127.0.0.1:3101HTTP:../media/uppercase-scheme","result":"UNTRUSTED_MEDIA_URL"}]}
+# Subtest: C1 preserves supported same-origin media identifiers and the root endpoint
+ok 22 - C1 preserves supported same-origin media identifiers and the root endpoint
+  ---
+  duration_ms: 0.575375
+  type: 'test'
+  ...
+# Subtest: C1 real worker processes reject raw unsafe sources without owned HTTP dispatch and preserve text
+ok 23 - C1 real worker processes reject raw unsafe sources without owned HTTP dispatch and preserve text
+  ---
+  duration_ms: 1898.731833
+  type: 'test'
+  ...
+# {"database":"kapibala_test_36dc65d5ac25400f88cc620c605e84d3","directory":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-8ml1Lq","origin":"http://127.0.0.1:63524","processes":11,"requests":[{"method":"GET","url":"/media/ok-start"},{"method":"GET","url":"/media/ok-end"}],"rows":[{"msg_id":"ok-end","source_url":"http://127.0.0.1:63524/media/ok-end","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-8ml1Lq/media-d8098c75-1183-4126-9c10-d8e5c6256aab.bin","text":"text-ok-end","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-8ml1Lq/media-d8098c75-1183-4126-9c10-d8e5c6256aab.bin"},{"msg_id":"ok-start","source_url":"/media/ok-start","state":"ready","attempts":1,"last_error":null,"local_file_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-8ml1Lq/media-8225d5c6-6794-4ec2-9052-74c9d50a6081.bin","text":"text-ok-start","message_path":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-url-8ml1Lq/media-8225d5c6-6794-4ec2-9052-74c9d50a6081.bin"},{"msg_id":"unsafe-0","source_url":"http://127.0.0.1:63524/media/denied/../escape","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-0","message_path":null},{"msg_id":"unsafe-1","source_url":"/private/../media/from-private","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-1","message_path":null},{"msg_id":"unsafe-10","source_url":"/media/new\\nline","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-10","message_path":null},{"msg_id":"unsafe-11","source_url":"/media/carriage\\rreturn","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-11","message_path":null},{"msg_id":"unsafe-12","source_url":"http:../media/scheme-parent","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-12","message_path":null},{"msg_id":"unsafe-13","source_url":"http:./media/scheme-dot","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-13","message_path":null},{"msg_id":"unsafe-14","source_url":"http:%2e%2e/media/scheme-encoded-parent","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-14","message_path":null},{"msg_id":"unsafe-15","source_url":"http:.%2e/media/scheme-mixed-parent","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-15","message_path":null},{"msg_id":"unsafe-16","source_url":"HTTP:../media/uppercase-scheme","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-16","message_path":null},{"msg_id":"unsafe-2","source_url":"/media/denied/%2e%2e/encoded-escape","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-2","message_path":null},{"msg_id":"unsafe-3","source_url":"/media/denied/.%2e/mixed-escape","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-3","message_path":null},{"msg_id":"unsafe-4","source_url":"/media/denied/%2E./upper-escape","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-4","message_path":null},{"msg_id":"unsafe-5","source_url":"/media/./single-dot","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-5","message_path":null},{"msg_id":"unsafe-6","source_url":"/media/%2e/encoded-single-dot","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-6","message_path":null},{"msg_id":"unsafe-7","source_url":"\\\\media\\\\backslash","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-7","message_path":null},{"msg_id":"unsafe-8","source_url":"/media/denied\\\\..\\\\slash-escape","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-8","message_path":null},{"msg_id":"unsafe-9","source_url":"/med\\tia/tab-escape","state":"unavailable","attempts":0,"last_error":"UNTRUSTED_MEDIA_URL","local_file_path":null,"text":"text-unsafe-9","message_path":null}],"storedFiles":["media-8225d5c6-6794-4ec2-9052-74c9d50a6081.bin","media-d8098c75-1183-4126-9c10-d8e5c6256aab.bin"]}
+1..23
+# tests 23
+# suites 0
+# pass 23
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 44717.168875

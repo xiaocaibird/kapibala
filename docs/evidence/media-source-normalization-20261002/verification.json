@@ -1,0 +1,129 @@
+{
+  "verifiedAt": "2026-10-01T23:36:23.551913+00:00",
+  "productRevision": "22db66d7e82383eac17be6db85cf3e2bd512c975",
+  "qaOriginalProductRevision": "ed50ca14ae3f4140d7f020f282b313b137920209",
+  "developmentBaseRevision": "c0d98958a3b4fcb5d5529de2b3e3e816f5e23af5",
+  "qaAndDevelopmentBaseMediaFileByteEqual": true,
+  "baseMediaFileSha256": "bb9ca129ee27be0c9a2c1ebc5b4af13742059da5ffb9e44fe29d50f507aae00b",
+  "finalMediaFileSha256": "d23b89e291729d25e717752c5801cb8389c2bd778059a93ab64dbe5a792db1b7",
+  "finalTestSha256": "89858d41a908ef2b8f93532ace123642541294e2eb07a74e69cf948333895eba",
+  "stages": [
+    {
+      "metadata": "before.json",
+      "rawTap": "before.tap",
+      "productRevision": "c0d98958a3b4fcb5d5529de2b3e3e816f5e23af5",
+      "exitCode": 1,
+      "counts": {
+        "tests": 3,
+        "pass": 1,
+        "fail": 2,
+        "skipped": 0,
+        "cancelled": 0
+      },
+      "workerProcesses": 8,
+      "ownedHttpRequests": 14,
+      "persistedRows": 14
+    },
+    {
+      "metadata": "candidate-892-related.json",
+      "rawTap": "candidate-892-related.tap",
+      "productRevision": "892f4c07e030cb333fa06b40ef4a24a87a6c7174",
+      "exitCode": 0,
+      "counts": {
+        "tests": 23,
+        "pass": 23,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0
+      },
+      "workerProcesses": 8,
+      "ownedHttpRequests": 2,
+      "persistedRows": 14
+    },
+    {
+      "metadata": "candidate-scheme-before.json",
+      "rawTap": "candidate-scheme-before.tap",
+      "productRevision": "892f4c07e030cb333fa06b40ef4a24a87a6c7174",
+      "exitCode": 1,
+      "counts": {
+        "tests": 3,
+        "pass": 1,
+        "fail": 2,
+        "skipped": 0,
+        "cancelled": 0
+      },
+      "workerProcesses": 11,
+      "ownedHttpRequests": 7,
+      "persistedRows": 19
+    },
+    {
+      "metadata": "final-related.json",
+      "rawTap": "final-related.tap",
+      "productRevision": "22db66d7e82383eac17be6db85cf3e2bd512c975",
+      "exitCode": 0,
+      "counts": {
+        "tests": 23,
+        "pass": 23,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0
+      },
+      "workerProcesses": 11,
+      "ownedHttpRequests": 2,
+      "persistedRows": 19
+    }
+  ],
+  "finalPersistedUnsafeRows": 17,
+  "finalUnsafeRowsUnavailableWithZeroAttemptsAndNullPaths": true,
+  "qaArchives": [
+    {
+      "archive": "qa-result.json.gz",
+      "sourceStillByteExact": true,
+      "sha256": "46f7c18f7c3add64747ffcc5f2d7ffe88db36376debcf04a9f5cd57ddbbf4674"
+    },
+    {
+      "archive": "qa-variant-1-environment.json.gz",
+      "sourceStillByteExact": true,
+      "sha256": "7bde8746b4e5f7fd5dd848fe2cb1f3947567394bba46b8b62768bb2f3d0291e6"
+    },
+    {
+      "archive": "qa-variant-1-media-source-ledger.json.gz",
+      "sourceStillByteExact": true,
+      "sha256": "09679688a60f5b54aca8791b05aaf3dd0f20b8b3576ddff96ac09e72f259b299"
+    },
+    {
+      "archive": "qa-variant-1-media-download-cycle.json.gz",
+      "sourceStillByteExact": true,
+      "sha256": "a489e474ab903ba7ec2bb0c9af3811d4137fa4de765c632e53b80ff43d236adc"
+    },
+    {
+      "archive": "qa-variant-1-media-egress-snapshot.json.gz",
+      "sourceStillByteExact": true,
+      "sha256": "fdc119cdccc32934faf48eea4cc487a0622aa60686a1dd862bd5189004591feb"
+    }
+  ],
+  "recordedAdditionalChecks": [
+    {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "output": "final-typecheck.txt"
+    },
+    {
+      "command": "npm run verify:original",
+      "exitCode": 0,
+      "output": "final-original.txt"
+    }
+  ],
+  "cleanupConfirmed": {
+    "containerAbsent": true,
+    "ownedAnonymousVolumeAbsent": true,
+    "testDatabasesBeforeStop": 0,
+    "mediaDirectoriesAbsent": 42
+  },
+  "limits": [
+    "Development event handler invocation and actual worker subprocesses; not full standard-main SSE acceptance.",
+    "Owned HTTP request ledger and persistent rows only; not arbitrary whole-process egress coverage.",
+    "No QA source or results edited; independent QA retest remains separate.",
+    "No full project suite or frontend build in this task."
+  ]
+}

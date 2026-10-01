@@ -1,0 +1,22 @@
+diff --git a/apps/server/src/modules/media-files/index.ts b/apps/server/src/modules/media-files/index.ts
+index 05ee0d5..f895955 100644
+--- a/apps/server/src/modules/media-files/index.ts
++++ b/apps/server/src/modules/media-files/index.ts
+@@ -72,7 +72,16 @@ export function trustedMediaUrl(source: string, gateway: string): URL {
+   const base = new URL(gateway);
+   let url: URL;
+   try {
+-    if (source.length > 4096 || source !== source.trim()) throw new Error();
++    // URL parsing removes dot segments (including %2e), treats backslashes as
++    // separators and strips some controls. Reject their raw syntax before an
++    // untrusted path can normalize into the allowed /media/:id endpoint.
++    if (
++      source.length > 4096 ||
++      source !== source.trim() ||
++      /[\x00-\x1f\x7f\\]/.test(source) ||
++      /(?:^|\/)(?:\.|%2e){1,2}(?=\/|[?#]|$)/i.test(source)
++    )
++      throw new Error();
+     url = new URL(source, base);
+     const match = /^\/media\/([^/]+)$/.exec(url.pathname);
+     const id = match ? decodeURIComponent(match[1]!) : "";

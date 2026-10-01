@@ -1,0 +1,242 @@
+import assert from "node:assert/strict";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+import { test } from "node:test";
+import { mkdtemp, readFile, readdir, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import Fastify from "fastify";
+import { migrate } from "../../apps/server/src/core/migrations.js";
+import { RemoteClient } from "../../apps/server/src/core/remote.js";
+import { GatewayEvents } from "../../apps/server/src/modules/gateway/events.js";
+import { Messages } from "../../apps/server/src/modules/gateway/messages.js";
+import { trustedMediaUrl } from "../../apps/server/src/modules/media-files/index.js";
+import { temporaryDatabase } from "../support/temporary-database.js";
+
+const execute = promisify(execFile);
+const rejectedPaths = [
+  "/media/denied/../escape",
+  "/private/../media/from-private",
+  "/media/denied/%2e%2e/encoded-escape",
+  "/media/denied/.%2e/mixed-escape",
+  "/media/denied/%2E./upper-escape",
+  "/media/./single-dot",
+  "/media/%2e/encoded-single-dot",
+  "\\media\\backslash",
+  "/media/denied\\..\\slash-escape",
+  "/med\tia/tab-escape",
+  "/media/new\nline",
+  "/media/carriage\rreturn",
+  "http:../media/scheme-parent",
+  "http:./media/scheme-dot",
+  "http:%2e%2e/media/scheme-encoded-parent",
+  "http:.%2e/media/scheme-mixed-parent",
+  "HTTP:../media/uppercase-scheme",
+];
+
+test("C1 rejects dangerous source syntax before URL normalization can erase it", (t) => {
+  const gateway = "http://127.0.0.1:3101";
+  const facts = rejectedPaths
+    .flatMap((path) => [path, gateway + path])
+    .map((source) => {
+      let result: string;
+      try {
+        result = trustedMediaUrl(source, gateway).href;
+      } catch (error) {
+        result = (error as Error).message;
+      }
+      return { source, result };
+    });
+  t.diagnostic(JSON.stringify({ facts }));
+  assert.deepEqual(
+    facts.map((fact) => fact.result),
+    facts.map(() => "UNTRUSTED_MEDIA_URL"),
+  );
+});
+
+test("C1 preserves supported same-origin media identifiers and the root endpoint", () => {
+  for (const gateway of [
+    "http://127.0.0.1:3101",
+    "https://gateway.example",
+    "https://gateway.example/prefix/",
+  ]) {
+    const origin = new URL(gateway).origin;
+    for (const id of [
+      "file-1",
+      "a..b",
+      ".hidden",
+      "v1.2",
+      "a:..",
+      "a:.",
+      "a:%2e%2e",
+      "%252e",
+      "%2Ehidden",
+      "file%20name",
+      "%E4%B8%AD%E6%96%87",
+    ]) {
+      for (const source of [
+        `/media/${id}`,
+        `${origin}/media/${id}`,
+        `//${new URL(gateway).host}/media/${id}`,
+      ]) {
+        assert.equal(
+          trustedMediaUrl(source, gateway).href,
+          `${origin}/media/${id}`,
+        );
+      }
+    }
+    assert.throws(
+      () => trustedMediaUrl(`${origin}/prefix/media/file`, gateway),
+      /UNTRUSTED_MEDIA_URL/,
+    );
+  }
+  assert.equal(
+    trustedMediaUrl("media/file-1", "http://127.0.0.1:3101").href,
+    "http://127.0.0.1:3101/media/file-1",
+  );
+  assert.equal(
+    trustedMediaUrl("http:media/file-1", "http://127.0.0.1:3101").href,
+    "http://127.0.0.1:3101/media/file-1",
+  );
+  assert.equal(
+    trustedMediaUrl("file-1", "http://127.0.0.1:3101/media/").href,
+    "http://127.0.0.1:3101/media/file-1",
+  );
+  assert.equal(
+    trustedMediaUrl("http:file-1", "http://127.0.0.1:3101/media/").href,
+    "http://127.0.0.1:3101/media/file-1",
+  );
+});
+
+test(
+  "C1 real worker processes reject raw unsafe sources without owned HTTP dispatch and preserve text",
+  { timeout: 30000 },
+  async (t) => {
+    const temporary = await temporaryDatabase(t);
+    const { db } = temporary;
+    await migrate(db);
+    await db.query(
+      "INSERT INTO groups(id,gateway_group_id,creator_account_id) VALUES('url-group','url-remote','account-1')",
+    );
+    const directory = await mkdtemp(join(tmpdir(), "kapibala-media-url-"));
+    temporary.onCleanup(() => rm(directory, { recursive: true, force: true }));
+    const remote = Fastify({ logger: false });
+    temporary.onCleanup(() => remote.close());
+    const requests: { method: string; url: string }[] = [];
+    remote.addHook("onRequest", async (request) => {
+      requests.push({ method: request.method, url: request.raw.url! });
+    });
+    remote.get("/media/:id", (_request, reply) =>
+      reply
+        .type("application/octet-stream")
+        .send(Buffer.from("real attachment bytes")),
+    );
+    const origin = await remote.listen({ host: "127.0.0.1", port: 0 });
+    const ctx = {
+      db,
+      log: remote.log,
+      gateway: new RemoteClient(origin),
+      agent: new RemoteClient(origin),
+    };
+    const events = new GatewayEvents(ctx, new Messages(ctx));
+    let eventId = 1;
+    const inbound = (msgId: string, source: string) =>
+      events.process({
+        eventId: eventId++,
+        type: "message",
+        groupId: "url-remote",
+        msgId,
+        senderPlatformUserId: "external",
+        text: `text-${msgId}`,
+        sentAt: new Date().toISOString(),
+        mediaUrl: source,
+      });
+    let processes = 0;
+    async function worker() {
+      const result = await execute(
+        process.execPath,
+        ["--import", "tsx", "tests/support/media-worker-process.ts"],
+        {
+          env: {
+            ...process.env,
+            MEDIA_TEST_DATABASE_URL: temporary.url,
+            MEDIA_TEST_DIRECTORY: directory,
+            MEDIA_TEST_GATEWAY_URL: origin,
+          },
+          timeout: 20000,
+        },
+      );
+      processes++;
+      assert.equal(result.stderr, "");
+    }
+    await inbound("ok-start", "/media/ok-start");
+    await worker();
+    const initial = (
+      await db.query("SELECT * FROM media_files WHERE msg_id='ok-start'")
+    ).rows[0]!;
+    assert.equal(initial.state, "ready");
+    assert.equal(
+      await readFile(initial.local_file_path, "utf8"),
+      "real attachment bytes",
+    );
+    const unsafe = rejectedPaths.map((path, index) => ({
+      msgId: `unsafe-${index}`,
+      source: index === 0 ? origin + path : path,
+    }));
+    for (const input of unsafe) await inbound(input.msgId, input.source);
+    // Each actual worker tick has its unchanged two-file download limit.
+    for (let index = 0; index < Math.ceil(unsafe.length / 2); index++)
+      await worker();
+    await inbound("ok-end", `${origin}/media/ok-end`);
+    await worker();
+    const rows = (
+      await db.query<{
+        msg_id: string;
+        source_url: string;
+        state: string;
+        attempts: number;
+        last_error: string | null;
+        local_file_path: string | null;
+        text: string;
+        message_path: string | null;
+      }>(
+        "SELECT f.msg_id,f.source_url,f.state,f.attempts,f.last_error,f.local_file_path,m.text,m.local_file_path AS message_path FROM media_files f JOIN messages m ON m.group_id=f.group_id AND m.msg_id=f.msg_id ORDER BY f.msg_id",
+      )
+    ).rows;
+    t.diagnostic(
+      JSON.stringify({
+        database: new URL(temporary.url).pathname.slice(1),
+        directory,
+        origin,
+        processes,
+        requests,
+        rows,
+        storedFiles: await readdir(directory),
+      }),
+    );
+    assert.deepEqual(requests, [
+      { method: "GET", url: "/media/ok-start" },
+      { method: "GET", url: "/media/ok-end" },
+    ]);
+    for (const input of unsafe) {
+      const row = rows.find((row) => row.msg_id === input.msgId)!;
+      assert.deepEqual(row, {
+        msg_id: input.msgId,
+        source_url: input.source,
+        state: "unavailable",
+        attempts: 0,
+        last_error: "UNTRUSTED_MEDIA_URL",
+        local_file_path: null,
+        text: `text-${input.msgId}`,
+        message_path: null,
+      });
+    }
+    const final = rows.find((row) => row.msg_id === "ok-end")!;
+    assert.equal(final.state, "ready");
+    assert.equal(
+      await readFile(final.local_file_path!, "utf8"),
+      "real attachment bytes",
+    );
+    assert.equal((await readdir(directory)).length, 2);
+  },
+);
