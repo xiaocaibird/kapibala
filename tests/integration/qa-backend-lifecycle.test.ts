@@ -24,6 +24,74 @@ import { runtimeFixture } from "../support/runtime-observation-fixture.js";
 
 const time = (event: ObservationEvent) => (event.monotonicMs as number[])[0]!;
 
+test("audit-blocked lifecycle retains the real terminal transaction for a late subscription", async (t) => {
+  let witness!: LifecycleWitness;
+  const f = await automationFixture(t, undefined, undefined, (ctx) => {
+    witness = new LifecycleWitness(ctx.db);
+    ctx.testLifecycleObserver = witness;
+  });
+  f.onCleanup(() => witness.close());
+  await f.app.listen({ host: "127.0.0.1", port: 0 });
+  f.handlers.turn = () =>
+    tool("blocked-send", "send_message", {
+      text: "blocked",
+      idempotency_key: "blocked",
+    });
+  f.handlers.audit = () => ({ reason: "inconclusive" });
+  await f.inbound();
+  const runId = await f.start();
+  assert.equal((await f.complete(runId)).status, "blocked");
+  const binding: Binding = {
+    apiUrl: f.app.listeningOrigin,
+    revision: execFileSync("git", ["rev-parse", "HEAD"], {
+      encoding: "utf8",
+    }).trim(),
+    pid: process.pid,
+    observedOwnerToken: randomUUID(),
+  };
+  const snapshot = await witness.establish(
+    randomUUID(),
+    {
+      protocol: "qa-runtime-observation/1",
+      target: {
+        apiUrl: binding.apiUrl,
+        revision: binding.revision,
+        pid: binding.pid,
+      },
+      mode: "observe-agent-lifecycle",
+      correlation: {
+        kind: "tool-wait",
+        groupId: "g",
+        runId,
+        toolUseId: "all-run-steps",
+      },
+      ttlMs: 5000,
+    },
+    new Date(Date.now() + 5000).toISOString(),
+    binding,
+  );
+  const decision = snapshot.events.find(
+    (e) => e.kind === "agent-termination-decided",
+  )!;
+  const terminal = snapshot.events.find(
+    (e) => e.kind === "agent-terminal-committed",
+  )!;
+  const history = snapshot.events.find(
+    (e) => e.kind === "send-tool-history-committed",
+  )!;
+  assert.equal(terminal.reason, "audit_blocked");
+  assert.equal(terminal.status, "blocked");
+  assert.equal(decision.attemptId, terminal.attemptId);
+  assert.equal(history.attemptId, terminal.attemptId);
+  assert.ok(time(decision) <= time(terminal));
+  assert.ok(time(terminal) < time(snapshot.events[0]!));
+  assert.equal(f.audits.length, 3);
+  assert.equal(f.gatewayRequests.length, 0);
+  t.diagnostic(
+    JSON.stringify({ sample: "audit-blocked-late-attachment", snapshot }),
+  );
+});
+
 test("real send wait resolves before history/next turn; same key reuses one outbound after real 504 and positive query", async (t) => {
   let witness!: LifecycleWitness, activity!: ActivityWitness;
   let available = false;

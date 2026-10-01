@@ -1,0 +1,133 @@
+{
+  "productRevision": "22d770bafcf7b2e2f64e42deb1c4189da81baaf6",
+  "baselineRevision": "07717d1ee8774a0950b2fd64bfe9341172d57bc0",
+  "qaRequirementSource": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/requirements/evidence-followup/backend-requirements-20261001.md",
+  "qaRequirementSha256": "02888a64168b7ec8150a97408acdb76cb254430efb2f33f0cce8108216a6c9cc",
+  "evidence": {
+    "first": {
+      "file": "first.log",
+      "sha256": "50b7cd674bcfe29616ba579afb604bab3f504d184cc861a3ef79f1d797390b30"
+    },
+    "integrated": {
+      "file": "integrated.log",
+      "sha256": "ea35ce527491cad8d20eb0e5f946cac78d7fb14d74e078b85b3f19047400f956"
+    },
+    "regression": {
+      "file": "regression.log",
+      "sha256": "30adf85e047bc1ea35764b015ca60c8b32154e012fa071b5ebcb2a708254a50f"
+    },
+    "final": {
+      "file": "final.log",
+      "sha256": "2c5a6417957ab8a56a4fd1312e31c9e3b5cd32fab4aa7e2bd4118450bd1c0187"
+    },
+    "minute": {
+      "file": "minute.log",
+      "sha256": "3d200f7d86838fe04e7473593378ab55cc2938cfe834a3f6546f8b9eebe52116"
+    },
+    "typecheck": {
+      "file": "typecheck.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "format": {
+      "file": "format.log",
+      "sha256": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20"
+    },
+    "samples": {
+      "file": "samples.json",
+      "sha256": "07a1853ce5c21e95e925310528cf6a3c56c7bb83363e266de50f415e81c7ba5d"
+    },
+    "audit-terminal": {
+      "file": "audit-terminal.log",
+      "sha256": "b7da57fdebc50dbda3767ae10f584d7eb9213efb457c42637bf7c1292f751204"
+    },
+    "cleanup": {
+      "file": "cleanup.json",
+      "sha256": "b74bef8c00f88b9661696cb3d18be08803a6798ebf3affbc3309c3806d7fc26b"
+    }
+  },
+  "measurements": {
+    "integrated:tool-wait-real-504": {
+      "revision": "2b0a6e534c7d7099b3aa77bc4dd9f923278eb340",
+      "runId": "3a0b4105-b98f-4cd6-99e7-534d1795783d",
+      "waitReturnIntervalMs": [
+        5093.516458,
+        5093.642790999999
+      ],
+      "enteredToReturnedMs": 5115.640291,
+      "auditIntervalMs": [
+        439.171333,
+        451.200833
+      ],
+      "timingAcceptance": "not-proven; observed wait exceeds 5000ms; no tolerance applied",
+      "waitStartWindowMs": [
+        460.530625,
+        460.580583
+      ],
+      "resultReturnWindowMs": [
+        5554.097041,
+        5554.173416
+      ]
+    },
+    "final:tool-wait-real-504": {
+      "revision": "22d770bafcf7b2e2f64e42deb1c4189da81baaf6",
+      "runId": "ab42396f-a7d5-498f-a3b6-a4ef63d27d91",
+      "waitReturnIntervalMs": [
+        5000.746749999999,
+        5000.849417
+      ],
+      "enteredToReturnedMs": 5018.389459,
+      "auditIntervalMs": [
+        382.924625,
+        391.810083
+      ],
+      "timingAcceptance": "not-proven; observed wait exceeds 5000ms; no tolerance applied",
+      "waitStartWindowMs": [
+        399.768625,
+        399.828333
+      ],
+      "resultReturnWindowMs": [
+        5400.575083,
+        5400.618042
+      ]
+    },
+    "minute:real-minute-observation": {
+      "revision": "22d770bafcf7b2e2f64e42deb1c4189da81baaf6",
+      "runId": "0d813684-966c-4e36-b9a0-e87e213ec53b",
+      "turns": 8,
+      "activityElapsedMs": [
+        60005,
+        60017
+      ],
+      "creationTransactionToDecisionMs": [
+        60005.274708000004,
+        60011.498084
+      ],
+      "insertToDecisionMs": [
+        60007.514792,
+        60008.213292
+      ],
+      "decisionToCommitMs": [
+        4.698041000003286,
+        4.714583000000857
+      ],
+      "timingAcceptance": "observed lower bound exceeds 60000ms; developer hook checks do not assert business limit"
+    }
+  },
+  "limits": [
+    "No independent QA acceptance executed",
+    "No full cross-epoch unsaved-tail bound",
+    "No negative completion guarantee for silent no-504 branch",
+    "Message recovery witness covers dispatch/adoption/query path; SSE/echo outcome checked via existing public evidence"
+  ],
+  "developmentChecks": {
+    "fixedFinalFocusedTests": 34,
+    "fixedFinalRealMinuteHookTests": 1,
+    "firstDirtyRunHelperTests": 1,
+    "baselineFixedFocusedTests": 9,
+    "baselineFixedRegressionTests": 25,
+    "finalAuditTerminalTests": 1
+  },
+  "qaRunRevision": null,
+  "qaExecution": "not-run; developer observations only",
+  "requirementWorktreeRevision": "fb1589df08f00c10e9e62801007b1698d4d0155a"
+}

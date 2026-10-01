@@ -1,0 +1,71 @@
+✔ TB01 known 504 clock starts at receipt, before local result-persistence lock wait (990.5235ms)
+ℹ isolated database: kapibala_test_5384a14bb8a8457f927e5210dc40b0e4
+ℹ {"case":"TB01","localLockWaitMs":750,"anchorShiftMs":0}
+✔ TB02 a 1900ms initial 202 is accepted only after its real response (2038.613292ms)
+ℹ isolated database: kapibala_test_1d888b7196a44105a3232d23c3d0ea24
+ℹ {"case":"TB02","sendStartToAcceptedMs":1918.8363750000003}
+✔ TB03 authoritative absence fails without the optional 1800ms retry 202 (2280.606334ms)
+ℹ isolated database: kapibala_test_9ff9e6a78d26452aa499ea2ce5326918
+ℹ {"case":"TB03","first504ToFailedMs":2159.2542499999995,"sends":1}
+✔ TB04 known absent HTTP 504 converges within five seconds without another POST (2265.7775ms)
+ℹ isolated database: kapibala_test_0e1a697e7a3b41168e71b58860e09a9c
+ℹ {"case":"TB04","first504ToFailedMs":2144.4175000000005,"sends":1}
+✔ TB05 the former delayed-second-504 counterexample now closes within the first five seconds (2263.485ms)
+ℹ isolated database: kapibala_test_4bb2f438052b43ada1c3b732885b1807
+ℹ {"case":"TB05","first504ToFailedMs":2166.8257090000006,"first504FiveSecondRequirementMet":true,"sends":1}
+✔ TB06 query 503 beyond five seconds stays unknown; a 1400ms positive query recovers within two seconds (6836.721833ms)
+ℹ isolated database: kapibala_test_6d9cece564ee44599846931d57230a1d
+ℹ {"case":"TB06","first504ToSentMs":6727.174666000001,"availabilityToSentMs":1519.939375}
+✔ TB07 a query exceeding the two-second HTTP timeout does not authorize retry or failure (2253.54ms)
+ℹ isolated database: kapibala_test_fe4beda84eff45f0a1b14938d38fae8a
+ℹ {"case":"TB07","queryElapsedMs":2007.3145829999994,"fastQueryAvailabilityToSentMs":121.79279099999985}
+✔ TB08 the former recovery-then-second-504 counterexample closes within two seconds (5438.553958ms)
+ℹ isolated database: kapibala_test_da1aaad8b2324eec8ef64ed922212a50
+ℹ {"case":"TB08","availabilityToFailedMs":114.85954100000163,"recoveryTwoSecondRequirementMet":true,"sends":1}
+✔ TB09 legacy reserved retry (1 attempts) is queried again without dispatch (106.068583ms)
+ℹ isolated database: kapibala_test_e7c3ae2f4676418594cf0db644ddeb3c
+✔ TB09 legacy reserved retry (3 attempts) is queried again without dispatch (86.736708ms)
+ℹ isolated database: kapibala_test_aa0e7c0846474da7adee7d86d876a05a
+✔ TB10 legacy sending retry with unknown result never uses the first 504 clock (90.110916ms)
+ℹ isolated database: kapibala_test_a5ff34cefb4241729b48b8eab3f87288
+✔ TB10 legacy uncertain retry with unknown result never uses the first 504 clock (89.596416ms)
+ℹ isolated database: kapibala_test_8ada73d8ff0f4cd88ea53a721afaacfb
+✔ TB11 a legacy retry with its own recorded 504 waits for that latest window (2279.059459ms)
+ℹ isolated database: kapibala_test_25a441a4bc694483b9ea1cb6432a4de3
+✔ TB12 an old retry marker does not cancel an ordinary queued send after rate-limit recovery (90.491917ms)
+ℹ isolated database: kapibala_test_b2e235f009e243ffb7508898cc0eb374
+✔ activity witness keeps pre-lease creation time and holds only a committed read continuation (1237.037333ms)
+ℹ Independent database: kapibala_test_589b7cc3f5d64d4a842fe32758b44368
+ℹ {"safe":{"seq":3,"at":"2026-10-01T10:54:53.991Z","kind":"activity-safe-held","correlation":{"kind":"activity","groupId":"g","runId":"be576a32-a239-4aa1-9863-29ea9cd06541","toolUseId":"all-run-steps"},"attemptId":"f2efe7b6-82c0-4fd8-a539-06f50875d08a","instancePid":60905,"runId":"be576a32-a239-4aa1-9863-29ea9cd06541","groupId":"g","clockDomain":"process-performance:60905:d1e94a8a-5a2e-43e6-bffb-25f41e5613a6","clockUnit":"ms","applicationPid":60905,"creationOrEpochStartWindowMs":[359.590875,365.804125],"activityState":"active","includesUnsavedTail":true,"epochIds":["ec0576e8-56f4-4b05-b5f5-58a650486e02"],"persistedActiveMs":149,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[152,160],"stepId":"2cd9060e9b7349775c90d61171e5ede6c68475f4fd534831e4ca94272eadc2f5","continuationDurable":true,"remoteInFlightCount":0,"safeBoundary":"read-tool-result-outer-commit-confirmed-before-next-dispatch"},"terminal":{"seq":8,"at":"2026-10-01T10:54:54.841Z","kind":"activity-terminal","correlation":{"kind":"activity","groupId":"g","runId":"be576a32-a239-4aa1-9863-29ea9cd06541","toolUseId":"all-run-steps"},"attemptId":"f2efe7b6-82c0-4fd8-a539-06f50875d08a","instancePid":60905,"runId":"be576a32-a239-4aa1-9863-29ea9cd06541","groupId":"g","clockDomain":"process-performance:60905:d1e94a8a-5a2e-43e6-bffb-25f41e5613a6","clockUnit":"ms","applicationPid":60905,"creationOrEpochStartWindowMs":[359.590875,365.804125],"activityEndWindowMs":[1363.024041,1368.19375],"activityState":"terminal","includesUnsavedTail":true,"epochIds":["ec0576e8-56f4-4b05-b5f5-58a650486e02"],"persistedActiveMs":1004,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[997,1009]},"limitation":"same-process monotonic creation-to-terminal brackets; not a 60-second acceptance result"}
+✔ safe activity lease TTL releases the actual wait while the product clock keeps billing it (5154.675125ms)
+ℹ Independent database: kapibala_test_d779c1c21d774cf2ba628121597e2396
+ℹ {"terminal":{"seq":16,"at":"2026-10-01T10:55:00.040Z","kind":"activity-terminal","correlation":{"kind":"activity","groupId":"g","runId":"7b05e16e-bba8-4b47-8df0-aa063f4ba8e9","toolUseId":"all-run-steps"},"attemptId":"82e8a748-bbb8-4eeb-b859-90bd59fcf60a","instancePid":60905,"runId":"7b05e16e-bba8-4b47-8df0-aa063f4ba8e9","groupId":"g","clockDomain":"process-performance:60905:d1e94a8a-5a2e-43e6-bffb-25f41e5613a6","clockUnit":"ms","applicationPid":60905,"creationOrEpochStartWindowMs":[1521.5705,1526.781291],"activityEndWindowMs":[6564.15425,6567.77475],"activityState":"terminal","includesUnsavedTail":true,"epochIds":["983e444d-9f52-499f-97b7-fae95bc37310"],"persistedActiveMs":5043,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5037,5047]},"holdState":"released"}
+✔ DELETE releases only its matched safe wait without deleting historical events (149.735541ms)
+ℹ Independent database: kapibala_test_e266e1171e9443d585f899d1baf9ad64
+✔ loss of the real run lock invalidates a safe hold before a new worker may resume (282.847292ms)
+ℹ Independent database: kapibala_test_a129de6fb30e451d9da871845baac714
+✔ loss of the clock owner invalidates completeness instead of treating a rebased epoch as continuous (303.197167ms)
+ℹ Independent database: kapibala_test_8136bc66762a44e6bb02e88e395a569d
+✔ pre-existing inflight work reports the real recovery pause with incomplete earlier activity (208.709917ms)
+ℹ Independent database: kapibala_test_8db69644cbdf4c02986bd21d040bdc8e
+ℹ {"latest":{"seq":4,"at":"2026-10-01T10:55:00.886Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"unrecorded-response","toolUseId":"all-run-steps"},"attemptId":"4e25fe23-89aa-48e1-a45a-1485fb4ebb18","instancePid":60905,"runId":"unrecorded-response","groupId":"g","clockDomain":"process-performance:60905:d1e94a8a-5a2e-43e6-bffb-25f41e5613a6","clockUnit":"ms","applicationPid":60905,"creationOrEpochStartWindowMs":[7395.630541,7396.490541],"activityEndWindowMs":[7409.575041,7413.117541],"activityState":"recovery-paused","includesUnsavedTail":false,"epochIds":["c7276795-c40c-48f5-bbdb-f88a74400e58"],"persistedActiveMs":1,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","observedEpochActiveMs":[13,18],"incompleteReason":"A pre-existing run was rebased after clock ownership acquisition; prior unsaved activity is not reconstructable."},"qaCompatibility":"Current QA requires activeElapsedMs even when incomplete, so this honest partial witness is BLOCKED at schema validation."}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ audit-blocked commits publish terminal activity without relying on Agent.finish (711.442ms)
+ℹ Independent database: kapibala_test_140e27043b7e483bb298fc80137ea3bb
+✔ a rolled-back creation transaction cannot publish a run creation witness (113.036542ms)
+ℹ Independent database: kapibala_test_8276711df63049b7aedecef4f08d7124
+✔ subscribing to an already paused run never bills the pause before its later cancellation (235.119875ms)
+ℹ Independent database: kapibala_test_5398393f3c0e49f899a621158b33aacb
+✔ a delayed notification of real clock acquisition cannot overwrite a newer committed recovery pause (110.39075ms)
+ℹ Independent database: kapibala_test_9f6669ce1b2142e7aa57a4a8c5525999
+✔ SIGKILL ends the held instance and a real replacement cannot inherit its lease or invent its unsaved tail (939.932791ms)
+ℹ Independent database: kapibala_test_b8ee846e3fe444c8a1064ee03e348c97
+ℹ {"killedAt":1790852102598,"oldOwnerPid":61886,"newOwnerPid":61890,"safe":{"seq":3,"at":"2026-10-01T10:55:02.577Z","kind":"activity-safe-held","correlation":{"kind":"activity","groupId":"g","runId":"9f191a56-7e8a-4c3c-9f94-c9645e7382e2","toolUseId":"all-run-steps"},"attemptId":"8b46671e-8094-4af5-82c0-eef425a700d7","instancePid":61886,"runId":"9f191a56-7e8a-4c3c-9f94-c9645e7382e2","groupId":"g","clockDomain":"process-performance:61886:db6ac3ad-dbe1-4858-9cbb-d08917f15bda","clockUnit":"ms","applicationPid":61886,"creationOrEpochStartWindowMs":[246.495792,255.17725],"activityState":"active","includesUnsavedTail":true,"epochIds":["5c05a5d8-ae44-4628-83ee-abc6294d58a7"],"persistedActiveMs":62,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[67,77],"stepId":"7c5493c4187add6a788be742fc54b635dc7010351ba226cd00a390f58b32df2c","continuationDurable":true,"remoteInFlightCount":0,"safeBoundary":"read-tool-result-outer-commit-confirmed-before-next-dispatch"},"terminal":{"seq":7,"at":"2026-10-01T10:55:03.076Z","kind":"activity-terminal","correlation":{"kind":"activity","groupId":"g","runId":"9f191a56-7e8a-4c3c-9f94-c9645e7382e2","toolUseId":"all-run-steps"},"attemptId":"6287068d-a39a-4658-863e-bd524006bb9a","instancePid":61890,"runId":"9f191a56-7e8a-4c3c-9f94-c9645e7382e2","groupId":"g","clockDomain":"process-performance:61890:de5a1204-1f9c-45ab-ab7b-7aea598dcd67","clockUnit":"ms","applicationPid":61890,"creationOrEpochStartWindowMs":[217.277,218.592125],"activityEndWindowMs":[258.337542,263.170792],"activityState":"terminal","includesUnsavedTail":false,"epochIds":["97377c6b-aa49-40ee-8d30-1682babe44ad"],"persistedActiveMs":103,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","observedEpochActiveMs":[39,46],"incompleteReason":"A pre-existing run was rebased after clock ownership acquisition; prior unsaved activity is not reconstructable."},"limitation":"Actual old online tail was lost on SIGKILL; no whole-run finite activity interval is asserted."}
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 27296.910083
