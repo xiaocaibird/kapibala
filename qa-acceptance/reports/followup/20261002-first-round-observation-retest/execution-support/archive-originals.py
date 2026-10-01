@@ -1,7 +1,8 @@
 from pathlib import Path
 import hashlib, json, tarfile, gzip, io
 qa=Path.cwd();run=qa/'reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6';out=qa/'reports/followup/20261002-first-round-observation-retest'
-files=sorted([p for p in run.rglob('*') if p.is_file()]+[p for p in out.rglob('*') if p.is_file() and p.suffix in ['.log','.txt']])
+correction=qa/'reports/preflight/2026-10-01T19-06-58.963Z-ecfeb5bc'
+files=sorted([p for tree in [run, correction] for p in tree.rglob('*') if p.is_file()]+[p for p in out.rglob('*') if p.is_file() and p.suffix in ['.log','.txt']])
 if any(p.is_symlink() for p in files): raise RuntimeError('Refuse symlink evidence')
 entries=[]
 archive=out/'original-evidence.tar.gz'
@@ -13,7 +14,7 @@ with archive.open('xb') as sink:
     entries.append({'path':name,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()})
     meta=tarfile.TarInfo(name);meta.size=len(raw);meta.mode=0o644;meta.mtime=0
     tar.addfile(meta,io.BytesIO(raw))
-index={'runId':'2026-10-01T18-39-27.933Z-15f16ec6','rawChanged':False,'originalFileCount':len(entries),'originalByteCount':sum(e['bytes'] for e in entries),'archive':archive.name,'archiveBytes':archive.stat().st_size,'archiveSha256':hashlib.sha256(archive.read_bytes()).hexdigest(),'files':entries}
+index={'runId':'2026-10-01T18-39-27.933Z-15f16ec6','correctionRunId':'2026-10-01T19-06-58.963Z-ecfeb5bc','rawChanged':False,'originalFileCount':len(entries),'originalByteCount':sum(e['bytes'] for e in entries),'archive':archive.name,'archiveBytes':archive.stat().st_size,'archiveSha256':hashlib.sha256(archive.read_bytes()).hexdigest(),'files':entries}
 (out/'original-file-index.json').write_text(json.dumps(index,ensure_ascii=False,indent=2)+'\n')
 with tarfile.open(archive,'r:gz') as tar:
  members=tar.getmembers()

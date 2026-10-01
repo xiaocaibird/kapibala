@@ -1,0 +1,114 @@
+{
+  "runId": "2026-10-01T19-06-58.963Z-ecfeb5bc",
+  "qaRevision": "ad712b6d68c4b4a72cf2a4984575e4dc147d6592",
+  "sutRevision": "01f2c1a237e84bcff68ade470402b369b345cd58",
+  "caseId": "INT-READ-SAVE-ROLLBACK-001",
+  "caseStatus": "PASS",
+  "reviewedAt": "2026-10-01T19:16:01.606860+00:00",
+  "reviewer": "independent readonly QA read_causal_retest",
+  "newProductExecutionByReviewer": false,
+  "evidence": "reports/preflight/2026-10-01T19-06-58.963Z-ecfeb5bc/artifacts/system-delivery-read-causa-a591e-d-same-key-process-recovery-system/evidence/delivery-read-causal-save-rollback.json",
+  "evidenceSha256": "9ae70526b3cdc8ad7cf2d9e913ffec25a0d8dec0cc7f4b3661bbc91ec95a1bc4",
+  "originalWindowMs": [
+    110.057291,
+    110.128666
+  ],
+  "recoveryWindowMs": [
+    4.978416,
+    5.021709
+  ],
+  "remoteApplyGate": {
+    "complete": true,
+    "samples": 5,
+    "qaObservationMs": 44.673708,
+    "actualLandingAt": "2026-10-01T19:07:02.589Z",
+    "responseFinishedAt": "2026-10-01T19:07:02.593Z",
+    "sends": 1,
+    "effects": 1,
+    "messages": 1,
+    "note": "Actual landing before200 established; 2000ms from QA gate observation does not prove original receipt-to-effect strict2s"
+  },
+  "originalProvenance": {
+    "source": "live-bridge",
+    "applicationPid": 25004,
+    "applicationStarted": "Fri Oct  2 03:07:00 2026"
+  },
+  "recoveryProvenance": {
+    "source": "live-bridge",
+    "applicationPid": 25144,
+    "applicationStarted": "Fri Oct  2 03:07:02 2026"
+  },
+  "originalRollback": {
+    "transactionAttemptId": "4761e343-7d4e-4a28-a632-eb3ccf463acf",
+    "backendPid": 64,
+    "outcome": "rollback",
+    "beginSourceSeq": 65,
+    "stepSourceSeq": 72,
+    "historySourceSeq": 74,
+    "acknowledgementSourceSeq": 76
+  },
+  "recoveryCommit": {
+    "transactionAttemptId": "8a81af5e-3e68-437a-8968-b6b12b840420",
+    "backendPid": 75,
+    "outcome": "commit",
+    "beginSourceSeq": 25,
+    "stepSourceSeq": 27,
+    "historySourceSeq": 29,
+    "acknowledgementSourceSeq": 31
+  },
+  "sourceProof": {
+    "source": {
+      "applicationPid": 25004,
+      "clockDomain": "process-performance:25004:1bb306c9-6df0-4b01-8937-94510c1590b9",
+      "creationAttemptId": "ee17c764-c1c0-4476-8ad0-026fea85edc4",
+      "preparedSourceSeq": 4,
+      "executionAttemptId": "18db600a-0c1b-4734-bd77-0b1ac3d502a6",
+      "runId": "71ccadfc-9971-48b5-8224-c4dc8b58d273",
+      "stepId": "71ccadfc-9971-48b5-8224-c4dc8b58d273:1"
+    },
+    "originalRollback": {
+      "transactionAttemptId": "4761e343-7d4e-4a28-a632-eb3ccf463acf",
+      "backendPid": 64,
+      "outcome": "rollback",
+      "beginSourceSeq": 65,
+      "stepSourceSeq": 72,
+      "historySourceSeq": 74,
+      "acknowledgementSourceSeq": 76
+    },
+    "recovery": {
+      "applicationPid": 25144,
+      "clockDomain": "process-performance:25144:3ba31024-b8b3-498f-8896-304601a719d0",
+      "executionAttemptId": "4a36b42f-8362-4f84-8cc4-ab47b89d3f27",
+      "clientMsgId": "2a2a2b95-eede-4981-9f24-0cc33430e9f7",
+      "keyReused": true,
+      "waitWindowMs": [
+        4.9784159999999815,
+        5.021708999999987
+      ],
+      "commit": {
+        "transactionAttemptId": "8a81af5e-3e68-437a-8968-b6b12b840420",
+        "backendPid": 75,
+        "outcome": "commit",
+        "beginSourceSeq": 25,
+        "stepSourceSeq": 27,
+        "historySourceSeq": 29,
+        "acknowledgementSourceSeq": 31
+      }
+    }
+  },
+  "originalRowsMatchRollback": true,
+  "finiteAuditSendEffectEach": 1,
+  "finalRunStatus": "finished",
+  "fixtureCleanupFailures": [],
+  "originalFirstRun": {
+    "runId": "2026-10-01T18-39-27.933Z-15f16ec6",
+    "raw": "3FAIL",
+    "independent": "2FAIL/1BLOCKED",
+    "unchanged": true
+  },
+  "limits": [
+    "Only this actual save-failure/restart window and finite sampling",
+    "No proof of permanent no-replay or arbitrary restart",
+    "Two original strict timing product FAILs remain unchanged"
+  ]
+}

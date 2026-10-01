@@ -1,0 +1,661 @@
+{
+  "formatVersion": 1,
+  "reportKind": "INDEPENDENT_FIRST_ROUND_ACCEPTANCE_SUPPLEMENT",
+  "signedAt": "2026-10-01T19:26:40.348984+00:00",
+  "sutRevision": "01f2c1a237e84bcff68ade470402b369b345cd58",
+  "productSourceRevision": "70dd1eeb83e64b72f250a0b83b63c933feaa4b23",
+  "executionQaRevision": "3ed9a178a7538be58068de8d85f4ff7fb54f8967",
+  "qaDirtyStateAtExecution": "",
+  "qaTreeSha256": "13d627135b713a7fc53876bb009937484b61714b2341f5e556f48b74e40690d0",
+  "targetSha256": "8f646beb5370fd1f0702032a162f0d1521d7539ef7230dd8425e359ab719f9c5",
+  "suiteSha256": "94e0aece6b269194395715c66ea139dc7d065decb37cda44fbc6e3957d305eb6",
+  "originalSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+  "dependencyLockSha256": "7462a4670d1e4036156d1639ebfeaa0cd4276bc918d1b805b3677d862c2cb883",
+  "node": "v24.21.0",
+  "runId": "2026-10-01T18-39-27.933Z-15f16ec6",
+  "startedAt": "2026-10-01T18:39:27.987Z",
+  "completedAt": "2026-10-01T18:40:48.154Z",
+  "nativePhase": "developer-preflight",
+  "nativePhaseNote": "QA-controlled exact subset used the existing preflight runner; native report is retained and does not become whole-business acceptance",
+  "attemptsPerCase": 1,
+  "automaticRetries": 0,
+  "sutRestartWithinDesignedSaveScenario": 1,
+  "additionalSutRetestAfterQaCorrection": 1,
+  "rawCounts": {
+    "PASS": 0,
+    "FAIL": 3,
+    "BLOCKED": 0
+  },
+  "firstIndependentCounts": {
+    "PASS": 0,
+    "FAIL": 2,
+    "BLOCKED": 1
+  },
+  "independentCounts": {
+    "PASS": 1,
+    "FAIL": 2,
+    "BLOCKED": 0
+  },
+  "productInvocations": 4,
+  "correctionRun": {
+    "runId": "2026-10-01T19-06-58.963Z-ecfeb5bc",
+    "qaRevision": "ad712b6d68c4b4a72cf2a4984575e4dc147d6592",
+    "qaDirtyState": "",
+    "targetSha256": "05de8979fc70d979bc6a82e5781ddcf1fbc456cbd9db1bd64287976443fef9b7",
+    "suiteSha256": "000eb0bbb135d6461bf28fd6821bb0c5e863ece127854082aa95fe0f685e09f7",
+    "sutRevision": "01f2c1a237e84bcff68ade470402b369b345cd58",
+    "reason": "One explicit QA-driver correction retest, not an automatic retry",
+    "originalRawOverwritten": false,
+    "automaticRetries": 0,
+    "rawCounts": {
+      "PASS": 1,
+      "FAIL": 0,
+      "BLOCKED": 0
+    },
+    "independentReview": {
+      "runId": "2026-10-01T19-06-58.963Z-ecfeb5bc",
+      "qaRevision": "ad712b6d68c4b4a72cf2a4984575e4dc147d6592",
+      "sutRevision": "01f2c1a237e84bcff68ade470402b369b345cd58",
+      "caseId": "INT-READ-SAVE-ROLLBACK-001",
+      "caseStatus": "PASS",
+      "reviewedAt": "2026-10-01T19:16:01.606860+00:00",
+      "reviewer": "independent readonly QA read_causal_retest",
+      "newProductExecutionByReviewer": false,
+      "evidence": "reports/preflight/2026-10-01T19-06-58.963Z-ecfeb5bc/artifacts/system-delivery-read-causa-a591e-d-same-key-process-recovery-system/evidence/delivery-read-causal-save-rollback.json",
+      "evidenceSha256": "9ae70526b3cdc8ad7cf2d9e913ffec25a0d8dec0cc7f4b3661bbc91ec95a1bc4",
+      "originalWindowMs": [
+        110.057291,
+        110.128666
+      ],
+      "recoveryWindowMs": [
+        4.978416,
+        5.021709
+      ],
+      "remoteApplyGate": {
+        "complete": true,
+        "samples": 5,
+        "qaObservationMs": 44.673708,
+        "actualLandingAt": "2026-10-01T19:07:02.589Z",
+        "responseFinishedAt": "2026-10-01T19:07:02.593Z",
+        "sends": 1,
+        "effects": 1,
+        "messages": 1,
+        "note": "Actual landing before200 established; 2000ms from QA gate observation does not prove original receipt-to-effect strict2s"
+      },
+      "originalProvenance": {
+        "source": "live-bridge",
+        "applicationPid": 25004,
+        "applicationStarted": "Fri Oct  2 03:07:00 2026"
+      },
+      "recoveryProvenance": {
+        "source": "live-bridge",
+        "applicationPid": 25144,
+        "applicationStarted": "Fri Oct  2 03:07:02 2026"
+      },
+      "originalRollback": {
+        "transactionAttemptId": "4761e343-7d4e-4a28-a632-eb3ccf463acf",
+        "backendPid": 64,
+        "outcome": "rollback",
+        "beginSourceSeq": 65,
+        "stepSourceSeq": 72,
+        "historySourceSeq": 74,
+        "acknowledgementSourceSeq": 76
+      },
+      "recoveryCommit": {
+        "transactionAttemptId": "8a81af5e-3e68-437a-8968-b6b12b840420",
+        "backendPid": 75,
+        "outcome": "commit",
+        "beginSourceSeq": 25,
+        "stepSourceSeq": 27,
+        "historySourceSeq": 29,
+        "acknowledgementSourceSeq": 31
+      },
+      "sourceProof": {
+        "source": {
+          "applicationPid": 25004,
+          "clockDomain": "process-performance:25004:1bb306c9-6df0-4b01-8937-94510c1590b9",
+          "creationAttemptId": "ee17c764-c1c0-4476-8ad0-026fea85edc4",
+          "preparedSourceSeq": 4,
+          "executionAttemptId": "18db600a-0c1b-4734-bd77-0b1ac3d502a6",
+          "runId": "71ccadfc-9971-48b5-8224-c4dc8b58d273",
+          "stepId": "71ccadfc-9971-48b5-8224-c4dc8b58d273:1"
+        },
+        "originalRollback": {
+          "transactionAttemptId": "4761e343-7d4e-4a28-a632-eb3ccf463acf",
+          "backendPid": 64,
+          "outcome": "rollback",
+          "beginSourceSeq": 65,
+          "stepSourceSeq": 72,
+          "historySourceSeq": 74,
+          "acknowledgementSourceSeq": 76
+        },
+        "recovery": {
+          "applicationPid": 25144,
+          "clockDomain": "process-performance:25144:3ba31024-b8b3-498f-8896-304601a719d0",
+          "executionAttemptId": "4a36b42f-8362-4f84-8cc4-ab47b89d3f27",
+          "clientMsgId": "2a2a2b95-eede-4981-9f24-0cc33430e9f7",
+          "keyReused": true,
+          "waitWindowMs": [
+            4.9784159999999815,
+            5.021708999999987
+          ],
+          "commit": {
+            "transactionAttemptId": "8a81af5e-3e68-437a-8968-b6b12b840420",
+            "backendPid": 75,
+            "outcome": "commit",
+            "beginSourceSeq": 25,
+            "stepSourceSeq": 27,
+            "historySourceSeq": 29,
+            "acknowledgementSourceSeq": 31
+          }
+        }
+      },
+      "originalRowsMatchRollback": true,
+      "finiteAuditSendEffectEach": 1,
+      "finalRunStatus": "finished",
+      "fixtureCleanupFailures": [],
+      "originalFirstRun": {
+        "runId": "2026-10-01T18-39-27.933Z-15f16ec6",
+        "raw": "3FAIL",
+        "independent": "2FAIL/1BLOCKED",
+        "unchanged": true
+      },
+      "limits": [
+        "Only this actual save-failure/restart window and finite sampling",
+        "No proof of permanent no-replay or arbitrary restart",
+        "Two original strict timing product FAILs remain unchanged"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "id": "INT-KICK-OBSERVATION-001",
+      "requirements": [
+        "R-A5-06",
+        "R-A5-09"
+      ],
+      "rawStatus": "FAIL",
+      "reviewedStatus": "FAIL",
+      "reason": "Continuous original activity prefix [60007,60016]ms exceeds strict 60000ms; original CROSS/CANCEL proved from same raw run",
+      "evidence": "reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/artifacts/system-dispatched-kick-obs-0e309-unresolved-504-confirmation-system/evidence/dispatched-kick-observation-final.json",
+      "defect": "QA-01F-ACTIVITY-001"
+    },
+    {
+      "id": "INT-READ-CAUSAL-001",
+      "requirements": [
+        "R-A5-10",
+        "R-A5-16"
+      ],
+      "rawStatus": "FAIL",
+      "reviewedStatus": "FAIL",
+      "reason": "Original send wait [5005.463667,5005.526083]ms exceeds strict 5000ms; real read causal cleanup and history COMMIT independently pass",
+      "evidence": "reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/artifacts/system-delivery-read-causa-3b694-dent-of-strict-five-seconds-system/evidence/delivery-read-causal-raw-database-observation.json",
+      "defect": "QA-01F-READ-001"
+    },
+    {
+      "id": "INT-READ-SAVE-ROLLBACK-001",
+      "requirements": [
+        "R-A5-10",
+        "R-A5-16"
+      ],
+      "rawStatus": "PASS",
+      "reviewedStatus": "PASS",
+      "reason": "One explicit QA-driver correction retest on same01f: actual landing before200, original real P0001/ROLLBACK/no-half-save, retained-state restart same key/client and distinct real COMMIT all PASS. First raw/blocked history preserved.",
+      "evidence": "reports/preflight/2026-10-01T19-06-58.963Z-ecfeb5bc/artifacts/system-delivery-read-causa-a591e-d-same-key-process-recovery-system/evidence/delivery-read-causal-save-rollback.json",
+      "qaIssues": [
+        "QA-DRIVER-ASYNC-EFFECT",
+        "QA-DRIVER-RESUMED-PREPARED"
+      ],
+      "firstRawStatus": "FAIL",
+      "firstReviewedStatus": "BLOCKED",
+      "latestRunId": "2026-10-01T19-06-58.963Z-ecfeb5bc",
+      "latestQaRevision": "ad712b6d68c4b4a72cf2a4984575e4dc147d6592",
+      "firstEvidence": "reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/artifacts/system-delivery-read-causa-a591e-d-same-key-process-recovery-system/evidence/delivery-read-causal-save-rollback.json"
+    }
+  ],
+  "productDefects": [
+    {
+      "id": "QA-01F-READ-001",
+      "severity": "P1",
+      "requirement": "R-A5-16",
+      "case": "INT-READ-CAUSAL-001",
+      "status": "OPEN",
+      "expectedMaximumMs": 5000,
+      "observedMs": [
+        5005.463667,
+        5005.526083
+      ],
+      "reproduction": "Publicly trigger original send, actual Gateway 504 with applied effect and omitted event; hold owned messages ACCESS EXCLUSIVE lock, actual confirmation unavailable, observe same process original wait source events. Release owned lock only after first actual result; continue same-key recovery.",
+      "impact": "Original maximum tool wait is violated under real database contention; later cleanup and recovery do not erase first failure."
+    },
+    {
+      "id": "QA-01F-ACTIVITY-001",
+      "severity": "P1",
+      "requirement": "R-A5-06",
+      "case": "INT-KICK-OBSERVATION-001",
+      "status": "OPEN",
+      "expectedMaximumMs": 60000,
+      "observedMs": [
+        60007,
+        60016
+      ],
+      "reproduction": "One real run: proven actual capacity refusal, release at38–40s; real kick POST504 applied once, release response at43–44s; hold unique confirmation GET. Preserve actual continuous activity prefix and original budget abort events.",
+      "impact": "Original continuous measured activity already exceeds maximum before recovery pause; unknown-outcome pause cannot turn this prefix violation into BLOCKED."
+    }
+  ],
+  "businessRecommendation": "FAIL_NOT_ACCEPTED",
+  "releaseReadiness": "NOT_ASSESSED",
+  "fullCandidateSuiteRerun": false,
+  "historicalReportsImmutable": [
+    {
+      "path": "reports/acceptance/20261002-current-delivery/report.md",
+      "sha256": "aa119fea808ee72d38eb21ef7f0022f3d7c36c69014dd204bb6d3bd5449d17c2",
+      "counts": "254 full on2716:240P/9F/5B;8e delta51 unique:46P/5F. Version-specific only."
+    },
+    {
+      "path": "reports/followup/20261002-dispatched-kick-budget/report.md",
+      "sha256": "acfecfffa8e05140f6198aa4bb23f50a0090874fb09909908e359af53e444e9f",
+      "status": "Old8e activity[59999,60008] remains BLOCKED; not replaced by new FAIL sample."
+    }
+  ],
+  "localEvidenceReview": {
+    "kick": {
+      "KB-CROSS": {
+        "status": "PASS",
+        "value": {
+          "proof": "original-confirmation-fetch-pending-at-actual-budget-source-abort",
+          "budgetSignalWindowMs": [
+            61545.9125,
+            61545.918792
+          ],
+          "requestBudgetSourceWindowMs": [
+            61546.068209,
+            61546.071709
+          ],
+          "requestId": "26cd0a91-0fa9-4023-9e53-ee1e6e445d87",
+          "sourceSequence": 12
+        }
+      },
+      "KB-CANCEL": {
+        "status": "PASS",
+        "value": {
+          "proof": "actual-request-combined-signal-reason-matches-original-budget-source",
+          "requestId": "26cd0a91-0fa9-4023-9e53-ee1e6e445d87",
+          "budgetSourceWindowMs": [
+            61546.068209,
+            61546.071709
+          ],
+          "combinedAbortWindowMs": [
+            61546.238042,
+            61546.2385
+          ],
+          "fetchSettledWindowMs": [
+            61546.603875,
+            61546.604542
+          ],
+          "requestSettledWindowMs": [
+            61546.6315,
+            61546.631792
+          ],
+          "configuredSources": [
+            "request-deadline",
+            "operation",
+            "caller",
+            "kick-lock",
+            "activity-budget"
+          ],
+          "abortedSources": [
+            "caller",
+            "activity-budget"
+          ],
+          "reasonMatchedSources": [
+            "caller",
+            "activity-budget"
+          ],
+          "requestDeadlineTriggered": false,
+          "operationScopeTriggered": false,
+          "kickLockScopeTriggered": false,
+          "sourceAbortFacts": [
+            {
+              "kind": "kick-confirmation-source-aborted",
+              "groupId": "fabf92f0-d558-4809-b15f-01b7cc335eb6",
+              "accountId": "account-2",
+              "runId": "f88558dd-56a1-4db2-a7fd-7d099b22d499",
+              "toolUseId": "qa-kick-dispatched-original-budget",
+              "stepId": "f88558dd-56a1-4db2-a7fd-7d099b22d499:1",
+              "attemptId": "9c0f4dfd-fd35-4bfc-b4ab-9d2a0c7105c7",
+              "requestPurpose": "confirmation",
+              "requestId": "26cd0a91-0fa9-4023-9e53-ee1e6e445d87",
+              "observedAtMonoNs": "121253778344125",
+              "observedWindowMs": [
+                61546.068209,
+                61546.071709
+              ],
+              "method": "GET",
+              "timeoutMs": 15000,
+              "fetchPending": true,
+              "bodyPending": false,
+              "configuredSources": [
+                "request-deadline",
+                "operation",
+                "caller",
+                "kick-lock",
+                "activity-budget"
+              ],
+              "abortedSources": [
+                "caller",
+                "activity-budget"
+              ],
+              "reasonMatchedSources": [
+                "caller",
+                "activity-budget"
+              ],
+              "stage": "source-aborted",
+              "source": "activity-budget",
+              "clockDomain": "process-performance:73173:034815e8-41d0-4b4a-9021-67c6f2680c34",
+              "clockUnit": "ms",
+              "monotonicMs": [
+                61546.116,
+                61546.116
+              ],
+              "applicationPid": 73173,
+              "at": "2026-10-01T18:40:45.378Z",
+              "seq": 13,
+              "sourceSeq": 12,
+              "instancePid": 73172,
+              "correlation": {
+                "kind": "tool-wait",
+                "groupId": "fabf92f0-d558-4809-b15f-01b7cc335eb6",
+                "runId": "f88558dd-56a1-4db2-a7fd-7d099b22d499",
+                "toolUseId": "all-run-steps"
+              }
+            },
+            {
+              "kind": "kick-confirmation-source-aborted",
+              "groupId": "fabf92f0-d558-4809-b15f-01b7cc335eb6",
+              "accountId": "account-2",
+              "runId": "f88558dd-56a1-4db2-a7fd-7d099b22d499",
+              "toolUseId": "qa-kick-dispatched-original-budget",
+              "stepId": "f88558dd-56a1-4db2-a7fd-7d099b22d499:1",
+              "attemptId": "9c0f4dfd-fd35-4bfc-b4ab-9d2a0c7105c7",
+              "requestPurpose": "confirmation",
+              "requestId": "26cd0a91-0fa9-4023-9e53-ee1e6e445d87",
+              "observedAtMonoNs": "121253778461000",
+              "observedWindowMs": [
+                61546.186125,
+                61546.187292
+              ],
+              "method": "GET",
+              "timeoutMs": 15000,
+              "fetchPending": true,
+              "bodyPending": false,
+              "configuredSources": [
+                "request-deadline",
+                "operation",
+                "caller",
+                "kick-lock",
+                "activity-budget"
+              ],
+              "abortedSources": [
+                "caller",
+                "activity-budget"
+              ],
+              "reasonMatchedSources": [
+                "caller",
+                "activity-budget"
+              ],
+              "stage": "source-aborted",
+              "source": "caller",
+              "clockDomain": "process-performance:73173:034815e8-41d0-4b4a-9021-67c6f2680c34",
+              "clockUnit": "ms",
+              "monotonicMs": [
+                61546.200625,
+                61546.200625
+              ],
+              "applicationPid": 73173,
+              "at": "2026-10-01T18:40:45.379Z",
+              "seq": 14,
+              "sourceSeq": 13,
+              "instancePid": 73172,
+              "correlation": {
+                "kind": "tool-wait",
+                "groupId": "fabf92f0-d558-4809-b15f-01b7cc335eb6",
+                "runId": "f88558dd-56a1-4db2-a7fd-7d099b22d499",
+                "toolUseId": "all-run-steps"
+              }
+            }
+          ],
+          "exclusiveFetchFailureCause": "NOT_ASSERTED"
+        }
+      },
+      "KB-ACTIVITY": {
+        "status": "FAIL",
+        "reason": "AssertionError [ERR_ASSERTION]: 活动预算已证明超过原始60000ms上限"
+      }
+    },
+    "saveOriginalMs": [
+      112.08912499999997,
+      112.16120799999999
+    ],
+    "saveResumedMs": [
+      4.749791000000016,
+      4.785957999999994
+    ],
+    "saveRollback": {
+      "transactionAttemptId": "cdcd4086-cf3a-4c92-9885-35492193aca0",
+      "backendPid": 64,
+      "outcome": "rollback",
+      "beginSourceSeq": 63,
+      "stepSourceSeq": 65,
+      "historySourceSeq": 67,
+      "acknowledgementSourceSeq": 69
+    },
+    "saveRecoveryCommit": {
+      "transactionAttemptId": "1d2dd9df-3fa0-44d0-904a-48e2057b1990",
+      "backendPid": 74,
+      "outcome": "commit",
+      "beginSourceSeq": 25,
+      "stepSourceSeq": 27,
+      "historySourceSeq": 29,
+      "acknowledgementSourceSeq": 31
+    },
+    "readActualCausalChains": 14,
+    "readOriginalCommit": "9ff3a3ff-5821-437d-853d-472cde40ce6d",
+    "finiteKickObservationLowerMs": 1599.972958,
+    "arbitraryRecovery": "NOT_RUN",
+    "secondInstance": "NOT_RUN"
+  },
+  "qaTooling": {
+    "executionFreezeSelfTests": 334,
+    "correctedSelfTests": 343,
+    "finalChecks": [
+      {
+        "name": "typecheck",
+        "startedAt": "2026-10-01T19:04:09.590135+00:00",
+        "endedAt": "2026-10-01T19:04:09.828405+00:00",
+        "exitCode": 0,
+        "file": "typecheck.log",
+        "sha256": "25ba3cfef4275a2bf7a86b13c7fc2d0598bd192c06c26f8826f2b4b019939897",
+        "bytes": 83,
+        "sutConnected": false
+      },
+      {
+        "name": "test:self",
+        "startedAt": "2026-10-01T19:04:09.828695+00:00",
+        "endedAt": "2026-10-01T19:04:13.934864+00:00",
+        "exitCode": 0,
+        "file": "test-self.log",
+        "sha256": "b10065633c80d2e6989387ca0aef30b9059f9138a5b41c2a15cfa9cdb27e625f",
+        "bytes": 35095,
+        "sutConnected": false
+      },
+      {
+        "name": "check:catalog",
+        "startedAt": "2026-10-01T19:04:13.935127+00:00",
+        "endedAt": "2026-10-01T19:04:14.514403+00:00",
+        "exitCode": 0,
+        "file": "check-catalog.log",
+        "sha256": "59de3c71a2ec9cfbfb3a39d76b01af6e2cf26a998ab502caa99e3ccc6fc65814",
+        "bytes": 182,
+        "sutConnected": false
+      },
+      {
+        "name": "check:impact",
+        "startedAt": "2026-10-01T19:04:14.514652+00:00",
+        "endedAt": "2026-10-01T19:04:14.674846+00:00",
+        "exitCode": 0,
+        "file": "check-impact.log",
+        "sha256": "e8f18b7b9005eb0ccf2724ed86ebb567bd8be799adddbf2b85525d1aeef01a5c",
+        "bytes": 213,
+        "sutConnected": false
+      },
+      {
+        "name": "check:suites",
+        "startedAt": "2026-10-01T19:04:14.675258+00:00",
+        "endedAt": "2026-10-01T19:04:15.257515+00:00",
+        "exitCode": 0,
+        "file": "check-suites.log",
+        "sha256": "2a4e23433bcd6e1cce9e0fdd129b39d251a66393be9db5f78e9b49541938c738",
+        "bytes": 87033,
+        "sutConnected": false
+      }
+    ],
+    "correctedScriptsProductTested": {
+      "saveRollback": true,
+      "kickFutureDriver": false,
+      "readOriginalTimingCase": false
+    },
+    "rawResultsPreserved": true
+  },
+  "cleanup": {
+    "runId": "2026-10-01T18-39-27.933Z-15f16ec6",
+    "reviewedAt": "2026-10-01T18:57:20.908185+00:00",
+    "reviewer": "independent read-only QA budget_observation_oracle",
+    "dockerEngineId": "1fbf2675-d415-458c-866c-28fd59cd7267",
+    "scope": "This exact run only, not historical resources",
+    "status": "CORE_OWNED_RESOURCES_CLEAN",
+    "containers": 3,
+    "volumes": 3,
+    "applications": 4,
+    "applicationGuardians": 4,
+    "controllerProcesses": 6,
+    "registries": 2,
+    "identifiedPorts": 13,
+    "allCaseCleanupFailures": [],
+    "evidence": [
+      "snapshot-20261001T183934.090745Z-during-run.json",
+      "snapshot-20261001T184005.409210Z-during-run.json",
+      "snapshot-20261001T184319.346498Z-post-cleanup.json",
+      "application-postchecks.json",
+      "../controllers/stop-request.json"
+    ],
+    "limits": [
+      "First container disappeared before live inspect; its volume tied by this case actual containerId/owner/database plus exact Docker mount/unmount container ID, not time coincidence",
+      "First PostgreSQL HostPort not captured; no claim of individual lsof check for that unknown port. 13 identified ports all checked absent",
+      "First worker72278 extra readonly post ps checked after original review, absent; other workers72633/73114 absent",
+      "Shared Docker backend59212 remains shared infrastructure, no leak classification"
+    ]
+  },
+  "correctionCleanup": {
+    "runId": "2026-10-01T19-06-58.963Z-ecfeb5bc",
+    "qaRevision": "ad712b6d68c4b4a72cf2a4984575e4dc147d6592",
+    "sutRevision": "01f2c1a237e84bcff68ade470402b369b345cd58",
+    "reviewedAt": "2026-10-01T19:11:46.319436+00:00",
+    "reviewer": "independent readonly QA budget_observation_oracle",
+    "status": "CORE_OWNED_RESOURCES_CLEAN",
+    "containers": 1,
+    "volumes": 1,
+    "applications": 2,
+    "applicationGuardians": 2,
+    "controllerProcesses": 3,
+    "registries": 1,
+    "identifiedPorts": [
+      52431,
+      52427,
+      52429,
+      51759
+    ],
+    "containerId": "82f30c7a5077a7a3bfe7509e186b9f34d339ec2925f3aca8dc02fd29cc6c1c0f",
+    "containerOwner": "e1e60439-4b38-472c-93b1-7ffa92f25ac4",
+    "database": "qa_206c26591c93415d9768a49f",
+    "volume": "8fefb3c1421c3caf2566770b2efba8dad9ffa6f92789ea346255cca6f09c81ae",
+    "dockerEngineId": "1fbf2675-d415-458c-866c-28fd59cd7267",
+    "allCaseCleanupFailures": [],
+    "applicationPids": [
+      25004,
+      25144
+    ],
+    "guardianPids": [
+      25003,
+      25143
+    ],
+    "workerPid": 24913,
+    "controllerPids": [
+      17558,
+      17776,
+      17777
+    ],
+    "registry": "/private/tmp/qa-rte-BeeGdc",
+    "evidence": [
+      "snapshot-20261001T190708.054897Z-during-run.json",
+      "snapshot-20261001T190759.853219Z-post-cleanup.json",
+      "correction-application-postchecks.json",
+      "../controllers/stop-correction-request.json"
+    ],
+    "limits": [
+      "No live Mounts/PGHostPort capture due short case; actual exact container mount/unmount events establish volume association, not time correlation",
+      "No claim of individual unknown PGHostPort lsof check",
+      "Shared Docker backend remains infrastructure; original resource review immutable"
+    ]
+  },
+  "evidenceArchive": {
+    "runId": "2026-10-01T18-39-27.933Z-15f16ec6",
+    "correctionRunId": "2026-10-01T19-06-58.963Z-ecfeb5bc",
+    "rawChanged": false,
+    "originalFileCount": 1559,
+    "originalByteCount": 766909283,
+    "archive": "original-evidence.tar.gz",
+    "archiveBytes": 18286284,
+    "archiveSha256": "e792980dfd53b463eec25f1d4296602f21e23d71850d12fcd9be71678b193868"
+  },
+  "pendingScope": {
+    "secondRoundQaCommit": "28b3b3199013681fb5266cc409c7161f8726eb17",
+    "realPaidProviderCalls": "NOT_AUTHORIZED_NOT_RUN",
+    "wholeObserverExceptions": "Not fully isolated; retained engineering risk, no invented current product failure",
+    "remainingFirstRoundStrongRecoveryFailures": "Historical failures not closed by this finite sample; no full reacceptance on01f",
+    "manualItems": [
+      {
+        "id": "MAN-IME-001",
+        "status": "NOT_RUN_HUMAN_REQUIRED",
+        "scope": "Actual OS Chinese IME"
+      },
+      {
+        "id": "MAN-FOCUS-001",
+        "status": "NOT_RUN_HUMAN_REQUIRED",
+        "scope": "Real cross-application focus/title/favicon"
+      },
+      {
+        "id": "MAN-UX-001",
+        "status": "PARTIAL_FULL_HUMAN_UX_NOT_RUN",
+        "scope": "Full operator experience; closed H18 finite four-state check stays closed"
+      }
+    ],
+    "C1C2ProductState": "Product development and engineering self-test delivery already integrated into main; not independently QA accepted by this run",
+    "C1C2IndependentQaState": "PREPARATION_ONLY_NOT_EXECUTED",
+    "secondRoundP0P1State": "PREPARATION_ONLY_NOT_EXECUTED_NOT_MERGED_TO_MAIN",
+    "boundedOutstandingAndEvidenceLimits": "See scope-clarification.json; distinguish existing BLK-EXT-001 gap from extra running-instance cross coverage and non-universal finite-evidence limits"
+  },
+  "nextActions": [
+    "Engineering reasonable fixes for two strict maxima, new candidate frozen before independent retest",
+    "Use corrected QA drivers on next candidate with explicit new run; preserve first raw record",
+    "Save QA-driver BLOCKED closed only by the explicit corrected run, not prior local PASS facts",
+    "Second-round and release scope remain separate; no threshold waiver made by QA"
+  ],
+  "attemptsPerCaseScope": "One attempt per selected case within each run; save case has two explicit runs, total four invocations, zero automatic retries",
+  "engineeringNextCandidate": {
+    "sourceRevision": "f285777f25dc644fe5181cd40ae2f0c316ae5389",
+    "sourceRole": "Engineering preparation handoff only; complete self-test and formal product execution handoff pending",
+    "independentlyProductExecuted": false,
+    "original01fResultsChanged": false
+  }
+}

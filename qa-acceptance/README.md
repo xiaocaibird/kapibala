@@ -4,6 +4,7 @@
 
 ## 阅读入口
 
+- **[01f固定候选最新独立补证报告](reports/followup/20261002-first-round-observation-retest/report.md)**：三条用例最新2 FAIL /1 PASS；5秒工具等待与60秒活动预算仍超限，真实保存失败及保留状态重启的限定场景通过。首次raw3 FAIL、独立2 FAIL /1 BLOCKED和修正后单例补测均保留，零自动重试；1559份原件逐文件核验。该补证不替代下面分版本全量结果；[范围澄清](reports/followup/20261002-first-round-observation-retest/scope-clarification.json)明确原阻塞、额外交叉覆盖与有限证据边界。
 - **[原活动预算 × 已派发 kick 独立补充报告](reports/followup/20261002-dispatched-kick-budget/report.md)**：固定8e单次实测、零重试，专项审定 BLOCKED（7项具体事实 PASS、3项 BLOCKED）；原始 FAIL 与强恢复观察原样保留。未证明确认在途跨决定或严格60秒预算符合，不改下方已签报告计数；第二实例仍单列未执行。
 - **[当前交付版本验收报告](reports/acceptance/20261002-current-delivery/report.md)**：[JSON](reports/acceptance/20261002-current-delivery/summary.json)、[缺陷与复现证据](reports/acceptance/20261002-current-delivery/defects.json)、[剩余事项](reports/acceptance/20261002-current-delivery/pending-items.json)。预算、容量及安全阶段崩溃恢复修复已通过；工具5秒与未知外部结果续跑要求仍未满足。历史未复测、真人缺证及上线范围单列。
 - [2716完整业务审定](reports/acceptance/20261001-2716abd-business/report.md)、[8e修复候选独立差异复测](reports/followup/20261001-8e047-retest/report.md)：冻结源、配置、逐项结果、JUnit、原始工件归档和资源核查分别保存。
@@ -34,7 +35,7 @@
 - [独立外部协议桩](contracts/simulator.md)、[公开响应契约](contracts/public-api.ts)。
 - [工具生成的准备快照](reports/preparation/acceptance.md)、[准备JSON](reports/preparation/results.json)：不代表最新产品测试结果。
 
-范围为原始 A/B 与已明确批准的追加需求。C1 媒体、C2 真实模型只列候选；浏览器自动化为本次 QA 的交付方法。消息分页采用固定遍历集合及实时合并，leave-all 比较服务账号成员投影。未知语义保留阻塞，不能从当前实现反推预期。
+首轮范围为原始 A/B 与已明确批准的追加需求。C1 媒体、C2 真实模型的产品开发、自测交付已合main，首轮独立QA未执行其验收、不继承开发PASS；C1/C2及第二轮P0/P1的QA资产在独立分支仅准备，第二轮准备分支未合main。浏览器自动化为本次 QA 的交付方法。消息分页采用固定遍历集合及实时合并，leave-all 比较服务账号成员投影。未知语义保留阻塞，不能从当前实现反推预期。
 
 ## 独立性与执行阶段
 

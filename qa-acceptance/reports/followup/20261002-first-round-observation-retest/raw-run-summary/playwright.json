@@ -1,0 +1,378 @@
+{
+  "config": {
+    "argv": [
+      "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node",
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/node_modules/@playwright/test/cli.js",
+      "test",
+      "--grep",
+      "(?:^|\\s)\\[(?:INT-KICK-OBSERVATION-001|INT-READ-CAUSAL-001|INT-READ-SAVE-ROLLBACK-001)\\](?=\\s|$)",
+      "--project=system"
+    ],
+    "configFile": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/playwright.config.ts",
+    "rootDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/execution-gate.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "system",
+        "name": "system",
+        "testDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests",
+        "testIgnore": [
+          "**/ui/**"
+        ],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/ui/*.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox-smoke",
+        "name": "firefox-smoke",
+        "testDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/ui/*.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit-smoke",
+        "name": "webkit-smoke",
+        "testDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/ui/*.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/reporter.ts",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/playwright.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/playwright.junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "system/delivery-read-causal-followup.spec.ts",
+      "file": "system/delivery-read-causal-followup.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "[INT-READ-SAVE-ROLLBACK-001] publicly initiated send survives a real original-history save rollback and same-key process recovery",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 90000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "system",
+              "projectName": "system",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 3116,
+                  "error": {
+                    "message": "AssertionError: 原消息实际副作用未唯一落地\n\n0 !== 1\n",
+                    "stack": "AssertionError: 原消息实际副作用未唯一落地\n\n0 !== 1\n\n    at body (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts:300:14)\n    at check (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts:74:7)\n    at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts:307:5",
+                    "location": {
+                      "file": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts",
+                      "column": 14,
+                      "line": 300
+                    },
+                    "snippet": "  298 |         '同一原发送出现重复实际send',\n  299 |       );\n> 300 |       assert.equal(\n      |              ^\n  301 |         gateway.messages.filter((message) => message.clientMsgId === clientMsgId).length,\n  302 |         1,\n  303 |         '原消息实际副作用未唯一落地',"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts",
+                        "column": 14,
+                        "line": 300
+                      },
+                      "message": "AssertionError: 原消息实际副作用未唯一落地\n\n0 !== 1\n\n\n  298 |         '同一原发送出现重复实际send',\n  299 |       );\n> 300 |       assert.equal(\n      |              ^\n  301 |         gateway.messages.filter((message) => message.clientMsgId === clientMsgId).length,\n  302 |         1,\n  303 |         '原消息实际副作用未唯一落地',\n    at body (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts:300:14)\n    at check (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts:74:7)\n    at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts:307:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T18:39:28.664Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE4LTM5LTI3LjkzM1otMTVmMTZlYzYvYXJ0aWZhY3RzL3N5c3RlbS1kZWxpdmVyeS1yZWFkLWNhdXNhLWE1OTFlLWQtc2FtZS1rZXktcHJvY2Vzcy1yZWNvdmVyeS1zeXN0ZW0vZXZpZGVuY2U="
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/artifacts/system-delivery-read-causa-a591e-d-same-key-process-recovery-system/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/artifacts/system-delivery-read-causa-a591e-d-same-key-process-recovery-system/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts",
+                    "column": 14,
+                    "line": 300
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "a49755a515d1f4e2f34b-80f155628620c3e817dd",
+          "file": "system/delivery-read-causal-followup.spec.ts",
+          "line": 42,
+          "column": 1
+        },
+        {
+          "title": "[INT-READ-CAUSAL-001] original locked read, real SQL rollback and actual Agent history commit remain independent of strict five seconds",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "system",
+              "projectName": "system",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8269,
+                  "error": {
+                    "message": "AssertionError: 实际工具状态等待下界超过原始5000ms上限",
+                    "stack": "AssertionError: 实际工具状态等待下界超过原始5000ms上限\n    at assertToolWaitBudget (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/lifecycle-observation.ts:367:10)\n    at body (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts:782:13)\n    at check (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts:491:7)\n    at Object.invariant (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts:781:11)\n    at observe (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/observation.ts:17:19)\n    at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts:752:21",
+                    "location": {
+                      "file": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/lifecycle-observation.ts",
+                      "column": 10,
+                      "line": 367
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39m../harness/lifecycle-observation.ts:367\n\n  365 |   assert.equal(window.errorCode, expectedCode, '实际工具交还结果错误');\n  366 |   assert.equal(window.readyErrorCode, expectedCode, '状态等待结果与交还结果不一致');\n> 367 |   assert.ok(window.elapsed[0] <= 5000, '实际工具状态等待下界超过原始5000ms上限');\n      |          ^\n  368 |   if (expectedCode === 'SEND_TIMEOUT')\n  369 |     assert.ok(window.elapsed[1] >= 5000, '未满5秒且无结论却提前宣告SEND_TIMEOUT');\n  370 |   if (window.elapsed[1] > 5000)"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/lifecycle-observation.ts",
+                        "column": 10,
+                        "line": 367
+                      },
+                      "message": "AssertionError: 实际工具状态等待下界超过原始5000ms上限\n\n   at ../harness/lifecycle-observation.ts:367\n\n  365 |   assert.equal(window.errorCode, expectedCode, '实际工具交还结果错误');\n  366 |   assert.equal(window.readyErrorCode, expectedCode, '状态等待结果与交还结果不一致');\n> 367 |   assert.ok(window.elapsed[0] <= 5000, '实际工具状态等待下界超过原始5000ms上限');\n      |          ^\n  368 |   if (expectedCode === 'SEND_TIMEOUT')\n  369 |     assert.ok(window.elapsed[1] >= 5000, '未满5秒且无结论却提前宣告SEND_TIMEOUT');\n  370 |   if (window.elapsed[1] > 5000)\n    at assertToolWaitBudget (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/lifecycle-observation.ts:367:10)\n    at body (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts:782:13)\n    at check (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts:491:7)\n    at Object.invariant (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts:781:11)\n    at observe (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/observation.ts:17:19)\n    at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-causal-followup.spec.ts:752:21"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T18:39:33.066Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE4LTM5LTI3LjkzM1otMTVmMTZlYzYvYXJ0aWZhY3RzL3N5c3RlbS1kZWxpdmVyeS1yZWFkLWNhdXNhLTNiNjk0LWRlbnQtb2Ytc3RyaWN0LWZpdmUtc2Vjb25kcy1zeXN0ZW0vZXZpZGVuY2U="
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/artifacts/system-delivery-read-causa-3b694-dent-of-strict-five-seconds-system/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/artifacts/system-delivery-read-causa-3b694-dent-of-strict-five-seconds-system/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/lifecycle-observation.ts",
+                    "column": 10,
+                    "line": 367
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "a49755a515d1f4e2f34b-e4932951016609ea4cd3",
+          "file": "system/delivery-read-causal-followup.spec.ts",
+          "line": 481,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "system/dispatched-kick-observation-followup.spec.ts",
+      "file": "system/dispatched-kick-observation-followup.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "[INT-KICK-OBSERVATION-001] original active budget bounds an already dispatched kick with unresolved 504 confirmation",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "system",
+              "projectName": "system",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 64428,
+                  "error": {
+                    "message": "AssertionError: complete activity lower bound: 完整实际活动下界已超过60000ms",
+                    "stack": "AssertionError: complete activity lower bound: 完整实际活动下界已超过60000ms\n    at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/dispatched-kick-observation-followup.spec.ts:883:31",
+                    "location": {
+                      "file": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/dispatched-kick-observation-followup.spec.ts",
+                      "column": 31,
+                      "line": 883
+                    },
+                    "snippet": "  881 |     });\n  882 |   }\n> 883 |   if (failures.length) assert.fail(failures.join('\\n'));\n      |                               ^\n  884 |   if (primary && !(primary instanceof BlockedError)) throw primary;\n  885 |   if (missing.length || secondary.length)\n  886 |     throw new BlockedError([...missing, ...secondary].join('; '));"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/dispatched-kick-observation-followup.spec.ts",
+                        "column": 31,
+                        "line": 883
+                      },
+                      "message": "AssertionError: complete activity lower bound: 完整实际活动下界已超过60000ms\n\n  881 |     });\n  882 |   }\n> 883 |   if (failures.length) assert.fail(failures.join('\\n'));\n      |                               ^\n  884 |   if (primary && !(primary instanceof BlockedError)) throw primary;\n  885 |   if (missing.length || secondary.length)\n  886 |     throw new BlockedError([...missing, ...secondary].join('; '));\n    at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/dispatched-kick-observation-followup.spec.ts:883:31"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T18:39:42.585Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE4LTM5LTI3LjkzM1otMTVmMTZlYzYvYXJ0aWZhY3RzL3N5c3RlbS1kaXNwYXRjaGVkLWtpY2stb2JzLTBlMzA5LXVucmVzb2x2ZWQtNTA0LWNvbmZpcm1hdGlvbi1zeXN0ZW0vZXZpZGVuY2U="
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/artifacts/system-dispatched-kick-obs-0e309-unresolved-504-confirmation-system/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/artifacts/system-dispatched-kick-obs-0e309-unresolved-504-confirmation-system/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/dispatched-kick-observation-followup.spec.ts",
+                    "column": 31,
+                    "line": 883
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "52a5733a7babe0377836-f3f5e858a5f5fba87fdb",
+          "file": "system/dispatched-kick-observation-followup.spec.ts",
+          "line": 39,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-01T18:39:28.260Z",
+    "duration": 79867.276,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}
