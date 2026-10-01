@@ -39,6 +39,23 @@ export function compatibleActivityPair(
   );
 }
 
+/** Independently owned module gates may share only the same verified target.
+ * Each registered module still has at most one active lease and its own TTL. */
+export function compatibleRuntimePair(
+  a: CombinedRequest,
+  b: CombinedRequest,
+): boolean {
+  return (
+    compatibleActivityPair(a, b) ||
+    (a.mode === "module-fail-then-hold" &&
+      b.mode === "module-fail-then-hold" &&
+      a.correlation.module !== b.correlation.module &&
+      a.target.apiUrl === b.target.apiUrl &&
+      a.target.pid === b.target.pid &&
+      a.target.revision === b.target.revision)
+  );
+}
+
 export class CombinedRuntimeObservation implements ObservationRuntime<CombinedRequest> {
   readonly protocol = protocol;
   readonly resource: RuntimeObservation;

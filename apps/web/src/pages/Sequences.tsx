@@ -288,346 +288,352 @@ export function Sequences({
     }
   };
   return (
-    <PageAttentionScope
-      key={`${groupId}:${sequenceId}`}
-      scopeKey={`sequences:${groupId}:${sequenceId}`}
-      title="定时序列"
-      acceptEvent={(event) => acceptsSequencePageEvent(event, groupId)}
-    >
-      <PageHeader
-        eyebrow="SCHEDULED MESSAGING"
+    <>
+      <PageAttentionScope
+        key={`${groupId}:${sequenceId}`}
+        scopeKey={`sequences:${groupId}:${sequenceId}`}
         title="定时序列"
-        subtitle="预检每一步的消息与变量来源，再有序发送到群组。"
-        actions={
-          user?.role === "admin" && (
-            <button
-              className="button secondary"
-              onClick={() => setCreateOpen(true)}
-            >
-              <Icon name="plus" size={16} />
-              新建序列
-            </button>
-          )
-        }
-      />
-      <ErrorNotice error={groups.error} retry={() => void groups.reload()} />
-      <ErrorNotice
-        error={sequences.error}
-        retry={() => void sequences.reload()}
-      />
-      <ErrorNotice error={preview ? null : error} />
-      {contextNotice && (
-        <p className="notice info" role="status">
-          {contextNotice}
-        </p>
-      )}
-      {(groupMissing || sequenceMissing) && (
-        <p className="notice warning" role="status">
-          原选择的{groupMissing ? "群组" : "序列"}
-          已不可用，请重新选择。不会自动切换到其他目标。
-        </p>
-      )}
-      <AttentionRegion
-        targetId="sequence-selection"
-        label="当前选择的群状态或运行有更新"
-        matchEvent={(event) =>
-          groupFields(event, groupId, ["name", "status"]) ||
-          (event.type === "sequence_run" && event.payload.groupId === groupId)
-        }
-        definitiveEvent={definitiveSequenceSelectionEvent}
-        version={JSON.stringify([group?.name, group?.status, runId])}
-        evidence={groups.snapshot}
-        ready={Boolean(group) && !groups.error}
-        refresh={groups.reload}
+        acceptEvent={(event) => acceptsSequencePageEvent(event, groupId)}
       >
-        <p className="muted">
-          当前群组：{group ? groupOptionLabel(group) : "未选择"} · 状态：
-          {group?.status ?? "—"}
-        </p>
-        <p className="mono small">当前展示运行：{runId ?? "尚无运行"}</p>
-      </AttentionRegion>
-      <SequenceChoicesAttention
-        data={sequences.data}
-        evidence={sequences.snapshot}
-        ready={sequences.data !== null && !sequences.error}
-        refresh={sequences.reload}
-      />
-      <div className="sequence-layout">
-        <section className="panel">
-          <div className="panel-header">
-            <h2>运行配置</h2>
-            <span className="muted small">先预检 · 后执行</span>
-          </div>
-          <form
-            className="sequence-form"
-            onSubmit={(event) => void preflight(event)}
-          >
-            <label>
-              目标群组
-              <select
-                value={groupId}
-                onChange={(event) => {
-                  invalidatePreview();
-                  setGroupChoice(event.target.value);
-                  setError(null);
-                }}
-                required
+        <PageHeader
+          eyebrow="SCHEDULED MESSAGING"
+          title="定时序列"
+          subtitle="预检每一步的消息与变量来源，再有序发送到群组。"
+          actions={
+            user?.role === "admin" && (
+              <button
+                className="button secondary"
+                onClick={() => setCreateOpen(true)}
               >
-                <option value="" disabled>
-                  请选择群组
-                </option>
-                {groupMissing && (
-                  <option value={groupId} disabled>
-                    {groupId}（已不可用，请重新选择）
-                  </option>
-                )}
-                {groups.data?.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {groupOptionLabel(item)} ·{" "}
-                    {item.status === "active" ? "可用" : "不可用"}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              消息序列
-              <select
-                value={sequenceId}
-                onChange={(event) => {
-                  invalidatePreview();
-                  setSequenceChoice(event.target.value);
-                  setError(null);
-                }}
-                required
-              >
-                <option value="" disabled>
-                  请选择序列
-                </option>
-                {sequenceMissing && (
-                  <option value={sequenceId} disabled>
-                    {sequenceId}（已不可用，请重新选择）
-                  </option>
-                )}
-                {sequences.data?.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name} · {item.steps.length} 步
-                  </option>
-                ))}
-              </select>
-            </label>
-            {sequences.loading && !sequence && <Loading />}
-            {sequence && (
-              <AttentionRegion
-                targetId="sequence-definition"
-                label="当前序列定义有更新"
-                matchEvent={(event) =>
-                  event.type === "sequence_definition_changed" &&
-                  event.payload.sequenceId === sequenceId
-                }
-                version={JSON.stringify(sequence)}
-                evidence={sequences.snapshot}
-                ready={!sequences.error}
-                refresh={sequences.reload}
-              >
-                <div className="sequence-definition">
-                  {sequence.steps.map((step) => (
-                    <div key={step.index}>
-                      <span className="step-number">{step.index}</span>
-                      <div>
-                        <strong>{step.text}</strong>
-                        <span>
-                          {step.accountRole === "admin"
-                            ? "管理员 / 群主"
-                            : "普通成员"}{" "}
-                          · 延迟 {step.delaySeconds} 秒
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </AttentionRegion>
-            )}
-            {user?.role === "admin" && (
-              <>
-                <label>
-                  默认变量 <code>vars</code>
-                  <textarea
-                    className="code-input"
-                    rows={5}
-                    value={varsText}
-                    onChange={(event) => {
-                      invalidatePreview();
-                      setVarsText(event.target.value);
-                    }}
-                    spellCheck={false}
-                    aria-describedby="vars-help"
-                  />
-                </label>
-                <p id="vars-help" className="field-help">
-                  JSON 键值对象。
-                  {placeholders.length
-                    ? `需要的占位符：${placeholders.join("、")}。`
-                    : "此序列没有占位符。"}
-                  空字符串视为未提供。
-                </p>
-                <label>
-                  分步变量 <code>stepVars</code>
-                  <textarea
-                    className="code-input"
-                    rows={5}
-                    value={stepVarsText}
-                    onChange={(event) => {
-                      invalidatePreview();
-                      setStepVarsText(event.target.value);
-                    }}
-                    spellCheck={false}
-                    aria-describedby="step-vars-help"
-                  />
-                </label>
-                <p id="step-vars-help" className="field-help">
-                  例如 <code>{'{"2":{"location":"共享盘"}}'}</code>
-                  。从该步起沿用新值；空字符串保留原值。
-                </p>
-                {group?.activeSequenceRunId && (
-                  <div className="notice warning">
-                    此群已有序列运行中，请等待完成。
-                  </div>
-                )}
-                <button
-                  className="button primary full-width"
-                  disabled={
-                    busy ||
-                    !sequenceId ||
-                    !groupId ||
-                    !sequence ||
-                    group?.status !== "active" ||
-                    Boolean(group?.activeSequenceRunId)
-                  }
-                >
-                  {busy ? "正在预检…" : "预检所有步骤"}
-                  <Icon name="arrow" size={16} />
-                </button>
-              </>
-            )}
-            {user?.role === "viewer" && (
-              <div className="notice info">
-                当前为只读会话，可查看序列与执行进度。
-              </div>
-            )}
-          </form>
-        </section>
-        <div>
-          {runId ? (
-            <SequenceProgress key={runId} id={runId} />
-          ) : (
-            <section className="panel">
-              <Empty title="尚无序列运行" icon="sequence">
-                选择序列并完成变量预检后，执行进度会在这里实时展示。
-              </Empty>
-            </section>
-          )}
-          <div className="sequence-note">
-            <h3>发送后，再开始下一步计时</h3>
-            <p>
-              限流时步骤等待恢复。没有匹配角色的可用账号时跳过；群不可写时停止运行。
-            </p>
-          </div>
-        </div>
-      </div>
-      {preview && (
-        <Modal
-          wide
-          title="预检通过 · 确认发送内容"
-          onClose={() => {
-            if (!busy) setPreview(null);
-          }}
+                <Icon name="plus" size={16} />
+                新建序列
+              </button>
+            )
+          }
+        />
+        <ErrorNotice error={groups.error} retry={() => void groups.reload()} />
+        <ErrorNotice
+          error={sequences.error}
+          retry={() => void sequences.reload()}
+        />
+        <ErrorNotice error={preview ? null : error} />
+        {contextNotice && (
+          <p className="notice info" role="status">
+            {contextNotice}
+          </p>
+        )}
+        {(groupMissing || sequenceMissing) && (
+          <p className="notice warning" role="status">
+            原选择的{groupMissing ? "群组" : "序列"}
+            已不可用，请重新选择。不会自动切换到其他目标。
+          </p>
+        )}
+        <AttentionRegion
+          targetId="sequence-selection"
+          label="当前选择的群状态或运行有更新"
+          matchEvent={(event) =>
+            groupFields(event, groupId, ["name", "status"]) ||
+            (event.type === "sequence_run" && event.payload.groupId === groupId)
+          }
+          definitiveEvent={definitiveSequenceSelectionEvent}
+          version={JSON.stringify([group?.name, group?.status, runId])}
+          evidence={groups.snapshot}
+          ready={Boolean(group) && !groups.error}
+          refresh={groups.reload}
         >
           <p className="muted">
-            以下是每一步的最终文本和变量来源。启动时服务会再次完整校验。
+            当前群组：{group ? groupOptionLabel(group) : "未选择"} · 状态：
+            {group?.status ?? "—"}
           </p>
-          <div className="notice info">
-            <div>
-              <strong>目标群组：{preview.groupLabel}</strong>
-              <span>群 ID：{preview.groupId}</span>
-              <span>
-                消息序列：{preview.sequence.name} · {preview.sequence.id}
-              </span>
-              <span>
-                角色可用性以执行时为准；没有匹配账号时仍按原规则跳过。
-              </span>
+          <p className="mono small">当前展示运行：{runId ?? "尚无运行"}</p>
+        </AttentionRegion>
+        <SequenceChoicesAttention
+          data={sequences.data}
+          evidence={sequences.snapshot}
+          ready={sequences.data !== null && !sequences.error}
+          refresh={sequences.reload}
+        />
+        <div className="sequence-layout">
+          <section className="panel">
+            <div className="panel-header">
+              <h2>运行配置</h2>
+              <span className="muted small">先预检 · 后执行</span>
+            </div>
+            <form
+              className="sequence-form"
+              onSubmit={(event) => void preflight(event)}
+            >
+              <label>
+                目标群组
+                <select
+                  value={groupId}
+                  onChange={(event) => {
+                    invalidatePreview();
+                    setGroupChoice(event.target.value);
+                    setError(null);
+                  }}
+                  required
+                >
+                  <option value="" disabled>
+                    请选择群组
+                  </option>
+                  {groupMissing && (
+                    <option value={groupId} disabled>
+                      {groupId}（已不可用，请重新选择）
+                    </option>
+                  )}
+                  {groups.data?.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {groupOptionLabel(item)} ·{" "}
+                      {item.status === "active" ? "可用" : "不可用"}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                消息序列
+                <select
+                  value={sequenceId}
+                  onChange={(event) => {
+                    invalidatePreview();
+                    setSequenceChoice(event.target.value);
+                    setError(null);
+                  }}
+                  required
+                >
+                  <option value="" disabled>
+                    请选择序列
+                  </option>
+                  {sequenceMissing && (
+                    <option value={sequenceId} disabled>
+                      {sequenceId}（已不可用，请重新选择）
+                    </option>
+                  )}
+                  {sequences.data?.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name} · {item.steps.length} 步
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {sequences.loading && !sequence && <Loading />}
+              {sequence && (
+                <AttentionRegion
+                  targetId="sequence-definition"
+                  label="当前序列定义有更新"
+                  matchEvent={(event) =>
+                    event.type === "sequence_definition_changed" &&
+                    event.payload.sequenceId === sequenceId
+                  }
+                  version={JSON.stringify(sequence)}
+                  evidence={sequences.snapshot}
+                  ready={!sequences.error}
+                  refresh={sequences.reload}
+                >
+                  <div className="sequence-definition">
+                    {sequence.steps.map((step) => (
+                      <div key={step.index}>
+                        <span className="step-number">{step.index}</span>
+                        <div>
+                          <strong>{step.text}</strong>
+                          <span>
+                            {step.accountRole === "admin"
+                              ? "管理员 / 群主"
+                              : "普通成员"}{" "}
+                            · 延迟 {step.delaySeconds} 秒
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </AttentionRegion>
+              )}
+              {user?.role === "admin" && (
+                <>
+                  <label>
+                    默认变量 <code>vars</code>
+                    <textarea
+                      className="code-input"
+                      rows={5}
+                      value={varsText}
+                      onChange={(event) => {
+                        invalidatePreview();
+                        setVarsText(event.target.value);
+                      }}
+                      spellCheck={false}
+                      aria-describedby="vars-help"
+                    />
+                  </label>
+                  <p id="vars-help" className="field-help">
+                    JSON 键值对象。
+                    {placeholders.length
+                      ? `需要的占位符：${placeholders.join("、")}。`
+                      : "此序列没有占位符。"}
+                    空字符串视为未提供。
+                  </p>
+                  <label>
+                    分步变量 <code>stepVars</code>
+                    <textarea
+                      className="code-input"
+                      rows={5}
+                      value={stepVarsText}
+                      onChange={(event) => {
+                        invalidatePreview();
+                        setStepVarsText(event.target.value);
+                      }}
+                      spellCheck={false}
+                      aria-describedby="step-vars-help"
+                    />
+                  </label>
+                  <p id="step-vars-help" className="field-help">
+                    例如 <code>{'{"2":{"location":"共享盘"}}'}</code>
+                    。从该步起沿用新值；空字符串保留原值。
+                  </p>
+                  {group?.activeSequenceRunId && (
+                    <div className="notice warning">
+                      此群已有序列运行中，请等待完成。
+                    </div>
+                  )}
+                  <button
+                    className="button primary full-width"
+                    disabled={
+                      busy ||
+                      !sequenceId ||
+                      !groupId ||
+                      !sequence ||
+                      group?.status !== "active" ||
+                      Boolean(group?.activeSequenceRunId)
+                    }
+                  >
+                    {busy ? "正在预检…" : "预检所有步骤"}
+                    <Icon name="arrow" size={16} />
+                  </button>
+                </>
+              )}
+              {user?.role === "viewer" && (
+                <div className="notice info">
+                  当前为只读会话，可查看序列与执行进度。
+                </div>
+              )}
+            </form>
+          </section>
+          <div>
+            {runId ? (
+              <SequenceProgress key={runId} id={runId} />
+            ) : (
+              <section className="panel">
+                <Empty title="尚无序列运行" icon="sequence">
+                  选择序列并完成变量预检后，执行进度会在这里实时展示。
+                </Empty>
+              </section>
+            )}
+            <div className="sequence-note">
+              <h3>发送后，再开始下一步计时</h3>
+              <p>
+                限流时步骤等待恢复。没有匹配角色的可用账号时跳过；群不可写时停止运行。
+              </p>
             </div>
           </div>
-          <ErrorNotice error={error} />
-          <div className="preview-steps">
-            {preview.result.steps.map((step) => (
-              <article key={step.index} className="preview-step">
-                <div className="split">
-                  <h3>第 {step.index} 步</h3>
-                  <Badge status="pass" />
-                </div>
-                <p className="preview-text">{step.text}</p>
-                <p className="muted small">
-                  {preview.sequence.steps.find(
-                    (item) => item.index === step.index,
-                  )?.accountRole === "admin"
-                    ? "管理员 / 群主"
-                    : "普通成员"}
-                  {" · "}相对等待{" "}
-                  {
-                    preview.sequence.steps.find(
+        </div>
+        {preview && (
+          <Modal
+            wide
+            title="预检通过 · 确认发送内容"
+            onClose={() => {
+              if (!busy) setPreview(null);
+            }}
+          >
+            <p className="muted">
+              以下是每一步的最终文本和变量来源。启动时服务会再次完整校验。
+            </p>
+            <div className="notice info">
+              <div>
+                <strong>目标群组：{preview.groupLabel}</strong>
+                <span>群 ID：{preview.groupId}</span>
+                <span>
+                  消息序列：{preview.sequence.name} · {preview.sequence.id}
+                </span>
+                <span>
+                  角色可用性以执行时为准；没有匹配账号时仍按原规则跳过。
+                </span>
+              </div>
+            </div>
+            <ErrorNotice error={error} />
+            <div className="preview-steps">
+              {preview.result.steps.map((step) => (
+                <article key={step.index} className="preview-step">
+                  <div className="split">
+                    <h3>第 {step.index} 步</h3>
+                    <Badge status="pass" />
+                  </div>
+                  <p className="preview-text">{step.text}</p>
+                  <p className="muted small">
+                    {preview.sequence.steps.find(
                       (item) => item.index === step.index,
-                    )?.delaySeconds
-                  }{" "}
-                  秒
-                  {step.index === 1
-                    ? "（从运行启动计）"
-                    : "（从前一步完成计，发出步骤以发送确认为准）"}
-                </p>
-                {Object.keys(step.resolvedVars).length ? (
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>变量</th>
-                        <th>最终取值</th>
-                        <th>来源</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {Object.entries(step.resolvedVars).map(([key, value]) => (
-                        <tr key={key}>
-                          <td>
-                            <code>{key}</code>
-                          </td>
-                          <td>{value}</td>
-                          <td>{sourceLabel(step.varSources[key] ?? "")}</td>
+                    )?.accountRole === "admin"
+                      ? "管理员 / 群主"
+                      : "普通成员"}
+                    {" · "}相对等待{" "}
+                    {
+                      preview.sequence.steps.find(
+                        (item) => item.index === step.index,
+                      )?.delaySeconds
+                    }{" "}
+                    秒
+                    {step.index === 1
+                      ? "（从运行启动计）"
+                      : "（从前一步完成计，发出步骤以发送确认为准）"}
+                  </p>
+                  {Object.keys(step.resolvedVars).length ? (
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>变量</th>
+                          <th>最终取值</th>
+                          <th>来源</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <p className="muted small">此步骤不使用变量。</p>
-                )}
-              </article>
-            ))}
-          </div>
-          <div className="modal-footer">
-            <button
-              className="button secondary"
-              disabled={busy}
-              onClick={() => setPreview(null)}
-            >
-              返回编辑
-            </button>
-            <button
-              className="button primary"
-              disabled={busy}
-              onClick={() => void start()}
-            >
-              {busy ? "正在启动…" : "确认启动序列"}
-            </button>
-          </div>
-        </Modal>
-      )}
+                      </thead>
+                      <tbody>
+                        {Object.entries(step.resolvedVars).map(
+                          ([key, value]) => (
+                            <tr key={key}>
+                              <td>
+                                <code>{key}</code>
+                              </td>
+                              <td>{value}</td>
+                              <td>{sourceLabel(step.varSources[key] ?? "")}</td>
+                            </tr>
+                          ),
+                        )}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <p className="muted small">此步骤不使用变量。</p>
+                  )}
+                </article>
+              ))}
+            </div>
+            <div className="modal-footer">
+              <button
+                className="button secondary"
+                disabled={busy}
+                onClick={() => setPreview(null)}
+              >
+                返回编辑
+              </button>
+              <button
+                className="button primary"
+                disabled={busy}
+                onClick={() => void start()}
+              >
+                {busy ? "正在启动…" : "确认启动序列"}
+              </button>
+            </div>
+          </Modal>
+        )}
+      </PageAttentionScope>
+      {/* Creating a template is independent of the selected template. A live
+          list refresh must not remount the form before its POST settles. */}
       {createOpen && (
         <CreateSequence
           onClose={() => setCreateOpen(false)}
@@ -639,7 +645,7 @@ export function Sequences({
           }}
         />
       )}
-    </PageAttentionScope>
+    </>
   );
 }
 function SequenceChoicesAttention({

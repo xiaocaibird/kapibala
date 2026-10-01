@@ -1,0 +1,752 @@
+{
+  "sourceHead": "a99a6a80ffa5b887a74e0ef9414e85b9068db9eb",
+  "sourceStatus": "",
+  "startedAt": "2026-10-01T22:03:25.029Z",
+  "scriptSha256": "0106d3779c1e80c81f0a75bf4c3d9bccf246ff8aa387f711b87414bafa415407",
+  "sequenceSourceSha256": "e5ef1902454689ef78e68dcf9edfc6f9169a0a90f06bede534b858600395a281",
+  "buildAssets": {
+    "index-D_PTbvD6.css": "e0d8ab745f0d8f2bd3d26d1095156e3d39fc1feb4f8a286025871d1e141a8556",
+    "index-auJcXEMB.js": "6a03f778e951aa6507f07759052c79a134620099f2dbd889f74549d4b2951cf3"
+  },
+  "mode": "real REST/PG/event log/WebSocket/list refresh; production React; unrelated background workers disabled",
+  "exclusions": [
+    "independent QA acceptance",
+    "external Gateway/Agent",
+    "human input method or OS focus"
+  ],
+  "results": [
+    {
+      "variant": "first-no-escape",
+      "status": "PASS",
+      "events": [
+        {
+          "at": "2026-10-01T22:03:25.523Z",
+          "type": "actual-post-response-held",
+          "status": 200,
+          "request": {
+            "name": "Development-first-no-escape-558649e6-f394-4902-8d6e-232e993861cc",
+            "steps": [
+              {
+                "index": 1,
+                "accountRole": "admin",
+                "text": "Submitted A {name}",
+                "delaySeconds": 0
+              },
+              {
+                "index": 2,
+                "accountRole": "member",
+                "text": "Submitted B {name}",
+                "delaySeconds": 0
+              }
+            ]
+          },
+          "response": {
+            "id": "3b59690b-5bfd-461f-9f93-62c48ab1c848"
+          }
+        },
+        {
+          "at": "2026-10-01T22:03:25.569Z",
+          "type": "sequence_definition_changed",
+          "seq": 1,
+          "payload": {
+            "sequenceId": "3b59690b-5bfd-461f-9f93-62c48ab1c848",
+            "changedFields": [
+              "created"
+            ]
+          }
+        },
+        {
+          "at": "2026-10-01T22:03:25.636Z",
+          "type": "actual-refreshed-list-held",
+          "status": 200,
+          "body": [
+            {
+              "id": "3b59690b-5bfd-461f-9f93-62c48ab1c848",
+              "name": "Development-first-no-escape-558649e6-f394-4902-8d6e-232e993861cc",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "at": "2026-10-01T22:03:25.641Z",
+          "type": "list-response-released",
+          "publishedId": "3b59690b-5bfd-461f-9f93-62c48ab1c848"
+        },
+        {
+          "at": "2026-10-01T22:03:25.810Z",
+          "type": "save-response-released"
+        },
+        {
+          "at": "2026-10-01T22:03:25.815Z",
+          "type": "actual-refreshed-list-held",
+          "status": 200,
+          "body": [
+            {
+              "id": "3b59690b-5bfd-461f-9f93-62c48ab1c848",
+              "name": "Development-first-no-escape-558649e6-f394-4902-8d6e-232e993861cc",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "list-held",
+          "at": "2026-10-01T22:03:25.637Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-first-no-escape-558649e6-f394-4902-8d6e-232e993861cc\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": ""
+        },
+        {
+          "phase": "actual-list-rendered",
+          "at": "2026-10-01T22:03:25.671Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-first-no-escape-558649e6-f394-4902-8d6e-232e993861cc\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "3b59690b-5bfd-461f-9f93-62c48ab1c848"
+        },
+        {
+          "phase": "saving-close-after-refresh",
+          "at": "2026-10-01T22:03:25.800Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-first-no-escape-558649e6-f394-4902-8d6e-232e993861cc\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "3b59690b-5bfd-461f-9f93-62c48ab1c848"
+        },
+        {
+          "phase": "saving-escape-after-refresh",
+          "at": "2026-10-01T22:03:25.804Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-first-no-escape-558649e6-f394-4902-8d6e-232e993861cc\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "3b59690b-5bfd-461f-9f93-62c48ab1c848"
+        },
+        {
+          "phase": "saving-cancel-after-refresh",
+          "at": "2026-10-01T22:03:25.807Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-first-no-escape-558649e6-f394-4902-8d6e-232e993861cc\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "3b59690b-5bfd-461f-9f93-62c48ab1c848"
+        }
+      ],
+      "cleanup": [
+        {
+          "name": "browser-context",
+          "success": true
+        },
+        {
+          "name": "web",
+          "success": true
+        },
+        {
+          "name": "api",
+          "success": true
+        },
+        {
+          "name": "database",
+          "success": true
+        }
+      ],
+      "pageErrors": [],
+      "routeErrors": [],
+      "database": "kapibala_test_aeeaa5627e5747ce8ac922eaff29f2ab",
+      "screenshot": {
+        "file": "/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/.runtime/sequence-save-refresh/after.json.first-no-escape.png",
+        "sha256": "0f9438c3e7755ad4eb3de5a7d7473805ce7f55ddbb72973ce4775e530dd18520"
+      },
+      "savedSnapshot": {
+        "id": "3b59690b-5bfd-461f-9f93-62c48ab1c848",
+        "name": "Development-first-no-escape-558649e6-f394-4902-8d6e-232e993861cc",
+        "steps": [
+          {
+            "text": "Submitted A {name}",
+            "index": 1,
+            "accountRole": "admin",
+            "delaySeconds": 0
+          },
+          {
+            "text": "Submitted B {name}",
+            "index": 2,
+            "accountRole": "member",
+            "delaySeconds": 0
+          }
+        ]
+      }
+    },
+    {
+      "variant": "first-escape-before-refresh",
+      "status": "PASS",
+      "events": [
+        {
+          "at": "2026-10-01T22:03:26.255Z",
+          "type": "actual-post-response-held",
+          "status": 200,
+          "request": {
+            "name": "Development-first-escape-before-refresh-70604d1b-f3f8-4234-ad40-6030f828f0ee",
+            "steps": [
+              {
+                "index": 1,
+                "accountRole": "admin",
+                "text": "Submitted A {name}",
+                "delaySeconds": 0
+              },
+              {
+                "index": 2,
+                "accountRole": "member",
+                "text": "Submitted B {name}",
+                "delaySeconds": 0
+              }
+            ]
+          },
+          "response": {
+            "id": "0de99508-f1a2-4c8d-982c-3ca14382c8ac"
+          }
+        },
+        {
+          "at": "2026-10-01T22:03:26.282Z",
+          "type": "sequence_definition_changed",
+          "seq": 1,
+          "payload": {
+            "sequenceId": "0de99508-f1a2-4c8d-982c-3ca14382c8ac",
+            "changedFields": [
+              "created"
+            ]
+          }
+        },
+        {
+          "at": "2026-10-01T22:03:26.348Z",
+          "type": "actual-refreshed-list-held",
+          "status": 200,
+          "body": [
+            {
+              "id": "0de99508-f1a2-4c8d-982c-3ca14382c8ac",
+              "name": "Development-first-escape-before-refresh-70604d1b-f3f8-4234-ad40-6030f828f0ee",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "at": "2026-10-01T22:03:26.389Z",
+          "type": "list-response-released",
+          "publishedId": "0de99508-f1a2-4c8d-982c-3ca14382c8ac"
+        },
+        {
+          "at": "2026-10-01T22:03:26.591Z",
+          "type": "save-response-released"
+        },
+        {
+          "at": "2026-10-01T22:03:26.596Z",
+          "type": "actual-refreshed-list-held",
+          "status": 200,
+          "body": [
+            {
+              "id": "0de99508-f1a2-4c8d-982c-3ca14382c8ac",
+              "name": "Development-first-escape-before-refresh-70604d1b-f3f8-4234-ad40-6030f828f0ee",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "list-held",
+          "at": "2026-10-01T22:03:26.348Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-first-escape-before-refresh-70604d1b-f3f8-4234-ad40-6030f828f0ee\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": ""
+        },
+        {
+          "phase": "escape-while-list-held",
+          "at": "2026-10-01T22:03:26.386Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-first-escape-before-refresh-70604d1b-f3f8-4234-ad40-6030f828f0ee\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": ""
+        },
+        {
+          "phase": "actual-list-rendered",
+          "at": "2026-10-01T22:03:26.436Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-first-escape-before-refresh-70604d1b-f3f8-4234-ad40-6030f828f0ee\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "0de99508-f1a2-4c8d-982c-3ca14382c8ac"
+        },
+        {
+          "phase": "saving-close-after-refresh",
+          "at": "2026-10-01T22:03:26.579Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-first-escape-before-refresh-70604d1b-f3f8-4234-ad40-6030f828f0ee\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "0de99508-f1a2-4c8d-982c-3ca14382c8ac"
+        },
+        {
+          "phase": "saving-escape-after-refresh",
+          "at": "2026-10-01T22:03:26.584Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-first-escape-before-refresh-70604d1b-f3f8-4234-ad40-6030f828f0ee\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "0de99508-f1a2-4c8d-982c-3ca14382c8ac"
+        },
+        {
+          "phase": "saving-cancel-after-refresh",
+          "at": "2026-10-01T22:03:26.589Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-first-escape-before-refresh-70604d1b-f3f8-4234-ad40-6030f828f0ee\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "0de99508-f1a2-4c8d-982c-3ca14382c8ac"
+        }
+      ],
+      "cleanup": [
+        {
+          "name": "browser-context",
+          "success": true
+        },
+        {
+          "name": "web",
+          "success": true
+        },
+        {
+          "name": "api",
+          "success": true
+        },
+        {
+          "name": "database",
+          "success": true
+        }
+      ],
+      "pageErrors": [],
+      "routeErrors": [],
+      "database": "kapibala_test_e06fcccd832d4e19b40e0e6ba4597393",
+      "screenshot": {
+        "file": "/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/.runtime/sequence-save-refresh/after.json.first-escape-before-refresh.png",
+        "sha256": "d6a0b9affe688d8b11d920feb160811ac7091337f57bf7768f63cab52c5241ec"
+      },
+      "savedSnapshot": {
+        "id": "0de99508-f1a2-4c8d-982c-3ca14382c8ac",
+        "name": "Development-first-escape-before-refresh-70604d1b-f3f8-4234-ad40-6030f828f0ee",
+        "steps": [
+          {
+            "text": "Submitted A {name}",
+            "index": 1,
+            "accountRole": "admin",
+            "delaySeconds": 0
+          },
+          {
+            "text": "Submitted B {name}",
+            "index": 2,
+            "accountRole": "member",
+            "delaySeconds": 0
+          }
+        ]
+      }
+    },
+    {
+      "variant": "existing-selection",
+      "status": "PASS",
+      "events": [
+        {
+          "at": "2026-10-01T22:03:27.042Z",
+          "type": "actual-post-response-held",
+          "status": 200,
+          "request": {
+            "name": "Development-existing-selection-84428909-903e-402c-b5e0-68e691690733",
+            "steps": [
+              {
+                "index": 1,
+                "accountRole": "admin",
+                "text": "Submitted A {name}",
+                "delaySeconds": 0
+              },
+              {
+                "index": 2,
+                "accountRole": "member",
+                "text": "Submitted B {name}",
+                "delaySeconds": 0
+              }
+            ]
+          },
+          "response": {
+            "id": "0eceb7f9-e72b-4521-814e-f5b9672f4e95"
+          }
+        },
+        {
+          "at": "2026-10-01T22:03:27.090Z",
+          "type": "sequence_definition_changed",
+          "seq": 1,
+          "payload": {
+            "sequenceId": "0eceb7f9-e72b-4521-814e-f5b9672f4e95",
+            "changedFields": [
+              "created"
+            ]
+          }
+        },
+        {
+          "at": "2026-10-01T22:03:27.155Z",
+          "type": "actual-refreshed-list-held",
+          "status": 200,
+          "body": [
+            {
+              "id": "existing",
+              "name": "Existing template",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            },
+            {
+              "id": "0eceb7f9-e72b-4521-814e-f5b9672f4e95",
+              "name": "Development-existing-selection-84428909-903e-402c-b5e0-68e691690733",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "at": "2026-10-01T22:03:27.160Z",
+          "type": "list-response-released",
+          "publishedId": "0eceb7f9-e72b-4521-814e-f5b9672f4e95"
+        },
+        {
+          "at": "2026-10-01T22:03:27.346Z",
+          "type": "save-response-released"
+        },
+        {
+          "at": "2026-10-01T22:03:27.351Z",
+          "type": "actual-refreshed-list-held",
+          "status": 200,
+          "body": [
+            {
+              "id": "existing",
+              "name": "Existing template",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            },
+            {
+              "id": "0eceb7f9-e72b-4521-814e-f5b9672f4e95",
+              "name": "Development-existing-selection-84428909-903e-402c-b5e0-68e691690733",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "list-held",
+          "at": "2026-10-01T22:03:27.155Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-existing-selection-84428909-903e-402c-b5e0-68e691690733\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "existing"
+        },
+        {
+          "phase": "actual-list-rendered",
+          "at": "2026-10-01T22:03:27.192Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-existing-selection-84428909-903e-402c-b5e0-68e691690733\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "existing"
+        },
+        {
+          "phase": "saving-close-after-refresh",
+          "at": "2026-10-01T22:03:27.336Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-existing-selection-84428909-903e-402c-b5e0-68e691690733\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "existing"
+        },
+        {
+          "phase": "saving-escape-after-refresh",
+          "at": "2026-10-01T22:03:27.340Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-existing-selection-84428909-903e-402c-b5e0-68e691690733\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "existing"
+        },
+        {
+          "phase": "saving-cancel-after-refresh",
+          "at": "2026-10-01T22:03:27.343Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-existing-selection-84428909-903e-402c-b5e0-68e691690733\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "existing"
+        }
+      ],
+      "cleanup": [
+        {
+          "name": "browser-context",
+          "success": true
+        },
+        {
+          "name": "web",
+          "success": true
+        },
+        {
+          "name": "api",
+          "success": true
+        },
+        {
+          "name": "database",
+          "success": true
+        }
+      ],
+      "pageErrors": [],
+      "routeErrors": [],
+      "database": "kapibala_test_fc14daefb7c048df99355fac8306ac65",
+      "screenshot": {
+        "file": "/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/.runtime/sequence-save-refresh/after.json.existing-selection.png",
+        "sha256": "6200c4868b59333361e8b9baf8afa1746bdac3a5805fccaba151be00793696fc"
+      },
+      "savedSnapshot": {
+        "id": "0eceb7f9-e72b-4521-814e-f5b9672f4e95",
+        "name": "Development-existing-selection-84428909-903e-402c-b5e0-68e691690733",
+        "steps": [
+          {
+            "text": "Submitted A {name}",
+            "index": 1,
+            "accountRole": "admin",
+            "delaySeconds": 0
+          },
+          {
+            "text": "Submitted B {name}",
+            "index": 2,
+            "accountRole": "member",
+            "delaySeconds": 0
+          }
+        ]
+      }
+    },
+    {
+      "variant": "dirty-external-refresh",
+      "status": "PASS",
+      "events": [
+        {
+          "at": "2026-10-01T22:03:27.754Z",
+          "type": "external-real-post-completed",
+          "id": "9689b72a-9e78-4620-a46e-44412cf94dcd",
+          "submitted": {
+            "name": "External-1caecd26-7ee7-4372-b527-f99e6da80f1b",
+            "steps": [
+              {
+                "index": 1,
+                "accountRole": "admin",
+                "text": "Submitted A {name}",
+                "delaySeconds": 0
+              },
+              {
+                "index": 2,
+                "accountRole": "member",
+                "text": "Submitted B {name}",
+                "delaySeconds": 0
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-01T22:03:27.817Z",
+          "type": "sequence_definition_changed",
+          "seq": 1,
+          "payload": {
+            "sequenceId": "9689b72a-9e78-4620-a46e-44412cf94dcd",
+            "changedFields": [
+              "created"
+            ]
+          }
+        },
+        {
+          "at": "2026-10-01T22:03:27.884Z",
+          "type": "actual-refreshed-list-held",
+          "status": 200,
+          "body": [
+            {
+              "id": "9689b72a-9e78-4620-a46e-44412cf94dcd",
+              "name": "External-1caecd26-7ee7-4372-b527-f99e6da80f1b",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "at": "2026-10-01T22:03:27.888Z",
+          "type": "list-response-released",
+          "publishedId": "9689b72a-9e78-4620-a46e-44412cf94dcd"
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "list-held",
+          "at": "2026-10-01T22:03:27.884Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-dirty-external-refresh-564bba60-2884-4a84-ba64-6558313378fe\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": false,
+          "disabled": false,
+          "selected": ""
+        },
+        {
+          "phase": "actual-list-rendered",
+          "at": "2026-10-01T22:03:27.931Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-dirty-external-refresh-564bba60-2884-4a84-ba64-6558313378fe\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": false,
+          "disabled": false,
+          "selected": "9689b72a-9e78-4620-a46e-44412cf94dcd"
+        }
+      ],
+      "cleanup": [
+        {
+          "name": "browser-context",
+          "success": true
+        },
+        {
+          "name": "web",
+          "success": true
+        },
+        {
+          "name": "api",
+          "success": true
+        },
+        {
+          "name": "database",
+          "success": true
+        }
+      ],
+      "pageErrors": [],
+      "routeErrors": [],
+      "database": "kapibala_test_6453cbdb5d0741bf998452006240eb49",
+      "screenshot": {
+        "file": "/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/.runtime/sequence-save-refresh/after.json.dirty-external-refresh.png",
+        "sha256": "ae3487e492b4bf05d152fbec807ba25c0234ff6bdb826905be9cf33e7b05ee9f"
+      }
+    }
+  ],
+  "finishedAt": "2026-10-01T22:03:28.252Z"
+}

@@ -1,0 +1,32 @@
+{
+  "recordedAt": "2026-10-01T22:02:01.264Z",
+  "node": "v24.21.0",
+  "container": {
+    "name": "kapibala-multimodule-20261002",
+    "id": "195dc9559d9a9330a6db83b7c63601de1fdb53c2e19c9b098617d2b2a84dff19",
+    "image": "postgres:17",
+    "serverVersion": "17.11 (Debian 17.11-1.pgdg13+2)",
+    "ports": {
+      "5432/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "53166"
+        }
+      ]
+    },
+    "tmpfs": {
+      "/var/lib/postgresql/data": "rw"
+    },
+    "mounts": []
+  },
+  "beforeRemoval": {
+    "remainingFixtureDatabases": []
+  },
+  "removal": {
+    "action": "docker rm -f exact owned container",
+    "exitCode": 0,
+    "containerStillPresent": false,
+    "namedVolumesCreated": false
+  },
+  "scope": "Only the developer-owned container was removed; no demo or QA database was used."
+}

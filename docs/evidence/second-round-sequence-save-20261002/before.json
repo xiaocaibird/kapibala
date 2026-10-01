@@ -1,0 +1,607 @@
+{
+  "sourceHead": "2c1826bdee0665b3c57f5714603a59931c7d05ca",
+  "sourceStatus": "?? apps/web/tests/verify-sequence-save-refresh.mjs",
+  "startedAt": "2026-10-01T22:02:00.562Z",
+  "scriptSha256": "08d82043bfcbd1f7237e92cb82ee0245a044d9e448c9e54c740a32ac38318b61",
+  "sequenceSourceSha256": "f38bd1efb259b2fc2789e8ee2e055e6f3e2489674f90c261be82560bed9e9895",
+  "buildAssets": {
+    "index-D_PTbvD6.css": "e0d8ab745f0d8f2bd3d26d1095156e3d39fc1feb4f8a286025871d1e141a8556",
+    "index-DjXAag7K.js": "4e24055a46d80f53c2994dbd476c7d39b6b4cbeee4e22dc2f930487be0b1645e"
+  },
+  "mode": "real REST/PG/event log/WebSocket/list refresh; production React; unrelated background workers disabled",
+  "exclusions": [
+    "independent QA acceptance",
+    "external Gateway/Agent",
+    "human input method or OS focus"
+  ],
+  "results": [
+    {
+      "variant": "first-no-escape",
+      "status": "FAIL",
+      "events": [
+        {
+          "at": "2026-10-01T22:02:01.109Z",
+          "type": "actual-post-response-held",
+          "status": 200,
+          "request": {
+            "name": "Development-first-no-escape-5104375a-d61a-4680-90ed-fbb1362a5fdd",
+            "steps": [
+              {
+                "index": 1,
+                "accountRole": "admin",
+                "text": "Submitted A {name}",
+                "delaySeconds": 0
+              },
+              {
+                "index": 2,
+                "accountRole": "member",
+                "text": "Submitted B {name}",
+                "delaySeconds": 0
+              }
+            ]
+          },
+          "response": {
+            "id": "db652eb7-6dde-48b9-88bc-52e7acfb7065"
+          }
+        },
+        {
+          "at": "2026-10-01T22:02:01.152Z",
+          "type": "sequence_definition_changed",
+          "seq": 1,
+          "payload": {
+            "sequenceId": "db652eb7-6dde-48b9-88bc-52e7acfb7065",
+            "changedFields": [
+              "created"
+            ]
+          }
+        },
+        {
+          "at": "2026-10-01T22:02:01.219Z",
+          "type": "actual-refreshed-list-held",
+          "status": 200,
+          "body": [
+            {
+              "id": "db652eb7-6dde-48b9-88bc-52e7acfb7065",
+              "name": "Development-first-no-escape-5104375a-d61a-4680-90ed-fbb1362a5fdd",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "at": "2026-10-01T22:02:01.225Z",
+          "type": "list-response-released",
+          "publishedId": "db652eb7-6dde-48b9-88bc-52e7acfb7065"
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "list-held",
+          "at": "2026-10-01T22:02:01.219Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-first-no-escape-5104375a-d61a-4680-90ed-fbb1362a5fdd\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": ""
+        },
+        {
+          "phase": "actual-list-rendered",
+          "at": "2026-10-01T22:02:01.277Z",
+          "open": true,
+          "json": "{\n  \"name\": \"活动提醒\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"{event} 将于 {time} 开始，请提前准备\",\n      \"delaySeconds\": 10\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"提醒：{event} 的资料已上传到 {location}\",\n      \"delaySeconds\": 5\n    }\n  ]\n}",
+          "saving": false,
+          "disabled": false,
+          "selected": "db652eb7-6dde-48b9-88bc-52e7acfb7065"
+        }
+      ],
+      "cleanup": [
+        {
+          "name": "browser-context",
+          "success": true
+        },
+        {
+          "name": "web",
+          "success": true
+        },
+        {
+          "name": "api",
+          "success": true
+        },
+        {
+          "name": "database",
+          "success": true
+        }
+      ],
+      "pageErrors": [],
+      "routeErrors": [],
+      "database": "kapibala_test_e6d01cb75769464ba6d02abfe5ec4cb2",
+      "screenshot": {
+        "file": "/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/.runtime/sequence-save-refresh/before.json.first-no-escape.png",
+        "sha256": "e635bae5da60299c081c55c2c398d23ac70d1ee9c282fe717bcd142eff725a23"
+      },
+      "error": "AssertionError [ERR_ASSERTION]: Automatic list refresh must preserve the exact submitted/draft JSON\n+ actual - expected\n\n  '{\\n' +\n+   '  \"name\": \"活动提醒\",\\n' +\n-   '  \"name\": \"Development-first-no-escape-5104375a-d61a-4680-90ed-fbb1362a5fdd\",\\n' +\n    '  \"steps\": [\\n' +\n    '    {\\n' +\n    '      \"index\": 1,\\n' +\n    '      \"accountRole\": \"admin\",\\n' +\n+   '      \"text\": \"{event} 将于 {time} 开始，请提前准备\",\\n' +\n+   '      \"delaySeconds\": 10\\n' +\n-   '      \"text\": \"Submitted A {name}\",\\n' +\n-   '      \"delaySeconds\": 0\\n' +\n    '    },\\n' +\n    '    {\\n' +\n    '      \"index\": 2,\\n' +\n    '      \"accountRole\": \"member\",\\n' +\n+   '      \"text\": \"提醒：{event} 的资料已上传到 {location}\",\\n' +\n+   '      \"delaySeconds\": 5\\n' +\n-   '      \"text\": \"Submitted B {name}\",\\n' +\n-   '      \"delaySeconds\": 0\\n' +\n    '    }\\n' +\n    '  ]\\n' +\n    '}'\n\n    at <anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/apps/web/tests/verify-sequence-save-refresh.mjs:173:14)"
+    },
+    {
+      "variant": "first-escape-before-refresh",
+      "status": "FAIL",
+      "events": [
+        {
+          "at": "2026-10-01T22:02:01.919Z",
+          "type": "actual-post-response-held",
+          "status": 200,
+          "request": {
+            "name": "Development-first-escape-before-refresh-ef33fe77-10cb-47c2-99a4-2a72b6616111",
+            "steps": [
+              {
+                "index": 1,
+                "accountRole": "admin",
+                "text": "Submitted A {name}",
+                "delaySeconds": 0
+              },
+              {
+                "index": 2,
+                "accountRole": "member",
+                "text": "Submitted B {name}",
+                "delaySeconds": 0
+              }
+            ]
+          },
+          "response": {
+            "id": "e012ae8a-3d10-4c10-aa8a-29dee25a8e4f"
+          }
+        },
+        {
+          "at": "2026-10-01T22:02:01.962Z",
+          "type": "sequence_definition_changed",
+          "seq": 1,
+          "payload": {
+            "sequenceId": "e012ae8a-3d10-4c10-aa8a-29dee25a8e4f",
+            "changedFields": [
+              "created"
+            ]
+          }
+        },
+        {
+          "at": "2026-10-01T22:02:02.029Z",
+          "type": "actual-refreshed-list-held",
+          "status": 200,
+          "body": [
+            {
+              "id": "e012ae8a-3d10-4c10-aa8a-29dee25a8e4f",
+              "name": "Development-first-escape-before-refresh-ef33fe77-10cb-47c2-99a4-2a72b6616111",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "at": "2026-10-01T22:02:02.071Z",
+          "type": "list-response-released",
+          "publishedId": "e012ae8a-3d10-4c10-aa8a-29dee25a8e4f"
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "list-held",
+          "at": "2026-10-01T22:02:02.029Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-first-escape-before-refresh-ef33fe77-10cb-47c2-99a4-2a72b6616111\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": ""
+        },
+        {
+          "phase": "escape-while-list-held",
+          "at": "2026-10-01T22:02:02.067Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-first-escape-before-refresh-ef33fe77-10cb-47c2-99a4-2a72b6616111\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": ""
+        },
+        {
+          "phase": "actual-list-rendered",
+          "at": "2026-10-01T22:02:02.129Z",
+          "open": true,
+          "json": "{\n  \"name\": \"活动提醒\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"{event} 将于 {time} 开始，请提前准备\",\n      \"delaySeconds\": 10\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"提醒：{event} 的资料已上传到 {location}\",\n      \"delaySeconds\": 5\n    }\n  ]\n}",
+          "saving": false,
+          "disabled": false,
+          "selected": "e012ae8a-3d10-4c10-aa8a-29dee25a8e4f"
+        }
+      ],
+      "cleanup": [
+        {
+          "name": "browser-context",
+          "success": true
+        },
+        {
+          "name": "web",
+          "success": true
+        },
+        {
+          "name": "api",
+          "success": true
+        },
+        {
+          "name": "database",
+          "success": true
+        }
+      ],
+      "pageErrors": [],
+      "routeErrors": [],
+      "database": "kapibala_test_b0878ed52c3f4887af836920c607062a",
+      "screenshot": {
+        "file": "/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/.runtime/sequence-save-refresh/before.json.first-escape-before-refresh.png",
+        "sha256": "9651d2cfd81b3015ad30be294cf1c18ac2733cbf12d376adbdb647aaebdfe6c5"
+      },
+      "error": "AssertionError [ERR_ASSERTION]: Automatic list refresh must preserve the exact submitted/draft JSON\n+ actual - expected\n\n  '{\\n' +\n+   '  \"name\": \"活动提醒\",\\n' +\n-   '  \"name\": \"Development-first-escape-before-refresh-ef33fe77-10cb-47c2-99a4-2a72b6616111\",\\n' +\n    '  \"steps\": [\\n' +\n    '    {\\n' +\n    '      \"index\": 1,\\n' +\n    '      \"accountRole\": \"admin\",\\n' +\n+   '      \"text\": \"{event} 将于 {time} 开始，请提前准备\",\\n' +\n+   '      \"delaySeconds\": 10\\n' +\n-   '      \"text\": \"Submitted A {name}\",\\n' +\n-   '      \"delaySeconds\": 0\\n' +\n    '    },\\n' +\n    '    {\\n' +\n    '      \"index\": 2,\\n' +\n    '      \"accountRole\": \"member\",\\n' +\n+   '      \"text\": \"提醒：{event} 的资料已上传到 {location}\",\\n' +\n+   '      \"delaySeconds\": 5\\n' +\n-   '      \"text\": \"Submitted B {name}\",\\n' +\n-   '      \"delaySeconds\": 0\\n' +\n    '    }\\n' +\n    '  ]\\n' +\n    '}'\n\n    at <anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/apps/web/tests/verify-sequence-save-refresh.mjs:173:14)"
+    },
+    {
+      "variant": "existing-selection",
+      "status": "PASS",
+      "events": [
+        {
+          "at": "2026-10-01T22:02:02.677Z",
+          "type": "actual-post-response-held",
+          "status": 200,
+          "request": {
+            "name": "Development-existing-selection-6aef9605-c483-43c6-89ed-647efc614a6b",
+            "steps": [
+              {
+                "index": 1,
+                "accountRole": "admin",
+                "text": "Submitted A {name}",
+                "delaySeconds": 0
+              },
+              {
+                "index": 2,
+                "accountRole": "member",
+                "text": "Submitted B {name}",
+                "delaySeconds": 0
+              }
+            ]
+          },
+          "response": {
+            "id": "972de436-ca0d-45c6-9c01-3bab3db540cf"
+          }
+        },
+        {
+          "at": "2026-10-01T22:02:02.722Z",
+          "type": "sequence_definition_changed",
+          "seq": 1,
+          "payload": {
+            "sequenceId": "972de436-ca0d-45c6-9c01-3bab3db540cf",
+            "changedFields": [
+              "created"
+            ]
+          }
+        },
+        {
+          "at": "2026-10-01T22:02:02.786Z",
+          "type": "actual-refreshed-list-held",
+          "status": 200,
+          "body": [
+            {
+              "id": "existing",
+              "name": "Existing template",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            },
+            {
+              "id": "972de436-ca0d-45c6-9c01-3bab3db540cf",
+              "name": "Development-existing-selection-6aef9605-c483-43c6-89ed-647efc614a6b",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "at": "2026-10-01T22:02:02.791Z",
+          "type": "list-response-released",
+          "publishedId": "972de436-ca0d-45c6-9c01-3bab3db540cf"
+        },
+        {
+          "at": "2026-10-01T22:02:02.982Z",
+          "type": "save-response-released"
+        },
+        {
+          "at": "2026-10-01T22:02:02.986Z",
+          "type": "actual-refreshed-list-held",
+          "status": 200,
+          "body": [
+            {
+              "id": "existing",
+              "name": "Existing template",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            },
+            {
+              "id": "972de436-ca0d-45c6-9c01-3bab3db540cf",
+              "name": "Development-existing-selection-6aef9605-c483-43c6-89ed-647efc614a6b",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "list-held",
+          "at": "2026-10-01T22:02:02.786Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-existing-selection-6aef9605-c483-43c6-89ed-647efc614a6b\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "existing"
+        },
+        {
+          "phase": "actual-list-rendered",
+          "at": "2026-10-01T22:02:02.827Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-existing-selection-6aef9605-c483-43c6-89ed-647efc614a6b\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "existing"
+        },
+        {
+          "phase": "saving-close-after-refresh",
+          "at": "2026-10-01T22:02:02.973Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-existing-selection-6aef9605-c483-43c6-89ed-647efc614a6b\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "existing"
+        },
+        {
+          "phase": "saving-escape-after-refresh",
+          "at": "2026-10-01T22:02:02.976Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-existing-selection-6aef9605-c483-43c6-89ed-647efc614a6b\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "existing"
+        },
+        {
+          "phase": "saving-cancel-after-refresh",
+          "at": "2026-10-01T22:02:02.980Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-existing-selection-6aef9605-c483-43c6-89ed-647efc614a6b\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": true,
+          "disabled": true,
+          "selected": "existing"
+        }
+      ],
+      "cleanup": [
+        {
+          "name": "browser-context",
+          "success": true
+        },
+        {
+          "name": "web",
+          "success": true
+        },
+        {
+          "name": "api",
+          "success": true
+        },
+        {
+          "name": "database",
+          "success": true
+        }
+      ],
+      "pageErrors": [],
+      "routeErrors": [],
+      "database": "kapibala_test_c56c7434120e4389adfe97efb98aa93f",
+      "screenshot": {
+        "file": "/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/.runtime/sequence-save-refresh/before.json.existing-selection.png",
+        "sha256": "7882729d17d639d25992542fd0008b8c9fb6776d95f058199c5d50312a26ae14"
+      },
+      "savedSnapshot": {
+        "id": "972de436-ca0d-45c6-9c01-3bab3db540cf",
+        "name": "Development-existing-selection-6aef9605-c483-43c6-89ed-647efc614a6b",
+        "steps": [
+          {
+            "text": "Submitted A {name}",
+            "index": 1,
+            "accountRole": "admin",
+            "delaySeconds": 0
+          },
+          {
+            "text": "Submitted B {name}",
+            "index": 2,
+            "accountRole": "member",
+            "delaySeconds": 0
+          }
+        ]
+      }
+    },
+    {
+      "variant": "dirty-external-refresh",
+      "status": "FAIL",
+      "events": [
+        {
+          "at": "2026-10-01T22:02:03.377Z",
+          "type": "external-real-post-completed",
+          "id": "612de4da-8dc3-47c7-8654-74d7c30e1b1b",
+          "submitted": {
+            "name": "External-bf8de3df-c51c-46fa-8c2c-2ec700917d95",
+            "steps": [
+              {
+                "index": 1,
+                "accountRole": "admin",
+                "text": "Submitted A {name}",
+                "delaySeconds": 0
+              },
+              {
+                "index": 2,
+                "accountRole": "member",
+                "text": "Submitted B {name}",
+                "delaySeconds": 0
+              }
+            ]
+          }
+        },
+        {
+          "at": "2026-10-01T22:02:03.439Z",
+          "type": "sequence_definition_changed",
+          "seq": 1,
+          "payload": {
+            "sequenceId": "612de4da-8dc3-47c7-8654-74d7c30e1b1b",
+            "changedFields": [
+              "created"
+            ]
+          }
+        },
+        {
+          "at": "2026-10-01T22:02:03.504Z",
+          "type": "actual-refreshed-list-held",
+          "status": 200,
+          "body": [
+            {
+              "id": "612de4da-8dc3-47c7-8654-74d7c30e1b1b",
+              "name": "External-bf8de3df-c51c-46fa-8c2c-2ec700917d95",
+              "steps": [
+                {
+                  "text": "Submitted A {name}",
+                  "index": 1,
+                  "accountRole": "admin",
+                  "delaySeconds": 0
+                },
+                {
+                  "text": "Submitted B {name}",
+                  "index": 2,
+                  "accountRole": "member",
+                  "delaySeconds": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "at": "2026-10-01T22:02:03.508Z",
+          "type": "list-response-released",
+          "publishedId": "612de4da-8dc3-47c7-8654-74d7c30e1b1b"
+        }
+      ],
+      "snapshots": [
+        {
+          "phase": "list-held",
+          "at": "2026-10-01T22:02:03.504Z",
+          "open": true,
+          "json": "{\n  \"name\": \"Development-dirty-external-refresh-b469ea7c-b0a7-4037-8a84-e026c59c4173\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"Submitted A {name}\",\n      \"delaySeconds\": 0\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"Submitted B {name}\",\n      \"delaySeconds\": 0\n    }\n  ]\n}",
+          "saving": false,
+          "disabled": false,
+          "selected": ""
+        },
+        {
+          "phase": "actual-list-rendered",
+          "at": "2026-10-01T22:02:03.543Z",
+          "open": true,
+          "json": "{\n  \"name\": \"活动提醒\",\n  \"steps\": [\n    {\n      \"index\": 1,\n      \"accountRole\": \"admin\",\n      \"text\": \"{event} 将于 {time} 开始，请提前准备\",\n      \"delaySeconds\": 10\n    },\n    {\n      \"index\": 2,\n      \"accountRole\": \"member\",\n      \"text\": \"提醒：{event} 的资料已上传到 {location}\",\n      \"delaySeconds\": 5\n    }\n  ]\n}",
+          "saving": false,
+          "disabled": false,
+          "selected": "612de4da-8dc3-47c7-8654-74d7c30e1b1b"
+        }
+      ],
+      "cleanup": [
+        {
+          "name": "browser-context",
+          "success": true
+        },
+        {
+          "name": "web",
+          "success": true
+        },
+        {
+          "name": "api",
+          "success": true
+        },
+        {
+          "name": "database",
+          "success": true
+        }
+      ],
+      "pageErrors": [],
+      "routeErrors": [],
+      "database": "kapibala_test_b8bc7c28bd404725981d9ea464cf5917",
+      "screenshot": {
+        "file": "/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/.runtime/sequence-save-refresh/before.json.dirty-external-refresh.png",
+        "sha256": "c2a8ce39ddb334ee28c6899674349712356b7c876dfc07e7396414763bf6639f"
+      },
+      "error": "AssertionError [ERR_ASSERTION]: Automatic list refresh must preserve the exact submitted/draft JSON\n+ actual - expected\n\n  '{\\n' +\n+   '  \"name\": \"活动提醒\",\\n' +\n-   '  \"name\": \"Development-dirty-external-refresh-b469ea7c-b0a7-4037-8a84-e026c59c4173\",\\n' +\n    '  \"steps\": [\\n' +\n    '    {\\n' +\n    '      \"index\": 1,\\n' +\n    '      \"accountRole\": \"admin\",\\n' +\n+   '      \"text\": \"{event} 将于 {time} 开始，请提前准备\",\\n' +\n+   '      \"delaySeconds\": 10\\n' +\n-   '      \"text\": \"Submitted A {name}\",\\n' +\n-   '      \"delaySeconds\": 0\\n' +\n    '    },\\n' +\n    '    {\\n' +\n    '      \"index\": 2,\\n' +\n    '      \"accountRole\": \"member\",\\n' +\n+   '      \"text\": \"提醒：{event} 的资料已上传到 {location}\",\\n' +\n+   '      \"delaySeconds\": 5\\n' +\n-   '      \"text\": \"Submitted B {name}\",\\n' +\n-   '      \"delaySeconds\": 0\\n' +\n    '    }\\n' +\n    '  ]\\n' +\n    '}'\n\n    at <anonymous> (/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/apps/web/tests/verify-sequence-save-refresh.mjs:173:14)"
+    }
+  ],
+  "finishedAt": "2026-10-01T22:02:03.659Z"
+}
