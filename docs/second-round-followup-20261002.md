@@ -2,14 +2,18 @@
 
 2026-10-02。本文记录研发对独立 QA 实测的处理，不替代 QA 自行维护的报告、用例及原始证据。初始被测产品为 `5906d8d6b230699fec4a51302677a79c409cac46`；首批 QA 工具源为 `87f5aea2519554616301f403643020b46e1d8a09`。新修复按新的固定提交复测，首次失败和阻塞保留。
 
-## 当前处理表
+**当前阶段：第三批 SUT / QA 均已冻结为 `ed50ca14ae3f4140d7f020f282b313b137920209`，正在启动完整 112 项，尚无本批结果。** 第二批 `47423c1` 已结束并归档为 80 PASS / 4 FAIL / 28 BLOCKED；UI008、DIA005 在该批均 PASS。GRD003 已完成开发修复并进入第三批，待新源独立复验；当前文档变化不移动冻结源。第二批归档入口见文末。
+
+## 既有问题处理与已完成批次
 
 | 项目 | 已核实事实 | 当前处理与判定边界 |
 | --- | --- | --- |
-| SR-UI-008：序列创建保存中重置 | 真实创建请求的成功响应仍被持有时，实时列表读取到了新模板，弹窗继续显示但输入回默认值、保存状态解除。`PageAttentionScope` 的群/序列 key 变化会卸载内部创建表单；不能单凭同一时段按了 Escape 就归因为 Escape | 已修复表单生命周期，开发真实浏览器修前 3 FAIL / 1 PASS、修后 4 PASS；前端 134 PASS / 1 既有 SKIP。详见[修复与原始证据](second-round-sequence-save-guard-20261002.md)，QA 在固定 `47423c1` 新批独立复验已报告该项 PASS；整批未签发前不推导全范围通过 |
-| SR-BE-DIA-005：同实例多模块故障观察 | 初始工程控制器拒绝同实例第二条模块租约，无法用同进程双故障证明模块独立恢复 | 已补工程入口 `module-tick-independent`；同实例专项修前 2 FAIL、修后 2 PASS，相关 22 PASS。见[接入及证据](qa-multimodule-observation-20261002.md)；生产逻辑不变，等待 QA 独立复测 |
+| SR-UI-008：序列创建保存中重置 | 真实创建请求的成功响应仍被持有时，实时列表读取到了新模板，弹窗继续显示但输入回默认值、保存状态解除。`PageAttentionScope` 的群/序列 key 变化会卸载内部创建表单；不能单凭同一时段按了 Escape 就归因为 Escape | 已修复表单生命周期，开发真实浏览器修前 3 FAIL / 1 PASS、修后 4 PASS；前端 134 PASS / 1 既有 SKIP。详见[修复与原始证据](second-round-sequence-save-guard-20261002.md)，QA 在固定 `47423c1` 第二批独立复验为 PASS；该批已结束，不能外推第三批结果 |
+| SR-BE-DIA-005：同实例多模块故障观察 | 初始工程控制器拒绝同实例第二条模块租约，无法用同进程双故障证明模块独立恢复 | 已补工程入口 `module-tick-independent`；同实例专项修前 2 FAIL、修后 2 PASS，相关 22 PASS。见[接入及证据](qa-multimodule-observation-20261002.md)；生产逻辑不变；QA 在固定 `47423c1` 第二批已独立复验 PASS |
 | SR-C2-012：模型服务硬崩溃后的目录锁 | QA 在原进程被强制终止后启动同目录服务，得到 `SESSION_DIRECTORY_LOCKED`，未达到后续原运行恢复检查 | 保留原 FAIL；当前元数据不足以安全自动接管。下文记录可行改进方向及未决边界，不擅自清锁、不盲重发未知轮次 |
 | 部分页面控件定位 | QA 已将若干 label/combobox 定位失败归为执行器适配问题 | QA 独立维护适配，研发不修改 QA 文件；修正后以新运行记录复测，不改写首次结果 |
+
+## 前序修复与接入记录（保留当时阶段）
 
 两项候选已组合到研发集成提交 `27a714b`，组合后的 `npm run build`（含类型与边界检查）、原始来源校验及差异空白检查通过，没有修改 `qa-acceptance/`。专项证据各自保留原固定候选；此处没有把专项相加为完整回归或 QA 结论。
 
@@ -45,4 +49,6 @@ QA 此次 SR-C2-012 在“服务能否重启”断言处失败，不能将后续
 
 ## 第二批已执行结果
 
-QA 固定 `47423c165f74d8b8908297974f7df71bc53b470d` 的 `2026-10-01T22-25-01.466Z-7951d02e` 批完成：80 PASS / 4 FAIL / 28 BLOCKED / 0 NOT_RUN。UI008 已独立通过。四项原始失败中，C1-009 为清理重试期限之前过早断言，UI021 为导航提交之前读标题；两者由 QA 修正执行器并保留原结果。GRD003 是本次产品修复，C2-012 保留目录锁限制。新增三组工程入口、迁移等夹具和交付追踪仍待后续独立复测；本摘要不替代 QA 归档报告，不把各批通过项机械相加。
+QA 固定 `47423c165f74d8b8908297974f7df71bc53b470d` 的 [2026-10-01T22-25-01.466Z-7951d02e 原报告](../qa-acceptance/reports/acceptance/20261002-second-round/batches/2026-10-01T22-25-01.466Z-7951d02e/report.md)已归档：80 PASS / 4 FAIL / 28 BLOCKED / 0 NOT_RUN。UI008、DIA005 已独立通过。四项原始失败中，C1-009 为清理重试期限之前过早断言，UI021 为导航提交之前读标题；两者由 QA 修正执行器并保留原结果。GRD003 是本次产品修复，C2-012 保留目录锁限制。新增三组工程入口、迁移等夹具和交付追踪仍待后续独立复测；本摘要不替代 QA 归档报告，不把各批通过项机械相加。
+
+归档中的 [manifest](../qa-acceptance/reports/acceptance/20261002-second-round/batches/2026-10-01T22-25-01.466Z-7951d02e/manifest.json)与 [results](../qa-acceptance/reports/acceptance/20261002-second-round/batches/2026-10-01T22-25-01.466Z-7951d02e/results.json)固定 SUT / QA 均为 47423c1；逐例原始文件由 [evidence-index](../qa-acceptance/reports/acceptance/20261002-second-round/batches/2026-10-01T22-25-01.466Z-7951d02e/evidence-index.json)和 [evidence.tar.gz](../qa-acceptance/reports/acceptance/20261002-second-round/batches/2026-10-01T22-25-01.466Z-7951d02e/evidence.tar.gz)保留。以上是第二批历史证据，第三批 ed50ca1 的实际 run、结果和清理仍由 QA 独立签发，不以本段代填。
