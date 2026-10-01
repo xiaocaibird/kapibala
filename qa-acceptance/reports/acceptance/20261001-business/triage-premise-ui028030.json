@@ -1,0 +1,1499 @@
+{
+  "reviewedAt": "2026-10-01T07:56:41.474925+00:00",
+  "reviewer": "AI QA独立trace和公开需求复核",
+  "runId": "2026-10-01T07-48-06.522Z-66d3a279",
+  "sutRevision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+  "qaSourceSha256": "e1cb1318cc16c2d93992d9c891eb4a4f78861247ee19c9829c45a2d1b0db90a9",
+  "targetSha256": "963177452104bbfbd2b16cae038490dbfa9b89ea2d10bd23cd041092f894db06",
+  "suiteSha256": "96870977a6e880ccee12bb1c3f7f55cee6fda6520c0555b8f7e743e10c2bfc22",
+  "originalCounts": {
+    "PASS": 12,
+    "FAIL": 2,
+    "BLOCKED": 2,
+    "NOT_RUN": 0
+  },
+  "runner": {
+    "runnerStatus": "failed",
+    "runnerErrors": [],
+    "completedAt": "2026-10-01T07:51:00.626Z"
+  },
+  "integrity": [],
+  "sourceUnchangedAtReview": true,
+  "cleanupRecords": 16,
+  "cleanupFailures": [],
+  "caseReviews": {
+    "UI-028": {
+      "raw": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/trace.zip",
+          "sha256": "69f9e9171e7bf1e5756d7050d81f49a3dd8139736f7851a4aa8d7144750a0a29"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/error-context.md",
+          "sha256": "782a40f84d7779393622fd67209795286458b02e8b6818ecbf3809ea5eac35f8"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/evidence/api.ndjson",
+          "sha256": "bd0c1fedfc9ec6d6881dd47953881f44cb3f422775aca10931476621c0472ac8"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/evidence/external-facts.json",
+          "sha256": "2db9d4270e90b813c25aee066d42b44d0a3eee64b3252fa6006f3bd8bbb08a75"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/evidence/cleanup.json",
+          "sha256": "f74ad2e35c88a4921332c3bd8685217ff2daacfbe75e1241355c1490f5c4e484"
+        }
+      ],
+      "nativeFocus": [
+        {
+          "kind": "native-tab-focus",
+          "at": "2026-10-01T07:49:43.040Z",
+          "browser": "chromium",
+          "overrideRemoved": true,
+          "observationBudgetMs": 2000,
+          "stages": [
+            {
+              "stage": "original-front",
+              "foreground": {
+                "hasFocus": true,
+                "visibility": "visible"
+              },
+              "background": {
+                "hasFocus": false,
+                "visibility": "visible"
+              }
+            },
+            {
+              "stage": "other-front",
+              "foreground": {
+                "hasFocus": true,
+                "visibility": "visible"
+              },
+              "background": {
+                "hasFocus": false,
+                "visibility": "visible"
+              }
+            }
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "callId": "call@1701",
+          "monotonicMs": 95215.055,
+          "method": "click",
+          "params": {
+            "selector": "button.login-submit",
+            "strict": true
+          }
+        },
+        {
+          "callId": "call@1740",
+          "monotonicMs": 95311.506,
+          "method": "bringToFront",
+          "params": {}
+        },
+        {
+          "callId": "call@1886",
+          "monotonicMs": 96492.807,
+          "method": "bringToFront",
+          "params": {}
+        },
+        {
+          "callId": "call@1896",
+          "monotonicMs": 96507.18,
+          "method": "bringToFront",
+          "params": {}
+        },
+        {
+          "callId": "call@2040",
+          "monotonicMs": 98038.666,
+          "method": "bringToFront",
+          "params": {}
+        },
+        {
+          "callId": "call@2084",
+          "monotonicMs": 99059.96,
+          "method": "click",
+          "params": {
+            "selector": "internal:text=\"失焦静态内容\"s",
+            "strict": true
+          }
+        }
+      ],
+      "directoryResponses": [
+        {
+          "url": "http://127.0.0.1:51979/api/group-directory?pageSize=20&order=desc&q=",
+          "at": "2026-10-01T07:49:41.853Z",
+          "monotonicMs": 95262.026,
+          "durationMs": 6.0280000000000005,
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": "1b4de95a-62c4-406f-b91e-41d0935b825c",
+                "name": null,
+                "description": null,
+                "createdAt": "2026-10-01T07:49:40.855Z",
+                "gatewayGroupId": "gateway-group-1",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              }
+            ],
+            "nextCursor": null
+          }
+        }
+      ],
+      "expectErrors": [
+        {
+          "type": "after",
+          "callId": "expect@356",
+          "endTime": 107094.955,
+          "annotations": [],
+          "error": {
+            "name": "",
+            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveTitle\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected: \u001b[32m\"群详情 · Kapibala\"\u001b[39m\nReceived: \u001b[31m\"\u001b[7m[有更新] \u001b[27m群详情 · Kapibala\"\u001b[39m\nTimeout:  8000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveTitle\" with timeout 8000ms\u001b[22m\n\u001b[2m    20 × locator resolved to <html lang=\"zh-CN\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"[有更新] 群详情 · Kapibala\"\u001b[22m\n",
+            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveTitle\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected: \u001b[32m\"群详情 · Kapibala\"\u001b[39m\nReceived: \u001b[31m\"\u001b[7m[有更新] \u001b[27m群详情 · Kapibala\"\u001b[39m\nTimeout:  8000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveTitle\" with timeout 8000ms\u001b[22m\n\u001b[2m    20 × locator resolved to <html lang=\"zh-CN\">…</html>\u001b[22m\n\u001b[2m       - unexpected value \"[有更新] 群详情 · Kapibala\"\u001b[22m\n\n    at /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/ui/console.spec.ts:1230:24"
+          }
+        }
+      ],
+      "adjudication": "QA_PREMISE_INSUFFICIENT: foreground first message had no trusted confirmation; final click targets only second message. RawFAIL preserved; product confirmation result requires isolated retest."
+    },
+    "UI-030": {
+      "raw": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/trace.zip",
+          "sha256": "0748246a6df1944dc8320e1d7b979dc5b580980e03900a94a690f635c266da2c"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/error-context.md",
+          "sha256": "1dfc0aadd8f21c2c67d134a49dfb427448aeb789564f69f6277221b93c1f1483"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/evidence/api.ndjson",
+          "sha256": "a5eb37c5e576dd12d6f7dde78cec4bbd1f72da5c1ec74e46d0a075946b38cde4"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/evidence/external-facts.json",
+          "sha256": "fe0104818baf789e4f6e0c6a44bcfecdd8b1653a8505e32895b8c987c46ccc88"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/evidence/cleanup.json",
+          "sha256": "40762cfc8483071983df72224a0626afc6f69371cc3d7071039c1029ed83ab12"
+        }
+      ],
+      "nativeFocus": [
+        {
+          "kind": "native-tab-focus",
+          "at": "2026-10-01T07:50:03.301Z",
+          "browser": "chromium",
+          "overrideRemoved": true,
+          "observationBudgetMs": 2000,
+          "stages": [
+            {
+              "stage": "original-front",
+              "foreground": {
+                "hasFocus": true,
+                "visibility": "visible"
+              },
+              "background": {
+                "hasFocus": false,
+                "visibility": "visible"
+              }
+            },
+            {
+              "stage": "other-front",
+              "foreground": {
+                "hasFocus": true,
+                "visibility": "visible"
+              },
+              "background": {
+                "hasFocus": false,
+                "visibility": "visible"
+              }
+            }
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "callId": "call@276",
+          "monotonicMs": 116621.269,
+          "method": "click",
+          "params": {
+            "selector": "button.login-submit",
+            "strict": true
+          }
+        },
+        {
+          "callId": "call@301",
+          "monotonicMs": 116702.091,
+          "method": "fill",
+          "params": {
+            "selector": "input[type=\"search\"]",
+            "strict": true,
+            "value": "范围甲"
+          }
+        },
+        {
+          "callId": "call@323",
+          "monotonicMs": 116739.937,
+          "method": "bringToFront",
+          "params": {}
+        },
+        {
+          "callId": "call@333",
+          "monotonicMs": 116749.196,
+          "method": "bringToFront",
+          "params": {}
+        },
+        {
+          "callId": "call@373",
+          "monotonicMs": 116848.257,
+          "method": "bringToFront",
+          "params": {}
+        }
+      ],
+      "directoryResponses": [
+        {
+          "url": "http://127.0.0.1:52218/api/group-directory?pageSize=20&order=desc&q=",
+          "at": "2026-10-01T07:50:03.271Z",
+          "monotonicMs": 116680.468,
+          "durationMs": 5.766,
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": "901ea238-bf32-4c08-93a4-326fc4d3b611",
+                "name": "范围甲唯一记录",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:02.207Z",
+                "gatewayGroupId": "gateway-group-1",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              }
+            ],
+            "nextCursor": null
+          }
+        },
+        {
+          "url": "http://127.0.0.1:52218/api/group-directory?pageSize=20&order=desc&q=%E8%8C%83%E5%9B%B4%E7%94%B2",
+          "at": "2026-10-01T07:50:03.549Z",
+          "monotonicMs": 116957.961,
+          "durationMs": 5.293,
+          "status": 200,
+          "body": {
+            "items": [],
+            "nextCursor": null
+          }
+        }
+      ],
+      "expectErrors": [
+        {
+          "type": "after",
+          "callId": "expect@102",
+          "endTime": 116959.444,
+          "annotations": [],
+          "error": {
+            "name": "",
+            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"群组工作台 · Kapibala\"\u001b[39m",
+            "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: not \u001b[32m\"群组工作台 · Kapibala\"\u001b[39m\n    at /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/ui/console.spec.ts:1301:62\n    at remains (/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/ui/console.spec.ts:96:5)\n    at /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/ui/console.spec.ts:1301:5"
+          }
+        }
+      ],
+      "adjudication": "QA_PREMISE_ERROR: initial one-card count belonged to empty query; actual q=范围甲 HTTP started after background mutation/return-to-front. Debounced scope change can legally clear the old scope; not evidence focus alone cleared updates."
+    },
+    "CAP-005": {
+      "raw": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/trace.zip",
+          "sha256": "a84fd7742544db82f6f15eb72ffb6328b99914a0f45e09e7f3931bff8a184c65"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/error-context.md",
+          "sha256": "83c253cd2b5dafd2aa3a3c217f73813df65dfd3d130f5b6a91125c7b8c073348"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/api.ndjson",
+          "sha256": "05ebceaf823adbd787bdcd3542f52b48bc0dd746d4c8b5fc8fc1d40ea94ad77f"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/external-facts.json",
+          "sha256": "34c0df458cbf85b17bec14e599639c0abdcafa3be956f7ba986086f02d0f557a"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence/cleanup.json",
+          "sha256": "8a4c422f3958658c98d9d64a10815bfca8a81d10e18a9ddb8cf9300ec9f781ca"
+        }
+      ],
+      "nativeFocus": [],
+      "inputs": [],
+      "directoryResponses": [],
+      "expectErrors": [],
+      "adjudication": "BLOCKED: actual send remainedqueued and independent gateway received no send request while capacity held; GROUP_WRITE_FORBIDDEN fault never occurred; cancellation-after-unreachable unexecuted."
+    },
+    "UI-032": {
+      "raw": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/trace.zip",
+          "sha256": "ed5ed6d861ac727679b002e698e1d020098c247a21a5e083f724a2cf8c5cec22"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/error-context.md",
+          "sha256": "48b7f88a9cbc52f56aacf68c49f4ac6644c2f79a3845fce9ee26cd86cbdae2c2"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/evidence/api.ndjson",
+          "sha256": "2d69e3e0fde8b053b0104ed75f485ebed44244c2aed8382a6988e7fb663b779e"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/evidence/external-facts.json",
+          "sha256": "cf5b8f3d8576595b792d1f00cb506cbc0533b75f71d92c02a0c74a4222f88966"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/evidence/cleanup.json",
+          "sha256": "6d921591c5abc76293f8f386368da3aa94479afd2f07bbc1065175ca148afc21"
+        }
+      ],
+      "nativeFocus": [
+        {
+          "kind": "native-tab-focus",
+          "at": "2026-10-01T07:50:36.616Z",
+          "browser": "chromium",
+          "overrideRemoved": true,
+          "observationBudgetMs": 2000,
+          "stages": [
+            {
+              "stage": "original-front",
+              "foreground": {
+                "hasFocus": true,
+                "visibility": "visible"
+              },
+              "background": {
+                "hasFocus": false,
+                "visibility": "visible"
+              }
+            },
+            {
+              "stage": "other-front",
+              "foreground": {
+                "hasFocus": true,
+                "visibility": "visible"
+              },
+              "background": {
+                "hasFocus": false,
+                "visibility": "visible"
+              }
+            }
+          ]
+        }
+      ],
+      "inputs": [
+        {
+          "callId": "call@222",
+          "monotonicMs": 144732.61,
+          "method": "click",
+          "params": {
+            "selector": "button.login-submit",
+            "strict": true
+          }
+        },
+        {
+          "callId": "call@593",
+          "monotonicMs": 149965.044,
+          "method": "click",
+          "params": {
+            "selector": ".directory-load-more > button",
+            "strict": true
+          }
+        },
+        {
+          "callId": "call@667",
+          "monotonicMs": 150057.711,
+          "method": "bringToFront",
+          "params": {}
+        },
+        {
+          "callId": "call@677",
+          "monotonicMs": 150068.594,
+          "method": "bringToFront",
+          "params": {}
+        },
+        {
+          "callId": "call@693",
+          "monotonicMs": 150280.645,
+          "method": "bringToFront",
+          "params": {}
+        }
+      ],
+      "directoryResponses": [
+        {
+          "url": "http://127.0.0.1:52344/api/group-directory?pageSize=20&order=desc&q=",
+          "at": "2026-10-01T07:50:31.387Z",
+          "monotonicMs": 144796.317,
+          "durationMs": 5.756,
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": "43d38e13-cd3b-4641-813f-40633c27958b",
+                "name": "游标提醒-22",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:30.339Z",
+                "gatewayGroupId": "gateway-group-23",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "4b788f24-7319-4ed5-9edf-2df714aed9eb",
+                "name": "游标提醒-21",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:29.430Z",
+                "gatewayGroupId": "gateway-group-22",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "64153512-75ac-4378-9565-47a3ee824b87",
+                "name": "游标提醒-20",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:28.520Z",
+                "gatewayGroupId": "gateway-group-21",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "edce78d2-e5fc-436a-afff-a510bf389485",
+                "name": "游标提醒-19",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:27.611Z",
+                "gatewayGroupId": "gateway-group-20",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "f6952d7b-336d-4008-8a9c-06f77b021ac4",
+                "name": "游标提醒-18",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:26.599Z",
+                "gatewayGroupId": "gateway-group-19",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "3c6cd435-d30f-43cc-b747-87b8004da8ca",
+                "name": "游标提醒-17",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:25.582Z",
+                "gatewayGroupId": "gateway-group-18",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "6f64a57f-73dd-4145-91dd-7cf473499f4b",
+                "name": "游标提醒-16",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:24.672Z",
+                "gatewayGroupId": "gateway-group-17",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "77106cac-bd7c-44ce-b537-b88b4dab0e35",
+                "name": "游标提醒-15",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:23.762Z",
+                "gatewayGroupId": "gateway-group-16",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "6d60975d-da51-4bb7-8330-1aca77c83e11",
+                "name": "游标提醒-14",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:22.848Z",
+                "gatewayGroupId": "gateway-group-15",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "e41af068-3446-4e00-87dd-1efa47fd3759",
+                "name": "游标提醒-13",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:21.939Z",
+                "gatewayGroupId": "gateway-group-14",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "dc51595e-5256-4619-8137-fbae536c06f1",
+                "name": "游标提醒-12",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:21.025Z",
+                "gatewayGroupId": "gateway-group-13",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "092d4795-2ca3-4e6d-8784-58270b0798ba",
+                "name": "游标提醒-11",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:20.011Z",
+                "gatewayGroupId": "gateway-group-12",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "b1a0e155-25f6-43ec-b15b-9369b40ad207",
+                "name": "游标提醒-10",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:19.099Z",
+                "gatewayGroupId": "gateway-group-11",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "226fcc35-cbba-445d-8ea3-c757c981f50a",
+                "name": "游标提醒-9",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:18.188Z",
+                "gatewayGroupId": "gateway-group-10",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "04e4bc1b-156a-4b9b-ab07-279a4a41d39c",
+                "name": "游标提醒-8",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:17.284Z",
+                "gatewayGroupId": "gateway-group-9",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "c3bbf051-3b43-4ac9-abc4-6efd7ae89b8d",
+                "name": "游标提醒-7",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:16.270Z",
+                "gatewayGroupId": "gateway-group-8",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "14e37418-5f1c-4fcd-af61-0c4db7b4efdc",
+                "name": "游标提醒-6",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:15.359Z",
+                "gatewayGroupId": "gateway-group-7",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "1d6f1e2f-7eea-483e-930d-60c63dd917a9",
+                "name": "游标提醒-5",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:14.452Z",
+                "gatewayGroupId": "gateway-group-6",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "54786b9d-365b-45dc-a9a5-f7163bccd258",
+                "name": "游标提醒-4",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:13.435Z",
+                "gatewayGroupId": "gateway-group-5",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "a3e54efb-e969-4ecb-b1e8-f283b753c552",
+                "name": "游标提醒-3",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:12.520Z",
+                "gatewayGroupId": "gateway-group-4",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              }
+            ],
+            "nextCursor": "eyJ2IjoxLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTAxVDA3OjUwOjEyLjUyMDQyOFoiLCJpZCI6ImEzZTU0ZWZiLWU5NjktNGVjYi1iMWU4LWYyODNiNzUzYzU1MiIsInEiOiIiLCJvcmRlciI6ImRlc2MiLCJwYWdlU2l6ZSI6MjB9"
+          }
+        },
+        {
+          "url": "http://127.0.0.1:52344/api/group-directory?pageSize=20&order=desc&q=",
+          "at": "2026-10-01T07:50:31.464Z",
+          "monotonicMs": 144873.131,
+          "durationMs": 4.2909999999999995,
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": "43d38e13-cd3b-4641-813f-40633c27958b",
+                "name": "游标提醒-22",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:30.339Z",
+                "gatewayGroupId": "gateway-group-23",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "4b788f24-7319-4ed5-9edf-2df714aed9eb",
+                "name": "游标提醒-21",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:29.430Z",
+                "gatewayGroupId": "gateway-group-22",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "64153512-75ac-4378-9565-47a3ee824b87",
+                "name": "游标提醒-20",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:28.520Z",
+                "gatewayGroupId": "gateway-group-21",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "edce78d2-e5fc-436a-afff-a510bf389485",
+                "name": "游标提醒-19",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:27.611Z",
+                "gatewayGroupId": "gateway-group-20",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "f6952d7b-336d-4008-8a9c-06f77b021ac4",
+                "name": "游标提醒-18",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:26.599Z",
+                "gatewayGroupId": "gateway-group-19",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "3c6cd435-d30f-43cc-b747-87b8004da8ca",
+                "name": "游标提醒-17",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:25.582Z",
+                "gatewayGroupId": "gateway-group-18",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "6f64a57f-73dd-4145-91dd-7cf473499f4b",
+                "name": "游标提醒-16",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:24.672Z",
+                "gatewayGroupId": "gateway-group-17",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "77106cac-bd7c-44ce-b537-b88b4dab0e35",
+                "name": "游标提醒-15",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:23.762Z",
+                "gatewayGroupId": "gateway-group-16",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "6d60975d-da51-4bb7-8330-1aca77c83e11",
+                "name": "游标提醒-14",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:22.848Z",
+                "gatewayGroupId": "gateway-group-15",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "e41af068-3446-4e00-87dd-1efa47fd3759",
+                "name": "游标提醒-13",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:21.939Z",
+                "gatewayGroupId": "gateway-group-14",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "dc51595e-5256-4619-8137-fbae536c06f1",
+                "name": "游标提醒-12",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:21.025Z",
+                "gatewayGroupId": "gateway-group-13",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "092d4795-2ca3-4e6d-8784-58270b0798ba",
+                "name": "游标提醒-11",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:20.011Z",
+                "gatewayGroupId": "gateway-group-12",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "b1a0e155-25f6-43ec-b15b-9369b40ad207",
+                "name": "游标提醒-10",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:19.099Z",
+                "gatewayGroupId": "gateway-group-11",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "226fcc35-cbba-445d-8ea3-c757c981f50a",
+                "name": "游标提醒-9",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:18.188Z",
+                "gatewayGroupId": "gateway-group-10",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "04e4bc1b-156a-4b9b-ab07-279a4a41d39c",
+                "name": "游标提醒-8",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:17.284Z",
+                "gatewayGroupId": "gateway-group-9",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "c3bbf051-3b43-4ac9-abc4-6efd7ae89b8d",
+                "name": "游标提醒-7",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:16.270Z",
+                "gatewayGroupId": "gateway-group-8",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "14e37418-5f1c-4fcd-af61-0c4db7b4efdc",
+                "name": "游标提醒-6",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:15.359Z",
+                "gatewayGroupId": "gateway-group-7",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "1d6f1e2f-7eea-483e-930d-60c63dd917a9",
+                "name": "游标提醒-5",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:14.452Z",
+                "gatewayGroupId": "gateway-group-6",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "54786b9d-365b-45dc-a9a5-f7163bccd258",
+                "name": "游标提醒-4",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:13.435Z",
+                "gatewayGroupId": "gateway-group-5",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "a3e54efb-e969-4ecb-b1e8-f283b753c552",
+                "name": "游标提醒-3",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:12.520Z",
+                "gatewayGroupId": "gateway-group-4",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              }
+            ],
+            "nextCursor": "eyJ2IjoxLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTAxVDA3OjUwOjEyLjUyMDQyOFoiLCJpZCI6ImEzZTU0ZWZiLWU5NjktNGVjYi1iMWU4LWYyODNiNzUzYzU1MiIsInEiOiIiLCJvcmRlciI6ImRlc2MiLCJwYWdlU2l6ZSI6MjB9"
+          }
+        },
+        {
+          "url": "http://127.0.0.1:52344/api/group-directory?pageSize=20&order=desc&q=",
+          "at": "2026-10-01T07:50:31.557Z",
+          "monotonicMs": 144968.741,
+          "durationMs": 6.971,
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": "43d38e13-cd3b-4641-813f-40633c27958b",
+                "name": "游标提醒-22",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:30.339Z",
+                "gatewayGroupId": "gateway-group-23",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "4b788f24-7319-4ed5-9edf-2df714aed9eb",
+                "name": "游标提醒-21",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:29.430Z",
+                "gatewayGroupId": "gateway-group-22",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "64153512-75ac-4378-9565-47a3ee824b87",
+                "name": "游标提醒-20",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:28.520Z",
+                "gatewayGroupId": "gateway-group-21",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "edce78d2-e5fc-436a-afff-a510bf389485",
+                "name": "游标提醒-19",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:27.611Z",
+                "gatewayGroupId": "gateway-group-20",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "f6952d7b-336d-4008-8a9c-06f77b021ac4",
+                "name": "游标提醒-18",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:26.599Z",
+                "gatewayGroupId": "gateway-group-19",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "3c6cd435-d30f-43cc-b747-87b8004da8ca",
+                "name": "游标提醒-17",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:25.582Z",
+                "gatewayGroupId": "gateway-group-18",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "6f64a57f-73dd-4145-91dd-7cf473499f4b",
+                "name": "游标提醒-16",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:24.672Z",
+                "gatewayGroupId": "gateway-group-17",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "77106cac-bd7c-44ce-b537-b88b4dab0e35",
+                "name": "游标提醒-15",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:23.762Z",
+                "gatewayGroupId": "gateway-group-16",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "6d60975d-da51-4bb7-8330-1aca77c83e11",
+                "name": "游标提醒-14",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:22.848Z",
+                "gatewayGroupId": "gateway-group-15",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "e41af068-3446-4e00-87dd-1efa47fd3759",
+                "name": "游标提醒-13",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:21.939Z",
+                "gatewayGroupId": "gateway-group-14",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "dc51595e-5256-4619-8137-fbae536c06f1",
+                "name": "游标提醒-12",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:21.025Z",
+                "gatewayGroupId": "gateway-group-13",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "092d4795-2ca3-4e6d-8784-58270b0798ba",
+                "name": "游标提醒-11",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:20.011Z",
+                "gatewayGroupId": "gateway-group-12",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "b1a0e155-25f6-43ec-b15b-9369b40ad207",
+                "name": "游标提醒-10",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:19.099Z",
+                "gatewayGroupId": "gateway-group-11",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "226fcc35-cbba-445d-8ea3-c757c981f50a",
+                "name": "游标提醒-9",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:18.188Z",
+                "gatewayGroupId": "gateway-group-10",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "04e4bc1b-156a-4b9b-ab07-279a4a41d39c",
+                "name": "游标提醒-8",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:17.284Z",
+                "gatewayGroupId": "gateway-group-9",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "c3bbf051-3b43-4ac9-abc4-6efd7ae89b8d",
+                "name": "游标提醒-7",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:16.270Z",
+                "gatewayGroupId": "gateway-group-8",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "14e37418-5f1c-4fcd-af61-0c4db7b4efdc",
+                "name": "游标提醒-6",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:15.359Z",
+                "gatewayGroupId": "gateway-group-7",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "1d6f1e2f-7eea-483e-930d-60c63dd917a9",
+                "name": "游标提醒-5",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:14.452Z",
+                "gatewayGroupId": "gateway-group-6",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "54786b9d-365b-45dc-a9a5-f7163bccd258",
+                "name": "游标提醒-4",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:13.435Z",
+                "gatewayGroupId": "gateway-group-5",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "a3e54efb-e969-4ecb-b1e8-f283b753c552",
+                "name": "游标提醒-3",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:12.520Z",
+                "gatewayGroupId": "gateway-group-4",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              }
+            ],
+            "nextCursor": "eyJ2IjoxLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTAxVDA3OjUwOjEyLjUyMDQyOFoiLCJpZCI6ImEzZTU0ZWZiLWU5NjktNGVjYi1iMWU4LWYyODNiNzUzYzU1MiIsInEiOiIiLCJvcmRlciI6ImRlc2MiLCJwYWdlU2l6ZSI6MjB9"
+          }
+        },
+        {
+          "url": "http://127.0.0.1:52344/api/group-directory?pageSize=20&order=desc&q=",
+          "at": "2026-10-01T07:50:36.390Z",
+          "monotonicMs": 149799.912,
+          "durationMs": 9.772,
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": "43d38e13-cd3b-4641-813f-40633c27958b",
+                "name": "游标提醒-22",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:30.339Z",
+                "gatewayGroupId": "gateway-group-23",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "4b788f24-7319-4ed5-9edf-2df714aed9eb",
+                "name": "游标提醒-21",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:29.430Z",
+                "gatewayGroupId": "gateway-group-22",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "64153512-75ac-4378-9565-47a3ee824b87",
+                "name": "游标提醒-20",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:28.520Z",
+                "gatewayGroupId": "gateway-group-21",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "edce78d2-e5fc-436a-afff-a510bf389485",
+                "name": "游标提醒-19",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:27.611Z",
+                "gatewayGroupId": "gateway-group-20",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "f6952d7b-336d-4008-8a9c-06f77b021ac4",
+                "name": "游标提醒-18",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:26.599Z",
+                "gatewayGroupId": "gateway-group-19",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "3c6cd435-d30f-43cc-b747-87b8004da8ca",
+                "name": "游标提醒-17",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:25.582Z",
+                "gatewayGroupId": "gateway-group-18",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "6f64a57f-73dd-4145-91dd-7cf473499f4b",
+                "name": "游标提醒-16",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:24.672Z",
+                "gatewayGroupId": "gateway-group-17",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "77106cac-bd7c-44ce-b537-b88b4dab0e35",
+                "name": "游标提醒-15",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:23.762Z",
+                "gatewayGroupId": "gateway-group-16",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "6d60975d-da51-4bb7-8330-1aca77c83e11",
+                "name": "游标提醒-14",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:22.848Z",
+                "gatewayGroupId": "gateway-group-15",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "e41af068-3446-4e00-87dd-1efa47fd3759",
+                "name": "游标提醒-13",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:21.939Z",
+                "gatewayGroupId": "gateway-group-14",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "dc51595e-5256-4619-8137-fbae536c06f1",
+                "name": "游标提醒-12",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:21.025Z",
+                "gatewayGroupId": "gateway-group-13",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "092d4795-2ca3-4e6d-8784-58270b0798ba",
+                "name": "游标提醒-11",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:20.011Z",
+                "gatewayGroupId": "gateway-group-12",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "b1a0e155-25f6-43ec-b15b-9369b40ad207",
+                "name": "游标提醒-10",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:19.099Z",
+                "gatewayGroupId": "gateway-group-11",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "226fcc35-cbba-445d-8ea3-c757c981f50a",
+                "name": "游标提醒-9",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:18.188Z",
+                "gatewayGroupId": "gateway-group-10",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "04e4bc1b-156a-4b9b-ab07-279a4a41d39c",
+                "name": "游标提醒-8",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:17.284Z",
+                "gatewayGroupId": "gateway-group-9",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "c3bbf051-3b43-4ac9-abc4-6efd7ae89b8d",
+                "name": "游标提醒-7",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:16.270Z",
+                "gatewayGroupId": "gateway-group-8",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "14e37418-5f1c-4fcd-af61-0c4db7b4efdc",
+                "name": "游标提醒-6",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:15.359Z",
+                "gatewayGroupId": "gateway-group-7",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "1d6f1e2f-7eea-483e-930d-60c63dd917a9",
+                "name": "游标提醒-5",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:14.452Z",
+                "gatewayGroupId": "gateway-group-6",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "54786b9d-365b-45dc-a9a5-f7163bccd258",
+                "name": "游标提醒-4",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:13.435Z",
+                "gatewayGroupId": "gateway-group-5",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "a3e54efb-e969-4ecb-b1e8-f283b753c552",
+                "name": "游标提醒-3",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:12.520Z",
+                "gatewayGroupId": "gateway-group-4",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              }
+            ],
+            "nextCursor": "eyJ2IjoxLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTAxVDA3OjUwOjEyLjUyMDQyOFoiLCJpZCI6ImEzZTU0ZWZiLWU5NjktNGVjYi1iMWU4LWYyODNiNzUzYzU1MiIsInEiOiIiLCJvcmRlciI6ImRlc2MiLCJwYWdlU2l6ZSI6MjB9"
+          }
+        },
+        {
+          "url": "http://127.0.0.1:52344/api/group-directory?pageSize=20&order=desc&q=&cursor=eyJ2IjoxLCJjcmVhdGVkQXQiOiIyMDI2LTEwLTAxVDA3OjUwOjEyLjUyMDQyOFoiLCJpZCI6ImEzZTU0ZWZiLWU5NjktNGVjYi1iMWU4LWYyODNiNzUzYzU1MiIsInEiOiIiLCJvcmRlciI6ImRlc2MiLCJwYWdlU2l6ZSI6MjB9",
+          "at": "2026-10-01T07:50:36.563Z",
+          "monotonicMs": 149971.879,
+          "durationMs": 5.796,
+          "status": 200,
+          "body": {
+            "items": [
+              {
+                "id": "16d48618-1575-4c8e-bfd9-2129114ec5a1",
+                "name": "游标提醒-2",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:11.605Z",
+                "gatewayGroupId": "gateway-group-3",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "ca25f6d9-841b-4e43-9e96-df13897130c0",
+                "name": "游标提醒-1",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:10.701Z",
+                "gatewayGroupId": "gateway-group-2",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              },
+              {
+                "id": "553a2142-009d-435d-a230-11daa3c8f7f1",
+                "name": "游标提醒-0",
+                "description": null,
+                "createdAt": "2026-10-01T07:50:09.779Z",
+                "gatewayGroupId": "gateway-group-1",
+                "status": "active",
+                "agentEnabled": false,
+                "memberCount": 3,
+                "activeAgentRunId": null,
+                "activeSequenceRunId": null
+              }
+            ],
+            "nextCursor": null
+          }
+        }
+      ],
+      "expectErrors": [],
+      "adjudication": "BLOCKED: no verified public confirmation action independent of full refresh; preserve limitation, no internal-state bypass."
+    }
+  },
+  "scope": "Only existing16-case run and evidence were read. Source corrections limited to development QA; no new SUT execution or original result edits."
+}

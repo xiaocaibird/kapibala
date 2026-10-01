@@ -1,0 +1,1358 @@
+{
+  "mixed": {
+    "id": "6a9f9cc8-fd7b-4bd2-a000-5ede7ea7098d",
+    "groupId": "e7ccdb90-3b49-42c1-a7da-58d4cefd5227",
+    "status": "failed",
+    "endReason": "protocol_errors",
+    "summary": null,
+    "recoveryNote": null,
+    "steps": [
+      {
+        "ordinal": 1,
+        "kind": "protocol_error",
+        "toolUseId": null,
+        "name": null,
+        "input": null,
+        "resultSummary": "BAD_JSON",
+        "isError": true,
+        "errorCode": "BAD_JSON",
+        "auditVerdict": null,
+        "rawResponse": "not-json"
+      },
+      {
+        "ordinal": 2,
+        "kind": "tool_use",
+        "toolUseId": "unknown-mixed",
+        "name": "not_a_tool",
+        "input": {},
+        "resultSummary": "{\"code\":\"UNKNOWN_TOOL\",\"message\":\"The tool is not supported.\"}",
+        "isError": true,
+        "errorCode": "UNKNOWN_TOOL",
+        "auditVerdict": null,
+        "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"unknown-mixed\",\"name\":\"not_a_tool\",\"input\":{}}]}"
+      },
+      {
+        "ordinal": 3,
+        "kind": "tool_use",
+        "toolUseId": "invalid-mixed",
+        "name": "send_message",
+        "input": {
+          "text": 42
+        },
+        "resultSummary": "{\"code\":\"INVALID_INPUT\",\"message\":\"Tool input does not match its required schema.\"}",
+        "isError": true,
+        "errorCode": "INVALID_INPUT",
+        "auditVerdict": null,
+        "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"invalid-mixed\",\"name\":\"send_message\",\"input\":{\"text\":42}}]}"
+      }
+    ]
+  },
+  "reset": {
+    "id": "7a1eac80-de0c-4fb7-aaac-ff1c5bd5c69c",
+    "groupId": "0e45161b-d578-4980-b06c-9b55e1e32dc5",
+    "status": "finished",
+    "endReason": "final",
+    "summary": "a legal tool response cleared the previous two protocol errors",
+    "recoveryNote": null,
+    "steps": [
+      {
+        "ordinal": 1,
+        "kind": "protocol_error",
+        "toolUseId": null,
+        "name": null,
+        "input": null,
+        "resultSummary": "BAD_JSON",
+        "isError": true,
+        "errorCode": "BAD_JSON",
+        "auditVerdict": null,
+        "rawResponse": "not-json"
+      },
+      {
+        "ordinal": 2,
+        "kind": "tool_use",
+        "toolUseId": "unknown-before-reset",
+        "name": "not_a_tool",
+        "input": {},
+        "resultSummary": "{\"code\":\"UNKNOWN_TOOL\",\"message\":\"The tool is not supported.\"}",
+        "isError": true,
+        "errorCode": "UNKNOWN_TOOL",
+        "auditVerdict": null,
+        "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"unknown-before-reset\",\"name\":\"not_a_tool\",\"input\":{}}]}"
+      },
+      {
+        "ordinal": 3,
+        "kind": "tool_use",
+        "toolUseId": "valid-business-error",
+        "name": "send_message",
+        "input": {
+          "text": "no online account",
+          "idempotency_key": "no-actor"
+        },
+        "resultSummary": "{\"code\":\"NO_AVAILABLE_ACCOUNT\",\"message\":\"No online group member can send.\"}",
+        "isError": true,
+        "errorCode": "NO_AVAILABLE_ACCOUNT",
+        "auditVerdict": "pass",
+        "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"valid-business-error\",\"name\":\"send_message\",\"input\":{\"text\":\"no online account\",\"idempotency_key\":\"no-actor\"}}]}"
+      },
+      {
+        "ordinal": 4,
+        "kind": "protocol_error",
+        "toolUseId": null,
+        "name": null,
+        "input": null,
+        "resultSummary": "BAD_JSON",
+        "isError": true,
+        "errorCode": "BAD_JSON",
+        "auditVerdict": null,
+        "rawResponse": "not-json"
+      },
+      {
+        "ordinal": 5,
+        "kind": "tool_use",
+        "toolUseId": "invalid-after-reset",
+        "name": "get_recent_messages",
+        "input": {
+          "limit": "wrong-type"
+        },
+        "resultSummary": "{\"code\":\"INVALID_INPUT\",\"message\":\"Tool input does not match its required schema.\"}",
+        "isError": true,
+        "errorCode": "INVALID_INPUT",
+        "auditVerdict": null,
+        "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"invalid-after-reset\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":\"wrong-type\"}}]}"
+      },
+      {
+        "ordinal": 6,
+        "kind": "final",
+        "toolUseId": null,
+        "name": null,
+        "input": null,
+        "resultSummary": "\"a legal tool response cleared the previous two protocol errors\"",
+        "isError": false,
+        "errorCode": null,
+        "auditVerdict": null,
+        "rawResponse": "{\"stop_reason\":\"end_turn\",\"content\":[{\"type\":\"text\",\"text\":\"a legal tool response cleared the previous two protocol errors\"}]}"
+      }
+    ]
+  },
+  "mixedTurns": [
+    {
+      "runId": "6a9f9cc8-fd7b-4bd2-a000-5ede7ea7098d",
+      "tools": [
+        {
+          "name": "get_recent_messages",
+          "description": "Read recent group messages.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "limit"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "send_message",
+          "description": "Send an audited group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20000
+              },
+              "idempotency_key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "text",
+              "idempotency_key"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "kick_user",
+          "description": "Remove a group member if policy permits.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "platform_user_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              }
+            },
+            "required": [
+              "platform_user_id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "finish",
+          "description": "Finish this run without sending a group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "summary": {
+                "type": "string",
+                "maxLength": 20000
+              }
+            },
+            "required": [
+              "summary"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "{\"groupId\":\"e7ccdb90-3b49-42c1-a7da-58d4cefd5227\",\"triggerMessages\":[{\"msgId\":\"spec-trigger-mixed-protocol\",\"senderPlatformUserId\":\"outside-spec\",\"text\":\"trigger mixed-protocol\",\"sentAt\":\"2026-10-01T07:25:27.194Z\"}],\"policy\":{\"autoKickEnabled\":false},\"ownPlatformUserIds\":[\"platform-account-1\",\"platform-account-2\",\"platform-account-3\",\"platform-account-4\",\"platform-account-5\",\"platform-account-6\"]}",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "runId": "6a9f9cc8-fd7b-4bd2-a000-5ede7ea7098d",
+      "tools": [
+        {
+          "name": "get_recent_messages",
+          "description": "Read recent group messages.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "limit"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "send_message",
+          "description": "Send an audited group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20000
+              },
+              "idempotency_key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "text",
+              "idempotency_key"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "kick_user",
+          "description": "Remove a group member if policy permits.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "platform_user_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              }
+            },
+            "required": [
+              "platform_user_id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "finish",
+          "description": "Finish this run without sending a group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "summary": {
+                "type": "string",
+                "maxLength": 20000
+              }
+            },
+            "required": [
+              "summary"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "{\"groupId\":\"e7ccdb90-3b49-42c1-a7da-58d4cefd5227\",\"triggerMessages\":[{\"msgId\":\"spec-trigger-mixed-protocol\",\"senderPlatformUserId\":\"outside-spec\",\"text\":\"trigger mixed-protocol\",\"sentAt\":\"2026-10-01T07:25:27.194Z\"}],\"policy\":{\"autoKickEnabled\":false},\"ownPlatformUserIds\":[\"platform-account-1\",\"platform-account-2\",\"platform-account-3\",\"platform-account-4\",\"platform-account-5\",\"platform-account-6\"]}",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "PROTOCOL_ERROR BAD_JSON: Return one valid tool_use or end_turn block with a new tool id.",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "runId": "6a9f9cc8-fd7b-4bd2-a000-5ede7ea7098d",
+      "tools": [
+        {
+          "name": "get_recent_messages",
+          "description": "Read recent group messages.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "limit"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "send_message",
+          "description": "Send an audited group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20000
+              },
+              "idempotency_key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "text",
+              "idempotency_key"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "kick_user",
+          "description": "Remove a group member if policy permits.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "platform_user_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              }
+            },
+            "required": [
+              "platform_user_id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "finish",
+          "description": "Finish this run without sending a group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "summary": {
+                "type": "string",
+                "maxLength": 20000
+              }
+            },
+            "required": [
+              "summary"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "{\"groupId\":\"e7ccdb90-3b49-42c1-a7da-58d4cefd5227\",\"triggerMessages\":[{\"msgId\":\"spec-trigger-mixed-protocol\",\"senderPlatformUserId\":\"outside-spec\",\"text\":\"trigger mixed-protocol\",\"sentAt\":\"2026-10-01T07:25:27.194Z\"}],\"policy\":{\"autoKickEnabled\":false},\"ownPlatformUserIds\":[\"platform-account-1\",\"platform-account-2\",\"platform-account-3\",\"platform-account-4\",\"platform-account-5\",\"platform-account-6\"]}",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "PROTOCOL_ERROR BAD_JSON: Return one valid tool_use or end_turn block with a new tool id.",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "id": "unknown-mixed",
+              "name": "not_a_tool",
+              "type": "tool_use",
+              "input": {}
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "content": "{\"code\":\"UNKNOWN_TOOL\",\"message\":\"The tool is not supported.\"}",
+              "is_error": true,
+              "tool_use_id": "unknown-mixed"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "resetTurns": [
+    {
+      "runId": "7a1eac80-de0c-4fb7-aaac-ff1c5bd5c69c",
+      "tools": [
+        {
+          "name": "get_recent_messages",
+          "description": "Read recent group messages.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "limit"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "send_message",
+          "description": "Send an audited group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20000
+              },
+              "idempotency_key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "text",
+              "idempotency_key"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "kick_user",
+          "description": "Remove a group member if policy permits.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "platform_user_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              }
+            },
+            "required": [
+              "platform_user_id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "finish",
+          "description": "Finish this run without sending a group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "summary": {
+                "type": "string",
+                "maxLength": 20000
+              }
+            },
+            "required": [
+              "summary"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "{\"groupId\":\"0e45161b-d578-4980-b06c-9b55e1e32dc5\",\"triggerMessages\":[{\"msgId\":\"spec-trigger-business-resets\",\"senderPlatformUserId\":\"outside-spec\",\"text\":\"trigger business-resets\",\"sentAt\":\"2026-10-01T07:25:28.374Z\"}],\"policy\":{\"autoKickEnabled\":false},\"ownPlatformUserIds\":[\"platform-account-1\",\"platform-account-2\",\"platform-account-3\",\"platform-account-4\",\"platform-account-5\",\"platform-account-6\"]}",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "runId": "7a1eac80-de0c-4fb7-aaac-ff1c5bd5c69c",
+      "tools": [
+        {
+          "name": "get_recent_messages",
+          "description": "Read recent group messages.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "limit"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "send_message",
+          "description": "Send an audited group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20000
+              },
+              "idempotency_key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "text",
+              "idempotency_key"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "kick_user",
+          "description": "Remove a group member if policy permits.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "platform_user_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              }
+            },
+            "required": [
+              "platform_user_id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "finish",
+          "description": "Finish this run without sending a group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "summary": {
+                "type": "string",
+                "maxLength": 20000
+              }
+            },
+            "required": [
+              "summary"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "{\"groupId\":\"0e45161b-d578-4980-b06c-9b55e1e32dc5\",\"triggerMessages\":[{\"msgId\":\"spec-trigger-business-resets\",\"senderPlatformUserId\":\"outside-spec\",\"text\":\"trigger business-resets\",\"sentAt\":\"2026-10-01T07:25:28.374Z\"}],\"policy\":{\"autoKickEnabled\":false},\"ownPlatformUserIds\":[\"platform-account-1\",\"platform-account-2\",\"platform-account-3\",\"platform-account-4\",\"platform-account-5\",\"platform-account-6\"]}",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "PROTOCOL_ERROR BAD_JSON: Return one valid tool_use or end_turn block with a new tool id.",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "runId": "7a1eac80-de0c-4fb7-aaac-ff1c5bd5c69c",
+      "tools": [
+        {
+          "name": "get_recent_messages",
+          "description": "Read recent group messages.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "limit"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "send_message",
+          "description": "Send an audited group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20000
+              },
+              "idempotency_key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "text",
+              "idempotency_key"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "kick_user",
+          "description": "Remove a group member if policy permits.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "platform_user_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              }
+            },
+            "required": [
+              "platform_user_id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "finish",
+          "description": "Finish this run without sending a group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "summary": {
+                "type": "string",
+                "maxLength": 20000
+              }
+            },
+            "required": [
+              "summary"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "{\"groupId\":\"0e45161b-d578-4980-b06c-9b55e1e32dc5\",\"triggerMessages\":[{\"msgId\":\"spec-trigger-business-resets\",\"senderPlatformUserId\":\"outside-spec\",\"text\":\"trigger business-resets\",\"sentAt\":\"2026-10-01T07:25:28.374Z\"}],\"policy\":{\"autoKickEnabled\":false},\"ownPlatformUserIds\":[\"platform-account-1\",\"platform-account-2\",\"platform-account-3\",\"platform-account-4\",\"platform-account-5\",\"platform-account-6\"]}",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "PROTOCOL_ERROR BAD_JSON: Return one valid tool_use or end_turn block with a new tool id.",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "id": "unknown-before-reset",
+              "name": "not_a_tool",
+              "type": "tool_use",
+              "input": {}
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "content": "{\"code\":\"UNKNOWN_TOOL\",\"message\":\"The tool is not supported.\"}",
+              "is_error": true,
+              "tool_use_id": "unknown-before-reset"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "runId": "7a1eac80-de0c-4fb7-aaac-ff1c5bd5c69c",
+      "tools": [
+        {
+          "name": "get_recent_messages",
+          "description": "Read recent group messages.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "limit"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "send_message",
+          "description": "Send an audited group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20000
+              },
+              "idempotency_key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "text",
+              "idempotency_key"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "kick_user",
+          "description": "Remove a group member if policy permits.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "platform_user_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              }
+            },
+            "required": [
+              "platform_user_id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "finish",
+          "description": "Finish this run without sending a group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "summary": {
+                "type": "string",
+                "maxLength": 20000
+              }
+            },
+            "required": [
+              "summary"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "{\"groupId\":\"0e45161b-d578-4980-b06c-9b55e1e32dc5\",\"triggerMessages\":[{\"msgId\":\"spec-trigger-business-resets\",\"senderPlatformUserId\":\"outside-spec\",\"text\":\"trigger business-resets\",\"sentAt\":\"2026-10-01T07:25:28.374Z\"}],\"policy\":{\"autoKickEnabled\":false},\"ownPlatformUserIds\":[\"platform-account-1\",\"platform-account-2\",\"platform-account-3\",\"platform-account-4\",\"platform-account-5\",\"platform-account-6\"]}",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "PROTOCOL_ERROR BAD_JSON: Return one valid tool_use or end_turn block with a new tool id.",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "id": "unknown-before-reset",
+              "name": "not_a_tool",
+              "type": "tool_use",
+              "input": {}
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "content": "{\"code\":\"UNKNOWN_TOOL\",\"message\":\"The tool is not supported.\"}",
+              "is_error": true,
+              "tool_use_id": "unknown-before-reset"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "id": "valid-business-error",
+              "name": "send_message",
+              "type": "tool_use",
+              "input": {
+                "text": "no online account",
+                "idempotency_key": "no-actor"
+              }
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "content": "{\"code\":\"NO_AVAILABLE_ACCOUNT\",\"message\":\"No online group member can send.\"}",
+              "is_error": true,
+              "tool_use_id": "valid-business-error"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "runId": "7a1eac80-de0c-4fb7-aaac-ff1c5bd5c69c",
+      "tools": [
+        {
+          "name": "get_recent_messages",
+          "description": "Read recent group messages.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "limit"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "send_message",
+          "description": "Send an audited group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20000
+              },
+              "idempotency_key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "text",
+              "idempotency_key"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "kick_user",
+          "description": "Remove a group member if policy permits.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "platform_user_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              }
+            },
+            "required": [
+              "platform_user_id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "finish",
+          "description": "Finish this run without sending a group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "summary": {
+                "type": "string",
+                "maxLength": 20000
+              }
+            },
+            "required": [
+              "summary"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "{\"groupId\":\"0e45161b-d578-4980-b06c-9b55e1e32dc5\",\"triggerMessages\":[{\"msgId\":\"spec-trigger-business-resets\",\"senderPlatformUserId\":\"outside-spec\",\"text\":\"trigger business-resets\",\"sentAt\":\"2026-10-01T07:25:28.374Z\"}],\"policy\":{\"autoKickEnabled\":false},\"ownPlatformUserIds\":[\"platform-account-1\",\"platform-account-2\",\"platform-account-3\",\"platform-account-4\",\"platform-account-5\",\"platform-account-6\"]}",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "PROTOCOL_ERROR BAD_JSON: Return one valid tool_use or end_turn block with a new tool id.",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "id": "unknown-before-reset",
+              "name": "not_a_tool",
+              "type": "tool_use",
+              "input": {}
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "content": "{\"code\":\"UNKNOWN_TOOL\",\"message\":\"The tool is not supported.\"}",
+              "is_error": true,
+              "tool_use_id": "unknown-before-reset"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "id": "valid-business-error",
+              "name": "send_message",
+              "type": "tool_use",
+              "input": {
+                "text": "no online account",
+                "idempotency_key": "no-actor"
+              }
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "content": "{\"code\":\"NO_AVAILABLE_ACCOUNT\",\"message\":\"No online group member can send.\"}",
+              "is_error": true,
+              "tool_use_id": "valid-business-error"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "PROTOCOL_ERROR BAD_JSON: Return one valid tool_use or end_turn block with a new tool id.",
+              "type": "text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "runId": "7a1eac80-de0c-4fb7-aaac-ff1c5bd5c69c",
+      "tools": [
+        {
+          "name": "get_recent_messages",
+          "description": "Read recent group messages.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "limit": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "limit"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "send_message",
+          "description": "Send an audited group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 20000
+              },
+              "idempotency_key": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              }
+            },
+            "required": [
+              "text",
+              "idempotency_key"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "kick_user",
+          "description": "Remove a group member if policy permits.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "platform_user_id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 512
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2000
+              }
+            },
+            "required": [
+              "platform_user_id",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        {
+          "name": "finish",
+          "description": "Finish this run without sending a group message.",
+          "input_schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "type": "object",
+            "properties": {
+              "summary": {
+                "type": "string",
+                "maxLength": 20000
+              }
+            },
+            "required": [
+              "summary"
+            ],
+            "additionalProperties": false
+          }
+        }
+      ],
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "{\"groupId\":\"0e45161b-d578-4980-b06c-9b55e1e32dc5\",\"triggerMessages\":[{\"msgId\":\"spec-trigger-business-resets\",\"senderPlatformUserId\":\"outside-spec\",\"text\":\"trigger business-resets\",\"sentAt\":\"2026-10-01T07:25:28.374Z\"}],\"policy\":{\"autoKickEnabled\":false},\"ownPlatformUserIds\":[\"platform-account-1\",\"platform-account-2\",\"platform-account-3\",\"platform-account-4\",\"platform-account-5\",\"platform-account-6\"]}",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "PROTOCOL_ERROR BAD_JSON: Return one valid tool_use or end_turn block with a new tool id.",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "id": "unknown-before-reset",
+              "name": "not_a_tool",
+              "type": "tool_use",
+              "input": {}
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "content": "{\"code\":\"UNKNOWN_TOOL\",\"message\":\"The tool is not supported.\"}",
+              "is_error": true,
+              "tool_use_id": "unknown-before-reset"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "id": "valid-business-error",
+              "name": "send_message",
+              "type": "tool_use",
+              "input": {
+                "text": "no online account",
+                "idempotency_key": "no-actor"
+              }
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "content": "{\"code\":\"NO_AVAILABLE_ACCOUNT\",\"message\":\"No online group member can send.\"}",
+              "is_error": true,
+              "tool_use_id": "valid-business-error"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "text": "PROTOCOL_ERROR BAD_JSON: Return one valid tool_use or end_turn block with a new tool id.",
+              "type": "text"
+            }
+          ]
+        },
+        {
+          "role": "assistant",
+          "content": [
+            {
+              "id": "invalid-after-reset",
+              "name": "get_recent_messages",
+              "type": "tool_use",
+              "input": {
+                "limit": "wrong-type"
+              }
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": [
+            {
+              "type": "tool_result",
+              "content": "{\"code\":\"INVALID_INPUT\",\"message\":\"Tool input does not match its required schema.\"}",
+              "is_error": true,
+              "tool_use_id": "invalid-after-reset"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

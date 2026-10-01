@@ -1,0 +1,175 @@
+{
+  "failedEvent": {
+    "eventId": 4,
+    "type": "message",
+    "recordedAt": "2026-10-01T07:23:14.792Z",
+    "data": {
+      "groupId": "gateway-group-1",
+      "msgId": "database-outage",
+      "senderPlatformUserId": "external",
+      "text": "must survive failed persistence",
+      "sentAt": "2026-10-01T07:23:14.792Z",
+      "eventId": 4,
+      "type": "message"
+    }
+  },
+  "recovered": {
+    "items": [
+      {
+        "id": "fcdd8f67-485c-49a6-93f0-93cc8230b419",
+        "msgId": "after-db-recovery",
+        "clientMsgId": null,
+        "senderPlatformUserId": "external",
+        "isOwn": false,
+        "text": "still consuming",
+        "sentAt": "2026-10-01T07:23:15.858Z",
+        "deliveryStatus": null,
+        "failCode": null
+      },
+      {
+        "id": "e5352c4f-4b13-4662-8625-6f1b1e1f6af6",
+        "msgId": "database-outage",
+        "clientMsgId": null,
+        "senderPlatformUserId": "external",
+        "isOwn": false,
+        "text": "must survive failed persistence",
+        "sentAt": "2026-10-01T07:23:14.792Z",
+        "deliveryStatus": null,
+        "failCode": null
+      },
+      {
+        "id": "3ccc245b-4cf8-43a2-b5fc-07dc290f1db1",
+        "msgId": "before-db-outage-anchor",
+        "clientMsgId": null,
+        "senderPlatformUserId": "external",
+        "isOwn": false,
+        "text": "establish actual received seq",
+        "sentAt": "2026-10-01T07:23:14.689Z",
+        "deliveryStatus": null,
+        "failCode": null
+      }
+    ],
+    "nextCursor": null,
+    "snapshotId": "7f6fa906-fc36-4bbc-ac56-9640cb31292f"
+  },
+  "notice": {
+    "complete": true,
+    "last": [
+      {
+        "type": "auth",
+        "success": true
+      },
+      {
+        "type": "message",
+        "seq": 13,
+        "msgId": "before-db-outage-anchor",
+        "groupId": "55ace5e7-2102-4158-a686-c87e9449cc01",
+        "isOwn": false
+      },
+      {
+        "type": "auth",
+        "success": true
+      },
+      {
+        "type": "message",
+        "seq": 14,
+        "msgId": "database-outage",
+        "groupId": "55ace5e7-2102-4158-a686-c87e9449cc01",
+        "isOwn": false
+      },
+      {
+        "type": "inconsistency",
+        "seq": 15,
+        "inconsistency": {
+          "kind": "gateway_event",
+          "ref": "4",
+          "message": "网关事件处理失败，事件保留在网关历史中并等待重试。"
+        }
+      },
+      {
+        "type": "message",
+        "seq": 16,
+        "msgId": "after-db-recovery",
+        "groupId": "55ace5e7-2102-4158-a686-c87e9449cc01",
+        "isOwn": false
+      }
+    ],
+    "samples": 1,
+    "elapsedMs": 2.6618749999997817
+  },
+  "ws": {
+    "connections": [
+      {
+        "openedAt": "2026-10-01T07:23:14.638Z",
+        "purpose": "initial authenticated observation"
+      },
+      {
+        "openedAt": "2026-10-01T07:23:15.795Z",
+        "sinceSeq": 13,
+        "purpose": "explicit recovery observation; actual peer close is recorded separately",
+        "previousPeerClose": {
+          "code": 4401,
+          "at": "2026-10-01T07:23:14.845Z"
+        }
+      }
+    ],
+    "sockets": [
+      {
+        "frames": [
+          {
+            "type": "auth",
+            "success": true
+          },
+          {
+            "type": "message",
+            "seq": 13,
+            "msgId": "before-db-outage-anchor",
+            "groupId": "55ace5e7-2102-4158-a686-c87e9449cc01",
+            "isOwn": false
+          }
+        ],
+        "closed": {
+          "code": 4401,
+          "at": "2026-10-01T07:23:14.845Z"
+        },
+        "errors": [],
+        "protocolErrors": [],
+        "lastReceivedSeq": 13
+      },
+      {
+        "frames": [
+          {
+            "type": "auth",
+            "success": true
+          },
+          {
+            "type": "message",
+            "seq": 14,
+            "msgId": "database-outage",
+            "groupId": "55ace5e7-2102-4158-a686-c87e9449cc01",
+            "isOwn": false
+          },
+          {
+            "type": "inconsistency",
+            "seq": 15,
+            "inconsistency": {
+              "kind": "gateway_event",
+              "ref": "4",
+              "message": "网关事件处理失败，事件保留在网关历史中并等待重试。"
+            }
+          },
+          {
+            "type": "message",
+            "seq": 16,
+            "msgId": "after-db-recovery",
+            "groupId": "55ace5e7-2102-4158-a686-c87e9449cc01",
+            "isOwn": false
+          }
+        ],
+        "errors": [],
+        "protocolErrors": [],
+        "lastReceivedSeq": 16
+      }
+    ]
+  }
+}

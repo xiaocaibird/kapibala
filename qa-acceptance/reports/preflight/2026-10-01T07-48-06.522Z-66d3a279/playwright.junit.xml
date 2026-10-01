@@ -1,0 +1,365 @@
+<testsuites id="" name="" tests="16" failures="2" skipped="0" errors="2" time="173.777606">
+<testsuite name="system/capacity-control.spec.ts" timestamp="2026-10-01T07:48:07.012Z" hostname="system" tests="2" failures="0" skipped="0" time="21.968" errors="1">
+<testcase name="[CAP-002] cancellation after admission refusal lets only the current step finish and prevents later work" classname="system/capacity-control.spec.ts" time="4.817">
+</testcase>
+<testcase name="[CAP-005] group unreachability during admission wait cancels without a late kick" classname="system/capacity-control.spec.ts" time="17.151">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/error-context.md]]
+
+[[ATTACHMENT|artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/trace.zip]]
+]]>
+</system-out>
+<error message="[BLOCKED] 有限观察内未建立真实GROUP_WRITE_FORBIDDEN消息及群不可写前提；不能由群主终态推导" type="BlockedError">
+<![CDATA[  [system] › system/capacity-control.spec.ts:455:1 › [CAP-005] group unreachability during admission wait cancels without a late kick 
+
+    BlockedError: [BLOCKED] 有限观察内未建立真实GROUP_WRITE_FORBIDDEN消息及群不可写前提；不能由群主终态推导
+
+      505 |     });
+      506 |     if (!observation.complete)
+    > 507 |       throw new BlockedError(
+          |             ^
+      508 |         '有限观察内未建立真实GROUP_WRITE_FORBIDDEN消息及群不可写前提；不能由群主终态推导',
+      509 |       );
+      510 |     expect(request?.responseStatus).toBe(403);
+        at /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/system/capacity-control.spec.ts:507:13
+        at deferred (/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/system/capacity-control.spec.ts:284:5)
+        at /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/system/capacity-control.spec.ts:458:3
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="ui/console.spec.ts" timestamp="2026-10-01T07:48:07.012Z" hostname="chromium" tests="13" failures="2" skipped="0" time="137.807" errors="1">
+<testcase name="[UI-011] 多个页面请求同时401只续期一次并恢复加载" classname="ui/console.spec.ts" time="4.984">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-011-多个页面请求同时401只续期一次并恢复加载-chromium/attachments/ui-final-screenshot-a0d68319ae2be9fe743f10ef9905ef0b9be05df5.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-011-多个页面请求同时401只续期一次并恢复加载-chromium/attachments/ui-final-state-593946155adf1f7193eceb2e3f034e5f18642230.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-020] 当前群失焦只提示相关更新，聚焦本身不确认" classname="ui/console.spec.ts" time="7.984">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-020-当前群失焦只提示相关更新，聚焦本身不确认-chromium/attachments/ui-final-screenshot-9023bc680bd8042b5007ac665394775ec6c3ff48.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-020-当前群失焦只提示相关更新，聚焦本身不确认-chromium/attachments/ui-final-state-a91d3824c8dd352fb7dc2afd61c264f686e60d09.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-021] 离开群详情销毁提醒范围，旧群变化不污染新页" classname="ui/console.spec.ts" time="5.735">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-021-离开群详情销毁提醒范围，旧群变化不污染新页-chromium/attachments/ui-final-screenshot-15d3e2531377d5e0d2c6fba24aff44af734708f6.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-021-离开群详情销毁提醒范围，旧群变化不污染新页-chromium/attachments/ui-final-state-184e9eb28416ac0ac21a4060eca6e2bc11132138.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-024] 单页五秒刷新、并发失效合并且无关消息不遍历目录" classname="ui/console.spec.ts" time="15.678">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-024-单页五秒刷新、并发失效合并且无关消息不遍历目录-chromium/attachments/ui-final-screenshot-957c313260f95a37b760d9ec87cd82f6a754240c.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-024-单页五秒刷新、并发失效合并且无关消息不遍历目录-chromium/attachments/ui-final-state-fa3d7d170ede6419c3532394ecaa88cf0c13375a.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-025] 同标签返回保留条件与已加载页，整页刷新清空目录内存" classname="ui/console.spec.ts" time="33.676">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-025-同标签返回保留条件与已加载页，整页刷新清空目录内存-chromium/attachments/ui-final-screenshot-d8edcdd76dd7d48abe46dcb609d8fd1358a88cc9.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-025-同标签返回保留条件与已加载页，整页刷新清空目录内存-chromium/attachments/ui-final-state-9b2d72c363d7260cc0bb7ae8c1bfee6e096cc50f.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-028] 前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除" classname="ui/console.spec.ts" time="14.783">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/attachments/ui-final-screenshot-942e7eefec06b8674371a3dbb71cfbbb62993383.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/attachments/ui-final-state-a93cd4ea019a7d6026b211a002793400e50a0bf5.json]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/video-1.webm]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/video.webm]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/error-context.md]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(page).toHaveTitle(expected) failed" type="expect.toHaveTitle">
+<![CDATA[  [chromium] › ui/console.spec.ts:1199:1 › [UI-028] 前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除 ──────────────────
+
+    Error: expect(page).toHaveTitle(expected) failed
+
+    Expected: "群详情 · Kapibala"
+    Received: "[有更新] 群详情 · Kapibala"
+    Timeout:  8000ms
+
+    Call log:
+      - Expect "toHaveTitle" with timeout 8000ms
+        20 × locator resolved to <html lang="zh-CN">…</html>
+           - unexpected value "[有更新] 群详情 · Kapibala"
+
+
+      1228 |     await remains(async () => expect(await page.title()).toBe(markedTitle));
+      1229 |     await page.getByText('失焦静态内容', { exact: true }).click();
+    > 1230 |     await expect(page).toHaveTitle(quietTitle);
+           |                        ^
+      1231 |     await expect.poll(() => favicon(page)).toBe(quietIcon);
+      1232 |   } finally {
+      1233 |     await background.close();
+        at /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/ui/console.spec.ts:1230:24
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: ui-final-screenshot (image/png) ─────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/attachments/ui-final-screenshot-942e7eefec06b8674371a3dbb71cfbbb62993383.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: ui-final-state (application/json) ───────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/attachments/ui-final-state-a93cd4ea019a7d6026b211a002793400e50a0bf5.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #7: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/error-context.md
+
+    attachment #9: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="[UI-029] 内容加载失败不能确认，成功呈现后相关操作才清提醒" classname="ui/console.spec.ts" time="4.98">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-029-内容加载失败不能确认，成功呈现后相关操作才清提醒-chromium/attachments/ui-final-screenshot-0e04ed1de637547f476d239fb908989233626e06.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-029-内容加载失败不能确认，成功呈现后相关操作才清提醒-chromium/attachments/ui-final-state-e0101bb88909d813560cc39bad21b646931ebc28.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-030] 搜索范围记录消失先展示成功结果，再明确确认范围变化" classname="ui/console.spec.ts" time="2.949">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/attachments/ui-final-screenshot-41388dcb8309c85e9e274200370e3900743d1b05.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/attachments/ui-final-state-8ae065cf25b8f5d69573c51b35c50b7f64927b49.json]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/video-1.webm]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/video.webm]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/error-context.md]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(received).not.toBe(expected) // Object.is equality" type="expect.not.toBe">
+<![CDATA[  [chromium] › ui/console.spec.ts:1288:1 › [UI-030] 搜索范围记录消失先展示成功结果，再明确确认范围变化 ──────────────────────
+
+    Error: expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "群组工作台 · Kapibala"
+
+      1299 |     await expect(page).not.toHaveTitle(quietTitle);
+      1300 |     await page.bringToFront();
+    > 1301 |     await remains(async () => expect(await page.title()).not.toBe(quietTitle));
+           |                                                              ^
+      1302 |     const refresh = element(page, qa, 'attentionRefresh');
+      1303 |     if (await refresh.isVisible()) await refresh.click();
+      1304 |     await expect(element(page, qa, 'directoryEmpty')).toBeVisible();
+        at /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/ui/console.spec.ts:1301:62
+        at remains (/Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/ui/console.spec.ts:96:5)
+        at /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/ui/console.spec.ts:1301:5
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: ui-final-screenshot (image/png) ─────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/attachments/ui-final-screenshot-41388dcb8309c85e9e274200370e3900743d1b05.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: ui-final-state (application/json) ───────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/attachments/ui-final-state-8ae065cf25b8f5d69573c51b35c50b7f64927b49.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #7: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/error-context.md
+
+    attachment #9: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="[UI-031] 状态先改变后还原仍保留期间变化候选" classname="ui/console.spec.ts" time="3.177">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-031-状态先改变后还原仍保留期间变化候选-chromium/attachments/ui-final-screenshot-327c3b2cfc8a3209808e2f85606d2cce7ea694d7.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-031-状态先改变后还原仍保留期间变化候选-chromium/attachments/ui-final-state-b92a4230f57946ee18b4bb3300ed9901078cdb96.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-032] 提醒确认不能恢复多页过期旧游标" classname="ui/console.spec.ts" time="28.765">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/attachments/ui-final-screenshot-62d8d3d5797a27d2bd1781f6d9c11983fe0240c8.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/attachments/ui-final-state-84eb309c2263af0ad000dce44d1e6cc811c60cbe.json]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/video-1.webm]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/video.webm]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/error-context.md]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="[BLOCKED] 需要适配独立于整体刷新、且只确认已呈现相关变化的公开操作，不能伪造已读状态绕过目录过期" type="BlockedError">
+<![CDATA[  [chromium] › ui/console.spec.ts:1343:1 › [UI-032] 提醒确认不能恢复多页过期旧游标 ────────────────────────────────
+
+    BlockedError: [BLOCKED] 需要适配独立于整体刷新、且只确认已呈现相关变化的公开操作，不能伪造已读状态绕过目录过期
+
+      1412 |       const confirm = element(page, qa, 'attentionConfirm');
+      1413 |       if (!(await confirm.isVisible()))
+    > 1414 |         throw new BlockedError(
+           |               ^
+      1415 |           '需要适配独立于整体刷新、且只确认已呈现相关变化的公开操作，不能伪造已读状态绕过目录过期',
+      1416 |         );
+      1417 |       await confirm.click();
+        at /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/tests/ui/console.spec.ts:1414:15
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: ui-final-screenshot (image/png) ─────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/attachments/ui-final-screenshot-62d8d3d5797a27d2bd1781f6d9c11983fe0240c8.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: ui-final-state (application/json) ───────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/attachments/ui-final-state-84eb309c2263af0ad000dce44d1e6cc811c60cbe.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/qa-premise-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #7: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/error-context.md
+
+    attachment #9: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T07-48-06.522Z-66d3a279/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="[UI-033] 本地手动发送先带clientMsgId，回流早于响应不误标远端未读" classname="ui/console.spec.ts" time="6.803">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-033-本地手动发送先带clientMsgId，回流早于响应不误标远端未读-chromium/attachments/ui-final-screenshot-72d1ed54a14b8f1d887a582cdf0689f408dfbe66.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-033-本地手动发送先带clientMsgId，回流早于响应不误标远端未读-chromium/attachments/ui-final-state-3184b3c0e60d6f9f2044240f1c87f2341c9b4955.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-034] Agent自己的自动消息仍参与失焦提醒" classname="ui/console.spec.ts" time="3.191">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-034-Agent自己的自动消息仍参与失焦提醒-chromium/attachments/ui-final-screenshot-d8706328a482b8ef87d7d9bc6522ebe98663ea7c.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-034-Agent自己的自动消息仍参与失焦提醒-chromium/attachments/ui-final-state-f7df5a1e0ee7d1071e375807a2c9337e2b3942d0.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-035] 序列自动发送不因isOwn被排除提醒" classname="ui/console.spec.ts" time="5.102">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-035-序列自动发送不因isOwn被排除提醒-chromium/attachments/ui-final-screenshot-57a158f6cdf80230814e74219030a0d39fed424e.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-035-序列自动发送不因isOwn被排除提醒-chromium/attachments/ui-final-state-95eccce4d73aa7036f3683be1f5e3668542bca1d.json]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="ui/observation-boundaries.spec.ts" timestamp="2026-10-01T07:48:07.012Z" hostname="chromium" tests="1" failures="0" skipped="0" time="6.4" errors="0">
+<testcase name="[ARC-UI-BLK-001] 通用账号资源读取失败不能提前确认未呈现的新状态" classname="ui/observation-boundaries.spec.ts" time="6.4">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/attachments/resource-observation-final-0df5ac8f45ecfdf89d1c17710c0b4c654aa278dd.png]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

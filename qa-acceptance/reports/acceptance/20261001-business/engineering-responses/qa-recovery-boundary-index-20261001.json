@@ -1,0 +1,104 @@
+{
+  "reviewDate": "2026-10-01",
+  "kind": "engineering-readonly-evidence-index-not-test-execution",
+  "qaThreadId": "01a0f3bd-3db4-7c93-aaa2-0ca16cb1c2f0",
+  "qaRun": "2026-10-01T06-54-18.519Z-a1e23916",
+  "sutRevision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+  "engineeringReviewRevision": "0f4a9f35ce1fab66047dd25da518f5a8971669d2",
+  "sourceRoot": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts",
+  "unchangedRecoveryFiles": [
+    "apps/server/src/modules/gateway/jobs.ts",
+    "apps/server/src/modules/automation/agent.ts",
+    "apps/server/src/modules/automation/tool-execution.ts"
+  ],
+  "evidence": [
+    {
+      "caseId": "BLK-EXT-002",
+      "source": "system-protocol-boundaries-83d92-iled-without-another-create-system/evidence/created-id-lost-observation.json",
+      "sha256": "8a0b75eea8fc9e420591d5f01690fb506fc37cce13380cd2d33cadb31749e407",
+      "bytes": 7584,
+      "publicObservations": [
+        {
+          "id": "bf693e27-373d-461f-a382-aa69b6c01418",
+          "status": "running",
+          "recoveryNote": "建群请求已开始但没有保存结果；网关没有查询本次创建结果的接口，不自动重新建群。"
+        }
+      ]
+    },
+    {
+      "caseId": "BLK-EXT-003",
+      "source": "system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence/promotion-first-recovery.json",
+      "sha256": "b2df415eba457f6f13aabda026c36c5afecc02d525ed86cff0f9a11c0afc7a2c",
+      "bytes": 11505,
+      "publicObservations": [
+        {
+          "id": "2a32eb18-fae8-484b-8309-c5709ae9f97f",
+          "status": "running",
+          "recoveryNote": "提升管理员请求已开始但没有保存结果；网关没有查询管理员角色的接口，结果未知时不自动重试。"
+        }
+      ]
+    },
+    {
+      "caseId": "BLK-EXT-004",
+      "source": "system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence/kick-rejoin-resumed.json",
+      "sha256": "c6f7a201701e83b847d7f7bb1eb492842d3abcacc189fb00f2267caae226208d",
+      "bytes": 22016,
+      "publicObservations": [
+        {
+          "id": "16221b3b-fd61-4b08-8590-881ae4264623",
+          "status": "running",
+          "endReason": null,
+          "recoveryNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe."
+        }
+      ]
+    },
+    {
+      "caseId": "BLK-EXT-005",
+      "source": "system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence/lost-model-response-resumed.json",
+      "sha256": "de35dde6ac267c4be235f8c302aeed9d7f8c982fa227755055844af5e78c3b6b",
+      "bytes": 30241,
+      "publicObservations": [
+        {
+          "id": "0ee2d49d-a232-4d42-8f96-d893ae0974c3",
+          "status": "running",
+          "endReason": null,
+          "recoveryNote": "An Agent turn was sent before interruption; the protocol cannot safely replay an unrecorded response."
+        }
+      ]
+    },
+    {
+      "caseId": "REC-007",
+      "source": "system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence/api.ndjson",
+      "sha256": "78b46d3ab692e8c07ab772f1d3df9bbef9740015e5bb471ec89a2fe7c4692b91",
+      "bytes": 945766,
+      "publicObservations": [
+        {
+          "id": "2e0c1137-516f-449d-901b-fbfa255a2b20",
+          "status": "running",
+          "endReason": null,
+          "recoveryNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe."
+        }
+      ]
+    },
+    {
+      "caseId": "INT-ACT-001",
+      "source": "system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/api.ndjson",
+      "sha256": "c5505b01bce2bfdefca1a9688d5e881c05a37efcf5046d9d9c28e3f0b305b888",
+      "bytes": 1495908,
+      "publicObservations": [
+        {
+          "id": "98d6a007-da35-4f95-aef2-d3576dd86e8a",
+          "status": "running",
+          "endReason": null,
+          "recoveryNote": null
+        },
+        {
+          "id": "98d6a007-da35-4f95-aef2-d3576dd86e8a",
+          "status": "failed",
+          "endReason": "wall_clock",
+          "recoveryNote": null
+        }
+      ]
+    }
+  ]
+}

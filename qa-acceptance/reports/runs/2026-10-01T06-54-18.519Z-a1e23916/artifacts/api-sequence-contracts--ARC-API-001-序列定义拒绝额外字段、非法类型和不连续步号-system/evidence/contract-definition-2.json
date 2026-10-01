@@ -1,0 +1,27 @@
+{
+  "input": {
+    "label": "first index is not one",
+    "body": {
+      "name": "QA independent sequence contract",
+      "steps": [
+        {
+          "index": 2,
+          "accountRole": "admin",
+          "text": "QA valid sequence",
+          "delaySeconds": 1
+        }
+      ]
+    }
+  },
+  "result": {
+    "status": 400,
+    "body": {
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Step indexes must be consecutive and start at 1",
+        "requestId": "cac7307a-7432-4946-9b49-3c7eb55c8d8b"
+      }
+    },
+    "headers": {}
+  }
+}

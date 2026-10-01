@@ -1,0 +1,17 @@
+npm notice run kapibala-independent-qa@0.1.0 preflight
+npm notice run tsx harness/cli.ts preflight --suite utf16-remediation-api-20261001 --target .runtime/target.utf16.json --authorization .runtime/authorization.utf16-api.json
+
+Running 7 tests using 1 worker
+
+(node:13706) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [system] › tests/extensions/api.spec.ts:23:1 › [EXT-001] 群资料可选、名称回退基础数据、局部编辑与简介清空 (1.9s)
+  ✓  2 [system] › tests/extensions/api.spec.ts:51:1 › [EXT-002] viewer不能修改群资料与原值条件 (1.8s)
+  ✓  3 [system] › tests/extensions/api.spec.ts:184:1 › [EXT-008] 同字段竞争只一成功，冲突返回当前快照 (1.8s)
+  ✓  4 [system] › tests/extensions/api.spec.ts:200:1 › [EXT-009] 冲突整请求无资料和开关副作用 (2.0s)
+  ✓  5 [system] › tests/extensions/api.spec.ts:255:1 › [EXT-010] 不同字段编辑共存，旧调用继续兼容 (2.7s)
+  ✓  6 [system] › tests/extensions/api.spec.ts:281:1 › [EXT-012] 资料创建时间与条件更新跨重启保留 (2.3s)
+  ✓  7 [system] › tests/system/spec-boundaries.spec.ts:532:1 › [BLK-SPEC-006] versioned profile rules and explicit tool limits have independent boundary oracles (7.0s)
+
+  7 passed (21.5s)
+开发预跑（不构成正式验收）证据: /Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96

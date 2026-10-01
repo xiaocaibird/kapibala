@@ -18,7 +18,7 @@
   "sutExecutionAuthorized": false,
   "productTestsExecuted": 0,
   "qaTree": {
-    "sha256": "fb50f282f910d462545601e835db8fb10288c9c40718a4d5e0d0659f720fcb11",
+    "sha256": "b2c66baa28f4ebcc0752f9bbe650b6978b7a5dd4784af2e19034bed137cc0206",
     "files": [
       {
         "path": ".gitignore",
@@ -30,7 +30,7 @@
       },
       {
         "path": "cases/architecture-capacity.json",
-        "sha256": "6007e9ec921e132c8a72b3e598073dbb1b99c242dff7b563307b34c2163b01b5"
+        "sha256": "b993b4887db104efc8e5e750e1af101eafab0d43460ffd3a687ce92dcab89453"
       },
       {
         "path": "cases/architecture-contract.json",
@@ -66,7 +66,7 @@
       },
       {
         "path": "cases/generated/architecture-capacity.md",
-        "sha256": "afc835900a55c8123d11bc805e55e6bfe1b3a6af01c0bfafa951361bff9e8a49"
+        "sha256": "baad82a8b520217eacd9c8c4869c7b15cce738214938f1c626360997be6e6c86"
       },
       {
         "path": "cases/generated/architecture-contract.md",
@@ -273,6 +273,10 @@
         "sha256": "558b585c571f77e304b507ead0e062cbeeb95b041165db0d4defe0f50c5b922c"
       },
       {
+        "path": "contracts/declared-json-schema.ts",
+        "sha256": "1b4e17b13ad40596e76feaa01e5e8dc199373dd093de0f8acca5c06908fe530d"
+      },
+      {
         "path": "contracts/fixture-artifacts.md",
         "sha256": "724d47a508a475c6d750c94a130e010a41d604545d55d2c0298c854de9374ec2"
       },
@@ -426,7 +430,7 @@
       },
       {
         "path": "harness/report.ts",
-        "sha256": "5db1991ee0c25a000ca1333209c432e844f100340be08dc46c45b92fbac61f8f"
+        "sha256": "4ef3ab79354c3e3a374d5031e13671f725c4801717daa0e120a7309c9ad53a97"
       },
       {
         "path": "harness/reporter.ts",
@@ -490,7 +494,7 @@
       },
       {
         "path": "requirements/change-reviews.json",
-        "sha256": "35321d02da52271e1cfb32e63ef5d353a1100a20461ed042b1ab0fe8d1ba80d7"
+        "sha256": "7352464f67203aa0f03ff42aef314ff8453c58e344e82830646a8cc7c0cb9f06"
       },
       {
         "path": "requirements/clarifications.md",
@@ -525,12 +529,24 @@
         "sha256": "40eeb2640d7f16e0d1ee4967fb9d07e8cf6e95b71d026296f8208b8c3a036b8a"
       },
       {
+        "path": "requirements/qa-correction-attention-test-premises-20261001.md",
+        "sha256": "3e75af636f12f2413b63012ed5fd30f583d04afa3096b456e0bfbb7077d2787d"
+      },
+      {
         "path": "requirements/qa-correction-auxiliary-startup-20261001.md",
         "sha256": "63a5516443d039753778db68f6aa203c1d2291ba06cc70575001c85c7c10351e"
       },
       {
         "path": "requirements/qa-correction-browser-adapter-20261001.md",
         "sha256": "659a48f7cbaaf018ed7a047c2885fd8088ff5ecca40309c94eb30ce82c625f4d"
+      },
+      {
+        "path": "requirements/qa-correction-capacity-cancellation-20261001.md",
+        "sha256": "26ed780083635e173959e6fb3c91d778df99efcc463a8b41120d010118b844e8"
+      },
+      {
+        "path": "requirements/qa-correction-directory-premises-20261001.md",
+        "sha256": "0ef2b6c42d24167b240f38a69b358e4b0c46676b7e0aefc82c681616c55a9fe5"
       },
       {
         "path": "requirements/qa-correction-group-prerequisites-20261001.md",
@@ -547,6 +563,14 @@
       {
         "path": "requirements/qa-correction-sequence-failed-sent-at-20261001.md",
         "sha256": "f99d7ba7e18c617396c8b7971ef8e17c7d78edb5dfc85b7485216f4fd99550a8"
+      },
+      {
+        "path": "requirements/qa-correction-spec006-schema-dialect-20261001.md",
+        "sha256": "bdda2e2c849a718729af6b3d8599b28bcf56b68bbd473c0ba8891efb874057ba"
+      },
+      {
+        "path": "requirements/qa-correction-ui-concurrency-pagination-20261001.md",
+        "sha256": "896d04635de34e2f3bce591e0f1178de3f49b9f9715dd21043c21973493e95a4"
       },
       {
         "path": "requirements/release-gates.md",
@@ -574,7 +598,11 @@
       },
       {
         "path": "requirements/traceability.md",
-        "sha256": "ca643e74b295585b235b897f12a86ac42a11dae5cec5c344ab1fb38f80484b31"
+        "sha256": "21968897bc010b9a521fa2edacc7475c2a1a47856312615c7077b9d1ec8f27bf"
+      },
+      {
+        "path": "requirements/utf16-remediation-intake-20261001.md",
+        "sha256": "8c088708428f03c417a41b1dd09cda61f164ec191102f45a6e34eb815b09b2be"
       },
       {
         "path": "sharing/business-acceptance.md",
@@ -586,7 +614,7 @@
       },
       {
         "path": "sharing/suites.json",
-        "sha256": "a9987a2434675230e12e548657b8970f587eb732c10175f66705b321b9e4dc78"
+        "sha256": "160913e11da015fd2ea052af4a85357405a73a44ebda26a83b3e6bea3b1a8584"
       },
       {
         "path": "tests/api/accounts.spec.ts",
@@ -653,6 +681,10 @@
         "sha256": "11d5e0c6cf9836d25ffa348bd12ece0f3cb693bef7e5cf67f8cb18ca1a7076aa"
       },
       {
+        "path": "tests/self/capacity-prerequisites.test.ts",
+        "sha256": "d702e3dc07fb56186db290b12db172273a71ddaf6908259cbc755862b4f48fad"
+      },
+      {
         "path": "tests/self/capacity-registry.test.ts",
         "sha256": "36013d1d75dbd4ade6f9347c9a1683578a6a37670c8d962be8b173fb4b560cbc"
       },
@@ -667,6 +699,14 @@
       {
         "path": "tests/self/database-cleanup.test.ts",
         "sha256": "c725b5aa17a7b6e5909e1cbc7947947c2030e915060a22b5f2387bec8a9b524b"
+      },
+      {
+        "path": "tests/self/declared-json-schema.test.ts",
+        "sha256": "d0673beea17761fcc086a7b0ece99ded5f867d7c8b24d01a8822f57f9ffadf4a"
+      },
+      {
+        "path": "tests/self/directory-observer.test.ts",
+        "sha256": "2b050d8a34d66828e190404ef65f0b30b5421f5b38dc312e86ca46bbb7fc656d"
       },
       {
         "path": "tests/self/fixture-artifacts.test.ts",
@@ -702,7 +742,7 @@
       },
       {
         "path": "tests/self/preflight-report.test.ts",
-        "sha256": "ec6925b6f18a1245215f5bb727facf9f559d49cc802b3011b807aff610cf36de"
+        "sha256": "def226d1859c556efd02c7884b8ac1d7da7d0203ace5dcfb9fa2c1b3e0f28516"
       },
       {
         "path": "tests/self/receipt-socket.test.ts",
@@ -730,7 +770,7 @@
       },
       {
         "path": "tests/self/suites.test.ts",
-        "sha256": "82374f5e5f139b6545094ccdd2b37d315d2a68d8fb0ff153a43e9ab592295e7c"
+        "sha256": "6defc30188d8dd08ff62c6e4bf300048cd48bda8ab1efe6b3dff5cb929b9744c"
       },
       {
         "path": "tests/support/sequence-timeout-policy.ts",
@@ -742,7 +782,7 @@
       },
       {
         "path": "tests/system/capacity-control.spec.ts",
-        "sha256": "9e467cdfcfd8cd2a9667f6c35c6154ab6bda9117f06542d6b325b3efd0ce0c64"
+        "sha256": "b381c502ce1fa82eb755630ef7d710221a7e786d1f5aa7a6712144df7b04ccb8"
       },
       {
         "path": "tests/system/capacity.spec.ts",
@@ -786,7 +826,7 @@
       },
       {
         "path": "tests/system/spec-boundaries.spec.ts",
-        "sha256": "372161bb7b08813065e7b7168241f7ece148a275047bed93af9f9d0935566748"
+        "sha256": "5a2cbf9d9d97a8400008bbd1de31cafe2de95b9e0902d9864e39cf161240059f"
       },
       {
         "path": "tests/ui/architecture.spec.ts",
@@ -794,11 +834,19 @@
       },
       {
         "path": "tests/ui/console.spec.ts",
-        "sha256": "f9ac663245d6f9b2b743ec2ce8bed8395bed168b833e52eb4ab65b24726ed104"
+        "sha256": "8769ce02f10b31dfc4dacd5429b3ce290df6e432e7676de8efa4721f572b5d85"
+      },
+      {
+        "path": "tests/ui/directory-observer.ts",
+        "sha256": "fa7f5490d86e3f4600a6b7482ce040f5045b2593ebfc278807904829d9aba27a"
+      },
+      {
+        "path": "tests/ui/native-focus.ts",
+        "sha256": "ef918c3770635466fc65b99153dac7e041e5ecd60b21eb7ef58c97a59102d617"
       },
       {
         "path": "tests/ui/observation-boundaries.spec.ts",
-        "sha256": "2be9efe6eb097a39848bac06563e3ce5d454c3eaea5dd4878196818ccfadd66f"
+        "sha256": "1f7c5b3337c092da5eddbfe7f518ff41ef86d8458ec158ec5e47875da80438ec"
       },
       {
         "path": "tsconfig.json",
@@ -1128,10 +1176,10 @@
 |CAP-REG-003 审计等待后重新检查执行账号在线状态|R-A5-07, R-A5-08|NOT_RUN|尚未执行||
 |CAP-REG-004 审计等待后成员身份和管理员角色均重新检查|R-A5-07, R-A5-08|NOT_RUN|尚未执行||
 |CAP-001 确证容量拒绝后零远端且释放后同一步只审计/踢人一次|ENG-ADMISSION-01, R-A5-05, R-A5-07, R-A5-09|NOT_RUN|尚未执行||
-|CAP-002 容量等待期间关闭 Agent 的取消边界|ENG-ADMISSION-01, R-A5-13|NOT_RUN|尚未执行||
+|CAP-002 容量拒绝后关闭 Agent，原当前步完成后取消且无后续工作|ENG-ADMISSION-01, R-A5-13|NOT_RUN|尚未执行||
 |CAP-003 持续容量拒绝计入原 60 秒活动预算|ENG-ADMISSION-01, R-A5-05, R-A5-06|NOT_RUN|尚未执行||
 |CAP-004 容量等待期间关闭踢人政策再次检查|ENG-ADMISSION-01, R-A5-07, R-A5-09|NOT_RUN|尚未执行||
-|CAP-005 容量等待期间群变不可写阻止迟发踢人|ENG-ADMISSION-01, R-A1-04, R-A5-13|NOT_RUN|尚未执行||
+|CAP-005 容量等待期间群变不可写阻止迟发踢人|ENG-ADMISSION-01, R-A2-11, R-A5-13|NOT_RUN|尚未执行||
 |CAP-006 容量等待后在线、成员与管理员资格复核|ENG-ADMISSION-01, R-A1-04, R-A5-08|NOT_RUN|尚未执行||
 |CAP-007 容量等待中目标退出或重新加入后按同一用户身份完成移除且不重复|ENG-ADMISSION-01, R-A5-09, R-A5-11|NOT_RUN|尚未执行||
 |CAP-008 容量延期后真实网关群主或权限错误仍按原业务契约返回|ENG-ADMISSION-01, R-A5-09|NOT_RUN|尚未执行||

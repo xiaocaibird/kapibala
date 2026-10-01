@@ -8,6 +8,8 @@
 
 ## 子集
 
+2026-10-01 联调及复测已经结束，当前结论见[正式报告](../reports/acceptance/20261001-business/report.md)。后续登记的浏览器适配、最终联调、UTF-16修复和QA前提纠正子集也都只引用正式用例，完整列表以[`suites.json`](suites.json)为准；下表保留常用开发入口。
+
 [`suites.json`](suites.json) 只保存用例 ID、明确项目和子集边界，不保存步骤、预期或断言副本。唯一用例定义仍在 `cases/*.json`，唯一自动化入口仍是各定义的 `automation`。
 
 | 子集                          | 内容                                                                                                                                                                | 明确边界                                                                                                                       |

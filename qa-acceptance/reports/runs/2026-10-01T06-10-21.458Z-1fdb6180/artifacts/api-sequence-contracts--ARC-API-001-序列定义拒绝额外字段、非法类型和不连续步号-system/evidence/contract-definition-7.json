@@ -1,0 +1,27 @@
+{
+  "input": {
+    "label": "negative delay",
+    "body": {
+      "name": "QA independent sequence contract",
+      "steps": [
+        {
+          "index": 1,
+          "accountRole": "admin",
+          "text": "QA valid sequence",
+          "delaySeconds": -1
+        }
+      ]
+    }
+  },
+  "result": {
+    "status": 400,
+    "body": {
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Too small: expected number to be >=0",
+        "requestId": "498ada46-ba85-4549-924b-133f8a1df267"
+      }
+    },
+    "headers": {}
+  }
+}

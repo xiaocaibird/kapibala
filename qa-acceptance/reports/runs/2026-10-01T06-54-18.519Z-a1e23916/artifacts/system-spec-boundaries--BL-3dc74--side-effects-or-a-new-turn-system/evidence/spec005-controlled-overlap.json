@@ -1,0 +1,227 @@
+{
+  "hit": {
+    "name": "spec-cancel-third-audit",
+    "hits": 1,
+    "at": "2026-10-01T07:25:30.398Z",
+    "context": {
+      "id": 4,
+      "at": "2026-10-01T07:25:30.398Z",
+      "path": "/agent/audit",
+      "body": {
+        "text": "never execute without audit pass",
+        "groupId": "0cc108c4-d3c5-42ef-a381-6394bd68db26"
+      },
+      "responseStatus": 200,
+      "rawResponse": "{\"verdict\":\"unknown\"}",
+      "completedAt": "2026-10-01T07:25:30.411Z"
+    }
+  },
+  "cancellationObserved": {
+    "id": "0cc108c4-d3c5-42ef-a381-6394bd68db26",
+    "name": null,
+    "description": null,
+    "createdAt": "2026-10-01T07:25:29.427Z",
+    "gatewayGroupId": "gateway-group-1",
+    "status": "active",
+    "creatorAccountId": "account-1",
+    "agentEnabled": false,
+    "autoKickEnabled": false,
+    "members": [
+      {
+        "accountId": "account-2",
+        "platformUserId": "platform-account-2",
+        "role": "admin"
+      },
+      {
+        "accountId": "account-1",
+        "platformUserId": "platform-account-1",
+        "role": "creator"
+      },
+      {
+        "accountId": "account-3",
+        "platformUserId": "platform-account-3",
+        "role": "member"
+      }
+    ],
+    "activeAgentRunId": "845859f3-9f7d-4d43-9645-4174a42ac051",
+    "activeSequenceRunId": null
+  },
+  "run": {
+    "id": "845859f3-9f7d-4d43-9645-4174a42ac051",
+    "groupId": "0cc108c4-d3c5-42ef-a381-6394bd68db26",
+    "status": "blocked",
+    "endReason": "audit_blocked",
+    "summary": null,
+    "recoveryNote": null,
+    "steps": [
+      {
+        "ordinal": 1,
+        "kind": "tool_use",
+        "toolUseId": "overlap-audit",
+        "name": "send_message",
+        "input": {
+          "text": "never execute without audit pass",
+          "idempotency_key": "spec-overlap"
+        },
+        "resultSummary": "{\"code\":\"AUDIT_REJECTED\",\"message\":\"Audit service returned no conclusive verdict after three attempts.\",\"hint\":\"The run is blocked; no side effect was executed.\"}",
+        "isError": true,
+        "errorCode": "AUDIT_REJECTED",
+        "auditVerdict": null,
+        "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"overlap-audit\",\"name\":\"send_message\",\"input\":{\"text\":\"never execute without audit pass\",\"idempotency_key\":\"spec-overlap\"}}]}"
+      }
+    ]
+  },
+  "audits": [
+    {
+      "id": 2,
+      "at": "2026-10-01T07:25:30.386Z",
+      "path": "/agent/audit",
+      "body": {
+        "text": "never execute without audit pass",
+        "groupId": "0cc108c4-d3c5-42ef-a381-6394bd68db26"
+      },
+      "responseStatus": 500,
+      "rawResponse": "first unknown",
+      "completedAt": "2026-10-01T07:25:30.386Z"
+    },
+    {
+      "id": 3,
+      "at": "2026-10-01T07:25:30.393Z",
+      "path": "/agent/audit",
+      "body": {
+        "text": "never execute without audit pass",
+        "groupId": "0cc108c4-d3c5-42ef-a381-6394bd68db26"
+      },
+      "responseStatus": 200,
+      "rawResponse": "second invalid JSON",
+      "completedAt": "2026-10-01T07:25:30.393Z"
+    },
+    {
+      "id": 4,
+      "at": "2026-10-01T07:25:30.398Z",
+      "path": "/agent/audit",
+      "body": {
+        "text": "never execute without audit pass",
+        "groupId": "0cc108c4-d3c5-42ef-a381-6394bd68db26"
+      },
+      "responseStatus": 200,
+      "rawResponse": "{\"verdict\":\"unknown\"}",
+      "completedAt": "2026-10-01T07:25:30.411Z"
+    }
+  ],
+  "samples": [
+    {
+      "observedAt": "2026-10-01T07:25:30.734Z",
+      "run": {
+        "id": "845859f3-9f7d-4d43-9645-4174a42ac051",
+        "groupId": "0cc108c4-d3c5-42ef-a381-6394bd68db26",
+        "status": "blocked",
+        "endReason": "audit_blocked",
+        "summary": null,
+        "recoveryNote": null,
+        "steps": [
+          {
+            "ordinal": 1,
+            "kind": "tool_use",
+            "toolUseId": "overlap-audit",
+            "name": "send_message",
+            "input": {
+              "text": "never execute without audit pass",
+              "idempotency_key": "spec-overlap"
+            },
+            "resultSummary": "{\"code\":\"AUDIT_REJECTED\",\"message\":\"Audit service returned no conclusive verdict after three attempts.\",\"hint\":\"The run is blocked; no side effect was executed.\"}",
+            "isError": true,
+            "errorCode": "AUDIT_REJECTED",
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"overlap-audit\",\"name\":\"send_message\",\"input\":{\"text\":\"never execute without audit pass\",\"idempotency_key\":\"spec-overlap\"}}]}"
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-10-01T07:25:30.996Z",
+      "run": {
+        "id": "845859f3-9f7d-4d43-9645-4174a42ac051",
+        "groupId": "0cc108c4-d3c5-42ef-a381-6394bd68db26",
+        "status": "blocked",
+        "endReason": "audit_blocked",
+        "summary": null,
+        "recoveryNote": null,
+        "steps": [
+          {
+            "ordinal": 1,
+            "kind": "tool_use",
+            "toolUseId": "overlap-audit",
+            "name": "send_message",
+            "input": {
+              "text": "never execute without audit pass",
+              "idempotency_key": "spec-overlap"
+            },
+            "resultSummary": "{\"code\":\"AUDIT_REJECTED\",\"message\":\"Audit service returned no conclusive verdict after three attempts.\",\"hint\":\"The run is blocked; no side effect was executed.\"}",
+            "isError": true,
+            "errorCode": "AUDIT_REJECTED",
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"overlap-audit\",\"name\":\"send_message\",\"input\":{\"text\":\"never execute without audit pass\",\"idempotency_key\":\"spec-overlap\"}}]}"
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-10-01T07:25:31.256Z",
+      "run": {
+        "id": "845859f3-9f7d-4d43-9645-4174a42ac051",
+        "groupId": "0cc108c4-d3c5-42ef-a381-6394bd68db26",
+        "status": "blocked",
+        "endReason": "audit_blocked",
+        "summary": null,
+        "recoveryNote": null,
+        "steps": [
+          {
+            "ordinal": 1,
+            "kind": "tool_use",
+            "toolUseId": "overlap-audit",
+            "name": "send_message",
+            "input": {
+              "text": "never execute without audit pass",
+              "idempotency_key": "spec-overlap"
+            },
+            "resultSummary": "{\"code\":\"AUDIT_REJECTED\",\"message\":\"Audit service returned no conclusive verdict after three attempts.\",\"hint\":\"The run is blocked; no side effect was executed.\"}",
+            "isError": true,
+            "errorCode": "AUDIT_REJECTED",
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"overlap-audit\",\"name\":\"send_message\",\"input\":{\"text\":\"never execute without audit pass\",\"idempotency_key\":\"spec-overlap\"}}]}"
+          }
+        ]
+      }
+    },
+    {
+      "observedAt": "2026-10-01T07:25:31.518Z",
+      "run": {
+        "id": "845859f3-9f7d-4d43-9645-4174a42ac051",
+        "groupId": "0cc108c4-d3c5-42ef-a381-6394bd68db26",
+        "status": "blocked",
+        "endReason": "audit_blocked",
+        "summary": null,
+        "recoveryNote": null,
+        "steps": [
+          {
+            "ordinal": 1,
+            "kind": "tool_use",
+            "toolUseId": "overlap-audit",
+            "name": "send_message",
+            "input": {
+              "text": "never execute without audit pass",
+              "idempotency_key": "spec-overlap"
+            },
+            "resultSummary": "{\"code\":\"AUDIT_REJECTED\",\"message\":\"Audit service returned no conclusive verdict after three attempts.\",\"hint\":\"The run is blocked; no side effect was executed.\"}",
+            "isError": true,
+            "errorCode": "AUDIT_REJECTED",
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"overlap-audit\",\"name\":\"send_message\",\"input\":{\"text\":\"never execute without audit pass\",\"idempotency_key\":\"spec-overlap\"}}]}"
+          }
+        ]
+      }
+    }
+  ],
+  "boundary": "第三次审计响应被屏障挂起时关闭 agent；允许实际已生效条件对应的两个终态。不证明同时发生、60秒预算重叠或永久稳定。"
+}

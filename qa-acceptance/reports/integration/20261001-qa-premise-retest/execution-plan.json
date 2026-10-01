@@ -1,0 +1,174 @@
+{
+  "phase": "developer-preflight",
+  "suite": {
+    "id": "qa-premise-retest-20261001",
+    "title": "QA前提纠正后的原版本定向复测",
+    "purpose": "独立复测当前步取消、真实群不可写、目录回放/分页、并发401和移除工具焦点仿真后的提醒场景；引用正式用例，不改原全量结果。",
+    "caseIds": [
+      "CAP-002",
+      "CAP-005",
+      "UI-011",
+      "UI-020",
+      "UI-021",
+      "UI-024",
+      "UI-025",
+      "UI-028",
+      "UI-029",
+      "UI-030",
+      "UI-031",
+      "UI-032",
+      "UI-033",
+      "UI-034",
+      "UI-035",
+      "ARC-UI-BLK-001"
+    ],
+    "projects": [
+      "system",
+      "chromium"
+    ],
+    "riskBoundaries": [
+      "只对86ad原版本纠正QA场景前提；不继承旧PASS，不覆盖完整业务或上线门禁。",
+      "实际独立数据库、公开协议、真实故障控制器与浏览器；每项目首次运行，原失败留存。",
+      "有头Chromium移除Playwright默认always-focused仿真，使用真实原生标签焦点；不证明OS跨应用或输入法人工义务。"
+    ],
+    "grep": "(?:^|\\s)\\[(?:CAP-002|CAP-005|UI-011|UI-020|UI-021|UI-024|UI-025|UI-028|UI-029|UI-030|UI-031|UI-032|UI-033|UI-034|UI-035|ARC-UI-BLK-001)\\](?=\\s|$)",
+    "cases": [
+      {
+        "id": "CAP-002",
+        "title": "容量拒绝后关闭 Agent，原当前步完成后取消且无后续工作",
+        "automation": "tests/system/capacity-control.spec.ts",
+        "projects": [
+          "system"
+        ]
+      },
+      {
+        "id": "CAP-005",
+        "title": "容量等待期间群变不可写阻止迟发踢人",
+        "automation": "tests/system/capacity-control.spec.ts",
+        "projects": [
+          "system"
+        ]
+      },
+      {
+        "id": "UI-011",
+        "title": "前端并发401单次续期",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "UI-020",
+        "title": "失焦提醒和呈现后确认",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "UI-021",
+        "title": "路由范围销毁",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "UI-024",
+        "title": "单页五秒轮询及并发失效合并",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "UI-025",
+        "title": "返回恢复内存条件分页位置及刷新清空",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "UI-028",
+        "title": "前台安静与失焦静态标题favicon",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "UI-029",
+        "title": "加载失败不冒称已确认",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "UI-030",
+        "title": "列表范围消失的两阶段确认",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "UI-031",
+        "title": "变化后回原值保留期间变化候选",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "UI-032",
+        "title": "提示确认与目录过期相互独立",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "UI-033",
+        "title": "本地手动clientMsgId及早回流归属",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "UI-034",
+        "title": "Agent自动消息失焦提醒",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "UI-035",
+        "title": "序列自动消息失焦提醒",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "ARC-UI-BLK-001",
+        "title": "通用资源读取失败不能提交成功快照或提前确认未呈现提醒",
+        "automation": "tests/ui/observation-boundaries.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      }
+    ]
+  },
+  "suiteSha256": "96870977a6e880ccee12bb1c3f7f55cee6fda6520c0555b8f7e743e10c2bfc22",
+  "playwrightArgs": [
+    "test",
+    "--grep",
+    "(?:^|\\s)\\[(?:CAP-002|CAP-005|UI-011|UI-020|UI-021|UI-024|UI-025|UI-028|UI-029|UI-030|UI-031|UI-032|UI-033|UI-034|UI-035|ARC-UI-BLK-001)\\](?=\\s|$)",
+    "--project=system",
+    "--project=chromium"
+  ]
+}

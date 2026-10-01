@@ -1,0 +1,60 @@
+{
+  "profile": {
+    "maximumReadAttempts": 4,
+    "observationMs": 3000,
+    "recoveryTimeoutMs": 8000
+  },
+  "profileSource": "docs/architecture-quality-closeout.md:19–20",
+  "http": [
+    {
+      "at": 28077.626709,
+      "method": "GET",
+      "path": "/api/sequences",
+      "body": null
+    },
+    {
+      "at": 28082.695334,
+      "method": "RESPONSE GET",
+      "path": "/api/sequences",
+      "status": 200
+    },
+    {
+      "at": 28132.065375,
+      "method": "GET",
+      "path": "/api/sequences",
+      "body": null
+    },
+    {
+      "at": 28135.694667,
+      "method": "RESPONSE GET",
+      "path": "/api/sequences",
+      "status": 200
+    },
+    {
+      "at": 28149.7715,
+      "method": "POST",
+      "path": "/api/sequences",
+      "body": {
+        "name": "QA禁止写重放",
+        "steps": [
+          {
+            "index": 1,
+            "accountRole": "admin",
+            "text": "{event_1}",
+            "delaySeconds": 0
+          }
+        ]
+      }
+    },
+    {
+      "at": 28163.43325,
+      "method": "RESPONSE POST",
+      "path": "/api/sequences",
+      "status": 503
+    }
+  ],
+  "events": [],
+  "authentications": 1,
+  "socketChanges": 1,
+  "pageErrors": []
+}

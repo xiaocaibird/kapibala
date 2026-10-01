@@ -1,0 +1,33 @@
+{
+  "input": {
+    "label": "index gap",
+    "body": {
+      "name": "QA independent sequence contract",
+      "steps": [
+        {
+          "index": 1,
+          "accountRole": "admin",
+          "text": "QA valid sequence",
+          "delaySeconds": 1
+        },
+        {
+          "index": 3,
+          "accountRole": "admin",
+          "text": "QA valid sequence",
+          "delaySeconds": 1
+        }
+      ]
+    }
+  },
+  "result": {
+    "status": 400,
+    "body": {
+      "error": {
+        "code": "VALIDATION_ERROR",
+        "message": "Step indexes must be consecutive and start at 1",
+        "requestId": "4558916a-22de-4e67-ae3c-b96310ae0026"
+      }
+    },
+    "headers": {}
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "method": "GET",
+  "path": "/qa/message/v1/leases/4e972b30-9a8c-4bf7-b8c2-0d7c875efac6",
+  "status": 200,
+  "response": {
+    "protocol": "qa-message-observation/1",
+    "leaseId": "4e972b30-9a8c-4bf7-b8c2-0d7c875efac6",
+    "state": "held",
+    "expiresAt": "2026-10-01T07:19:29.328Z",
+    "binding": {
+      "apiUrl": "http://127.0.0.1:57001",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "pid": 8224,
+      "observedOwnerToken": "[REDACTED]"
+    },
+    "correlation": {
+      "clientMsgId": "d645296c-5815-4508-b31e-ce5ae1c8b5b9",
+      "msgId": "gateway-message-1",
+      "eventId": "3"
+    },
+    "events": [
+      {
+        "seq": 1,
+        "at": "2026-10-01T07:17:59.477Z",
+        "kind": "window-held",
+        "phase": "receipt-before-commit",
+        "attemptId": "1df6c403-fc32-4fa6-ae01-8770cabc77f8",
+        "clientMsgId": "d645296c-5815-4508-b31e-ce5ae1c8b5b9",
+        "msgId": "gateway-message-1",
+        "eventId": "3",
+        "observedAt": "2026-10-01T07:17:59.474Z",
+        "instancePid": 8224,
+        "databaseIdentity": "ed6a448354ca0f1003276e67e464e074578ad7638e0df8009118cfb88d3f51f9",
+        "localBoundary": "receipt-insert-not-issued",
+        "receiptPresentAtProbe": false,
+        "receiptObservedAt": null,
+        "coverage": {
+          "scope": "bound-instance",
+          "allDatabaseWritersProven": false
+        }
+      }
+    ]
+  }
+}

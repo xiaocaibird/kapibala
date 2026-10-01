@@ -1,0 +1,406 @@
+{
+  "config": {
+    "argv": [
+      "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node",
+      "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/node_modules/@playwright/test/cli.js",
+      "test",
+      "--grep",
+      "(?:^|\\s)\\[(?:BLK-SPEC-002|SEQ-006|SEQ-007|SEQ-008|SEQ-010)\\](?=\\s|$)",
+      "--project=system"
+    ],
+    "configFile": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/playwright.config.ts",
+    "rootDir": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/harness/execution-gate.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-01-07.702Z-40114059/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "system",
+        "name": "system",
+        "testDir": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests",
+        "testIgnore": [
+          "**/ui/**"
+        ],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-01-07.702Z-40114059/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/ui/*.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-01-07.702Z-40114059/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox-smoke",
+        "name": "firefox-smoke",
+        "testDir": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/ui/*.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-01-07.702Z-40114059/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit-smoke",
+        "name": "webkit-smoke",
+        "testDir": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/ui/*.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/harness/reporter.ts",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-01-07.702Z-40114059/playwright.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-01-07.702Z-40114059/playwright.junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "system/sequence-failure-policy.spec.ts",
+      "file": "system/sequence-failure-policy.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "[BLK-SPEC-002] ordinary send failure fails the sequence and never advances later steps",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "system",
+              "projectName": "system",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 1995,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"clientMsgId\": \"bc1bf74c-1f8f-46ad-a2bf-f38909da49d1\",\u001b[22m\n\u001b[32m-   \"sentAt\": null,\u001b[39m\n\u001b[31m+   \"sentAt\": \"2026-10-01T06:01:10.989Z\",\u001b[39m\n\u001b[2m    \"status\": \"failed\",\u001b[22m\n\u001b[2m  }\u001b[22m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"clientMsgId\": \"bc1bf74c-1f8f-46ad-a2bf-f38909da49d1\",\u001b[22m\n\u001b[32m-   \"sentAt\": null,\u001b[39m\n\u001b[31m+   \"sentAt\": \"2026-10-01T06:01:10.989Z\",\u001b[39m\n\u001b[2m    \"status\": \"failed\",\u001b[22m\n\u001b[2m  }\u001b[22m\n    at /Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests/system/sequence-failure-policy.spec.ts:156:54\n    at /Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests/system/sequence-failure-policy.spec.ts:17:7",
+                    "location": {
+                      "file": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests/system/sequence-failure-policy.spec.ts",
+                      "column": 54,
+                      "line": 156
+                    },
+                    "snippet": "  154 |               'No sequence terminal evidence within the 15s observation budget; QA-D6 did not introduce a terminal-latency SLA',\n  155 |             );\n> 156 |           expect(result.last.steps[failedIndex - 1]).toMatchObject({\n      |                                                      ^\n  157 |             status: 'failed',\n  158 |             clientMsgId: payload.clientMsgId,\n  159 |             sentAt: null,"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests/system/sequence-failure-policy.spec.ts",
+                        "column": 54,
+                        "line": 156
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"clientMsgId\": \"bc1bf74c-1f8f-46ad-a2bf-f38909da49d1\",\u001b[22m\n\u001b[32m-   \"sentAt\": null,\u001b[39m\n\u001b[31m+   \"sentAt\": \"2026-10-01T06:01:10.989Z\",\u001b[39m\n\u001b[2m    \"status\": \"failed\",\u001b[22m\n\u001b[2m  }\u001b[22m\n\n  154 |               'No sequence terminal evidence within the 15s observation budget; QA-D6 did not introduce a terminal-latency SLA',\n  155 |             );\n> 156 |           expect(result.last.steps[failedIndex - 1]).toMatchObject({\n      |                                                      ^\n  157 |             status: 'failed',\n  158 |             clientMsgId: payload.clientMsgId,\n  159 |             sentAt: null,\n    at /Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests/system/sequence-failure-policy.spec.ts:156:54\n    at /Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests/system/sequence-failure-policy.spec.ts:17:7"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "steps": [
+                    {
+                      "title": "ACCOUNT_OFFLINE, failed step 1",
+                      "duration": 1231,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"clientMsgId\": \"bc1bf74c-1f8f-46ad-a2bf-f38909da49d1\",\u001b[22m\n\u001b[32m-   \"sentAt\": null,\u001b[39m\n\u001b[31m+   \"sentAt\": \"2026-10-01T06:01:10.989Z\",\u001b[39m\n\u001b[2m    \"status\": \"failed\",\u001b[22m\n\u001b[2m  }\u001b[22m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoMatchObject\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 1\u001b[39m\n\n\u001b[2m  Object {\u001b[22m\n\u001b[2m    \"clientMsgId\": \"bc1bf74c-1f8f-46ad-a2bf-f38909da49d1\",\u001b[22m\n\u001b[32m-   \"sentAt\": null,\u001b[39m\n\u001b[31m+   \"sentAt\": \"2026-10-01T06:01:10.989Z\",\u001b[39m\n\u001b[2m    \"status\": \"failed\",\u001b[22m\n\u001b[2m  }\u001b[22m\n    at /Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests/system/sequence-failure-policy.spec.ts:156:54\n    at /Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests/system/sequence-failure-policy.spec.ts:17:7",
+                        "location": {
+                          "file": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests/system/sequence-failure-policy.spec.ts",
+                          "column": 54,
+                          "line": 156
+                        },
+                        "snippet": "  154 |               'No sequence terminal evidence within the 15s observation budget; QA-D6 did not introduce a terminal-latency SLA',\n  155 |             );\n> 156 |           expect(result.last.steps[failedIndex - 1]).toMatchObject({\n      |                                                      ^\n  157 |             status: 'failed',\n  158 |             clientMsgId: payload.clientMsgId,\n  159 |             sentAt: null,"
+                      }
+                    }
+                  ],
+                  "startTime": "2026-10-01T06:01:08.241Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL3FhLWJ1c2luZXNzLWV4ZWN1dGlvbi9rYXBpYmFsYS9xYS1hY2NlcHRhbmNlL3JlcG9ydHMvcHJlZmxpZ2h0LzIwMjYtMTAtMDFUMDYtMDEtMDcuNzAyWi00MDExNDA1OS9hcnRpZmFjdHMvc3lzdGVtLXNlcXVlbmNlLWZhaWx1cmUtcG8tMmRlZmItLW5ldmVyLWFkdmFuY2VzLWxhdGVyLXN0ZXBzLXN5c3RlbS9ldmlkZW5jZQ=="
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-01-07.702Z-40114059/artifacts/system-sequence-failure-po-2defb--never-advances-later-steps-system/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-01-07.702Z-40114059/artifacts/system-sequence-failure-po-2defb--never-advances-later-steps-system/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests/system/sequence-failure-policy.spec.ts",
+                    "column": 54,
+                    "line": 156
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "abb662e17a65030ff48f-1a656ecb0f5cde27d779",
+          "file": "system/sequence-failure-policy.spec.ts",
+          "line": 10,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "system/sequence.spec.ts",
+      "file": "system/sequence.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "[SEQ-006] unavailable member step is skipped with timestamp and progress continues",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "system",
+              "projectName": "system",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1912,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T06:01:11.456Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL3FhLWJ1c2luZXNzLWV4ZWN1dGlvbi9rYXBpYmFsYS9xYS1hY2NlcHRhbmNlL3JlcG9ydHMvcHJlZmxpZ2h0LzIwMjYtMTAtMDFUMDYtMDEtMDcuNzAyWi00MDExNDA1OS9hcnRpZmFjdHMvc3lzdGVtLXNlcXVlbmNlLS1TRVEtMDA2LXUtOWYzMjAtdGFtcC1hbmQtcHJvZ3Jlc3MtY29udGludWVzLXN5c3RlbS9ldmlkZW5jZQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "590b9f47280a7790ada8-9631f0555aa4f7bd1114",
+          "file": "system/sequence.spec.ts",
+          "line": 308,
+          "column": 1
+        },
+        {
+          "title": "[SEQ-007] rate-limited role waits rather than skips and preserves later delays",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "system",
+              "projectName": "system",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5410,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T06:01:14.184Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL3FhLWJ1c2luZXNzLWV4ZWN1dGlvbi9rYXBpYmFsYS9xYS1hY2NlcHRhbmNlL3JlcG9ydHMvcHJlZmxpZ2h0LzIwMjYtMTAtMDFUMDYtMDEtMDcuNzAyWi00MDExNDA1OS9hcnRpZmFjdHMvc3lzdGVtLXNlcXVlbmNlLS1TRVEtMDA3LXItODRjNzYtLWFuZC1wcmVzZXJ2ZXMtbGF0ZXItZGVsYXlzLXN5c3RlbS9ldmlkZW5jZQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "590b9f47280a7790ada8-9a14c615768cc849bb16",
+          "file": "system/sequence.spec.ts",
+          "line": 340,
+          "column": 1
+        },
+        {
+          "title": "[SEQ-008] group write prohibition stops sequence while account remains online",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "system",
+              "projectName": "system",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2077,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T06:01:19.600Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL3FhLWJ1c2luZXNzLWV4ZWN1dGlvbi9rYXBpYmFsYS9xYS1hY2NlcHRhbmNlL3JlcG9ydHMvcHJlZmxpZ2h0LzIwMjYtMTAtMDFUMDYtMDEtMDcuNzAyWi00MDExNDA1OS9hcnRpZmFjdHMvc3lzdGVtLXNlcXVlbmNlLS1TRVEtMDA4LWctMzNjYmQtaGlsZS1hY2NvdW50LXJlbWFpbnMtb25saW5lLXN5c3RlbS9ldmlkZW5jZQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "590b9f47280a7790ada8-9c347ba07e7dd9486fcf",
+          "file": "system/sequence.spec.ts",
+          "line": 382,
+          "column": 1
+        },
+        {
+          "title": "[SEQ-010] terminal account skips its queued sequence step and advances progress",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "system",
+              "projectName": "system",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2587,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T06:01:21.681Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL3FhLWJ1c2luZXNzLWV4ZWN1dGlvbi9rYXBpYmFsYS9xYS1hY2NlcHRhbmNlL3JlcG9ydHMvcHJlZmxpZ2h0LzIwMjYtMTAtMDFUMDYtMDEtMDcuNzAyWi00MDExNDA1OS9hcnRpZmFjdHMvc3lzdGVtLXNlcXVlbmNlLS1TRVEtMDEwLXQtN2EyNWEtLXN0ZXAtYW5kLWFkdmFuY2VzLXByb2dyZXNzLXN5c3RlbS9ldmlkZW5jZQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "590b9f47280a7790ada8-88598cf7aafc181db755",
+          "file": "system/sequence.spec.ts",
+          "line": 452,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-01T06:01:07.917Z",
+    "duration": 16569.203999999998,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

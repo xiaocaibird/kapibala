@@ -1,0 +1,304 @@
+{
+  "startedAt": "2026-10-01T06:59:02.594Z",
+  "runnerPid": 28275,
+  "candidate": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+  "ownership": {
+    "runId": "fa0b645c-3367-4913-af47-7db8a5bd37f8",
+    "ownerPid": 23595,
+    "ownerStarted": "Thu Oct  1 14:56:16 2026",
+    "directory": "/private/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-local-fa0b645c-3367-4913-af47-7db8a5bd37f8",
+    "manifest": "/private/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-local-fa0b645c-3367-4913-af47-7db8a5bd37f8/manifest.json",
+    "manifestMode": 384,
+    "directoryMode": 448,
+    "engineId": "1fbf2675-d415-458c-866c-28fd59cd7267",
+    "containerName": "kapibala-local-fa0b645c-3367-4913-af47-7db8a5bd37f8",
+    "containerId": "b2d201bee108ba9aac879cdf474a9e5926be833f9d6d53ba66183343bad4dab1",
+    "volumeName": "kapibala-local-fa0b645c-3367-4913-af47-7db8a5bd37f8-data",
+    "urls": {
+      "api": "http://127.0.0.1:51062",
+      "web": "http://127.0.0.1:51066",
+      "gateway": "http://127.0.0.1:51057",
+      "agent": "http://127.0.0.1:51058"
+    },
+    "database": {
+      "host": "127.0.0.1",
+      "port": 51054,
+      "name": "kapibala_fa0b645c33674913af477db8a5bd37f8"
+    }
+  },
+  "commands": [
+    {
+      "at": "2026-10-01T06:59:02.597Z",
+      "argv": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "inspect",
+        "b2d201bee108ba9aac879cdf474a9e5926be833f9d6d53ba66183343bad4dab1",
+        "--format",
+        "{{json .}}"
+      ]
+    },
+    {
+      "at": "2026-10-01T06:59:02.617Z",
+      "argv": [
+        "docker",
+        "--context",
+        "desktop-linux",
+        "volume",
+        "inspect",
+        "kapibala-local-fa0b645c-3367-4913-af47-7db8a5bd37f8-data",
+        "--format",
+        "{{json .}}"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "name": "owned fresh PostgreSQL and owner identity",
+      "startedAt": "2026-10-01T06:59:02.594Z",
+      "finishedAt": "2026-10-01T06:59:02.632Z",
+      "status": "PASS",
+      "detail": {
+        "container": "b2d201bee108ba9aac879cdf474a9e5926be833f9d6d53ba66183343bad4dab1",
+        "volume": "kapibala-local-fa0b645c-3367-4913-af47-7db8a5bd37f8-data",
+        "ownershipLabelsMatched": true,
+        "processStartMatched": true,
+        "image": "postgres:17-alpine"
+      }
+    },
+    {
+      "name": "fresh migrations and API through random web proxy",
+      "startedAt": "2026-10-01T06:59:02.633Z",
+      "finishedAt": "2026-10-01T06:59:02.643Z",
+      "status": "PASS",
+      "detail": {
+        "ok": true,
+        "schemaVersion": 8
+      }
+    },
+    {
+      "name": "two public REST identities",
+      "startedAt": "2026-10-01T06:59:02.643Z",
+      "finishedAt": "2026-10-01T06:59:02.662Z",
+      "status": "PASS",
+      "detail": {
+        "roles": [
+          "admin",
+          "viewer"
+        ],
+        "initialAccounts": 6,
+        "allIdle": true
+      }
+    },
+    {
+      "name": "two identities authenticate real WebSocket through web proxy",
+      "startedAt": "2026-10-01T06:59:02.662Z",
+      "finishedAt": "2026-10-01T06:59:02.830Z",
+      "status": "PASS",
+      "detail": {
+        "proxy": "http://127.0.0.1:51066",
+        "identities": [
+          "admin",
+          "viewer"
+        ]
+      }
+    },
+    {
+      "name": "viewer denied write; administrator connects two accounts; both WS observe committed event",
+      "startedAt": "2026-10-01T06:59:02.831Z",
+      "finishedAt": "2026-10-01T06:59:02.991Z",
+      "status": "PASS",
+      "detail": {
+        "viewerStatus": 403,
+        "connected": [
+          "account-1",
+          "account-2"
+        ],
+        "bothObserved": true
+      }
+    },
+    {
+      "name": "admin browser login and accounts page",
+      "startedAt": "2026-10-01T06:59:04.544Z",
+      "finishedAt": "2026-10-01T06:59:04.922Z",
+      "status": "PASS",
+      "detail": {
+        "accountRows": 6
+      }
+    },
+    {
+      "name": "admin creates group via actual browser form and observes completed membership",
+      "startedAt": "2026-10-01T06:59:04.923Z",
+      "finishedAt": "2026-10-01T06:59:20.040Z",
+      "status": "FAIL",
+      "error": "TimeoutError: locator.selectOption: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog').getByLabel('群主账号', { exact: true })\u001b[22m\n"
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:04.657Z",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    }
+  ],
+  "browserNetwork": [
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:04.657Z",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "status": 401
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:04.753Z",
+      "method": "POST",
+      "path": "/api/auth/login",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:04.758Z",
+      "method": "GET",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:04.768Z",
+      "method": "GET",
+      "path": "/api/group-directory",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:04.826Z",
+      "method": "GET",
+      "path": "/api/accounts",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:04.844Z",
+      "method": "GET",
+      "path": "/api/accounts",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:04.947Z",
+      "method": "GET",
+      "path": "/api/accounts",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:04.977Z",
+      "method": "GET",
+      "path": "/api/group-directory",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:05.021Z",
+      "method": "GET",
+      "path": "/api/accounts",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:09.983Z",
+      "method": "GET",
+      "path": "/api/group-directory",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:14.984Z",
+      "method": "GET",
+      "path": "/api/group-directory",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:19.983Z",
+      "method": "GET",
+      "path": "/api/group-directory",
+      "status": 200
+    }
+  ],
+  "websocket": {
+    "admin": [
+      {
+        "at": "2026-10-01T06:59:02.709Z",
+        "frame": {
+          "type": "auth",
+          "success": true
+        }
+      },
+      {
+        "at": "2026-10-01T06:59:02.871Z",
+        "frame": {
+          "seq": 1,
+          "type": "account_status_changed",
+          "payload": {
+            "to": "online",
+            "from": "idle",
+            "accountId": "account-1"
+          }
+        }
+      },
+      {
+        "at": "2026-10-01T06:59:02.871Z",
+        "frame": {
+          "seq": 2,
+          "type": "account_status_changed",
+          "payload": {
+            "to": "online",
+            "from": "idle",
+            "accountId": "account-2"
+          }
+        }
+      }
+    ],
+    "viewer": [
+      {
+        "at": "2026-10-01T06:59:02.789Z",
+        "frame": {
+          "type": "auth",
+          "success": true
+        }
+      },
+      {
+        "at": "2026-10-01T06:59:02.954Z",
+        "frame": {
+          "seq": 1,
+          "type": "account_status_changed",
+          "payload": {
+            "to": "online",
+            "from": "idle",
+            "accountId": "account-1"
+          }
+        }
+      },
+      {
+        "at": "2026-10-01T06:59:02.954Z",
+        "frame": {
+          "seq": 2,
+          "type": "account_status_changed",
+          "payload": {
+            "to": "online",
+            "from": "idle",
+            "accountId": "account-2"
+          }
+        }
+      }
+    ]
+  },
+  "browserVersion": "153.0.8010.12",
+  "status": "FAIL",
+  "error": "TimeoutError: locator.selectOption: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog').getByLabel('群主账号', { exact: true })\u001b[22m\n",
+  "finishedAt": "2026-10-01T06:59:20.058Z"
+}

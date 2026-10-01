@@ -1,0 +1,63 @@
+<testsuites id="" name="" tests="5" failures="1" skipped="0" errors="0" time="16.569204">
+<testsuite name="system/sequence-failure-policy.spec.ts" timestamp="2026-10-01T06:01:08.069Z" hostname="system" tests="1" failures="1" skipped="0" time="1.995" errors="0">
+<testcase name="[BLK-SPEC-002] ordinary send failure fails the sequence and never advances later steps" classname="system/sequence-failure-policy.spec.ts" time="1.995">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/system-sequence-failure-po-2defb--never-advances-later-steps-system/error-context.md]]
+
+[[ATTACHMENT|artifacts/system-sequence-failure-po-2defb--never-advances-later-steps-system/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(received).toMatchObject(expected)" type="expect.toMatchObject">
+<![CDATA[  [system] › system/sequence-failure-policy.spec.ts:10:1 › [BLK-SPEC-002] ordinary send failure fails the sequence and never advances later steps › ACCOUNT_OFFLINE, failed step 1 
+
+    Error: expect(received).toMatchObject(expected)
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "clientMsgId": "bc1bf74c-1f8f-46ad-a2bf-f38909da49d1",
+    -   "sentAt": null,
+    +   "sentAt": "2026-10-01T06:01:10.989Z",
+        "status": "failed",
+      }
+
+      154 |               'No sequence terminal evidence within the 15s observation budget; QA-D6 did not introduce a terminal-latency SLA',
+      155 |             );
+    > 156 |           expect(result.last.steps[failedIndex - 1]).toMatchObject({
+          |                                                      ^
+      157 |             status: 'failed',
+      158 |             clientMsgId: payload.clientMsgId,
+      159 |             sentAt: null,
+        at /Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests/system/sequence-failure-policy.spec.ts:156:54
+        at /Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/tests/system/sequence-failure-policy.spec.ts:17:7
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/qa-business-execution/kapibala/qa-acceptance/reports/preflight/2026-10-01T06-01-07.702Z-40114059/artifacts/system-sequence-failure-po-2defb--never-advances-later-steps-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T06-01-07.702Z-40114059/artifacts/system-sequence-failure-po-2defb--never-advances-later-steps-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T06-01-07.702Z-40114059/artifacts/system-sequence-failure-po-2defb--never-advances-later-steps-system/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T06-01-07.702Z-40114059/artifacts/system-sequence-failure-po-2defb--never-advances-later-steps-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+</testsuite>
+<testsuite name="system/sequence.spec.ts" timestamp="2026-10-01T06:01:08.069Z" hostname="system" tests="4" failures="0" skipped="0" time="11.986" errors="0">
+<testcase name="[SEQ-006] unavailable member step is skipped with timestamp and progress continues" classname="system/sequence.spec.ts" time="1.912">
+</testcase>
+<testcase name="[SEQ-007] rate-limited role waits rather than skips and preserves later delays" classname="system/sequence.spec.ts" time="5.41">
+</testcase>
+<testcase name="[SEQ-008] group write prohibition stops sequence while account remains online" classname="system/sequence.spec.ts" time="2.077">
+</testcase>
+<testcase name="[SEQ-010] terminal account skips its queued sequence step and advances progress" classname="system/sequence.spec.ts" time="2.587">
+</testcase>
+</testsuite>
+</testsuites>

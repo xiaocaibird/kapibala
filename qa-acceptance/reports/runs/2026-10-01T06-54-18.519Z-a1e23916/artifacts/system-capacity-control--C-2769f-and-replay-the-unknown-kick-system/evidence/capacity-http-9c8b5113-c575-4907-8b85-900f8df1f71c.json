@@ -1,0 +1,55 @@
+{
+  "method": "PUT",
+  "path": "/qa/capacity/v1/leases/168553e9-ae7e-41e6-8fc5-c8c066d43c52",
+  "request": {
+    "protocol": "qa-capacity-control/1",
+    "target": {
+      "apiUrl": "http://127.0.0.1:56619",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "pid": 3582
+    },
+    "correlation": {
+      "groupId": "c7cc1f00-e092-4fde-a766-f519b7d69dee",
+      "runId": "40227bde-304c-4ab4-926b-d59dc7691698",
+      "toolUseId": "qa-kick-capacity-already-dispatched"
+    },
+    "mode": "hold-admission-capacity",
+    "ttlMs": 90000
+  },
+  "status": 200,
+  "response": {
+    "protocol": "qa-capacity-control/1",
+    "leaseId": "168553e9-ae7e-41e6-8fc5-c8c066d43c52",
+    "state": "held",
+    "expiresAt": "2026-10-01T07:19:06.656Z",
+    "binding": {
+      "apiUrl": "http://127.0.0.1:56619",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "pid": 3582,
+      "observedOwnerToken": "[REDACTED]"
+    },
+    "correlation": {
+      "groupId": "c7cc1f00-e092-4fde-a766-f519b7d69dee",
+      "runId": "40227bde-304c-4ab4-926b-d59dc7691698",
+      "toolUseId": "qa-kick-capacity-already-dispatched"
+    },
+    "events": [
+      {
+        "groupId": "c7cc1f00-e092-4fde-a766-f519b7d69dee",
+        "runId": "40227bde-304c-4ab4-926b-d59dc7691698",
+        "toolUseId": "qa-kick-capacity-already-dispatched",
+        "seq": 1,
+        "at": "2026-10-01T07:17:36.670Z",
+        "kind": "capacity-held",
+        "holderKeys": [
+          "qa-capacity:ef230fd3-b9be-4b78-a499-f30158061e94:168553e9-ae7e-41e6-8fc5-c8c066d43c52:0",
+          "qa-capacity:ef230fd3-b9be-4b78-a499-f30158061e94:168553e9-ae7e-41e6-8fc5-c8c066d43c52:1",
+          "qa-capacity:ef230fd3-b9be-4b78-a499-f30158061e94:168553e9-ae7e-41e6-8fc5-c8c066d43c52:2",
+          "qa-capacity:ef230fd3-b9be-4b78-a499-f30158061e94:168553e9-ae7e-41e6-8fc5-c8c066d43c52:3",
+          "qa-capacity:ef230fd3-b9be-4b78-a499-f30158061e94:168553e9-ae7e-41e6-8fc5-c8c066d43c52:4",
+          "qa-capacity:ef230fd3-b9be-4b78-a499-f30158061e94:168553e9-ae7e-41e6-8fc5-c8c066d43c52:5"
+        ]
+      }
+    ]
+  }
+}

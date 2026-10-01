@@ -1,0 +1,272 @@
+{
+  "formatVersion": 1,
+  "reviewedAt": "2026-10-01T07:20:30.760043+00:00",
+  "sutRevision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+  "runId": "2026-10-01T06-54-18.519Z-a1e23916",
+  "method": "Read-only review of frozen requests, independent external ledgers, controller windows and approved requirement oracles; no product execution or frozen changes.",
+  "status": "Full baseline ended; five timing assessments complete. Supplemental QA premise retests are recorded separately.",
+  "rawResultsPreserved": true,
+  "items": [
+    {
+      "caseId": "AGENT-025",
+      "rawOutcome": "BLOCKED",
+      "qaAssessment": "BLOCKED",
+      "classification": "measurement-insufficient",
+      "productDefectSeverity": null,
+      "acceptancePriority": "P0",
+      "oracle": [
+        "docs/original-interview-question.md:258",
+        "cases/backend.json:AGENT-025"
+      ],
+      "failureLocation": "tests/system/agent.spec.ts:105 (called at 802)",
+      "reason": "公开创建/终态区间为[60000,60138]ms，下界恰等于上限；不能证明严格超限，也不能证明未超过。",
+      "facts": {
+        "runId": "f8df8f7c-c384-4646-bb12-9a761faa70a1",
+        "timingIntervalMs": [
+          60000,
+          60138
+        ],
+        "creationIntervalUtcEpochMs": [
+          1790838827049,
+          1790838827121
+        ],
+        "terminalIntervalUtcEpochMs": [
+          1790838887121,
+          1790838887187
+        ],
+        "finalStatus": "failed",
+        "endReason": "wall_clock",
+        "steps": 8,
+        "turnRequests": 8,
+        "lastTurnAt": "2026-10-01T07:14:43.306Z",
+        "audits": 0,
+        "gatewaySendRequests": 0
+      },
+      "evidence": [
+        "evidence/wall-clock-window.json",
+        "evidence/api.ndjson:2174",
+        "evidence/api.ndjson:2176",
+        "evidence/external-facts.json",
+        "error-context.md"
+      ],
+      "unproven": [
+        "原活动预算精确终止时刻；不能用不同CAP-003运行的时间替换本例区间。"
+      ],
+      "nextAction": "后续若需关闭本例计时阻塞，绑定同一run的真实活动生命周期见证，仍保留严格60000ms，不靠提高轮询频率或容差改PASS。",
+      "cleanup": {
+        "completedAt": "2026-10-01T07:14:47.253Z",
+        "failures": []
+      },
+      "artifactDirectory": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-agent--AGENT-025-ru-6b311-budget-including-slow-turns-system"
+    },
+    {
+      "caseId": "AGENT-028",
+      "rawOutcome": "BLOCKED",
+      "qaAssessment": "BLOCKED",
+      "classification": "measurement-insufficient",
+      "productDefectSeverity": null,
+      "acceptancePriority": "P0",
+      "oracle": [
+        "docs/original-interview-question.md:121",
+        "docs/original-interview-question.md:181",
+        "docs/original-interview-question.md:225",
+        "docs/original-interview-question.md:263"
+      ],
+      "failureLocation": "tests/system/agent.spec.ts:905-909",
+      "reason": "下一turn携带SEND_TIMEOUT只给工具结果已存在的上界，5025–5101ms还含工具结果保存/下一轮调度/网络，缺结果产生的下界；不能据此认定五秒返回违约。",
+      "facts": {
+        "runId": "0b52a9d4-75e8-4fed-a696-179cdcece02c",
+        "startBoundsUtcEpochMs": [
+          1790838893881,
+          1790838893957
+        ],
+        "nextTurnObservedAtUtcEpochMs": 1790838898982,
+        "observationMinusPossibleStartMs": [
+          5025,
+          5101
+        ],
+        "toolResultCode": "SEND_TIMEOUT",
+        "byClient503Count": 49,
+        "byClient200At": "2026-10-01T07:14:59.017Z",
+        "sameKeyResult": "sent",
+        "gatewaySendRequests": 1,
+        "gatewayActualMessagesForKey": 1,
+        "audits": 1,
+        "finalStatus": "finished",
+        "endReason": "final"
+      },
+      "evidence": [
+        "evidence/send-timeout-window.json",
+        "evidence/external-facts.json",
+        "evidence/api.ndjson:78",
+        "error-context.md"
+      ],
+      "unproven": [
+        "send_message内部开始等待/返回结果的精确时刻；五秒上限不能记PASS。"
+      ],
+      "nextAction": "如补充工程观测，需真实工具等待开始/结果形成边界，不能把收到下一turn等同工具结果产生。保留本例已成立的SEND_TIMEOUT、查询恢复、一次审计/一次发送及同key现状返回证据。",
+      "cleanup": {
+        "completedAt": "2026-10-01T07:14:59.177Z",
+        "failures": []
+      },
+      "artifactDirectory": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system"
+    },
+    {
+      "caseId": "CAP-002",
+      "rawOutcome": "FAIL",
+      "qaAssessment": "BLOCKED",
+      "classification": "qa-timeout-classification-too-strong",
+      "productDefectSeverity": null,
+      "acceptancePriority": "P0",
+      "oracle": [
+        "docs/original-interview-question.md:266",
+        "requirements/catalog.json:ENG-ADMISSION-01"
+      ],
+      "failureLocation": "tests/system/capacity-control.spec.ts:224 -> terminal:44-52 (30000ms default)",
+      "reason": "真实容量拒绝后关闭agent成功，30秒内仍running；原文规定当前步结束后取消但没有30秒取消SLA。普通Error不能独立证明永久不取消或迟发。",
+      "facts": {
+        "runId": "62bc7cff-0c87-42be-9a4f-ed96166e2435",
+        "disablePatchAt": "2026-10-01T07:15:18.700Z",
+        "disablePatchStatus": 200,
+        "agentEnabled": false,
+        "lastRunReadAt": "2026-10-01T07:15:48.703Z",
+        "lastRunStatus": "running",
+        "recoveryNote": null,
+        "turnRequests": 1,
+        "audits": 1,
+        "gatewayKickRequests": 0,
+        "gatewayKickEffects": 0,
+        "lastRefusalAt": "2026-10-01T07:15:48.717Z",
+        "lastRefusalCallbackEntered": false,
+        "lastRefusalRemoteRequestCount": 0,
+        "leaseCleanupStatus": 200,
+        "leaseCleanupState": "released"
+      },
+      "evidence": [
+        "evidence/capacity-refusal.json",
+        "evidence/api.ndjson:76",
+        "evidence/api.ndjson:1146",
+        "evidence/capacity-http-ed04d741-3642-4788-a788-e8d18caa3fb0.json",
+        "evidence/external-facts.json",
+        "error-context.md"
+      ],
+      "unproven": [
+        "取消终态未形成；测试正常路径中的释放后1500ms持续无kick和引用清空断言未执行。finally释放成功不补足这些断言。"
+      ],
+      "nextAction": "后续QA版本区分观察预算耗尽与硬违约，并在释放后继续有限观察取消及迟发，保留原run身份、原预算和零未授权副作用标准；不能给研发新增30秒硬时限。",
+      "cleanup": {
+        "completedAt": "2026-10-01T07:15:49.889Z",
+        "failures": []
+      },
+      "artifactDirectory": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-6c71d-deferred-kick-after-release-system"
+    },
+    {
+      "caseId": "CAP-003",
+      "rawOutcome": "FAIL",
+      "qaAssessment": "FAIL",
+      "classification": "product-requirement-violation",
+      "productDefectSeverity": "S2",
+      "acceptancePriority": "P0",
+      "oracle": [
+        "docs/original-interview-question.md:258",
+        "contracts/capacity-observation.md:18",
+        "requirements/clarifications.md:CL-03"
+      ],
+      "failureLocation": "tests/system/capacity-control.spec.ts:330",
+      "reason": "本例无重启；关联真实终态活动下界60010ms已经超过原60000ms预算。独立单调区间相交不矛盾，明确超限不是仅采样跨界。",
+      "facts": {
+        "runId": "b812b9e7-5aba-4d52-a67c-c165be446c8d",
+        "terminalAt": "2026-10-01T07:16:53.065Z",
+        "terminalEventSeq": 1844,
+        "activeElapsedMs": [
+          60010,
+          60112
+        ],
+        "independentElapsedBoundsMs": [
+          59861.22225,
+          60159.588500000005
+        ],
+        "finalStatus": "failed",
+        "endReason": "wall_clock",
+        "turnRequests": 1,
+        "audits": 1,
+        "gatewayKickRequests": 0,
+        "gatewayKickEffects": 0,
+        "leaseCleanupStatus": 200,
+        "leaseCleanupState": "released"
+      },
+      "evidence": [
+        "evidence/capacity-active-budget.json",
+        "evidence/capacity-refusal.json",
+        "evidence/external-facts.json",
+        "evidence/capacity-http-461b0b11-6455-494d-a667-ecb8ebe130e1.json",
+        "error-context.md"
+      ],
+      "unproven": [
+        "未观察到预算后真实kick；不能升级叙述为已产生预算外副作用。正常释放后有限无迟发分支因前述FAIL未执行。"
+      ],
+      "nextAction": "向研发报告严格活动预算违约并保留真实区间；修复后在新固定版本重测，不能裁剪活动值、补计时容差或以CAP001通过关闭。",
+      "cleanup": {
+        "completedAt": "2026-10-01T07:16:53.265Z",
+        "failures": []
+      },
+      "artifactDirectory": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system",
+      "initialSuggestedSeverity": "P1"
+    },
+    {
+      "caseId": "CAP-005",
+      "rawOutcome": "FAIL",
+      "qaAssessment": "BLOCKED",
+      "classification": "qa-invalid-prerequisite",
+      "productDefectSeverity": null,
+      "acceptancePriority": "P0",
+      "oracle": [
+        "docs/original-interview-question.md:44",
+        "docs/original-interview-question.md:52",
+        "docs/original-interview-question.md:64",
+        "docs/original-interview-question.md:218",
+        "docs/original-interview-question.md:237",
+        "docs/original-interview-question.md:241",
+        "docs/original-interview-question.md:266"
+      ],
+      "failureLocation": "tests/system/capacity-control.spec.ts:363-367; cases/architecture-capacity.json:435",
+      "reason": "QA把creator suspended错当群unreachable。原要求仅移除终态账号及其队列后果；群主离开导致kick OWNER_LEFT而不自动改变群状态。实际没有GROUP_WRITE_FORBIDDEN。",
+      "facts": {
+        "runId": "4ed4f7e6-d6ea-4059-a86f-ff4724cc38aa",
+        "groupId": "7f28e50a-97f2-4e75-9030-35c188ecd8fc",
+        "terminalAccountEventAt": "2026-10-01T07:16:58.709Z",
+        "accountStatusEventId": 5,
+        "memberLeftEventId": 6,
+        "gatewayWritable": true,
+        "remainingManagedMemberIds": [
+          "account-2",
+          "account-3"
+        ],
+        "publicGroupStatus": "active",
+        "lastGroupReadAt": "2026-10-01T07:17:13.706Z",
+        "gatewaySendRequests": 0,
+        "gatewayKickRequests": 0,
+        "audits": 1
+      },
+      "evidence": [
+        "evidence/external-facts.json",
+        "evidence/api.ndjson:596",
+        "evidence/capacity-refusal.json",
+        "error-context.md"
+      ],
+      "unproven": [
+        "群不可写前提从未建立；取消、主动释放后的无迟发及终态引用断言未执行。"
+      ],
+      "nextAction": "在新QA版本使用真实群不可写故障并通过受支持的发送/事件路径让SUT实际收到GROUP_WRITE_FORBIDDEN，确认对应消息身份和群状态后检验容量中的取消；不能修改产品让群主终态强制群不可写。",
+      "cleanup": {
+        "completedAt": "2026-10-01T07:17:13.868Z",
+        "failures": []
+      },
+      "artifactDirectory": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system"
+    }
+  ],
+  "reportSeverityNormalization": {
+    "at": "2026-10-01T07:53:08.626191+00:00",
+    "rule": "最终报告统一用S1/S2缺陷严重度；旧分诊P1为初始建议标签，不代表需求执行优先级。"
+  }
+}

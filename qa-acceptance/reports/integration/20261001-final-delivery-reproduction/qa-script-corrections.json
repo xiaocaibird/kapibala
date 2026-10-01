@@ -1,0 +1,18 @@
+{
+  "items": [
+    {
+      "script": "receiver.mjs",
+      "observedAt": "2026-10-01T06:59:20.040Z",
+      "classification": "QA_LOCATOR_ERROR",
+      "impact": "群主select精确accessible name匹配失败；建群POST未发出。修正为真实label下select后继续浏览器步骤，原始结果保留。",
+      "continuation": "browser-continuation.mjs",
+      "result": "browser-continuation-result.json"
+    },
+    {
+      "script": "cleanup.mjs",
+      "classification": "QA_EVIDENCE_CHECK_ERROR",
+      "impact": "已发送SIGINT且launcher正常退出0；Docker返回lowercase no such object被case-sensitive regex拒绝。只读复核资源全部不存在，无重复signal/删除。",
+      "result": "cleanup-verification.json"
+    }
+  ]
+}

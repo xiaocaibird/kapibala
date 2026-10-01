@@ -1,0 +1,496 @@
+{
+  "startedAt": "2026-10-01T06:59:53.018Z",
+  "runnerPid": 28943,
+  "candidate": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+  "ownership": {
+    "runId": "fa0b645c-3367-4913-af47-7db8a5bd37f8",
+    "ownerPid": 23595,
+    "ownerStarted": "Thu Oct  1 14:56:16 2026",
+    "directory": "/private/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-local-fa0b645c-3367-4913-af47-7db8a5bd37f8",
+    "manifest": "/private/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-local-fa0b645c-3367-4913-af47-7db8a5bd37f8/manifest.json",
+    "manifestMode": 384,
+    "directoryMode": 448,
+    "engineId": "1fbf2675-d415-458c-866c-28fd59cd7267",
+    "containerName": "kapibala-local-fa0b645c-3367-4913-af47-7db8a5bd37f8",
+    "containerId": "b2d201bee108ba9aac879cdf474a9e5926be833f9d6d53ba66183343bad4dab1",
+    "volumeName": "kapibala-local-fa0b645c-3367-4913-af47-7db8a5bd37f8-data",
+    "urls": {
+      "api": "http://127.0.0.1:51062",
+      "web": "http://127.0.0.1:51066",
+      "gateway": "http://127.0.0.1:51057",
+      "agent": "http://127.0.0.1:51058"
+    },
+    "database": {
+      "host": "127.0.0.1",
+      "port": 51054,
+      "name": "kapibala_fa0b645c33674913af477db8a5bd37f8"
+    }
+  },
+  "commands": [],
+  "checks": [
+    {
+      "name": "admin browser login and accounts page",
+      "startedAt": "2026-10-01T06:59:53.120Z",
+      "finishedAt": "2026-10-01T06:59:53.441Z",
+      "status": "PASS",
+      "detail": {
+        "accountRows": 6
+      }
+    },
+    {
+      "name": "admin creates group via actual browser form and observes completed membership",
+      "startedAt": "2026-10-01T06:59:53.441Z",
+      "finishedAt": "2026-10-01T06:59:54.501Z",
+      "status": "PASS",
+      "detail": {
+        "id": "2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a",
+        "gatewayGroupId": "99bccc15-ed40-4802-8cce-70744f9541bf",
+        "members": [
+          {
+            "accountId": "account-2",
+            "platformUserId": "platform-account-2",
+            "role": "admin"
+          },
+          {
+            "accountId": "account-1",
+            "platformUserId": "platform-account-1",
+            "role": "creator"
+          }
+        ]
+      }
+    },
+    {
+      "name": "browser manual message reaches sent and appears once",
+      "startedAt": "2026-10-01T06:59:54.501Z",
+      "finishedAt": "2026-10-01T06:59:54.991Z",
+      "status": "PASS",
+      "detail": {
+        "matchingMessages": 1,
+        "deliveryStatus": "sent"
+      }
+    },
+    {
+      "name": "browser sequence page reachable",
+      "startedAt": "2026-10-01T06:59:54.991Z",
+      "finishedAt": "2026-10-01T06:59:55.091Z",
+      "status": "PASS",
+      "detail": {
+        "page": "sequences",
+        "formVisible": true
+      }
+    },
+    {
+      "name": "viewer browser login and read-only account/group pages",
+      "startedAt": "2026-10-01T06:59:55.091Z",
+      "finishedAt": "2026-10-01T06:59:55.597Z",
+      "status": "PASS",
+      "detail": {
+        "accountWriteControls": 0,
+        "createGroupControls": 0,
+        "messageComposers": 0,
+        "logoutReturnedToLogin": true
+      }
+    },
+    {
+      "name": "browser admin logout and REST token revocation",
+      "startedAt": "2026-10-01T06:59:55.598Z",
+      "finishedAt": "2026-10-01T06:59:55.639Z",
+      "status": "PASS",
+      "detail": {
+        "browserLogout": true,
+        "restTokensRevoked": true,
+        "pageErrors": 0
+      }
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:53.213Z",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.183Z",
+      "text": "Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+    }
+  ],
+  "browserNetwork": [
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:53.213Z",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "status": 401
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:53.306Z",
+      "method": "POST",
+      "path": "/api/auth/login",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:53.309Z",
+      "method": "GET",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:53.319Z",
+      "method": "GET",
+      "path": "/api/group-directory",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:53.378Z",
+      "method": "GET",
+      "path": "/api/accounts",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:53.395Z",
+      "method": "GET",
+      "path": "/api/accounts",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:53.495Z",
+      "method": "GET",
+      "path": "/api/group-directory",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:53.540Z",
+      "method": "GET",
+      "path": "/api/accounts",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:53.609Z",
+      "method": "POST",
+      "path": "/api/groups",
+      "status": 202
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:53.614Z",
+      "method": "GET",
+      "path": "/api/group-directory",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:53.615Z",
+      "method": "GET",
+      "path": "/api/jobs/416d8f7d-76e7-4988-8b1f-035b5e9c3d11",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:53.803Z",
+      "method": "GET",
+      "path": "/api/jobs/416d8f7d-76e7-4988-8b1f-035b5e9c3d11",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:53.804Z",
+      "method": "GET",
+      "path": "/api/group-directory",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.209Z",
+      "method": "GET",
+      "path": "/api/jobs/416d8f7d-76e7-4988-8b1f-035b5e9c3d11",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.219Z",
+      "method": "GET",
+      "path": "/api/group-directory",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.397Z",
+      "method": "GET",
+      "path": "/api/accounts",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.399Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.418Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a/agent-runs",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.420Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a/messages",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.421Z",
+      "method": "GET",
+      "path": "/api/accounts",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.422Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a/agent-runs",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.422Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.422Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a/messages",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.557Z",
+      "method": "POST",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a/send",
+      "status": 202
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.561Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a/messages",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.715Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a/agent-runs",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.717Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a/messages",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.717Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:54.724Z",
+      "method": "GET",
+      "path": "/api/accounts",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:55.016Z",
+      "method": "GET",
+      "path": "/api/accounts",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:55.017Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a/agent-runs",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:55.018Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:55.018Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a/messages",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:55.048Z",
+      "method": "GET",
+      "path": "/api/sequences",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:55.048Z",
+      "method": "GET",
+      "path": "/api/groups",
+      "status": 200
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.183Z",
+      "method": "POST",
+      "path": "/api/auth/refresh",
+      "status": 401
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.274Z",
+      "method": "POST",
+      "path": "/api/auth/login",
+      "status": 200
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.276Z",
+      "method": "GET",
+      "path": "/api/auth/me",
+      "status": 200
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.286Z",
+      "method": "GET",
+      "path": "/api/group-directory",
+      "status": 200
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.345Z",
+      "method": "GET",
+      "path": "/api/accounts",
+      "status": 200
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.362Z",
+      "method": "GET",
+      "path": "/api/accounts",
+      "status": 200
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.397Z",
+      "method": "GET",
+      "path": "/api/group-directory",
+      "status": 200
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.447Z",
+      "method": "GET",
+      "path": "/api/accounts",
+      "status": 200
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.448Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a",
+      "status": 200
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.457Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a/agent-runs",
+      "status": 200
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.458Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a/messages",
+      "status": 200
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.463Z",
+      "method": "GET",
+      "path": "/api/accounts",
+      "status": 200
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.463Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a/agent-runs",
+      "status": 200
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.464Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a/messages",
+      "status": 200
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.464Z",
+      "method": "GET",
+      "path": "/api/groups/2f694f6a-3a1e-4ce6-b4b0-4d76cb9e9b7a",
+      "status": 200
+    },
+    {
+      "role": "viewer",
+      "at": "2026-10-01T06:59:55.590Z",
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "status": 200
+    },
+    {
+      "role": "admin",
+      "at": "2026-10-01T06:59:55.623Z",
+      "method": "POST",
+      "path": "/api/auth/logout",
+      "status": 200
+    }
+  ],
+  "websocket": {
+    "admin": [],
+    "viewer": []
+  },
+  "continuation": {
+    "reason": "QA locator exact accessible-label matching failed before create was submitted; preserve first attempt raw; labels include option text in accessible name. This continuation only completes browser observations on the same owned instance.",
+    "prior": "receiver-result.json"
+  },
+  "browserVersion": "153.0.8010.12",
+  "status": "PASS",
+  "finishedAt": "2026-10-01T06:59:55.658Z"
+}

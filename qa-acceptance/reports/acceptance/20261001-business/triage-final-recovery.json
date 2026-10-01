@@ -1,0 +1,2400 @@
+{
+  "formatVersion": 1,
+  "reviewedAt": "2026-10-01T07:32:53.828Z",
+  "reviewer": "Independent QA / intake_member_scope",
+  "candidateRevision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+  "runDirectory": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916",
+  "readOnly": true,
+  "newProductTests": false,
+  "rawRecordsMutated": false,
+  "fullRunComplete": true,
+  "cases": [
+    {
+      "caseId": "INT-MSG-007",
+      "rawStatus": "FAIL",
+      "rawStatusSource": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-64129--original-scheduling-origin-system/error-context.md",
+      "rawError": "AssertionError: 后步排期确定偏离原首次接收时间区间，不能用重放时刻代替",
+      "triagedStatus": "FAIL",
+      "classification": "OBSERVED_ORIGINAL_SCHEDULING_ORIGIN_SHIFT",
+      "suggestedSeverity": "S2",
+      "requirements": [
+        "R-A2-01",
+        "R-A2-08",
+        "R-B1-07",
+        "R-B1-09"
+      ],
+      "basis": {
+        "original": "原始需求总则任意时刻重启前后行为成立；B1发出以收到message_sent为准，后步以前步发出+delaySeconds排期；仅最早已过期步骤可重排。",
+        "decision": "D041明确不把网关sentAt或重放时间冒充丢失首次接收时间，保存前窗口如实保留；没有据此把已观察排期偏离改成PASS或凭空给予容差。",
+        "qaCase": "固定INT-MSG007明确：原期内恢复并证明排期偏离独立首次接收区间=>FAIL；未命中/跨原到期/区间重叠/无完成观察=>BLOCKED。"
+      },
+      "environment": {
+        "candidate": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+        "database": "qa_c58b296ef3b2428e95191ff4",
+        "apiPort": 57001,
+        "oldOwnerPid": 8224,
+        "newOwnerPid": 8530,
+        "scope": "single-bound-instance; no all-database-writer or global-first-receipt claim"
+      },
+      "facts": {
+        "firstReceiptIntervalMs": [
+          1790839079330,
+          1790839079497
+        ],
+        "firstReceiptIntervalUtc": [
+          "2026-10-01T07:17:59.330Z",
+          "2026-10-01T07:17:59.497Z"
+        ],
+        "observedAt": "2026-10-01T07:17:59.474Z",
+        "localBoundary": "receipt-insert-not-issued",
+        "receiptPresentAtProbe": false,
+        "receiptObservedAt": null,
+        "runId": "2970735d-d090-4b28-99eb-6825a7286615",
+        "clientMsgId": "d645296c-5815-4508-b31e-ce5ae1c8b5b9",
+        "msgId": "gateway-message-1",
+        "eventId": "3",
+        "heldFirstStepStatus": "accepted",
+        "heldSecondStepScheduledAt": null,
+        "crashAt": "2026-10-01T07:18:01.024Z",
+        "restartUpper": "2026-10-01T07:18:01.503Z",
+        "replayDeliveryUpper": "2026-10-01T07:18:01.823Z",
+        "expectedDueIntervalUtc": [
+          "2026-10-01T07:18:19.330Z",
+          "2026-10-01T07:18:19.497Z"
+        ],
+        "actualNextScheduledAt": "2026-10-01T07:18:21.802Z",
+        "actualRecoveredFirstStepSentAt": "2026-10-01T07:18:01.802Z",
+        "minimumObservedSchedulingShiftMs": 2305,
+        "recoveredRunStatus": "running",
+        "firstSendCount": 1,
+        "cleanupFailures": []
+      },
+      "whyNotBlocked": [
+        "真实INSERT前held窗口已命中，目标进程/数据库/消息身份已关联；QA独立递送至读回区间与工程观察时刻相交。",
+        "重启及重放均在原最早后步到期之前完成，排除原文允许的过期重排。",
+        "公开GET返回真实后步scheduledAt，超过原首次区间+20秒最晚上界2305ms，远超毫秒表示区间；不是缺失公开排期或区间交叠。",
+        "首次物理时间未持久是这次已观察违约的已知原因；不能把产品无法还原自身丢失事实等同QA无法观察该事实。"
+      ],
+      "limits": [
+        "仅单个受控实例；controller allDatabaseWritersProven=false，未声称全局多实例首次观察。",
+        "此处证明错误公开排期，未等到第二步实际晚发；原测试在首个明确FAIL后退出，不补造后续轨迹。",
+        "首步发送账本只有一次，本条不另声称已观察重复外部效果。",
+        "没有修改产品、测试、阈值、冻结证据或重跑。"
+      ],
+      "minimalDisposition": "保留该原始FAIL，报告为原B1严格恢复保证的已知未闭合窗口。修复/准确界定恢复方案或明确接受差异由后续处理；QA不把D041方向选择解释成已有偏差豁免。",
+      "evidence": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-64129--original-scheduling-origin-system/error-context.md",
+          "sha256": "8e11d5f6c1bc7c365dfc7d3f55b418670d4c45e0dc24a53a3a7d245b75a40545"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence/receipt-window-before-kill.json",
+          "sha256": "c9423ee40b8a6e17639622a6f7155ca6f5230d10796c39c52e639ed2f8cfad88"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence/receipt-window-after-restart.json",
+          "sha256": "90b8e4604edb15b9b664f8b7ae2651a366a3ed4c2de24b926e5e773e3b0a2a56"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence/kill-1790839081024.json",
+          "sha256": "d1db091e4662c9d52542ccbd20352bbdc31e9c721b82102cf17917eb0816cb31"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence/message-control-b8fdbbcd-4f51-4493-a1d6-3140dcec1551.json",
+          "sha256": "946eec9bd7d297ee7aa2c1677183ae9bcc74650a997aeef8b54c0d4d46e99118"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence/api.ndjson",
+          "sha256": "fef779b1f01954561e1334e197beec3e02d1915a733332a80b276b2a765aef07"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence/cleanup.json",
+          "sha256": "c8e1f4d9e9bf3101a931ec59bb5f552001b9c33cbc4f79464698c0e5ab63ac2e"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence/environment.json",
+          "sha256": "5e3672da8ed66ee9663604c9c62cc657572504827c0c0eaa1bf98e91c3fa7728"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/tests/system/integration-message-boundaries.spec.ts",
+          "sha256": "dabf3cfda975c436b99eef8c689fc58c9b6b244a1fb1300b724a1f03423d8a99"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/harness/message-observation.ts",
+          "sha256": "32e6f16c3a110af7bf100d2f6a56d8c29260f690dc23d9bb49991f523e196743"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/contracts/message-receipt-observation.md",
+          "sha256": "b8fe423b10ab038cfb9100fa82938c2af28302d461d18ebd73a4071bdd7b122e"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/cases/integration-message-boundaries.json",
+          "sha256": "50d2339ddec3e5f852425e1b515fe84ca710361345cff86eac33a09fdf7dfe9b"
+        }
+      ],
+      "finalRawStatusVerified": "FAIL",
+      "initialSuggestedSeverity": "P1"
+    },
+    {
+      "caseId": "INT-ACT-001",
+      "rawStatus": "BLOCKED",
+      "rawError": "BlockedError: [BLOCKED] 活动终态缺少原有及接管epoch完整关联，不能证明重启累计",
+      "triagedStatus": "BLOCKED",
+      "classification": "INCOMPLETE_CROSS_EPOCH_ACTIVITY_WITNESS",
+      "consoleEvidence": {
+        "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/integration/20261001-final-candidate/full-business-console.log",
+        "observedAt": "2026-10-01T07:32:53.828Z",
+        "wholeFileHashPendingRunCompletion": false,
+        "lines": [
+          {
+            "line": 178,
+            "text": "  ✘  159 [system] › tests/system/integration-runtime.spec.ts:130:1 › [INT-ACT-001] activity budget accumulates across restart and excludes proven downtime without tail tolerance (1.1m)"
+          }
+        ],
+        "wholeFileSha256": "532f9df56cb381093e712ad318f55ec59d89b49c9226c797a36b13afaf9a7e45"
+      },
+      "facts": {
+        "runId": "98d6a007-da35-4f95-aef2-d3576dd86e8a",
+        "safeBoundary": {
+          "at": "2026-10-01T07:19:27.463Z",
+          "kind": "activity-safe-held",
+          "instancePid": 13137,
+          "activityState": "active",
+          "includesUnsavedTail": true,
+          "epochIds": [
+            "9c982638-3863-45c3-acf4-428cc9f26b25"
+          ],
+          "activeElapsedMs": [
+            21100,
+            21105
+          ],
+          "continuationDurable": true,
+          "remoteInFlightCount": 0,
+          "safeBoundary": "read-tool-result-outer-commit-confirmed-before-next-dispatch"
+        },
+        "leaseStateImmediatelyBeforeKill": "held",
+        "leaseExpiresAt": "2026-10-01T07:21:13.542Z",
+        "killBeforeUtcMs": 1790839167490,
+        "killAfterUtcMs": 1790839167495,
+        "resumedOwnerPid": 14302,
+        "witnessStates": [
+          "active",
+          "terminal"
+        ],
+        "resumedTerminalWitness": {
+          "seq": 468,
+          "at": "2026-10-01T07:20:11.683Z",
+          "kind": "activity-terminal",
+          "correlation": {
+            "kind": "activity",
+            "groupId": "e43970b3-e7b3-469c-8f0f-e54f32a7bdff",
+            "runId": "98d6a007-da35-4f95-aef2-d3576dd86e8a",
+            "toolUseId": "all-run-steps"
+          },
+          "attemptId": "8119e7f2-e1db-4817-8b52-0cfcfb3a1bcc",
+          "instancePid": 14302,
+          "activityState": "terminal",
+          "includesUnsavedTail": false,
+          "epochIds": [
+            "e662b051-92f0-4e90-b5dc-033f88074e0e"
+          ],
+          "persistedActiveMs": 60011,
+          "clockSource": "process performance.now brackets around confirmed product creation, ownership and terminal boundaries",
+          "observedEpochActiveMs": [
+            38920,
+            38927
+          ],
+          "incompleteReason": "A pre-existing run was rebased after clock ownership acquisition; prior unsaved activity is not reconstructable."
+        },
+        "publicTerminal": {
+          "at": "2026-10-01T07:20:11.765Z",
+          "body": {
+            "id": "98d6a007-da35-4f95-aef2-d3576dd86e8a",
+            "groupId": "e43970b3-e7b3-469c-8f0f-e54f32a7bdff",
+            "status": "failed",
+            "endReason": "wall_clock",
+            "summary": null,
+            "recoveryNote": null,
+            "steps": [
+              {
+                "ordinal": 1,
+                "kind": "tool_use",
+                "toolUseId": "activity-0",
+                "name": "get_recent_messages",
+                "input": {
+                  "limit": 1
+                },
+                "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"activity-external\",\"isOwn\":false,\"text\":\"runtime-budget-trigger\",\"sentAt\":\"2026-10-01T07:19:06.333Z\"}],\"truncated\":false}",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": null,
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"activity-0\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":1}}]}"
+              },
+              {
+                "ordinal": 2,
+                "kind": "tool_use",
+                "toolUseId": "activity-1",
+                "name": "get_recent_messages",
+                "input": {
+                  "limit": 2
+                },
+                "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"activity-external\",\"isOwn\":false,\"text\":\"runtime-budget-trigger\",\"sentAt\":\"2026-10-01T07:19:06.333Z\"}],\"truncated\":false}",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": null,
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"activity-1\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":2}}]}"
+              },
+              {
+                "ordinal": 3,
+                "kind": "tool_use",
+                "toolUseId": "activity-2",
+                "name": "get_recent_messages",
+                "input": {
+                  "limit": 3
+                },
+                "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"activity-external\",\"isOwn\":false,\"text\":\"runtime-budget-trigger\",\"sentAt\":\"2026-10-01T07:19:06.333Z\"}],\"truncated\":false}",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": null,
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"activity-2\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":3}}]}"
+              },
+              {
+                "ordinal": 4,
+                "kind": "tool_use",
+                "toolUseId": "activity-3",
+                "name": "get_recent_messages",
+                "input": {
+                  "limit": 4
+                },
+                "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"activity-external\",\"isOwn\":false,\"text\":\"runtime-budget-trigger\",\"sentAt\":\"2026-10-01T07:19:06.333Z\"}],\"truncated\":false}",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": null,
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"activity-3\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":4}}]}"
+              },
+              {
+                "ordinal": 5,
+                "kind": "tool_use",
+                "toolUseId": "activity-4",
+                "name": "get_recent_messages",
+                "input": {
+                  "limit": 5
+                },
+                "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"activity-external\",\"isOwn\":false,\"text\":\"runtime-budget-trigger\",\"sentAt\":\"2026-10-01T07:19:06.333Z\"}],\"truncated\":false}",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": null,
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"activity-4\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":5}}]}"
+              },
+              {
+                "ordinal": 6,
+                "kind": "tool_use",
+                "toolUseId": "activity-5",
+                "name": "get_recent_messages",
+                "input": {
+                  "limit": 6
+                },
+                "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"activity-external\",\"isOwn\":false,\"text\":\"runtime-budget-trigger\",\"sentAt\":\"2026-10-01T07:19:06.333Z\"}],\"truncated\":false}",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": null,
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"activity-5\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":6}}]}"
+              },
+              {
+                "ordinal": 7,
+                "kind": "tool_use",
+                "toolUseId": "activity-6",
+                "name": "get_recent_messages",
+                "input": {
+                  "limit": 7
+                },
+                "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"activity-external\",\"isOwn\":false,\"text\":\"runtime-budget-trigger\",\"sentAt\":\"2026-10-01T07:19:06.333Z\"}],\"truncated\":false}",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": null,
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"activity-6\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":7}}]}"
+              },
+              {
+                "ordinal": 8,
+                "kind": "tool_use",
+                "toolUseId": "activity-7",
+                "name": "get_recent_messages",
+                "input": {
+                  "limit": 8
+                },
+                "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"activity-external\",\"isOwn\":false,\"text\":\"runtime-budget-trigger\",\"sentAt\":\"2026-10-01T07:19:06.333Z\"}],\"truncated\":false}",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": null,
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"activity-7\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":8}}]}"
+              },
+              {
+                "ordinal": 9,
+                "kind": "protocol_error",
+                "toolUseId": null,
+                "name": null,
+                "input": null,
+                "resultSummary": "TURN_TIMEOUT",
+                "isError": true,
+                "errorCode": "TURN_TIMEOUT",
+                "auditVerdict": null,
+                "rawResponse": "The operation was aborted due to timeout"
+              }
+            ]
+          }
+        },
+        "cleanup": {
+          "completedAt": "2026-10-01T07:20:11.894Z",
+          "failures": []
+        }
+      },
+      "decision": [
+        "安全屏障命中且强杀完成早于 TTL；响应与只读工具续跑状态已真实提交，未将未知在途模型轮伪装成纯预算窗口。",
+        "完整恢复见证只有 active/terminal，未出现 recovery-paused；公开原 runId 继续至 failed/wall_clock，recoveryNote=null。因此不据本例报 A5.8 恢复暂停失败。",
+        "新 epoch 诚实回报 includesUnsavedTail=false，缺完整旧 epoch/未保存尾段，全 run activeElapsedMs 缺省。此为合法不完整证据；不算通过，也不归为格式错误。",
+        "persistedActiveMs=60011 与 observedEpochActiveMs=[38920,38927] 是原始局部诊断；固定 QA 契约未赋予附加字段跨 epoch 独立裁判语义，不将它们拼成完整活动区间，不声称 11ms 容差。保持严格 60000ms 门槛。"
+      ],
+      "limits": [
+        "不以进程在线减停机代替实际活动量；不把 85 秒观察预算当业务 SLA。",
+        "已恢复并终止仅覆盖此安全续跑窗口，不覆盖任意在途强杀；活动预算未验明。"
+      ],
+      "evidence": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/error-context.md",
+          "sha256": "061ce3f5648c45cce2e7860797845c5f724018cce6011b92b4be7cd67613ab80"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-before-crash.json",
+          "sha256": "5093509ead11c9943d4ca60d483d58b4d2da210cc89088c98c9464191b2612c7"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-kill-window.json",
+          "sha256": "9730f756a8eb48b6fc441ecc3fe1e65e5fd45b9a878b59a6e7b8b4f75c20a447"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/runtime-control-d1b82a2a-480b-495d-9d80-3e34894941b2.json",
+          "sha256": "b18063a5d8c2f5d009fee45a07a3500ea939af74fea4dd96e9207a3e58ddc99c"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/api.ndjson",
+          "sha256": "c5505b01bce2bfdefca1a9688d5e881c05a37efcf5046d9d9c28e3f0b305b888"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/external-facts.json",
+          "sha256": "f5e6e35b685a6706306c2b483085fad9e5ddcd4a8953d6d2d643f9cd97a18c1c"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/cleanup.json",
+          "sha256": "ac1acf195a9d7567539c76123111b7c9b3d3aeec8c0aa8489007cf890a81d353"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/tests/system/integration-runtime.spec.ts",
+          "sha256": "75448e31562b87041090a32211688f9e0ca636837e7a5ced8c0495e04df7a863"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/contracts/runtime-observation.md",
+          "sha256": "29cbae987899132603201fdba9874a752d0f5237a2ab7cbb8d15cad7d88497e3"
+        }
+      ],
+      "finalRawStatusVerified": "BLOCKED"
+    },
+    {
+      "caseId": "INT-ACCOUNT-001",
+      "rawStatus": "PASS",
+      "triagedStatus": "PASS",
+      "classification": "OBSERVED_IN_SCOPE_PASS",
+      "consoleEvidence": {
+        "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/integration/20261001-final-candidate/full-business-console.log",
+        "observedAt": "2026-10-01T07:32:53.828Z",
+        "wholeFileHashPendingRunCompletion": false,
+        "lines": [
+          {
+            "line": 181,
+            "text": "  ✓  160 [system] › tests/system/integration-runtime.spec.ts:319:1 › [INT-ACCOUNT-001] remote success local transient save retries in the original transaction before a newer disconnect (2.6s)"
+          }
+        ],
+        "wholeFileSha256": "532f9df56cb381093e712ad318f55ec59d89b49c9226c797a36b13afaf9a7e45"
+      },
+      "cleanup": {
+        "completedAt": "2026-10-01T07:20:15.788Z",
+        "failures": []
+      },
+      "evidence": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-87a64-n-before-a-newer-disconnect-system/evidence/account-original-transaction-and-newer-intent.json",
+          "sha256": "edcdf764e1885ab989cfed2a2ed1e304a605484153ca310f134878776405c50d"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-87a64-n-before-a-newer-disconnect-system/evidence/api.ndjson",
+          "sha256": "f382710f799c068a12a500b845dbbd14ff48bd3e4cb750ba7726442536a83de6"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-87a64-n-before-a-newer-disconnect-system/evidence/external-facts.json",
+          "sha256": "281f8d61e9516a2a30012d070cd5b22dd41c91e768be43f9665552349d21a6f4"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-87a64-n-before-a-newer-disconnect-system/evidence/cleanup.json",
+          "sha256": "36bbd8003796823c665cd17f011ffa6d5b4412585839025eca38fefaec67235d"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/tests/system/integration-runtime.spec.ts",
+          "sha256": "75448e31562b87041090a32211688f9e0ca636837e7a5ced8c0495e04df7a863"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/contracts/runtime-observation.md",
+          "sha256": "29cbae987899132603201fdba9874a752d0f5237a2ab7cbb8d15cad7d88497e3"
+        }
+      ],
+      "facts": {
+        "events": [
+          {
+            "seq": 1,
+            "at": "2026-10-01T07:20:14.080Z",
+            "kind": "remote-success",
+            "correlation": {
+              "kind": "account",
+              "accountId": "account-1",
+              "operation": "connect",
+              "intentId": "7e2c04e4-cb4e-4025-af9b-096953b34ea5"
+            },
+            "attemptId": "389e2c68-a40e-4979-8241-b287f9a9a974",
+            "instancePid": 19399,
+            "requestId": "77a7a34b-93c1-43b8-9abd-0b185ba5f4f1",
+            "transactionId": "c431dbf2-3e1d-49ca-bde8-131f3cf36c70"
+          },
+          {
+            "seq": 2,
+            "at": "2026-10-01T07:20:14.083Z",
+            "kind": "local-save-failed",
+            "correlation": {
+              "kind": "account",
+              "accountId": "account-1",
+              "operation": "connect",
+              "intentId": "7e2c04e4-cb4e-4025-af9b-096953b34ea5"
+            },
+            "attemptId": "389e2c68-a40e-4979-8241-b287f9a9a974",
+            "instancePid": 19399,
+            "requestId": "77a7a34b-93c1-43b8-9abd-0b185ba5f4f1",
+            "transactionId": "c431dbf2-3e1d-49ca-bde8-131f3cf36c70",
+            "recoverableInOriginalTransaction": true
+          },
+          {
+            "seq": 3,
+            "at": "2026-10-01T07:20:14.083Z",
+            "kind": "local-retry-held",
+            "correlation": {
+              "kind": "account",
+              "accountId": "account-1",
+              "operation": "connect",
+              "intentId": "7e2c04e4-cb4e-4025-af9b-096953b34ea5"
+            },
+            "attemptId": "389e2c68-a40e-4979-8241-b287f9a9a974",
+            "instancePid": 19399,
+            "requestId": "77a7a34b-93c1-43b8-9abd-0b185ba5f4f1",
+            "transactionId": "c431dbf2-3e1d-49ca-bde8-131f3cf36c70"
+          },
+          {
+            "seq": 4,
+            "at": "2026-10-01T07:20:14.130Z",
+            "kind": "newer-account-intent-waiting",
+            "correlation": {
+              "kind": "account",
+              "accountId": "account-1",
+              "operation": "connect",
+              "intentId": "7e2c04e4-cb4e-4025-af9b-096953b34ea5"
+            },
+            "attemptId": "389e2c68-a40e-4979-8241-b287f9a9a974",
+            "instancePid": 19399,
+            "requestId": "77a7a34b-93c1-43b8-9abd-0b185ba5f4f1",
+            "transactionId": "c431dbf2-3e1d-49ca-bde8-131f3cf36c70",
+            "waitingIntent": {
+              "requestId": "0272373c-e078-4efb-9301-8c7d9809e6b3",
+              "accountId": "account-1",
+              "expectedFrom": "online",
+              "to": "disconnected",
+              "waitingForTransactionId": "c431dbf2-3e1d-49ca-bde8-131f3cf36c70"
+            }
+          },
+          {
+            "seq": 5,
+            "at": "2026-10-01T07:20:14.201Z",
+            "kind": "local-save-committed",
+            "correlation": {
+              "kind": "account",
+              "accountId": "account-1",
+              "operation": "connect",
+              "intentId": "7e2c04e4-cb4e-4025-af9b-096953b34ea5"
+            },
+            "attemptId": "389e2c68-a40e-4979-8241-b287f9a9a974",
+            "instancePid": 19399,
+            "requestId": "77a7a34b-93c1-43b8-9abd-0b185ba5f4f1",
+            "transactionId": "c431dbf2-3e1d-49ca-bde8-131f3cf36c70",
+            "commitBoundary": "outer-commit-confirmed"
+          }
+        ],
+        "heldState": "held",
+        "competingState": "held",
+        "competingExpiresAt": "2026-10-01T07:22:03.988Z",
+        "finalAccounts": [
+          {
+            "id": "account-1",
+            "status": "disconnected",
+            "platformUserId": "platform-account-1",
+            "rateLimitedUntil": null
+          },
+          {
+            "id": "account-2",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          },
+          {
+            "id": "account-3",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          },
+          {
+            "id": "account-4",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          },
+          {
+            "id": "account-5",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          },
+          {
+            "id": "account-6",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          }
+        ],
+        "negativeObservationMs": 1505.4941669999998,
+        "wsFrames": [
+          {
+            "type": "auth",
+            "success": true
+          },
+          {
+            "seq": 1,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "online",
+              "from": "idle",
+              "accountId": "account-1"
+            }
+          },
+          {
+            "seq": 2,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "disconnected",
+              "from": "online",
+              "accountId": "account-1"
+            }
+          }
+        ],
+        "gatewayEffects": [
+          {
+            "at": "2026-10-01T07:20:14.079Z",
+            "kind": "connect",
+            "accountId": "account-1"
+          },
+          {
+            "at": "2026-10-01T07:20:14.213Z",
+            "kind": "disconnect",
+            "accountId": "account-1"
+          }
+        ]
+      },
+      "decision": "远端 connect 1 次 → 原事务可恢复局部错误 → 不同 requestId 的新 disconnect 实际等待同 transactionId → 原外层 COMMIT 确认 → disconnect 1 次；最终 disconnected，WS 按已提交 online/disconnected 顺序。并发前提有真实等待事件，不是仅创建 Promise。",
+      "limits": [
+        "1500ms 窗口内未见旧意图覆盖；不外推任意未来时间及所有并发模式。"
+      ],
+      "finalRawStatusVerified": "PASS"
+    },
+    {
+      "caseId": "INT-ACCOUNT-002",
+      "rawStatus": "PASS",
+      "triagedStatus": "PASS",
+      "classification": "OBSERVED_IN_SCOPE_PASS",
+      "consoleEvidence": {
+        "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/integration/20261001-final-candidate/full-business-console.log",
+        "observedAt": "2026-10-01T07:32:53.828Z",
+        "wholeFileHashPendingRunCompletion": false,
+        "lines": [
+          {
+            "line": 182,
+            "text": "  ✓  161 [system] › tests/system/integration-runtime.spec.ts:429:1 › [INT-ACCOUNT-002] persistent local save failure rolls back without false status events or automatic remote replay (4.1s)"
+          }
+        ],
+        "wholeFileSha256": "532f9df56cb381093e712ad318f55ec59d89b49c9226c797a36b13afaf9a7e45"
+      },
+      "cleanup": {
+        "completedAt": "2026-10-01T07:20:19.871Z",
+        "failures": []
+      },
+      "evidence": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-9f043--or-automatic-remote-replay-system/evidence/account-local-rollback.json",
+          "sha256": "8cdb1fd9ceeb23c1bdb5c0ffd7fed9d971251dcfb6ea1b2665d28971dc5c3352"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-9f043--or-automatic-remote-replay-system/evidence/api.ndjson",
+          "sha256": "3d8fda2ffc7d111809e6bcedbae849c76332187be4d7e14899f30da0623a81b1"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-9f043--or-automatic-remote-replay-system/evidence/external-facts.json",
+          "sha256": "fc65d90db95e446a2884e420f2a97f0c9c5fef7e55257a2642be34fb22716eec"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-9f043--or-automatic-remote-replay-system/evidence/cleanup.json",
+          "sha256": "440eab5f4fd8e8cd114e23ddc0ae76ec8615392f9637bb76bce16a6461fab4c0"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/tests/system/integration-runtime.spec.ts",
+          "sha256": "75448e31562b87041090a32211688f9e0ca636837e7a5ced8c0495e04df7a863"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/contracts/runtime-observation.md",
+          "sha256": "29cbae987899132603201fdba9874a752d0f5237a2ab7cbb8d15cad7d88497e3"
+        }
+      ],
+      "facts": {
+        "events": [
+          {
+            "seq": 1,
+            "at": "2026-10-01T07:20:16.681Z",
+            "kind": "remote-success",
+            "correlation": {
+              "kind": "account",
+              "accountId": "account-1",
+              "operation": "connect",
+              "intentId": "bed991fc-4064-4c20-bdd9-de9277d59484"
+            },
+            "attemptId": "dd38d749-ae6e-4f98-bb15-78a20b57edbd",
+            "instancePid": 19828,
+            "requestId": "14cf5c9c-5240-4278-b5a5-4710bc28abd1",
+            "transactionId": "200f6b70-f7ba-405e-bd6c-8951abd41a0e"
+          },
+          {
+            "seq": 2,
+            "at": "2026-10-01T07:20:16.685Z",
+            "kind": "local-save-failed",
+            "correlation": {
+              "kind": "account",
+              "accountId": "account-1",
+              "operation": "connect",
+              "intentId": "bed991fc-4064-4c20-bdd9-de9277d59484"
+            },
+            "attemptId": "dd38d749-ae6e-4f98-bb15-78a20b57edbd",
+            "instancePid": 19828,
+            "requestId": "14cf5c9c-5240-4278-b5a5-4710bc28abd1",
+            "transactionId": "200f6b70-f7ba-405e-bd6c-8951abd41a0e",
+            "recoverableInOriginalTransaction": true
+          },
+          {
+            "seq": 3,
+            "at": "2026-10-01T07:20:16.712Z",
+            "kind": "local-save-failed",
+            "correlation": {
+              "kind": "account",
+              "accountId": "account-1",
+              "operation": "connect",
+              "intentId": "bed991fc-4064-4c20-bdd9-de9277d59484"
+            },
+            "attemptId": "dd38d749-ae6e-4f98-bb15-78a20b57edbd",
+            "instancePid": 19828,
+            "requestId": "14cf5c9c-5240-4278-b5a5-4710bc28abd1",
+            "transactionId": "200f6b70-f7ba-405e-bd6c-8951abd41a0e",
+            "recoverableInOriginalTransaction": true
+          },
+          {
+            "seq": 4,
+            "at": "2026-10-01T07:20:16.767Z",
+            "kind": "local-save-failed",
+            "correlation": {
+              "kind": "account",
+              "accountId": "account-1",
+              "operation": "connect",
+              "intentId": "bed991fc-4064-4c20-bdd9-de9277d59484"
+            },
+            "attemptId": "dd38d749-ae6e-4f98-bb15-78a20b57edbd",
+            "instancePid": 19828,
+            "requestId": "14cf5c9c-5240-4278-b5a5-4710bc28abd1",
+            "transactionId": "200f6b70-f7ba-405e-bd6c-8951abd41a0e",
+            "recoverableInOriginalTransaction": true
+          },
+          {
+            "seq": 5,
+            "at": "2026-10-01T07:20:16.767Z",
+            "kind": "transaction-rolled-back",
+            "correlation": {
+              "kind": "account",
+              "accountId": "account-1",
+              "operation": "connect",
+              "intentId": "bed991fc-4064-4c20-bdd9-de9277d59484"
+            },
+            "attemptId": "dd38d749-ae6e-4f98-bb15-78a20b57edbd",
+            "instancePid": 19828,
+            "requestId": "14cf5c9c-5240-4278-b5a5-4710bc28abd1",
+            "transactionId": "200f6b70-f7ba-405e-bd6c-8951abd41a0e",
+            "rollbackBoundary": "outer-rollback-confirmed"
+          }
+        ],
+        "publicFailedResponse": {
+          "status": 500,
+          "code": "INTERNAL_ERROR",
+          "requestId": "14cf5c9c-5240-4278-b5a5-4710bc28abd1"
+        },
+        "afterFailure": [
+          {
+            "id": "account-1",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          },
+          {
+            "id": "account-2",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          },
+          {
+            "id": "account-3",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          },
+          {
+            "id": "account-4",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          },
+          {
+            "id": "account-5",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          },
+          {
+            "id": "account-6",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          }
+        ],
+        "afterExplicitNewIntent": [
+          {
+            "id": "account-1",
+            "status": "disconnected",
+            "platformUserId": "platform-account-1",
+            "rateLimitedUntil": null
+          },
+          {
+            "id": "account-2",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          },
+          {
+            "id": "account-3",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          },
+          {
+            "id": "account-4",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          },
+          {
+            "id": "account-5",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          },
+          {
+            "id": "account-6",
+            "status": "idle",
+            "platformUserId": null,
+            "rateLimitedUntil": null
+          }
+        ],
+        "negativeObservationMs": [
+          1505.7010830000008,
+          1505.891584
+        ],
+        "wsFrames": [
+          {
+            "type": "auth",
+            "success": true
+          },
+          {
+            "seq": 1,
+            "type": "inconsistency",
+            "payload": {
+              "ref": "account-1",
+              "kind": "account_result_unknown",
+              "message": "网关 connect 已返回成功，但本地账号状态保存未确认；请核验远端与本地状态后再操作。"
+            }
+          },
+          {
+            "seq": 2,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "online",
+              "from": "idle",
+              "accountId": "account-1"
+            }
+          },
+          {
+            "seq": 3,
+            "type": "account_status_changed",
+            "payload": {
+              "to": "disconnected",
+              "from": "online",
+              "accountId": "account-1"
+            }
+          }
+        ],
+        "gatewayEffects": [
+          {
+            "at": "2026-10-01T07:20:16.680Z",
+            "kind": "connect",
+            "accountId": "account-1"
+          },
+          {
+            "at": "2026-10-01T07:20:18.287Z",
+            "kind": "connect",
+            "accountId": "account-1"
+          },
+          {
+            "at": "2026-10-01T07:20:18.298Z",
+            "kind": "disconnect",
+            "accountId": "account-1"
+          }
+        ]
+      },
+      "decision": "原事务 3 次实际局部错误后 outer-rollback-confirmed；公开原请求 500，本地仍 idle，无原请求的成功状态 WS，仅一致性提醒；后续第 2 次 connect 是 QA 明确新操作，继而 disconnect，非自动重放。",
+      "limits": [
+        "远端已成功、本地回滚的差异仍真实存在；本通过不表示跨系统原子性或全面自动恢复。",
+        "无自动重放/旧意图覆盖仅限记录的两个约1500ms窗口。"
+      ],
+      "finalRawStatusVerified": "PASS"
+    },
+    {
+      "caseId": "INT-DIAG-002",
+      "rawStatus": "PASS",
+      "triagedStatus": "PASS",
+      "classification": "OBSERVED_IN_SCOPE_PASS",
+      "consoleEvidence": {
+        "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/integration/20261001-final-candidate/full-business-console.log",
+        "observedAt": "2026-10-01T07:32:53.828Z",
+        "wholeFileHashPendingRunCompletion": false,
+        "lines": [
+          {
+            "line": 183,
+            "text": "  ✓  162 [system] › tests/system/integration-runtime.spec.ts:503:1 › [INT-DIAG-002] actual tick failure running hold and recovery have truthful restricted diagnostics (1.2s)"
+          }
+        ],
+        "wholeFileSha256": "532f9df56cb381093e712ad318f55ec59d89b49c9226c797a36b13afaf9a7e45"
+      },
+      "cleanup": {
+        "completedAt": "2026-10-01T07:20:21.117Z",
+        "failures": []
+      },
+      "evidence": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-76161-hful-restricted-diagnostics-system/evidence/diagnostic-controlled-lifecycle.json",
+          "sha256": "5cbd760ce3252a7c880f56c22d0efa805d8580409e39ae8a1c4ae630e105d458"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-76161-hful-restricted-diagnostics-system/evidence/api.ndjson",
+          "sha256": "2a819f47e943ab1ff1186e050a288b6c19a7c2e88b904427863f5f5298043825"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-76161-hful-restricted-diagnostics-system/evidence/external-facts.json",
+          "sha256": "362283487b8d3900f177e4b36a6cafb3bfbee860fdaaf27d813bfce7407168bd"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-integration-runtime-76161-hful-restricted-diagnostics-system/evidence/cleanup.json",
+          "sha256": "07d718dafa4be9ccaa788deb8e5574e90bb2f3a0ed270068406cd683a5fb1c43"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/tests/system/integration-runtime.spec.ts",
+          "sha256": "75448e31562b87041090a32211688f9e0ca636837e7a5ced8c0495e04df7a863"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/contracts/runtime-observation.md",
+          "sha256": "29cbae987899132603201fdba9874a752d0f5237a2ab7cbb8d15cad7d88497e3"
+        }
+      ],
+      "facts": {
+        "events": [
+          {
+            "seq": 1,
+            "at": "2026-10-01T07:20:20.729Z",
+            "kind": "module-failed",
+            "correlation": {
+              "kind": "module",
+              "module": "gateway",
+              "attemptLabel": "b4169d81-a9bd-4446-bdf8-8f9b1c8c0197"
+            },
+            "attemptId": "45dfd638-fce0-47ac-acf3-6be15c8b09b0",
+            "instancePid": 20506,
+            "faultMarker": "qa-runtime-1b676018-120d-433b-abd6-3057d3647905"
+          },
+          {
+            "seq": 2,
+            "at": "2026-10-01T07:20:20.831Z",
+            "kind": "module-before-next-held",
+            "correlation": {
+              "kind": "module",
+              "module": "gateway",
+              "attemptLabel": "b4169d81-a9bd-4446-bdf8-8f9b1c8c0197"
+            },
+            "attemptId": "82c50637-b422-4a7b-80c1-cd47f3038c2d",
+            "instancePid": 20506,
+            "tickBoundary": "before-activity-and-diagnostics-start"
+          },
+          {
+            "seq": 3,
+            "at": "2026-10-01T07:20:20.883Z",
+            "kind": "module-running-held",
+            "correlation": {
+              "kind": "module",
+              "module": "gateway",
+              "attemptLabel": "b4169d81-a9bd-4446-bdf8-8f9b1c8c0197"
+            },
+            "attemptId": "82c50637-b422-4a7b-80c1-cd47f3038c2d",
+            "instancePid": 20506
+          },
+          {
+            "seq": 4,
+            "at": "2026-10-01T07:20:21.052Z",
+            "kind": "module-succeeded",
+            "correlation": {
+              "kind": "module",
+              "module": "gateway",
+              "attemptLabel": "b4169d81-a9bd-4446-bdf8-8f9b1c8c0197"
+            },
+            "attemptId": "82c50637-b422-4a7b-80c1-cd47f3038c2d",
+            "instancePid": 20506
+          }
+        ],
+        "publicStates": {
+          "first": {
+            "name": "gateway",
+            "status": "failed",
+            "recovery": "succeeded",
+            "ticks": 4,
+            "successfulTicks": 3,
+            "consecutiveFailures": 1,
+            "lastStartedAt": "2026-10-01T07:20:20.729Z",
+            "lastCompletedAt": "2026-10-01T07:20:20.729Z",
+            "lastSucceededAt": "2026-10-01T07:20:20.629Z",
+            "lastFailedAt": "2026-10-01T07:20:20.729Z",
+            "lastDurationMs": 0.055916000000024724,
+            "runningForMs": null
+          },
+          "running1": {
+            "name": "gateway",
+            "status": "running",
+            "recovery": "succeeded",
+            "ticks": 5,
+            "successfulTicks": 3,
+            "consecutiveFailures": 1,
+            "lastStartedAt": "2026-10-01T07:20:20.883Z",
+            "lastCompletedAt": "2026-10-01T07:20:20.729Z",
+            "lastSucceededAt": "2026-10-01T07:20:20.629Z",
+            "lastFailedAt": "2026-10-01T07:20:20.729Z",
+            "lastDurationMs": 0.055916000000024724,
+            "runningForMs": 3.4896669999999403
+          },
+          "running2": {
+            "name": "gateway",
+            "status": "running",
+            "recovery": "succeeded",
+            "ticks": 5,
+            "successfulTicks": 3,
+            "consecutiveFailures": 1,
+            "lastStartedAt": "2026-10-01T07:20:20.883Z",
+            "lastCompletedAt": "2026-10-01T07:20:20.729Z",
+            "lastSucceededAt": "2026-10-01T07:20:20.629Z",
+            "lastFailedAt": "2026-10-01T07:20:20.729Z",
+            "lastDurationMs": 0.055916000000024724,
+            "runningForMs": 160.99120900000003
+          },
+          "done": {
+            "name": "gateway",
+            "status": "idle",
+            "recovery": "succeeded",
+            "ticks": 5,
+            "successfulTicks": 4,
+            "consecutiveFailures": 0,
+            "lastStartedAt": "2026-10-01T07:20:20.883Z",
+            "lastCompletedAt": "2026-10-01T07:20:21.052Z",
+            "lastSucceededAt": "2026-10-01T07:20:21.052Z",
+            "lastFailedAt": "2026-10-01T07:20:20.729Z",
+            "lastDurationMs": 168.4325,
+            "runningForMs": null
+          }
+        }
+      },
+      "decision": "真实模块失败后在下一 tick 的活动/诊断开始前保持，再观察 running 和时长递增，再自然完成 idle；连续失败归零、上次失败保留、成功时间只在完成后更新。",
+      "limits": [
+        "仅有限错误 marker、token/cookie 与连接串/堆栈样本；不证明任意秘密均不泄漏。",
+        "调度 tick idle 不等于业务完成或全局健康。"
+      ],
+      "finalRawStatusVerified": "PASS"
+    },
+    {
+      "caseId": "BLK-EXT-002",
+      "rawStatus": "BLOCKED",
+      "rawError": "BlockedError: [BLOCKED] Created group job has no terminal evidence within 20s probe; CL-01 recovery still unresolved",
+      "triagedStatus": "FAIL",
+      "classification": "CREATE_RESULT_UNKNOWN_RECOVERY_PAUSED",
+      "suggestedSeverity": "S1",
+      "consoleEvidence": {
+        "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/integration/20261001-final-candidate/full-business-console.log",
+        "observedAt": "2026-10-01T07:32:53.828Z",
+        "wholeFileHashPendingRunCompletion": false,
+        "lines": [
+          {
+            "line": 188,
+            "text": "  ✘  165 [system] › tests/system/protocol-boundaries.spec.ts:79:1 › [BLK-EXT-002] a created group whose response was lost is reconciled without another create (21.3s)"
+          }
+        ],
+        "wholeFileSha256": "532f9df56cb381093e712ad318f55ec59d89b49c9226c797a36b13afaf9a7e45"
+      },
+      "requirements": [
+        "A3 与任意时刻重启总则",
+        "D039 不新增外部能力不等于接受原始偏差"
+      ],
+      "facts": {
+        "observation": {
+          "complete": false,
+          "last": {
+            "id": "bf693e27-373d-461f-a382-aa69b6c01418",
+            "status": "running",
+            "errors": [],
+            "groupId": null,
+            "recoveryNote": "建群请求已开始但没有保存结果；网关没有查询本次创建结果的接口，不自动重新建群。",
+            "processing": true
+          },
+          "samples": 355,
+          "elapsedMs": 20003.27825
+        },
+        "firstRecoveryPauseResponse": {
+          "at": "2026-10-01T07:21:14.398Z",
+          "body": {
+            "id": "bf693e27-373d-461f-a382-aa69b6c01418",
+            "status": "running",
+            "errors": [],
+            "groupId": null,
+            "recoveryNote": "建群请求已开始但没有保存结果；网关没有查询本次创建结果的接口，不自动重新建群。",
+            "processing": true
+          }
+        },
+        "lastRecoveryPauseResponse": {
+          "at": "2026-10-01T07:21:34.398Z",
+          "body": {
+            "id": "bf693e27-373d-461f-a382-aa69b6c01418",
+            "status": "running",
+            "errors": [],
+            "groupId": null,
+            "recoveryNote": "建群请求已开始但没有保存结果；网关没有查询本次创建结果的接口，不自动重新建群。",
+            "processing": true
+          }
+        },
+        "recoveryPauseResponseCount": 355,
+        "gatewayRequestCounts": {
+          "/events": 2,
+          "/accounts/account-1/connect": 1,
+          "/accounts/account-2/connect": 1,
+          "/accounts/account-3/connect": 1,
+          "/accounts/account-4/connect": 1,
+          "/accounts/account-5/connect": 1,
+          "/accounts/account-6/connect": 1,
+          "/groups": 1
+        },
+        "gatewayEffects": [
+          {
+            "at": "2026-10-01T07:21:13.867Z",
+            "kind": "connect",
+            "accountId": "account-1"
+          },
+          {
+            "at": "2026-10-01T07:21:13.874Z",
+            "kind": "connect",
+            "accountId": "account-2"
+          },
+          {
+            "at": "2026-10-01T07:21:13.880Z",
+            "kind": "connect",
+            "accountId": "account-3"
+          },
+          {
+            "at": "2026-10-01T07:21:13.885Z",
+            "kind": "connect",
+            "accountId": "account-4"
+          },
+          {
+            "at": "2026-10-01T07:21:13.891Z",
+            "kind": "connect",
+            "accountId": "account-5"
+          },
+          {
+            "at": "2026-10-01T07:21:13.897Z",
+            "kind": "connect",
+            "accountId": "account-6"
+          },
+          {
+            "at": "2026-10-01T07:21:13.952Z",
+            "kind": "create",
+            "groupId": "gateway-group-1",
+            "accountId": "account-1"
+          }
+        ],
+        "finalRemoteGroups": [
+          {
+            "groupId": "gateway-group-1",
+            "creatorAccountId": "account-1",
+            "writable": true,
+            "members": [
+              {
+                "platformUserId": "platform-account-1",
+                "role": "creator"
+              }
+            ]
+          }
+        ],
+        "agentTurnCount": 0,
+        "cleanup": {
+          "completedAt": "2026-10-01T07:21:34.467Z",
+          "failures": []
+        }
+      },
+      "decision": "远端已创建一群但本地没有 groupId，公开明确不自动重新建群；没有继续 invite/join/promote。该明确安全暂停与文档已披露的恢复机制相符，属于原强恢复未满足；审定 FAIL 不来源于 20 秒超时。",
+      "attribution": "现有外部协议缺少可确认原操作结果/安全重放的判据；安全暂停避免未知效果盲重放，但不能满足正常续跑义务。并非要求通过盲重试修复。",
+      "limits": [
+        "原始 BLOCKED 不改写；审定结论独立列示。",
+        "没有观察到重复副作用，不追加重复执行缺陷。",
+        "不从有限等待推导永久停滞；暂停性质以实际 recoveryNote 加已版本化公开说明为据。"
+      ],
+      "evidence": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/error-context.md",
+          "sha256": "07ffd39e332b405d2fe8f8a3c8647d9c8b8e0d3a32cee6aba0a1b67083e30ed2"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence/created-id-lost-observation.json",
+          "sha256": "8a0b75eea8fc9e420591d5f01690fb506fc37cce13380cd2d33cadb31749e407"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence/created-id-lost-at-crash.json",
+          "sha256": "05df826aa32483b15701486c1ebf81228e9c7950e662321b3b0c7189d296d042"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence/created-id-lost-final-ledger.json",
+          "sha256": "5f5a24fe14a195138ccb7a586ae9ff017c9cd1d76ea511e395ac4abb95c1d4de"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence/api.ndjson",
+          "sha256": "072150c268ebac688e61b68a3b0347d5e86a98581b24a01a10d5f51ee9128ef1"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence/cleanup.json",
+          "sha256": "4df5c15bbdd23a914f51aab7df2fd503ac4bee61e150284c28a222b17a5b6b96"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/tests/system/protocol-boundaries.spec.ts",
+          "sha256": "56ec359ef23e9fe05d4aaf2b80c892c7659919f1cec8fbc809f969a555cbc4af"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-delivery-reproduction/kapibala/docs/acceptance.md",
+          "sha256": "fc84df5acf3553a02684846d17d0b11a2cf8f35d87b0988b844eccf10a98032a"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-delivery-reproduction/kapibala/docs/decisions.md",
+          "sha256": "e4189c2af1c3933346ac5d296d7ac6dd954f8c4785cc29cae9faef870c5cfa6f"
+        }
+      ],
+      "finalRawStatusVerified": "BLOCKED",
+      "initialSuggestedSeverity": "P1"
+    },
+    {
+      "caseId": "BLK-EXT-003",
+      "rawStatus": "BLOCKED",
+      "rawError": "BlockedError: [BLOCKED] No next promotion or terminal job within 20s probe; not proof of infinite stall",
+      "triagedStatus": "FAIL",
+      "classification": "PROMOTION_RESULT_UNKNOWN_RECOVERY_PAUSED",
+      "suggestedSeverity": "S1",
+      "consoleEvidence": {
+        "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/integration/20261001-final-candidate/full-business-console.log",
+        "observedAt": "2026-10-01T07:32:53.828Z",
+        "wholeFileHashPendingRunCompletion": false,
+        "lines": [
+          {
+            "line": 191,
+            "text": "  ✘  166 [system] › tests/system/protocol-boundaries.spec.ts:121:1 › [BLK-EXT-003] promotion response loss preserves administrator facts and the two-call limit (21.9s)"
+          }
+        ],
+        "wholeFileSha256": "532f9df56cb381093e712ad318f55ec59d89b49c9226c797a36b13afaf9a7e45"
+      },
+      "requirements": [
+        "A3 角色/顺序与任意时刻重启总则",
+        "D039 不新增外部能力不等于接受原始偏差"
+      ],
+      "facts": {
+        "observation": {
+          "complete": false,
+          "last": {
+            "id": "2a32eb18-fae8-484b-8309-c5709ae9f97f",
+            "status": "running",
+            "errors": [],
+            "groupId": "b8ca7e34-9074-436a-8ee8-8b92070c0801",
+            "recoveryNote": "提升管理员请求已开始但没有保存结果；网关没有查询管理员角色的接口，结果未知时不自动重试。",
+            "processing": true
+          },
+          "samples": 353,
+          "elapsedMs": 20008.109792
+        },
+        "firstRecoveryPauseResponse": {
+          "at": "2026-10-01T07:21:37.497Z",
+          "body": {
+            "id": "2a32eb18-fae8-484b-8309-c5709ae9f97f",
+            "status": "running",
+            "errors": [],
+            "groupId": "b8ca7e34-9074-436a-8ee8-8b92070c0801",
+            "recoveryNote": "提升管理员请求已开始但没有保存结果；网关没有查询管理员角色的接口，结果未知时不自动重试。",
+            "processing": true
+          }
+        },
+        "lastRecoveryPauseResponse": {
+          "at": "2026-10-01T07:21:57.499Z",
+          "body": {
+            "id": "2a32eb18-fae8-484b-8309-c5709ae9f97f",
+            "status": "running",
+            "errors": [],
+            "groupId": "b8ca7e34-9074-436a-8ee8-8b92070c0801",
+            "recoveryNote": "提升管理员请求已开始但没有保存结果；网关没有查询管理员角色的接口，结果未知时不自动重试。",
+            "processing": true
+          }
+        },
+        "recoveryPauseResponseCount": 353,
+        "gatewayRequestCounts": {
+          "/events": 2,
+          "/accounts/account-1/connect": 1,
+          "/accounts/account-2/connect": 1,
+          "/accounts/account-3/connect": 1,
+          "/accounts/account-4/connect": 1,
+          "/accounts/account-5/connect": 1,
+          "/accounts/account-6/connect": 1,
+          "/groups": 1,
+          "/groups/gateway-group-1/invite": 1,
+          "/groups/gateway-group-1/join": 1,
+          "/groups/gateway-group-1/members": 1,
+          "/groups/gateway-group-1/promote": 1
+        },
+        "gatewayEffects": [
+          {
+            "at": "2026-10-01T07:21:36.442Z",
+            "kind": "connect",
+            "accountId": "account-1"
+          },
+          {
+            "at": "2026-10-01T07:21:36.450Z",
+            "kind": "connect",
+            "accountId": "account-2"
+          },
+          {
+            "at": "2026-10-01T07:21:36.457Z",
+            "kind": "connect",
+            "accountId": "account-3"
+          },
+          {
+            "at": "2026-10-01T07:21:36.463Z",
+            "kind": "connect",
+            "accountId": "account-4"
+          },
+          {
+            "at": "2026-10-01T07:21:36.469Z",
+            "kind": "connect",
+            "accountId": "account-5"
+          },
+          {
+            "at": "2026-10-01T07:21:36.474Z",
+            "kind": "connect",
+            "accountId": "account-6"
+          },
+          {
+            "at": "2026-10-01T07:21:36.508Z",
+            "kind": "create",
+            "groupId": "gateway-group-1",
+            "accountId": "account-1"
+          },
+          {
+            "at": "2026-10-01T07:21:36.607Z",
+            "kind": "invite",
+            "groupId": "gateway-group-1"
+          },
+          {
+            "at": "2026-10-01T07:21:36.814Z",
+            "kind": "join",
+            "accountId": "account-2",
+            "groupId": "gateway-group-1",
+            "platformUserId": "platform-account-2"
+          },
+          {
+            "at": "2026-10-01T07:21:37.018Z",
+            "kind": "promote",
+            "groupId": "gateway-group-1",
+            "accountId": "account-2"
+          }
+        ],
+        "finalRemoteGroups": [
+          {
+            "groupId": "gateway-group-1",
+            "creatorAccountId": "account-1",
+            "writable": true,
+            "members": [
+              {
+                "platformUserId": "platform-account-1",
+                "role": "creator"
+              },
+              {
+                "platformUserId": "platform-account-2",
+                "role": "admin"
+              }
+            ]
+          }
+        ],
+        "agentTurnCount": 0,
+        "cleanup": {
+          "completedAt": "2026-10-01T07:21:57.599Z",
+          "failures": []
+        }
+      },
+      "decision": "远端成员已为 admin，promote 仅一次；公开明确未知结果不自动重试，job 未完成。未触达第二次 promote 响应丢失窗口。该明确安全暂停与文档已披露的恢复机制相符，属于原强恢复未满足；审定 FAIL 不来源于 20 秒超时。",
+      "attribution": "现有外部协议缺少可确认原操作结果/安全重放的判据；安全暂停避免未知效果盲重放，但不能满足正常续跑义务。并非要求通过盲重试修复。",
+      "limits": [
+        "原始 BLOCKED 不改写；审定结论独立列示。",
+        "没有观察到重复副作用，不追加重复执行缺陷。",
+        "不从有限等待推导永久停滞；暂停性质以实际 recoveryNote 加已版本化公开说明为据。"
+      ],
+      "evidence": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/error-context.md",
+          "sha256": "751411ca0e47cb527a31c47fd7c4387eb13f1841e57ed7fcf179d1a45fb9b4f8"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence/promotion-first-recovery.json",
+          "sha256": "b2df415eba457f6f13aabda026c36c5afecc02d525ed86cff0f9a11c0afc7a2c"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence/promotion-first-crash.json",
+          "sha256": "355d3149f8b75f1978e4d02eec8c99ce238e1a31b64ad024742d7fbe6440c3be"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence/promotion-final-ledger.json",
+          "sha256": "3b2ffe5dd12b4a65573eed0e10154cc0445479b8bb90486ca36972c0a9851970"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence/api.ndjson",
+          "sha256": "0c4f85b09ff90af03a320d3c8c9096d090e09fc30759575b8e0ecb249d0207d7"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence/cleanup.json",
+          "sha256": "2aa5dfd2d9bc604368db98d18d7570552357ab3da98a1959ba68bbff3c7fb272"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/tests/system/protocol-boundaries.spec.ts",
+          "sha256": "56ec359ef23e9fe05d4aaf2b80c892c7659919f1cec8fbc809f969a555cbc4af"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-delivery-reproduction/kapibala/docs/acceptance.md",
+          "sha256": "fc84df5acf3553a02684846d17d0b11a2cf8f35d87b0988b844eccf10a98032a"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-delivery-reproduction/kapibala/docs/decisions.md",
+          "sha256": "e4189c2af1c3933346ac5d296d7ac6dd954f8c4785cc29cae9faef870c5cfa6f"
+        }
+      ],
+      "finalRawStatusVerified": "BLOCKED",
+      "initialSuggestedSeverity": "P1"
+    },
+    {
+      "caseId": "BLK-EXT-004",
+      "rawStatus": "BLOCKED",
+      "rawError": "BlockedError: [BLOCKED] Restarted kick run remains open within 20s observation budget; no arbitrary recovery deadline asserted",
+      "triagedStatus": "FAIL",
+      "classification": "KICK_RESULT_UNKNOWN_RECOVERY_PAUSED",
+      "suggestedSeverity": "S1",
+      "consoleEvidence": {
+        "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/integration/20261001-final-candidate/full-business-console.log",
+        "observedAt": "2026-10-01T07:32:53.828Z",
+        "wholeFileHashPendingRunCompletion": false,
+        "lines": [
+          {
+            "line": 197,
+            "text": "  ✘  168 [system] › tests/system/protocol-boundaries.spec.ts:294:1 › [BLK-EXT-004] an already effective kick is not repeated against a rejoined target after restart (23.4s)"
+          }
+        ],
+        "wholeFileSha256": "532f9df56cb381093e712ad318f55ec59d89b49c9226c797a36b13afaf9a7e45"
+      },
+      "requirements": [
+        "A5.8",
+        "D039 不新增外部能力不等于接受原始偏差"
+      ],
+      "facts": {
+        "observation": {
+          "complete": false,
+          "last": {
+            "id": "16221b3b-fd61-4b08-8590-881ae4264623",
+            "groupId": "c15d96c9-9e5b-415b-bc96-d44c2a72fe75",
+            "status": "running",
+            "endReason": null,
+            "summary": null,
+            "recoveryNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
+            "steps": [
+              {
+                "ordinal": 1,
+                "kind": "tool_use",
+                "toolUseId": "kick-before-rejoin",
+                "name": "kick_user",
+                "input": {
+                  "reason": "single authorized removal",
+                  "platform_user_id": "kick-rejoin-target"
+                },
+                "resultSummary": "",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": "pass",
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"kick-before-rejoin\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"kick-rejoin-target\",\"reason\":\"single authorized removal\"}}]}"
+              }
+            ]
+          },
+          "samples": 343,
+          "elapsedMs": 20003.326625
+        },
+        "firstRecoveryPauseResponse": {
+          "at": "2026-10-01T07:22:22.227Z",
+          "body": {
+            "id": "16221b3b-fd61-4b08-8590-881ae4264623",
+            "groupId": "c15d96c9-9e5b-415b-bc96-d44c2a72fe75",
+            "status": "running",
+            "endReason": null,
+            "summary": null,
+            "recoveryNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
+            "steps": [
+              {
+                "ordinal": 1,
+                "kind": "tool_use",
+                "toolUseId": "kick-before-rejoin",
+                "name": "kick_user",
+                "input": {
+                  "reason": "single authorized removal",
+                  "platform_user_id": "kick-rejoin-target"
+                },
+                "resultSummary": "",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": "pass",
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"kick-before-rejoin\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"kick-rejoin-target\",\"reason\":\"single authorized removal\"}}]}"
+              }
+            ]
+          }
+        },
+        "lastRecoveryPauseResponse": {
+          "at": "2026-10-01T07:22:42.223Z",
+          "body": {
+            "id": "16221b3b-fd61-4b08-8590-881ae4264623",
+            "groupId": "c15d96c9-9e5b-415b-bc96-d44c2a72fe75",
+            "status": "running",
+            "endReason": null,
+            "summary": null,
+            "recoveryNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
+            "steps": [
+              {
+                "ordinal": 1,
+                "kind": "tool_use",
+                "toolUseId": "kick-before-rejoin",
+                "name": "kick_user",
+                "input": {
+                  "reason": "single authorized removal",
+                  "platform_user_id": "kick-rejoin-target"
+                },
+                "resultSummary": "",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": "pass",
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"kick-before-rejoin\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"kick-rejoin-target\",\"reason\":\"single authorized removal\"}}]}"
+              }
+            ]
+          }
+        },
+        "recoveryPauseResponseCount": 343,
+        "gatewayRequestCounts": {
+          "/events": 2,
+          "/accounts/account-1/connect": 1,
+          "/accounts/account-2/connect": 1,
+          "/accounts/account-3/connect": 1,
+          "/accounts/account-4/connect": 1,
+          "/accounts/account-5/connect": 1,
+          "/accounts/account-6/connect": 1,
+          "/groups": 1,
+          "/groups/gateway-group-1/invite": 1,
+          "/groups/gateway-group-1/join": 2,
+          "/groups/gateway-group-1/members": 5,
+          "/groups/gateway-group-1/promote": 1,
+          "/groups/gateway-group-1/kick": 1
+        },
+        "gatewayEffects": [
+          {
+            "at": "2026-10-01T07:22:19.661Z",
+            "kind": "connect",
+            "accountId": "account-1"
+          },
+          {
+            "at": "2026-10-01T07:22:19.669Z",
+            "kind": "connect",
+            "accountId": "account-2"
+          },
+          {
+            "at": "2026-10-01T07:22:19.675Z",
+            "kind": "connect",
+            "accountId": "account-3"
+          },
+          {
+            "at": "2026-10-01T07:22:19.682Z",
+            "kind": "connect",
+            "accountId": "account-4"
+          },
+          {
+            "at": "2026-10-01T07:22:19.687Z",
+            "kind": "connect",
+            "accountId": "account-5"
+          },
+          {
+            "at": "2026-10-01T07:22:19.692Z",
+            "kind": "connect",
+            "accountId": "account-6"
+          },
+          {
+            "at": "2026-10-01T07:22:19.729Z",
+            "kind": "create",
+            "groupId": "gateway-group-1",
+            "accountId": "account-1"
+          },
+          {
+            "at": "2026-10-01T07:22:19.829Z",
+            "kind": "invite",
+            "groupId": "gateway-group-1"
+          },
+          {
+            "at": "2026-10-01T07:22:20.031Z",
+            "kind": "join",
+            "accountId": "account-2",
+            "groupId": "gateway-group-1",
+            "platformUserId": "platform-account-2"
+          },
+          {
+            "at": "2026-10-01T07:22:20.343Z",
+            "kind": "join",
+            "accountId": "account-3",
+            "groupId": "gateway-group-1",
+            "platformUserId": "platform-account-3"
+          },
+          {
+            "at": "2026-10-01T07:22:20.546Z",
+            "kind": "promote",
+            "groupId": "gateway-group-1",
+            "accountId": "account-2"
+          },
+          {
+            "at": "2026-10-01T07:22:20.706Z",
+            "kind": "kick",
+            "accountId": "account-2",
+            "groupId": "gateway-group-1",
+            "platformUserId": "kick-rejoin-target"
+          }
+        ],
+        "finalRemoteGroups": [
+          {
+            "groupId": "gateway-group-1",
+            "creatorAccountId": "account-1",
+            "writable": true,
+            "members": [
+              {
+                "platformUserId": "platform-account-1",
+                "role": "creator"
+              },
+              {
+                "platformUserId": "platform-account-2",
+                "role": "admin"
+              },
+              {
+                "platformUserId": "platform-account-3",
+                "role": "member"
+              },
+              {
+                "platformUserId": "kick-rejoin-target",
+                "role": "member"
+              }
+            ]
+          }
+        ],
+        "agentTurnCount": 1,
+        "cleanup": {
+          "completedAt": "2026-10-01T07:22:42.298Z",
+          "failures": []
+        }
+      },
+      "decision": "旧 kick 已生效、产生 member_left 后目标重新入群；未重复 kick、外部目标仍在群；原 run 公开说明成员变化不足以判断重放安全并暂停续跑。该明确安全暂停与文档已披露的恢复机制相符，属于原强恢复未满足；审定 FAIL 不来源于 20 秒超时。",
+      "attribution": "现有外部协议缺少可确认原操作结果/安全重放的判据；安全暂停避免未知效果盲重放，但不能满足正常续跑义务。并非要求通过盲重试修复。",
+      "limits": [
+        "原始 BLOCKED 不改写；审定结论独立列示。",
+        "没有观察到重复副作用，不追加重复执行缺陷。",
+        "不从有限等待推导永久停滞；暂停性质以实际 recoveryNote 加已版本化公开说明为据。"
+      ],
+      "evidence": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/error-context.md",
+          "sha256": "d9b58d3142bd77363c1cc4541d5ee87b09eee3115a1a5f062907af5e7e4d3bf6"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence/kick-rejoin-resumed.json",
+          "sha256": "c6f7a201701e83b847d7f7bb1eb492842d3abcacc189fb00f2267caae226208d"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence/kick-applied-then-rejoined.json",
+          "sha256": "7d06a7490afb7ee3c0a3a1997e05c309b9dfb9d432b431f1c7b3bece08a44f9c"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence/kick-rejoin-final-ledger.json",
+          "sha256": "9307660d1aea22363ba7a24cb0ca23fe28c62672fc4a6937b7ef48b9ad3f2885"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence/api.ndjson",
+          "sha256": "8a99fa5386aaeb0fe3d74dfbb541520ab6723b3196a5292ed089ed7525d01280"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence/cleanup.json",
+          "sha256": "6267c15c6d4a7282b384ab66c0d24de23d9dedfb94f3db80fec6fece6f85e9b8"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/tests/system/protocol-boundaries.spec.ts",
+          "sha256": "56ec359ef23e9fe05d4aaf2b80c892c7659919f1cec8fbc809f969a555cbc4af"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-delivery-reproduction/kapibala/docs/acceptance.md",
+          "sha256": "fc84df5acf3553a02684846d17d0b11a2cf8f35d87b0988b844eccf10a98032a"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-delivery-reproduction/kapibala/docs/decisions.md",
+          "sha256": "e4189c2af1c3933346ac5d296d7ac6dd954f8c4785cc29cae9faef870c5cfa6f"
+        }
+      ],
+      "finalRawStatusVerified": "BLOCKED",
+      "initialSuggestedSeverity": "P1"
+    },
+    {
+      "caseId": "BLK-EXT-005",
+      "rawStatus": "BLOCKED",
+      "rawError": "BlockedError: [BLOCKED] Run not terminal within 20s probe; original recovery obligation retained without inventing a deadline",
+      "triagedStatus": "FAIL",
+      "classification": "AGENT_TURN_RESULT_UNKNOWN_RECOVERY_PAUSED",
+      "suggestedSeverity": "S1",
+      "consoleEvidence": {
+        "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/integration/20261001-final-candidate/full-business-console.log",
+        "observedAt": "2026-10-01T07:32:53.828Z",
+        "wholeFileHashPendingRunCompletion": false,
+        "lines": [
+          {
+            "line": 200,
+            "text": "  ✘  169 [system] › tests/system/protocol-boundaries.spec.ts:384:1 › [BLK-EXT-005] a lost unexecuted model response may change while persisted history and effects survive (22.5s)"
+          }
+        ],
+        "wholeFileSha256": "532f9df56cb381093e712ad318f55ec59d89b49c9226c797a36b13afaf9a7e45"
+      },
+      "requirements": [
+        "A5.8",
+        "D039 不新增外部能力不等于接受原始偏差"
+      ],
+      "facts": {
+        "observation": {
+          "complete": false,
+          "last": {
+            "id": "0ee2d49d-a232-4d42-8f96-d893ae0974c3",
+            "groupId": "22d5900d-5ae8-4a5d-ac85-602d6c6484ba",
+            "status": "running",
+            "endReason": null,
+            "summary": null,
+            "recoveryNote": "An Agent turn was sent before interruption; the protocol cannot safely replay an unrecorded response.",
+            "steps": [
+              {
+                "ordinal": 1,
+                "kind": "tool_use",
+                "toolUseId": "persisted-send",
+                "name": "send_message",
+                "input": {
+                  "text": "effect before lost model turn",
+                  "idempotency_key": "persisted-send-key"
+                },
+                "resultSummary": "{\"clientMsgId\":\"cecbe6b5-1248-44a3-b040-f6404cb3cb49\",\"deliveryStatus\":\"sent\"}",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": "pass",
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"persisted-send\",\"name\":\"send_message\",\"input\":{\"text\":\"effect before lost model turn\",\"idempotency_key\":\"persisted-send-key\"}}]}"
+              }
+            ]
+          },
+          "samples": 342,
+          "elapsedMs": 20005.06725
+        },
+        "firstRecoveryPauseResponse": {
+          "at": "2026-10-01T07:22:45.908Z",
+          "body": {
+            "id": "0ee2d49d-a232-4d42-8f96-d893ae0974c3",
+            "groupId": "22d5900d-5ae8-4a5d-ac85-602d6c6484ba",
+            "status": "running",
+            "endReason": null,
+            "summary": null,
+            "recoveryNote": "An Agent turn was sent before interruption; the protocol cannot safely replay an unrecorded response.",
+            "steps": [
+              {
+                "ordinal": 1,
+                "kind": "tool_use",
+                "toolUseId": "persisted-send",
+                "name": "send_message",
+                "input": {
+                  "text": "effect before lost model turn",
+                  "idempotency_key": "persisted-send-key"
+                },
+                "resultSummary": "{\"clientMsgId\":\"cecbe6b5-1248-44a3-b040-f6404cb3cb49\",\"deliveryStatus\":\"sent\"}",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": "pass",
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"persisted-send\",\"name\":\"send_message\",\"input\":{\"text\":\"effect before lost model turn\",\"idempotency_key\":\"persisted-send-key\"}}]}"
+              }
+            ]
+          }
+        },
+        "lastRecoveryPauseResponse": {
+          "at": "2026-10-01T07:23:05.905Z",
+          "body": {
+            "id": "0ee2d49d-a232-4d42-8f96-d893ae0974c3",
+            "groupId": "22d5900d-5ae8-4a5d-ac85-602d6c6484ba",
+            "status": "running",
+            "endReason": null,
+            "summary": null,
+            "recoveryNote": "An Agent turn was sent before interruption; the protocol cannot safely replay an unrecorded response.",
+            "steps": [
+              {
+                "ordinal": 1,
+                "kind": "tool_use",
+                "toolUseId": "persisted-send",
+                "name": "send_message",
+                "input": {
+                  "text": "effect before lost model turn",
+                  "idempotency_key": "persisted-send-key"
+                },
+                "resultSummary": "{\"clientMsgId\":\"cecbe6b5-1248-44a3-b040-f6404cb3cb49\",\"deliveryStatus\":\"sent\"}",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": "pass",
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"persisted-send\",\"name\":\"send_message\",\"input\":{\"text\":\"effect before lost model turn\",\"idempotency_key\":\"persisted-send-key\"}}]}"
+              }
+            ]
+          }
+        },
+        "recoveryPauseResponseCount": 342,
+        "gatewayRequestCounts": {
+          "/events": 2,
+          "/accounts/account-1/connect": 1,
+          "/accounts/account-2/connect": 1,
+          "/accounts/account-3/connect": 1,
+          "/accounts/account-4/connect": 1,
+          "/accounts/account-5/connect": 1,
+          "/accounts/account-6/connect": 1,
+          "/groups": 1,
+          "/groups/gateway-group-1/invite": 1,
+          "/groups/gateway-group-1/join": 2,
+          "/groups/gateway-group-1/members": 2,
+          "/groups/gateway-group-1/promote": 1,
+          "/groups/gateway-group-1/send": 1
+        },
+        "gatewayEffects": [
+          {
+            "at": "2026-10-01T07:22:44.252Z",
+            "kind": "connect",
+            "accountId": "account-1"
+          },
+          {
+            "at": "2026-10-01T07:22:44.259Z",
+            "kind": "connect",
+            "accountId": "account-2"
+          },
+          {
+            "at": "2026-10-01T07:22:44.266Z",
+            "kind": "connect",
+            "accountId": "account-3"
+          },
+          {
+            "at": "2026-10-01T07:22:44.272Z",
+            "kind": "connect",
+            "accountId": "account-4"
+          },
+          {
+            "at": "2026-10-01T07:22:44.278Z",
+            "kind": "connect",
+            "accountId": "account-5"
+          },
+          {
+            "at": "2026-10-01T07:22:44.284Z",
+            "kind": "connect",
+            "accountId": "account-6"
+          },
+          {
+            "at": "2026-10-01T07:22:44.329Z",
+            "kind": "create",
+            "groupId": "gateway-group-1",
+            "accountId": "account-1"
+          },
+          {
+            "at": "2026-10-01T07:22:44.429Z",
+            "kind": "invite",
+            "groupId": "gateway-group-1"
+          },
+          {
+            "at": "2026-10-01T07:22:44.635Z",
+            "kind": "join",
+            "accountId": "account-2",
+            "groupId": "gateway-group-1",
+            "platformUserId": "platform-account-2"
+          },
+          {
+            "at": "2026-10-01T07:22:44.940Z",
+            "kind": "join",
+            "accountId": "account-3",
+            "groupId": "gateway-group-1",
+            "platformUserId": "platform-account-3"
+          },
+          {
+            "at": "2026-10-01T07:22:45.144Z",
+            "kind": "promote",
+            "groupId": "gateway-group-1",
+            "accountId": "account-2"
+          },
+          {
+            "at": "2026-10-01T07:22:45.400Z",
+            "kind": "send",
+            "accountId": "account-2",
+            "groupId": "gateway-group-1",
+            "clientMsgId": "cecbe6b5-1248-44a3-b040-f6404cb3cb49",
+            "msgId": "gateway-message-2"
+          }
+        ],
+        "finalRemoteGroups": [
+          {
+            "groupId": "gateway-group-1",
+            "creatorAccountId": "account-1",
+            "writable": true,
+            "members": [
+              {
+                "platformUserId": "platform-account-1",
+                "role": "creator"
+              },
+              {
+                "platformUserId": "platform-account-2",
+                "role": "admin"
+              },
+              {
+                "platformUserId": "platform-account-3",
+                "role": "member"
+              }
+            ]
+          }
+        ],
+        "agentTurnCount": 2,
+        "cleanup": {
+          "completedAt": "2026-10-01T07:23:05.981Z",
+          "failures": []
+        }
+      },
+      "decision": "先前 send 已持久且只落地一次；第二轮模型响应未记录即强杀，公开明确不能安全重放未记录响应，未发出恢复后的下一轮。该明确安全暂停与文档已披露的恢复机制相符，属于原强恢复未满足；审定 FAIL 不来源于 20 秒超时。",
+      "attribution": "现有外部协议缺少可确认原操作结果/安全重放的判据；安全暂停避免未知效果盲重放，但不能满足正常续跑义务。并非要求通过盲重试修复。",
+      "limits": [
+        "原始 BLOCKED 不改写；审定结论独立列示。",
+        "没有观察到重复副作用，不追加重复执行缺陷。",
+        "不从有限等待推导永久停滞；暂停性质以实际 recoveryNote 加已版本化公开说明为据。"
+      ],
+      "evidence": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/error-context.md",
+          "sha256": "137a90c2970e30adfe3a80ccd66958a2500bf9335e74e360708f56f63614db6a"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence/lost-model-response-resumed.json",
+          "sha256": "de35dde6ac267c4be235f8c302aeed9d7f8c982fa227755055844af5e78c3b6b"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence/lost-model-response-at-crash.json",
+          "sha256": "f6aebdeaf564b2e05cf75ba57cc75415bba7be1d71eda4d51aebab05f994f2ee"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence/lost-model-response-final-ledger.json",
+          "sha256": "535785689715f32ab2cdd71f5069bd148c34464be75a72ac93864a747f6ed827"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence/api.ndjson",
+          "sha256": "4429030937fbcc210684b6c7036019ecde0a66654972ac78b30fcfad89bffedd"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence/cleanup.json",
+          "sha256": "4246c66383f3458d0d3f92912b6f05eed05b511ee44dd3cbe048e75ae22cba26"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/tests/system/protocol-boundaries.spec.ts",
+          "sha256": "56ec359ef23e9fe05d4aaf2b80c892c7659919f1cec8fbc809f969a555cbc4af"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-delivery-reproduction/kapibala/docs/acceptance.md",
+          "sha256": "fc84df5acf3553a02684846d17d0b11a2cf8f35d87b0988b844eccf10a98032a"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-delivery-reproduction/kapibala/docs/decisions.md",
+          "sha256": "e4189c2af1c3933346ac5d296d7ac6dd954f8c4785cc29cae9faef870c5cfa6f"
+        }
+      ],
+      "finalRawStatusVerified": "BLOCKED",
+      "initialSuggestedSeverity": "P1"
+    },
+    {
+      "caseId": "BLK-EXT-001",
+      "rawStatus": "BLOCKED",
+      "rawError": "BlockedError: [BLOCKED] No terminal evidence within observation budget for does-not-land. The 10s probe is not a product deadline or proof of permanent non-recovery; retain CL-01 protocol risk.",
+      "triagedStatus": "BLOCKED",
+      "classification": "UNACKNOWLEDGED_SEND_FINITE_OBSERVATION_INCONCLUSIVE",
+      "consoleEvidence": {
+        "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/integration/20261001-final-candidate/full-business-console.log",
+        "observedAt": "2026-10-01T07:32:53.828Z",
+        "wholeFileHashPendingRunCompletion": false,
+        "lines": [
+          {
+            "line": 194,
+            "text": "  ✘  167 [system] › tests/system/protocol-boundaries.spec.ts:199:1 › [BLK-EXT-001] unacknowledged send has paired pending prefixes without a fabricated two-second bound (18.8s)"
+          }
+        ],
+        "wholeFileSha256": "532f9df56cb381093e712ad318f55ec59d89b49c9226c797a36b13afaf9a7e45"
+      },
+      "facts": {
+        "lands": {
+          "complete": true,
+          "last": {
+            "items": [
+              {
+                "id": "01aab595-855c-433d-98c0-d3676499c578",
+                "msgId": "gateway-message-1",
+                "clientMsgId": "40399873-b71e-4141-be76-dfd31a10b632",
+                "senderPlatformUserId": "platform-account-1",
+                "isOwn": true,
+                "text": "unacknowledged original lands",
+                "sentAt": "2026-10-01T07:22:03.556Z",
+                "deliveryStatus": "sent",
+                "failCode": null
+              }
+            ],
+            "nextCursor": null,
+            "snapshotId": "b78eaa52-03e2-44dd-9790-10e9c156a03e"
+          },
+          "samples": 2,
+          "elapsedMs": 70.2924579999999
+        },
+        "doesNotLand": {
+          "complete": false,
+          "last": {
+            "items": [
+              {
+                "id": "b8d483bc-db97-4bbf-b77c-6332a0c42657",
+                "msgId": null,
+                "clientMsgId": "c47e21ff-32c5-4f94-820e-7781ba8e0c83",
+                "senderPlatformUserId": "platform-account-1",
+                "isOwn": true,
+                "text": "unacknowledged original does-not-land",
+                "sentAt": "2026-10-01T07:22:04.558Z",
+                "deliveryStatus": "unknown",
+                "failCode": null
+              }
+            ],
+            "nextCursor": null,
+            "snapshotId": "e9f24c3c-fec5-45d5-a8cc-2bc6c34157be"
+          },
+          "samples": 169,
+          "elapsedMs": 10009.409832999998
+        },
+        "finalSendRequests": [
+          {
+            "id": 15,
+            "at": "2026-10-01T07:22:00.575Z",
+            "method": "POST",
+            "path": "/groups/gateway-group-1/send",
+            "body": {
+              "accountId": "account-1",
+              "clientMsgId": "40399873-b71e-4141-be76-dfd31a10b632",
+              "text": "unacknowledged original lands"
+            },
+            "responseClosedAt": "2026-10-01T07:22:00.590Z",
+            "responseClosedBeforeFinish": true,
+            "responsePreparedAt": "2026-10-01T07:22:03.556Z",
+            "preparedResponseStatus": 202
+          },
+          {
+            "id": 50,
+            "at": "2026-10-01T07:22:04.600Z",
+            "method": "POST",
+            "path": "/groups/gateway-group-2/send",
+            "body": {
+              "accountId": "account-1",
+              "clientMsgId": "c47e21ff-32c5-4f94-820e-7781ba8e0c83",
+              "text": "unacknowledged original does-not-land"
+            },
+            "responseClosedAt": "2026-10-01T07:22:04.611Z",
+            "responseClosedBeforeFinish": true,
+            "responsePreparedAt": "2026-10-01T07:22:07.585Z",
+            "preparedResponseStatus": 202
+          }
+        ],
+        "cleanup": {
+          "completedAt": "2026-10-01T07:22:17.693Z",
+          "failures": []
+        }
+      },
+      "decision": [
+        "两种相同可见前缀均只有原 send；未收到明确 504，没有原 A2 的 504 后 5 秒/查询恢复 2 秒判定前提。",
+        "原请求落地分支恢复 sent；不落地分支在有限约 10 秒窗口保持 unknown，无伪造失败、无盲重发、无已观察重复效果。",
+        "没有独立明确恢复暂停诊断，也没有有界活性保证可裁判；不把私有 effect:none 当作应用可用的否定凭证，保留 BLOCKED。"
+      ],
+      "limits": [
+        "落地分支通过不能覆盖不落地分支；有限 10 秒未收敛不证明永久不恢复。"
+      ],
+      "evidence": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/error-context.md",
+          "sha256": "8c7de462c6b2e591f6a42fe4d31bc18011481e97f57b0dbc8c8b318a979a8f5f"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/evidence/lands-outcome.json",
+          "sha256": "de1ef97eff6579a0ee7c1c372ee4a3c7b8cac9eeefe8e9288fbef2a617d52f28"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/evidence/does-not-land-outcome.json",
+          "sha256": "fb9943bc64eb2436364e3e774cd8c4033c45b699efe4cb6a6977f0885123c253"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/evidence/does-not-land-final-ledger.json",
+          "sha256": "472d954227ea1070f5d450c5c49797d7f46cdf68c4577d0fea0f3e091cecfc1d"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/evidence/api.ndjson",
+          "sha256": "069de37e5d37d15028743356253d930629d4f856bf2648ff66a9e2a1e6d642ea"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/evidence/cleanup.json",
+          "sha256": "163b483bcf62584c85f8caee387888c29449f73ee19d6a02392d56813a3b751d"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/tests/system/protocol-boundaries.spec.ts",
+          "sha256": "56ec359ef23e9fe05d4aaf2b80c892c7659919f1cec8fbc809f969a555cbc4af"
+        }
+      ],
+      "finalRawStatusVerified": "BLOCKED"
+    },
+    {
+      "caseId": "REC-007",
+      "rawStatus": "FAIL",
+      "rawError": "Error: Condition not reached: /api/agent-runs/2e0c1137-516f-449d-901b-fbfa255a2b20; last={\"id\":\"2e0c1137-516f-449d-901b-fbfa255a2b20\",\"groupId\":\"08401deb-2846-42e2-a76c-91266a4ca998\",\"status\":\"running\",\"endReason\":null,\"summary\":null,\"recoveryNote\":\"A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.\",\"steps\":[{\"ordinal\":1,\"kind\":\"tool_use\",\"toolUseId\":\"recover-kick\",\"name\":\"kick_user\",\"input\":{\"reason\":\"recovery\",\"platform_user_id\":\"recover-kick-target\"},\"resultSummary\":\"\",\"isError\":false,\"errorCode\":null,\"auditVerdict\":\"pass\",\"rawResponse\":\"{\\\"stop_reason\\\":\\\"tool_use\\\",\\\"content\\\":[{\\\"type\\\":\\\"tool_use\\\",\\\"id\\\":\\\"recover-kick\\\",\\\"name\\\":\\\"kick_user\\\",\\\"input\\\":{\\\"platform_user_id\\\":\\\"recover-kick-target\\\",\\\"reason\\\":\\\"recovery\\\"}}]}\"}]}",
+      "triagedStatus": "FAIL",
+      "classification": "KICK_RESULT_UNKNOWN_RECOVERY_PAUSED",
+      "suggestedSeverity": "S1",
+      "consoleEvidence": {
+        "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/integration/20261001-final-candidate/full-business-console.log",
+        "observedAt": "2026-10-01T07:32:53.828Z",
+        "wholeFileHashPendingRunCompletion": false,
+        "lines": [
+          {
+            "line": 209,
+            "text": "  ✘  176 [system] › tests/system/recovery.spec.ts:407:1 › [REC-007] agent restart after kick effect uses membership reconciliation without repeating kick (32.3s)"
+          }
+        ],
+        "wholeFileSha256": "532f9df56cb381093e712ad318f55ec59d89b49c9226c797a36b13afaf9a7e45"
+      },
+      "requirements": [
+        "A5.8"
+      ],
+      "facts": {
+        "firstRecoveryPauseResponse": {
+          "at": "2026-10-01T07:23:34.435Z",
+          "body": {
+            "id": "2e0c1137-516f-449d-901b-fbfa255a2b20",
+            "groupId": "08401deb-2846-42e2-a76c-91266a4ca998",
+            "status": "running",
+            "endReason": null,
+            "summary": null,
+            "recoveryNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
+            "steps": [
+              {
+                "ordinal": 1,
+                "kind": "tool_use",
+                "toolUseId": "recover-kick",
+                "name": "kick_user",
+                "input": {
+                  "reason": "recovery",
+                  "platform_user_id": "recover-kick-target"
+                },
+                "resultSummary": "",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": "pass",
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"recover-kick\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"recover-kick-target\",\"reason\":\"recovery\"}}]}"
+              }
+            ]
+          }
+        },
+        "lastRecoveryPauseResponse": {
+          "at": "2026-10-01T07:24:04.423Z",
+          "body": {
+            "id": "2e0c1137-516f-449d-901b-fbfa255a2b20",
+            "groupId": "08401deb-2846-42e2-a76c-91266a4ca998",
+            "status": "running",
+            "endReason": null,
+            "summary": null,
+            "recoveryNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
+            "steps": [
+              {
+                "ordinal": 1,
+                "kind": "tool_use",
+                "toolUseId": "recover-kick",
+                "name": "kick_user",
+                "input": {
+                  "reason": "recovery",
+                  "platform_user_id": "recover-kick-target"
+                },
+                "resultSummary": "",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": "pass",
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"recover-kick\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"recover-kick-target\",\"reason\":\"recovery\"}}]}"
+              }
+            ]
+          }
+        },
+        "recoveryPauseResponseCount": 527,
+        "kickRequests": [
+          {
+            "id": 16,
+            "at": "2026-10-01T07:23:33.967Z",
+            "method": "POST",
+            "path": "/groups/gateway-group-1/kick",
+            "body": {
+              "byAccountId": "account-2",
+              "targetPlatformUserId": "recover-kick-target"
+            },
+            "responsePreparedAt": "2026-10-01T07:23:33.967Z",
+            "preparedResponseStatus": 200,
+            "responseClosedAt": "2026-10-01T07:23:33.975Z",
+            "responseClosedBeforeFinish": true,
+            "responseStatus": 200,
+            "completedAt": "2026-10-01T07:23:34.975Z"
+          }
+        ],
+        "kickEffects": [
+          {
+            "at": "2026-10-01T07:23:33.967Z",
+            "kind": "kick",
+            "accountId": "account-2",
+            "groupId": "gateway-group-1",
+            "platformUserId": "recover-kick-target"
+          }
+        ],
+        "finalRemoteGroups": [
+          {
+            "groupId": "gateway-group-1",
+            "creatorAccountId": "account-1",
+            "writable": true,
+            "members": [
+              {
+                "platformUserId": "platform-account-1",
+                "role": "creator"
+              },
+              {
+                "platformUserId": "platform-account-2",
+                "role": "admin"
+              },
+              {
+                "platformUserId": "platform-account-3",
+                "role": "member"
+              }
+            ]
+          }
+        ],
+        "agentTurnCount": 1,
+        "kill": {
+          "at": "2026-10-01T07:23:33.971Z",
+          "pid": 40430
+        },
+        "cleanup": {
+          "completedAt": "2026-10-01T07:24:04.583Z",
+          "failures": []
+        }
+      },
+      "decision": "真实 kick 已移除目标，响应未保存时强杀；恢复后同 runId 持续返回明确未知 kick 的安全暂停说明，未从中断处正常结束。保留 FAIL，依据 A5.8 与公开暂停事实，而非 30 秒恢复 SLA。",
+      "attribution": "与 BLK-EXT-004 同类未知 kick 结果边界；本例不包含重入用户，不能据成员缺席推断所有情况下安全重放。",
+      "limits": [
+        "只有一次真实 kick，未观察重复；原步骤 isError=false，失败点是未正常续跑，不能写成工具被记失败。",
+        "REC-006 消息路径通过不消除 kick 路径差异。"
+      ],
+      "evidence": [
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/error-context.md",
+          "sha256": "2c9dfb850c46b8a3b3ee35a9dac37166c099fc4256833cb7161467dbddea9928"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence/api.ndjson",
+          "sha256": "78b46d3ab692e8c07ab772f1d3df9bbef9740015e5bb471ec89a2fe7c4692b91"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence/external-facts.json",
+          "sha256": "02ea610c15f3e361fedaad7b7fa2dfae8a753742a481c803ee0693e4af0ba580"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence/cleanup.json",
+          "sha256": "121d0bd540af0ec8af57ade2c885b5dff77af1882300ef0d8eabdf34e1ab3de6"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence/kill-1790839413971.json",
+          "sha256": "78ed882cd1e7f33809068261e573b660e274a7fdfa4fefff8be3b3397ee90156"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/tests/system/recovery.spec.ts",
+          "sha256": "4c3d39d1ac48df9c6f46b4f4e642507fc0df838a8de8b8de2dd9df7a5a97b2e6"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-delivery-reproduction/kapibala/docs/acceptance.md",
+          "sha256": "fc84df5acf3553a02684846d17d0b11a2cf8f35d87b0988b844eccf10a98032a"
+        },
+        {
+          "path": "/Users/zcm/.codex/worktrees/qa-delivery-reproduction/kapibala/docs/original-interview-question.md",
+          "sha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75"
+        }
+      ],
+      "finalRawStatusVerified": "FAIL",
+      "initialSuggestedSeverity": "P1"
+    }
+  ],
+  "relatedContext": {
+    "INT_MSG_008": {
+      "basis": "独立只读检查receipt-window-after-restart.json：已提交receiptObservedAt=07:18:05.406Z，恢复首步sentAt相同，后步25.406Z在独立firstReceipt区间+20秒内；主任务通知原用例PASS。不能据008覆盖007保存前窗口。"
+    },
+    "INT_MSG_001_to_006": "主任务通知当前PASS，本次未重复逐例复核，不继承为INT-MSG007通过。",
+    "runtimeAndExternal": "11条已完成原始与审定复核，正式runner结束及6项manual录入已确认。"
+  },
+  "reviewScope": "只读既有正式运行证据与最终候选公开需求/交付说明；没有运行新产品测试，没有改写任何 raw 状态。",
+  "sourceDocuments": [
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-delivery-reproduction/kapibala/docs/original-interview-question.md",
+      "sha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-delivery-reproduction/kapibala/docs/decisions.md",
+      "sha256": "e4189c2af1c3933346ac5d296d7ac6dd954f8c4785cc29cae9faef870c5cfa6f"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-delivery-reproduction/kapibala/docs/acceptance.md",
+      "sha256": "fc84df5acf3553a02684846d17d0b11a2cf8f35d87b0988b844eccf10a98032a"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-delivery-reproduction/kapibala/docs/qa-activity-witness-20261001.md",
+      "sha256": "a46083f6b5036fcacd4cd28042e3c55433707e89f0fec0f21e8ca3258231f941"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/contracts/runtime-observation.md",
+      "sha256": "29cbae987899132603201fdba9874a752d0f5237a2ab7cbb8d15cad7d88497e3"
+    }
+  ],
+  "summary": {
+    "caseCount": 11,
+    "raw": {
+      "FAIL": 2,
+      "BLOCKED": 6,
+      "PASS": 3
+    },
+    "adjudicated": {
+      "FAIL": 6,
+      "BLOCKED": 2,
+      "PASS": 3
+    },
+    "note": "本复核11条子集，原始状态与已结束正式results逐项一致；后续纠正子集由主任务独立记录。"
+  },
+  "reclassificationPolicy": "明确公开恢复暂停违反原强恢复要求时，保留原始 BLOCKED 并独立审定 FAIL；仅有限观察不足维持 BLOCKED。",
+  "runExecutionComplete": true,
+  "finalAcceptanceAggregationComplete": false,
+  "runExecutionStatusSource": "主任务已收到完整自动 run 进程退出1；本报告没有代替完整自动/人工报告聚合。",
+  "updatedAt": "2026-10-01T07:45:32.055Z",
+  "qaIdentity": {
+    "gitBase": "f63b3e3b2b4f6e84b145dc03e724c0da03a4acdc",
+    "gitDirty": true,
+    "assetCommit": "c529f31076f9c645b5b1b04a2184e641c81b031b",
+    "frozenTreeSha256": "fb50f282f910d462545601e835db8fb10288c9c40718a4d5e0d0659f720fcb11",
+    "frozenFileCount": 196,
+    "assetCommitMatchingFiles": 195,
+    "localUncommittedFiles": [
+      {
+        "path": "config/preflight-authorization.local.json",
+        "sha256": "13baf6a171e4747871c3f9fc94aaaee5fd0f84d54a08fe319b58106549079db6"
+      }
+    ],
+    "mismatches": [],
+    "verifiedAt": "2026-10-01T07:45:32.055Z",
+    "meaning": "195份冻结QA资产与c529提交逐字节一致；另1份执行本地授权文件不在该提交。196文件整体由qaTree SHA绑定；执行checkout确为f63基点+dirty。"
+  },
+  "rawResultAggregationComplete": true,
+  "fullRunCompleteMeaning": "正式自动runner结束且6项人工结果已录入；不表示验收通过或后续QA纠正复测结束。",
+  "finalRunner": {
+    "runnerStatus": "failed",
+    "runnerErrors": [],
+    "completedAt": "2026-10-01T07:32:54.100Z"
+  },
+  "finalSourceEvidence": [
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/results.json",
+      "sha256": "958eafd4680b30c15c9ec4f332d088b54d50fe267005e2ebb464250dac532e57"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/runner-summary.json",
+      "sha256": "cf043adf6d1679e451e8ccb843ae9b13cf28724f70b921a0b75faf00dc04f6aa"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/events.json",
+      "sha256": "219f26524254353c304d99d534f223a5873123bb89ec900e203da999f92d4544"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/runs/2026-10-01T06-54-18.519Z-a1e23916/manifest.json",
+      "sha256": "80e53b918b20f775e9435912af923dfd95aa746ac9e3ed810344d251d3d31981"
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-business-final/kapibala/qa-acceptance/reports/integration/20261001-final-candidate/full-business-console.log",
+      "sha256": "532f9df56cb381093e712ad318f55ec59d89b49c9226c797a36b13afaf9a7e45"
+    }
+  ],
+  "finalRawStatusCrossCheck": "All 11 reviewed cases match final results.json; no raw event or status was rewritten.",
+  "reportSeverityNormalization": "最终报告S2用于排期偏移，S1用于核心流程明确暂停；旧P1初始建议另存，非验收优先级。"
+}

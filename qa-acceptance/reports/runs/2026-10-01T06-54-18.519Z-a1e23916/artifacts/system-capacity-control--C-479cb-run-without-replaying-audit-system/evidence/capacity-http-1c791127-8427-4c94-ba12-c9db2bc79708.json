@@ -1,0 +1,65 @@
+{
+  "method": "GET",
+  "path": "/qa/capacity/v1/leases/c3b84947-04be-4cb1-ad39-aab78d26f2a2",
+  "status": 200,
+  "response": {
+    "protocol": "qa-capacity-control/1",
+    "leaseId": "c3b84947-04be-4cb1-ad39-aab78d26f2a2",
+    "state": "held",
+    "expiresAt": "2026-10-01T07:19:02.988Z",
+    "binding": {
+      "apiUrl": "http://127.0.0.1:56543",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "pid": 2653,
+      "observedOwnerToken": "[REDACTED]"
+    },
+    "correlation": {
+      "groupId": "78d63d04-5759-4815-acd4-f2ac4096f7a9",
+      "runId": "8c33f7e6-6ab2-49e7-96ba-df34199f08ff",
+      "toolUseId": "qa-kick-capacity-before-ready-crash"
+    },
+    "events": [
+      {
+        "groupId": "78d63d04-5759-4815-acd4-f2ac4096f7a9",
+        "runId": "8c33f7e6-6ab2-49e7-96ba-df34199f08ff",
+        "toolUseId": "qa-kick-capacity-before-ready-crash",
+        "seq": 1,
+        "at": "2026-10-01T07:17:33.006Z",
+        "kind": "capacity-held",
+        "holderKeys": [
+          "qa-capacity:d16144a8-744e-4736-94de-88c2bb48aade:c3b84947-04be-4cb1-ad39-aab78d26f2a2:0",
+          "qa-capacity:d16144a8-744e-4736-94de-88c2bb48aade:c3b84947-04be-4cb1-ad39-aab78d26f2a2:1",
+          "qa-capacity:d16144a8-744e-4736-94de-88c2bb48aade:c3b84947-04be-4cb1-ad39-aab78d26f2a2:2",
+          "qa-capacity:d16144a8-744e-4736-94de-88c2bb48aade:c3b84947-04be-4cb1-ad39-aab78d26f2a2:3",
+          "qa-capacity:d16144a8-744e-4736-94de-88c2bb48aade:c3b84947-04be-4cb1-ad39-aab78d26f2a2:4",
+          "qa-capacity:d16144a8-744e-4736-94de-88c2bb48aade:c3b84947-04be-4cb1-ad39-aab78d26f2a2:5",
+          "qa-capacity:d16144a8-744e-4736-94de-88c2bb48aade:c3b84947-04be-4cb1-ad39-aab78d26f2a2:6"
+        ]
+      },
+      {
+        "groupId": "78d63d04-5759-4815-acd4-f2ac4096f7a9",
+        "runId": "8c33f7e6-6ab2-49e7-96ba-df34199f08ff",
+        "toolUseId": "qa-kick-capacity-before-ready-crash",
+        "seq": 2,
+        "at": "2026-10-01T07:17:33.020Z",
+        "kind": "admission-refused",
+        "attemptId": "f876c177-4543-42aa-922b-f8340184791a",
+        "reason": "capacity",
+        "callbackEntered": false,
+        "remoteRequestCount": 0
+      },
+      {
+        "groupId": "78d63d04-5759-4815-acd4-f2ac4096f7a9",
+        "runId": "8c33f7e6-6ab2-49e7-96ba-df34199f08ff",
+        "toolUseId": "qa-kick-capacity-before-ready-crash",
+        "seq": 3,
+        "at": "2026-10-01T07:17:33.020Z",
+        "kind": "before-ready-held",
+        "attemptId": "f876c177-4543-42aa-922b-f8340184791a",
+        "reason": "capacity",
+        "callbackEntered": false,
+        "remoteRequestCount": 0
+      }
+    ]
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "method": "GET",
+  "path": "/qa/runtime/v1/leases/b5fd9366-75c6-4da5-87fa-45ce073b9ba9",
+  "status": 200,
+  "response": {
+    "protocol": "qa-runtime-observation/1",
+    "leaseId": "b5fd9366-75c6-4da5-87fa-45ce073b9ba9",
+    "state": "armed",
+    "expiresAt": "2026-10-01T07:22:03.988Z",
+    "binding": {
+      "apiUrl": "http://127.0.0.1:57670",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "pid": 19399,
+      "observedOwnerToken": "[REDACTED]"
+    },
+    "correlation": {
+      "kind": "account",
+      "accountId": "account-1",
+      "operation": "connect",
+      "intentId": "7e2c04e4-cb4e-4025-af9b-096953b34ea5"
+    },
+    "events": [
+      {
+        "seq": 1,
+        "at": "2026-10-01T07:20:14.080Z",
+        "kind": "remote-success",
+        "correlation": {
+          "kind": "account",
+          "accountId": "account-1",
+          "operation": "connect",
+          "intentId": "7e2c04e4-cb4e-4025-af9b-096953b34ea5"
+        },
+        "attemptId": "389e2c68-a40e-4979-8241-b287f9a9a974",
+        "instancePid": 19399,
+        "requestId": "77a7a34b-93c1-43b8-9abd-0b185ba5f4f1",
+        "transactionId": "c431dbf2-3e1d-49ca-bde8-131f3cf36c70"
+      },
+      {
+        "seq": 2,
+        "at": "2026-10-01T07:20:14.083Z",
+        "kind": "local-save-failed",
+        "correlation": {
+          "kind": "account",
+          "accountId": "account-1",
+          "operation": "connect",
+          "intentId": "7e2c04e4-cb4e-4025-af9b-096953b34ea5"
+        },
+        "attemptId": "389e2c68-a40e-4979-8241-b287f9a9a974",
+        "instancePid": 19399,
+        "requestId": "77a7a34b-93c1-43b8-9abd-0b185ba5f4f1",
+        "transactionId": "c431dbf2-3e1d-49ca-bde8-131f3cf36c70",
+        "recoverableInOriginalTransaction": true
+      },
+      {
+        "seq": 3,
+        "at": "2026-10-01T07:20:14.083Z",
+        "kind": "local-retry-held",
+        "correlation": {
+          "kind": "account",
+          "accountId": "account-1",
+          "operation": "connect",
+          "intentId": "7e2c04e4-cb4e-4025-af9b-096953b34ea5"
+        },
+        "attemptId": "389e2c68-a40e-4979-8241-b287f9a9a974",
+        "instancePid": 19399,
+        "requestId": "77a7a34b-93c1-43b8-9abd-0b185ba5f4f1",
+        "transactionId": "c431dbf2-3e1d-49ca-bde8-131f3cf36c70"
+      },
+      {
+        "seq": 4,
+        "at": "2026-10-01T07:20:14.130Z",
+        "kind": "newer-account-intent-waiting",
+        "correlation": {
+          "kind": "account",
+          "accountId": "account-1",
+          "operation": "connect",
+          "intentId": "7e2c04e4-cb4e-4025-af9b-096953b34ea5"
+        },
+        "attemptId": "389e2c68-a40e-4979-8241-b287f9a9a974",
+        "instancePid": 19399,
+        "requestId": "77a7a34b-93c1-43b8-9abd-0b185ba5f4f1",
+        "transactionId": "c431dbf2-3e1d-49ca-bde8-131f3cf36c70",
+        "waitingIntent": {
+          "requestId": "0272373c-e078-4efb-9301-8c7d9809e6b3",
+          "accountId": "account-1",
+          "expectedFrom": "online",
+          "to": "disconnected",
+          "waitingForTransactionId": "c431dbf2-3e1d-49ca-bde8-131f3cf36c70"
+        }
+      },
+      {
+        "seq": 5,
+        "at": "2026-10-01T07:20:14.201Z",
+        "kind": "local-save-committed",
+        "correlation": {
+          "kind": "account",
+          "accountId": "account-1",
+          "operation": "connect",
+          "intentId": "7e2c04e4-cb4e-4025-af9b-096953b34ea5"
+        },
+        "attemptId": "389e2c68-a40e-4979-8241-b287f9a9a974",
+        "instancePid": 19399,
+        "requestId": "77a7a34b-93c1-43b8-9abd-0b185ba5f4f1",
+        "transactionId": "c431dbf2-3e1d-49ca-bde8-131f3cf36c70",
+        "commitBoundary": "outer-commit-confirmed"
+      }
+    ]
+  }
+}

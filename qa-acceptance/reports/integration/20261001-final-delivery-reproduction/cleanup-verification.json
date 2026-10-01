@@ -1,0 +1,65 @@
+{
+  "startedAt": "2026-10-01T07:01:48.663Z",
+  "runnerPid": 32254,
+  "correction": "Original cleanup script sent SIGINT after matching owner process, engine and resource labels. Docker returned lowercase no such object; an overly strict QA regex failed. Original script remains unchanged. This read-only verification checks absence and never repeats cleanup.",
+  "launcherExitCode": 0,
+  "signal": {
+    "name": "SIGINT",
+    "ownerPid": 23595
+  },
+  "checks": [
+    {
+      "ownerAbsent": true
+    },
+    {
+      "resource": "container",
+      "command": [
+        "docker",
+        "inspect",
+        "b2d201bee108ba9aac879cdf474a9e5926be833f9d6d53ba66183343bad4dab1"
+      ],
+      "exitCode": 1,
+      "error": "error: no such object: b2d201bee108ba9aac879cdf474a9e5926be833f9d6d53ba66183343bad4dab1",
+      "absent": true
+    },
+    {
+      "resource": "volume",
+      "command": [
+        "docker",
+        "volume",
+        "inspect",
+        "kapibala-local-fa0b645c-3367-4913-af47-7db8a5bd37f8-data"
+      ],
+      "exitCode": 1,
+      "error": "Error response from daemon: get kapibala-local-fa0b645c-3367-4913-af47-7db8a5bd37f8-data: no such volume",
+      "absent": true
+    },
+    {
+      "directory": "/private/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-local-fa0b645c-3367-4913-af47-7db8a5bd37f8",
+      "absent": true
+    },
+    {
+      "service": "api",
+      "port": 51062,
+      "closed": true
+    },
+    {
+      "service": "web",
+      "port": 51066,
+      "closed": true
+    },
+    {
+      "service": "gateway",
+      "port": 51057,
+      "closed": true
+    },
+    {
+      "service": "agent",
+      "port": 51058,
+      "closed": true
+    }
+  ],
+  "finalStatus": "",
+  "status": "PASS",
+  "finishedAt": "2026-10-01T07:01:48.718Z"
+}

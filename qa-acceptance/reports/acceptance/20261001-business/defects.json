@@ -1,0 +1,102 @@
+{
+  "asOf": "2026-10-01T08:03:18.604689+00:00",
+  "baselineRevision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+  "severityDefinition": {
+    "S1": "核心流程无法按原恢复承诺自动完成，需要补协议/修复或明确接受差异；本等级不等于安全漏洞或已发生数据丢失",
+    "S2": "公开规则或严格边界不符合，已观察影响有限；仍阻止无条件验收通过"
+  },
+  "defects": [
+    {
+      "id": "QA-DEF-001",
+      "caseIds": [
+        "BLK-SPEC-006"
+      ],
+      "severity": "S2",
+      "title": "资料写入长度未按公开UTF-16单元校验",
+      "observed": "86ad及0af曾接受41个emoji（82 UTF-16单元）名称，应400；a6b修复后独立API7/7、Chromium4/4通过，原失败完整保留。",
+      "state": "CLOSED_BY_INDEPENDENT_FOCUSED_RETEST",
+      "fixRevision": "a6b14e73ec738b979b05510fdfac8c6fcbb09df7",
+      "evidenceReview": "triage-original-remaining.md",
+      "retestEvidence": "../../integration/20261001-utf16-retest-schema-correction/result-summary.md"
+    },
+    {
+      "id": "QA-DEF-002",
+      "caseIds": [
+        "CAP-003"
+      ],
+      "severity": "S2",
+      "title": "持续容量拒绝的活动时间超过严格60秒",
+      "observed": "无崩溃活动区间[60010,60112]ms，下界已超60000；零kick，未观察额外副作用。",
+      "state": "OPEN_REQUIREMENT_NOT_MET",
+      "fixRevision": null,
+      "evidenceReview": "triage-final-timing.md"
+    },
+    {
+      "id": "QA-DEF-003",
+      "caseIds": [
+        "INT-MSG-007"
+      ],
+      "severity": "S2",
+      "title": "首次接收尚未落盘崩溃导致后步排期原点后移",
+      "observed": "重启和重放早于原到期；公开scheduledAt较首次接收区间最晚上界+20秒晚2305ms。未等第二步实际发送，不能夸大成已实测晚发或重复副作用。",
+      "state": "OPEN_REQUIREMENT_NOT_MET",
+      "fixRevision": null,
+      "evidenceReview": "triage-final-recovery.md"
+    },
+    {
+      "id": "QA-DEF-004",
+      "caseIds": [
+        "BLK-EXT-002"
+      ],
+      "severity": "S1",
+      "title": "建群远端成功而本地未获结果后明确暂停",
+      "observed": "公开job recoveryNote明确不自动重建/恢复，未满足原重启续跑；本次不是仅20秒等待失败。",
+      "state": "OPEN_PROTOCOL_BOUNDARY",
+      "fixRevision": null,
+      "evidenceReview": "triage-final-recovery.md"
+    },
+    {
+      "id": "QA-DEF-005",
+      "caseIds": [
+        "BLK-EXT-003"
+      ],
+      "severity": "S1",
+      "title": "提权成功响应丢失后明确暂停",
+      "observed": "公开job recoveryNote明确不自动重试，未正常完成原任务；不要求研发盲重放越过次数边界。",
+      "state": "OPEN_PROTOCOL_BOUNDARY",
+      "fixRevision": null,
+      "evidenceReview": "triage-final-recovery.md"
+    },
+    {
+      "id": "QA-DEF-006",
+      "caseIds": [
+        "BLK-EXT-004",
+        "REC-007"
+      ],
+      "severity": "S1",
+      "title": "移除成员外部效果未知时Agent明确暂停",
+      "observed": "同run公开recoveryNote停止自动恢复；违背原正常续跑保证。没有把有限测试写成任意重入窗口或重复效果已实证。",
+      "state": "OPEN_PROTOCOL_BOUNDARY",
+      "fixRevision": null,
+      "evidenceReview": "triage-final-recovery.md"
+    },
+    {
+      "id": "QA-DEF-007",
+      "caseIds": [
+        "BLK-EXT-005"
+      ],
+      "severity": "S1",
+      "title": "模型轮次结果丢失后的Agent明确暂停",
+      "observed": "失败依据为未正常续跑，非要求从未执行的模型响应必须逐字一致。",
+      "state": "OPEN_PROTOCOL_BOUNDARY",
+      "fixRevision": null,
+      "evidenceReview": "triage-final-recovery.md"
+    }
+  ],
+  "notes": [
+    "原始8条FAIL不是8个已确认产品缺陷；QA场景错误单列复测。",
+    "4项原始BLOCKED经公开明确暂停事实审定FAIL，原始文件不修改。",
+    "缺陷根因去重只用于本清单，不改变按用例/项目统计。"
+  ],
+  "reportState": "ISSUED"
+}

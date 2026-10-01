@@ -1,0 +1,1599 @@
+{
+  "formatVersion": 1,
+  "reviewedAt": "2026-10-01T07:38:23.041Z",
+  "reviewer": "AI QA 独立接收核查与隔离定向复测",
+  "scope": "UTF-16资料长度修复补充复测；通过developer-preflight子集入口记录，不是新版本全量业务验收或上线结论。",
+  "sut": {
+    "cwd": "/Users/zcm/.codex/worktrees/qa-profile-retest/kapibala",
+    "revision": "a6b14e73ec738b979b05510fdfac8c6fcbb09df7",
+    "dirtyState": ""
+  },
+  "qa": {
+    "revision": "c529f31076f9c645b5b1b04a2184e641c81b031b",
+    "sourceSha256": "0ddf161e203b71969885cd5db684574b0376d6325a0b9f10ced7fb5f5606acc2",
+    "authoredFiles": 199,
+    "sourceArchive": {
+      "path": "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/integration/20261001-utf16-retest-schema-correction/qa-authored-source.tar.gz",
+      "sha256": "2a262859df5e55754593c4de6f8cce052a1d5f6f1e046e50e74fcd781ebac7b1"
+    }
+  },
+  "targetSha256": "536f47fdab2f4271558ed30309628f730d212f0eeff04587cacc1d8b3cd15653",
+  "authorization": {
+    "origin": "原2026-10-01T05:55:15.000Z用户全权隔离执行/修复复测授权",
+    "note": "复用真实授权依据，只重绑精确SUT、target和suite；没有新增伪造批准。"
+  },
+  "conclusion": {
+    "selectedCases": 11,
+    "latestSupplementaryCounts": {
+      "PASS": 11,
+      "FAIL": 0,
+      "BLOCKED": 0,
+      "NOT_RUN": 0
+    },
+    "apiPassed": 7,
+    "uiPassed": 4,
+    "formalBusinessVerdict": "NOT_ISSUED_FOR_THIS_SUBSET",
+    "releaseReadiness": "NOT_ASSESSED",
+    "originalFailurePreserved": true,
+    "note": "每个修正后run内均首次attempt=0；API初run的QA错误仍保留6PASS/1FAIL，不能宣称整个历史从未失败。"
+  },
+  "qaCorrection": {
+    "cause": "SPEC006两处内联默认Ajv不支持声明的2020-12；先前Agent桩方言修复遗漏内联校验点。",
+    "files": [
+      "contracts/declared-json-schema.ts",
+      "tests/self/declared-json-schema.test.ts",
+      "tests/system/spec-boundaries.spec.ts",
+      "requirements/qa-correction-spec006-schema-dialect-20261001.md"
+    ],
+    "validation": "三个独立schema工具自测与typecheck通过；不导入产品schema，不修改输入、数字或字节预期。",
+    "firstRunPartial": "首run资料UTF-16边界和limit100000/50条查询已执行；在编译合法声明schema时失败，0/-1/1.5和后续字节上限当时未执行。",
+    "correctedRun": "第二APIrun执行SPEC006全部后半段并PASS；独立schema0/-1/1.5、消息顺序/50条上限、2KB原始响应、8KB工具结果、200字符摘要证据完整。Unicode兼容观察仍仅为OBSERVATION_ONLY。"
+  },
+  "runs": [
+    {
+      "runId": "2026-10-01T07-28-49.319Z-ac58f612",
+      "path": "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612",
+      "phase": "developer-preflight",
+      "suiteId": "utf16-remediation-api-20261001",
+      "suiteSha256": "a9fb2bde8f31a94422f535a5fe04ae991a7a6eda919cf956e4d5573c81115b70",
+      "sutRevision": "a6b14e73ec738b979b05510fdfac8c6fcbb09df7",
+      "targetSha256": "536f47fdab2f4271558ed30309628f730d212f0eeff04587cacc1d8b3cd15653",
+      "qaSourceSha256": "6fa8116946d650d72e6d9f89af0cb3e1cf905f3e2a06dcd84308d0f933629df7",
+      "startedAt": "2026-10-01T07:28:49.352Z",
+      "runner": {
+        "runnerStatus": "failed",
+        "runnerErrors": [],
+        "completedAt": "2026-10-01T07:29:05.054Z"
+      },
+      "verdict": "FAIL",
+      "counts": {
+        "PASS": 6,
+        "FAIL": 1,
+        "BLOCKED": 0,
+        "NOT_RUN": 0
+      },
+      "results": [
+        {
+          "id": "BLK-SPEC-006",
+          "status": "FAIL",
+          "reason": "Error: no schema with key or ref \"https://json-schema.org/draft/2020-12/schema\"",
+          "durationMs": 2950,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence",
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/error-context.md",
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/trace.zip"
+          ],
+          "defectId": "DEF-BLK-SPEC-006"
+        },
+        {
+          "id": "EXT-001",
+          "status": "PASS",
+          "durationMs": 2316,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence"
+          ]
+        },
+        {
+          "id": "EXT-002",
+          "status": "PASS",
+          "durationMs": 1700,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence"
+          ]
+        },
+        {
+          "id": "EXT-008",
+          "status": "PASS",
+          "durationMs": 1564,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence"
+          ]
+        },
+        {
+          "id": "EXT-009",
+          "status": "PASS",
+          "durationMs": 1721,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence"
+          ]
+        },
+        {
+          "id": "EXT-010",
+          "status": "PASS",
+          "durationMs": 1574,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence"
+          ]
+        },
+        {
+          "id": "EXT-012",
+          "status": "PASS",
+          "durationMs": 2161,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence"
+          ]
+        }
+      ],
+      "attempts": [
+        {
+          "id": "EXT-001",
+          "status": "PASS",
+          "project": "system",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:28:49.958Z",
+          "completedAt": "2026-10-01T07:28:52.274Z"
+        },
+        {
+          "id": "EXT-002",
+          "status": "PASS",
+          "project": "system",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:28:53.106Z",
+          "completedAt": "2026-10-01T07:28:54.806Z"
+        },
+        {
+          "id": "EXT-008",
+          "status": "PASS",
+          "project": "system",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:28:54.812Z",
+          "completedAt": "2026-10-01T07:28:56.376Z"
+        },
+        {
+          "id": "EXT-009",
+          "status": "PASS",
+          "project": "system",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:28:56.380Z",
+          "completedAt": "2026-10-01T07:28:58.101Z"
+        },
+        {
+          "id": "EXT-010",
+          "status": "PASS",
+          "project": "system",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:28:58.105Z",
+          "completedAt": "2026-10-01T07:28:59.679Z"
+        },
+        {
+          "id": "EXT-012",
+          "status": "PASS",
+          "project": "system",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:28:59.682Z",
+          "completedAt": "2026-10-01T07:29:01.843Z"
+        },
+        {
+          "id": "BLK-SPEC-006",
+          "status": "FAIL",
+          "project": "system",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:29:01.871Z",
+          "completedAt": "2026-10-01T07:29:04.821Z"
+        }
+      ],
+      "integrity": [],
+      "cleanup": [
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence/cleanup.json",
+          "sha256": "c5964c4b9e0632303e782bf998ccd313ccfa0ea96afbbcc81267faa0c8f44193",
+          "completedAt": "2026-10-01T07:28:53.103Z",
+          "failures": []
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence/cleanup.json",
+          "sha256": "9fedf1a042d40621aed54ada77249f46be3152ebf661b06ed302f1069e84fac8",
+          "completedAt": "2026-10-01T07:28:54.810Z",
+          "failures": []
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence/cleanup.json",
+          "sha256": "1ef63030cf6632b57b6c96ba2c2a04313ed78b85fe74c392be31982bb02c3e13",
+          "completedAt": "2026-10-01T07:28:56.378Z",
+          "failures": []
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence/cleanup.json",
+          "sha256": "7c03aa56061f5b6eb4f21985d7500d39ea5f7c92f01770c765ed652ba9425582",
+          "completedAt": "2026-10-01T07:28:58.103Z",
+          "failures": []
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence/cleanup.json",
+          "sha256": "b5ff1e9234cde6fdd00f58f7c672d432eacd32032692013386f903e798281386",
+          "completedAt": "2026-10-01T07:28:59.680Z",
+          "failures": []
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/cleanup.json",
+          "sha256": "b3aba590c05a26d7cc3bd1436138690547e542c40fe0617c3e6edaf3f2af3678",
+          "completedAt": "2026-10-01T07:29:01.846Z",
+          "failures": []
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/cleanup.json",
+          "sha256": "7dd66c5f676085acd6d8964ddba59763f80c4fdc8a838f4e10e16e5368245d62",
+          "completedAt": "2026-10-01T07:29:04.823Z",
+          "failures": []
+        }
+      ],
+      "raw": [
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/manifest.json",
+          "sha256": "815d36845799b76886dffe0565808250b7ec65598776bafedb129d291b4d2242"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/results.json",
+          "sha256": "19b8a0e3675a34ddc745a1af062b0627420bd728f1eb753795d327c0cfddd200"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/events.json",
+          "sha256": "079276fb9d36f7de321ae32fb6c3362783b0c84d0c04a83a404f4ff2debc996b"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/runner-summary.json",
+          "sha256": "bf6f22c0e6515bbe7819f9a50d35b4b09c1e17f2a3f291478e3af895b0aa7971"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/playwright.json",
+          "sha256": "d1afb2ad390df701fb8cd1e8f24ff688406bd9ed61a08d4b7dea7defcfa23cdc"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/junit.xml",
+          "sha256": "f867bdc90ed9ec739252705f9020eb87df1e7f3996487f2c1a10214cddefdeef"
+        }
+      ],
+      "allRawFiles": [
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/acceptance.md",
+          "bytes": 132658,
+          "sha256": "0d02ff9641e24a8c3d3206cb24a826ced564be4894c6013272819e852a46a09f"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/.last-run.json",
+          "bytes": 96,
+          "sha256": "ea4273715c7784a9a08b8c74107075309ddd5449d3e0917ec97f908aa1a7e1e3"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence/api.ndjson",
+          "bytes": 44996,
+          "sha256": "585a99508ddde98448b92f6f258c154aa80523f4ebec1b7a7c5620f5a4778af5"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "c5964c4b9e0632303e782bf998ccd313ccfa0ea96afbbcc81267faa0c8f44193"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "6cf99323601b40a4c06d7c8f41d86b58a85f38ad328c37987956292e5503d9d8"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence/external-facts.json",
+          "bytes": 11179,
+          "sha256": "07c17b5e06e50984a049bd0f3cdc757d0f648ca36e5a1a2aa10236b04d80017d"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence/server.log",
+          "bytes": 20033,
+          "sha256": "a9770f1706c0b28700dd1fbea512e6e77220836f5e76f2595965002b341f07f7"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence/api.ndjson",
+          "bytes": 41214,
+          "sha256": "724d24478546b987de009788ecbf27a3c8059e9f65c8706ab47359797bc18016"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "9fedf1a042d40621aed54ada77249f46be3152ebf661b06ed302f1069e84fac8"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "03a383d6a925fe0e849a248e475ea00bb6e326966502cf7371808dff91659a4d"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence/external-facts.json",
+          "bytes": 11179,
+          "sha256": "0751ca64b5fb5e0e900d59fa95f775a1867d42894c64563b157505641f9ccf04"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence/server.log",
+          "bytes": 18980,
+          "sha256": "0af38c8b2793cee3ee2fe69492af5467e81171616f4921d2b4ffc376d154c314"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence/api.ndjson",
+          "bytes": 43095,
+          "sha256": "e9c0fbd5041a18bea9f3ef588603198dd0274023f3bea7c9d6913a59ba00e1bc"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "1ef63030cf6632b57b6c96ba2c2a04313ed78b85fe74c392be31982bb02c3e13"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "4a66a1b3a580229c1a774dcf297d61888aff8a3b214d7277165664f0618cf67d"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence/external-facts.json",
+          "bytes": 11179,
+          "sha256": "fc6c10380bcc82a5748bae03a9ac6264c30e53ae2b05074d2f87da898f6eee96"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence/server.log",
+          "bytes": 19515,
+          "sha256": "4b6d9eae34c7b714e17e0c2dfae0c2541dc5e92003508a5db04e715605ee1bfa"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence/api.ndjson",
+          "bytes": 48128,
+          "sha256": "515a1ca0f1f01fc047c68f9be3ce35fc90d5e70a68c09428c38af9f3b4b321ae"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "7c03aa56061f5b6eb4f21985d7500d39ea5f7c92f01770c765ed652ba9425582"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "f398292c59ede88fce80245e6590bc26c8829492e4d903eca4a2dc14fd81d0df"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence/external-facts.json",
+          "bytes": 25489,
+          "sha256": "76be0ec94e5b5143a1326658b0e772eaa3831462b513710d497c0bf59ab794ac"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence/server.log",
+          "bytes": 21058,
+          "sha256": "f8a888174b09f749d275347fe6bf61fc6d28ccddb165645527e499deb0a15d1d"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence/api.ndjson",
+          "bytes": 45100,
+          "sha256": "beaa6afe1f2f6a0d74593711857b680ed4950145d430bd9659326d3fbc9bdb3c"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "b5ff1e9234cde6fdd00f58f7c672d432eacd32032692013386f903e798281386"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "708ed566c573da31d70d2f91665e08f284d0406b846a0bc12f8ac336c14fa6bd"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence/external-facts.json",
+          "bytes": 11179,
+          "sha256": "5cf84eb5a734b27b0d37d9ccf57f786f3ea9447347fe4d9b0c4075e27eefb369"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence/server.log",
+          "bytes": 20040,
+          "sha256": "21ec30fa6e2148bcac33c08b3e94bca969666ed248b17d9319280588f0f68111"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/api.ndjson",
+          "bytes": 41460,
+          "sha256": "8caf4d8a8abdba6ba4275fa22af0f0258d3e6e61d5fe5e8e6a28cd912029f867"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "b3aba590c05a26d7cc3bd1436138690547e542c40fe0617c3e6edaf3f2af3678"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "a625f4daaa0276e9d95bc4f07fffa6283643824e92ec4492032e8813001c2f60"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/external-facts.json",
+          "bytes": 11460,
+          "sha256": "e88d43c2190537dd46b0dbd32592c2b21e29346e36230f0ede97caee04d6cffb"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/kill-1790839741289.json",
+          "bytes": 54,
+          "sha256": "da5e821344a5d11ea73c37570b55598bbaab488dc0a528bdb5e4ec1514842558"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/server.log",
+          "bytes": 19584,
+          "sha256": "fa3ac280aa24e9259f6a4e296a700add2385d9b49580580c333ab4b8b5702f16"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/error-context.md",
+          "bytes": 10359,
+          "sha256": "9c74833c7d5161a5b51babc34b134c86fd5249fd159d75200c57c9c29ed8d16b"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/api.ndjson",
+          "bytes": 183238,
+          "sha256": "304aacb2c788498ead794eef2d428759340e10f7d09dbc26c38ad1536c12f5b8"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "7dd66c5f676085acd6d8964ddba59763f80c4fdc8a838f4e10e16e5368245d62"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "bf54b1fbdedb1dec8596b39d7453b7fcf2e795864ff7960d3358505c741f1337"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/external-facts.json",
+          "bytes": 68428,
+          "sha256": "1f53ff8f98eac7c3bbaf526ae318dc252044f1f30cfbf53ae1913da7e988a554"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/server.log",
+          "bytes": 46945,
+          "sha256": "a0357ed507191136ee2f2609f329c3bcf1100f5ad98774e9213815688762d363"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/spec006-profile-policy.json",
+          "bytes": 1046,
+          "sha256": "783e738bc7abf8eeb87b9f778ef04b2e728ccb9f064a1805ff03d58919452790"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/trace.zip",
+          "bytes": 17022,
+          "sha256": "71672cbda9fd02708f1119ce1466767c1c921308896f2ba9fbab2bd934b85326"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/events.json",
+          "bytes": 3796,
+          "sha256": "079276fb9d36f7de321ae32fb6c3362783b0c84d0c04a83a404f4ff2debc996b"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/junit.xml",
+          "bytes": 685,
+          "sha256": "f867bdc90ed9ec739252705f9020eb87df1e7f3996487f2c1a10214cddefdeef"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/manifest.json",
+          "bytes": 57580,
+          "sha256": "815d36845799b76886dffe0565808250b7ec65598776bafedb129d291b4d2242"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/playwright.json",
+          "bytes": 22134,
+          "sha256": "d1afb2ad390df701fb8cd1e8f24ff688406bd9ed61a08d4b7dea7defcfa23cdc"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/playwright.junit.xml",
+          "bytes": 5075,
+          "sha256": "4fad506cfc8e09c3afa28d8005b0064a0770200adb8e9823ff8672068c4009e7"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/results.json",
+          "bytes": 193481,
+          "sha256": "19b8a0e3675a34ddc745a1af062b0627420bd728f1eb753795d327c0cfddd200"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/runner-summary.json",
+          "bytes": 97,
+          "sha256": "bf6f22c0e6515bbe7819f9a50d35b4b09c1e17f2a3f291478e3af895b0aa7971"
+        }
+      ]
+    },
+    {
+      "runId": "2026-10-01T07-32-37.918Z-3b6efd96",
+      "path": "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96",
+      "phase": "developer-preflight",
+      "suiteId": "utf16-remediation-api-20261001",
+      "suiteSha256": "a9fb2bde8f31a94422f535a5fe04ae991a7a6eda919cf956e4d5573c81115b70",
+      "sutRevision": "a6b14e73ec738b979b05510fdfac8c6fcbb09df7",
+      "targetSha256": "536f47fdab2f4271558ed30309628f730d212f0eeff04587cacc1d8b3cd15653",
+      "qaSourceSha256": "0ddf161e203b71969885cd5db684574b0376d6325a0b9f10ced7fb5f5606acc2",
+      "startedAt": "2026-10-01T07:32:37.961Z",
+      "runner": {
+        "runnerStatus": "passed",
+        "runnerErrors": [],
+        "completedAt": "2026-10-01T07:32:59.752Z"
+      },
+      "verdict": "PASS",
+      "counts": {
+        "PASS": 7,
+        "FAIL": 0,
+        "BLOCKED": 0,
+        "NOT_RUN": 0
+      },
+      "results": [
+        {
+          "id": "BLK-SPEC-006",
+          "status": "PASS",
+          "durationMs": 7002,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence"
+          ]
+        },
+        {
+          "id": "EXT-001",
+          "status": "PASS",
+          "durationMs": 1950,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence"
+          ]
+        },
+        {
+          "id": "EXT-002",
+          "status": "PASS",
+          "durationMs": 1810,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence"
+          ]
+        },
+        {
+          "id": "EXT-008",
+          "status": "PASS",
+          "durationMs": 1847,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence"
+          ]
+        },
+        {
+          "id": "EXT-009",
+          "status": "PASS",
+          "durationMs": 2006,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence"
+          ]
+        },
+        {
+          "id": "EXT-010",
+          "status": "PASS",
+          "durationMs": 2708,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence"
+          ]
+        },
+        {
+          "id": "EXT-012",
+          "status": "PASS",
+          "durationMs": 2283,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence"
+          ]
+        }
+      ],
+      "attempts": [
+        {
+          "id": "EXT-001",
+          "status": "PASS",
+          "project": "system",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:32:38.557Z",
+          "completedAt": "2026-10-01T07:32:40.507Z"
+        },
+        {
+          "id": "EXT-002",
+          "status": "PASS",
+          "project": "system",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:32:41.788Z",
+          "completedAt": "2026-10-01T07:32:43.598Z"
+        },
+        {
+          "id": "EXT-008",
+          "status": "PASS",
+          "project": "system",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:32:43.605Z",
+          "completedAt": "2026-10-01T07:32:45.452Z"
+        },
+        {
+          "id": "EXT-009",
+          "status": "PASS",
+          "project": "system",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:32:45.456Z",
+          "completedAt": "2026-10-01T07:32:47.462Z"
+        },
+        {
+          "id": "EXT-010",
+          "status": "PASS",
+          "project": "system",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:32:47.465Z",
+          "completedAt": "2026-10-01T07:32:50.173Z"
+        },
+        {
+          "id": "EXT-012",
+          "status": "PASS",
+          "project": "system",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:32:50.177Z",
+          "completedAt": "2026-10-01T07:32:52.460Z"
+        },
+        {
+          "id": "BLK-SPEC-006",
+          "status": "PASS",
+          "project": "system",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:32:52.486Z",
+          "completedAt": "2026-10-01T07:32:59.488Z"
+        }
+      ],
+      "integrity": [],
+      "cleanup": [
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence/cleanup.json",
+          "sha256": "8f3084914b445236aa1d056fba106c8ed40e3bb57886bdbdf5b880a93d9f8b96",
+          "completedAt": "2026-10-01T07:32:41.785Z",
+          "failures": []
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence/cleanup.json",
+          "sha256": "319f00b566ac9f629b054e84990152a526187b0ff61ad8b679f973dd2a48c5ad",
+          "completedAt": "2026-10-01T07:32:43.602Z",
+          "failures": []
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence/cleanup.json",
+          "sha256": "64561ce8c770a1311ab158a54610081a7a58e29850913cf74bdb9d5172ae822f",
+          "completedAt": "2026-10-01T07:32:45.453Z",
+          "failures": []
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence/cleanup.json",
+          "sha256": "ec2737a0cea2192491035ced03c76b2e88fc9427524ebda6696e5eb9d351ebb2",
+          "completedAt": "2026-10-01T07:32:47.463Z",
+          "failures": []
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence/cleanup.json",
+          "sha256": "10568a4ccfbe1f197f4948cde1f851aaafbef3ae93b2a092d738fb97014cbbbf",
+          "completedAt": "2026-10-01T07:32:50.175Z",
+          "failures": []
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/cleanup.json",
+          "sha256": "bab7ee508bb8f30cec4c86bdee6dfbc0932256a8031520f98ceed5db77f70365",
+          "completedAt": "2026-10-01T07:32:52.462Z",
+          "failures": []
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/cleanup.json",
+          "sha256": "17342e7620977e4d9bcc3cda757efc54658ff4d43cc4a39fa7ce2ca83784311f",
+          "completedAt": "2026-10-01T07:32:59.489Z",
+          "failures": []
+        }
+      ],
+      "raw": [
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/manifest.json",
+          "sha256": "3be794cb46401dbe15ea882aca2ce209b3acbda9f149a6c73152210b7bc24f3b"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/results.json",
+          "sha256": "c11cfa3964b94177059f47f6ec223a3925884e6b74900d88ff8cf4a27de31352"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/events.json",
+          "sha256": "5387f2494a0ade8200b4da8cad4049bfc02498b3fb45996b896794ad679c7cd9"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/runner-summary.json",
+          "sha256": "30348a84b81cc0cf98d76d39564ccafe74a6bd701d100ab3315cf237b7469985"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/playwright.json",
+          "sha256": "2f426fb56817f525fa569063a7ce68169fcab188981622d016afdf6084350900"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/junit.xml",
+          "sha256": "ae5a5be3059b92dea008829da492590dc87ea5190278030594d002c49c587d0f"
+        }
+      ],
+      "allRawFiles": [
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/acceptance.md",
+          "bytes": 133382,
+          "sha256": "04886bb92b320d073a820f2a7741f2f20f9433b7bc94314f181b84b99a9a4962"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/.last-run.json",
+          "bytes": 45,
+          "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence/api.ndjson",
+          "bytes": 44954,
+          "sha256": "ca01d280d2aa7c7c38696ba692a3505d317513bb1abf1cf795c2d776e5e27bf7"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "8f3084914b445236aa1d056fba106c8ed40e3bb57886bdbdf5b880a93d9f8b96"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "ac28460092836df714b2879421f019716ae0e5571060fa9fd2828ea6691599e1"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence/external-facts.json",
+          "bytes": 11179,
+          "sha256": "55531fa6326a118ba564c316968acca08fe975d184dac460c97588608c71ba02"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence/server.log",
+          "bytes": 20033,
+          "sha256": "545582dcd607ada3554dcb7267f058c393749d3bada6673b5968a1a335619c3d"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence/api.ndjson",
+          "bytes": 41217,
+          "sha256": "90cec5f61568e8eefebe140c6f69614125f3414ca8576ad190b91546da69b42c"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "319f00b566ac9f629b054e84990152a526187b0ff61ad8b679f973dd2a48c5ad"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "b215a4bf4d272cdf89e10dc766ddf38286d6d580f9f90c535ee8ff8f464cca85"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence/external-facts.json",
+          "bytes": 11179,
+          "sha256": "d83979c0f912fe55eaf1465d7a29ff0aa7b3e9c047a25c1858e013dab0a910ad"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence/server.log",
+          "bytes": 18985,
+          "sha256": "7df313f2fe50b474eb78b8afef077c988949eef955faef8cadbbb636a3baf99e"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence/api.ndjson",
+          "bytes": 42065,
+          "sha256": "4850c9413e22be1da841eb7a3104cc854e05030f0c205e0beea3ad46fd541404"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "64561ce8c770a1311ab158a54610081a7a58e29850913cf74bdb9d5172ae822f"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "761051f9038c550e1504693834a2a3d608db5f527a50e86d18b9aea749b2115e"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence/external-facts.json",
+          "bytes": 11179,
+          "sha256": "7fc43daef46885a9ae9b1e4fbc8af781be03fedebc91d943e4b7db936a110677"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence/server.log",
+          "bytes": 19015,
+          "sha256": "07f49671800e73d7ab614c0576d9e73447dbe0a294ce64f92268fb147074f5c9"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence/api.ndjson",
+          "bytes": 47093,
+          "sha256": "2f9ff50224a0b35418bc7d8bfb2bc5c042f1af184f9a85111f0375093e58f3fd"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "ec2737a0cea2192491035ced03c76b2e88fc9427524ebda6696e5eb9d351ebb2"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "1b6a6d865d5c1d7b75d3bcdc9e0adbf787c716930da2c89772df6b9230cd4dde"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence/external-facts.json",
+          "bytes": 25489,
+          "sha256": "58418343308e937d51771fd6d7f462db1d2f0227ee1990d50af8447c1717b7c9"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence/server.log",
+          "bytes": 20555,
+          "sha256": "e117cbaacc23764569b3a61bf82956b4c1c76376b152e63480218b7e731e08aa"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence/api.ndjson",
+          "bytes": 44023,
+          "sha256": "7bb15b8322ee7d5f8cdb835c7afea84993138a7784e5d26ee1ef049906976eab"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "10568a4ccfbe1f197f4948cde1f851aaafbef3ae93b2a092d738fb97014cbbbf"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "3b8f99900e89bc09fb866fa2839c34f993980185f6c02e4647347d45f4fa0301"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence/external-facts.json",
+          "bytes": 11179,
+          "sha256": "67a1b9c1e8254a108b85d54a1193391bbdb2f052192cb0d942269c207e2954b1"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence/server.log",
+          "bytes": 19532,
+          "sha256": "53aaa16a1cd7b427b3a335a7a21e386380bff0eb5536a187d065bf89ae3359f6"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/api.ndjson",
+          "bytes": 41460,
+          "sha256": "f57f61bc7f1b2c7c7f718245e44f5fd8e706dcecfc42d503b078cbf804b03251"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "bab7ee508bb8f30cec4c86bdee6dfbc0932256a8031520f98ceed5db77f70365"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "d4df5d193ba9473149c6cb59a2f02b8d39d1058a04de9e07933b1842cb6f4f39"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/external-facts.json",
+          "bytes": 11460,
+          "sha256": "5adfa86bd2437f7f1f65c6e723b8b1070f699a7819e67823cc645d10c5ac077b"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/kill-1790839971907.json",
+          "bytes": 54,
+          "sha256": "2d1aaf33635c3a5e095c79d02f672ff0e77c49d796bcae4b9bc9992ff2cdd031"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence/server.log",
+          "bytes": 19573,
+          "sha256": "f1ab23178fcd124a7b8fb2e954ed294b9f339ed093c4261b5a8d8675fd303f82"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/api.ndjson",
+          "bytes": 414512,
+          "sha256": "3ecffd123b1278f4b202400f49242fd531ec88afe61658e24bca3a6ed2363c11"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "17342e7620977e4d9bcc3cda757efc54658ff4d43cc4a39fa7ce2ca83784311f"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "b96565ea6b836c3d793aceb7e418bf0f6ae28f3acaba209620de85d035b1f3a7"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/external-facts.json",
+          "bytes": 292153,
+          "sha256": "708b3bc939cd9566491b79a83b5693606c70fc4bd835227b3277598033ab346e"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/server.log",
+          "bytes": 92815,
+          "sha256": "80f051b1c670f12daf6c0100b110ccf08ce8b6d47de28027d321bbb5fb47ec9e"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/spec006-byte-caps.json",
+          "bytes": 14097,
+          "sha256": "3b2104906512242128824c198e6cbb486bde8a540726eddc7cd8826b7cc41301"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/spec006-limit-clamp.json",
+          "bytes": 10206,
+          "sha256": "452113db74c280e56be7f86015c0feeac66fec4941f67135fba744612cf13d81"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/spec006-profile-policy.json",
+          "bytes": 1046,
+          "sha256": "3eb3a5e04ee72e58b0f24843c0476d0a52efbe47b23c111417489cc1c54a541d"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/spec006-public-schema-fractional.json",
+          "bytes": 642,
+          "sha256": "29b8f238ba8e28a7c2ad32c0ac255a3dead9ff310126e767073471f14e752f44"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/spec006-public-schema-negative.json",
+          "bytes": 641,
+          "sha256": "d38bb6de6eac83ee4e30ee0aff9f2a61913afb19cebbadaf1cc39614f3e8ba6b"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/spec006-public-schema-zero.json",
+          "bytes": 640,
+          "sha256": "2af6a269ed8792864b825b1f2fc9b726681b87c8256055c00c9b3ebb95f43656"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/spec006-unicode-compatibility-observation.json",
+          "bytes": 354,
+          "sha256": "ffbd07fbd4c1d8f8c9270584ae104e6e269804bcfc8ced5da00ae9f540fd8c55"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/events.json",
+          "bytes": 3254,
+          "sha256": "5387f2494a0ade8200b4da8cad4049bfc02498b3fb45996b896794ad679c7cd9"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/junit.xml",
+          "bytes": 576,
+          "sha256": "ae5a5be3059b92dea008829da492590dc87ea5190278030594d002c49c587d0f"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/manifest.json",
+          "bytes": 58627,
+          "sha256": "3be794cb46401dbe15ea882aca2ce209b3acbda9f149a6c73152210b7bc24f3b"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/playwright.json",
+          "bytes": 16431,
+          "sha256": "2f426fb56817f525fa569063a7ce68169fcab188981622d016afdf6084350900"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/playwright.junit.xml",
+          "bytes": 1472,
+          "sha256": "11add9ae85d3a3c8598b357e0f18e8ea39bf987c359d2e8d5a2ce77ab6ddd2f2"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/results.json",
+          "bytes": 187471,
+          "sha256": "c11cfa3964b94177059f47f6ec223a3925884e6b74900d88ff8cf4a27de31352"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/runner-summary.json",
+          "bytes": 97,
+          "sha256": "30348a84b81cc0cf98d76d39564ccafe74a6bd701d100ab3315cf237b7469985"
+        }
+      ]
+    },
+    {
+      "runId": "2026-10-01T07-33-32.289Z-8a84ff03",
+      "path": "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03",
+      "phase": "developer-preflight",
+      "suiteId": "utf16-remediation-ui-20261001",
+      "suiteSha256": "f5efb2e41b321059c692f45ea5d9c0ce51875d280bee27b6a7997f33d43427e0",
+      "sutRevision": "a6b14e73ec738b979b05510fdfac8c6fcbb09df7",
+      "targetSha256": "536f47fdab2f4271558ed30309628f730d212f0eeff04587cacc1d8b3cd15653",
+      "qaSourceSha256": "0ddf161e203b71969885cd5db684574b0376d6325a0b9f10ced7fb5f5606acc2",
+      "startedAt": "2026-10-01T07:33:32.320Z",
+      "runner": {
+        "runnerStatus": "passed",
+        "runnerErrors": [],
+        "completedAt": "2026-10-01T07:33:45.717Z"
+      },
+      "verdict": "PASS",
+      "counts": {
+        "PASS": 4,
+        "FAIL": 0,
+        "BLOCKED": 0,
+        "NOT_RUN": 0
+      },
+      "results": [
+        {
+          "id": "UI-012",
+          "status": "PASS",
+          "durationMs": 4046,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/attachments/ui-final-screenshot-3fd10a95bc96e793cf2e710f20c1e183433f3cb7.png",
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/attachments/ui-final-state-c10b2b553ebee2910a35066bfdc72653003957bb.json",
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/evidence"
+          ]
+        },
+        {
+          "id": "UI-013",
+          "status": "PASS",
+          "durationMs": 2885,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/attachments/ui-final-screenshot-cfd56fc63bd21eab78bcfe0c1bd0b9df34c3a030.png",
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/attachments/ui-final-state-cf33742c1b4811e3644568743477f0611d611108.json",
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/evidence"
+          ]
+        },
+        {
+          "id": "UI-015",
+          "status": "PASS",
+          "durationMs": 2813,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/attachments/ui-final-screenshot-8f88c20400ef9add8febef011b8e36961fb951eb.png",
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/attachments/ui-final-state-43f45d527540b168e505fcafa9113116da351bb3.json",
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/evidence"
+          ]
+        },
+        {
+          "id": "UI-022",
+          "status": "PASS",
+          "durationMs": 1838,
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/attachments/ui-final-screenshot-887c2cf94964279bbc9b76759170a5787b96971b.png",
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/attachments/ui-final-state-6c3f9aa76cb3a4e32328690f3b006c2bda32e472.json",
+            "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/evidence"
+          ]
+        }
+      ],
+      "attempts": [
+        {
+          "id": "UI-012",
+          "status": "PASS",
+          "project": "chromium",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:33:32.754Z",
+          "completedAt": "2026-10-01T07:33:36.800Z"
+        },
+        {
+          "id": "UI-013",
+          "status": "PASS",
+          "project": "chromium",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:33:37.882Z",
+          "completedAt": "2026-10-01T07:33:40.767Z"
+        },
+        {
+          "id": "UI-015",
+          "status": "PASS",
+          "project": "chromium",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:33:40.773Z",
+          "completedAt": "2026-10-01T07:33:43.586Z"
+        },
+        {
+          "id": "UI-022",
+          "status": "PASS",
+          "project": "chromium",
+          "attempt": 0,
+          "startedAt": "2026-10-01T07:33:43.592Z",
+          "completedAt": "2026-10-01T07:33:45.430Z"
+        }
+      ],
+      "integrity": [],
+      "cleanup": [
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/evidence/cleanup.json",
+          "sha256": "bb6605e01a1ca03e9348eabfd4e64416fadaa9dfeeb79a3c6dc3b93f48475df3",
+          "completedAt": "2026-10-01T07:33:37.831Z",
+          "failures": []
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/evidence/cleanup.json",
+          "sha256": "af3cf6561a7c3f914d5462265551959bb8fe87037d6f28977eecf528f2a15a33",
+          "completedAt": "2026-10-01T07:33:40.709Z",
+          "failures": []
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/evidence/cleanup.json",
+          "sha256": "8e648a04e55e4530d6ec776b8d75e78daa468f82548a54a401a7ebdb5263bd58",
+          "completedAt": "2026-10-01T07:33:43.536Z",
+          "failures": []
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/evidence/cleanup.json",
+          "sha256": "7aec40832d468e0e625727ab379f3c107be2c7033213a475b23904b46819b247",
+          "completedAt": "2026-10-01T07:33:45.374Z",
+          "failures": []
+        }
+      ],
+      "raw": [
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/manifest.json",
+          "sha256": "97781b3a874b1668881b0a5d1246ea21af8ee0b5b4b912951fae6d0a2156340e"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/results.json",
+          "sha256": "c02b6fbc53ffc529874e956cbc779c6c083708c685bba2a507632583950c8324"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/events.json",
+          "sha256": "ec1a5f3128c19a3496f7af45921e124810615503fc3d682ca5a240ed3bbf5ae2"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/runner-summary.json",
+          "sha256": "e3bffe5424433ea35b5bd81e99cf0ed38e0e20abd3cec66965e12058e4ae46ae"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/playwright.json",
+          "sha256": "bcd002b067bdd0d8109815492677e1b02a9231fe3aa91426d077794f447cdd0c"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/junit.xml",
+          "sha256": "132e9a8676363cf9d043113c27cddefc3f5fde83c11d3cc9a841fc57372e9cef"
+        }
+      ],
+      "allRawFiles": [
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/acceptance.md",
+          "bytes": 134263,
+          "sha256": "35844e8c60077ab0241ff089af94efe535805522943841dd158bc399e7cf573d"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/.last-run.json",
+          "bytes": 45,
+          "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/attachments/ui-final-screenshot-3fd10a95bc96e793cf2e710f20c1e183433f3cb7.png",
+          "bytes": 148363,
+          "sha256": "3ffe485a246951b2103f8056dba16e46b4e8c4084ce610f2f8602ab26e3e9a6b"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/attachments/ui-final-state-c10b2b553ebee2910a35066bfdc72653003957bb.json",
+          "bytes": 1619,
+          "sha256": "263e9c13352d1f37d728eb173c674585acd6b51988e18bf1430d5db70d7e4b60"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/evidence/api.ndjson",
+          "bytes": 40999,
+          "sha256": "e51c2978b81034738029f9af1e4b4ea188b46bcbf37fd788fb80423c157cbc25"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "bb6605e01a1ca03e9348eabfd4e64416fadaa9dfeeb79a3c6dc3b93f48475df3"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "f046906985cba78a875a69f4edfbcdedb1aeff168442357546beca3608747273"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/evidence/external-facts.json",
+          "bytes": 11179,
+          "sha256": "3a9f51c9ab8d7549f57919c574e0b96e69b1b90d291404fad82ae5eb583b43c5"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/evidence/server.log",
+          "bytes": 32049,
+          "sha256": "430d81b4ece2933444d8264ec8af214a93575cfd47d3263d7011757f75629972"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/evidence/ui-final.json",
+          "bytes": 1619,
+          "sha256": "263e9c13352d1f37d728eb173c674585acd6b51988e18bf1430d5db70d7e4b60"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/evidence/ui-final.png",
+          "bytes": 148363,
+          "sha256": "3ffe485a246951b2103f8056dba16e46b4e8c4084ce610f2f8602ab26e3e9a6b"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/evidence/web.log",
+          "bytes": 156,
+          "sha256": "be5ec4a9014dc290d818c0956afae5e73f26270b6d66a1415623782153aab6c6"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/attachments/ui-final-screenshot-cfd56fc63bd21eab78bcfe0c1bd0b9df34c3a030.png",
+          "bytes": 140235,
+          "sha256": "f63b7475c2269b459f6685a4d0388b7d88e5af5fc6878d2d22dd461324064774"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/attachments/ui-final-state-cf33742c1b4811e3644568743477f0611d611108.json",
+          "bytes": 1575,
+          "sha256": "df9df7027c2e0c40912dc5f3daa5b7aca547d72ecb7d7b93363854f8f844eb7a"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/evidence/api.ndjson",
+          "bytes": 38512,
+          "sha256": "9882847065be772a81e2beda13f2f40428bc395c30e8833200e21f7051f6fda6"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "af3cf6561a7c3f914d5462265551959bb8fe87037d6f28977eecf528f2a15a33"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "d4b879bc0c05a5d478bdec66c443d35d6ec754486e1c5a8539e4fd3d58fb696a"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/evidence/external-facts.json",
+          "bytes": 11179,
+          "sha256": "220c831026d2dc4c00902039aaae19002142f0e5572647241a46804e7ab17c81"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/evidence/server.log",
+          "bytes": 26282,
+          "sha256": "8e24e39f06009eb05f3069b9cd73c86457f2504cb2117d2dfd765c4e21315f06"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/evidence/ui-final.json",
+          "bytes": 1575,
+          "sha256": "df9df7027c2e0c40912dc5f3daa5b7aca547d72ecb7d7b93363854f8f844eb7a"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/evidence/ui-final.png",
+          "bytes": 140235,
+          "sha256": "f63b7475c2269b459f6685a4d0388b7d88e5af5fc6878d2d22dd461324064774"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/evidence/web.log",
+          "bytes": 156,
+          "sha256": "d09bd0d497e2ddfa3a432957c67a05b153d99432da0dee35a850f39d68a3d690"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/attachments/ui-final-screenshot-8f88c20400ef9add8febef011b8e36961fb951eb.png",
+          "bytes": 141157,
+          "sha256": "f36d468a0f0ab9f8de720e216d04a92f678c22a48798dc388bb76e379f70eadd"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/attachments/ui-final-state-43f45d527540b168e505fcafa9113116da351bb3.json",
+          "bytes": 1578,
+          "sha256": "8149275e2023d55e759e86c3ec038bb87b1cd38ad564d9e9ac236a0a279eb92f"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/evidence/api.ndjson",
+          "bytes": 41136,
+          "sha256": "185d3a048ab8d7490919e0ff5e5f984245a3f6b06de049b43b08d70f577c0c7b"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "8e648a04e55e4530d6ec776b8d75e78daa468f82548a54a401a7ebdb5263bd58"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "290ba2922b8f39885741d1405de9ee1932967c63a383f0c692d7ba658fe0f19e"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/evidence/external-facts.json",
+          "bytes": 11179,
+          "sha256": "1bfaa902e0612bff7bb7a63f3fa4ab4a85d25bdd4590a6668e69c65fc1c2df99"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/evidence/server.log",
+          "bytes": 30357,
+          "sha256": "7b933d8ea5ca3f78e22319ce7c17a1b7f837cf1c786d0c789f4ef0c1d0ac398c"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/evidence/ui-final.json",
+          "bytes": 1578,
+          "sha256": "8149275e2023d55e759e86c3ec038bb87b1cd38ad564d9e9ac236a0a279eb92f"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/evidence/ui-final.png",
+          "bytes": 141157,
+          "sha256": "f36d468a0f0ab9f8de720e216d04a92f678c22a48798dc388bb76e379f70eadd"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/evidence/web.log",
+          "bytes": 156,
+          "sha256": "a0abdb2c0c86ff5d960370fb40448fc5aaea01baf29b0549e00ea667e5f90789"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/attachments/ui-final-screenshot-887c2cf94964279bbc9b76759170a5787b96971b.png",
+          "bytes": 85413,
+          "sha256": "3616e6ce276f9f2331d1d85da46e26bcee9f48c0e4a98c185a692793d8667749"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/attachments/ui-final-state-6c3f9aa76cb3a4e32328690f3b006c2bda32e472.json",
+          "bytes": 966,
+          "sha256": "299ae3025c7fa4fffe1588a459506fea5c6ccb3e004842ba6b282e7bfa0668a1"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/evidence/api.ndjson",
+          "bytes": 13681,
+          "sha256": "73076e41dd56255d1a4b297dd5801417a6e97fe380345d48a90728fec3ae93f5"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "7aec40832d468e0e625727ab379f3c107be2c7033213a475b23904b46819b247"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/evidence/environment.json",
+          "bytes": 1146,
+          "sha256": "98267c44198747a522c251304d1a89c4328b0e79add643ab7f72bc470d00b283"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/evidence/external-facts.json",
+          "bytes": 5371,
+          "sha256": "e462d41395d4bbb8ff4f4e00edb5fe16a6d9014015d33d11de86cbf12c725808"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/evidence/migration.log",
+          "bytes": 19,
+          "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/evidence/server.log",
+          "bytes": 11018,
+          "sha256": "9e79e1113270db425005d14f1aeb4d03f0611fbede81e59d55423dc53af25fa2"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/evidence/ui-final.json",
+          "bytes": 966,
+          "sha256": "299ae3025c7fa4fffe1588a459506fea5c6ccb3e004842ba6b282e7bfa0668a1"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/evidence/ui-final.png",
+          "bytes": 85413,
+          "sha256": "3616e6ce276f9f2331d1d85da46e26bcee9f48c0e4a98c185a692793d8667749"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/evidence/web.log",
+          "bytes": 156,
+          "sha256": "7a9833d0545ae666b2eaa9456e57fadfe05f5e76ae43e02527c8814018cfd3a2"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/events.json",
+          "bytes": 4260,
+          "sha256": "ec1a5f3128c19a3496f7af45921e124810615503fc3d682ca5a240ed3bbf5ae2"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/junit.xml",
+          "bytes": 402,
+          "sha256": "132e9a8676363cf9d043113c27cddefc3f5fde83c11d3cc9a841fc57372e9cef"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/manifest.json",
+          "bytes": 57818,
+          "sha256": "97781b3a874b1668881b0a5d1246ea21af8ee0b5b4b912951fae6d0a2156340e"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/playwright.json",
+          "bytes": 14463,
+          "sha256": "bcd002b067bdd0d8109815492677e1b02a9231fe3aa91426d077794f447cdd0c"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/playwright.junit.xml",
+          "bytes": 2470,
+          "sha256": "a9dbd30d9f6bfde9dd5302858bb203bbe929143e8444871f2af30de9d5b12892"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/results.json",
+          "bytes": 192779,
+          "sha256": "c02b6fbc53ffc529874e956cbc779c6c083708c685bba2a507632583950c8324"
+        },
+        {
+          "path": "reports/preflight/2026-10-01T07-33-32.289Z-8a84ff03/runner-summary.json",
+          "bytes": 97,
+          "sha256": "e3bffe5424433ea35b5bd81e99cf0ed38e0e20abd3cec66965e12058e4ae46ae"
+        }
+      ]
+    }
+  ],
+  "rawFirstRunAudit": [
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/manifest.json",
+      "sha256": "815d36845799b76886dffe0565808250b7ec65598776bafedb129d291b4d2242",
+      "actualSha256": "815d36845799b76886dffe0565808250b7ec65598776bafedb129d291b4d2242",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/events.json",
+      "sha256": "079276fb9d36f7de321ae32fb6c3362783b0c84d0c04a83a404f4ff2debc996b",
+      "actualSha256": "079276fb9d36f7de321ae32fb6c3362783b0c84d0c04a83a404f4ff2debc996b",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/results.json",
+      "sha256": "19b8a0e3675a34ddc745a1af062b0627420bd728f1eb753795d327c0cfddd200",
+      "actualSha256": "19b8a0e3675a34ddc745a1af062b0627420bd728f1eb753795d327c0cfddd200",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/preflight/2026-10-01T07-28-49.319Z-ac58f612/runner-summary.json",
+      "sha256": "bf6f22c0e6515bbe7819f9a50d35b4b09c1e17f2a3f291478e3af895b0aa7971",
+      "actualSha256": "bf6f22c0e6515bbe7819f9a50d35b4b09c1e17f2a3f291478e3af895b0aa7971",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/integration/20261001-utf16-retest-preparation/qa-authored-source.tar.gz",
+      "sha256": "b8de0726d10cd9c096df9f28d3a70a2cf434c6726601d4183f97333c4e24c147",
+      "actualSha256": "b8de0726d10cd9c096df9f28d3a70a2cf434c6726601d4183f97333c4e24c147",
+      "unchanged": true
+    }
+  ],
+  "buildAudit": [
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-profile-retest/kapibala/apps/web/dist/assets/index-BEIF3-Eq.js",
+      "bytes": 337157,
+      "sha256": "9a7cda5d2a65fbdc41dc83d31c83cf48a48b0ad3115de2429b696b87b19cf11f",
+      "actualSha256": "9a7cda5d2a65fbdc41dc83d31c83cf48a48b0ad3115de2429b696b87b19cf11f",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-profile-retest/kapibala/apps/web/dist/assets/index-D_PTbvD6.css",
+      "bytes": 25044,
+      "sha256": "e0d8ab745f0d8f2bd3d26d1095156e3d39fc1feb4f8a286025871d1e141a8556",
+      "actualSha256": "e0d8ab745f0d8f2bd3d26d1095156e3d39fc1feb4f8a286025871d1e141a8556",
+      "unchanged": true
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-profile-retest/kapibala/apps/web/dist/index.html",
+      "bytes": 462,
+      "sha256": "57729fbc829acbb578423b392b75a67f9547b051dc34370e32b276ba78921768",
+      "actualSha256": "57729fbc829acbb578423b392b75a67f9547b051dc34370e32b276ba78921768",
+      "unchanged": true
+    }
+  ],
+  "sourceConsistentWithCorrectedRuns": true,
+  "cleanupSummary": {
+    "records": [
+      {
+        "runId": "2026-10-01T07-28-49.319Z-ac58f612",
+        "count": 7,
+        "failures": []
+      },
+      {
+        "runId": "2026-10-01T07-32-37.918Z-3b6efd96",
+        "count": 7,
+        "failures": []
+      },
+      {
+        "runId": "2026-10-01T07-33-32.289Z-8a84ff03",
+        "count": 4,
+        "failures": []
+      }
+    ],
+    "boundary": "每条独立环境cleanup记录已落盘且failures=[]；本次未额外声明全宿主/全部Docker卷均无其他任务资源。"
+  },
+  "spec006Evidence": [
+    {
+      "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/spec006-byte-caps.json",
+      "sha256": "3b2104906512242128824c198e6cbb486bde8a540726eddc7cd8826b7cc41301"
+    },
+    {
+      "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/spec006-limit-clamp.json",
+      "sha256": "452113db74c280e56be7f86015c0feeac66fec4941f67135fba744612cf13d81"
+    },
+    {
+      "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/spec006-profile-policy.json",
+      "sha256": "3eb3a5e04ee72e58b0f24843c0476d0a52efbe47b23c111417489cc1c54a541d"
+    },
+    {
+      "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/spec006-public-schema-fractional.json",
+      "sha256": "29b8f238ba8e28a7c2ad32c0ac255a3dead9ff310126e767073471f14e752f44"
+    },
+    {
+      "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/spec006-public-schema-negative.json",
+      "sha256": "d38bb6de6eac83ee4e30ee0aff9f2a61913afb19cebbadaf1cc39614f3e8ba6b"
+    },
+    {
+      "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/spec006-public-schema-zero.json",
+      "sha256": "2af6a269ed8792864b825b1f2fc9b726681b87c8256055c00c9b3ebb95f43656"
+    },
+    {
+      "path": "reports/preflight/2026-10-01T07-32-37.918Z-3b6efd96/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence/spec006-unicode-compatibility-observation.json",
+      "sha256": "ffbd07fbd4c1d8f8c9270584ae104e6e269804bcfc8ced5da00ae9f540fd8c55"
+    }
+  ],
+  "sourceArchives": [
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/integration/20261001-utf16-retest-preparation/qa-authored-source.tar.gz",
+      "sha256": "b8de0726d10cd9c096df9f28d3a70a2cf434c6726601d4183f97333c4e24c147",
+      "qaSourceSha256": "6fa8116946d650d72e6d9f89af0cb3e1cf905f3e2a06dcd84308d0f933629df7",
+      "authoredFileCount": 196,
+      "archiveMatchesFrozenFileHashes": true
+    },
+    {
+      "path": "/Users/zcm/.codex/worktrees/qa-focused-retest/kapibala/qa-acceptance/reports/integration/20261001-utf16-retest-schema-correction/qa-authored-source.tar.gz",
+      "sha256": "2a262859df5e55754593c4de6f8cce052a1d5f6f1e046e50e74fcd781ebac7b1",
+      "qaSourceSha256": "0ddf161e203b71969885cd5db684574b0376d6325a0b9f10ced7fb5f5606acc2",
+      "authoredFileCount": 199,
+      "archiveMatchesFrozenFileHashes": true
+    }
+  ],
+  "defectRetestReview": {
+    "reviewer": "AI QA 独立复测审阅",
+    "decision": "可关闭 BLK-SPEC-006 对既有UTF-16资料长度公开契约的产品缺陷；a6b14e7范围内独立边界复测已通过。",
+    "scopeLimit": "登记phase仍为developer-preflight子集执行；QA人工审阅不会将其改写为formal-business，不声明a6b14e7全量业务或上线通过。",
+    "qaIssue": "首API中的内联Ajv方言错误是QA自身问题，原始FAIL保留；新QA源码重新冻结后完整复测通过。"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "revision": "a6b14e73ec738b979b05510fdfac8c6fcbb09df7",
+  "cwd": "/Users/zcm/.codex/worktrees/qa-profile-retest/kapibala",
+  "apiPort": 64824,
+  "database": "qa_ca55a99da8c4490aa294ddf9",
+  "databaseImage": "postgres:17-alpine",
+  "gateway": "http://127.0.0.1:64820",
+  "agent": "http://127.0.0.1:64822",
+  "startedAt": "2026-10-01T07:32:49.062Z",
+  "commands": {
+    "cwd": "/Users/zcm/.codex/worktrees/qa-profile-retest/kapibala",
+    "revision": "a6b14e73ec738b979b05510fdfac8c6fcbb09df7",
+    "start": {
+      "command": "node",
+      "args": [
+        "--import",
+        "tsx",
+        "apps/server/src/main.ts"
+      ]
+    },
+    "migrate": {
+      "command": "node",
+      "args": [
+        "--import",
+        "tsx",
+        "scripts/migrate.ts"
+      ]
+    },
+    "web": {
+      "command": "npm",
+      "args": [
+        "exec",
+        "--workspace",
+        "apps/web",
+        "--",
+        "vite",
+        "preview",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "{WEB_PORT}",
+        "--strictPort"
+      ]
+    },
+    "env": {
+      "AGENT_TURN_TIMEOUT_MS": "12000"
+    },
+    "startupTimeoutMs": 45000
+  }
+}

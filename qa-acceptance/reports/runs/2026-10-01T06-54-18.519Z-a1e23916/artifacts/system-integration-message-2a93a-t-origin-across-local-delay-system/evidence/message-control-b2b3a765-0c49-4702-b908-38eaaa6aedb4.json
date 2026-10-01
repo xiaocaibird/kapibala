@@ -1,0 +1,41 @@
+{
+  "method": "GET",
+  "path": "/qa/message/v1/leases/a9621854-86da-4885-a82a-727359da19ed",
+  "status": 200,
+  "response": {
+    "protocol": "qa-message-observation/1",
+    "leaseId": "a9621854-86da-4885-a82a-727359da19ed",
+    "state": "held",
+    "expiresAt": "2026-10-01T07:19:24.229Z",
+    "binding": {
+      "apiUrl": "http://127.0.0.1:56963",
+      "revision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+      "pid": 7214,
+      "observedOwnerToken": "[REDACTED]"
+    },
+    "correlation": {
+      "clientMsgId": "848650c6-269c-4172-92ee-402aae3e1740"
+    },
+    "events": [
+      {
+        "seq": 1,
+        "at": "2026-10-01T07:17:54.232Z",
+        "kind": "window-held",
+        "phase": "timeout-observed-before-local-save",
+        "attemptId": "ceacb02c-b4f5-40b3-8d15-f2c1d5c92080",
+        "groupId": "6bed7eb5-8a82-4f99-b53f-78fb6f225e2d",
+        "clientMsgId": "848650c6-269c-4172-92ee-402aae3e1740",
+        "observedAt": "2026-10-01T07:17:54.231Z",
+        "instancePid": 7214,
+        "databaseIdentity": "23dfafca08a774dad4cd4286b99425e2a9f5cd06f4ca75cbb49c1354ed215efd",
+        "localBoundary": "504-recognized-local-result-save-not-started",
+        "receiptPresentAtProbe": false,
+        "receiptObservedAt": null,
+        "coverage": {
+          "scope": "bound-instance",
+          "allDatabaseWritersProven": false
+        }
+      }
+    ]
+  }
+}
