@@ -542,7 +542,10 @@ export class Messages implements MessagingService {
   }
   async kick(
     input: { groupId: string; accountId: string; targetPlatformUserId: string },
-    options?: { signal?: AbortSignal },
+    options?: {
+      signal?: AbortSignal;
+      beforeDispatch?: () => Promise<void>;
+    },
   ): Promise<{ kicked: true }> {
     options?.signal?.throwIfAborted();
     const result = await this.ctx.db.tryWithLock(
@@ -570,6 +573,8 @@ export class Messages implements MessagingService {
           throw new AppError(409, "NO_AVAILABLE_ACCOUNT", "没有可执行的账号");
         if (!["creator", "admin"].includes(member.role))
           throw new AppError(403, "NO_PERMISSION", "账号没有移除成员权限");
+        await options?.beforeDispatch?.();
+        signal.throwIfAborted();
         try {
           z.object({ kicked: z.literal(true) }).parse(
             await this.ctx.gateway.request(

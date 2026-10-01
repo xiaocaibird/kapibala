@@ -31,7 +31,11 @@ export interface StepRow {
   state: string;
   result: Record<string, unknown> | null;
   audit_attempts: number;
-  intent: { accountId?: string; targetPlatformUserId?: string } | null;
+  intent: {
+    accountId?: string;
+    targetPlatformUserId?: string;
+    dispatchState?: "awaiting_admission" | "dispatching";
+  } | null;
 }
 export interface GroupRow {
   id: string;

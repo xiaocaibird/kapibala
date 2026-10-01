@@ -345,7 +345,10 @@ export class AgentTools {
   }
   private async kick(run: RunRow, step: StepRow): Promise<void> {
     const input = step.input as { platform_user_id: string; reason: string };
-    if (step.state === "executing") {
+    if (
+      step.state === "executing" &&
+      step.intent?.dispatchState !== "awaiting_admission"
+    ) {
       await this.host.pause(
         run,
         "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
@@ -431,6 +434,7 @@ export class AgentTools {
           JSON.stringify({
             accountId,
             targetPlatformUserId: input.platform_user_id,
+            dispatchState: "awaiting_admission",
           }),
         ],
       );
@@ -454,7 +458,21 @@ export class AgentTools {
             accountId: accountId!,
             targetPlatformUserId: input.platform_user_id,
           },
-          { signal: deadline },
+          {
+            signal: deadline,
+            beforeDispatch: async () => {
+              deadline.throwIfAborted();
+              // This autocommit runs only inside the admitted kick callback.
+              // Its acknowledged commit precedes HTTP dispatch; a crash or SQL
+              // failure here cannot turn a dispatched intent into replayable work.
+              const persisted = await this.ctx.db.query(
+                "UPDATE agent_steps SET intent=jsonb_set(intent,'{dispatchState}','\"dispatching\"'::jsonb) WHERE run_id=$1 AND ordinal=$2 AND state='executing' AND intent->>'dispatchState'='awaiting_admission'",
+                [run.id, step.ordinal],
+              );
+              if (persisted.rowCount !== 1)
+                throw new Error("Kick dispatch intent was not persisted");
+            },
+          },
         );
       if (this.ctx.testExecutionObserver)
         await this.ctx.testExecutionObserver.kick(correlation, kick);
@@ -462,12 +480,12 @@ export class AgentTools {
     } catch (error) {
       currentOperationSignal()?.throwIfAborted();
       if (error instanceof LockCapacityUnavailableError) {
-        // Admission failed before the gateway callback ran. Keep the same audited
-        // step pending; only this proven no-effect path can discard an executing
-        // intent. Unknown remote outcomes below must remain non-replayable.
+        // Admission failed before the gateway callback ran. The durable
+        // awaiting_admission intent is already safe to resume, even if this
+        // process dies before the optional ready cleanup below.
         await this.ctx.testExecutionObserver?.ready(correlation, "before");
         await this.ctx.db.query(
-          "UPDATE agent_steps SET state='ready',intent=null WHERE run_id=$1 AND ordinal=$2 AND state='executing'",
+          "UPDATE agent_steps SET state='ready',intent=null WHERE run_id=$1 AND ordinal=$2 AND state='executing' AND intent->>'dispatchState'='awaiting_admission'",
           [run.id, step.ordinal],
         );
         await this.ctx.testExecutionObserver?.ready(correlation, "after");

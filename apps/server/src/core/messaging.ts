@@ -18,7 +18,12 @@ export interface MessagingService {
       accountId: string;
       targetPlatformUserId: string;
     },
-    options?: { signal?: AbortSignal },
+    options?: {
+      signal?: AbortSignal;
+      /** Runs after local admission and validation, before any remote kick. A
+       * rejection prevents dispatch; durable intent writes must commit here. */
+      beforeDispatch?: () => Promise<void>;
+    },
   ): Promise<{ kicked: true }>;
 }
 export interface PlatformModule {
