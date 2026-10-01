@@ -7,11 +7,15 @@ import {
   emit,
   currentOperationSignal,
   LockCapacityUnavailableError,
+  currentDatabaseDeadline,
+  withDatabaseDeadline,
   type Queryable,
 } from "../../core/db.js";
 import { AppError, RemoteError } from "../../core/errors.js";
 import {
   KICK_POST_TIMEOUT_MS,
+  KICK_SETTLEMENT_BUDGET_MS,
+  KickRejectionPersistenceError,
   type MessagingService,
 } from "../../core/messaging.js";
 import type { AgentRun } from "../../../../../packages/contracts/src/index.js";
@@ -35,6 +39,7 @@ export interface ToolExecutionHost {
     executionAttemptId?: string,
   ): Promise<void>;
   finishAfterStep(run: RunRow, text: string): Promise<void>;
+  settleAfterKick(run: RunRow): Promise<void>;
   remaining(run: RunRow): number;
   finish(
     run: RunRow,
@@ -470,6 +475,14 @@ export class AgentTools {
     ).rows[0]?.id;
   }
   private async kick(run: RunRow, step: StepRow): Promise<void> {
+    // This scope bounds only this kick's local database work. The external work
+    // signal below never becomes an ownership signal or cancels finalization.
+    await withDatabaseDeadline(
+      performance.now() + this.host.remaining(run),
+      () => this.kickWithinBudget(run, step),
+    );
+  }
+  private async kickWithinBudget(run: RunRow, step: StepRow): Promise<void> {
     const input = step.input as { platform_user_id: string; reason: string };
     if (
       step.state === "executing" &&
@@ -570,15 +583,25 @@ export class AgentTools {
       await this.host.completeStep(run, step, denied);
       return;
     }
-    const remaining = this.host.remaining(run);
+    const remaining = Math.max(
+      0,
+      Math.floor(
+        Math.min(
+          this.host.remaining(run),
+          currentDatabaseDeadline()! - performance.now(),
+        ),
+      ),
+    );
     // Admit only a first POST that can receive its existing timeout window.
-    // Policy/account checks above keep their precedence; this neither reserves
-    // time for later confirmation queries nor declares a remote effect failed.
-    if (remaining < KICK_POST_TIMEOUT_MS) {
+    // Policy/account checks retain precedence. Allocate real time for local
+    // finalization without changing the total run clock or the POST timeout.
+    if (remaining < KICK_POST_TIMEOUT_MS + KICK_SETTLEMENT_BUDGET_MS) {
       await this.host.finish(run, "failed", "wall_clock");
       return;
     }
-    const deadline = AbortSignal.timeout(remaining);
+    const hardDeadline = AbortSignal.timeout(remaining);
+    const workBudgetMs = remaining - KICK_SETTLEMENT_BUDGET_MS;
+    const deadline = AbortSignal.timeout(workBudgetMs);
     const observation = this.ctx.testLifecycleObserver
       ? {
           groupId: run.group_id,
@@ -586,10 +609,12 @@ export class AgentTools {
           toolUseId: step.tool_use_id!,
           stepId: `${run.id}:${step.ordinal}`,
           attemptId: randomUUID(),
-          signalSource: "activity-budget" as const,
+          signalSource: "kick-work-budget" as const,
         }
       : undefined;
-    const budgetAborted = () => {
+    const observeBudgetAbort = (
+      source: "activity-budget" | "kick-work-budget",
+    ) => {
       if (!observation) return;
       try {
         const before = performance.now();
@@ -597,23 +622,38 @@ export class AgentTools {
         const after = performance.now();
         this.ctx.testLifecycleObserver?.record({
           ...observation,
-          kind: "kick-budget-signal-aborted",
+          kind:
+            source === "activity-budget"
+              ? "kick-budget-signal-aborted"
+              : "kick-work-budget-signal-aborted",
           signalObservedAtMonoNs,
           signalObservedWindowMs: [before, after],
           budgetMs: remaining,
-          source: "activity-budget",
+          workBudgetMs,
+          settlementBudgetMs: KICK_SETTLEMENT_BUDGET_MS,
+          source,
         });
       } catch {
         /* A test observer cannot change cancellation handling. */
       }
     };
-    if (observation)
-      deadline.addEventListener("abort", budgetAborted, { once: true });
+    const budgetAborted = () => observeBudgetAbort("activity-budget");
+    const workBudgetAborted = () => observeBudgetAbort("kick-work-budget");
+    if (observation) {
+      hardDeadline.addEventListener("abort", budgetAborted, { once: true });
+      deadline.addEventListener("abort", workBudgetAborted, { once: true });
+    }
     const assertDispatchAllowed = () => {
       currentOperationSignal()?.throwIfAborted();
-      if (this.host.remaining(run) < KICK_POST_TIMEOUT_MS)
+      if (
+        Math.min(
+          this.host.remaining(run),
+          currentDatabaseDeadline()! - performance.now(),
+        ) <
+        KICK_POST_TIMEOUT_MS + KICK_SETTLEMENT_BUDGET_MS
+      )
         throw new KickBudgetExpiredBeforeDispatch(
-          "Activity budget cannot admit the first kick POST timeout window",
+          "Remaining activity budget cannot admit the kick POST and its finalization allocation",
         );
     };
     const correlation = {
@@ -622,6 +662,8 @@ export class AgentTools {
       toolUseId: step.tool_use_id!,
       targetPlatformUserId: input.platform_user_id,
     };
+    let confirmed = false;
+    let successSaved = false;
     try {
       const kick = () =>
         this.messaging.kick(
@@ -632,8 +674,18 @@ export class AgentTools {
           },
           {
             signal: deadline,
+            hardBudgetSignal: hardDeadline,
+            workDatabaseDeadline:
+              currentDatabaseDeadline()! - KICK_SETTLEMENT_BUDGET_MS,
             observation,
             assertDispatchAllowed,
+            afterConfirmation: async () => {
+              confirmed = true;
+              await this.host.completeStep(run, step, {
+                value: { kicked: true },
+              });
+              successSaved = true;
+            },
             beforeDispatch: async () => {
               assertDispatchAllowed();
               deadline.throwIfAborted();
@@ -653,7 +705,17 @@ export class AgentTools {
       if (this.ctx.testExecutionObserver)
         await this.ctx.testExecutionObserver.kick(correlation, kick);
       else await kick();
+      confirmed = true;
+      if (!successSaved)
+        await this.host.completeStep(run, step, { value: { kicked: true } });
+      // Keep ordinary post-step cancellation/limit precedence, and any needed
+      // terminal COMMIT, inside this kick's original database deadline.
+      await this.host.settleAfterKick(run);
     } catch (error) {
+      // The remote proof precedes optional projection work. A subsequent local
+      // failure cannot turn it into an unknown effect or authorize replay.
+      if (confirmed || error instanceof KickRejectionPersistenceError)
+        throw error;
       currentOperationSignal()?.throwIfAborted();
       if (error instanceof KickBudgetExpiredBeforeDispatch) {
         // This process knows fetch never started. Retain any committed intent:
@@ -677,8 +739,47 @@ export class AgentTools {
         });
         return;
       }
-      if (deadline.aborted) {
-        // Budget exhaustion ends the run, not the uncertain external effect. Keep
+      const code =
+        error instanceof RemoteError || error instanceof AppError
+          ? error.code
+          : "UNKNOWN";
+      const unknown =
+        (error instanceof RemoteError && error.status >= 500) ||
+        [
+          "NETWORK_TIMEOUT",
+          "UNKNOWN",
+          "KICK_UNKNOWN",
+          "HTTP_503",
+          "SERVICE_UNAVAILABLE",
+        ].includes(code);
+      const definiteRejection =
+        !unknown &&
+        [
+          "ACCOUNT_SUSPENDED",
+          "SESSION_EXPIRED",
+          "GROUP_WRITE_FORBIDDEN",
+          "OWNER_LEFT",
+          "NO_PERMISSION",
+          "GROUP_UNREACHABLE",
+          "NO_AVAILABLE_ACCOUNT",
+          "SEND_TIMEOUT",
+        ].includes(code);
+      if (definiteRejection) {
+        // A received rejection remains definite even if its local state repair
+        // consumed the rest of the work allocation. Save the original mapping.
+        const mapped = [
+          "OWNER_LEFT",
+          "NO_PERMISSION",
+          "GROUP_UNREACHABLE",
+        ].includes(code)
+          ? code
+          : "SEND_FAILED";
+        await this.host.completeStep(run, step, toolError(mapped, code));
+        await this.host.settleAfterKick(run);
+        return;
+      }
+      if (deadline.aborted || hardDeadline.aborted) {
+        // The work allocation ends before the total limit, not the uncertain effect. Keep
         // its intent as executing so a later process can never replay this kick.
         await this.ctx.db.transaction(async (tx) => {
           await tx.query(
@@ -686,7 +787,9 @@ export class AgentTools {
             [
               run.id,
               step.ordinal,
-              "Activity budget ended while the kick outcome remained unknown; this intent is not replayed.",
+              hardDeadline.aborted
+                ? "The original activity limit expired while the kick outcome remained unknown; this intent is not replayed."
+                : "Kick work stopped to preserve finalization time within the activity limit; the outcome remains unknown and this intent is not replayed.",
             ],
           );
           await emit(tx, "agent_step_changed", {
@@ -698,26 +801,17 @@ export class AgentTools {
         });
         await this.host.pause(
           run,
-          "The activity budget expired during a kick. Its external result remains unknown and the saved intent will not be replayed.",
-          "kick-budget-exhausted",
+          hardDeadline.aborted
+            ? "The original activity limit expired during a kick. Its external result remains unknown and the saved intent will not be replayed."
+            : "Kick work stopped before the activity limit to reserve finalization time. Its external result remains unknown and the saved intent will not be replayed.",
+          hardDeadline.aborted
+            ? "kick-budget-exhausted"
+            : "kick-work-budget-exhausted",
         );
         await this.host.finish(run, "failed", "wall_clock");
         return;
       }
-      const code =
-        error instanceof RemoteError || error instanceof AppError
-          ? error.code
-          : "UNKNOWN";
-      if (
-        (error instanceof RemoteError && error.status >= 500) ||
-        [
-          "NETWORK_TIMEOUT",
-          "UNKNOWN",
-          "KICK_UNKNOWN",
-          "HTTP_503",
-          "SERVICE_UNAVAILABLE",
-        ].includes(code)
-      ) {
+      if (unknown) {
         await this.host.pause(
           run,
           "The dispatched kick has no provable outcome; automatic replay is paused.",
@@ -735,8 +829,10 @@ export class AgentTools {
       await this.host.completeStep(run, step, toolError(mapped, code));
       return;
     } finally {
-      if (observation) deadline.removeEventListener("abort", budgetAborted);
+      if (observation) {
+        hardDeadline.removeEventListener("abort", budgetAborted);
+        deadline.removeEventListener("abort", workBudgetAborted);
+      }
     }
-    await this.host.completeStep(run, step, { value: { kicked: true } });
   }
 }

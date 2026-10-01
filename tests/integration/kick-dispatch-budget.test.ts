@@ -12,7 +12,9 @@ import {
   until,
 } from "../support/core-automation-fixture.js";
 
-// These waits consume real elapsed time; no clock, budget value, or timer is mocked.
+// Persisted active_ms fixtures test local boundaries, not a full 60s lifecycle.
+// Admission now requires the unchanged 15s POST plus a 2s settlement allocation.
+// These waits consume real elapsed time; no running clock or timer is mocked.
 function blockFor(ms: number): void {
   Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
@@ -40,7 +42,7 @@ test("kick does not enter admission when real preparation consumes the first POS
   await f.db.query(
     "CREATE TRIGGER slow_kick_prepare BEFORE UPDATE OF state ON agent_steps FOR EACH ROW EXECUTE FUNCTION slow_kick_prepare()",
   );
-  await f.preparedTool("expired-kick-prepare", 44800, kickTurn().content[0]!);
+  await f.preparedTool("expired-kick-prepare", 42800, kickTurn().content[0]!);
   await f.automation.tick();
   const run = await f.complete("expired-kick-prepare");
   const [step] = await f.steps(run.id);
@@ -65,7 +67,7 @@ test("kick does not enter admission when real preparation consumes the first POS
   assert.equal(run.recovery_note, null);
   assert.equal(step?.intent?.dispatchState, "awaiting_admission");
   assert.ok(
-    Number(run.active_ms) > 45000 && Number(run.active_ms) < 60000,
+    Number(run.active_ms) > 43000 && Number(run.active_ms) < 60000,
     "bill the real SQL wait without pretending the 60s cap was exhausted",
   );
 });
@@ -102,7 +104,7 @@ test("kick blocked across its first POST window before fetch ends without invent
       };
     },
   );
-  await f.preparedTool("expired-kick-fetch", 44000, kickTurn().content[0]!);
+  await f.preparedTool("expired-kick-fetch", 42000, kickTurn().content[0]!);
   await f.automation.tick();
   const run = await f.complete("expired-kick-fetch", 5000);
   const [step] = await f.steps(run.id);
@@ -139,7 +141,7 @@ test("kick blocked across its first POST window before fetch ends without invent
   );
   assert.equal(f.audits.length, 1);
   assert.ok(
-    Number(run.active_ms) > 45000 && Number(run.active_ms) < 60000,
+    Number(run.active_ms) > 43000 && Number(run.active_ms) < 60000,
     "bill the real blocked interval without fabricating 60s exhaustion",
   );
 });
@@ -196,7 +198,7 @@ test("a deadline timer already fired before kick fetch is still a known non-disp
       return request(...args);
     };
   });
-  await f.preparedTool("expired-kick-timer", 44800, kickTurn().content[0]!);
+  await f.preparedTool("expired-kick-timer", 42800, kickTurn().content[0]!);
   await f.automation.tick();
   const run = await f.complete("expired-kick-timer", 20000);
   assert.equal(expiredSignal, true);
@@ -234,7 +236,7 @@ test("failed terminal persistence after a local dispatch rejection keeps the sav
   await f.db.query(
     "CREATE TRIGGER reject_budget_terminal BEFORE UPDATE OF status ON agent_runs FOR EACH ROW EXECUTE FUNCTION reject_budget_terminal()",
   );
-  await f.preparedTool("failed-kick-terminal", 44500, kickTurn().content[0]!);
+  await f.preparedTool("failed-kick-terminal", 42500, kickTurn().content[0]!);
   await f.automation.tick();
   await Promise.race([
     failure.promise,
@@ -287,7 +289,7 @@ test("failed terminal persistence after a local dispatch rejection keeps the sav
   );
 });
 
-test("a real kick remains unknown when confirmation outlasts the original run deadline", async (t) => {
+test("a real kick remains unknown when confirmation outlasts the work allocation before the original run deadline", async (t) => {
   const f = await automationFixture(t, undefined, (remote) => {
     remote.post("/groups/remote-g/kick", async (_request, reply) =>
       reply.code(504).send({ code: "NETWORK_TIMEOUT" }),
@@ -297,7 +299,7 @@ test("a real kick remains unknown when confirmation outlasts the original run de
       return [];
     });
   });
-  await f.preparedTool("inflight-kick-timeout", 44800, kickTurn().content[0]!);
+  await f.preparedTool("inflight-kick-timeout", 42800, kickTurn().content[0]!);
   await f.automation.tick();
   const run = await f.complete("inflight-kick-timeout", 20000);
   assert.equal(
@@ -352,7 +354,7 @@ test("a confirmed first kick POST still refreshes members below its admission wi
   });
   await f.preparedTool(
     "kick-confirmed-below-window",
-    44800,
+    42800,
     kickTurn().content[0]!,
   );
   await f.automation.tick();
@@ -374,7 +376,7 @@ test("a confirmed first kick POST still refreshes members below its admission wi
 });
 
 for (const scenario of ["policy", "account", "cancel"] as const) {
-  test(`kick admission preserves ${scenario} precedence with less than 15 seconds remaining`, async (t) => {
+  test(`kick admission preserves ${scenario} precedence with less than the 17-second admission allocation`, async (t) => {
     const f = await automationFixture(t);
     const id = `kick-order-${scenario}`;
     await f.preparedTool(id, 45500, kickTurn().content[0]!);

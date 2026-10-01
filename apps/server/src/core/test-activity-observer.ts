@@ -3,6 +3,7 @@ export type ActivityPauseCause =
   | "unrecorded-model-response"
   | "unrecorded-kick-response"
   | "kick-budget-exhausted"
+  | "kick-work-budget-exhausted"
   | "kick-outcome-unknown";
 export interface ActivityTransitionEvidence {
   phase: "creation" | "pause" | "terminal";

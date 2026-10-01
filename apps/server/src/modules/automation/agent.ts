@@ -8,7 +8,12 @@ import {
 } from "../../core/test-transaction-observer.js";
 import type { FastifyInstance } from "fastify";
 import type { AppContext } from "../../core/context.js";
-import { currentOperationSignal, emit, type Queryable } from "../../core/db.js";
+import {
+  currentOperationSignal,
+  emit,
+  withoutDatabaseDeadline,
+  type Queryable,
+} from "../../core/db.js";
 import { AppError } from "../../core/errors.js";
 import type { MessagingService } from "../../core/messaging.js";
 import type { AgentRun } from "../../../../../packages/contracts/src/index.js";
@@ -72,6 +77,7 @@ export class AgentModule {
       completeStep: (run, step, outcome, endReason, executionAttemptId) =>
         this.completeStep(run, step, outcome, endReason, executionAttemptId),
       finishAfterStep: (run, text) => this.finishAfterStep(run, text),
+      settleAfterKick: (run) => this.settleAfterKick(run),
       remaining: (run) => this.remaining(run),
       finish: (run, status, reason) => this.finish(run, status, reason),
       pause: (run, reason, cause) => this.pause(run, reason, cause),
@@ -449,8 +455,10 @@ export class AgentModule {
       );
     }
     // Messages that arrived during the previous run are handed off without waiting for another turn.
-    await this.scan();
-    await this.startNext(run.group_id);
+    await withoutDatabaseDeadline(async () => {
+      await this.scan();
+      await this.startNext(run.group_id);
+    });
   }
   private async run(id: string): Promise<void> {
     let run = await this.readRun(id);
@@ -524,37 +532,49 @@ export class AgentModule {
           await this.toolRunner.executeStep(run, pending);
           continue;
         }
-        const group = (
-          await this.ctx.db.query<GroupRow>(
-            "SELECT * FROM groups WHERE id=$1",
-            [run.group_id],
-          )
-        ).rows[0];
-        if (
-          run.cancel_requested ||
-          !group?.agent_enabled ||
-          group.status !== "active"
-        ) {
-          await this.finish(run, "cancelled", "cancelled");
-          return;
-        }
-        if (this.remaining(run) <= 0) {
-          await this.finish(run, "failed", "wall_clock");
-          return;
-        }
-        if (run.protocol_errors >= 3) {
-          await this.finish(run, "failed", "protocol_errors");
-          return;
-        }
-        if (run.step_count >= 12) {
-          await this.finish(run, "failed", "budget_exhausted");
-          return;
-        }
+        if (await this.finishBeforeNextTurn(run)) return;
         await this.turn(run);
       }
     } finally {
       this.deadlines.delete(id);
     }
+  }
+  private async finishBeforeNextTurn(run: RunRow): Promise<boolean> {
+    const group = (
+      await this.ctx.db.query<GroupRow>("SELECT * FROM groups WHERE id=$1", [
+        run.group_id,
+      ])
+    ).rows[0];
+    if (
+      run.cancel_requested ||
+      !group?.agent_enabled ||
+      group.status !== "active"
+    ) {
+      await this.finish(run, "cancelled", "cancelled");
+      return true;
+    }
+    if (this.remaining(run) <= 0) {
+      await this.finish(run, "failed", "wall_clock");
+      return true;
+    }
+    if (run.protocol_errors >= 3) {
+      await this.finish(run, "failed", "protocol_errors");
+      return true;
+    }
+    if (run.step_count >= 12) {
+      await this.finish(run, "failed", "budget_exhausted");
+      return true;
+    }
+    return false;
+  }
+  private async settleAfterKick(previous: RunRow): Promise<void> {
+    const run = await this.readRun(previous.id);
+    if (!run || run.status !== "running" || run.recovery_note) return;
+    if (await this.finishBeforeNextTurn(run)) return;
+    // The next complete model stage cannot start. Finish under the kick's hard
+    // deadline even when PostgreSQL returned just before its work timer fired.
+    if (this.remaining(run) < this.turnTimeoutMs)
+      await this.finish(run, "failed", "wall_clock");
   }
   private remaining(run: RunRow): number {
     return Math.max(

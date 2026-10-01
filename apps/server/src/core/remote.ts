@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { RemoteError } from "./errors.js";
 import { currentOperationSignal } from "./db.js";
 export interface RemoteSignalSource {
-  source: "activity-budget" | "kick-lock";
+  source: "activity-budget" | "kick-work-budget" | "kick-lock";
   signal: AbortSignal;
 }
 export interface RemoteObservation {

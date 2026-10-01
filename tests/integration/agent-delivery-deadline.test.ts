@@ -55,6 +55,9 @@ async function prepared(
     finishAfterStep: async () => {
       assert.fail("send is not finish");
     },
+    settleAfterKick: async () => {
+      assert.fail("send does not use kick settlement");
+    },
     pause: async () => {
       assert.fail("a read failure does not invent an unknown tool");
     },

@@ -2,7 +2,10 @@ import { setTimeout as delay } from "node:timers/promises";
 import { randomUUID } from "node:crypto";
 import type { Notification, PoolClient, QueryResultRow } from "pg";
 import type { AppContext } from "../../core/context.js";
-import { currentOperationSignal } from "../../core/db.js";
+import {
+  currentDatabaseDeadline,
+  currentOperationSignal,
+} from "../../core/db.js";
 import type { ActivitySample } from "../../core/test-activity-observer.js";
 
 const checkpointChannel = "kapibala_activity_checkpoint";
@@ -72,6 +75,10 @@ export class ActivityClock {
   }
 
   private connect(timeoutMs = checkpointTimeoutMs): Promise<PoolClient> {
+    if (timeoutMs <= 0)
+      return Promise.reject(
+        new Error("Activity clock connection acquisition timed out"),
+      );
     return new Promise((resolve, reject) => {
       let expired = false;
       const timer = setTimeout(
@@ -109,6 +116,8 @@ export class ActivityClock {
     };
     connection.on("error", onError);
     try {
+      if (performance.now() >= deadline)
+        throw new Error("Activity checkpoint expired before observation");
       const config = {
         text,
         values,
@@ -191,7 +200,10 @@ export class ActivityClock {
 
   async checkpoint(runId: string, phase: string): Promise<void> {
     const started = performance.now();
-    const deadline = started + checkpointTimeoutMs;
+    const deadline = Math.min(
+      started + checkpointTimeoutMs,
+      currentDatabaseDeadline() ?? Infinity,
+    );
     try {
       if (this.closed) throw new Error("Activity clock is closed");
       const signal = currentOperationSignal();
@@ -215,9 +227,9 @@ export class ActivityClock {
       let notified = false;
       while (true) {
         signal?.throwIfAborted();
-        if (this.closed || performance.now() - started >= checkpointTimeoutMs)
+        if (this.closed || performance.now() >= deadline)
           throw new Error(
-            "Activity checkpoint was not confirmed within 1500ms",
+            "Activity checkpoint was not confirmed before its deadline",
           );
         const row = (
           await this.observe<{
@@ -230,9 +242,9 @@ export class ActivityClock {
             [runId],
           )
         ).rows[0];
-        if (performance.now() - started >= checkpointTimeoutMs)
+        if (performance.now() >= deadline)
           throw new Error(
-            "Activity checkpoint was not confirmed within 1500ms",
+            "Activity checkpoint was not confirmed before its deadline",
           );
         if (!row || row.status !== "running" || row.recovery_note) return;
         if (row.activity_updated_at.getTime() >= boundary.at.getTime()) return;
@@ -245,7 +257,11 @@ export class ActivityClock {
           ]);
           notified = true;
         }
-        await delay(20, undefined, { signal });
+        await delay(
+          Math.min(20, Math.max(0, deadline - performance.now())),
+          undefined,
+          { signal },
+        );
       }
     } catch (error) {
       this.ctx.log.error(
