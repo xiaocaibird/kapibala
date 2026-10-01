@@ -4,6 +4,7 @@
 
 ## 阅读入口
 
+- **[原活动预算 × 已派发 kick 独立补充报告](reports/followup/20261002-dispatched-kick-budget/report.md)**：固定8e单次实测、零重试，专项审定 BLOCKED（7项具体事实 PASS、3项 BLOCKED）；原始 FAIL 与强恢复观察原样保留。未证明确认在途跨决定或严格60秒预算符合，不改下方已签报告计数；第二实例仍单列未执行。
 - **[当前交付版本验收报告](reports/acceptance/20261002-current-delivery/report.md)**：[JSON](reports/acceptance/20261002-current-delivery/summary.json)、[缺陷与复现证据](reports/acceptance/20261002-current-delivery/defects.json)、[剩余事项](reports/acceptance/20261002-current-delivery/pending-items.json)。预算、容量及安全阶段崩溃恢复修复已通过；工具5秒与未知外部结果续跑要求仍未满足。历史未复测、真人缺证及上线范围单列。
 - [2716完整业务审定](reports/acceptance/20261001-2716abd-business/report.md)、[8e修复候选独立差异复测](reports/followup/20261001-8e047-retest/report.md)：冻结源、配置、逐项结果、JUnit、原始工件归档和资源核查分别保存。
 

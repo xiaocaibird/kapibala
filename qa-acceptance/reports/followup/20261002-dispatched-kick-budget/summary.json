@@ -1,0 +1,155 @@
+{
+  "formatVersion": 1,
+  "generatedAt": "2026-10-01T16:57:00.152870+00:00",
+  "timezone": "Asia/Shanghai",
+  "scope": "Independent single-instance two-factor supplementary adjudication",
+  "caseId": "INT-KICK-BUDGET-001",
+  "requirements": [
+    "R-A5-06",
+    "R-A5-09"
+  ],
+  "sutRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+  "executedQaRevision": "60cd3dda117b9b38906902458175cd81bd42212a",
+  "postRunAttributionFixRevision": "318cc3290ef31b73bdee015fc132163e48ff6298",
+  "postRunFixProductRetested": false,
+  "targetSha256": "4ac2ac1d38208333653a6e5aadaecc46c6a0cf7c49ce92b082fe276d42bfd998",
+  "suiteSha256": "5d4a5ef7763424458ca420a49f36d6f0f8b39f8ad588b6f41ab4544924c55b73",
+  "qaTreeSha256": "7f86d020b3c0efc6c47e5364e4ed37c276a4a0d1cdae8f067fe88107587e3a03",
+  "runId": "2026-10-01T16-42-20.128Z-67fb4dd4",
+  "rawPhase": "developer-preflight",
+  "rawCaseStatus": "FAIL",
+  "reviewedSupplementStatus": "BLOCKED",
+  "overallBusinessAcceptance": "FAIL_UNCHANGED",
+  "releaseReadiness": "NOT_ASSESSED",
+  "counts": {
+    "uniqueCases": 1,
+    "caseResults": {
+      "PASS": 0,
+      "FAIL": 0,
+      "BLOCKED": 1
+    },
+    "obligations": 10,
+    "obligationResults": {
+      "PASS": 7,
+      "BLOCKED": 3
+    },
+    "productRuns": 1,
+    "automaticRetries": 0,
+    "productRetests": 0
+  },
+  "adjudication": "Raw FAIL retained. Both raw assertions enforce original A5.8 before budget comparison. This no-restart supplement does not execute that recovery obligation; no new budget FAIL is substantiated. Strict budget and crossing remain BLOCKED, never PASS. Existing strong recovery FAIL is unchanged.",
+  "claims": [
+    {
+      "id": "SCOPE",
+      "status": "PASS",
+      "reason": "固定版本、单实例、新建原run、真实时间、零SQL活动计数注入；仅一次执行、attempt=0。"
+    },
+    {
+      "id": "CAPACITY",
+      "status": "PASS",
+      "reason": "真实准入拒绝且callbackEntered=false/remoteRequestCount=0；38–40秒活动窗口释放前零kick请求/效果。"
+    },
+    {
+      "id": "POST-EFFECT",
+      "status": "PASS",
+      "reason": "唯一kick POST #16实际收到并落地一次；效果观察保守上界4.386875ms；真实HTTP504已完成。"
+    },
+    {
+      "id": "CONFIRMATION-CROSS",
+      "status": "BLOCKED",
+      "reason": "唯一确认GET #17关闭早于实际预算决定映射下界4.508292ms，未建立仍在途跨决定的正证。"
+    },
+    {
+      "id": "ACTIVE-BUDGET",
+      "status": "BLOCKED",
+      "reason": "包含未保存尾段的活动区间[59999,60008]ms跨严格60000ms，且尾段暂停/continuous=false；不可判通过或活动超限。"
+    },
+    {
+      "id": "DECISION-COMMIT",
+      "status": "PASS",
+      "reason": "真实failed/wall_clock决定与同attempt外层COMMIT配对；仅证明决定和持久状态存在，不替代活动预算符合性。"
+    },
+    {
+      "id": "PUBLIC-UNKNOWN",
+      "status": "PASS",
+      "reason": "公开终态failed/wall_clock；原step审计pass、isError=false/errorCode=null、unknown说明诚实保留，群activeAgentRunId为空。"
+    },
+    {
+      "id": "FINITE-NO-REPLAY",
+      "status": "PASS",
+      "reason": "一次审计、一次turn、一次POST/副作用；实际stop后未见新turn，有限1500ms观察中未见重放；不外推永久保证。"
+    },
+    {
+      "id": "TRANSPORT-CAUSE",
+      "status": "BLOCKED",
+      "reason": "GET关闭且未finish为实际传输事实；缺原请求取消来源，不能声明由预算主动取消，亦不新增取消SLA。"
+    },
+    {
+      "id": "CLEANUP",
+      "status": "PASS",
+      "reason": "自有进程/控制器/注册目录/端口退出，实际Mounts精确映射容器及匿名卷消失，cleanup.failures=[]。"
+    }
+  ],
+  "timing": {
+    "actualActivityMs": [
+      59999,
+      60008
+    ],
+    "activityContinuous": false,
+    "creationWindowMs": [
+      1641.977959,
+      1647.535042
+    ],
+    "decisionWindowMs": [
+      61649.343292,
+      61649.352
+    ],
+    "commitMonotonicMs": [
+      61653.175209,
+      61653.175209
+    ],
+    "sameClockOnlineToDecisionMsDiagnosticOnly": [
+      "60001.808250",
+      "60007.374041"
+    ],
+    "mappedParentDecisionWindowMs": [
+      63014.393334,
+      63045.845292
+    ],
+    "confirmationCloseParentMonoMs": 63009.885042,
+    "closePrecedesDecisionLowerMs": "4.508292",
+    "crossingProved": false
+  },
+  "knownRecoveryObservation": {
+    "status": "OBSERVED_EXISTING_RISK",
+    "historicalConclusion": "FAIL_UNCHANGED",
+    "restartExecutionThisRun": "NOT_RUN",
+    "recoveryState": "recovery-paused",
+    "notANewBudgetDefect": true
+  },
+  "remainingScope": {
+    "runningSecondInstanceCompetition": "NOT_RUN_SEPARATE_SCOPE",
+    "arbitraryRestartRecovery": "NOT_RUN_THIS_SUPPLEMENT",
+    "postFixProductExecution": "NOT_RUN",
+    "realIMEAndFocus": "NO_NEW_HUMAN_EVIDENCE",
+    "secondRoundC1C2P0P1": "PREPARATION_ONLY_SEPARATE_BRANCH"
+  },
+  "archive": {
+    "directory": "runs/2026-10-01T16-42-20.128Z-67fb4dd4",
+    "filesVerified": 1411,
+    "path": "evidence.tar.gz",
+    "bytes": 13448153,
+    "sha256": "f44e9604985dc3f39fad30f8ebfbf6742da6e227b0840b3fc71fb405cf512a30"
+  },
+  "previousSignedReport": {
+    "path": "../../acceptance/20261002-current-delivery/report.md",
+    "sha256": "aa119fea808ee72d38eb21ef7f0022f3d7c36c69014dd204bb6d3bd5449d17c2",
+    "immutable": true
+  },
+  "limits": [
+    "No second product run or silent retry.",
+    "No new business rule, SLA tolerance or protocol outcome guarantee.",
+    "Single finite experiment is not proof for all restart times or all future effects.",
+    "Exact cleanup proof applies only to this run, not all historical resources."
+  ]
+}

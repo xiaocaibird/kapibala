@@ -31,6 +31,12 @@ export interface GatewayRequest {
   method: string;
   path: string;
   body: unknown;
+  /** QA worker's real monotonic clock only; never sent over the gateway protocol. */
+  clockDomain?: string;
+  receivedMonoMs?: number;
+  responsePreparedMonoMs?: number;
+  responseFinishedMonoMs?: number;
+  responseClosedMonoMs?: number;
   responseStatus?: number;
   completedAt?: string;
   /** Route result captured before any response-delay/barrier; not SUT receipt. */
@@ -394,13 +400,17 @@ export class GatewaySimulator {
       method,
       path: url.pathname,
       body,
+      clockDomain: `qa-process-performance:${process.pid}`,
+      receivedMonoMs: performance.now(),
     };
     this.requests.push(entry);
     response.once('finish', () => {
       entry.responseFinishedAt = new Date().toISOString();
+      entry.responseFinishedMonoMs = performance.now();
     });
     response.once('close', () => {
       entry.responseClosedAt = new Date().toISOString();
+      entry.responseClosedMonoMs = performance.now();
       entry.responseClosedBeforeFinish = !response.writableFinished;
     });
     if (this.config.unavailable || (url.pathname === '/events' && this.config.sseUnavailable)) {
@@ -459,6 +469,7 @@ export class GatewaySimulator {
     const action = this.route(method, url.pathname, record(body), plan);
     const status = plan.status ?? action.status;
     entry.responsePreparedAt = new Date().toISOString();
+    entry.responsePreparedMonoMs = performance.now();
     entry.preparedResponseStatus = status;
     if (status >= 400)
       this.applyErrorState(

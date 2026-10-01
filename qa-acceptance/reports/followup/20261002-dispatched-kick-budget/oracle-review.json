@@ -1,0 +1,160 @@
+{
+  "formatVersion": 1,
+  "reviewedAt": "2026-10-01T16:27:57.803166+00:00",
+  "reviewer": "Independent AI QA intake_smoke_gate",
+  "state": "ORACLE_REVIEW_ONLY_AWAITING_ACTUAL_RUN",
+  "productExecutionByReviewer": false,
+  "productConclusion": "NOT_RUN",
+  "scope": "Single-instance from-zero budget × already dispatched kick with actual 504 and unavailable/pending member observation.",
+  "sources": {
+    "original": {
+      "path": "../docs/original-interview-question.md",
+      "sha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+      "bytes": 33219,
+      "lines": [
+        52,
+        122,
+        158,
+        164,
+        192,
+        258,
+        260,
+        264,
+        268
+      ]
+    },
+    "adjudication": {
+      "path": "requirements/evidence-followup/static-closeout-contract-20261001.md",
+      "sha256": "a45b6a2471c0bd76999e4a98120fb1398677b31cb3aa32b1c8be1911c3eb52b2",
+      "bytes": 17448,
+      "lines": []
+    },
+    "runtimeContract": {
+      "path": "contracts/runtime-observation.md",
+      "sha256": "b9898c2538f06607d51d6981a63f0a4d1c3675ce22c73e408394910f503e8d4b",
+      "bytes": 24873,
+      "lines": []
+    },
+    "lifecycleOracle": {
+      "path": "harness/lifecycle-observation.ts",
+      "sha256": "dad97f04a9016e82bdd1ca5e38cc46ee4d9b7110afe038c285e0dbb8604892c8",
+      "bytes": 20622,
+      "lines": []
+    },
+    "activityOracle": {
+      "path": "tests/support/agent-activity-budget.ts",
+      "sha256": "3ef26daae42550d7fcee1131eb219ac36d9213939024b3b000327cc46f94cae7",
+      "bytes": 3900,
+      "lines": []
+    },
+    "gatewayTransport": {
+      "path": "harness/gateway.ts",
+      "sha256": "966292c0866702435f147834988fd5f444143e0be7d03157603f52a2805d1077",
+      "bytes": 33007,
+      "lines": [
+        28,
+        36,
+        39,
+        400,
+        403,
+        459,
+        475,
+        675,
+        689
+      ]
+    },
+    "engineeringDecisionScope": {
+      "path": "../docs/decisions.md",
+      "sha256": "d7dcd34ece69e449162eaa8eecbf6ba487a1f18e4bd69d42f9d36439e7ddc72c",
+      "bytes": 43557,
+      "lines": [
+        69,
+        71,
+        73,
+        138,
+        140,
+        142
+      ]
+    },
+    "kickAdmissionDisclosure": {
+      "path": "../docs/agent-kick-stage-budget-20261001.md",
+      "sha256": "871f6a146c1866dd273f71775ee1ef0c2c7659aed541e10c131f34166f427571",
+      "bytes": 9640,
+      "lines": [
+        7,
+        9,
+        11,
+        25,
+        29,
+        56
+      ]
+    }
+  },
+  "checks": [
+    {
+      "id": "SCOPE",
+      "claim": "One real from-zero run, one live application process and one activity epoch; no restart, second instance, preloaded active_ms or synthetic clock.",
+      "missing": "BLOCKED for the missing premise; no historical PASS import."
+    },
+    {
+      "id": "DISPATCH-PREMISE",
+      "claim": "Exactly one real audited kick POST for the selected group/target and actual 504 HTTP completion, followed by an actual member GET held pending. Route-prepared status and configuration alone do not prove delivery.",
+      "missing": "BLOCKED if the first POST never happened or no pending member request is observed; already proved excess dispatch remains FAIL."
+    },
+    {
+      "id": "UPSTREAM-FIDELITY",
+      "claim": "The remote membership converges within the original two-second guarantee; QA may withhold the HTTP observation but must not make the remote effect itself violate that guarantee to manufacture a product failure.",
+      "missing": "Invalid fixture/premise is BLOCKED; retain actual request/effect timestamps and state."
+    },
+    {
+      "id": "BUDGET",
+      "claim": "Use original creation C and actual stop D in one true process clock, with complete continuous activity from creation and unsaved tail. Duration interval is [D.lower-C.upper,D.upper-C.lower], without rounding or tolerance.",
+      "fail": "A trusted complete activity/actual decision/new dispatch lower bound >60000ms; or actual new turn after a matching stop decision.",
+      "pass": "Complete decision/activity upper bound <=60000ms with all identities/completeness obligations and independent public behavior fulfilled.",
+      "blocked": "Interval straddles 60000 or lacks actual creation/decision, epoch completeness, tail, or process identity. Public terminal/COMMIT cannot substitute."
+    },
+    {
+      "id": "COMMIT",
+      "claim": "Pair the real termination decision and terminal COMMIT by original run/group/application/clock and execution attempt. COMMIT and public visibility are separate diagnostic times.",
+      "fail": "Observed contradictory status/history or dispatch after decision.",
+      "blocked": "Missing pairing without another proven violation; late COMMIT alone does not establish late stop."
+    },
+    {
+      "id": "NO-NEW-DISPATCH",
+      "claim": "At and after actual stop, no newly initiated audit, Agent turn, kick POST or independent new side-effect operation; keep a finite post-stop observation window and record it as diagnostic coverage, not a new SLA.",
+      "qualification": "A remote effect from the single POST initiated before stop may land later and is not new dispatch. Correlate it to that request by unique case/group/target and count; do not assert zero cumulative effect just because stop occurred."
+    },
+    {
+      "id": "PENDING-TRANSPORT",
+      "claim": "Preserve the selected GET request id and pending snapshot, then responseClosedAt/responseClosedBeforeFinish before QA release, TTL, kill or teardown.",
+      "qualification": "closed-before-finish proves transport closure, not alone its application cancellation cause. Normal per-request timeout remains a possible cause unless separate actual cancellation evidence distinguishes it. Do not invent an abort-time SLA."
+    },
+    {
+      "id": "PUBLIC-STATE",
+      "claim": "Original run reaches failed/wall_clock with consistent actual decision and durable state, activeAgentRunId clears, existing step/history remains visible, and no false successful or failed kick outcome is invented from unknown.",
+      "qualification": "Run failed/wall_clock is not automatically tool failure. An unfinished/unknown current effect must be reported accurately rather than fabricated as kicked:true or known not-applied."
+    },
+    {
+      "id": "FAIL-PRECEDENCE",
+      "claim": "Inspect already available exact dispatch/ledger/public and timing violations before raising missing-witness/transport-cause BLOCKED. Preserve earliest real FAIL through cleanup.",
+      "qualification": "The final report separates PASS/FAIL/BLOCKED per claim, raw status and reviewed status. No repeat filtering of first failure."
+    },
+    {
+      "id": "RECOVERY-SCOPE",
+      "claim": "This no-restart budget/safety experiment does not verify A5.8 arbitrary restart continuation and does not close BLK-EXT-004/REC-007 or other recovery FAIL. D039 chosen conservative unknown behavior is an engineering direction, not an accepted standard deviation.",
+      "qualification": "Additional running second-instance competition remains independently NOT_RUN and is not a new condition for closing this two-factor supplement."
+    }
+  ],
+  "reviewLimits": [
+    "No SUT, controller, database or browser was started or contacted.",
+    "No signed historical report, QA source or product was changed.",
+    "Engineering implementation disclosures inform fault placement only; original requirements and accepted adjudication remain the assertion basis."
+  ],
+  "actualRunReviewRequired": [
+    "Pinned SUT/QA/target/suite identities and immutable first-attempt events",
+    "Creation, single epoch and actual stop/COMMIT raw witnesses",
+    "Gateway request/response/effect ledger including exact pending request id and cleanup ordering",
+    "Public original run/group/step state, audit/turn ledger and bounded post-stop snapshots",
+    "Cause-specific PASS/FAIL/BLOCKED and owned-resource cleanup without masking primary FAIL"
+  ]
+}
