@@ -90,6 +90,8 @@ export interface UsageQueueEvent {
 export interface UsageTestObserver {
   event(event: UsageQueueEvent): void;
   beforeWrite(event: UsageQueueEvent): Promise<void>;
+  /** Engineering entry only: bind the initialized real writer, never a replacement. */
+  bindWriter?(writer: { close(): Promise<void> }): void;
 }
 const hardMaxBytes = 16 * 1024 * 1024;
 const fileName = "usage.jsonl";
@@ -212,6 +214,11 @@ export class UsageJournal {
       journal.entries = journal.retain(journal.entries);
       await journal.persist(journal.entries);
       journal.observe("initialized");
+      try {
+        options.testObserver?.bindWriter?.({ close: () => journal.close() });
+      } catch {
+        /* Optional engineering control cannot disable a usable journal. */
+      }
       return journal;
     } catch {
       journal.diagnostic("USAGE_STORE_UNAVAILABLE");
@@ -232,7 +239,10 @@ export class UsageJournal {
   }
   record(value: UsageObservation): void {
     if (this.closed) {
-      this.observe("rejected-closed");
+      this.observe("rejected-closed", {
+        requestId: value.requestId,
+        attemptId: value.attemptId,
+      });
       return;
     }
     let line: string;

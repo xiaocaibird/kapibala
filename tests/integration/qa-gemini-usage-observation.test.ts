@@ -354,6 +354,10 @@ test(
         assert.ok(!(await readdir(session)).includes("usage"));
         assert.deepEqual(observed.usage.events, []);
         assert.equal(
+          (await control(ready, "/writer/close", "POST")).status,
+          409,
+        );
+        assert.equal(
           (
             await control(ready, `/holds/${randomUUID()}`, "PUT", {
               ttlMs: 1000,
@@ -370,6 +374,14 @@ test(
     assert.equal(ready.observation, undefined);
     assert.equal(
       (await fetch(`${ready.address}/qa/usage/v1/snapshot`)).status,
+      404,
+    );
+    assert.equal(
+      (
+        await fetch(`${ready.address}/qa/usage/v1/writer/close`, {
+          method: "POST",
+        })
+      ).status,
       404,
     );
     await audit(ready);
@@ -398,6 +410,10 @@ test(
     assert.deepEqual(transportSnapshot.usage.events, []);
     assert.ok(transportSnapshot.transport.events.length > 0);
     assert.equal(
+      (await control(transportReady, "/writer/close", "POST")).status,
+      409,
+    );
+    assert.equal(
       (
         await control(transportReady, `/holds/${randomUUID()}`, "PUT", {
           ttlMs: 1000,
@@ -407,6 +423,149 @@ test(
     );
     assert.deepEqual(await transportOnly.stop(), { code: 0, signal: null });
     assert.equal((await usage(f.sessionDirectory)).length, 2);
+  },
+);
+
+test(
+  "usage observation: writer close drains the real held journal and rejects later records without closing business service",
+  { timeout: 30000 },
+  async (t) => {
+    const f = await fixture(t);
+    let providerCalls = 0;
+    const origin = await f.listen((request, response) => {
+      providerCalls++;
+      success(request, response);
+    });
+    for (const entry of ["main", "factory"])
+      await t.test(entry, async () => {
+        const session = join(f.directory, `writer-close-${entry}`);
+        const child = f.launch(origin, {
+          ...observationEnv,
+          QA_GEMINI_USAGE_ENTRY: entry,
+          QA_GEMINI_FACTORY_USAGE: "true",
+          QA_GEMINI_SESSION_DIR: session,
+        });
+        const ready = await child.ready();
+        const initialCalls = providerCalls;
+        const id = randomUUID();
+        assert.equal(
+          (await control(ready, `/holds/${id}`, "PUT", { ttlMs: 30000 }))
+            .status,
+          200,
+        );
+        await audit(ready);
+        await until(ready, (s) => s.hold?.state === "held");
+        await audit(ready);
+        const held = await snapshot(ready);
+        assert.equal(held.usage.activeBatch, 1);
+        assert.equal(held.usage.queued, 1);
+        assert.equal((await usage(session)).length, 0);
+        assert.equal(
+          (
+            await control(ready, "/writer/close", "POST", undefined, {
+              authorization: "Bearer wrong",
+            })
+          ).status,
+          403,
+        );
+        assert.equal(
+          (
+            await control(ready, "/writer/close", "POST", undefined, {
+              "x-qa-instance-id": randomUUID(),
+            })
+          ).status,
+          409,
+        );
+        assert.equal(
+          (await control(ready, "/writer/close", "POST", { unexpected: true }))
+            .status,
+          400,
+        );
+        assert.equal((await snapshot(ready)).hold?.state, "held");
+        const replies = await Promise.all([
+          control(ready, "/writer/close", "POST"),
+          control(ready, "/writer/close", "POST"),
+        ]);
+        for (const response of replies) assert.equal(response.status, 200);
+        const closed = (await replies[0]!.json()) as {
+          closed: boolean;
+          snapshot: Snapshot;
+        };
+        assert.equal(closed.closed, true);
+        assert.equal(closed.snapshot.instanceId, ready.observation!.instanceId);
+        assert.equal(closed.snapshot.hold?.state, "released");
+        assert.equal(closed.snapshot.hold?.releaseReason, "writer-close");
+        assert.equal(closed.snapshot.usage.activeBatch, 0);
+        assert.equal(closed.snapshot.usage.queued, 0);
+        const persisted = await readFile(
+          join(session, "usage", "usage.jsonl"),
+          "utf8",
+        );
+        assert.equal((await usage(session)).length, 2);
+        assert.equal(
+          (
+            await control(ready, `/holds/${randomUUID()}`, "PUT", {
+              ttlMs: 1000,
+            })
+          ).status,
+          409,
+        );
+        assert.equal(
+          (await control(ready, "/writer/close", "POST")).status,
+          200,
+        );
+        await audit(ready);
+        const after = await snapshot(ready);
+        assert.equal(providerCalls - initialCalls, 3);
+        assert.equal(
+          after.usage.events.filter((e) => e.kind === "closing").length,
+          1,
+        );
+        assert.equal(
+          after.usage.events.filter((e) => e.kind === "closed").length,
+          1,
+        );
+        assert.equal(
+          after.usage.events.filter((e) => e.kind === "rejected-closed").length,
+          1,
+        );
+        const rejected = after.usage.events.find(
+          (e) => e.kind === "rejected-closed",
+        )!;
+        assert.match(rejected.requestId!, /^[0-9a-f-]{36}$/);
+        assert.match(rejected.attemptId!, /^[0-9a-f-]{36}$/);
+        assert.ok(
+          !(await usage(session)).some(
+            (record) =>
+              record.requestId === rejected.requestId ||
+              record.attemptId === rejected.attemptId,
+          ),
+        );
+        assert.equal(
+          after.usage.events.filter((e) => e.kind === "enqueued").length,
+          2,
+        );
+        assert.ok(
+          after.usage.events.find((e) => e.kind === "closed")!.seq <
+            after.usage.events.find((e) => e.kind === "rejected-closed")!.seq,
+        );
+        assert.equal(
+          await readFile(join(session, "usage", "usage.jsonl"), "utf8"),
+          persisted,
+        );
+        assert.equal((await fetch(`${ready.address}/health`)).status, 200);
+        await evidence(`writer-close-${entry}`, {
+          held,
+          closed,
+          after,
+          providerCalls: providerCalls - initialCalls,
+          retainedRecords: 2,
+        });
+        assert.deepEqual(await child.stop(), { code: 0, signal: null });
+        assert.ok(!(await readdir(session)).includes("owner.lock"));
+        assert.equal(child.stderr, "");
+        assert.ok(!child.stdout.includes(controlToken));
+      });
   },
 );
 

@@ -1,0 +1,48 @@
+{
+  "baseRevision": "c0d98958a3b4fcb5d5529de2b3e3e816f5e23af5",
+  "branch": "agent/second-round-usage-writer-close",
+  "verifiedAt": "2026-10-01T23:33:00.209675+00:00",
+  "testedState": "working tree before candidate commit; hashes below identify exact tested source",
+  "sourceSha256": {
+    "apps/gemini-agent/src/usage.ts": "62b7c91c1c66d033787cd3c9f8a35a04feca7fa5d1368178c8ccb2059dac3101",
+    "scripts/qa-usage-observation.ts": "270559efc0c1c000a7e778aa6d2288b35292dc70f81ab223ddb879a9d4baab02",
+    "tests/integration/qa-gemini-usage-observation.test.ts": "0b80f04399533c2c5df1745bbc3df2be0cc1cbb6048272b8c303670cd762f88c"
+  },
+  "focused": {
+    "tests": 20,
+    "pass": 20,
+    "fail": 0,
+    "skipped": 0
+  },
+  "build": "PASS including typecheck and architecture boundaries",
+  "original": "PASS",
+  "ownedCloseTestProcesses": [
+    {
+      "pid": 17624,
+      "psExitCode": 1,
+      "absent": true
+    },
+    {
+      "pid": 17626,
+      "psExitCode": 1,
+      "absent": true
+    }
+  ],
+  "resourceCleanup": "Tests await stopping every owned child, closing every owned HTTP server, and rm of each temporary directory in after hooks; final test run passed without cleanup errors. No database/container resources.",
+  "scope": "Independent loopback HTTP provider stub and real Gemini service/journal; synthetic credentials only. No real model, key, external request, QA assertion change, main/SUT modification.",
+  "commands": [
+    "QA_USAGE_EVIDENCE_DIR=docs/evidence/qa-usage-writer-close-20261002 node --import tsx --test --test-reporter=tap tests/integration/qa-gemini-usage-observation.test.ts tests/integration/qa-gemini-agent-process.test.ts tests/integration/qa-gemini-transport.test.ts tests/integration/gemini-agent-usage.test.ts",
+    "npm run build",
+    "npm run verify:original"
+  ],
+  "evidenceSha256": {
+    "after.tap": "80c8f000eacdb16e88279bda7ef06348cc6b7a960be7846d9098b64fa6f0c9e6",
+    "before.tap": "4ee058090572583667b0a5e7f027510ac3f4943e4eb6ec11ef82d2002ac97706",
+    "build.txt": "9bf51d978e63929f4a0871504976416dfb693c7dcacb37853b1ae9ace358b05b",
+    "focused.tap": "ac2d4d81b18dbc32d22e8ae6624d68b7811b8d65bad78a2dbe5f813e512b227c",
+    "original.txt": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa",
+    "writer-close-factory.json": "69a28b67e3e372f6c2a5b2c411e801dcfa130c1c9efead84012eb814723edc8f",
+    "writer-close-main.json": "46fdfb553d037144213cbf351de57be506bf265f562a0585afa21b110dd2db57"
+  },
+  "evidenceRetention": "Retain new writer-close snapshots and raw before/after/final test/build logs. Duplicated regression snapshots from existing coverage are omitted; focused.tap retains every test outcome."
+}

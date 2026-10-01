@@ -16,7 +16,7 @@ interface Hold {
   ttlMs: number;
   expiresAt: string;
   reached: UsageQueueEvent | null;
-  releaseReason: "delete" | "ttl" | "shutdown" | null;
+  releaseReason: "delete" | "ttl" | "shutdown" | "writer-close" | null;
 }
 
 /** Explicit offline engineering control. One gate belongs to the sole real writer. */
@@ -35,6 +35,8 @@ export class QaUsageObservation implements UsageTestObserver {
   private release?: () => void;
   private timer?: NodeJS.Timeout;
   private closed = false;
+  private writer?: { close(): Promise<void> };
+  private writerClose?: Promise<void>;
   constructor(
     private options: {
       token: string;
@@ -45,6 +47,11 @@ export class QaUsageObservation implements UsageTestObserver {
       configuredEnabled: boolean;
     },
   ) {}
+
+  bindWriter(writer: { close(): Promise<void> }): void {
+    if (this.writer) throw new Error("QA usage writer already bound");
+    this.writer = writer;
+  }
 
   event(event: UsageQueueEvent): void {
     this.latest = structuredClone(event);
@@ -137,6 +144,21 @@ export class QaUsageObservation implements UsageTestObserver {
               .send({ error: "QA_OBSERVATION_INSTANCE_MISMATCH" });
         });
         routes.get("/snapshot", async () => this.snapshot());
+        routes.post("/writer/close", async (request, reply) => {
+          if (request.body !== undefined)
+            return reply.code(400).send({ error: "QA_WRITER_CLOSE_INVALID" });
+          if (!this.options.usageEnabled || !this.initialized || !this.writer)
+            return reply
+              .code(409)
+              .send({ error: "QA_USAGE_WRITER_UNAVAILABLE" });
+          if (!this.writerClose) {
+            this.closed = true;
+            this.releaseHold("writer-close");
+            this.writerClose = this.writer.close();
+          }
+          await this.writerClose;
+          return { closed: true, snapshot: this.snapshot() };
+        });
         routes.put<{ Params: { id: string } }>(
           "/holds/:id",
           async (request, reply) => {
