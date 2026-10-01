@@ -138,7 +138,8 @@ export async function runtimeFixture(
     accessToken = ((await login.json()) as { accessToken: string }).accessToken;
   }
   async function kill() {
-    if (!guardian || guardian.exitCode !== null) return;
+    if (!guardian || guardian.exitCode !== null || guardian.signalCode !== null)
+      return;
     const ended = once(guardian, "exit");
     process.kill(-guardian.pid!, "SIGKILL");
     await ended;

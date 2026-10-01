@@ -20,7 +20,7 @@
 }
 ```
 
-上例用于真实 `get_recent_messages`：在自己的 Agent HTTP 回复发出前，已知真实 run 和将返回的精确 toolUseId，先建立租约再释放该合法模型回复。toolUseId 必须与该 run 中实际执行的调用匹配；不匹配不会命中，不能把未命中写成执行成功。触发引用用同一结构，将 operation 换成 `{"kind":"trigger","messageId":"ACTUAL_MESSAGES_ROW_ID"}`，要求该非自有消息已经持久化、属于同一 group/msg、尚未分配 run。可用原真实 PG `agent_pending` 表锁暂缓调度扫描，待媒体消息落库后建立精确租约再解除该锁；不是“任意下一个 run”。
+上例用于真实 `get_recent_messages`：在自己的 Agent HTTP 回复发出前，已知真实 run 和将返回的精确 toolUseId，先建立租约再释放该合法模型回复。toolUseId 必须与该 run 中实际执行的调用匹配；不匹配不会命中，不能把未命中写成执行成功。触发引用用同一结构，将 operation 换成 `{"kind":"trigger","messageId":"ACTUAL_MESSAGES_ROW_ID"}`，要求该非自有消息已经持久化、属于同一 group/msg、尚未分配 run。可用原真实 PG `LOCK TABLE agent_pending IN SHARE MODE` 暂缓调度扫描（允许控制器只读身份校验），待媒体消息落库后建立精确租约再解除该锁；不是“任意下一个 run”。
 
 ```json
 {

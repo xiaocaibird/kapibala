@@ -51,11 +51,9 @@ async function fixture(t: TestContext, unknown = false) {
       }));
       remote.post("/groups/remote-g/kick", (_request, reply) => {
         kicks++;
-        return reply
-          .code(503)
-          .send({
-            error: { code: "SERVICE_UNAVAILABLE", message: "result unknown" },
-          });
+        return reply.code(503).send({
+          error: { code: "SERVICE_UNAVAILABLE", message: "result unknown" },
+        });
       });
       remote.get("/groups/remote-g/members", () =>
         ["account-1", "account-2", "external-target"].map((platformUserId) => ({
@@ -333,7 +331,7 @@ test(
       }
     });
     await blocker.query("BEGIN");
-    await blocker.query("LOCK TABLE agent_pending IN ACCESS EXCLUSIVE MODE");
+    await blocker.query("LOCK TABLE agent_pending IN SHARE MODE");
     await f.emit("attachment", false);
     const row = await f.ready();
     const reference = await f.arm(
