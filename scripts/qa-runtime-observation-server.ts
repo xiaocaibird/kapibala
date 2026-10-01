@@ -5,10 +5,8 @@ import { createGatewayModule } from "../apps/server/src/modules/gateway/index.js
 import { createAutomationModule } from "../apps/server/src/modules/automation/index.js";
 import { sourceRevision } from "./qa-capacity/ownership.js";
 import { createObservationBridge } from "./qa-observation/bridge.js";
-import {
-  ObservedRuntimeDatabase,
-  RuntimeObservation,
-} from "./qa-runtime-observation/runtime.js";
+import { ObservedRuntimeDatabase } from "./qa-runtime-observation/runtime.js";
+import { CombinedRuntimeObservation } from "./qa-runtime-observation/combined.js";
 const directory = process.env.QA_RUNTIME_REGISTRY_DIR;
 const port = Number(process.env.PORT);
 if (
@@ -24,7 +22,7 @@ if (
   );
 const revision = await sourceRevision();
 const db = new ObservedRuntimeDatabase(process.env.DATABASE_URL);
-const runtime = new RuntimeObservation(db);
+const runtime = new CombinedRuntimeObservation(db);
 let app: Awaited<ReturnType<typeof createApp>> | undefined;
 let bridge: Awaited<ReturnType<typeof createObservationBridge>> | undefined;
 let closing: Promise<void> | undefined;
@@ -55,7 +53,8 @@ try {
   app = await createApp({
     db,
     modules: (ctx) => {
-      ctx.testRuntimeObserver = runtime;
+      ctx.testRuntimeObserver = runtime.resource;
+      ctx.testActivityObserver = runtime.activity;
       const gateway = createGatewayModule(ctx);
       return [gateway, createAutomationModule(ctx, gateway)];
     },

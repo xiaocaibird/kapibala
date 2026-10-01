@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
-import { mkdtemp, rm } from "node:fs/promises";
+import { mkdtemp, rm, mkdir, symlink } from "node:fs/promises";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+import { join } from "node:path";
 import type { ServerResponse } from "node:http";
 import { test } from "node:test";
 import { createObservationController } from "../../scripts/qa-observation/controller.js";
@@ -12,6 +15,36 @@ import {
 import { createRuntimeObservationController } from "../../scripts/qa-runtime-observation/controller.js";
 import { capacityFixture } from "../support/capacity-control-fixture.js";
 import { until } from "../support/core-automation-fixture.js";
+
+test("CO02 registry aliases cannot bind different protocols to one real directory", async (t) => {
+  const root = await mkdtemp("/tmp/kap-alias-");
+  const alias = root + "-link";
+  await mkdir(join(root, "registry"), { mode: 0o700 });
+  await symlink(root, alias);
+  t.after(async () => {
+    await rm(alias);
+    await rm(root, { recursive: true });
+  });
+  await assert.rejects(
+    promisify(execFile)(
+      process.execPath,
+      ["--import", "tsx", "scripts/qa-observation-server.ts"],
+      {
+        timeout: 5000,
+        env: {
+          ...process.env,
+          PORT: "12345",
+          DATABASE_URL: "postgres://invalid@127.0.0.1:1/never-open",
+          QA_ACCEPTANCE_RESOURCE_TOKEN: randomUUID(),
+          QA_CAPACITY_REGISTRY_DIR: join(root, "registry"),
+          QA_MESSAGE_REGISTRY_DIR: join(alias, "registry"),
+          QA_RUNTIME_REGISTRY_DIR: "",
+        },
+      },
+    ),
+    /distinct registry directory/,
+  );
+});
 
 test("CO01 one real SUT preserves capacity, receipt and account observers simultaneously", async (t) => {
   const messageDir = await mkdtemp("/tmp/kap-cm-");

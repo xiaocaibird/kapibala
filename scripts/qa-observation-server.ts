@@ -1,5 +1,6 @@
 // Explicit, combined engineering entry. Production main never imports this.
 import "dotenv/config";
+import { realpath } from "node:fs/promises";
 import { createApp } from "../apps/server/src/app.js";
 import { createGatewayModule } from "../apps/server/src/modules/gateway/index.js";
 import { createAutomationModule } from "../apps/server/src/modules/automation/index.js";
@@ -7,10 +8,8 @@ import { CapacityRuntime } from "./qa-capacity/runtime.js";
 import { registryDirectory, sourceRevision } from "./qa-capacity/ownership.js";
 import { MessageObservationRuntime } from "./qa-message-observation/runtime.js";
 import { createObservationBridge } from "./qa-observation/bridge.js";
-import {
-  ObservedRuntimeDatabase,
-  RuntimeObservation,
-} from "./qa-runtime-observation/runtime.js";
+import { ObservedRuntimeDatabase } from "./qa-runtime-observation/runtime.js";
+import { CombinedRuntimeObservation } from "./qa-runtime-observation/combined.js";
 
 const directories = {
   capacity: process.env.QA_CAPACITY_REGISTRY_DIR,
@@ -32,7 +31,11 @@ if (
   throw new Error(
     "At least one explicit QA registry, owner token, DATABASE_URL and PORT required",
   );
-const canonical = await Promise.all(configured.map(registryDirectory));
+const canonical = await Promise.all(
+  configured.map(async (directory) =>
+    realpath(await registryDirectory(directory)),
+  ),
+);
 if (new Set(canonical).size !== canonical.length)
   throw new Error(
     "Each observation protocol requires a distinct registry directory",
@@ -43,7 +46,9 @@ const capacity = directories.capacity ? new CapacityRuntime(db) : undefined;
 const message = directories.message
   ? new MessageObservationRuntime(db)
   : undefined;
-const runtime = directories.runtime ? new RuntimeObservation(db) : undefined;
+const runtime = directories.runtime
+  ? new CombinedRuntimeObservation(db)
+  : undefined;
 let app: Awaited<ReturnType<typeof createApp>> | undefined;
 const bridges: Awaited<ReturnType<typeof createObservationBridge>>[] = [];
 let closing: Promise<void> | undefined;
@@ -74,7 +79,8 @@ try {
     modules: (ctx) => {
       ctx.testExecutionObserver = capacity;
       ctx.testMessageObserver = message;
-      ctx.testRuntimeObserver = runtime;
+      ctx.testRuntimeObserver = runtime?.resource;
+      ctx.testActivityObserver = runtime?.activity;
       const gateway = createGatewayModule(ctx);
       return [gateway, createAutomationModule(ctx, gateway)];
     },

@@ -28,6 +28,8 @@ test("RT02 real savepoint fault preserves original transaction and observes newe
     "account-local-save",
     "account-intent-wait",
     "module-tick",
+    "activity-witness",
+    "activity-safe-boundary",
   ]);
   for (const target of [
     { ...f.target(), pid: process.pid },

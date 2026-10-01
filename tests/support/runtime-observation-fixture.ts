@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { createServer } from "node:net";
 import { randomUUID } from "node:crypto";
 import type { TestContext } from "node:test";
-import Fastify from "fastify";
+import Fastify, { type FastifyInstance } from "fastify";
 import { WebSocket } from "ws";
 import { createRuntimeObservationController } from "../../scripts/qa-runtime-observation/controller.js";
 import {
@@ -19,7 +19,14 @@ import { migrate } from "../../scripts/migrate.js";
 import { temporaryDatabase } from "./temporary-database.js";
 import { until } from "./core-automation-fixture.js";
 
-export async function runtimeFixture(t: TestContext, normal = false) {
+export async function runtimeFixture(
+  t: TestContext,
+  normal = false,
+  options: {
+    entry?: string;
+    configureRemote?: (remote: FastifyInstance) => void;
+  } = {},
+) {
   assert.ok(
     process.env.DATABASE_URL,
     "Explicit disposable PostgreSQL required",
@@ -45,6 +52,7 @@ export async function runtimeFixture(t: TestContext, normal = false) {
     reply.raw.writeHead(200, { "content-type": "text/event-stream" });
     reply.raw.write(": runtime observation fixture\n\n");
   });
+  options.configureRemote?.(remote);
   await remote.listen({ host: "127.0.0.1", port: 0 });
   const controller = await createRuntimeObservationController(directory);
   await controller.listen({ host: "127.0.0.1", port: 0 });
@@ -74,9 +82,10 @@ export async function runtimeFixture(t: TestContext, normal = false) {
       [
         "-e",
         guardianCode,
-        normal
-          ? "apps/server/src/main.ts"
-          : "scripts/qa-runtime-observation-server.ts",
+        options.entry ??
+          (normal
+            ? "apps/server/src/main.ts"
+            : "scripts/qa-runtime-observation-server.ts"),
       ],
       {
         cwd: process.cwd(),
