@@ -187,6 +187,35 @@ export async function automationFixture(
     await until(async () => (await readRun(id)).status !== "running", timeout);
     return readRun(id);
   }
+  // A persisted tool response is a valid recovery entry point. Short-budget
+  // tool tests must not depend on dispatching a new, sub-10-second model turn.
+  async function preparedTool(
+    id: string,
+    activeMs: number,
+    use: { id: string; name: string; input: unknown },
+  ) {
+    const response = tool(use.id, use.name, use.input);
+    await db.transaction(async (tx) => {
+      await tx.query(
+        "INSERT INTO agent_runs(id,group_id,history,active_ms,step_count) VALUES($1,'g',$2,$3,1)",
+        [
+          id,
+          JSON.stringify([{ role: "assistant", content: response.content }]),
+          activeMs,
+        ],
+      );
+      await tx.query(
+        "INSERT INTO agent_steps(run_id,ordinal,kind,tool_use_id,name,input,raw_response,state) VALUES($1,1,'tool_use',$2,$3,$4,$5,'ready')",
+        [
+          id,
+          use.id,
+          use.name,
+          JSON.stringify(use.input),
+          JSON.stringify(response),
+        ],
+      );
+    });
+  }
   return {
     ...temporary,
     db,
@@ -204,5 +233,6 @@ export async function automationFixture(
     steps,
     start,
     complete,
+    preparedTool,
   };
 }

@@ -942,7 +942,7 @@ test("disabling Agent during its current step cancels after that step, without a
   );
 });
 
-test("activity budget interrupts a late turn and discards the eventual response", async () => {
+test("activity budget refuses a new turn that cannot receive the configured timeout", async () => {
   await reset();
   let turns = 0;
   agentReply = async () => {
@@ -957,7 +957,7 @@ test("activity budget interrupts a late turn and discards the eventual response"
   );
   await waitFor(async () => (await latestRun())?.status === "failed");
   assert.equal((await latestRun()).end_reason, "wall_clock");
-  assert.equal(turns, 1);
+  assert.equal(turns, 0);
   await delay(220);
   const steps = (
     await db.query<{ kind: string; error_code: string }>(
@@ -966,8 +966,9 @@ test("activity budget interrupts a late turn and discards the eventual response"
     )
   ).rows;
   assert.deepEqual(
-    steps.map((step) => step.error_code),
-    ["TURN_TIMEOUT"],
+    steps,
+    [],
+    "an unstarted turn adds no protocol error or history",
   );
   assert.equal((await latestRun()).status, "failed");
 });
@@ -1608,7 +1609,7 @@ test("a follower cannot execute against a stale activity base while the new cloc
   await module.recover!();
   const runId = randomUUID();
   await db.query(
-    "INSERT INTO agent_runs(id,group_id,active_ms) VALUES($1,$2,59000)",
+    "INSERT INTO agent_runs(id,group_id,active_ms) VALUES($1,$2,47000)",
     [runId, groupId],
   );
   await module.close!();
@@ -1714,7 +1715,7 @@ test("an initialization follower takes over after the blocked clock owner connec
   await module.recover!();
   const runId = randomUUID();
   await db.query(
-    "INSERT INTO agent_runs(id,group_id,active_ms) VALUES($1,$2,59000)",
+    "INSERT INTO agent_runs(id,group_id,active_ms) VALUES($1,$2,47000)",
     [runId, groupId],
   );
   await module.close!();
@@ -2070,7 +2071,7 @@ test(
   },
 );
 test(
-  "timing: sixty seconds of activity ends the run even below the twelve-step cap",
+  "timing: model admission stops within sixty seconds even below the twelve-step cap",
   { skip: !realTiming },
   async () => {
     await reset();
@@ -2084,7 +2085,7 @@ test(
     await inbound();
     await waitFor(async () => (await latestRun())?.status === "failed", 66000);
     const elapsed = Date.now() - started;
-    assert.ok(elapsed >= 59500 && elapsed < 65000, `elapsed ${elapsed}ms`);
+    assert.ok(elapsed < 60000, `actual elapsed ${elapsed}ms`);
     const run = await latestRun();
     assert.equal(run.end_reason, "wall_clock");
     assert.ok(turns < 12);
@@ -2094,7 +2095,7 @@ test(
           "SELECT error_code FROM agent_steps ORDER BY ordinal DESC LIMIT 1",
         )
       ).rows[0]!.error_code,
-      "TURN_TIMEOUT",
+      null,
     );
   },
 );

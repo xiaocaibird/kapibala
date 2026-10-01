@@ -52,10 +52,20 @@ async function saturatedKick(
     await auditResponse.promise;
     return { verdict: "pass", reason: "approved" };
   };
-  await f.db.query(
-    "INSERT INTO agent_runs(id,group_id,history,active_ms) VALUES('capacity-run','g','[]',$1)",
-    [activeMs],
-  );
+  if (activeMs > 0)
+    await f.preparedTool(
+      "capacity-run",
+      activeMs,
+      tool("kick-one", "kick_user", {
+        platform_user_id: "external-target",
+        reason: "capacity regression",
+      }).content[0]!,
+    );
+  else
+    await f.db.query(
+      "INSERT INTO agent_runs(id,group_id,history,active_ms) VALUES('capacity-run','g','[]',$1)",
+      [activeMs],
+    );
   await f.automation.tick();
   await audited.promise;
   let admitted = 0;

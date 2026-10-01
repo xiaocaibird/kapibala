@@ -6,7 +6,7 @@ import {
   tool,
 } from "../support/core-automation-fixture.js";
 
-test("Agent does not dispatch a model request after its intent write consumes the remaining budget", async (t) => {
+test("Agent does not dispatch a model request after its intent write leaves less than the configured turn budget", async (t) => {
   const f = await automationFixture(t);
   // Delay the real pre-dispatch SQL. The fixture starts with a short remaining
   // budget to isolate this scheduling race; DC06 measures an unshortened minute.
@@ -18,7 +18,7 @@ test("Agent does not dispatch a model request after its intent write consumes th
   );
   f.handlers.turn = () => end("must never be requested");
   await f.db.query(
-    "INSERT INTO agent_runs(id,group_id,history,active_ms) VALUES('expired-intent','g','[]',59800)",
+    "INSERT INTO agent_runs(id,group_id,history,active_ms) VALUES('expired-intent','g','[]',47800)",
   );
   const began = performance.now();
   await f.automation.tick();
@@ -40,7 +40,10 @@ test("Agent does not dispatch a model request after its intent write consumes th
   assert.equal(run.recovery_note, null);
   assert.equal(run.step_count, 0);
   assert.deepEqual(await f.steps(run.id), []);
-  assert.ok(Number(run.active_ms) > 60000, "retain actual overshoot evidence");
+  assert.ok(
+    Number(run.active_ms) >= 48150 && Number(run.active_ms) < 60000,
+    "record the real intent wait without charging the unstarted model turn",
+  );
 });
 
 test("Agent does not dispatch an audit request after its intent write consumes the remaining budget", async (t) => {
@@ -51,13 +54,13 @@ test("Agent does not dispatch an audit request after its intent write consumes t
   await f.db.query(
     "CREATE TRIGGER slow_audit_intent BEFORE UPDATE OF state ON agent_steps FOR EACH ROW EXECUTE FUNCTION slow_audit_intent()",
   );
-  f.handlers.turn = () =>
+  await f.preparedTool(
+    "expired-audit-intent",
+    59800,
     tool("requires-audit", "send_message", {
       text: "must not send",
       idempotency_key: "expired-audit-intent",
-    });
-  await f.db.query(
-    "INSERT INTO agent_runs(id,group_id,history,active_ms) VALUES('expired-audit-intent','g','[]',59800)",
+    }).content[0]!,
   );
   const began = performance.now();
   await f.automation.tick();
@@ -71,7 +74,11 @@ test("Agent does not dispatch an audit request after its intent write consumes t
       auditRequests: f.audits.length,
     }),
   );
-  assert.equal(f.turns.length, 1);
+  assert.equal(
+    f.turns.length,
+    0,
+    "resume the prepared tool, not a shortened new model turn",
+  );
   assert.equal(f.audits.length, 0);
   assert.equal(f.gatewayRequests.length, 0);
   assert.equal(run.status, "failed");

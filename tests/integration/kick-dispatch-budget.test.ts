@@ -39,10 +39,7 @@ test("kick does not enter admission when its real preparation transaction consum
   await f.db.query(
     "CREATE TRIGGER slow_kick_prepare BEFORE UPDATE OF state ON agent_steps FOR EACH ROW EXECUTE FUNCTION slow_kick_prepare()",
   );
-  f.handlers.turn = kickTurn;
-  await f.db.query(
-    "INSERT INTO agent_runs(id,group_id,history,active_ms) VALUES('expired-kick-prepare','g','[]',59800)",
-  );
+  await f.preparedTool("expired-kick-prepare", 59800, kickTurn().content[0]!);
   await f.automation.tick();
   const run = await f.complete("expired-kick-prepare");
   const [step] = await f.steps(run.id);
@@ -56,7 +53,11 @@ test("kick does not enter admission when its real preparation transaction consum
   );
   assert.equal(admissions, 0);
   assert.equal(f.gatewayRequests.length, 0);
-  assert.equal(f.turns.length, 1);
+  assert.equal(
+    f.turns.length,
+    0,
+    "resume a recorded tool without a new model turn",
+  );
   assert.equal(f.audits.length, 1);
   assert.equal(run.status, "failed");
   assert.equal(run.end_reason, "wall_clock");
@@ -100,10 +101,7 @@ test("kick blocked across its deadline before fetch ends without inventing an un
       };
     },
   );
-  f.handlers.turn = kickTurn;
-  await f.db.query(
-    "INSERT INTO agent_runs(id,group_id,history,active_ms) VALUES('expired-kick-fetch','g','[]',59000)",
-  );
+  await f.preparedTool("expired-kick-fetch", 59000, kickTurn().content[0]!);
   await f.automation.tick();
   const run = await f.complete("expired-kick-fetch", 5000);
   const [step] = await f.steps(run.id);
@@ -133,7 +131,11 @@ test("kick blocked across its deadline before fetch ends without inventing an un
     "dispatching",
     "retain the committed intent; never make it replayable",
   );
-  assert.equal(f.turns.length, 1);
+  assert.equal(
+    f.turns.length,
+    0,
+    "resume a recorded tool without a new model turn",
+  );
   assert.equal(f.audits.length, 1);
   assert.ok(
     Number(run.active_ms) > 60000,
@@ -193,10 +195,7 @@ test("a deadline timer already fired before kick fetch is still a known non-disp
       return request(...args);
     };
   });
-  f.handlers.turn = kickTurn;
-  await f.db.query(
-    "INSERT INTO agent_runs(id,group_id,history,active_ms) VALUES('expired-kick-timer','g','[]',59500)",
-  );
+  await f.preparedTool("expired-kick-timer", 59500, kickTurn().content[0]!);
   await f.automation.tick();
   const run = await f.complete("expired-kick-timer");
   assert.equal(expiredSignal, true);
@@ -234,10 +233,7 @@ test("failed terminal persistence after a local dispatch rejection keeps the sav
   await f.db.query(
     "CREATE TRIGGER reject_budget_terminal BEFORE UPDATE OF status ON agent_runs FOR EACH ROW EXECUTE FUNCTION reject_budget_terminal()",
   );
-  f.handlers.turn = kickTurn;
-  await f.db.query(
-    "INSERT INTO agent_runs(id,group_id,history,active_ms) VALUES('failed-kick-terminal','g','[]',59500)",
-  );
+  await f.preparedTool("failed-kick-terminal", 59500, kickTurn().content[0]!);
   await f.automation.tick();
   await Promise.race([
     failure.promise,
@@ -289,10 +285,7 @@ test("a real kick sent before its deadline remains an unknown effect if its resp
       return { kicked: true };
     });
   });
-  f.handlers.turn = kickTurn;
-  await f.db.query(
-    "INSERT INTO agent_runs(id,group_id,history,active_ms) VALUES('inflight-kick-timeout','g','[]',59500)",
-  );
+  await f.preparedTool("inflight-kick-timeout", 59500, kickTurn().content[0]!);
   await f.automation.tick();
   const run = await f.complete("inflight-kick-timeout");
   assert.equal(
@@ -305,7 +298,11 @@ test("a real kick sent before its deadline remains an unknown effect if its resp
     (await f.steps(run.id))[0]?.intent?.dispatchState,
     "dispatching",
   );
-  assert.equal(f.turns.length, 1);
+  assert.equal(
+    f.turns.length,
+    0,
+    "resume a recorded tool without a new model turn",
+  );
   assert.equal(f.audits.length, 1);
 });
 

@@ -493,7 +493,10 @@ export class AgentModule {
   }
   private async turn(run: RunRow): Promise<void> {
     await this.activityClock.checkpoint(run.id, "model:before");
-    if (this.remaining(run) <= 0) {
+    // The run limit is an upper bound, not a requirement to consume all 60s.
+    // Do not start a turn which cannot receive its configured 10–15s window.
+    // This is admission against the real remaining budget, not prepaid time.
+    if (this.remaining(run) < this.turnTimeoutMs) {
       await this.finish(run, "failed", "wall_clock");
       return;
     }
@@ -509,7 +512,7 @@ export class AgentModule {
     // The intent write and request serialization consume the same activity
     // budget. Never dispatch with time captured before either operation.
     const left = this.remaining(run);
-    if (left <= 0) {
+    if (left < this.turnTimeoutMs) {
       await this.finish(run, "failed", "wall_clock");
       return;
     }
@@ -517,8 +520,7 @@ export class AgentModule {
     let code: "BAD_JSON" | "TURN_TIMEOUT" | null = null;
     const operation = currentOperationSignal();
     const turnAttemptId = this.ctx.testLifecycleObserver ? randomUUID() : "";
-    const timeoutMs = Math.min(this.turnTimeoutMs, left);
-    const timeout = AbortSignal.timeout(Math.max(1, timeoutMs));
+    const timeout = AbortSignal.timeout(this.turnTimeoutMs);
     try {
       this.ctx.testLifecycleObserver?.record({
         kind: "agent-turn-dispatched",
