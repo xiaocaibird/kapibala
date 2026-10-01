@@ -1,8 +1,14 @@
-import { Component, useState, type ErrorInfo, type ReactNode } from "react";
+import {
+  Component,
+  useEffect,
+  useState,
+  type ErrorInfo,
+  type ReactNode,
+} from "react";
 import { AuthProvider, useAuth } from "./state/auth";
 import { LiveProvider, useLive } from "./state/live";
 import { GroupDirectoryProvider } from "./directory/GroupDirectoryProvider";
-import { useRoute } from "./hooks/useRoute";
+import { parseRoute, useRoute } from "./hooks/useRoute";
 import { Login } from "./pages/Login";
 import { Accounts } from "./pages/Accounts";
 import { Groups } from "./pages/Groups";
@@ -45,6 +51,20 @@ function Workspace() {
   const { connection, notices, dismiss } = useLive();
   const [error, setError] = useState<unknown>(null);
   const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    const clearNavigationContext = () => {
+      const current = parseRoute(location.hash);
+      if (
+        current.page === "agent-runs" &&
+        (current.agentOrigin || current.agentGroup)
+      ) {
+        location.hash = `/agent-runs${current.id ? `/${encodeURIComponent(current.id)}` : ""}`;
+      }
+    };
+    window.addEventListener("session-expired", clearNavigationContext);
+    return () =>
+      window.removeEventListener("session-expired", clearNavigationContext);
+  }, []);
   const signOut = async (): Promise<void> => {
     setBusy(true);
     setError(null);
@@ -62,8 +82,13 @@ function Workspace() {
     { path: "agent-runs", label: "Agent 运行", icon: "activity" as const },
     { path: "sequences", label: "定时序列", icon: "sequence" as const },
   ];
+  const workspacePage =
+    route.page === "agent-runs" && route.id && route.agentOrigin === "groups"
+      ? "groups"
+      : route.page;
   const currentName =
-    navigation.find((item) => item.path === route.page)?.label ?? "群组工作台";
+    navigation.find((item) => item.path === workspacePage)?.label ??
+    "群组工作台";
   return (
     <div className="workspace">
       <aside className="sidebar">
@@ -77,11 +102,11 @@ function Workspace() {
             <a
               key={item.path}
               href={`#/${item.path}`}
-              className={route.page === item.path ? "active" : ""}
+              className={workspacePage === item.path ? "active" : ""}
             >
               <Icon name={item.icon} />
               <span>{item.label}</span>
-              {route.page === item.path && <span className="nav-dot" />}
+              {workspacePage === item.path && <span className="nav-dot" />}
             </a>
           ))}
         </nav>
@@ -204,12 +229,16 @@ function Workspace() {
                   event.payload.runId === route.id &&
                   ["agent_run", "agent_step_changed"].includes(event.type)
                 }
-                title="Agent 运行详情 · Kapibala"
+                title={
+                  route.agentOrigin === "groups"
+                    ? "群组工作台 · Agent 运行详情 · Kapibala"
+                    : "Agent 运行详情 · Kapibala"
+                }
               >
-                <AgentRunDetail id={route.id} />
+                <AgentRunDetail id={route.id} origin={route.agentOrigin} />
               </PageAttentionScope>
             ) : (
-              <AgentRuns />
+              <AgentRuns selectedGroup={route.agentGroup} />
             )
           ) : route.page === "sequences" ? (
             <Sequences key={route.id ?? "all"} groupId={route.id} />

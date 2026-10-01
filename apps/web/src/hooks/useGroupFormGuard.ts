@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-// Kept local to the two group forms: closing does not cancel an accepted request.
+// Local form lifetime only: closing does not cancel an accepted request.
 export function useGroupFormGuard(dirty: boolean, onClose: () => void) {
   const [busy, setBusy] = useState(false);
   const [confirmDiscard, setConfirmDiscard] = useState(false);

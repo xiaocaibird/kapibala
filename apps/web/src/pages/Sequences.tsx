@@ -9,7 +9,14 @@ import {
   definitiveSequenceSelectionEvent,
   groupFields,
 } from "../attention/pageAdapters";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 import { z } from "zod";
 import {
   sequenceDefinitionRequestSchema,
@@ -18,7 +25,7 @@ import {
   sequenceStartRequestSchema,
   type SequenceStartRequest,
 } from "../../../../packages/contracts/src/sequence-requests";
-import { ApiError, post } from "../api/client";
+import { ApiError, getSessionGeneration, post } from "../api/client";
 import {
   groupSchema,
   sequenceSchema,
@@ -30,6 +37,8 @@ import {
 } from "../api/schemas";
 import { useResource } from "../hooks/useResource";
 import { useAuth } from "../state/auth";
+import { useGroupFormGuard } from "../hooks/useGroupFormGuard";
+import { GroupDiscardPrompt } from "../components/GroupDiscardPrompt";
 import {
   Badge,
   Empty,
@@ -46,6 +55,10 @@ const sequencesSchema = sequenceSchema.array();
 const runIdsSchema = z.record(z.string(), z.string());
 interface PreviewState {
   groupId: string;
+  groupLabel: string;
+  sequence: Sequence;
+  revision: number;
+  session: number;
   payload: SequenceStartRequest;
   result: Preview;
 }
@@ -80,6 +93,10 @@ export function Sequences({
   const [preview, setPreview] = useState<PreviewState | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<unknown>(null);
+  const [contextNotice, setContextNotice] = useState<string | null>(null);
+  const contextRevision = useRef(0);
+  const pending = useRef<"preview" | "start" | null>(null);
+  const mounted = useRef(false);
   const [runIds, setRunIds] = useState<Record<string, string>>(() => {
     try {
       const raw: unknown = JSON.parse(
@@ -91,16 +108,64 @@ export function Sequences({
     }
   });
   const [createOpen, setCreateOpen] = useState(false);
-  const groupId = groups.data?.some((group) => group.id === groupChoice)
-    ? groupChoice
-    : (groups.data?.[0]?.id ?? "");
-  const sequenceId = sequences.data?.some(
-    (sequence) => sequence.id === sequenceChoice,
-  )
-    ? sequenceChoice
-    : (sequences.data?.[0]?.id ?? "");
+  // Default only before a choice exists. Missing explicit IDs (including URL
+  // targets) remain selected so refreshes cannot silently retarget a write.
+  const groupId = groupChoice || (groups.data?.[0]?.id ?? "");
+  const sequenceId = sequenceChoice || (sequences.data?.[0]?.id ?? "");
   const group = groups.data?.find((item) => item.id === groupId);
   const sequence = sequences.data?.find((item) => item.id === sequenceId);
+  const groupMissing = Boolean(groupChoice && groups.data && !group);
+  const sequenceMissing = Boolean(
+    sequenceChoice && sequences.data && !sequence,
+  );
+  useLayoutEffect(() => {
+    if (!groupChoice && groupId) setGroupChoice(groupId);
+    if (!sequenceChoice && sequenceId) setSequenceChoice(sequenceId);
+  }, [groupChoice, groupId, sequenceChoice, sequenceId]);
+  useLayoutEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      contextRevision.current++;
+    };
+  }, []);
+  const contextKey = JSON.stringify([
+    groupId,
+    group?.name,
+    group?.gatewayGroupId,
+    group?.status,
+    group?.activeSequenceRunId,
+    group?.members,
+    sequenceId,
+    sequence,
+    varsText,
+    stepVarsText,
+    user?.username,
+    user?.role,
+  ]);
+  const previousContext = useRef(contextKey);
+  const invalidatePreview = (): void => {
+    contextRevision.current++;
+    if (pending.current !== "start") {
+      setPreview(null);
+      setError(null);
+      setContextNotice("配置已变更，请重新预检。变量草稿已保留。");
+    }
+  };
+  useLayoutEffect(() => {
+    if (previousContext.current !== contextKey) {
+      previousContext.current = contextKey;
+      contextRevision.current++;
+      if (
+        pending.current !== "start" &&
+        (preview || pending.current === "preview")
+      ) {
+        setPreview(null);
+        setError(null);
+        setContextNotice("目标或配置已更新，请重新预检。变量草稿已保留。");
+      }
+    }
+  }, [contextKey, preview]);
   const runId = group?.activeSequenceRunId ?? runIds[groupId];
   // Retain the latest displayed run after it becomes terminal. A later active run
   // replaces it within the same page scope, whose summary records that replacement.
@@ -131,8 +196,25 @@ export function Sequences({
   );
   const preflight = async (event: FormEvent): Promise<void> => {
     event.preventDefault();
+    if (
+      pending.current ||
+      !group ||
+      !sequence ||
+      group.status !== "active" ||
+      group.activeSequenceRunId ||
+      user?.role !== "admin"
+    )
+      return;
+    pending.current = "preview";
+    const revision = contextRevision.current;
+    const session = getSessionGeneration();
+    const isCurrent = () =>
+      mounted.current &&
+      contextRevision.current === revision &&
+      getSessionGeneration() === session;
     setBusy(true);
     setError(null);
+    setContextNotice(null);
     try {
       const payload = sequenceStartRequestSchema.parse({
         sequenceId,
@@ -148,15 +230,38 @@ export function Sequences({
         previewSchema,
         payload,
       );
-      setPreview({ groupId, payload, result });
+      if (isCurrent())
+        setPreview({
+          groupId,
+          groupLabel: groupOptionLabel(group),
+          sequence,
+          payload,
+          result,
+          revision,
+          session,
+        });
     } catch (value) {
-      setError(value);
+      if (isCurrent()) setError(value);
     } finally {
-      setBusy(false);
+      pending.current = null;
+      if (mounted.current) setBusy(false);
     }
   };
   const start = async (): Promise<void> => {
-    if (!preview) return;
+    if (!preview || pending.current) return;
+    if (
+      preview.revision !== contextRevision.current ||
+      preview.session !== getSessionGeneration() ||
+      !group ||
+      !sequence ||
+      group.status !== "active" ||
+      group.activeSequenceRunId ||
+      user?.role !== "admin"
+    ) {
+      invalidatePreview();
+      return;
+    }
+    pending.current = "start";
     setBusy(true);
     setError(null);
     try {
@@ -165,6 +270,8 @@ export function Sequences({
         runIdSchema,
         preview.payload,
       );
+      if (!mounted.current || preview.session !== getSessionGeneration())
+        return;
       setRunIds((current) => {
         const next = { ...current, [preview.groupId]: result.runId };
         sessionStorage.setItem("kapibala:sequenceRuns", JSON.stringify(next));
@@ -173,9 +280,11 @@ export function Sequences({
       setPreview(null);
       await groups.reload();
     } catch (value) {
-      setError(value);
+      if (mounted.current && preview.session === getSessionGeneration())
+        setError(value);
     } finally {
-      setBusy(false);
+      pending.current = null;
+      if (mounted.current) setBusy(false);
     }
   };
   return (
@@ -207,6 +316,17 @@ export function Sequences({
         retry={() => void sequences.reload()}
       />
       <ErrorNotice error={preview ? null : error} />
+      {contextNotice && (
+        <p className="notice info" role="status">
+          {contextNotice}
+        </p>
+      )}
+      {(groupMissing || sequenceMissing) && (
+        <p className="notice warning" role="status">
+          原选择的{groupMissing ? "群组" : "序列"}
+          已不可用，请重新选择。不会自动切换到其他目标。
+        </p>
+      )}
       <AttentionRegion
         targetId="sequence-selection"
         label="当前选择的群状态或运行有更新"
@@ -247,6 +367,7 @@ export function Sequences({
               <select
                 value={groupId}
                 onChange={(event) => {
+                  invalidatePreview();
                   setGroupChoice(event.target.value);
                   setError(null);
                 }}
@@ -255,6 +376,11 @@ export function Sequences({
                 <option value="" disabled>
                   请选择群组
                 </option>
+                {groupMissing && (
+                  <option value={groupId} disabled>
+                    {groupId}（已不可用，请重新选择）
+                  </option>
+                )}
                 {groups.data?.map((item) => (
                   <option key={item.id} value={item.id}>
                     {groupOptionLabel(item)} ·{" "}
@@ -268,6 +394,7 @@ export function Sequences({
               <select
                 value={sequenceId}
                 onChange={(event) => {
+                  invalidatePreview();
                   setSequenceChoice(event.target.value);
                   setError(null);
                 }}
@@ -276,6 +403,11 @@ export function Sequences({
                 <option value="" disabled>
                   请选择序列
                 </option>
+                {sequenceMissing && (
+                  <option value={sequenceId} disabled>
+                    {sequenceId}（已不可用，请重新选择）
+                  </option>
+                )}
                 {sequences.data?.map((item) => (
                   <option key={item.id} value={item.id}>
                     {item.name} · {item.steps.length} 步
@@ -323,7 +455,10 @@ export function Sequences({
                     className="code-input"
                     rows={5}
                     value={varsText}
-                    onChange={(event) => setVarsText(event.target.value)}
+                    onChange={(event) => {
+                      invalidatePreview();
+                      setVarsText(event.target.value);
+                    }}
                     spellCheck={false}
                     aria-describedby="vars-help"
                   />
@@ -341,7 +476,10 @@ export function Sequences({
                     className="code-input"
                     rows={5}
                     value={stepVarsText}
-                    onChange={(event) => setStepVarsText(event.target.value)}
+                    onChange={(event) => {
+                      invalidatePreview();
+                      setStepVarsText(event.target.value);
+                    }}
                     spellCheck={false}
                     aria-describedby="step-vars-help"
                   />
@@ -361,6 +499,7 @@ export function Sequences({
                     busy ||
                     !sequenceId ||
                     !groupId ||
+                    !sequence ||
                     group?.status !== "active" ||
                     Boolean(group?.activeSequenceRunId)
                   }
@@ -406,6 +545,14 @@ export function Sequences({
           <p className="muted">
             以下是每一步的最终文本和变量来源。启动时服务会再次完整校验。
           </p>
+          <div className="notice info">
+            <strong>目标群组：{preview.groupLabel}</strong>
+            <span>群 ID：{preview.groupId}</span>
+            <span>
+              消息序列：{preview.sequence.name} · {preview.sequence.id}
+            </span>
+            <span>角色可用性以执行时为准；没有匹配账号时仍按原规则跳过。</span>
+          </div>
           <ErrorNotice error={error} />
           <div className="preview-steps">
             {preview.result.steps.map((step) => (
@@ -415,6 +562,23 @@ export function Sequences({
                   <Badge status="pass" />
                 </div>
                 <p className="preview-text">{step.text}</p>
+                <p className="muted small">
+                  {preview.sequence.steps.find(
+                    (item) => item.index === step.index,
+                  )?.accountRole === "admin"
+                    ? "管理员 / 群主"
+                    : "普通成员"}
+                  {" · "}相对等待{" "}
+                  {
+                    preview.sequence.steps.find(
+                      (item) => item.index === step.index,
+                    )?.delaySeconds
+                  }{" "}
+                  秒
+                  {step.index === 1
+                    ? "（从运行启动计）"
+                    : "（从前一步完成计，发出步骤以发送确认为准）"}
+                </p>
                 {Object.keys(step.resolvedVars).length ? (
                   <table>
                     <thead>
@@ -464,6 +628,7 @@ export function Sequences({
         <CreateSequence
           onClose={() => setCreateOpen(false)}
           onCreated={(id) => {
+            invalidatePreview();
             setSequenceChoice(id);
             setCreateOpen(false);
             void sequences.reload();
@@ -559,33 +724,28 @@ function CreateSequence({
       2,
     ),
   );
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<unknown>(null);
+  const initialText = useRef(text);
+  const guard = useGroupFormGuard(text !== initialText.current, onClose);
+  const { busy } = guard;
   const submit = async (event: FormEvent): Promise<void> => {
     event.preventDefault();
-    setBusy(true);
-    setError(null);
-    try {
+    await guard.submit(async (isCurrent) => {
       const value = parseInput(
         text,
         sequenceDefinitionRequestSchema,
         "序列定义",
       );
       const result = await post("/api/sequences", idSchema, value);
-      onCreated(result.id);
-    } catch (value) {
-      setError(value);
-    } finally {
-      setBusy(false);
-    }
+      if (isCurrent()) onCreated(result.id);
+    });
   };
   return (
-    <Modal wide title="新建消息序列" onClose={onClose}>
+    <Modal wide title="新建消息序列" onClose={guard.close}>
       <form onSubmit={(event) => void submit(event)}>
         <p className="muted">
           定义角色、消息模板和每一步的延迟。保存序列不会立即发送消息。
         </p>
-        <ErrorNotice error={error} />
+        <ErrorNotice error={guard.error} />
         <label>
           序列 JSON
           <textarea
@@ -593,6 +753,7 @@ function CreateSequence({
             rows={16}
             spellCheck={false}
             value={text}
+            disabled={busy}
             onChange={(event) => setText(event.target.value)}
             required
           />
@@ -618,7 +779,7 @@ function CreateSequence({
             type="button"
             className="button secondary"
             disabled={busy}
-            onClick={onClose}
+            onClick={guard.close}
           >
             取消
           </button>
@@ -627,6 +788,12 @@ function CreateSequence({
           </button>
         </div>
       </form>
+      {guard.confirmDiscard && (
+        <GroupDiscardPrompt
+          onContinue={guard.continueEditing}
+          onDiscard={guard.discard}
+        />
+      )}
     </Modal>
   );
 }

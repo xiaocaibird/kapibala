@@ -9,9 +9,10 @@ import {
   groupFields,
   runVersion,
 } from "../attention/pageAdapters";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { agentRunSchema, groupSchema } from "../api/schemas";
 import { useResource } from "../hooks/useResource";
+import { agentListHref, agentReturnLink, type Route } from "../hooks/useRoute";
 import { AgentRunList } from "../components/AgentRunList";
 import {
   Badge,
@@ -23,15 +24,23 @@ import {
   label,
 } from "../components/ui";
 const groupsSchema = groupSchema.array();
-export function AgentRuns() {
+export function AgentRuns({
+  selectedGroup = null,
+}: {
+  selectedGroup?: string | null;
+}) {
   const { data, error, snapshot, reload } = useResource(
     "/api/groups",
     groupsSchema,
   );
-  const [selected, setSelected] = useState("");
-  const groupId = data?.some((group) => group.id === selected)
-    ? selected
-    : (data?.[0]?.id ?? "");
+  const [initialGroup, setInitialGroup] = useState("");
+  const groupId = selectedGroup ?? (initialGroup || data?.[0]?.id || "");
+  const selectedMissing = Boolean(
+    data && groupId && !data.some((group) => group.id === groupId),
+  );
+  useLayoutEffect(() => {
+    if (!initialGroup && groupId) setInitialGroup(groupId);
+  }, [groupId, initialGroup]);
   return (
     <PageAttentionScope
       key={groupId}
@@ -61,11 +70,18 @@ export function AgentRuns() {
             查看群组
             <select
               value={groupId}
-              onChange={(event) => setSelected(event.target.value)}
+              onChange={(event) => {
+                location.hash = agentListHref(event.target.value);
+              }}
             >
               <option value="" disabled>
                 请选择群组
               </option>
+              {selectedMissing && (
+                <option value={groupId} disabled>
+                  {groupId}（已不可用，请重新选择）
+                </option>
+              )}
               {data?.map((group) => (
                 <option key={group.id} value={group.id}>
                   {groupOptionLabel(group)}
@@ -75,8 +91,8 @@ export function AgentRuns() {
           </label>
         </section>
       </AttentionRegion>
-      {groupId ? (
-        <AgentRunList key={groupId} groupId={groupId} />
+      {groupId && !selectedMissing ? (
+        <AgentRunList key={groupId} groupId={groupId} origin="agent-runs" />
       ) : (
         <Empty title="暂无可查看的群组" icon="activity">
           创建群组并开启 Agent 后，运行记录将出现在这里。
@@ -85,7 +101,13 @@ export function AgentRuns() {
     </PageAttentionScope>
   );
 }
-export function AgentRunDetail({ id }: { id: string }) {
+export function AgentRunDetail({
+  id,
+  origin = null,
+}: {
+  id: string;
+  origin?: Route["agentOrigin"];
+}) {
   const {
     data: run,
     error,
@@ -119,27 +141,42 @@ export function AgentRunDetail({ id }: { id: string }) {
     ready: run !== null && !error,
     refresh: reload,
   });
-  if (loading && !run) return <Loading />;
+  const back = agentReturnLink(origin, run?.groupId);
+  const returnLink = (
+    <a className="back-link" href={back.href}>
+      ← {back.label}
+    </a>
+  );
+  if (loading && !run)
+    return (
+      <>
+        {returnLink}
+        <Loading />
+      </>
+    );
   if (!run)
     return (
       <>
+        {returnLink}
         <ErrorNotice error={error} retry={() => void reload()} />
         <Empty title="未能读取运行记录" icon="activity" />
       </>
     );
   return (
     <>
-      <a
-        className="back-link"
-        href={`#/groups/${encodeURIComponent(run.groupId)}`}
-      >
-        ← 返回群组
-      </a>
+      {returnLink}
       <PageHeader
         eyebrow="AGENT EXECUTION"
         title="运行详情"
         subtitle={run.id}
-        actions={<Badge status={run.status} />}
+        actions={
+          <>
+            <a href={`#/groups/${encodeURIComponent(run.groupId)}`}>
+              查看所属群
+            </a>
+            <Badge status={run.status} />
+          </>
+        }
       />
       <ErrorNotice error={error} />
       <AttentionRegion
