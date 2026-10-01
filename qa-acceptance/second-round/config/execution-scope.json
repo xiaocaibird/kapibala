@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "phase": "SECOND_ROUND_EXECUTION",
+  "authorization": {
+    "sourceThreadId": "01a0f194-5588-7353-9a80-5ef7da3d0702",
+    "humanApprovalMessageId": "01a0f947-81d1-7bf3-b896-179868b43f6d",
+    "scopeConfirmationMessageId": "01a0f944-8341-72f3-af30-9530272c91f9",
+    "workflowApprovalMessageId": "01a0f942-7a35-7351-b7c7-e93e95be764d",
+    "verifiedBy": "read_thread actual user messages; approval supersedes earlier preparation-only phase",
+    "approvedAt": "2026-10-01T21:03:28.000Z",
+    "approvedAtSource": "approval turn startedAt Unix 1790888608; not an independently timestamped spoken utterance",
+    "executionAuthorized": true,
+    "localMainMergeAuthorized": true,
+    "realProviderAuthorized": false
+  },
+  "scope": [
+    "original C1",
+    "original C2",
+    "all five P0",
+    "all five P1",
+    "affected original regressions"
+  ],
+  "caseAuthority": [
+    "cases/c1-c2.json",
+    "cases/enhancements-ui.json",
+    "cases/enhancements-backend.json"
+  ],
+  "executionRules": [
+    "Smoke then remaining full second-round cases; do not interrupt independent cases for failures or owner decisions",
+    "Freeze actual merged main SUT plus QA tree and configuration before execution",
+    "No automatic test retry; repairs produce separate revision-bound retest records",
+    "Independent QA public interfaces, real PostgreSQL, controlled owned external services and fault windows",
+    "A partial variant pass cannot make the full case PASS; actual assertion FAIL takes precedence over later evidence or cleanup gaps",
+    "No external paid provider request without separate explicit credential/purpose/call and cost bound"
+  ],
+  "firstRoundDisposition": {
+    "items1and8": "Deferred by human until after round 2: strict five-second interpretation and actual human IME/focus. Do not re-open or re-test in round 2.",
+    "items2to7": "Already decided engineering treatment/external capability limits. Preserve original FAIL/BLOCKED evidence, map known differences; genuine new regressions remain new issues.",
+    "p0_01": "Read-only incorporation of first-round signed record, not reopening remediation",
+    "immutableReports": [
+      "qa-acceptance/reports/acceptance/20261002-current-delivery/report.md",
+      "qa-acceptance/reports/followup/20261002-dispatched-kick-budget/report.md",
+      "qa-acceptance/reports/followup/20261002-first-round-observation-retest/report.md",
+      "qa-acceptance/reports/followup/20261002-kick-work-retest/report.md"
+    ]
+  },
+  "excluded": [
+    "production readiness and deployment",
+    "new external capabilities",
+    "blind resend for unknown remote effect",
+    "relaxed original timing thresholds",
+    "automated substitution for human sign-off"
+  ],
+  "preparationHistory": "requirements/baseline.json and reports/preparation retain their original preparation-only facts; this record is subsequent authority, not a rewrite."
+}

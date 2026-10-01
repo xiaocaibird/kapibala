@@ -8352,3 +8352,178 @@ null
 ```json
 "requirements/contract-conflicts.json#CONFLICT-USAGE-001"
 ```
+
+## SR-BE-POL-008 派发前托管目标明确拒绝跨真实work截止仍正确保存并保持取消优先级
+
+**id**
+
+```json
+"SR-BE-POL-008"
+```
+
+**title**
+
+```json
+"派发前托管目标明确拒绝跨真实work截止仍正确保存并保持取消优先级"
+```
+
+**requirements**
+
+```json
+[
+  "SR-P1-04-01",
+  "SR-P1-04-02",
+  "SR-P1-04-05"
+]
+```
+
+**source**
+
+```json
+"requirements/sources/second-round-managed-rejection-20261002.md"
+```
+
+**priority**
+
+```json
+"P0"
+```
+
+**preconditions**
+
+```json
+[
+  "第二轮已获实际用户授权；仍须绑定最终main SUT、QA源和专属资源。",
+  "真实PostgreSQL、独立Agent/Gateway协议桩及已审核runtime工程观察入口。",
+  "独立工程故障子例，不替代POL-003的公开身份变化容量场景，不伪造active_ms或预置已完成步骤。"
+]
+```
+
+**data**
+
+```json
+[
+  "无取消和已请求取消两个新建真实run，各自工具id、数据库门锁、独立观察租约。",
+  "初始目标为普通外部成员，合法kick提议及实际审计pass；在线有权执行者。"
+]
+```
+
+**steps**
+
+```json
+[
+  "经HTTP建群并形成真实Agent新run和审计等待，不预扣活动时钟。",
+  "只对当前tool的awaiting_admission→dispatching UPDATE安装公开交接的真实PG门锁trigger；实际pg_stat_activity阻塞PID必须对应本例控制连接，真实步骤已提交executing/audit pass/awaiting_admission。",
+  "在已命中等待后，按工程故障契约于独占库事务改变一个本例账号platform_user_id为目标；保存前后查询和实际COMMIT返回、公开账号投影。",
+  "取消分支通过真实管理员PATCH关闭Agent并读到同run cancel_requested；无取消分支保持启用。",
+  "等待真实kick-work-budget-signal-aborted，核对run/step/attempt/clock及完整前缀、hard信号尚未出现，再放开真实SQL锁。",
+  "读取原run/step结果与history，核对POLICY_DENIED完整落库、recovery_note为空；真实保存事务COMMIT返回和终态COMMIT必须有观察；网关该关联kick请求和效果均为零。",
+  "分别核对无取消failed/wall_clock、取消cancelled/cancelled及原活动上限；零HTTP不是单独的故障窗口判据。"
+]
+```
+
+**faults**
+
+```json
+[
+  "真实意图更新等待跨实际work截止；目标事实在初次检查后、最终检查前提交。",
+  "只修改明确列出的本例身份故障数据；不得导入产品AgentTools、覆写产品时钟/方法/结果或生成预算通过事实。"
+]
+```
+
+**expected**
+
+```json
+[
+  "明确未派发的本地POLICY_DENIED不得误记远端结果未知、不能留下executing/recovery_note。",
+  "步骤complete/is_error=true/error_code=POLICY_DENIED，原history仅一个对应tool_result，审计一次，实际kick请求与效果均零。",
+  "已请求取消保留cancelled优先级；无取消按剩余预算无法开始下一完整模型轮的wall_clock结束。",
+  "原60000ms上限保持，work/hard身份不混，缺实际窗口/完整clock/提交证据为BLOCKED；明确观察违约仍FAIL。"
+]
+```
+
+**timing**
+
+```json
+[
+  "每变体从公开新run起实际运行，不写active_ms。工程signal不是活动结束或终态提交；保留原同域实际活动及事务包络。",
+  "收到真实work事件后才发出门锁ROLLBACK，以因果顺序核对释放晚于信号，不直接减跨进程单调时钟。"
+]
+```
+
+**evidence**
+
+```json
+[
+  "独立HTTP/Agent/Gateway原始账本、PG gate/backendpid/lock/step/identity前后、实际runtime完整事件、公共run、保存与终态事务COMMIT、逐变体清理。"
+]
+```
+
+**cleanup**
+
+```json
+[
+  "窗口未完成先停止本例执行者再释放PG门与audit，防止清理触发迟发。",
+  "只删除本例trigger/schema并释放本例lease及连接，正常完成才复原本例身份；数据库最终由root按owner销毁。"
+]
+```
+
+**mode**
+
+```json
+"automated-driver"
+```
+
+**state**
+
+```json
+"NOT_RUN"
+```
+
+**readiness**
+
+```json
+"driver-implemented-final-binding-pending"
+```
+
+**dependencies**
+
+```json
+[
+  "SR-DEP-CANDIDATE",
+  "SR-DEP-OWNED-FAULTS"
+]
+```
+
+**automation**
+
+```json
+"tests/backend-flows.ts#runBackendCase"
+```
+
+**executionBoundary**
+
+```json
+"Human approved second-round execution; exact final main and QA/target freeze remain mandatory before product execution."
+```
+
+**coverageKind**
+
+```json
+"product-behavior"
+```
+
+**sources**
+
+```json
+[
+  "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+  "requirements/sources/second-round-managed-rejection-20261002.md"
+]
+```
+
+**engineeringSeam**
+
+```json
+"Explicit owned SQL fault recipe from developer 7a3ea584; acceptance oracles independently maintained by QA."
+```

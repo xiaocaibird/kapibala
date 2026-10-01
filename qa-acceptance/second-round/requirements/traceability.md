@@ -1,5 +1,6 @@
 # 第二轮需求—用例追踪
 
+当前执行范围为112条；此处 NOT_RUN 为用例初始状态，实际结果以各固定批次 reports/runs 为准。后续授权见 config/execution-scope.json。
 这是第二轮 overlay；不重写原全局目录、候选范围或已签首轮统计。所有产品结果 NOT_RUN。
 
 | 条款 | 来源性质 | 用例 / 准备边界 |
@@ -61,11 +62,11 @@
 | SR-P1-03-03 恢复和有限历史 | approved-enhancement | SR-BE-DIA-002, SR-BE-DIA-005 |
 | SR-P1-03-04 权限与脱敏 | approved-enhancement | SR-BE-DIA-003, SR-BE-DIA-005 |
 | SR-P1-03-05 未知效果安全 | approved-enhancement | SR-BE-DIA-004 |
-| SR-P1-04-01 保护当前托管目标 | approved-new-business-policy | SR-BE-POL-001, SR-BE-POL-002, SR-BE-POL-003, SR-BE-POL-007 |
-| SR-P1-04-02 使用最新目标事实 | approved-new-business-policy | SR-BE-POL-002, SR-BE-POL-003, SR-BE-POL-007 |
+| SR-P1-04-01 保护当前托管目标 | approved-new-business-policy | SR-BE-POL-001, SR-BE-POL-002, SR-BE-POL-003, SR-BE-POL-007, SR-BE-POL-008 |
+| SR-P1-04-02 使用最新目标事实 | approved-new-business-policy | SR-BE-POL-002, SR-BE-POL-003, SR-BE-POL-007, SR-BE-POL-008 |
 | SR-P1-04-03 保留外部目标原规则 | approved-new-business-policy | SR-BE-POL-004, SR-BE-POL-005 |
 | SR-P1-04-04 独立退群清理不变 | approved-new-business-policy | SR-BE-POL-006 |
-| SR-P1-04-05 既有错误协议 | approved-new-business-policy | SR-BE-POL-001, SR-BE-POL-004, SR-BE-POL-007 |
+| SR-P1-04-05 既有错误协议 | approved-new-business-policy | SR-BE-POL-001, SR-BE-POL-004, SR-BE-POL-007, SR-BE-POL-008 |
 | SR-P1-05-01 真实调用记录 | approved-enhancement | SR-C2-013, SR-BE-USG-001, SR-BE-USG-002, SR-BE-USG-004, SR-BE-USG-007, SR-BE-USG-012 |
 | SR-P1-05-02 真实用量与未知 | approved-enhancement | SR-C2-013, SR-C2-015, SR-C2-018, SR-BE-USG-001, SR-BE-USG-002, SR-BE-USG-012, SR-BE-USG-013 |
 | SR-P1-05-03 缓存不重复推理 | approved-enhancement | SR-C2-004, SR-C2-013, SR-BE-USG-003, SR-BE-USG-008 |

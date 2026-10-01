@@ -112,6 +112,8 @@ export function assertSelectedCase(plan: ExecutionPlan, title: string, project: 
 }
 export async function currentExecutionPlan(root: string): Promise<ExecutionPlan> {
   const purpose = executionPurpose();
+  if (purpose.phase === 'second-round')
+    throw new BlockedError('第二轮使用独立runner，不得借旧全局Playwright入口扩大范围');
   const plan = await executionPlan(
     root,
     purpose.phase,

@@ -1,6 +1,6 @@
 /** Future adapter boundary: every operation must use actual public UI/network
  * evidence. No implementation state, simulated business results or pass flags. */
-export type ResponseKind = 'send' | 'sequence-save' | 'precheck';
+export type ResponseKind = 'send' | 'sequence-save' | 'precheck' | 'run-read' | 'identity-read' | 'group-save' | 'group-create';
 export interface ResponseGate {
   requestId: string;
   received: Promise<void>;

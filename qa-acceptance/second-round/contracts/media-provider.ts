@@ -116,7 +116,7 @@ export type Proposal =
   | { kind: 'tool'; name: string; input: Record<string, Json> }
   | { kind: 'text'; text: string }
   | { kind: 'audit'; verdict: 'pass' | 'fail'; reason: string };
-export type ProviderFault = 'http-401' | 'http-429' | 'network-error' | 'timeout' |
+export type ProviderFault = 'http-401' | 'http-429' | 'http-500' | 'network-error' | 'timeout' |
   'bad-json' | 'multiple-candidates' | 'native-function-call' | 'truncated' | 'safety-blocked';
 export interface ProviderCall {
   id: string;
@@ -200,7 +200,7 @@ export interface RealProviderPermission {
 export interface ProviderDriver extends DriverBase {
   /** An upstream transport seam must be explicitly delivered. No monkeypatch
    * of product internals and no silent Google access if the seam is absent. */
-  enqueue(input: { purpose: 'turn' | 'audit'; proposal?: Proposal; fault?: ProviderFault; actualUsage?: Record<string, number> | null; delayResponseMs?: number }): Promise<void>;
+  enqueue(input: { purpose: 'turn' | 'audit'; proposal?: Proposal; fault?: ProviderFault; actualUsage?: Record<string, number> | null; rawUsage?: Record<string, Json>; delayResponseMs?: number }): Promise<void>;
   holdNextUpstream(purpose: 'turn' | 'audit'): Promise<Barrier>;
   exchange(path: '/agent/turn' | '/agent/audit', body: unknown): Promise<HttpFact>;
   calls(): Promise<ProviderCall[]>;

@@ -1,0 +1,563 @@
+{
+  "schemaVersion": 1,
+  "preparedAt": "2026-10-02",
+  "scope": "independent second-round QA backend preparation only",
+  "sourceContracts": [
+    "second-round-qa-intake-20261002.aa41fc8.md",
+    "second-round-qa-intake-20261002.5a53cc8.md",
+    "docs/qa-runtime-observation-adapter.md",
+    "docs/group-profile-conflict-review.md",
+    "docs/second-round-managed-rejection-20261002.md@7a3ea584"
+  ],
+  "counts": {
+    "backendCases": 48,
+    "operationDriverCases": 17,
+    "fullDesignedVariantsImplemented": 12,
+    "partialDrivers": 5,
+    "assignedRoot": 14,
+    "assignedProvider": 13,
+    "actualWindowDriverPending": 4
+  },
+  "execution": {
+    "sutStarted": false,
+    "productResultsInherited": false,
+    "productStatus": "NOT_RUN",
+    "entry": "runBackendCase(caseId,{qa,outputDir,sutDirectory?,deliveryEvidence?,observationMs?}) -> RoundResult",
+    "authorization": "Human second-round approval verified by root; actual fixed main/QA/target binding is still required"
+  },
+  "selfValidation": {
+    "command": "node --import tsx --test second-round/tests/self/backend-oracles.test.ts",
+    "pass": 6,
+    "fail": 0,
+    "productMeaning": "QA pure oracles only; no product acceptance claim",
+    "typecheck": "backend files typechecked; latest complete directory check currently blocked only by concurrent driver-factories.ts:90 missing GatewaySimulator.setMemberRole"
+  },
+  "interfaceNeeds": [
+    "Root provides authorized QaEnvironment per case and recorded lifecycle; do not call standalone bypassing execution gate.",
+    "Root binds owned runtime/capacity controllers with module-tick, admission-hold, agent-lifecycle-witness and activity-witness.",
+    "Freeze new P1-04 work-window contract source and exact final main revision; SQL fault identity change only applies to new POL008, does not replace POL003 public transition.",
+    "Provider owner binds HTTP200/500/invalid output/usage variants with real service UUID to actual wire request evidence, not array index."
+  ],
+  "limitations": [
+    "Most pre-existing case modes still describe preparation-time manual/existing-regression; root must reconcile runtime dispatch and catalog without inventing execution.",
+    "Per-variant PASS cannot make an incomplete case PASS; driver returns BLOCKED for all explicitly uncovered variants.",
+    "Finite observation timeout is BLOCKED unless an actual assertion demonstrates a product contradiction; infrastructure exceptions are not product FAIL.",
+    "Repeated product runs cannot erase first failures; no retries are introduced.",
+    "First-round timing interpretation/human confirmation are not reopened."
+  ],
+  "cases": [
+    {
+      "caseId": "SR-BE-DEL-001",
+      "title": "首轮签发事实与第二轮差异逐项可追踪",
+      "owner": "root",
+      "binding": "root-owned delivery/database/mutation review runner",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final root runner and evidence binding"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-DEL-002",
+      "title": "既有决定、真人与上线结论不相互替代",
+      "owner": "root",
+      "binding": "root-owned delivery/database/mutation review runner",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final root runner and evidence binding"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-DEL-003",
+      "title": "组合候选与授权准入不借历史结果放行",
+      "owner": "root",
+      "binding": "root-owned delivery/database/mutation review runner",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final root runner and evidence binding"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-DEL-004",
+      "title": "干净副本按最终README可隔离安装迁移启动",
+      "owner": "root",
+      "binding": "root-owned delivery/database/mutation review runner",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final root runner and evidence binding"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-DEL-005",
+      "title": "升级重启保留数据且不会删除其他运行目录",
+      "owner": "root",
+      "binding": "root-owned delivery/database/mutation review runner",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final root runner and evidence binding"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-DEL-006",
+      "title": "C3复用新候选完整登录到实际run步骤",
+      "owner": "root",
+      "binding": "root-owned delivery/database/mutation review runner",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final root runner and evidence binding"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-GRD-001",
+      "title": "send_message 审计非pass绝不实际派发",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "operation-driver-implemented",
+      "uncoveredVariants": [],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-GRD-002",
+      "title": "kick_user 审计非pass绝不实际派发",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "operation-driver-implemented",
+      "uncoveredVariants": [],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-GRD-003",
+      "title": "同key在未确认和已确认状态复用原消息不重审重发",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "partial-driver",
+      "uncoveredVariants": [
+        "queued/accepted/failed/unknown actual delivery-state retry variants"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-GRD-004",
+      "title": "被拒调用不占send幂等key",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "operation-driver-implemented",
+      "uncoveredVariants": [],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-GRD-005",
+      "title": "幂等竞争与崩溃恢复不重复已有副作用",
+      "owner": "backend",
+      "binding": null,
+      "readiness": "actual-window-driver-pending",
+      "uncoveredVariants": [
+        "GRD005: real send effect-after/crash plus second-instance recovery"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-GRD-006",
+      "title": "关闭Agent在当前step结束后原子取消",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "partial-driver",
+      "uncoveredVariants": [
+        "concurrent profile update interleaving, covered separately by GRD007/008 only when actually executed"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-GRD-007",
+      "title": "资料与取消事务失败不留半提交",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "operation-driver-implemented",
+      "uncoveredVariants": [],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-GRD-008",
+      "title": "CAS失败和旧执行者竞争不导致错误取消或额外效果",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "partial-driver",
+      "uncoveredVariants": [
+        "simultaneous lock-witness CAS pair",
+        "old worker actual permission-loss boundary"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-MUT-001",
+      "title": "审计守卫错误副本确由业务断言检出",
+      "owner": "root",
+      "binding": "root-owned delivery/database/mutation review runner",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final root runner and evidence binding"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-MUT-002",
+      "title": "同key守卫错误副本由重审或重复副作用断言检出",
+      "owner": "root",
+      "binding": "root-owned delivery/database/mutation review runner",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final root runner and evidence binding"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-MUT-003",
+      "title": "单事务入口与有限静态门禁交付可复核",
+      "owner": "root",
+      "binding": "root-owned delivery/database/mutation review runner",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final root runner and evidence binding"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-DB-001",
+      "title": "两档真实PG计划与API成本可复现",
+      "owner": "root",
+      "binding": "root-owned delivery/database/mutation review runner",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final root runner and evidence binding"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-DB-002",
+      "title": "一个局部优化或有依据的不优化结论",
+      "owner": "root",
+      "binding": "root-owned delivery/database/mutation review runner",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final root runner and evidence binding"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-DB-003",
+      "title": "首次固定分页集合与同毫秒顺序不重复不遗漏",
+      "owner": "root",
+      "binding": "root-owned delivery/database/mutation review runner",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final root runner and evidence binding"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-DB-004",
+      "title": "出站确认改时间与补投不破坏旧游标",
+      "owner": "root",
+      "binding": "root-owned delivery/database/mutation review runner",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final root runner and evidence binding"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-DB-005",
+      "title": "局部优化回滚和并发读取保持公开语义",
+      "owner": "root",
+      "binding": "root-owned delivery/database/mutation review runner",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final root runner and evidence binding"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-DIA-001",
+      "title": "真实tick失败形成可信原因时间和关联",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "operation-driver-implemented",
+      "uncoveredVariants": [],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-DIA-002",
+      "title": "真实恢复更新当前建议并保留一份最近失败",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "operation-driver-implemented",
+      "uncoveredVariants": [],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-DIA-003",
+      "title": "诊断admin/viewer权限和敏感信息隔离",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "operation-driver-implemented",
+      "uncoveredVariants": [],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-DIA-004",
+      "title": "未知外部效果只建议核对不盲重发",
+      "owner": "backend",
+      "binding": null,
+      "readiness": "actual-window-driver-pending",
+      "uncoveredVariants": [
+        "DIA004: unknown remote effect with paired applied/not-applied and safe advice evidence"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-DIA-005",
+      "title": "并发失败与重启诊断不串来源或泄露",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "partial-driver",
+      "uncoveredVariants": [
+        "two simultaneously held modules and selective recovery"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-POL-001",
+      "title": "有权审计pass也不能kick当前托管目标",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "operation-driver-implemented",
+      "uncoveredVariants": [],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-POL-002",
+      "title": "审计等待时目标成为托管身份派发前重查",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "operation-driver-implemented",
+      "uncoveredVariants": [],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-POL-003",
+      "title": "容量拒绝等待时目标身份变化仍零kick",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "operation-driver-implemented",
+      "uncoveredVariants": [],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-POL-004",
+      "title": "普通外部目标原审计开关权限预算保持",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "partial-driver",
+      "uncoveredVariants": [
+        "pre-dispatch insufficient budget actual lifecycle/capacity boundary"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-POL-005",
+      "title": "已派发外部kick的未知结果不被新政策误重放",
+      "owner": "backend",
+      "binding": null,
+      "readiness": "actual-window-driver-pending",
+      "uncoveredVariants": [
+        "POL005: dispatched unknown effect/budget/restart regression with first-round known differences"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-POL-006",
+      "title": "leave-all仍可清托管成员且群主最后",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "operation-driver-implemented",
+      "uncoveredVariants": [],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-POL-007",
+      "title": "保护在重启恢复和C2提议下保持同目标事实",
+      "owner": "backend",
+      "binding": null,
+      "readiness": "actual-window-driver-pending",
+      "uncoveredVariants": [
+        "POL007: C2 proposal and actual restart boundary"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-USG-001",
+      "title": "turn与audit真实调用记录和实际usage精确对应",
+      "owner": "media-provider",
+      "binding": "C2 public process/HTTP + harness/backend-oracles.ts",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final actual provider process/wire and file observation binding; per-variant availability remains separate"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-USG-002",
+      "title": "HTTP错误坏输出和超时各自记录失败不虚构零消耗",
+      "owner": "media-provider",
+      "binding": "C2 public process/HTTP + harness/backend-oracles.ts",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final actual provider process/wire and file observation binding; per-variant availability remains separate"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-USG-003",
+      "title": "完成结果缓存复用不增加实际推理计数",
+      "owner": "media-provider",
+      "binding": "C2 public process/HTTP + harness/backend-oracles.ts",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final actual provider process/wire and file observation binding; per-variant availability remains separate"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-USG-004",
+      "title": "并发turn/audit下记录不串身份且有界",
+      "owner": "media-provider",
+      "binding": "C2 public process/HTTP + harness/backend-oracles.ts",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final actual provider process/wire and file observation binding; per-variant availability remains separate"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-USG-005",
+      "title": "写入失败或慢存储不阻塞调用且可诊断",
+      "owner": "media-provider",
+      "binding": "C2 public process/HTTP + harness/backend-oracles.ts",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final actual provider process/wire and file observation binding; per-variant availability remains separate"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-USG-006",
+      "title": "关闭记录与权限清理不触及秘密或其他目录",
+      "owner": "media-provider",
+      "binding": "C2 public process/HTTP + harness/backend-oracles.ts",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final actual provider process/wire and file observation binding; per-variant availability remains separate"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-USG-007",
+      "title": "允许字段留存不泄露prompt工具正文和key",
+      "owner": "media-provider",
+      "binding": "C2 public process/HTTP + harness/backend-oracles.ts",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final actual provider process/wire and file observation binding; per-variant availability remains separate"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-USG-008",
+      "title": "正常关闭与硬崩溃后记录真实性和缓存边界",
+      "owner": "media-provider",
+      "binding": "C2 public process/HTTP + harness/backend-oracles.ts",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final actual provider process/wire and file observation binding; per-variant availability remains separate"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-USG-009",
+      "title": "用量写失败诊断自身不造成递归或信息泄漏",
+      "owner": "media-provider",
+      "binding": "C2 public process/HTTP + harness/backend-oracles.ts",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final actual provider process/wire and file observation binding; per-variant availability remains separate"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-USG-010",
+      "title": "正式入口与显式编程入口usage配置保持公开差异",
+      "owner": "media-provider",
+      "binding": "C2 public process/HTTP + harness/backend-oracles.ts",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final actual provider process/wire and file observation binding; per-variant availability remains separate"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-USG-011",
+      "title": "记录数、UTF-8字节及年龄边界按启动与写入清理",
+      "owner": "media-provider",
+      "binding": "C2 public process/HTTP + harness/backend-oracles.ts",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final actual provider process/wire and file observation binding; per-variant availability remains separate"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-USG-012",
+      "title": "成功HTTP真实用量与随后输出失败独立记录，非成功HTTP不取body用量",
+      "owner": "media-provider",
+      "binding": "C2 public process/HTTP + harness/backend-oracles.ts",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final actual provider process/wire and file observation binding; per-variant availability remains separate"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-USG-013",
+      "title": "部分用量字段独立校验，零与未知不混淆且不补算总量",
+      "owner": "media-provider",
+      "binding": "C2 public process/HTTP + harness/backend-oracles.ts",
+      "readiness": "assigned",
+      "uncoveredVariants": [
+        "final actual provider process/wire and file observation binding; per-variant availability remains separate"
+      ],
+      "productStatus": "NOT_RUN"
+    },
+    {
+      "caseId": "SR-BE-POL-008",
+      "title": "派发前托管目标明确拒绝跨真实work截止仍正确保存并保持取消优先级",
+      "owner": "backend",
+      "binding": "tests/backend-flows.ts#runBackendCase",
+      "readiness": "operation-driver-implemented",
+      "uncoveredVariants": [],
+      "productStatus": "NOT_RUN"
+    }
+  ],
+  "managedWindowSource": {
+    "repositoryPath": "docs/second-round-managed-rejection-20261002.md",
+    "revision": "0f0e171e595b264ec65638912834567d346e8aa7",
+    "snapshot": "requirements/sources/second-round-managed-rejection-20261002.md",
+    "sha256": "bfd5a4cdba79fa8ea1b32e675609ffa1eb155c4bde77defcedee1b7fc2d85b5b",
+    "bytes": 10453,
+    "sameGitObject": true
+  }
+}

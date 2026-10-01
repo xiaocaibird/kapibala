@@ -1,0 +1,98 @@
+{
+  "phase": "second-round-driver-readiness",
+  "owner": "QA",
+  "productState": "NOT_RUN",
+  "entry": "harness/ui-runner.ts#runUiCase",
+  "input": {
+    "qa": "initialized and authorized QaEnvironment, root owns lifecycle",
+    "browser": "owned Playwright Browser, driver creates/cleans one context per case",
+    "outputDir": "owned case evidence directory"
+  },
+  "caseBindings": [
+    "SR-UI-001",
+    "SR-UI-002",
+    "SR-UI-003",
+    "SR-UI-004",
+    "SR-UI-005",
+    "SR-UI-006",
+    "SR-UI-007",
+    "SR-UI-008",
+    "SR-UI-009",
+    "SR-UI-010",
+    "SR-UI-011",
+    "SR-UI-012",
+    "SR-UI-013",
+    "SR-UI-014",
+    "SR-UI-015",
+    "SR-UI-016",
+    "SR-UI-017",
+    "SR-UI-018",
+    "SR-UI-019",
+    "SR-UI-020",
+    "SR-UI-021",
+    "SR-UI-022",
+    "SR-UI-023",
+    "SR-UI-024",
+    "SR-UI-025",
+    "SR-UI-026",
+    "SR-UI-027",
+    "SR-UI-028",
+    "SR-UI-029",
+    "SR-BE-DEL-006"
+  ],
+  "preparedBindings": 30,
+  "productPassClaims": 0,
+  "selfVerification": {
+    "typecheck": "UI source passed earlier full second-round tsc; latest shared-worktree check currently blocked by unrelated driver-factories.ts:90 nonexistent setMemberRole, reported to root",
+    "qaOracleAndActualTransportTests": 9,
+    "pass": 9,
+    "fail": 0,
+    "skip": 0,
+    "sutStarted": false,
+    "testSource": "tests/self/ui-public-driver.test.ts and tests/self/ui-oracles.test.ts",
+    "additionalRegression": "Nested discard prompt locator binds its own direct heading, never dirty-form ancestor"
+  },
+  "observability": [
+    "real REST fixture creates groups, templates and actual Agent runs",
+    "held browser response uses real upstream and unchanged body; zero transport retries",
+    "failed send uses owned DB transport interruption and real HTTP result; successful response cannot be relabeled failure",
+    "unknown uses real upstream acceptance then browser response loss, records actual gateway effect",
+    "browser requests, actual gateway messages/requests, public persisted API result checked separately",
+    "trace, final screenshot, monotonic NDJSON ordinals, first error and cleanup errors",
+    "native browser focus prerequisite observed; no synthetic visibility events or human IME/focus signoff"
+  ],
+  "executionPrerequisites": [
+    "root exact SUT/QA/config/authorization freeze",
+    "actual owned environment and independent DB",
+    "installed Playwright browser matching package",
+    "public final-candidate controls must correspond to reviewed integration contracts; locator mismatch is a QA fixture issue, not inferred product FAIL"
+  ],
+  "conditionalCoverage": [
+    {
+      "case": "SR-UI-014",
+      "condition": "simultaneous precheck may be prevented by the actual disabled public submit control",
+      "handling": "record exact disabled control premise; verify stale discard and then newer current preview. If a second actual request is permitted, release newer first and older second and check newer text retained. Do not invoke React internals."
+    },
+    {
+      "case": "SR-UI-016/SR-UI-017",
+      "condition": "target invalidation uses actual public leave-all and active-to-left transition, not private database deletion",
+      "handling": "assert same explicit URL target remains, start disabled, no automatic switch to the still-valid second group; record first-entry default separately"
+    },
+    {
+      "case": "SR-UI-025",
+      "condition": "both pages must show native exclusive background focus before actual Agent update",
+      "handling": "missing prerequisite is BLOCKED and preserved; real human focus remains outside automation"
+    },
+    {
+      "case": "SR-UI-027",
+      "condition": "uses real logout/revoked cookie followed by cold-start real refresh401",
+      "handling": "records groups, list, direct entry variants; does not claim automatic token time expiration was independently measured"
+    }
+  ],
+  "knownImplementationImports": [],
+  "existingQaHelperUse": [
+    "harness/environment.ts and platform-client.ts for independent owned external fixture/API",
+    "tests/ui/native-focus.ts for independently observed native browser focus, not business implementation/test helpers"
+  ],
+  "remainingProductExecution": "All bindings must execute on the actual merged candidate. Prepared function existence and QA self-tests do not count as product coverage PASS."
+}

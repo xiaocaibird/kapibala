@@ -312,6 +312,15 @@ export async function loadTarget(path: string, qaRoot: string): Promise<TargetCo
 }
 export function executionPurpose(env: NodeJS.ProcessEnv = process.env): ExecutionPurpose {
   const phase = env.QA_EXECUTION_KIND ?? 'execution';
+  if (phase === 'second-round') {
+    if (env.QA_EXECUTION_MANUAL_SHA256 || env.QA_EXECUTION_SUITE_ID ||
+        env.QA_EXECUTION_SUITE_SHA256 || env.QA_EXECUTION_BUSINESS_SHA256 ||
+        !/^[a-f0-9]{64}$/.test(env.QA_EXECUTION_SECOND_ROUND_SHA256 ?? ''))
+      throw new BlockedError('第二轮须绑定独立完整范围摘要，不能混用历史用途');
+    return { phase, secondRoundSha256: env.QA_EXECUTION_SECOND_ROUND_SHA256! };
+  }
+  if (env.QA_EXECUTION_SECOND_ROUND_SHA256)
+    throw new BlockedError('第二轮摘要不能作为其他执行用途');
   if (env.QA_EXECUTION_MANUAL_SHA256)
     throw new BlockedError('人工续测摘要不能作为完整执行或预跑用途');
   if (phase === 'business-acceptance') {
@@ -362,7 +371,9 @@ export function validateAuthorization(
   if (
     a.version !== 1 ||
     a.scope !==
-      (purpose.phase === 'execution'
+      (purpose.phase === 'second-round'
+        ? 'second-round'
+        : purpose.phase === 'execution'
         ? 'all-required'
         : purpose.phase === 'business-acceptance'
           ? 'all-business'
@@ -377,6 +388,12 @@ export function validateAuthorization(
     /REQUIRED/.test(a.approvalReference)
   )
     throw new BlockedError('缺少后续用户明确授权的记录');
+  if (purpose.phase === 'second-round') {
+    if (!/^[a-f0-9]{64}$/.test(purpose.secondRoundSha256) ||
+        a.secondRoundSha256 !== purpose.secondRoundSha256)
+      throw new BlockedError('第二轮授权未绑定独立用例与范围摘要');
+  } else if (a.secondRoundSha256 !== undefined)
+    throw new BlockedError('非第二轮授权不可携带第二轮摘要');
   if (
     purpose.phase === 'developer-preflight' &&
     (a.suiteId !== purpose.suiteId ||
@@ -467,6 +484,10 @@ export async function requireAuthorization(
     const scope = await readManualFollowupScope(fileURLToPath(new URL('../', import.meta.url)));
     if (manualScopeFingerprint(scope) !== purpose.manualScopeSha256)
       throw new BlockedError('人工续测三条用例或原需求摘要已改变');
+  } else if (purpose.phase === 'second-round') {
+    const { secondRoundFingerprint } = await import('../second-round/harness/scope.js');
+    if (await secondRoundFingerprint() !== purpose.secondRoundSha256)
+      throw new BlockedError('第二轮用例或授权范围已变化，须重新冻结');
   } else if (purpose.phase !== 'execution') {
     // Resolve QA metadata and recheck the selected digest on every authorization
     // check, including fixture/restart calls. Never trust an environment project list.

@@ -360,6 +360,17 @@ export class GatewaySimulator {
     this.emit(present ? 'member_joined' : 'member_left', { groupId, platformUserId }, options);
   }
 
+  /** QA-controlled external membership fact. Only the documented membership
+   * notification is emitted; the app must obtain the role from the real members read. */
+  setMemberRole(groupId: string, platformUserId: string, role: 'creator' | 'admin' | 'member'): void {
+    const group = this.groups.get(groupId);
+    const member = group?.members.find(item => item.platformUserId === platformUserId);
+    if (!member) throw new Error('Cannot change role of an absent remote member');
+    member.role = role;
+    this.effect('external-role-change', { groupId, platformUserId });
+    this.emit('member_joined', { groupId, platformUserId });
+  }
+
   expireInvite(link: string): void {
     const invite = this.invites.get(link);
     if (!invite) throw new Error(`Unknown invitation ${link}`);

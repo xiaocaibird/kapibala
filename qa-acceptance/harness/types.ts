@@ -131,11 +131,12 @@ export interface Authorization {
   sutDirectory: string;
   targetSha256: string;
   allowedActions: string[];
-  scope: 'all-required' | 'all-business' | 'developer-preflight' | 'manual-followup';
+  scope: 'all-required' | 'all-business' | 'developer-preflight' | 'manual-followup' | 'second-round';
   suiteId?: string;
   suiteSha256?: string;
   businessSha256?: string;
   manualScopeSha256?: string;
+  secondRoundSha256?: string;
 }
 
 export interface ManualFollowupPurpose {
@@ -145,5 +146,6 @@ export interface ManualFollowupPurpose {
 
 export type ExecutionPurpose =
   | { phase: 'execution' }
+  | { phase: 'second-round'; secondRoundSha256: string }
   | { phase: 'developer-preflight'; suiteId: string; suiteSha256: string }
   | { phase: 'business-acceptance'; businessSha256: string };

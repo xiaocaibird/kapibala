@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash, randomUUID } from 'node:crypto';
 import { lstat, readFile, realpath } from 'node:fs/promises';
 import { isAbsolute, relative, sep } from 'node:path';
+import { decodeProviderWire } from '../harness/provider-wire.js';
 import {
   C1_CAPABILITIES as M, C2_CAPABILITIES as P, PreparationBlocked,
   type DriverBase, type Ownership, type MediaDriver, type MediaMessage, type MessageRef,
@@ -138,6 +139,8 @@ export async function mediaDuplicateReplay(driver?: MediaDriver) {
     for (let i = 0; i < 3; i++) proof(await d.emit({ ...a.ref, text: `text:${a.ref.msgId}`, mediaUrl: a.source.url }));
     const changed = await d.source({ id: 'changed-source', bytes: Uint8Array.of(99) });
     proof(await d.emit({ ...a.ref, text: 'duplicate changed source', mediaUrl: changed.url }));
+    const marker = { groupId: a.ref.groupId, msgId: `duplicate-ingress-marker-${randomUUID()}` };
+    proof(await d.emit({ ...marker, text: 'ordered ingress marker' })); await d.read(marker);
     proof(await d.cycle('download'));
     const after = await published(d, a.ref, a.content);
     assert.equal(after.localFilePath, original.localFilePath);
@@ -193,10 +196,23 @@ export async function mediaRetention(driver?: MediaDriver) {
       '零天边界缺最终公开接受范围；已完成default30/合法2天结果须分别留证，不猜零天合法');
     await withOwnedDriver(driver, [M.basic, M.age, M.cleanup], `media-retention-${retentionDays ?? 'default'}`, async (d) => {
       const configured = await d.mediaDirectory(); assert.equal(configured.effectiveRetentionDays, retentionDays ?? 30);
-      const a = await attachment(d), row = await published(d, a.ref, a.content);
+      const a = await attachment(d);
       const limit = retentionDays ?? 30;
+      if (limit === 0) {
+        await d.read(a.ref);
+        proof(await d.cycle('cleanup'));
+        cleared(await d.read(a.ref));
+        const requests = (await d.sourceRequests()).filter((r) => r.url === a.source.url);
+        assert.equal(requests.length, 1); assert.equal(requests[0]!.responseStatus, 200); assert.equal(requests[0]!.responseBytes, a.content.length);
+        await d.evidence('media-zero-day-boundary', { configured, requests, publicMessage: await d.read(a.ref), publicationNeedNotRemainVisible: true });
+        return;
+      }
+      const row = await published(d, a.ref, a.content);
       if (limit > 0) {
-        assertAgeSide(await age(d, a.ref, limit - 0.001), limit, 'younger'); proof(await d.cycle('cleanup'));
+        assertAgeSide(await age(d, a.ref, limit - 0.001), limit, 'younger');
+        const control = await attachment(d), controlRow = await published(d, control.ref, control.content);
+        await expire(d, control.ref, limit + 1); proof(await d.cycle('cleanup'));
+        cleared(await d.read(control.ref)); await absent(controlRow.localFilePath!);
         await assertOwnedBytes((await d.read(a.ref)).localFilePath, configured.path, a.content);
       }
       assertAgeSide(await age(d, a.ref, limit + 0.001), limit, 'expired'); proof(await d.cycle('cleanup'));
@@ -207,7 +223,15 @@ export async function mediaRetention(driver?: MediaDriver) {
 export async function mediaDeletedPaths(driver?: MediaDriver) {
   await withOwnedDriver(driver, [M.basic, M.age, M.cleanup], 'media-deleted-paths', async (d) => {
     const a = await attachment(d, { isOwn: true }), row = await published(d, a.ref, a.content);
+    // Populate a real next page through public ingress; the API returns no
+    // separate snapshot token for a single-item page.
+    for (let i = 0; i < 51; i++) {
+      const newer = { groupId: a.ref.groupId, msgId: `snapshot-anchor-${randomUUID()}` };
+      proof(await d.emit({ ...newer, text: 'newer cursor anchor' }));
+      if (i === 50) await d.read(newer);
+    }
     const oldPage = await d.timeline(a.ref.groupId), count = (await d.sourceRequests()).length;
+    need(oldPage.snapshotCursor, '真实旧分页游标尚未建立，不能用空串冒称旧snapshot');
     await expire(d, a.ref); proof(await d.cycle('cleanup'));
     cleared(await d.read(a.ref)); await absent(row.localFilePath!);
     const replayed = await d.timeline(a.ref.groupId, oldPage.snapshotCursor);
@@ -234,12 +258,15 @@ export async function mediaActiveReferences(driver?: MediaDriver) {
       const traffic = await d.agentRequests(); proof(traffic.evidence);
       need(traffic.requests.length > 0, '未实际触发Agent请求，不能判模型上下文隔离');
       assert.ok(!JSON.stringify(traffic.requests).includes(row.localFilePath!), '服务端文件路径不自动加入模型上下文');
-      await expire(d, a.ref); proof(await d.cycle('cleanup'));
+      const control = await attachment(d, { groupId: a.ref.groupId, isOwn: true });
+      const controlRow = await published(d, control.ref, control.content);
+      await expire(d, a.ref); await expire(d, control.ref); proof(await d.cycle('cleanup'));
+      cleared(await d.read(control.ref)); await absent(controlRow.localFilePath!);
       await assertOwnedBytes((await d.read(a.ref)).localFilePath, (await d.mediaDirectory()).path, a.content);
       proof(await d.finishReference(ref.runId)); assert.notEqual((await d.run(ref.runId)).status, 'running');
       proof(await d.cycle('cleanup')); cleared(await d.read(a.ref)); await absent(row.localFilePath!);
       });
-    });
+    }, { referenceMode: via });
   }
 }
 export async function mediaReferenceCleanupRace(driver?: MediaDriver) {
@@ -269,8 +296,9 @@ export async function mediaReferenceCleanupRace(driver?: MediaDriver) {
   }
 }
 export async function mediaCrashRecovery(driver?: MediaDriver) {
+  const failures: { phase: string; error: unknown }[] = [];
   for (const phase of ['partial-written', 'complete-before-path-commit', 'path-cleared-before-unlink', 'unlinked-before-completion'] as const) {
-    await withOwnedDriver(driver, [M.basic, M.sourceFaults, M.age, M.cleanup, M.barriers, M.restart], `media-crash-${phase}`, async (d) => {
+    try { await withOwnedDriver(driver, [M.basic, M.sourceFaults, M.age, M.cleanup, M.barriers, M.restart], `media-crash-${phase}`, async (d) => {
       const groupId = await d.createGroup(), ref = { groupId, msgId: randomUUID() }, content = bytes();
       const source = await d.source({ id: ref.msgId, bytes: content });
       const gate = await d.hold(phase, ref);
@@ -295,7 +323,12 @@ export async function mediaCrashRecovery(driver?: MediaDriver) {
           if (phase === 'partial-written') assert.ok((await d.sourceRequests()).filter((r) => r.url === source.url).length > before, '不完整下载恢复需要新真实请求');
         }
       });
-    });
+    }); } catch (error) { failures.push({ phase, error }); await driver?.evidence(`media-crash-${phase}-variant-result`, { phase, status: error instanceof PreparationBlocked ? 'BLOCKED' : 'FAIL', error: error instanceof Error ? error.message : String(error) }); }
+  }
+  if (failures.length) {
+    const realFailure = failures.find((item) => !(item.error instanceof PreparationBlocked));
+    if (realFailure) throw realFailure.error;
+    throw new PreparationBlocked(`媒体崩溃子场景缺失真实窗口: ${failures.map((item) => item.phase).join(', ')}`);
   }
 }
 export async function mediaDeletionFailure(driver?: MediaDriver) {
@@ -659,8 +692,18 @@ export async function providerUsage(driver?: ProviderDriver) {
       { runId: malformedOutputRequest.runId, validOutput: false, usage: { inputTokens: 23, outputTokens: 5 } },
     ];
     for (const record of usage.records) {
-      const call = calls.find((c) => c.id === record.serviceCallId); assert.ok(call);
-      const expected = expectedCalls[calls.indexOf(call)]!;
+      // Google wire has no service-local UUID. Correlate actual received
+      // runId/purpose; this controlled sample has exactly one audit invocation.
+      const matching = calls.filter((call) => {
+        if (call.purpose !== record.purpose) return false;
+        const decoded = decodeProviderWire(`/v1beta/models/${call.model}:generateContent`, call.rawWire);
+        return record.purpose === 'audit' ? record.runId === null : decoded.payload.runId === record.runId;
+      });
+      assert.equal(matching.length, 1, '唯一实际runId/用途关联；不能把服务UUID当上游ID或按数组猜关联');
+      const call = matching[0]!;
+      const expected = expectedCalls.find((item) => item.runId === record.runId)!;
+      assert.ok(expected);
+      await d.evidence('usage-observed-correlation', { serviceRequestId: record.requestId, serviceAttemptId: record.attemptId, independentWireLedgerId: call.id, runId: record.runId, purpose: record.purpose, basis: record.purpose === 'audit' ? 'only-audit-call-in-controlled-serial-sample' : 'unique-actual-wire-runId-and-purpose', crossServiceIdEqualityAsserted: false });
       assert.equal(record.purpose, call.purpose); assert.equal(record.model, call.model);
       assertUsageTokens(record.usage, expected.usage);
       assert.ok(Number.isFinite(record.elapsedMs) && record.elapsedMs >= 0);
@@ -701,9 +744,10 @@ export async function providerUsageFailureBounds(driver?: ProviderDriver) {
   }, { usageMaxRecords: 2, usageMaxBytes: 4096 });
 }
 export async function providerUsageLifecycle(driver?: ProviderDriver) {
+ const failures: { variant: string; error: unknown }[] = [];
  for (const option of [ { entry: 'main', enabled: true }, { entry: 'main', enabled: false },
    { entry: 'factory', enabled: false }, { entry: 'factory', enabled: true } ]) {
-  await withOwnedDriver(driver, [P.protocol, P.upstream, P.usage, P.storage, P.restart], 'provider-usage-lifecycle', async (d) => {
+  try { await withOwnedDriver(driver, [P.protocol, P.upstream, P.usage, P.restart], 'provider-usage-lifecycle', async (d) => {
     const profile = usageProfile(d); assert.equal(profile.enabled, option.enabled); assert.equal(profile.entry, option.entry);
     assert.equal(profile.maximumRecords, 1000); assert.equal(profile.maximumBytes, 2097152); assert.equal(profile.maximumAgeDays, 30);
     await d.enqueue({ purpose: 'turn', proposal: { kind: 'text', text: 'zero usage is real zero' }, actualUsage: { inputTokens: 0, outputTokens: 0, totalTokens: 0 } });
@@ -721,8 +765,9 @@ export async function providerUsageLifecycle(driver?: ProviderDriver) {
     const restart = await d.restart('SIGTERM'); proof(restart.evidence); assert.equal(restart.started, true);
     assert.ok(!(await d.usage()).records.some((r) => r.serviceCallId === age.oldestEligibleRecordId), '启动按实际年龄清理');
     const closed = await d.shutdownUsageWriter(); proof(closed.evidence); assert.equal(closed.rejectedAfterClose, true);
-  }, { usageEntry: option.entry, ...(option.entry === 'factory' ? { factoryUsageSupplied: option.enabled } : { usageEnabled: option.enabled }) });
+  }, { usageEntry: option.entry, ...(option.entry === 'factory' ? { factoryUsageSupplied: option.enabled } : { usageEnabled: option.enabled }) }); } catch (error) { const variant = `${option.entry}-${option.enabled}`; failures.push({ variant, error }); await driver?.evidence(`provider-usage-lifecycle-${variant}-result`, { variant, status: error instanceof PreparationBlocked ? 'BLOCKED' : 'FAIL', error: error instanceof Error ? error.message : String(error) }); }
  }
+ if (failures.length) { const realFailure = failures.find((item) => !(item.error instanceof PreparationBlocked)); if (realFailure) throw realFailure.error; throw new PreparationBlocked(`Usage lifecycle subscenarios not established: ${failures.map((item) => item.variant).join(', ')}`); }
 }
 export async function providerUsageQueue(driver?: ProviderDriver) {
  await withOwnedDriver(driver, [P.protocol, P.upstream, P.usage, P.usageQueue], 'provider-usage-queue', async (d) => {

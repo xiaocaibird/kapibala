@@ -1,3 +1,13 @@
+> 当前阶段：已获得第二轮实际执行授权，见 `config/execution-scope.json` 和 `requirements/current-execution.md`。以下旧准备期说明保留其历史含义；不得用它覆盖后续真实授权。当前共 112 条，旧准备报告的 111 条是当时快照。
+
+实际入口（在 QA 根目录运行；必须指定干净独立 SUT 和完整提交）：
+
+```sh
+PLAYWRIGHT_BROWSERS_PATH=/absolute/owned/browser-cache node --import tsx second-round/harness/runner.ts --sut /absolute/isolated/sut --revision FULL_COMMIT_SHA
+```
+
+入口冻结授权、完整范围和目标摘要，先执行冒烟子集，再执行其余用例；首次失败不自动重试。结果写入 `second-round/reports/runs/<run-id>/`；每轮保留 MD/JSON/JUnit、逐例原始证据和资源清理。真实付费模型与生产评估不在本入口范围。`--cases ID1,ID2` 仅用于独立复测批次，报告其余项保持 NOT_RUN，不替代全量结果。
+
 # 第二轮独立 QA 准备
 
 本目录只在 `agent/qa-second-round-preparation` 分支准备。范围为原 C1/C2 与 D050 批准的全部五项 P0、五项 P1；D051 只授权提前准备。所有产品结果为 **NOT_RUN**，第二轮产品执行、真实模型调用与合入 main 均未获授权。开发候选是材料输入，不能自动成为正式被测版本。

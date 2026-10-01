@@ -34,6 +34,11 @@ export class QaEnvironment {
   private disposed = false;
   private closing?: Promise<void>;
   private apiWrites = Promise.resolve();
+  /** QA-owned adapters may replace external services, never business outcomes. */
+  protected externalServiceUrls(): { gateway: string; agent: string } {
+    return { gateway: this.gateway.url, agent: this.agent.url };
+  }
+  protected resourceEnvironment(): Record<string, string> { return {}; }
   constructor(
     readonly config: TargetConfig,
     private readonly cluster: OwnedDatabaseCluster,
@@ -51,16 +56,24 @@ export class QaEnvironment {
     port = this.apiPort,
     databaseUrl = this.cluster.url(this.database, this.proxy!.port),
   ): Promise<NodeJS.ProcessEnv> {
+    const services = this.externalServiceUrls();
+    for (const value of Object.values(services)) {
+      const url = new URL(value);
+      if (url.protocol !== 'http:' || url.hostname !== '127.0.0.1' || !url.port ||
+          url.username || url.password || url.search || url.hash || url.pathname !== '/')
+        throw new Error('QA external service must be an explicit owned loopback origin');
+    }
     return isolatedEnv({
       ...this.config.sut.env,
+      ...this.resourceEnvironment(),
       ...(await capacityRegistryEnvironment(this.config)),
       ...(await runtimeRegistryEnvironment(this.config)),
       ...(await messageRegistryEnvironment(this.config)),
       QA_ACCEPTANCE_RESOURCE_TOKEN: this.resourceToken,
       PORT: String(port),
       DATABASE_URL: databaseUrl,
-      GATEWAY_URL: this.gateway.url,
-      AGENT_URL: this.agent.url,
+      GATEWAY_URL: services.gateway,
+      AGENT_URL: services.agent,
     });
   }
   readonly recordHttp = async (entry: Record<string, unknown>): Promise<void> => {
@@ -168,16 +181,17 @@ export class QaEnvironment {
       this.server,
     );
   }
-  async kill(): Promise<void> {
+  async kill(signal: 'SIGTERM' | 'SIGKILL' = 'SIGKILL'): Promise<void> {
     await this.evidence(`kill-${Date.now()}`, {
       at: new Date().toISOString(),
       pid: this.server?.pid,
+      signal,
     });
-    await this.server?.stop('SIGKILL');
+    await this.server?.stop(signal);
     this.server = undefined;
   }
-  async restart(): Promise<void> {
-    await this.kill();
+  async restart(signal: 'SIGTERM' | 'SIGKILL' = 'SIGKILL'): Promise<void> {
+    await this.kill(signal);
     await this.start();
   }
   async startSecondInstance(): Promise<PlatformClient> {
