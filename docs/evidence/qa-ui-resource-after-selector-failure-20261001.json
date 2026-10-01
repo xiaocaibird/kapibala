@@ -1,0 +1,42 @@
+{
+  "sourceHead": "fb1589df08f00c10e9e62801007b1698d4d0155a",
+  "sourceFiles": {
+    "apps/web/src/pages/Sequences.tsx": "ffce0d7e6d02abe28b9d42dd97aa09ca3e8f64cf0d0a121896f0fe038037f719",
+    "scripts/verify-architecture-resource-browser.mjs": "8d57124de9e062a1b3cc471f8b98e91e3f4742f682a4107e746f7695d3e05f41"
+  },
+  "startedAt": "2026-10-01T10:36:02.931Z",
+  "database": "architecture_browser_6b33c345aeb5483caf7565ed5b6bf805",
+  "background": false,
+  "webMode": "production build",
+  "results": [
+    {
+      "name": "transient GET failures recover without polling, new events, or manual reload",
+      "observed": {
+        "gets": 3,
+        "events": 0
+      }
+    },
+    {
+      "name": "permanent forbidden response is not automatically retried",
+      "observed": {
+        "gets": 1
+      }
+    },
+    {
+      "name": "transient retry budget stops after initial attempt plus three retries",
+      "observed": {
+        "gets": 4
+      }
+    }
+  ],
+  "pageErrors": [],
+  "cleanupErrors": [],
+  "passed": false,
+  "error": {
+    "name": "TimeoutError",
+    "message": "locator.inputValue: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('消息序列', { exact: true })\u001b[22m\n",
+    "stack": "locator.inputValue: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('消息序列', { exact: true })\u001b[22m\n\n    at <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/verify-architecture-resource-browser.mjs:207:52)"
+  },
+  "failurePage": "- complementary:\n  - link \"K kapibala .\":\n    - /url: \"#/groups\"\n  - text: 工作空间\n  - navigation:\n    - link \"群组工作台\":\n      - /url: \"#/groups\"\n    - link \"服务账号\":\n      - /url: \"#/accounts\"\n    - link \"Agent 运行\":\n      - /url: \"#/agent-runs\"\n    - link \"定时序列\":\n      - /url: \"#/sequences\"\n  - strong: 消息运营平台\n  - text: 本地工作空间 A\n  - strong: admin\n  - text: 管理员\n  - button \"退出登录\"\n- text: 工作空间 /\n- strong: 定时序列\n- status: 实时同步中\n- main:\n  - text: SCHEDULED MESSAGING\n  - heading \"定时序列\" [level=1]\n  - paragraph: 预检每一步的消息与变量来源，再有序发送到群组。\n  - button \"新建序列\"\n  - paragraph: 当前群组：未选择 · 状态：—\n  - paragraph: 当前展示运行：尚无运行\n  - heading \"运行配置\" [level=2]\n  - text: 先预检 · 后执行 目标群组\n  - combobox \"目标群组\":\n    - option \"请选择群组\" [disabled] [selected]\n  - text: 消息序列\n  - combobox \"消息序列\":\n    - option \"请选择序列\" [disabled]\n    - option \"读取恢复样例 · 1 步\" [selected]\n  - text: \"1\"\n  - strong: 恢复后的序列正文\n  - text: 管理员 / 群主 · 延迟 0 秒 默认变量\n  - code: vars\n  - textbox \"默认变量 vars\": \"{}\"\n  - paragraph: JSON 键值对象。此序列没有占位符。空字符串视为未提供。\n  - text: 分步变量\n  - code: stepVars\n  - textbox \"分步变量 stepVars\": \"{}\"\n  - paragraph:\n    - text: 例如\n    - code: \"{\\\"2\\\":{\\\"location\\\":\\\"共享盘\\\"}}\"\n    - text: 。从该步起沿用新值；空字符串保留原值。\n  - button \"预检所有步骤\" [disabled]\n  - strong: 尚无序列运行\n  - paragraph: 选择序列并完成变量预检后，执行进度会在这里实时展示。\n  - heading \"发送后，再开始下一步计时\" [level=3]\n  - paragraph: 限流时步骤等待恢复。没有匹配角色的可用账号时跳过；群不可写时停止运行。\n  - text: Kapibala Console 状态有记录，执行可追踪。",
+  "completedAt": "2026-10-01T10:36:44.241Z"
+}

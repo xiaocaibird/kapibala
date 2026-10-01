@@ -1,0 +1,72 @@
+{
+  "sourceHead": "fb1589df08f00c10e9e62801007b1698d4d0155a",
+  "sourceFiles": {
+    "apps/web/src/pages/Sequences.tsx": "ffce0d7e6d02abe28b9d42dd97aa09ca3e8f64cf0d0a121896f0fe038037f719",
+    "scripts/verify-architecture-resource-browser.mjs": "dc0e76a0a156931ba927338675db3ef32620ff0653f101ba07d06fedc5dbe8f6"
+  },
+  "startedAt": "2026-10-01T10:37:06.485Z",
+  "database": "architecture_browser_ad85c01057994623ba65bab5de221574",
+  "background": false,
+  "webMode": "production build",
+  "results": [
+    {
+      "name": "transient GET failures recover without polling, new events, or manual reload",
+      "observed": {
+        "gets": 3,
+        "events": 0
+      }
+    },
+    {
+      "name": "permanent forbidden response is not automatically retried",
+      "observed": {
+        "gets": 1
+      }
+    },
+    {
+      "name": "transient retry budget stops after initial attempt plus three retries",
+      "observed": {
+        "gets": 4
+      }
+    },
+    {
+      "name": "visible retry restarts the exhausted resource in the same document without events",
+      "observed": {
+        "exhaustedAttempts": 4,
+        "gets": 5,
+        "events": 0,
+        "documentOrigin": 1790851026811.2,
+        "selectedSequence": "architecture-sequence"
+      }
+    },
+    {
+      "name": "leaving a resource page cancels its pending retries",
+      "observed": {
+        "beforeWait": 1,
+        "afterWait": 1
+      }
+    },
+    {
+      "name": "unknown sequence fields are rejected by the rendered form without POST",
+      "observed": {
+        "posts": 0
+      }
+    },
+    {
+      "name": "non-contiguous sequence indices are rejected before POST",
+      "observed": {
+        "posts": 0
+      }
+    },
+    {
+      "name": "valid sequence still saves exactly once through the real API",
+      "observed": {
+        "posts": 1,
+        "rows": 1
+      }
+    }
+  ],
+  "pageErrors": [],
+  "cleanupErrors": [],
+  "passed": true,
+  "completedAt": "2026-10-01T10:37:20.010Z"
+}
