@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
+import { createServer as createHttpServer } from "node:http";
+import { once } from "node:events";
+import type { Socket } from "node:net";
 import { randomUUID, randomBytes } from "node:crypto";
 import {
   mkdir,
@@ -401,6 +404,19 @@ async function start(smoke: boolean): Promise<void> {
     await api.listen({ host: "127.0.0.1", port: 0 });
     check();
     const { createServer } = await import("vite");
+    const webHttp = createHttpServer();
+    const webSockets = new Set<Socket>();
+    webHttp.on("connection", (socket) => {
+      webSockets.add(socket);
+      socket.once("close", () => webSockets.delete(socket));
+    });
+    disposers.push(async () => {
+      for (const socket of webSockets) socket.destroy();
+      if (webHttp.listening)
+        await new Promise<void>((resolve, reject) =>
+          webHttp.close((error) => (error ? reject(error) : resolve())),
+        );
+    });
     const web = await createServer({
       root: join(root, "apps/web"),
       configFile: join(root, "apps/web/vite.config.ts"),
@@ -408,6 +424,10 @@ async function start(smoke: boolean): Promise<void> {
         host: "127.0.0.1",
         port: 0,
         strictPort: true,
+        // The orchestrator owns process signals and HTTP lifecycle. Vite's
+        // standalone mode exits the process before our Docker cleanup finishes.
+        middlewareMode: { server: webHttp },
+        hmr: { server: webHttp },
         proxy: {
           "/api": { target: api.listeningOrigin },
           "/ws": {
@@ -418,8 +438,10 @@ async function start(smoke: boolean): Promise<void> {
       },
     });
     disposers.push(() => web.close());
-    await web.listen();
-    const webAddress = web.httpServer!.address();
+    webHttp.on("request", web.middlewares);
+    webHttp.listen(0, "127.0.0.1");
+    await once(webHttp, "listening");
+    const webAddress = webHttp.address();
     assert.ok(webAddress && typeof webAddress !== "string");
     m.urls = {
       api: api.listeningOrigin,
