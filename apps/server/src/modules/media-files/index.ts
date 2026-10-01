@@ -107,12 +107,35 @@ export function trustedMediaUrl(source: string, gateway: string): URL {
   return url;
 }
 
+/** PostgreSQL text/jsonb cannot represent U+0000. Preserve that rejected source
+ * as an explicitly encoded witness, never as a rewritten download URL. */
+export function mediaSourceMetadata(source: string) {
+  return source.includes("\0")
+    ? {
+        rejectedMediaSource: {
+          reason: "UNTRUSTED_MEDIA_URL",
+          encoding: "json-string",
+          value: JSON.stringify(source),
+        },
+      }
+    : { mediaUrl: source };
+}
+
 export async function registerMedia(
   tx: Queryable,
   groupId: string,
   msgId: string,
   source: string,
 ): Promise<void> {
+  if (source.includes("\0")) {
+    // The explicit witness in the event/message owns the original value. This
+    // literal is only an inert placeholder; no reader decodes it as a source.
+    await tx.query(
+      "INSERT INTO media_files(id,group_id,msg_id,source_url,state,last_error) VALUES($1,$2,$3,'untrusted-media-source:raw-nul','unavailable','UNTRUSTED_MEDIA_URL') ON CONFLICT(group_id,msg_id) DO NOTHING",
+      [randomUUID(), groupId, msgId],
+    );
+    return;
+  }
   await tx.query(
     "INSERT INTO media_files(id,group_id,msg_id,source_url) VALUES($1,$2,$3,$4) ON CONFLICT(group_id,msg_id) DO NOTHING",
     [randomUUID(), groupId, msgId, source],

@@ -13,7 +13,7 @@ import { changeAccount, markGroupUnreachable } from "./state.js";
 import { Messages, recordSent } from "./messages.js";
 import { recordConfirmationReceipt } from "./confirmation-receipts.js";
 import { reconcileLeftMembers } from "./left-membership.js";
-import { registerMedia } from "../media-files/index.js";
+import { mediaSourceMetadata, registerMedia } from "../media-files/index.js";
 
 const gatewayEventSchema = z.discriminatedUnion("type", [
   z.object({
@@ -162,6 +162,10 @@ export class GatewayEvents {
   }
   async process(event: GatewayEvent): Promise<void> {
     const ref = String(event.eventId);
+    const storedMedia =
+      event.type === "message" && event.mediaUrl !== undefined
+        ? mediaSourceMetadata(event.mediaUrl)
+        : {};
     // A local persistence retry retains when this process first received the
     // message, even if a duplicate acknowledgement has another eventId. Include
     // msgId so a conflicting remote delivery cannot supply the valid one's clock.
@@ -231,7 +235,20 @@ export class GatewayEvents {
           await tx.query("SET LOCAL lock_timeout = '50ms'");
         const inserted = await tx.query(
           "INSERT INTO gateway_events(event_id,type,data) VALUES($1,$2,$3) ON CONFLICT DO NOTHING RETURNING event_id",
-          [ref, event.type, JSON.stringify(event)],
+          [
+            ref,
+            event.type,
+            JSON.stringify(
+              event.type === "message"
+                ? {
+                    ...event,
+                    mediaUrl: undefined,
+                    rejectedMediaSource: undefined,
+                    ...storedMedia,
+                  }
+                : event,
+            ),
+          ],
         );
         if (!inserted.rowCount) return;
         switch (event.type) {
@@ -320,7 +337,7 @@ export class GatewayEvents {
                   ...(identityPending
                     ? { attentionPendingClientMsgIds: pendingClientIds }
                     : {}),
-                  ...(event.mediaUrl ? { mediaUrl: event.mediaUrl } : {}),
+                  ...(event.mediaUrl ? storedMedia : {}),
                 }),
               ],
             );
