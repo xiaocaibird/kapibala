@@ -238,9 +238,17 @@ test('real shared manifests select only existing automation and keep smoke inten
       'qa-8e047-ui-retest',
       'qa-8e047-read-boundary',
       'qa-8e047-zero-step-queue-retest',
-    'qa-8e047-dispatched-kick-budget',
+      'qa-8e047-dispatched-kick-budget',
+      'qa-01f-first-round-observation',
     ],
   );
+  const observation = suites.find((suite) => suite.id === 'qa-01f-first-round-observation')!;
+  assert.deepEqual(observation.caseIds, [
+    'INT-KICK-OBSERVATION-001',
+    'INT-READ-CAUSAL-001',
+    'INT-READ-SAVE-ROLLBACK-001',
+  ]);
+  assert.deepEqual(observation.projects, ['system']);
   const smoke = suites.find((suite) => suite.id === 'developer-smoke')!;
   assert.deepEqual(smoke.caseIds, [
     'AUTH-001',

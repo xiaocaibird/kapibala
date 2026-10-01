@@ -1,0 +1,21 @@
+{
+  "reviewedAt": "2026-10-01T18:39:09.198122+00:00",
+  "reviewer": "independent read-only QA observation_contract_review",
+  "conclusion": "READY_FOR_HEALTHY_FIRST_ROUND_EXPERIMENT",
+  "productExecuted": false,
+  "scope": [
+    "INT-KICK-OBSERVATION-001",
+    "INT-READ-CAUSAL-001",
+    "INT-READ-SAVE-ROLLBACK-001"
+  ],
+  "preExecutionFix": "Owned history trigger text-vs-uuid mismatch corrected to NEW.id::text with verified schema data_type, before any SUT run",
+  "limits": [
+    "Original strict 5000/60000ms unchanged; proven FAIL prioritized",
+    "Cross/source cancellation must be same original run/tool/step/attempt/request/PID/start/domain; multi-source aliases retained",
+    "Actual read and Agent save transactions distinct; returned rollback required",
+    "Restart preserves real DB/Gateway/Agent; new attempt/domain not spliced into old transaction",
+    "Missing binding/unique lock chain/actual rollback/tail or truncated witness BLOCKED",
+    "SQLSTATE/release helper assertion alone is not automatically a business defect: preserve actual facts and classify contract/probe mismatch separately",
+    "Original full observer channel is not completely exception-isolated; no claim of blanket observer safety"
+  ]
+}

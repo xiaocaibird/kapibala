@@ -656,6 +656,24 @@
         "单实例无重启；运行中第二实例竞争另列NOT_RUN，peer-close不自动证明预算取消原因。",
         "已签254全量及51差异报告不改，另冻QA源与目标另立run；0自动重试。"
       ]
+    },
+    {
+      "id": "qa-01f-first-round-observation",
+      "title": "首轮最小观测固定候选独立补测",
+      "purpose": "真实原活动×已派发kick与取消因果、PG表锁读取回滚和真实保存失败；独立新样本不改旧报告",
+      "caseIds": [
+        "INT-KICK-OBSERVATION-001",
+        "INT-READ-CAUSAL-001",
+        "INT-READ-SAVE-ROLLBACK-001"
+      ],
+      "projects": [
+        "system"
+      ],
+      "riskBoundaries": [
+        "零自动重试；严格5000/60000不新增容差，已证FAIL优先缺证",
+        "真实读取事务与保存事务分列；不把开发样例/单项通过拼成组合PASS",
+        "仅首轮单实例有限证据；第二轮、真人、强恢复与上线结论不升级"
+      ]
     }
   ]
 }
