@@ -10,10 +10,10 @@ import {
 } from '../../harness/runtime-observation.js';
 import {
   assertSingleEpochActivityBudget,
+  assertSingleEpochLifecycleBudget,
   optionalActivityObservation,
 } from '../support/agent-activity-budget.js';
 import {
-  assertAgentLifecycle,
   assertToolWaitBudget,
   assertToolWaitCompletion,
   toolWaitWindow,
@@ -784,7 +784,7 @@ test('[AGENT-024] turn timeout records error and late response never sends a mes
   );
 });
 
-test('[AGENT-025] run reaches sixty-second active wall-clock budget including slow turns', async ({
+test('[AGENT-025] run stays within sixty-second active wall-clock budget including slow turns', async ({
   qa,
 }) => {
   test.setTimeout(100_000);
@@ -965,34 +965,10 @@ test('[AGENT-025] run reaches sixty-second active wall-clock budget including sl
       'lifecycle decision and dispatch',
       async () => {
         const events = (lifecycleWitness ?? lifecycle?.latest)?.events ?? [];
-        const created = events.find((event) => event.kind === 'agent-run-created');
-        const actualActivity =
-          (witness ?? lease?.latest)?.events.filter((event) => event.clockDomain !== undefined) ??
-          [];
-        const terminalActivity = actualActivity.findLast(
-          (event) => event.kind === 'activity-terminal',
+        const decision = assertSingleEpochLifecycleBudget(
+          (witness ?? lease?.latest)?.events ?? [],
+          events,
         );
-        if (
-          !created ||
-          !terminalActivity?.includesUnsavedTail ||
-          terminalActivity.epochIds?.length !== 1
-        )
-          throw new BlockedError('缺少完整单epoch活动来源，不能将生命周期在线差值当实际活动');
-        if (
-          !actualActivity.every(
-            (event) =>
-              event.clockDomain === created.clockDomain &&
-              event.applicationPid === created.applicationPid &&
-              event.runId === id &&
-              event.groupId === group.id &&
-              event.includesUnsavedTail &&
-              event.epochIds?.length === 1 &&
-              event.epochIds[0] === terminalActivity.epochIds![0] &&
-              ['active', 'terminal'].includes(String(event.activityState)),
-          )
-        )
-          throw new BlockedError('activity与lifecycle实际run/时钟域矛盾，不能拼接');
-        const decision = assertAgentLifecycle(events);
         await qa.evidence('agent-lifecycle-budget', decision);
       },
       missing,

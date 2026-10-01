@@ -1,0 +1,108 @@
+{
+  "phase": "QA_TOOLS_ONLY",
+  "productTestsExecuted": 0,
+  "productSystemsStarted": 0,
+  "paidModelCalls": 0,
+  "generatedAt": "2026-10-01T13:43:00.446Z",
+  "node": "v24.21.0",
+  "stages": [
+    {
+      "script": "typecheck",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T13:42:56.323Z",
+      "durationMs": 357,
+      "log": "initial-tooling/typecheck.log",
+      "sha256": "25ba3cfef4275a2bf7a86b13c7fc2d0598bd192c06c26f8826f2b4b019939897",
+      "summary": [
+        "npm notice run kapibala-independent-qa@0.1.0 typecheck",
+        "npm notice run tsc --noEmit"
+      ]
+    },
+    {
+      "script": "test:self",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T13:42:56.325Z",
+      "durationMs": 4121,
+      "log": "initial-tooling/test-self.log",
+      "sha256": "f1aad9bdd9850f1bb0d3dc8ebe8459f5391f34cb5007671e90215e43543bf67c",
+      "summary": [
+        "✔ filesystem resolver reads only QA manifest and registry, not target or authorization (8.706792ms)",
+        "✔ real shared manifests select only existing automation and keep smoke intentionally short (13.681791ms)",
+        "ℹ tests 286",
+        "ℹ suites 0",
+        "ℹ pass 286",
+        "ℹ fail 0",
+        "ℹ cancelled 0",
+        "ℹ skipped 0",
+        "ℹ todo 0",
+        "ℹ duration_ms 3945.65075"
+      ]
+    },
+    {
+      "script": "check:catalog",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T13:42:56.325Z",
+      "durationMs": 939,
+      "log": "initial-tooling/check-catalog.log",
+      "sha256": "0642ceeed759e871f235a8ffc41b4293b93fb2a186ceafd04bffc9c5fc93edd1",
+      "summary": [
+        "npm notice run kapibala-independent-qa@0.1.0 check:catalog",
+        "npm notice run tsx harness/catalog-check.ts",
+        "追踪检查通过：128项需求，266条用例。该检查不执行产品。"
+      ]
+    },
+    {
+      "script": "check:impact",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T13:42:56.325Z",
+      "durationMs": 359,
+      "log": "initial-tooling/check-impact.log",
+      "sha256": "973f286bc6c9cb31e4f75732d69b1b1ebc9e4c2672b7644c7b2321e0f063dfb7",
+      "summary": [
+        "npm notice run kapibala-independent-qa@0.1.0 check:impact",
+        "npm notice run tsx harness/change-review-check.ts",
+        "变更影响评审登记有效：9条；仅核对登记与文档存在，不宣称风险覆盖充分。"
+      ]
+    },
+    {
+      "script": "check:suites",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T13:42:56.326Z",
+      "durationMs": 962,
+      "log": "initial-tooling/check-suites.log",
+      "sha256": "6ee6f38dfa10f19f2a64f3b8dcc46e785df0bbe5f1327a4a278eb963098dfa8c",
+      "summary": [
+        "          \"title\": \"耗尽后显式同页刷新可开始新一轮\",",
+        "          \"automation\": \"tests/ui/architecture.spec.ts\",",
+        "          \"projects\": [",
+        "            \"chromium\"",
+        "          ]",
+        "        }",
+        "      ]",
+        "    }",
+        "  ]",
+        "}"
+      ]
+    },
+    {
+      "script": "list",
+      "exitCode": 0,
+      "startedAt": "2026-10-01T13:42:56.326Z",
+      "durationMs": 857,
+      "log": "initial-tooling/list.log",
+      "sha256": "ca190a8e710628d88f3759824dc2b8c4cb93d03b34bbc69e3a2240a79ebf1962",
+      "summary": [
+        "  [chromium] › ui/observation-boundaries.spec.ts:53:1 › [ARC-UI-BLK-001] 通用账号资源读取失败不能提前确认未呈现的新状态",
+        "  [firefox-smoke] › ui/console.spec.ts:188:1 › [UI-001] viewer通过浏览器登录且各页无写入口 @compat",
+        "  [firefox-smoke] › ui/console.spec.ts:217:1 › [UI-003] 群详情显示角色和实时消息，回流不重复 @compat",
+        "  [firefox-smoke] › ui/console.spec.ts:270:1 › [UI-006] 浏览器断线恢复后3秒内补齐 @compat",
+        "  [firefox-smoke] › ui/console.spec.ts:311:1 › [UI-008] 登录到群再到Agent步骤，错误原文和审计结果可读 @compat",
+        "  [webkit-smoke] › ui/console.spec.ts:188:1 › [UI-001] viewer通过浏览器登录且各页无写入口 @compat",
+        "  [webkit-smoke] › ui/console.spec.ts:217:1 › [UI-003] 群详情显示角色和实时消息，回流不重复 @compat",
+        "  [webkit-smoke] › ui/console.spec.ts:270:1 › [UI-006] 浏览器断线恢复后3秒内补齐 @compat",
+        "  [webkit-smoke] › ui/console.spec.ts:311:1 › [UI-008] 登录到群再到Agent步骤，错误原文和审计结果可读 @compat",
+        "Total: 259 tests in 27 files"
+      ]
+    }
+  ]
+}

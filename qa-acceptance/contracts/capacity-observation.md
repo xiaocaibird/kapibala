@@ -15,7 +15,7 @@
 - **关联诊断**：实例、groupId、runId、toolUseId、attemptId、单调 seq、reason=capacity，确认受保护回调未进入且尚无远端派发；可以由结构化日志承载。QA 与独立网关零请求/零效果交叉核对。
 - **可保持/释放的真实容量占用**：合法外部操作持有者，或经确认的测试故障入口。不能仅强制返回一个 capacity 错误以替代真实资源耗尽。已确认的持有者与释放必须有证据。
 - **仅 CAP-009 需要的精确窗口**：已发生零远端拒绝、但恢复 ready 状态尚未提交时可停住；这是工程故障控制依赖，不是用户业务语义待裁定。普通审计/网关屏障不能命中它。
-- **CAP-003 活动计时**：原 run 活动预算决定的权威时间区间，排除停机；不将控制请求起点或每次重试起点当预算起点。采样区间跨 60 秒时保留 BLOCKED，不擅加容差。
+- **CAP-003 活动计时**：原run完整实际活动及停止决定/同attempt终态COMMIT，排除有证据的停机；复用runtimeObservation双流，不将控制请求/重试起点当预算起点。旧capacity active_ms样本只诊断；缺完整段或区间跨60秒仍BLOCKED，不擅加容差或最低时长。
 
 工程已在固定候选0af6443交付容量控制器，详见[接收评审](../requirements/engineering-candidate-intake-20261001.md)。QA尚未实际联通或验证真实饱和；下面的客户端契约和工程交物均不能替代QA执行证据。
 
@@ -105,7 +105,7 @@ QA在读取目标配置以及每次迁移、SUT/第二实例/页面服务启动�
 
 事件 `kind` 支持 `capacity-held / admission-refused / before-ready-held / ready-persisted / run-terminal`。拒绝和 before-ready 事件必须包含容量原因、唯一尝试身份和零派发证据，实体锁忙或已进入回调不能替代。`before-ready-held` 必须指向同一次已拒绝尝试，事件确认时该尝试 ready 提交仍被拦住。`ready-persisted` 可用于验证故障窗口没有提前溜过。
 
-`run-terminal` 必须与原 run 的公开终态吻合，并在预算用例携带 `status / endReason / activeElapsedMs:[下界,上界]`。时间来自原活动计时，不得伪造精度或把派发后未知状态伪装为零效果。
+`run-terminal` 必须与原run公开终态吻合，并携带`status / endReason`；`activeElapsedMs`保留原采样来源作为诊断。该事件及持久active_ms不能冒充完整实际停止决定。CAP-003另需runtimeObservation的完整连续单epoch活动流及同run实际停止决定/同attempt COMMIT，不得伪造精度或把派发后未知状态伪装为零效果。
 
 ## 用例闭合范围与纠正
 
@@ -117,4 +117,6 @@ QA在读取目标配置以及每次迁移、SUT/第二实例/页面服务启动�
 
 产品验收仍需后续明确授权。当前 fake-controller 自测只证明 QA 客户端的归属、协议、清理与断言工具行为，既未启动 SUT，也未证明工程控制器已实现或被测功能通过。
 
-交叉复核后，通用场景以前置一次确证拒绝为足够，不强制产品在等待期间反复轮询。取消/预算/不可写终态释放容量后保留至少1500ms采样，不能瞬时零请求即宣称无迟发。CAP-009/010在关键窗口及收敛期间重新验证租约有效；CAP-003增加QA独立单调时钟创建/公开终态区间交叉核对，控制器自报值不能覆盖明显的真实提前/延后。相交只表示未被独立测量否证，不能伪称精确时刻已独立证实。
+交叉复核后，通用场景以前置一次确证拒绝为足够，不强制产品在等待期间反复轮询。取消/预算/不可写终态释放容量后保留至少1500ms采样，不能瞬时零请求即宣称无迟发。CAP-009/010在关键窗口及收敛期间重新验证租约有效；CAP-003保存QA独立单调时钟创建/公开终态外包络，仅用其上界核对真实活动来源；公开下界和区间相交不作决定裁判。真实完整活动/决定超过60秒仍FAIL，较早wall_clock不因时间本身FAIL。控制器持久采样不能替代完整活动与决定/COMMIT配对。
+
+2026-10-01后续QA修订依[收尾契约](../requirements/evidence-followup/static-closeout-contract-20261001.md)移除60秒附加下限和公开终态相交判据。CAP-003的target须同时配置既有capacityControl与runtimeObservation，使用安装两个观察器的既有组合入口；控制器各有owner与清理。只提供capacityControl时，仍执行已可观察的容量拒绝、公开failed/wall_clock、步骤/活动引用、零kick和释放后无迟发断言；随后预算缺证BLOCKED。不是要求研发增加生产能力，也不把旧capacity-only运行的采样事后解释成真实决定，原报告不变。

@@ -4,6 +4,8 @@
 
 ## 阅读入口
 
+- [首轮收尾接入澄清与QA修正](requirements/evidence-followup/static-closeout-contract-20261001.md)：UI-032公开场景、60秒上限解释与分段计时、跨epoch观测、四态文案有限收尾及真实IME/焦点后续。QA工具校验不产生新产品结果，修复候选待固定交付后复测。
+
 - **[e85候选补充复测报告](reports/followup/20261001-e85ae61-retest/report.md)**：本轮30条唯一用例最新24 PASS / 3 FAIL / 3 BLOCKED，首次29条及修正后复测分别留档。两条严格60秒及一条严格5秒仍失败；不替代下方完整业务报告，不外推后续C1/C2候选或上线结论。
 
 - [七项工程补证与三项真人体验](requirements/evidence-followup/README.md)：负责人已授权的后续接入；新候选、观测与正式人工运行分别绑定。[本次交付与体验收尾记录](reports/followup/20261001-seven-blockers/report.md)。准备和工具校验不改变原报告结论。

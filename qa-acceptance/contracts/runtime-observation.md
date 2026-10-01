@@ -1,6 +1,6 @@
 # 原始运行观测与局部故障接入
 
-本契约对应 INT-R02／INT-R04／INT-R06。QA 客户端及四条自动化已准备，**真实工程控制器尚未接入，产品未执行**。工程提供本机薄适配与必要的真实执行观测，QA 维护公开接口预期和独立网关／WS证据；不能用 fake-controller 工具自测代替产品验收。
+本契约对应 INT-R02／INT-R04／INT-R06，并包含 AGENT-025／028 与 CAP-003 的运行取证。工程提供本机薄适配与必要的真实执行观测，QA 维护公开接口预期和独立网关／WS证据；不能用 fake-controller 工具自测代替产品验收。e85 控制器已经隔离接入并留下[实际补证复测报告](../reports/followup/20261001-e85ae61-retest/report.md)；本文后续源码修订尚未对新产品候选执行，不能继承该旧版本的结果。
 
 依据：原 A5.2 的60秒累计活动预算与重启恢复；D040 保留停机不计、不虚报任意硬崩溃尾差上界；原 A1 提交后状态事件与 D043 原事务内有限本地保存恢复；D045 以及 `docs/core-resource-observability.md` 的管理员诊断语义。这是隔离测试接入，不新增生产公开业务接口、不要求暴露业务表名、SQL或内部模块导入。
 
@@ -26,7 +26,7 @@ QA 使用既有 `capacityControlTarget()` 的 `{apiUrl,revision,pid,ownerToken}`
 
 ## 生命周期只读扩展：AGENT-025／028、BLK-EXT-001
 
-2026-10-01 基于研发预交接 `68d28d80acb059387af14dcb41a2be62f1d14e12` 的 `docs/qa-backend-evidence-followup-20261001.md`、真实挂点及样例准备客户端；已收到正式文档提交 `e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb`，产品源 `7a38ae2979b187a74757dfe4456f947e26ee27b7`，见 `docs/qa-followup-integration-20261001.md`。旧文档中的开发计量版本 `22d770bafcf7b2e2f64e42deb1c4189da81baaf6` 不改写为最终候选的独立 QA 运行；本次仅完成客户端和自身验证，新的独立环境/执行冻结由后续流程记录。这些新入口没有改变原 5000/60000ms 规则，不关闭旧报告的 BLOCKED。
+2026-10-01 客户端初次准备基于研发预交接 `68d28d80acb059387af14dcb41a2be62f1d14e12` 的 `docs/qa-backend-evidence-followup-20261001.md`、真实挂点及样例；正式文档提交为 `e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb`，产品源 `7a38ae2979b187a74757dfe4456f947e26ee27b7`，见 `docs/qa-followup-integration-20261001.md`。旧文档中的开发计量版本 `22d770bafcf7b2e2f64e42deb1c4189da81baaf6` 不改写为最终候选的独立 QA 运行。初次准备仅验证客户端；后续 e85 实际冻结/执行由上述报告单独记录。本轮再修订仅校验 QA 工具，尚无新候选运行。这些入口没有改变原 5000/60000ms 上限，不自动关闭旧结果。
 
 | 能力                     | 模式                     | 关联                                                         |
 | ------------------------ | ------------------------ | ------------------------------------------------------------ |
@@ -40,7 +40,7 @@ QA 使用既有 `capacityControlTarget()` 的 `{apiUrl,revision,pid,ownerToken}`
 
 后续事件除公共 lease seq/attempt/guardian 字段外，必须含实际业务身份、正整数 `sourceSeq`、实际 `applicationPid`、`clockDomain=process-performance:<applicationPid>:<UUID>`、`clockUnit:'ms'`、有限非负有序的 `monotonicMs`。业务 sourceSeq 严格递增但允许过滤造成的 gaps；业务单调读数须在同一实际进程域内递增。**attached 发生于晚订阅时，回放的 UTC/单调时间早于 attached 是合法的**，不能把首条接入元信息当计时起点。已返回的事件不能改写、删除或换进程。SUT 重启后重新核对新 PID，旧租约仅可读/释放原历史；只按真实消息/run/attempt 身份关联新旧文件，禁止相减不同 clockDomain。
 
-- **AGENT-025**：原 `observe-activity` 完整单 epoch 一侧裁判保留。追加创建事务与 INSERT 包围、BEGIN 确认读数、turn 派发、实际终止决定及同 attempt 的终态 COMMIT。创建、BEGIN、INSERT、决定、提交不能互相替换；不能挑最晚起点来缩短预算。完整活动下界，或经完整连续单 epoch 活动见证关联的同域实际决定/新派发下界，大于 60000ms 即 FAIL；缺流、缺决定/提交配对、缺同域活动来源则 BLOCKED，继续公开终态/指针/步骤/零副作用断言。生命周期区间仅追加诊断，不能把缺 activity 完整性的情况升级为 PASS。
+- **AGENT-025**：原 `observe-activity` 完整单 epoch 上限裁判保留，删除仅凭wall_clock较早就自动FAIL的附加下限。追加创建事务与 INSERT 包围、BEGIN 确认读数、turn 派发、实际终止决定及同 attempt 的终态 COMMIT。创建、BEGIN、INSERT、决定、提交不能互相替换；不能挑最晚起点来缩短预算。完整活动下界，或经完整连续单 epoch 活动见证关联的同域实际决定/新派发下界，大于 60000ms 即 FAIL；缺流、缺决定/提交配对、缺同域活动来源则 BLOCKED，继续公开终态/指针/步骤/零副作用断言。生命周期区间仅追加诊断，不能把缺 activity 完整性的情况升级为 PASS。
 - **AGENT-028**：按同真实 `runId/stepId/toolUseId/execution attemptId/clientMsgId/idempotencyKey` 配对 `send-key-resolved → send-wait-started → send-wait-result-ready → send-tool-result-returned`。原始包围为 `S=[key.lower,waitStarted.upper]`、`E=[ready.lower,returned.upper]`，耗时 `[E.lower-S.upper,E.upper-S.lower]`，保留小数、不扣日志或调度成本。prepared/entered/审计阶段也保存，用于复核早期阶段，不能将下一 turn 或 history COMMIT 当交还时点。真实等待下界>5000ms 为 FAIL；区间跨界为 BLOCKED；尚未到5秒却返回 SEND_TIMEOUT 同样 FAIL。结果/history 必须按**同 execution attemptId** 与原值配对；正式候选已修复旧 host adapter 漏传该 ID 的接线；QA 仍不能按 toolUseId 猜配，缺链 BLOCKED；但已证明超时先 FAIL。第二次同 key 的公开 sent、只有一次审计/发送/落地继续独立验证。
 - **BLK-EXT-001**：kill 前保存原 `message-send-dispatch` 流和外部未返回事实，重启后以新 PID 建立同 clientMsgId 的观察。`attemptId=<真实消息行id>:<持久dispatch次数>`、`messageId` 及 databaseIdentity 关联同一原请求；每个真实查询有独立 queryAttemptId，headers/body 的 responseStatus 只在真实接收后出现。`not-durably-recorded` 不是未生效保证，automatic-query-pending 不是人工暂停。记录真实查询和提交原因；普通404、私有 effect:none 或长等待都不能造出否定完成保证。SSE/echo 终态可能不在此流，仍由现有公开状态/receipt/独立网关取证，不能因缺 query-result-committed 误判产品。两分支原安全断言始终执行，静默无终结信号仍保留 BLOCKED。
 - **INT-ACT-001**：本次不改既有重启场景或裁判。新增同进程时钟字段不能填补旧 epoch 的 SIGKILL 尾段；`includesUnsavedTail=false` 合法并继续恢复断言，不能把 persistedActiveMs 或多个不完整域机械相加成完整证据。
@@ -62,7 +62,7 @@ QA用外部Agent各轮7秒的合法不同只读工具响应保持运行，17秒�
 
 时间数据为用例输入，不是产品时限变更。QA保存performance.now下的创建、kill、start、最后running／首次terminal请求响应区间，独立减去停机上下界。但**进程在线仅能提供实际活动量的保守上界**：不能用在线下界超过60秒断言活动预算失败，也不能假设在线区间必与实际活动区间相交。真实活动下界超过在线上界属于矛盾证据。真实网关不得收到发送，公开结果须原runId、failed/wall_clock、active指针清空。
 
-裁判是一侧上限：完整活动见证下界已超过60000则FAIL；上界不超过60000才证明最大预算。若公开理由是wall_clock而实际活动上界（或独立在线上界）严格小于60000，则为提前错误宣告耗尽。实际活动区间跨过60000且下界未超过时证据不能确定，记BLOCKED；允许 `[59999,60000]` 这类有界证明，不要求物理采样精确成 `[60000,60000]`。缺完整epoch/尾段或真实活动状态记BLOCKED。若真实恢复见证表明等待人工／外部确认而无法自动续跑，准确记录**原A5.8强恢复不满足FAIL**，不归因成预算超时；这是独立恢复要求，不放宽原预算。
+裁判是一侧上限：完整活动见证下界已超过60000则FAIL；完整上界不超过60000才证明最大预算。原A5.2没有最低运行时长；wall_clock而上界小于60000本身不判FAIL，真实结束原因与合法循环/终止后不再派发分别核查。实际活动区间跨过60000且下界未超过时证据不能确定，记BLOCKED；允许 `[59999,60000]` 这类有界证明，不要求物理采样精确成 `[60000,60000]`。缺完整epoch/尾段或真实活动状态记BLOCKED。若真实恢复见证表明等待人工／外部确认而无法自动续跑，准确记录**原A5.8强恢复不满足FAIL**，不归因成预算超时；这是独立恢复要求，不放宽原预算。
 
 不完整活动区间不能中止独立恢复观察。QA先检查整份快照中是否已经出现 `recovery-paused`，不能被较早的unknown或缺尾段检查点遮盖；对合法的不完整证据继续有限观察公开原run身份、终态、发送副作用和后续实际恢复状态。已经确认恢复暂停即为原A5.8的FAIL；没有独立违约但最终仍无完整活动证据才将预算判断记BLOCKED，绝不以局部采样推算通过。85秒仅为终态诊断观察预算，超出而无确证违约记BLOCKED，不另设业务SLA。真实控制器和新增安全屏障仍是工程接入依赖，QA客户端自测不能证明已接入。该例只分离并验证安全阶段重启后的预算累计，不宣称覆盖任意在途崩溃、全部双实例所有权或未知外部结果窗口；后者仍保留原强恢复验收要求。
 
@@ -94,3 +94,13 @@ QA用外部Agent各轮7秒的合法不同只读工具响应保持运行，17秒�
 ## 工程最小交付
 
 交付版本化接入文档、可运行本机控制器、真实owner识别方式、上述能力中已实现集合、真实挂点与opaque因果字段来源、TTL/崩溃释放证据，以及诊断profile的公开响应样本。未实现能力可缺省并让对应用例BLOCKED，不可用接口自报假象关闭依赖。QA四条自动化和工具自测是客户端准备；联调时才确认接入成立。
+
+## 2026-10-01 严格时限裁判纠正
+
+依据[收尾判定契约第3/4节](../requirements/evidence-followup/static-closeout-contract-20261001.md)，60秒为上限；不要求停止决定恰好发生在60秒，也不凭较早的wall_clock自动判FAIL。完整真实活动/停止决定或新派发下界超过60000仍FAIL，完整上界不超过60000方可证明上限，跨界或缺段仍BLOCKED。真实停止决定之后再派发是独立违约，缺活动时长或随后COMMIT不能掩盖；终态与同attempt实际COMMIT、原因映射仍须核对。
+
+CAP-003复用`activity-witness`/`agent-lifecycle-witness`两个只读流，与既有容量控制同时绑定同一SUT。`includesUnsavedTail=true`采用工程[活动见证说明](../../docs/qa-activity-witness-20261001.md)第32/36行公开语义：从真实创建开始，连续同epoch边界完整；不能由若干active样本推断连续性。真实run/group/applicationPid/clockDomain/epoch必须一致，缺创建、失去所有权、历史被截断、尾段不完整均不得将创建至决定差当完整活动。实际决定先于同attempt终态COMMIT；提交和公开GET/WS可见性延迟单列诊断，不要求其区间与活动决定区间相交，不新增公开终态SLA。旧capacity的持久active_ms和采样至读回尾段不能代替此证明；缺runtime接入时仍完成公开/零效果/释放后不迟发检查，预算项保留BLOCKED。
+
+现有工程活动见证第22行把正常terminal边界包围为`finish进入→终态COMMIT确认`，不是COMMIT本身的精确停止点。该完整活动区间的真实下界已超限仍FAIL；上界仅因宽包围跨界则BLOCKED，不能报告为已证明迟停止，也不能把其中persistedActiveMs当更精确答案。另有同域生命周期`decisionWindowMs`时，单独判断创建至实际决定的区间，并保存同attempt COMMIT；决定≤60秒且COMMIT晚于60秒不会因提交滞后自动FAIL。若活动完整性或粗区间仍不足以单独证明预算，保留对应缺口，不能将配置deadline或终态取样反填成精确决定。
+
+5秒等待没有套用删除下限：原工具表同时要求最多等5秒和“5秒后仍无法确认→SEND_TIMEOUT”。已确认accepted/sent/failed可提前返回；持续未决支路必须有实际504接收、查询故障、事件控制及整个等待段没有明确结果的前提。保留prepared/审计、等待进入、结果交还、history与下一turn不同边界；故障开启和504到达都不能重置等待预算。已证明超过5000的真实下界仍FAIL；不舍入、不加容差。本次仅修后续QA资产，旧版本结果和真实超限证据保持。

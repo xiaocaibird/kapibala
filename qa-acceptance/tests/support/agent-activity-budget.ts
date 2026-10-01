@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import { BlockedError } from '../../harness/security.js';
 import {
+  assertAgentLifecycle,
+  assertNoDispatchAfterStop,
+} from '../../harness/lifecycle-observation.js';
+import {
   assertActivityBudget,
   assertNoRecoveryPause,
   type RuntimeEvent,
@@ -39,12 +43,48 @@ export function assertSingleEpochActivityBudget(
     assert.ok(event.activeElapsedMs[0] <= online[1], '活动下界超过独立在线上界，证据矛盾');
     assert.ok(event.activeElapsedMs[0] <= 60_000, '活动预算已证明超过原始60秒上限');
   }
-  if (endReason === 'wall_clock')
-    assert.ok(online[1] >= 60_000, '独立在线上界尚不足60秒却已提前宣告wall_clock');
   const terminal = events.findLast((event) => event.kind === 'activity-terminal');
   if (!terminal) throw new BlockedError('缺少真实活动终止边界，REST轮询区间不替代活动见证');
   const epochs = new Set(events.flatMap((event) => event.epochIds ?? []));
   if (epochs.size !== 1 || terminal.epochIds?.length !== 1)
     throw new BlockedError('本例缺少完整单epoch创建至终止关联；不推算遗漏或多个所有权段');
   assertActivityBudget(terminal, online, 60_000, endReason);
+}
+
+/** Both streams already passed RuntimeLease identity/history validation. A
+ * public terminal observation or persisted active_ms is not a stop decision. */
+export function assertSingleEpochLifecycleBudget(
+  activity: readonly RuntimeEvent[],
+  lifecycle: readonly RuntimeEvent[],
+) {
+  assertNoDispatchAfterStop(lifecycle);
+  assertNoRecoveryPause(activity);
+  const created = lifecycle.find((event) => event.kind === 'agent-run-created');
+  const actual = activity.filter((event) =>
+    ['activity-checkpoint', 'activity-terminal'].includes(event.kind),
+  );
+  const terminal = actual.findLast((event) => event.kind === 'activity-terminal');
+  // includesUnsavedTail=true is a reviewed continuous-boundary guarantee, not
+  // an inference from a few active samples (engineering witness doc §§3–4).
+  if (
+    !created?.clockDomain ||
+    !created.applicationPid ||
+    !terminal?.includesUnsavedTail ||
+    terminal.epochIds?.length !== 1 ||
+    !actual.every(
+      (event) =>
+        event.clockDomain === created.clockDomain &&
+        event.applicationPid === created.applicationPid &&
+        event.runId === created.runId &&
+        event.groupId === created.groupId &&
+        event.includesUnsavedTail &&
+        event.epochIds?.length === 1 &&
+        event.epochIds[0] === terminal.epochIds![0] &&
+        ['active', 'terminal'].includes(String(event.activityState)),
+    )
+  )
+    throw new BlockedError(
+      '缺少同run/进程时钟域完整连续单epoch活动来源，不能以在线或持久采样替代决定',
+    );
+  return assertAgentLifecycle(lifecycle);
 }

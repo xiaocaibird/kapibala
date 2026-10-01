@@ -1,0 +1,70 @@
+{
+  "recordedAt": "2026-10-01T13:25:09.126296+00:00",
+  "kind": "independent-qa-static-contract-review-and-asset-correction",
+  "sourceBase": "92ddc1db983e8454ee363a4b75998df8998b904a",
+  "qaBranch": "agent/qa-ui-manual-closeout-contract",
+  "handoffSourceThreadId": "01a0f194-5588-7353-9a80-5ef7da3d0702",
+  "initialBoundary": "read-only product/contract inspection",
+  "continuingAuthority": "User continuing QA/development closeout authorization relayed by main; QA maintains own cases and corrects unsupported constraints",
+  "contract": "qa-acceptance/requirements/evidence-followup/static-closeout-contract-20261001.md",
+  "sourceIndex": "sources-index.json",
+  "manualDisposition": "manual-disposition.json",
+  "findings": [
+    {
+      "id": "QA-CL-U32",
+      "decision": "原职责不变量有效，stale未呈现新版本时独立确认的前提过强；23条无剩余游标不足验证",
+      "action": "改为有剩余续页的多页失效/失败刷新保护与成功新快照后确认/新链续页",
+      "historicalStatus": "BLOCKED preserved"
+    },
+    {
+      "id": "QA-CL-60",
+      "decision": "60秒是上限，没有强制跑满下限；取消QA附加下限",
+      "action": "实际停止决定/活动/COMMIT/公开可见分段；严格上限不加容差",
+      "historicalOutcomes": "old raw FAIL/results unchanged; new source requires new fixed run"
+    },
+    {
+      "id": "QA-CL-CAP",
+      "decision": "CAP公开可见与persisted样本不是精确decision窗口",
+      "action": "实际decision与same-attempt COMMIT及完整活动归属；缺证BLOCKED",
+      "historicalOutcomes": "raw CAP003 FAIL retained, stop-window attribution separately pending evidence"
+    },
+    {
+      "id": "QA-CL-5",
+      "decision": "持续未决SEND_TIMEOUT有5秒后下限依据；确认结果可提前返回",
+      "action": "保留5000ms上限和全等待段身份/未决证据，不用history/nextturn作为返回"
+    },
+    {
+      "id": "QA-CL-MAN",
+      "decision": "四态文案有限接受、本体验工作流已关闭",
+      "action": "不重复四态或造unknown，工程文案复核材料与真实IME/焦点后续单列"
+    },
+    {
+      "id": "QA-CL-EPOCH",
+      "decision": "只接收跨epoch方案预告，需原始live读数/强杀退出/缓存标识和完整两epoch关联",
+      "action": "固定新候选交付后独立接入，不追溯补造旧尾段"
+    }
+  ],
+  "productExecutions": 0,
+  "paidModelCalls": 0,
+  "oldReportsModified": false,
+  "newProductAcceptanceStatus": "NOT_RUN",
+  "assetsValidation": {
+    "status": "PASS",
+    "record": "tooling-verification.json",
+    "selfTests": 286,
+    "selfPass": 286,
+    "selfFail": 0,
+    "selfSkipped": 0,
+    "requirements": 128,
+    "cases": 266,
+    "testRegistrations": 259,
+    "specFiles": 27,
+    "independentReadOnlyReview": "timing, UI, manual disposition completed; no remaining asset blocker"
+  },
+  "nextFixedCandidateReceived": {
+    "revision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+    "handoff": "docs/qa-final-boundaries-followup-20261001.md",
+    "productResultsInThisRecord": "NOT_RUN",
+    "nextAction": "separate impact intake and independent targeted retest"
+  }
+}
