@@ -33,6 +33,30 @@ function ready() {
   return ledger;
 }
 
+test('a stale socket acknowledgement arriving inside the action blocks both continuity modes', () => {
+  let now = 1;
+  const ledger = new ContinuityLedger(() => now);
+  const old = ledger.socket('open')!;
+  ledger.frame('{"type":"scope_ready","requestId":"old","startSeq":0}', old);
+  ledger.socket('close', old);
+  const current = ledger.socket('open')!;
+  ledger.sent('{"type":"scope_marker","requestId":"current"}', current);
+  ledger.frame('{"type":"scope_ready","requestId":"current","startSeq":7}', current);
+  const before = ledger.snapshot(url);
+  now = 21;
+  ledger.sent('{"type":"scope_marker","requestId":"post-success"}', current);
+  now = 22;
+  ledger.frame('{"type":"scope_ready","requestId":"post-success","startSeq":7}', current);
+  const sync = { requestAt: 10, responseAt: 20, requireReady: true };
+  assert.doesNotThrow(() => ledger.assertUnchanged(before, url, true, sync));
+  const strictBefore = ledger.snapshot(url);
+  ledger.frame('{"type":"scope_ready","requestId":"late-old","startSeq":100}', old);
+  assert.throws(() => ledger.assertUnchanged(strictBefore, url, true), /BLOCKED/);
+  assert.throws(() => ledger.assertUnchanged(before, url, true, sync), /BLOCKED/);
+  assert.equal(ledger.snapshot(url).scopeReady, strictBefore.scopeReady);
+  assert.equal(ledger.snapshot(url).staleScopeReady, strictBefore.staleScopeReady + 1);
+});
+
 test('a route round trip cannot pass by ending at the same URL and document', () => {
   const ledger = ready(),
     before = ledger.snapshot(url);
@@ -88,14 +112,154 @@ test('observer is passive, ignores subframes, and disposes all page/socket liste
   Object.assign(socket, { url: () => 'ws://127.0.0.1:1234/ws' });
   const observer = observePageContinuity(page as unknown as Page);
   page.emit('websocket', socket);
+  socket.emit('framesent', { payload: '{"type":"scope_marker","requestId":"initial"}' });
   socket.emit('framereceived', { payload: Buffer.from('{"type":"scope_ready","startSeq":0}') });
+  assert.equal(observer.ledger.scopeMarkers[0]?.requestId, 'initial');
   const baseline = await observer.capture();
   page.emit('framenavigated', { url: () => 'about:blank' });
   await observer.unchanged(baseline);
   await observer.dispose();
   assert.equal(disposed, 1);
   for (const event of ['framenavigated', 'websocket']) assert.equal(page.listenerCount(event), 0);
-  for (const event of ['framereceived', 'close']) assert.equal(socket.listenerCount(event), 0);
+  for (const event of ['framesent', 'framereceived', 'close'])
+    assert.equal(socket.listenerCount(event), 0);
+});
+
+function responseScope() {
+  let now = 1;
+  const ledger = new ContinuityLedger(() => now);
+  const socket = ledger.socket('open')!;
+  const sent = (at: number, requestId = 'after-response') => {
+    now = at;
+    ledger.sent(JSON.stringify({ type: 'scope_marker', requestId }), socket);
+  };
+  const reply = (at: number, requestId = 'after-response', startSeq = 7) => {
+    now = at;
+    ledger.frame(JSON.stringify({ type: 'scope_ready', requestId, startSeq }), socket);
+  };
+  sent(2, 'initial');
+  reply(3, 'initial');
+  const before = ledger.snapshot(url);
+  const sync = { requestAt: 10, responseAt: 20 };
+  return { ledger, socket, before, sync, sent, reply };
+}
+
+test('only explicit response mode admits a later same-socket matched marker with unchanged watermark', () => {
+  const { ledger, before, sync, sent, reply } = responseScope();
+  sent(21);
+  reply(22);
+  assert.throws(() => ledger.assertUnchanged(before, url, true), /BLOCKED/);
+  assert.doesNotThrow(() =>
+    ledger.assertUnchanged(before, url, true, { ...sync, requireReady: true }),
+  );
+  assert.equal(ledger.scopeMarkers[1]?.socketId, ledger.scopeReplies[1]?.socketId);
+});
+
+test('response mode cannot accept a marker sent before or at success, even when its ack arrives later', () => {
+  for (const at of [9, 19, 20]) {
+    const { ledger, before, sync, sent, reply } = responseScope();
+    sent(at);
+    reply(23);
+    assert.throws(() => ledger.assertUnchanged(before, url, true, sync), /BLOCKED/);
+  }
+});
+
+test('response mode requires actual paired identity, unchanged watermark, and unique marker/ack', () => {
+  const scenarios = [
+    (x: ReturnType<typeof responseScope>) => x.reply(22),
+    (x: ReturnType<typeof responseScope>) => {
+      x.sent(21);
+      x.reply(22, 'wrong');
+    },
+    (x: ReturnType<typeof responseScope>) => {
+      x.sent(21);
+      x.reply(22, 'after-response', 8);
+    },
+    (x: ReturnType<typeof responseScope>) => {
+      x.sent(21, 'initial');
+      x.reply(22, 'initial');
+    },
+    (x: ReturnType<typeof responseScope>) => {
+      x.sent(21);
+      x.sent(22);
+      x.reply(23);
+    },
+    (x: ReturnType<typeof responseScope>) => {
+      x.sent(21);
+      x.reply(22);
+      x.reply(23);
+    },
+    (x: ReturnType<typeof responseScope>) => {
+      x.sent(21);
+      x.ledger.frame('{"type":"scope_ready","requestId":"after-response"}', x.socket);
+    },
+  ];
+  for (const arrange of scenarios) {
+    const x = responseScope();
+    arrange(x);
+    assert.throws(() => x.ledger.assertUnchanged(x.before, url, true, x.sync), /BLOCKED/);
+  }
+});
+
+test('a pending post-response marker cannot pass the final boundary; no marker needs no fabricated ack', () => {
+  const x = responseScope();
+  assert.doesNotThrow(() =>
+    x.ledger.assertUnchanged(x.before, url, true, { ...x.sync, requireReady: true }),
+  );
+  x.sent(21);
+  assert.doesNotThrow(() => x.ledger.assertUnchanged(x.before, url, true, x.sync));
+  assert.throws(
+    () => x.ledger.assertUnchanged(x.before, url, true, { ...x.sync, requireReady: true }),
+    /BLOCKED/,
+  );
+  x.reply(23);
+  assert.doesNotThrow(() =>
+    x.ledger.assertUnchanged(x.before, url, true, { ...x.sync, requireReady: true }),
+  );
+});
+
+test('response mode never excuses document/navigation/socket changes or invalid timing', () => {
+  const x = responseScope();
+  x.sent(21);
+  x.reply(22);
+  assert.throws(() => x.ledger.assertUnchanged(x.before, url, false, x.sync), /BLOCKED/);
+  assert.throws(() => x.ledger.assertUnchanged(x.before, `${url}/other`, true, x.sync), /BLOCKED/);
+  for (const responseAt of [NaN, Infinity, 9, 10])
+    assert.throws(
+      () => x.ledger.assertUnchanged(x.before, url, true, { ...x.sync, responseAt }),
+      /BLOCKED/,
+    );
+  x.ledger.navigation(url);
+  assert.throws(() => x.ledger.assertUnchanged(x.before, url, true, x.sync), /BLOCKED/);
+  const fresh = responseScope();
+  fresh.ledger.socket('close', fresh.socket);
+  const next = fresh.ledger.socket('open')!;
+  fresh.ledger.sent('{"type":"scope_marker","requestId":"after-response"}', next);
+  fresh.ledger.frame('{"type":"scope_ready","requestId":"after-response","startSeq":7}', next);
+  assert.throws(() => fresh.ledger.assertUnchanged(fresh.before, url, true, fresh.sync), /BLOCKED/);
+});
+
+test('post-response synchronization does not replace a real response/presentation failure with BLOCKED', async () => {
+  const x = responseScope();
+  x.sent(21);
+  x.reply(22);
+  const violation = new Error('successful response omitted the seeded sequence');
+  let outcome: ContinuityOutcome | undefined;
+  await assert.rejects(
+    withContinuityEvidence(
+      async () => x.ledger.assertUnchanged(x.before, url, true, x.sync),
+      async (check) =>
+        check('refresh-response', () => {
+          throw violation;
+        }),
+      (value) => {
+        outcome = value;
+      },
+    ),
+    (error) => error === violation,
+  );
+  assert.equal(outcome?.outcome, 'confirmed-business-failure');
+  assert.equal(outcome?.confirmedBusinessFailure?.message, violation.message);
 });
 
 test('confirmed cursor violation survives a later final navigation and retains both errors', async () => {

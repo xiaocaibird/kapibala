@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import assert from 'node:assert/strict';
 import { resolve } from 'node:path';
 import { test, expect } from '../fixtures.js';
 import {
@@ -22,28 +23,15 @@ import {
   type StreamCloseAttribution,
 } from '../../harness/stream-close-observation.js';
 
+import {
+  messageIdentity as identity,
+  assertUniqueMessages as uniqueMessages,
+  assertMessageSubset as messageSubset,
+  assertReceiptGroup,
+  assertHistoryTextHashes,
+} from '../../harness/stream-invariants.js';
+
 const hash = (text: string) => createHash('sha256').update(text).digest('hex');
-const identity = (message: Message) =>
-  message.clientMsgId ? `client:${message.clientMsgId}` : `message:${message.msgId}`;
-function uniqueMessages(items: readonly Message[]): void {
-  for (const message of items)
-    expect(Boolean(message.clientMsgId || message.msgId), 'Message lacks a stable identity').toBe(
-      true,
-    );
-  expect(new Set(items.map(identity)).size, 'Duplicate identity in snapshot').toBe(items.length);
-}
-function messageSubset(
-  items: readonly Message[],
-  expected: ReadonlyMap<string, { text: string; sentAt?: string }>,
-): void {
-  uniqueMessages(items);
-  for (const item of items) {
-    const value = expected.get(identity(item));
-    expect(value, 'Unexpected message identity in snapshot').toBeDefined();
-    expect(item.text).toBe(value!.text);
-    if (value!.sentAt !== undefined) expect(item.sentAt).toBe(value!.sentAt);
-  }
-}
 async function allMessages(
   api: PlatformClient,
   groupId: string,
@@ -111,7 +99,7 @@ test('[INT-STREAM-001] real paused reader leaves healthy consumer working and re
       new Set(expected.keys()),
       ancillary,
     );
-    for (const frame of selected) expect(frame).toMatchObject({ groupId: group.id, isOwn: false });
+    assertReceiptGroup(selected, group.id, false);
     return selected;
   };
   const invariant = () => {
@@ -224,13 +212,15 @@ test('[INT-STREAM-001] real paused reader leaves healthy consumer working and re
       budgetMs: profile.historyObservationMs,
       inspect: (items, complete) => {
         messageSubset(items, apiExpected);
-        if (complete) expect(items).toHaveLength(expected.size + 1);
+        if (complete) assert.equal(items.length, expected.size + 1);
         whilePaused();
       },
     });
     expect(history).toHaveLength(expected.size + 1);
-    for (const message of history.filter((entry) => entry.msgId?.startsWith('slow-stream-')))
-      expect(hash(message.text)).toBe(expected.get(message.msgId!));
+    assertHistoryTextHashes(
+      history.filter((entry) => entry.msgId?.startsWith('slow-stream-')),
+      expected,
+    );
     phase('history-complete', {
       count: history.length,
       elapsedMs: performance.now() - historyStarted,

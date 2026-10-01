@@ -393,6 +393,25 @@
         "当前仅预接收适配；最终候选、目标和QA源冻结后才执行，保留首次结果。",
         "子集不签发完整版本业务验收通过；旧报告与研发自测各自保留。"
       ]
+    },
+    {
+      "id": "qa-observation-correction-retest-20261001",
+      "title": "QA观察修正后的慢读/分页和同页恢复复测",
+      "caseIds": [
+        "INT-STREAM-001",
+        "INT-STREAM-002",
+        "ARC-UI-015"
+      ],
+      "projects": [
+        "system",
+        "chromium"
+      ],
+      "purpose": "保留原首次BLOCKED；仅替换高频断言实现与严格限定成功响应之后的同连接scope握手，不改业务预期。补INT-STREAM-002确认共享内容断言仍正确。",
+      "riskBoundaries": [
+        "首轮29项结果不改，修正后的复测独立记录QA源和结果。",
+        "不改profile、时间/页数预算、已收全部数据检查或业务阈值。",
+        "新增INT-STREAM-002关联回归由共享内容校验实现变化触发；不扩大到C1/C2或上线评估。"
+      ]
     }
   ]
 }
