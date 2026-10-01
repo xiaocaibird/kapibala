@@ -210,7 +210,7 @@ test('real shared manifests select only existing automation and keep smoke inten
   const { cases } = await readCatalog(qaRoot);
   assert.deepEqual(
     suites.map((suite) => suite.id),
-    ['developer-smoke', 'architecture-regression', 'sequence-failure-regression', 'browser-adapter-regression', 'final-integration-smoke'],
+    ['developer-smoke', 'architecture-regression', 'sequence-failure-regression', 'browser-adapter-regression', 'final-integration-smoke', 'qa-premise-retest-20261001', 'utf16-remediation-retest-20261001', 'utf16-remediation-api-20261001', 'utf16-remediation-ui-20261001', 'qa-final-window-retest-20261001'],
   );
   const smoke = suites.find((suite) => suite.id === 'developer-smoke')!;
   assert.deepEqual(smoke.caseIds, [

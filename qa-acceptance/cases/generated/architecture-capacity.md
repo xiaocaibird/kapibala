@@ -278,7 +278,7 @@
 
 <a id="CAP-002"></a>
 
-## CAP-002 · 容量等待期间关闭 Agent 的取消边界
+## CAP-002 · 容量拒绝后关闭 Agent，原当前步完成后取消且无后续工作
 
 - 需求：ENG-ADMISSION-01、R-A5-13
 - 优先级：P0；方法：automated
@@ -299,13 +299,14 @@
 **执行步骤**
 
 1. 确证目标 kick 在零远端容量拒绝后等待，保留唯一审计与步骤身份
-2. PATCH agentEnabled=false 并确认；保持容量不足观察取消决定，再释放容量
-3. 检查原 run 的取消终态、activeAgentRunId、后续 turn 与远端账本
+2. PATCH agentEnabled=false 并确认；取证仍零派发后释放容量，不要求仍held时提前终态
+3. 若释放前已cancelled则禁止任何kick；否则允许原当前step合法完成至多一次，不能重审计或开始新turn
+4. 有限观察原run之后cancelled、activeAgentRunId清空及终态后无新增效果；未取得完成/取消证据时BLOCKED，不自造30秒SLA
 
 **预期结果**
 
-1. 外部取消在容量等待中仍生效，未派发的拒绝尝试不能在取消后重新成为 kick
-2. run cancelled/endReason=cancelled、活动引用清空；取消后不发新 turn/新 kick，审计不重复
+1. 原A5.10允许当前步完成后取消，不额外要求释放容量前终态；同step至多一次合法效果且同一审计
+2. run cancelled/endReason=cancelled、活动引用清空；不开始下一turn，终态后请求/效果不再增加
 
 **时序要求**
 
@@ -378,7 +379,8 @@
 
 1. waiting 消耗原 run 的 60 秒活动预算，不随重试或 ready 恢复而归零；终态 failed/wall_clock
 2. 预算耗尽前后均无远端 kick；没有审计/工具步骤膨胀
-3. 测量区间跨预算边界则 BLOCKED 复核，不擅加容差或借用脚本启动时刻当业务起点
+3. 活动下界>60000明确FAIL；上界<60000而声称wall_clock明确FAIL；有效区间上界>60000且下界未超记BLOCKED，不加容差
+4. 允许[59999,60000]这类含阈值且上界不超限的完整见证，不自造必须精确[60000,60000]的仪器要求
 
 **时序要求**
 
@@ -498,7 +500,7 @@
 
 ## CAP-005 · 容量等待期间群变不可写阻止迟发踢人
 
-- 需求：ENG-ADMISSION-01、R-A1-04、R-A5-13
+- 需求：ENG-ADMISSION-01、R-A2-11、R-A5-13
 - 优先级：P0；方法：automated
 - 自动化入口：tests/system/capacity-control.spec.ts
 
@@ -516,9 +518,11 @@
 
 **执行步骤**
 
-1. 确证 kick 因容量拒绝且零远端，保留占用者
-2. 网关注入creator账号suspended，等待公开群状态unreachable；保持容量占用时检查取消，不需另启动一次发送来碰运气
-3. 释放占用者后检查 run 取消、活动引用以及 kick 账本
+1. 原kick审计保持期间断开网关SSE；先经公开send得到真实网关202及平台accepted，自动生成GROUP_WRITE_FORBIDDEN失败历史但尚未递送；核对消息未落地、平台群仍active
+2. 建立容量占用、释放原审计并确证kick因容量拒绝且零远端；恢复真实SSE补投该已受理消息的message_failed，不释放容量或追加竞争send
+3. 核对同clientMsgId消息failed及公开群unreachable、网关不可写、唯一真实失败事件且消息未落地
+4. 取证零kick后释放容量，不把creator终态当群不可写、不要求held期间30秒内取消
+5. 有限观察原当前步完成后的cancelled、活动引用清空和无kick；前提或终态未建立记BLOCKED，实际不可写后仍kick为FAIL
 
 **预期结果**
 
@@ -595,7 +599,7 @@
 **预期结果**
 
 1. 仅creator合格时由当前creator执行一次kick；无合格管理账号时NO_AVAILABLE_ACCOUNT且零kick
-2. 已有审计与工具身份不重复；普通online成员不能替代admin；账号终态导致群不可写的组合由CAP-005及原终态矩阵覆盖
+2. 已有审计与工具身份不重复；普通online成员不能替代admin；账号终态后果由原终态矩阵覆盖，真实群不可写组合由CAP-005覆盖，两者不等同
 
 **时序要求**
 

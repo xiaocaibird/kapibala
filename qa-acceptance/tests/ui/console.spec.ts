@@ -5,6 +5,13 @@ import { test, expect } from '../fixtures.js';
 import { BlockedError } from '../../harness/security.js';
 import type { QaEnvironment } from '../../harness/environment.js';
 import type { AgentRun, Group } from '../../harness/platform-client.js';
+import {
+  observeDirectory,
+  directoryPremise,
+  directoryPeriodMs,
+  directoryGroupIds,
+} from './directory-observer.js';
+import { nativeBackgroundTab } from './native-focus.js';
 
 const pageErrors = new WeakMap<Page, string[]>();
 test.beforeEach(async ({ page }) => {
@@ -103,14 +110,14 @@ function directoryRequest(request: Request): boolean {
   return new URL(request.url()).pathname === '/api/group-directory' && request.method() === 'GET';
 }
 async function backgroundTab(page: Page): Promise<Page> {
-  const other = await page.context().newPage();
-  await other.goto('about:blank');
-  await other.bringToFront();
-  if (await page.evaluate(() => document.hasFocus())) {
-    await other.close();
-    throw new BlockedError('浏览器未建立真实标签失焦；需要有头环境复验，禁止伪造visibility/focus');
-  }
-  return other;
+  return nativeBackgroundTab(page, {
+    record: async (evidence) => {
+      await test.info().attach('native-tab-focus', {
+        body: JSON.stringify(evidence, null, 2),
+        contentType: 'application/json',
+      });
+    },
+  });
 }
 async function favicon(page: Page): Promise<string> {
   return page.evaluate(async () =>
@@ -397,56 +404,128 @@ test('[UI-010] 序列预检缺值显示步骤与key且零发送', async ({ qa, p
 });
 test('[UI-011] 多个页面请求同时401只续期一次并恢复加载', async ({ qa, page }) => {
   const group = await prepare(qa);
+  const sequence = await createSequence(qa);
   await login(page, qa);
   let refresh = 0;
   let injecting = true;
   const waiting: (() => Promise<void>)[] = [];
-  page.on('request', (r) => {
+  const paths = new Set(['/api/groups', '/api/sequences']);
+  const heldPaths = new Set<string>();
+  const received401 = new Set<string>();
+  const recovered = new Set<string>();
+  const network: { at: number; method: string; path: string; status?: number }[] = [];
+  let releaseRefresh!: () => void;
+  const holdRefresh = new Promise<void>((resolve) => (releaseRefresh = resolve));
+  const onRequest = (r: Request) => {
+    const path = new URL(r.url()).pathname;
+    if (paths.has(path) || path === '/api/auth/refresh')
+      network.push({ at: performance.now(), method: r.method(), path });
     if (new URL(r.url()).pathname === '/api/auth/refresh') refresh++;
-  });
-  await page.route(`**/api/groups/${group.id}**`, async (route) => {
-    if (!injecting || route.request().method() !== 'GET') {
-      await route.continue();
-      return;
-    }
-    await new Promise<void>((resolve) => {
-      waiting.push(async () => {
-        try {
-          await route.fulfill({
-            status: 401,
-            contentType: 'application/json',
-            body: JSON.stringify({
-              error: {
-                code: 'UNAUTHORIZED',
-                message: 'QA controlled expiry response',
-                requestId: 'qa-expiry',
-              },
-            }),
-          });
-        } finally {
-          resolve();
-        }
-      });
+  };
+  const onResponse = (response: import('@playwright/test').Response) => {
+    const path = new URL(response.url()).pathname;
+    if (!paths.has(path) && path !== '/api/auth/refresh') return;
+    network.push({
+      at: performance.now(),
+      method: `RESPONSE ${response.request().method()}`,
+      path,
+      status: response.status(),
     });
-  });
-  try {
-    await go(page, qa, 'group', group.id);
-    try {
-      await expect.poll(() => waiting.length, { timeout: 5000 }).toBeGreaterThanOrEqual(2);
-    } catch {
-      throw new BlockedError(
-        '该公开页面未产生至少两个并发GET；需另行适配真实并发用户操作，不注入绕过应用客户端的fetch',
-      );
+    if (paths.has(path) && response.request().method() === 'GET') {
+      if (response.status() === 401) received401.add(path);
+      if (!injecting && response.status() === 200) recovered.add(path);
     }
+  };
+  page.on('request', onRequest);
+  page.on('response', onResponse);
+  await page.route(
+    (url) =>
+      url.origin === new URL(qa.webUrl).origin &&
+      (paths.has(url.pathname) || url.pathname === '/api/auth/refresh'),
+    async (route) => {
+      const path = new URL(route.request().url()).pathname;
+      if (path === '/api/auth/refresh' && route.request().method() === 'POST') {
+        await holdRefresh;
+        await route.continue();
+        return;
+      }
+      if (!injecting || route.request().method() !== 'GET' || !paths.has(path)) {
+        await route.continue();
+        return;
+      }
+      heldPaths.add(path);
+      await new Promise<void>((resolve) => {
+        waiting.push(async () => {
+          try {
+            await route.fulfill({
+              status: 401,
+              contentType: 'application/json',
+              body: JSON.stringify({
+                error: {
+                  code: 'UNAUTHORIZED',
+                  message: 'QA controlled expiry response',
+                  requestId: 'qa-expiry',
+                },
+              }),
+            });
+          } finally {
+            resolve();
+          }
+        });
+      });
+    },
+  );
+  try {
+    const originalDocument = await page.evaluateHandle(() => document);
+    try {
+      await element(page, qa, 'navSequences').click();
+      const sameDocument = await page
+        .evaluate((oldDocument) => oldDocument === document, originalDocument)
+        .catch(() => false);
+      if (!sameDocument)
+        throw new BlockedError('序列导航触发整页重载，可能混入启动续期，不能作为本次并发401窗口');
+    } finally {
+      await originalDocument.dispose();
+    }
+    await directoryPremise(
+      () => heldPaths.size === 2 && waiting.length >= 2,
+      '序列页真实 /api/groups 与 /api/sequences 两个独立GET同时在途；不注入直接fetch',
+      5000,
+    );
     injecting = false;
     await Promise.all(waiting.splice(0).map((release) => release()));
-    await expect.poll(() => refresh).toBe(1);
-    await expect(page.locator('body')).toContainText(/群管理员|creator/);
+    await directoryPremise(
+      () => received401.size === 2,
+      '两个实际页面GET均已收到受控401',
+      5000,
+    );
+    try {
+      await expect.poll(() => refresh).toBe(1);
+      // Keep refresh pending while both 401 handlers join the same renewal.
+      await remains(async () => expect(refresh).toBe(1));
+    } finally {
+      releaseRefresh();
+    }
+    await expect.poll(() => recovered.size).toBe(2);
+    await element(page, qa, 'sequenceGroup').selectOption(group.id);
+    await element(page, qa, 'sequence').selectOption(sequence.id);
+    await expect(element(page, qa, 'sequenceGroup')).toHaveValue(group.id);
+    await expect(element(page, qa, 'sequence')).toHaveValue(sequence.id);
     await remains(async () => expect(refresh).toBe(1));
   } finally {
     injecting = false;
+    releaseRefresh();
     await Promise.all(waiting.splice(0).map((release) => release()));
     await page.unrouteAll({ behavior: 'wait' });
+    page.off('request', onRequest);
+    page.off('response', onResponse);
+    await qa.evidence('ui-concurrent-auth-refresh', {
+      heldPaths: [...heldPaths],
+      received401: [...received401],
+      recovered: [...recovered],
+      refresh,
+      network,
+    });
   }
 });
 test('[UI-012] 群名称简介按纯文本显示且日期不随编辑变化', async ({ qa, page }) => {
@@ -819,65 +898,95 @@ test('[UI-023] 简介摘要最多两行纯文本、详情完整且空简介无�
 test('[UI-024] 单页五秒刷新、并发失效合并且无关消息不遍历目录', async ({ qa, page }) => {
   const group = await prepare(qa);
   await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { name: '轮询起点' }));
-  await login(page, qa);
-  const requests: { at: number; url: string }[] = [];
-  page.on('request', (request) => {
-    if (directoryRequest(request)) requests.push({ at: performance.now(), url: request.url() });
-  });
-  await go(page, qa, 'groups');
-  await expect(card(page, qa, '轮询起点')).toHaveCount(1);
-  const search = element(page, qa, 'search');
-  await search.focus();
-  const baseline = requests.length;
-  const start = performance.now();
-  await expect.poll(() => requests.length, { timeout: 6000 }).toBeGreaterThan(baseline);
-  expect(requests[baseline]!.at - start).toBeLessThanOrEqual(5000);
-  await expect(search).toBeFocused();
-  const unrelated = requests.length;
-  incoming(qa, group, '消息不改变目录摘要');
-  await remains(async () => expect(requests.length).toBe(unrelated), 1000);
-  let release!: () => void;
-  const hold = new Promise<void>((resolve) => (release = resolve));
-  let active = 0;
-  let maxActive = 0;
-  let intercepted = 0;
-  await page.route('**/api/group-directory**', async (route) => {
-    active++;
-    maxActive = Math.max(maxActive, active);
-    intercepted++;
-    try {
-      const response = await route.fetch();
-      await hold;
-      await route.fulfill({ response });
-    } finally {
-      active--;
-    }
-  });
+  const observer = observeDirectory(page);
+  const { reads: requests } = observer.ledger;
   try {
-    await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { name: '轮询变更一' }));
-    await expect.poll(() => intercepted).toBe(1);
-    await Promise.all(
-      ['轮询变更二', '轮询最终值'].map((name) =>
-        qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { name })),
-      ),
+    await login(page, qa);
+    // Login already enters groups. Do not reload and create another replay epoch.
+    await expect(card(page, qa, '轮询起点')).toHaveCount(1);
+    await observer.settle();
+    const search = element(page, qa, 'search');
+    await search.focus();
+    const version = observer.ledger.boundaryVersion;
+    const baseline = requests.length;
+    const start = performance.now();
+    try {
+      await expect.poll(() => requests.length, { timeout: 6000 }).toBeGreaterThan(baseline);
+    } finally {
+      // Check outside expect.poll so a premise interruption stays BLOCKED.
+      observer.unchanged(version);
+    }
+    const periodic = requests[baseline]!;
+    expect(periodic.at - start).toBeLessThanOrEqual(directoryPeriodMs);
+    await directoryPremise(() => periodic.endedAt !== undefined, '真实周期响应已完成');
+    expect(periodic.status).toBe(200);
+    expect(periodic.error).toBeUndefined();
+    await expect(search).toBeFocused();
+    const unrelated = requests.length;
+    const message = incoming(qa, group, '消息不改变目录摘要');
+    await directoryPremise(
+      () =>
+        observer.ledger.frames.some(
+          (frame) => frame.type === 'message' && frame.msgId === message.data.msgId,
+        ),
+      '注入的无关消息真实到达本浏览器',
     );
-    await remains(async () => expect(intercepted).toBe(1), 500);
-    release();
-    const actual = await qa.api.require(
-      qa.api.get<Group & { name: string }>(`/api/groups/${group.id}`),
-    );
-    await expect(card(page, qa, actual.name)).toHaveCount(1);
-    expect(maxActive).toBe(1);
-    expect(intercepted).toBeLessThanOrEqual(2);
-    for (const request of requests) {
-      const query = new URL(request.url).searchParams;
-      expect(query.get('cursor')).toBeNull();
-      expect(Number(query.get('pageSize') ?? 20)).toBeLessThanOrEqual(50);
+    observer.unchanged(version);
+    const nextPeriodAt = periodic.at + directoryPeriodMs;
+    if (performance.now() + 1000 >= nextPeriodAt)
+      throw new BlockedError('无关消息到达过晚，完整1秒负向窗口会与下个合法周期重叠');
+    await remains(async () => {
+      observer.unchanged(version);
+      if (performance.now() >= nextPeriodAt)
+        throw new BlockedError('负向观察跨越下一个合法目录轮询周期');
+      expect(requests.length).toBe(unrelated);
+    }, 1000);
+    let release!: () => void;
+    const hold = new Promise<void>((resolve) => (release = resolve));
+    let active = 0;
+    let maxActive = 0;
+    let intercepted = 0;
+    await page.route('**/api/group-directory**', async (route) => {
+      active++;
+      maxActive = Math.max(maxActive, active);
+      intercepted++;
+      try {
+        const response = await route.fetch();
+        await hold;
+        await route.fulfill({ response });
+      } finally {
+        active--;
+      }
+    });
+    try {
+      await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { name: '轮询变更一' }));
+      await expect.poll(() => intercepted).toBe(1);
+      await Promise.all(
+        ['轮询变更二', '轮询最终值'].map((name) =>
+          qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { name })),
+        ),
+      );
+      await remains(async () => expect(intercepted).toBe(1), 500);
+      release();
+      const actual = await qa.api.require(
+        qa.api.get<Group & { name: string }>(`/api/groups/${group.id}`),
+      );
+      await expect(card(page, qa, actual.name)).toHaveCount(1);
+      expect(maxActive).toBe(1);
+      expect(intercepted).toBeLessThanOrEqual(2);
+      for (const request of requests) {
+        const query = new URL(request.url).searchParams;
+        expect(query.get('cursor')).toBeNull();
+        expect(Number(query.get('pageSize') ?? 20)).toBeLessThanOrEqual(50);
+      }
+    } finally {
+      release();
+      await page.unrouteAll({ behavior: 'wait' });
     }
   } finally {
-    release();
-    await page.unrouteAll({ behavior: 'wait' });
-    await qa.evidence('ui-directory-bounded-requests', requests);
+    observer.dispose();
+    await qa.evidence('ui-directory-bounded-requests', observer.ledger);
+    observer.assertProtocol();
   }
 });
 
@@ -889,27 +998,112 @@ test('[UI-025] 同标签返回保留条件与已加载页，整页刷新清空�
       qa.api.patch(`/api/groups/${group.id}`, { name: `cache-item-${String(i).padStart(3, '0')}` }),
     );
   }
-  await login(page, qa);
-  await go(page, qa, 'groups');
-  await element(page, qa, 'search').fill('cache-item');
-  await element(page, qa, 'order').selectOption('asc');
-  await expect(element(page, qa, 'directoryItem')).toHaveCount(20);
-  await element(page, qa, 'loadMoreGroups').click();
-  await expect(element(page, qa, 'directoryItem')).toHaveCount(23);
-  const selected = card(page, qa, 'cache-item-022');
-  await selected.scrollIntoViewIfNeeded();
-  await child(selected, qa, 'directoryLink').click();
-  await expect(page.locator('body')).toContainText(/群主|creator/);
-  await page.goBack({ waitUntil: 'domcontentloaded' });
-  await expect(element(page, qa, 'search')).toHaveValue('cache-item');
-  await expect(element(page, qa, 'order')).toHaveValue('asc');
-  await expect(element(page, qa, 'directoryItem')).toHaveCount(23);
-  await expect(card(page, qa, 'cache-item-022')).toBeInViewport();
-  await expect(element(page, qa, 'directoryLoadedCount')).toContainText('23');
-  await page.reload({ waitUntil: 'domcontentloaded' });
-  await expect(element(page, qa, 'search')).toHaveValue('');
-  await expect(element(page, qa, 'order')).toHaveValue('desc');
-  await expect(element(page, qa, 'directoryItem')).toHaveCount(20);
+  const observer = observeDirectory(page);
+  try {
+    await login(page, qa);
+    await expect(element(page, qa, 'directoryItem')).toHaveCount(20);
+    await observer.settle();
+    const beforeQuery = observer.ledger.reads.length;
+    await element(page, qa, 'search').fill('cache-item');
+    await element(page, qa, 'order').selectOption('asc');
+    const matchesQuery = (url: string, cursor: string | null) => {
+      const query = new URL(url).searchParams;
+      return (
+        query.get('q') === 'cache-item' &&
+        query.get('order') === 'asc' &&
+        Number(query.get('pageSize') ?? 20) === 20 &&
+        query.get('cursor') === cursor
+      );
+    };
+    await directoryPremise(
+      () =>
+        observer.ledger.reads
+          .slice(beforeQuery)
+          .some((read) => matchesQuery(read.url, null) && read.endedAt !== undefined),
+      '新查询条件的完整首页响应',
+    );
+    await observer.settle();
+    const first = observer.ledger.reads
+      .slice(beforeQuery)
+      .findLast((read) => matchesQuery(read.url, null))!;
+    expect(first.status).toBe(200);
+    expect(first.error).toBeUndefined();
+    const firstBody = first.body as {
+      items: { id: string; name: string }[];
+      nextCursor: string | null;
+    };
+    expect(firstBody.items.map((item) => item.name)).toEqual(
+      Array.from({ length: 20 }, (_, index) => `cache-item-${String(index).padStart(3, '0')}`),
+    );
+    expect(new Set(firstBody.items.map((item) => item.id)).size).toBe(20);
+    expect(typeof firstBody.nextCursor).toBe('string');
+    expect(firstBody.nextCursor).not.toBe('');
+    await expect(element(page, qa, 'directoryItem')).toHaveCount(20);
+    const beforeMore = observer.ledger.reads.length;
+    const version = observer.ledger.boundaryVersion;
+    await element(page, qa, 'loadMoreGroups').click();
+    try {
+      // Stable preparation is already established. Failure to produce 23 visible
+      // items remains a product assertion failure, not a new BLOCKED escape.
+      await expect(element(page, qa, 'directoryItem')).toHaveCount(23);
+    } finally {
+      observer.unchanged(version);
+    }
+    const second = observer.ledger.reads
+      .slice(beforeMore)
+      .find((read) => matchesQuery(read.url, firstBody.nextCursor))!;
+    expect(second, '加载更多必须使用当前首页返回的cursor').toBeDefined();
+    await directoryPremise(
+      () => second.endedAt !== undefined,
+      '可见23项对应的真实cursor响应已完成',
+    );
+    expect(second.status).toBe(200);
+    if (second.error || second.body === undefined)
+      throw new BlockedError(
+        `第二页响应正文未取得，不能确认23项缓存前提：${second.error ?? 'missing body'}`,
+      );
+    const secondBody = second.body as typeof firstBody;
+    expect(secondBody.items.map((item) => item.name)).toEqual([
+      'cache-item-020',
+      'cache-item-021',
+      'cache-item-022',
+    ]);
+    expect(secondBody.nextCursor).toBeNull();
+    const expectedIds = [...firstBody.items, ...secondBody.items].map((item) => item.id);
+    expect(new Set(expectedIds).size).toBe(23);
+    await expect(element(page, qa, 'directoryItem')).toHaveCount(23);
+    const captureVisibleIds = async (phase: string) => {
+      const items = await element(page, qa, 'directoryItem').all();
+      const hrefs = await Promise.all(
+        items.map((item) => child(item, qa, 'directoryLink').getAttribute('href')),
+      );
+      const ids = directoryGroupIds(hrefs, page.url());
+      await qa.evidence(`ui-directory-cache-identities-${phase}`, { expectedIds, hrefs, ids });
+      expect(new Set(ids).size).toBe(23);
+      expect(ids).toEqual(expectedIds);
+    };
+    await captureVisibleIds('before-detail');
+    observer.unchanged(version);
+    const selected = card(page, qa, 'cache-item-022');
+    await selected.scrollIntoViewIfNeeded();
+    await child(selected, qa, 'directoryLink').click();
+    await expect(page.locator('body')).toContainText(/群主|creator/);
+    await page.goBack({ waitUntil: 'domcontentloaded' });
+    await expect(element(page, qa, 'search')).toHaveValue('cache-item');
+    await expect(element(page, qa, 'order')).toHaveValue('asc');
+    await expect(element(page, qa, 'directoryItem')).toHaveCount(23);
+    await captureVisibleIds('after-return');
+    await expect(card(page, qa, 'cache-item-022')).toBeInViewport();
+    await expect(element(page, qa, 'directoryLoadedCount')).toContainText('23');
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await expect(element(page, qa, 'search')).toHaveValue('');
+    await expect(element(page, qa, 'order')).toHaveValue('desc');
+    await expect(element(page, qa, 'directoryItem')).toHaveCount(20);
+  } finally {
+    observer.dispose();
+    await qa.evidence('ui-directory-return-premises', observer.ledger);
+    observer.assertProtocol();
+  }
 });
 
 test('[UI-026] 注销后更换身份不复用上一会话目录条件', async ({ qa, page }) => {
@@ -1018,6 +1212,19 @@ test('[UI-028] 前台呈现安静，失焦标题和favicon静态提醒且聚焦�
     expect(await page.title()).toBe(quietTitle);
     expect(await favicon(page)).toBe(quietIcon);
   });
+  // Foreground presentation alone leaves this first message pending. Confirm
+  // that distinct target before isolating the later background-message case.
+  await page.getByText('前台安静内容', { exact: true }).click();
+  await expect(element(page, qa, 'attentionRefresh')).toBeHidden();
+  await expect(page).toHaveTitle(quietTitle);
+  await expect.poll(() => favicon(page)).toBe(quietIcon);
+  await qa.evidence('ui028-foreground-message-confirmed', {
+    text: '前台安静内容',
+    mechanism: 'real click on the presented foreground message',
+    pendingEntryVisible: await element(page, qa, 'attentionRefresh').isVisible(),
+    title: await page.title(),
+    icon: await favicon(page),
+  });
   const background = await backgroundTab(page);
   try {
     incoming(qa, group, '失焦静态内容');
@@ -1094,13 +1301,56 @@ test('[UI-029] 内容加载失败不能确认，成功呈现后相关操作才�
 test('[UI-030] 搜索范围记录消失先展示成功结果，再明确确认范围变化', async ({ qa, page }) => {
   const group = await prepare(qa);
   await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { name: '范围甲唯一记录' }));
-  await login(page, qa);
-  await go(page, qa, 'groups');
-  await element(page, qa, 'search').fill('范围甲');
-  await expect(element(page, qa, 'directoryItem')).toHaveCount(1);
-  const quietTitle = await page.title();
-  const background = await backgroundTab(page);
+  const observer = observeDirectory(page);
+  let background: Page | undefined;
   try {
+    await login(page, qa);
+    // Login already enters the directory. A count of one also matches the old
+    // unfiltered result, so it cannot establish the debounced search scope.
+    await observer.settle();
+    const searchStartedAt = performance.now();
+    await element(page, qa, 'search').fill('范围甲');
+    const filteredRead = () =>
+      observer.ledger.reads.findLast(
+        (read) =>
+          read.at >= searchStartedAt &&
+          new URL(read.url).searchParams.get('q') === '范围甲' &&
+          !new URL(read.url).searchParams.has('cursor') &&
+          read.endedAt !== undefined,
+      );
+    await directoryPremise(() => !!filteredRead(), '新搜索范围的精确q首屏响应已经完整返回');
+    const searched = filteredRead()!;
+    expect(searched.status).toBe(200);
+    expect(searched.error).toBeUndefined();
+    expect((searched.body as { items: { id: string }[] }).items.map((item) => item.id)).toEqual([
+      group.id,
+    ]);
+    await directoryPremise(
+      () =>
+        observer.ledger.frames.some(
+          (frame) => frame.type === 'scope_ready' && frame.at >= searchStartedAt,
+        ),
+      '新搜索条件后实际收到scope_ready，不能借用旧空搜索水位',
+    );
+    await observer.settle();
+    await expect(element(page, qa, 'search')).toHaveValue('范围甲');
+    await expect(card(page, qa, '范围甲唯一记录')).toHaveCount(1);
+    await expect(element(page, qa, 'directoryItem')).toHaveCount(1);
+    await qa.evidence('ui030-search-scope-premise', {
+      searchStartedAt,
+      filteredRead: searched,
+      frames: observer.ledger.frames.filter((frame) => frame.at >= searchStartedAt),
+      replayObserved: observer.ledger.replayObserved(),
+      boundaryVersion: observer.ledger.boundaryVersion,
+      visibleGroupIds: directoryGroupIds(
+        await element(page, qa, 'directoryItem').evaluateAll((nodes) =>
+          nodes.map((node) => node.getAttribute('href')),
+        ),
+        page.url(),
+      ),
+    });
+    const quietTitle = await page.title();
+    background = await backgroundTab(page);
     await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { name: '范围乙唯一记录' }));
     await expect(page).not.toHaveTitle(quietTitle);
     await page.bringToFront();
@@ -1114,7 +1364,8 @@ test('[UI-030] 搜索范围记录消失先展示成功结果，再明确确认�
     await element(page, qa, 'attentionScopeConfirm').click();
     await expect(page).toHaveTitle(quietTitle);
   } finally {
-    await background.close();
+    await background?.close();
+    observer.dispose();
   }
 });
 
@@ -1149,43 +1400,94 @@ test('[UI-031] 状态先改变后还原仍保留期间变化候选', async ({ qa
 test('[UI-032] 提醒确认不能恢复多页过期旧游标', async ({ qa, page }) => {
   await qa.api.login();
   let changed: Group | undefined;
+  const createdIds: string[] = [];
   for (let i = 0; i < 23; i++) {
     const { group } = await qa.api.createGroup();
     changed ??= group;
+    createdIds.push(group.id);
     await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { name: `游标提醒-${i}` }));
   }
-  await login(page, qa);
-  await go(page, qa, 'groups');
-  await expect(element(page, qa, 'directoryItem')).toHaveCount(20);
-  await element(page, qa, 'loadMoreGroups').click();
-  await expect(element(page, qa, 'directoryItem')).toHaveCount(23);
-  const quietTitle = await page.title();
-  const background = await backgroundTab(page);
-  const cursorRequests: string[] = [];
-  page.on('request', (request) => {
-    if (directoryRequest(request) && new URL(request.url()).searchParams.has('cursor'))
-      cursorRequests.push(request.url());
-  });
+  const observer = observeDirectory(page);
   try {
-    await qa.api.require(qa.api.patch(`/api/groups/${changed!.id}`, { name: '游标提醒已变化' }));
-    await expect(element(page, qa, 'directoryStale')).toBeVisible();
-    await expect(page).not.toHaveTitle(quietTitle);
-    await page.bringToFront();
-    const confirm = element(page, qa, 'attentionConfirm');
-    if (!(await confirm.isVisible()))
+    await login(page, qa);
+    await expect(element(page, qa, 'directoryItem')).toHaveCount(20);
+    await observer.settle();
+    const first = observer.ledger.reads.findLast(
+      (read) => !new URL(read.url).searchParams.has('cursor'),
+    )!;
+    expect(first.status).toBe(200);
+    expect(first.error).toBeUndefined();
+    const firstBody = first.body as { items: { id: string }[]; nextCursor: string | null };
+    expect(firstBody.items).toHaveLength(20);
+    expect(typeof firstBody.nextCursor).toBe('string');
+    expect(firstBody.nextCursor).not.toBe('');
+    const beforeMore = observer.ledger.reads.length;
+    const version = observer.ledger.boundaryVersion;
+    await element(page, qa, 'loadMoreGroups').click();
+    try {
+      await expect(element(page, qa, 'directoryItem')).toHaveCount(23);
+    } finally {
+      observer.unchanged(version);
+    }
+    const second = observer.ledger.reads.slice(beforeMore).find(
+      (read) => new URL(read.url).searchParams.get('cursor') === firstBody.nextCursor,
+    );
+    expect(second, '多页前提必须使用当前首页公开cursor').toBeDefined();
+    await directoryPremise(() => second!.endedAt !== undefined, '提醒用例第二页真实响应正文已完成');
+    expect(second!.status).toBe(200);
+    if (second!.error || second!.body === undefined)
       throw new BlockedError(
-        '需要适配独立于整体刷新、且只确认已呈现相关变化的公开操作，不能伪造已读状态绕过目录过期',
+        `第二页正文未取得，不能建立多页游标前提：${second!.error ?? 'missing body'}`,
       );
-    await confirm.click();
-    await expect(page).toHaveTitle(quietTitle);
-    await expect(element(page, qa, 'directoryStale')).toBeVisible();
-    await remains(async () => {
-      const more = element(page, qa, 'loadMoreGroups');
-      expect((await more.count()) === 0 || (await more.isDisabled())).toBe(true);
-      expect(cursorRequests).toEqual([]);
-    });
+    const secondBody = second!.body as typeof firstBody;
+    expect(secondBody.items).toHaveLength(3);
+    expect(secondBody.nextCursor).toBeNull();
+    const expectedIds = [...firstBody.items, ...secondBody.items].map((item) => item.id);
+    expect(new Set(expectedIds).size).toBe(23);
+    expect([...expectedIds].sort()).toEqual([...createdIds].sort());
+    const cards = await element(page, qa, 'directoryItem').all();
+    const hrefs = await Promise.all(
+      cards.map((item) => child(item, qa, 'directoryLink').getAttribute('href')),
+    );
+    const actualIds = directoryGroupIds(hrefs, page.url());
+    await qa.evidence('ui-directory-stale-initial-identities', { expectedIds, actualIds, hrefs });
+    expect(actualIds).toEqual(expectedIds);
+    observer.unchanged(version);
+    const quietTitle = await page.title();
+    const background = await backgroundTab(page);
+    const cursorRequests: string[] = [];
+    const onCursor = (request: Request) => {
+      if (directoryRequest(request) && new URL(request.url()).searchParams.has('cursor'))
+        cursorRequests.push(request.url());
+    };
+    page.on('request', onCursor);
+    try {
+      await qa.api.require(qa.api.patch(`/api/groups/${changed!.id}`, { name: '游标提醒已变化' }));
+      await expect(element(page, qa, 'directoryStale')).toBeVisible();
+      await expect(page).not.toHaveTitle(quietTitle);
+      await page.bringToFront();
+      const confirm = element(page, qa, 'attentionConfirm');
+      if (!(await confirm.isVisible()))
+        throw new BlockedError(
+          '需要适配独立于整体刷新、且只确认已呈现相关变化的公开操作，不能伪造已读状态绕过目录过期',
+        );
+      await confirm.click();
+      await expect(page).toHaveTitle(quietTitle);
+      await expect(element(page, qa, 'directoryStale')).toBeVisible();
+      await remains(async () => {
+        const more = element(page, qa, 'loadMoreGroups');
+        expect((await more.count()) === 0 || (await more.isDisabled())).toBe(true);
+        expect(cursorRequests).toEqual([]);
+      });
+    } finally {
+      page.off('request', onCursor);
+      await background.close();
+      await qa.evidence('ui-directory-stale-cursor-requests', cursorRequests);
+    }
   } finally {
-    await background.close();
+    observer.dispose();
+    await qa.evidence('ui-directory-stale-premises', observer.ledger);
+    observer.assertProtocol();
   }
 });
 

@@ -1,5 +1,5 @@
 import { requireServiceAccountId } from '../../contracts/public-api.js';
-import { Ajv } from 'ajv';
+import { compileDeclaredJsonSchema } from '../../contracts/declared-json-schema.js';
 import WebSocket from 'ws';
 import { test, expect } from '../fixtures.js';
 import type { AgentResponsePlan } from '../../harness/agent.js';
@@ -622,7 +622,7 @@ test('[BLK-SPEC-006] versioned profile rules and explicit tool limits have indep
     const schema = turns(qa, runId)[0]!.tools.find(
       (item) => item.name === 'get_recent_messages',
     )!.input_schema;
-    const validate = new Ajv({ strict: false }).compile(schema);
+    const validate = compileDeclaredJsonSchema(schema);
     expect(
       validate({ limit: 100000 }),
       'SUT advertised schema must permit the original explicit clamp example',
@@ -650,7 +650,7 @@ test('[BLK-SPEC-006] versioned profile rules and explicit tool limits have indep
       const schema = turns(qa, runId)[0]!.tools.find(
         (item) => item.name === 'get_recent_messages',
       )!.input_schema;
-      const schemaAccepts = new Ajv({ strict: false }).compile(schema)({ limit });
+      const schemaAccepts = compileDeclaredJsonSchema(schema)({ limit });
       const block = result(qa, runId, toolUseId);
       const content = JSON.parse(block.content!) as ReadResult & { code?: string };
       if (!schemaAccepts) {

@@ -6,6 +6,7 @@ import { BlockedError, requireAuthorization } from '../../harness/security.js';
 import { assertSelectedCase, currentExecutionPlan } from '../../harness/execution-plan.js';
 import { loadObservation } from '../../harness/fixture-artifacts.js';
 import type { QaEnvironment } from '../../harness/environment.js';
+import { nativeBackgroundTab } from './native-focus.js';
 
 const observationTest = test.extend<{
   observationAdapter: Awaited<ReturnType<typeof loadObservation>>;
@@ -110,11 +111,9 @@ observationTest(
       }
     });
     try {
-      background = await page.context().newPage();
-      await background.goto('about:blank');
-      await background.bringToFront();
-      if (await page.evaluate(() => document.hasFocus()))
-        throw new BlockedError('浏览器未建立真实失焦；该执行环境不能验证后台提醒');
+      background = await nativeBackgroundTab(page, {
+        record: (evidence) => qa.evidence('native-tab-focus', evidence),
+      });
       await qa.api.require(
         qa.api.post(`/api/accounts/${account.id}/transition`, {
           expectedFrom: 'online',
