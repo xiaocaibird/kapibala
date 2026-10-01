@@ -1,18 +1,34 @@
 import { setTimeout as delay } from "node:timers/promises";
+import { randomUUID } from "node:crypto";
 import type { Notification, PoolClient, QueryResultRow } from "pg";
 import type { AppContext } from "../../core/context.js";
 import { currentOperationSignal } from "../../core/db.js";
+import type { ActivitySample } from "../../core/test-activity-observer.js";
 
 const checkpointChannel = "kapibala_activity_checkpoint";
 const checkpointTimeoutMs = 1500;
 
 interface ClockLease {
+  epochId: string;
   connection: PoolClient;
   failed: boolean;
   locked: boolean;
   schema: string;
   onError(error: Error): void;
   onNotification(message: Notification): void;
+}
+
+interface SampleRow extends QueryResultRow {
+  id: string;
+  group_id: string;
+  active_ms: string;
+}
+function sampleRows(rows: SampleRow[]): ActivitySample[] {
+  return rows.map((row) => ({
+    runId: row.id,
+    groupId: row.group_id,
+    persistedActiveMs: Number(row.active_ms),
+  }));
 }
 
 // One clock bills every runnable run, including runs waiting for a local slot.
@@ -256,12 +272,14 @@ export class ActivityClock {
   private async acquire(): Promise<void> {
     const connection = await this.connect();
     const lease: ClockLease = {
+      epochId: randomUUID(),
       connection,
       failed: false,
       locked: false,
       schema: "",
       onError: () => {
         lease.failed = true;
+        this.ctx.testActivityObserver?.clockLost(lease.epochId);
       },
       onNotification: (message) => {
         if (
@@ -293,6 +311,8 @@ export class ActivityClock {
     connection.on("error", lease.onError);
     connection.on("notification", lease.onNotification);
     this.lease = lease;
+    let rows: SampleRow[] = [];
+    let before = performance.now();
     try {
       // Server-side cancellation releases blocked row/advisory waits even when
       // closing a client socket alone would not interrupt PostgreSQL promptly.
@@ -319,13 +339,25 @@ export class ActivityClock {
           lease,
           "SELECT id FROM agent_runs WHERE status='running' AND recovery_note IS NULL ORDER BY id FOR UPDATE",
         );
-        await this.query(
-          lease,
-          "UPDATE agent_runs SET activity_updated_at=date_trunc('milliseconds',clock_timestamp()) WHERE status='running' AND recovery_note IS NULL",
-        );
+        before = performance.now();
+        rows = (
+          await this.query<SampleRow>(
+            lease,
+            `UPDATE agent_runs SET activity_updated_at=date_trunc('milliseconds',clock_timestamp()) WHERE status='running' AND recovery_note IS NULL${this.ctx.testActivityObserver ? " RETURNING id,group_id,active_ms" : ""}`,
+          )
+        ).rows;
       }
       // The initialization barrier is released only after the new base commits.
       await this.query(lease, "COMMIT");
+      if (lease.locked)
+        this.ctx.testActivityObserver?.clockAcquired(
+          lease.epochId,
+          sampleRows(rows),
+          {
+            before,
+            after: performance.now(),
+          },
+        );
       if (!lease.locked) await this.release();
     } catch (error) {
       lease.failed = true;
@@ -341,10 +373,19 @@ export class ActivityClock {
     const lease = this.lease;
     if (!lease) return;
     try {
-      await this.query(
+      const before = performance.now();
+      const sampled = await this.query<SampleRow>(
         lease,
-        `UPDATE agent_runs SET active_ms=active_ms+GREATEST(0,floor(extract(epoch FROM (date_trunc('milliseconds',now())-activity_updated_at))*1000))::bigint,activity_updated_at=date_trunc('milliseconds',now()) WHERE status='running' AND recovery_note IS NULL${ids ? " AND id=ANY($1::text[])" : ""}`,
+        `UPDATE agent_runs SET active_ms=active_ms+GREATEST(0,floor(extract(epoch FROM (date_trunc('milliseconds',now())-activity_updated_at))*1000))::bigint,activity_updated_at=date_trunc('milliseconds',now()) WHERE status='running' AND recovery_note IS NULL${ids ? " AND id=ANY($1::text[])" : ""}${this.ctx.testActivityObserver ? " RETURNING id,group_id,active_ms" : ""}`,
         ids ? [ids] : undefined,
+      );
+      this.ctx.testActivityObserver?.clockSampled(
+        lease.epochId,
+        sampleRows(sampled.rows),
+        {
+          before,
+          after: performance.now(),
+        },
       );
     } catch (error) {
       lease.failed = true;
@@ -357,6 +398,7 @@ export class ActivityClock {
     const lease = this.lease;
     if (!lease) return;
     this.lease = null;
+    if (lease.locked) this.ctx.testActivityObserver?.clockLost(lease.epochId);
     try {
       if (lease.locked && !lease.failed) {
         await this.query(lease, `UNLISTEN ${checkpointChannel}`);

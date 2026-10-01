@@ -51,6 +51,7 @@ export async function automationFixture(
   t: TestContext,
   turnTimeoutMs?: number,
   configureRemote?: (remote: FastifyInstance) => void,
+  configureContext?: (ctx: AppContext) => void,
 ) {
   const temporary = await temporaryDatabase(t);
   const { db } = temporary;
@@ -112,6 +113,7 @@ export async function automationFixture(
           agent: new RemoteClient(remote.listeningOrigin),
           gateway: new RemoteClient(remote.listeningOrigin),
         };
+        configureContext?.(ctx);
         const gateway = createGatewayModule(ctx);
         automation = createAutomationModule(ctx, gateway);
         return [gateway, automation];

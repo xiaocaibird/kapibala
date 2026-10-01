@@ -189,7 +189,9 @@ export class AgentModule {
       });
   }
   private async startNext(groupId: string): Promise<void> {
-    await schedulingTransaction(this.ctx.db, async (tx) => {
+    const before = performance.now();
+    let created: RunRow | undefined;
+    const committed = await schedulingTransaction(this.ctx.db, async (tx) => {
       const group = (
         await tx.query<GroupRow>(
           "SELECT * FROM groups WHERE id=$1 FOR UPDATE",
@@ -248,12 +250,22 @@ export class AgentModule {
           [id, groupId, JSON.stringify(history)],
         )
       ).rows[0]!;
+      created = run;
       await tx.query(
         "UPDATE agent_pending SET run_id=$1 WHERE message_id=ANY($2::text[])",
         [id, messages.map((m) => m.id)],
       );
       await notify(tx, run, true);
     });
+    if (committed && created)
+      this.ctx.testActivityObserver?.runCreated(
+        {
+          runId: created.id,
+          groupId: created.group_id,
+          persistedActiveMs: Number(created.active_ms),
+        },
+        { before, after: performance.now() },
+      );
   }
   private async readRun(
     id: string,
@@ -264,6 +276,7 @@ export class AgentModule {
     ).rows[0];
   }
   private async pause(run: RunRow, reason: string): Promise<void> {
+    const before = performance.now();
     await this.ctx.db.transaction(async (tx) => {
       await tx.query(
         "UPDATE agent_runs SET recovery_note=$2,updated_at=now() WHERE id=$1",
@@ -277,6 +290,10 @@ export class AgentModule {
         message: reason,
       });
     });
+    this.ctx.testActivityObserver?.runPaused(run.id, {
+      before,
+      after: performance.now(),
+    });
   }
   private async finish(
     run: RunRow,
@@ -285,6 +302,8 @@ export class AgentModule {
     finalSummary: string | null = null,
     options: { deferIfLocked?: boolean } = {},
   ): Promise<void> {
+    const before = performance.now();
+    let terminalCommitted = false;
     await this.activityClock.checkpoint(run.id, "run:finish");
     const commit = async (tx: Queryable): Promise<void> => {
       await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
@@ -296,7 +315,10 @@ export class AgentModule {
           [run.id, status, reason, finalSummary],
         )
       ).rows[0];
-      if (updated) await notify(tx, updated, true);
+      if (updated) {
+        await notify(tx, updated, true);
+        terminalCommitted = true;
+      }
     };
     if (options.deferIfLocked) {
       // Paused-run cancellation is background progress, just like admission. A
@@ -304,6 +326,11 @@ export class AgentModule {
       // the next tick, while other groups can still start and run sequences.
       if (!(await schedulingTransaction(this.ctx.db, commit))) return;
     } else await this.ctx.db.transaction(commit);
+    if (terminalCommitted)
+      this.ctx.testActivityObserver?.runTerminal(run.id, {
+        before,
+        after: performance.now(),
+      });
     // Messages that arrived during the previous run are handed off without waiting for another turn.
     await this.scan();
     await this.startNext(run.group_id);
@@ -615,6 +642,8 @@ export class AgentModule {
     outcome: ToolOutcome,
     endReason?: "audit_blocked",
   ): Promise<void> {
+    const before = performance.now();
+    let terminalCommitted = false;
     const content = resultContent(outcome.value);
     const history: ConversationMessage[] = [
       ...run.history,
@@ -664,9 +693,36 @@ export class AgentModule {
             [run.id, endReason],
           )
         ).rows[0];
-        if (blocked) await notify(tx, blocked, true);
+        if (blocked) {
+          await notify(tx, blocked, true);
+          terminalCommitted = true;
+        }
       }
     });
+    if (terminalCommitted)
+      this.ctx.testActivityObserver?.runTerminal(run.id, {
+        before,
+        after: performance.now(),
+      });
+    if (
+      this.ctx.testActivityObserver &&
+      !endReason &&
+      step.name === "get_recent_messages" &&
+      !outcome.errorCode
+    ) {
+      // The model response, tool result and continuation history have committed.
+      // This sequential read-only path has no external request left in flight;
+      // the run advisory lock remains held across this optional test barrier.
+      await this.ctx.testActivityObserver?.safeBoundary(
+        {
+          runId: run.id,
+          groupId: run.group_id,
+          persistedActiveMs: Number(run.active_ms),
+        },
+        `${run.id}:${step.ordinal}`,
+      );
+      currentOperationSignal()?.throwIfAborted();
+    }
     if (endReason) {
       await this.scan();
       await this.startNext(run.group_id);
