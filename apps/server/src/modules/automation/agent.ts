@@ -21,6 +21,7 @@ import type { GroupRow, RecentRow, RunRow, StepRow } from "./types.js";
 import { AgentTools } from "./tool-execution.js";
 import { ActivityClock } from "./activity-clock.js";
 import { schedulingTransaction } from "./scheduling-transaction.js";
+import { referenceMedia } from "../media-files/index.js";
 
 function runPublic(run: RunRow): AgentRun {
   return {
@@ -256,6 +257,12 @@ export class AgentModule {
       ).rows[0]!;
       insertWindow = [insertBefore, performance.now()];
       created = run;
+      await referenceMedia(
+        tx,
+        id,
+        groupId,
+        messages.map((message) => message.msg_id),
+      );
       await tx.query(
         "UPDATE agent_pending SET run_id=$1 WHERE message_id=ANY($2::text[])",
         [id, messages.map((m) => m.id)],

@@ -49,6 +49,13 @@ export async function recordSent(
   sentAt: string,
   messageSentObservedAt?: Date,
 ): Promise<void> {
+  // Keep the same media -> message lock order as publication and expiry. An
+  // acknowledgement merging an echo must not copy a path concurrently deleted
+  // by cleanup whose message UPDATE already took its statement snapshot.
+  await tx.query(
+    "SELECT f.id FROM media_files f JOIN messages m ON m.group_id=f.group_id WHERE m.client_msg_id=$1 AND f.msg_id=$2 FOR UPDATE OF f",
+    [clientMsgId, msgId],
+  );
   const row = (
     await tx.query<MessageRow>(
       "SELECT * FROM messages WHERE client_msg_id=$1 FOR UPDATE",
@@ -81,7 +88,7 @@ export async function recordSent(
     [row.group_id, msgId, row.id],
   );
   await tx.query(
-    "UPDATE messages SET msg_id=$2,sent_at=$3,delivery_status='sent',fail_code=null,dispatch_state='done',timeout_at=null,updated_at=now() WHERE id=$1",
+    "UPDATE messages SET msg_id=$2,sent_at=$3,delivery_status='sent',fail_code=null,dispatch_state='done',timeout_at=null,updated_at=now(),local_file_path=(SELECT local_file_path FROM media_files WHERE group_id=messages.group_id AND msg_id=$2 AND state='ready') WHERE id=$1",
     [row.id, msgId, sentAt],
   );
   await emit(tx, "message", {

@@ -44,6 +44,20 @@ npm run dev:isolated -- --smoke
 
 当前迁移按显式编号、名称和内容校验和核对完整历史；启动要求当前清单全等，健康接口不是物理schema巡检。第二轮修复、证据及尚未闭合的边界见[本轮记录](docs/core-repair-round-two.md)。
 
+## C1 媒体文件
+
+网关 `message.mediaUrl` 入库后由后台下载，成功后消息 API 的 `localFilePath` 返回服务器本地绝对路径。默认保存在启动目录下的 `media/`；这不是浏览器下载 URL，也没有新增网关或模型接口。下载失败保留消息文本，过期的网关 404 不重复尝试。运行中的 Agent 所引用消息的附件会保留，终态后恢复按保留期清理。
+
+| 配置 | 默认值 | 含义 |
+| --- | --- | --- |
+| `MEDIA_DIR` | `media` | 专用持久目录；使用同一数据库的服务实例须共享同一绝对路径和文件系统 |
+| `MEDIA_RETENTION_DAYS` | `30` | 完整下载后的保留天数，允许 0；正在使用的文件仍受保护 |
+| `MEDIA_MAX_BYTES` | `20971520` | 单文件最多 20 MiB，按流累计检查，超限不保存 |
+| `MEDIA_DOWNLOAD_TIMEOUT_MS` | `15000` | 单次下载等待上限 |
+| `MEDIA_CLEANUP_INTERVAL_MS` | `3600000` | 清理巡检及删除失败后的重试间隔，默认一小时 |
+
+升级须先停止旧服务并备份数据库与媒体目录，再执行 `npm run db:migrate`。新增 009 会为旧消息中的 `metadata.mediaUrl` 创建下载任务，并保护旧版仍在运行的 Agent 对应群的已有附件。请保持目录稳定，不手动删除受管文件；目录与已保存位置不一致时服务拒绝启动。`npm run dev:isolated` 自动使用本次临时根下的 `media/`，退出时一并清理。下载、安全边界、恢复及开发证据见 [C1 说明](docs/c1-media-files.md)。
+
 ## 验证与说明
 
 ```sh

@@ -22,6 +22,7 @@ import {
   type ToolUse,
 } from "./protocol.js";
 import type { GroupRow, RecentRow, RunRow, StepRow } from "./types.js";
+import { referenceMedia } from "../media-files/index.js";
 
 export interface ToolExecutionHost {
   completeStep(
@@ -96,12 +97,21 @@ export class AgentTools {
     run: RunRow,
     input: { limit: number },
   ): Promise<ToolOutcome> {
-    const rows = (
-      await this.ctx.db.query<RecentRow>(
-        "SELECT msg_id,sender_platform_user_id,is_own,text,sent_at FROM messages WHERE group_id=$1 ORDER BY sent_at DESC,id DESC LIMIT $2",
-        [run.group_id, Math.min(input.limit, 50)],
-      )
-    ).rows.reverse();
+    const rows = await this.ctx.db.transaction(async (tx) => {
+      const rows = (
+        await tx.query<RecentRow>(
+          "SELECT msg_id,sender_platform_user_id,is_own,text,sent_at FROM messages WHERE group_id=$1 ORDER BY sent_at DESC,id DESC LIMIT $2",
+          [run.group_id, Math.min(input.limit, 50)],
+        )
+      ).rows.reverse();
+      await referenceMedia(
+        tx,
+        run.id,
+        run.group_id,
+        rows.map((row) => row.msg_id),
+      );
+      return rows;
+    });
     let truncated = false;
     const messages = rows.map((row) => {
       const chars = [...row.text];

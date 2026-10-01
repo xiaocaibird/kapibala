@@ -40,6 +40,7 @@ export interface MessageRow extends QueryResultRow {
   attempts: number;
   timeout_at: Date | null;
   metadata: Record<string, unknown>;
+  local_file_path?: string | null;
   created_at: Date;
 }
 export interface JobError {
@@ -91,6 +92,7 @@ export function messageDto(row: MessageRow): Message {
     sentAt: row.sent_at.toISOString(),
     deliveryStatus: row.delivery_status,
     failCode: row.fail_code,
+    ...(row.local_file_path ? { localFilePath: row.local_file_path } : {}),
   };
 }
 export const transitions: Readonly<

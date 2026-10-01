@@ -65,6 +65,8 @@ export interface Message {
   sentAt: string;
   deliveryStatus: DeliveryStatus | null;
   failCode: string | null;
+  /** Current local attachment availability; absent/null after expiry or failed download. */
+  localFilePath?: string | null;
 }
 export interface SequenceStep {
   index: number;
@@ -141,7 +143,7 @@ export interface PlatformEventPayloads {
     clientMsgId?: string | null;
     isOwn: boolean;
     source: string;
-    changeKind: "created" | "delivery";
+    changeKind: "created" | "delivery" | "media";
     attentionIdentity?: "pending" | "confirmed";
     attentionCreatedSeq?: number;
   };

@@ -113,6 +113,7 @@ export const messageSchema: z.ZodType<Message> = z.object({
     .enum(["queued", "accepted", "sent", "failed", "unknown", "cancelled"])
     .nullable(),
   failCode: nullableText,
+  localFilePath: nullableText.optional(),
 });
 export const messagesSchema = z.object({
   items: z.array(messageSchema),

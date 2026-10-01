@@ -25,6 +25,7 @@ import {
 import { registerGroupDirectory } from "./group-directory.js";
 import { Messages } from "./messages.js";
 import { type GroupRow, type MessageRow, messageDto } from "./models.js";
+import { MediaFiles, withCurrentFiles } from "../media-files/index.js";
 
 function parse<T>(schema: z.ZodType<T>, input: unknown): T {
   const result = schema.safeParse(input);
@@ -56,6 +57,7 @@ export function createGatewayModule(
   const messages = new Messages(ctx);
   const events = new GatewayEvents(ctx, messages);
   const jobs = new Jobs(ctx);
+  const media = new MediaFiles(ctx);
   const running = new Map<string, Promise<void>>();
   let closed = false;
   function launch(key: string, work: () => Promise<void>): void {
@@ -311,14 +313,20 @@ export function createGatewayModule(
         ).rows.map(messageDto);
         await ctx.db.query(
           "INSERT INTO timeline_snapshots(id,group_id,items) VALUES($1,$2,$3)",
-          [snapshotId, id, JSON.stringify(items)],
+          [
+            snapshotId,
+            id,
+            JSON.stringify(
+              items.map(({ localFilePath: _path, ...item }) => item),
+            ),
+          ],
         );
         total = items.length;
         items = items.slice(0, limit);
       }
       const next = offset + limit;
       return {
-        items,
+        items: await withCurrentFiles(ctx.db, id, items),
         nextCursor:
           next < total
             ? Buffer.from(
@@ -336,6 +344,7 @@ export function createGatewayModule(
     getMessage: (clientMsgId) => messages.getMessage(clientMsgId),
     kick: (input, options?: KickOptions) => messages.kick(input, options),
     recover: async () => {
+      await media.recover();
       await messages.recover();
       events.start();
     },
@@ -343,6 +352,7 @@ export function createGatewayModule(
       events.start();
       launch("rate-limits", () => accounts.releaseRateLimits());
       launch("event-retries", () => events.retryFailed());
+      launch("media-files", () => media.tick());
       const [accountRows, jobRows] = await Promise.all([
         ctx.db.query<{ account_id: string }>(
           "SELECT DISTINCT account_id FROM messages WHERE account_id IS NOT NULL AND delivery_status IN ('queued','accepted','unknown')",
@@ -360,6 +370,7 @@ export function createGatewayModule(
     },
     close: async () => {
       closed = true;
+      media.close();
       await events.close();
       await Promise.allSettled(running.values());
     },

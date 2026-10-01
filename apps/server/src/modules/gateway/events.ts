@@ -13,6 +13,7 @@ import { changeAccount, markGroupUnreachable } from "./state.js";
 import { Messages, recordSent } from "./messages.js";
 import { recordConfirmationReceipt } from "./confirmation-receipts.js";
 import { reconcileLeftMembers } from "./left-membership.js";
+import { registerMedia } from "../media-files/index.js";
 
 const gatewayEventSchema = z.discriminatedUnion("type", [
   z.object({
@@ -277,6 +278,8 @@ export class GatewayEvents {
               throw new Error(
                 `群 ${event.groupId} 尚未落库，等待建群响应持久化`,
               );
+            if (event.mediaUrl !== undefined)
+              await registerMedia(tx, group.id, event.msgId, event.mediaUrl);
             if (echoClientId) {
               await recordSent(tx, echoClientId, event.msgId, event.sentAt);
               break;

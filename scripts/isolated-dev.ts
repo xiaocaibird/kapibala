@@ -387,6 +387,7 @@ async function start(smoke: boolean): Promise<void> {
     check();
     process.env.GATEWAY_URL = gateway.listeningOrigin;
     process.env.AGENT_URL = agent.listeningOrigin;
+    process.env.MEDIA_DIR = join(directory, "media");
     const { createApp } = await import("../apps/server/src/app.js");
     const { createGatewayModule } =
       await import("../apps/server/src/modules/gateway/index.js");
