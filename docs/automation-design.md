@@ -4,7 +4,9 @@
 
 首轮验收后续修复新增[模型阶段准入](agent-stage-budget-followup-20261001.md)：剩余活动预算必须容纳下一轮原配置的完整 10–15 秒窗口，否则不发起请求并以 `failed/wall_clock` 结束，已有步骤及真实活动账本保留。因此 `wall_clock` 也可以表示剩余预算不足以开始下一完整阶段，并不要求实际已用满 60 秒。提前停止业务不能证明数据库锁下终态提交必有严格物理上界；本轮候选、QA 结果与待决边界见[首轮收尾记录](first-acceptance-closeout-20261001.md)。下面旧候选与验证数量保留其历史版本。
 
-当前候选见[最终收口](core-verification-closeout.md)。关键模型/审计/工具及结束阶段加强活动记账；只有时钟所有者持久计量，跟随者等待成功记录，失败不放行下一外部副作用。正常预算和停机排除保留，硬终止未保存尾差不承诺固定上限，详见[计量实证](core-activity-accounting-hardening.md)。序列排期复用[首次可靠接收记录](core-confirmation-receipt-hardening.md)，保存前窗口不冒称已消除。
+同样的准入原则用于[首次移除请求](agent-kick-stage-budget-20261001.md)：与网关实际 POST 共用 15000ms 配置，在未派发时剩余不足便结束容量等待；已派发后的确认、结果未知与恢复路径不套用该准入门槛。它不是整条移除调用链的完成上界，不改变此前真实步骤或外部效果。
+
+前次收口见[历史实施记录](core-verification-closeout.md)。关键模型/审计/工具及结束阶段加强活动记账；只有时钟所有者持久计量，跟随者等待成功记录，失败不放行下一外部副作用。正常预算和停机排除保留，硬终止未保存尾差不承诺固定上限，详见[计量实证](core-activity-accounting-hardening.md)。序列排期复用[首次可靠接收记录](core-confirmation-receipt-hardening.md)，保存前窗口不冒称已消除。
 
 账号终态跳过序列步、群停止序列和请求Agent取消，由 `automation/lifecycle.ts` 提供事务内规则入口，调用者保留原事务/锁顺序，不改为异步最终一致；当前生产事件采用名字-载荷类型约束。管理员[后台进展诊断](core-resource-observability.md)只表示本进程调度tick，不等于每条业务成功。下面周期采样、调度和业务规则继续有效；旧测试数量只对应其原版本。
 
