@@ -1,0 +1,57 @@
+{
+  "recordedAt": "2026-10-01T21:23:51.030595+00:00",
+  "baseRevision": "5c799dd12a0c80669c5d1d311382cb086d5b7dbf",
+  "scope": "Development offline process entry asynchronous response conversion boundary only",
+  "before": {
+    "sourceRevision": "5c799dd12a0c80669c5d1d311382cb086d5b7dbf",
+    "entrySha256": "7ca81db14a9d71909017fe3f77348feb62cc9993d3c29c7d6d502382a7a6191c",
+    "command": "node --import tsx --test --test-reporter=tap --test-name-pattern='malformed HTTP status' tests/integration/qa-gemini-agent-process.test.ts",
+    "exitCode": 1,
+    "passed": 0,
+    "failed": 1,
+    "entryExitCode": 1,
+    "ownerLockRetained": true,
+    "observation": "HTTP 600 response caused uncaught RangeError in new Response; client connection closed"
+  },
+  "after": {
+    "targeted": {
+      "exitCode": 0,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    "relatedRegression": {
+      "exitCode": 0,
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0
+    },
+    "build": {
+      "command": "npm run build",
+      "exitCode": 0
+    },
+    "original": {
+      "command": "npm run verify:original",
+      "exitCode": 0
+    },
+    "observations": [
+      "Actual GeminiProvider maps rejected transport to HTTP 502 MODEL_UNAVAILABLE",
+      "Health stays available; following legitimate audit succeeds",
+      "Usage records failure then success",
+      "SIGTERM exits 0, stderr remains empty, and own owner.lock is released"
+    ]
+  },
+  "independentSourceReview": "Sibling agent read-only review found the conversion callback correctly catches/destroys/rejects, and found no further blocking issues in this boundary",
+  "noQaDirectoryChange": true,
+  "noRealKeyOrExternalProvider": true,
+  "sha256": {
+    "scripts/qa-gemini-agent.ts": "c1bc995c7d307d6c49ad2f04a0dd0fb140aa4a8dbbaa93d1caba2dbd3f63b867",
+    "tests/integration/qa-gemini-agent-process.test.ts": "87ab3520a190c7074baa5d3f6346d6242441af6e1b7a8f25b18586705e675dbb",
+    "docs/qa-offline-model-entry-20261002.md": "5482b4ecc9ab6afd9b935e0323234fb0adf92ab26650a79bcc099a08383b4b0f",
+    "docs/evidence/qa-offline-model-entry-20261002/malformed-status-before.tap": "53ec87b936cd84346db1578b8f1154a912fe8ebea7d2aa283ef7050031f8563a",
+    "docs/evidence/qa-offline-model-entry-20261002/malformed-status-after.tap": "5a14ac97fce2c38ea19cac02294065b45f1498d0b95f39a50624eefd736e306e",
+    "docs/evidence/qa-offline-model-entry-20261002/focused-after-status-fix.tap": "18d982cbf858c267f59a24e662050a53e95e81d55bfc28d138dc7d1d06b5d35a",
+    "docs/evidence/qa-offline-model-entry-20261002/build-after-status-fix.log": "19b98fcbeb30238280001e86245f9c41e867aabb3d86c79d736bac04f94c77f3",
+    "docs/evidence/qa-offline-model-entry-20261002/original-after-status-fix.log": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa"
+  }
+}

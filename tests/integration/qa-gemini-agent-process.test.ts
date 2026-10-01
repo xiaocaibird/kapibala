@@ -598,3 +598,77 @@ test(
     );
   },
 );
+
+test(
+  "QA C2 process: malformed HTTP status is safely rejected without killing service or retaining its lock",
+  { timeout: 20000 },
+  async (t) => {
+    const f = await fixture(t);
+    let status = 600;
+    const origin = await f.listen((_request, response) => {
+      response
+        .writeHead(status)
+        .end(
+          candidate({ verdict: "pass", reason: "subsequent valid response" }),
+        );
+    });
+    const child = f.launch(origin);
+    const ready = await child.ready();
+    const attempt = await post(ready.address, "/agent/audit", {
+      groupId: "g",
+      text: "synthetic malformed status",
+    }).then(
+      async (response) => ({
+        status: response.status,
+        body: await response.json(),
+      }),
+      () => ({ status: 0, body: { transportError: "connection closed" } }),
+    );
+    if (attempt.status === 0) {
+      const exit = await bounded(child.done);
+      t.diagnostic(
+        JSON.stringify({
+          exit,
+          ownerLockRetained: (await readdir(f.sessionDirectory)).includes(
+            "owner.lock",
+          ),
+          stderr: child.stderr,
+        }),
+      );
+    }
+    assert.deepEqual(attempt, {
+      status: 502,
+      body: { code: "MODEL_UNAVAILABLE" },
+    });
+    assert.deepEqual(await (await fetch(`${ready.address}/health`)).json(), {
+      ok: true,
+      service: "gemini-agent",
+    });
+    status = 200;
+    const recovered = await post(ready.address, "/agent/audit", {
+      groupId: "g",
+      text: "synthetic recovery",
+    });
+    assert.equal(recovered.status, 200);
+    assert.deepEqual(await recovered.json(), {
+      verdict: "pass",
+      reason: "subsequent valid response",
+    });
+    assert.deepEqual(await child.stop(), { code: 0, signal: null });
+    assert.equal(child.stderr, "");
+    assert.equal(
+      (await readdir(f.sessionDirectory)).includes("owner.lock"),
+      false,
+    );
+    assert.deepEqual(
+      (await usage(f.sessionDirectory)).map((row) => [
+        row.outcome,
+        row.errorCode,
+      ]),
+      [
+        ["failure", "MODEL_UNAVAILABLE"],
+        ["success", null],
+      ],
+    );
+  },
+);

@@ -52,24 +52,29 @@ async function main() {
           signal: options.signal ?? undefined,
         },
         (response) => {
-          const status = response.statusCode ?? 502;
-          // There is no redirect request path, even to another loopback server.
-          if ([301, 302, 303, 307, 308].includes(status)) {
+          try {
+            const status = response.statusCode ?? 502;
+            // There is no redirect request path, even to another loopback server.
+            if ([301, 302, 303, 307, 308].includes(status))
+              throw new Error("QA_PROVIDER_REDIRECT_REJECTED");
+            const headers = new Headers();
+            for (let index = 0; index < response.rawHeaders.length; index += 2)
+              headers.append(
+                response.rawHeaders[index]!,
+                response.rawHeaders[index + 1]!,
+              );
+            const body = [204, 205, 304].includes(status)
+              ? null
+              : (Readable.toWeb(response) as ReadableStream<Uint8Array>);
+            const result = new Response(body, { status, headers });
+            if (body === null) response.resume();
+            resolveResponse(result);
+          } catch (error) {
+            // HTTP callbacks execute after the Promise constructor returns.
+            // Reject conversion failures so GeminiProvider handles them safely.
             response.destroy();
-            reject(new Error("QA_PROVIDER_REDIRECT_REJECTED"));
-            return;
+            reject(error);
           }
-          const headers = new Headers();
-          for (let index = 0; index < response.rawHeaders.length; index += 2)
-            headers.append(
-              response.rawHeaders[index]!,
-              response.rawHeaders[index + 1]!,
-            );
-          const body = [204, 205, 304].includes(status)
-            ? null
-            : (Readable.toWeb(response) as ReadableStream<Uint8Array>);
-          if (body === null) response.resume();
-          resolveResponse(new Response(body, { status, headers }));
         },
       );
       request.once("error", reject);

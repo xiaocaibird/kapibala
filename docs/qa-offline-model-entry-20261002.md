@@ -69,4 +69,8 @@ node --import tsx --test tests/integration/qa-gemini-agent-process.test.ts
 
 本入口只证明可执行的离线接入链。它不证明真实 Gemini 网络、TLS、认证、收费、提供方模型行为或模型安全性，也不替代 QA 第二轮用例执行、主后端工具授权与事务验证、真人体验或上线结论。桩应发送未压缩的原始 Gemini JSON HTTP 响应；此受控 HTTP transport 不提供生产 fetch 的压缩解码、代理或外网能力。
 
-本次最终研发验证：入口六组进程测试及既有 provider/protocol/usage/main 相关回归共 **25/25 PASS，0 FAIL，0 SKIP**；`npm run build`（含边界校验及前后端类型检查）与 `npm run verify:original` 通过。代理场景同时启用 `NODE_USE_ENV_PROXY=1`、大小写 HTTP/HTTPS proxy 配置并清空 NO_PROXY；桩收到实际调用而代理探针收到 **0** 次请求。相关原始日志和源文件哈希见 [验证记录](evidence/qa-offline-model-entry-20261002/verification.json)。这 25 项是研发验证，不写入或代签独立 QA 用例结果。
+初次研发验证（`5c799dd`）：入口六组进程测试及既有 provider/protocol/usage/main 相关回归共 **25/25 PASS，0 FAIL，0 SKIP**；`npm run build`（含边界校验及前后端类型检查）与 `npm run verify:original` 通过。代理场景同时启用 `NODE_USE_ENV_PROXY=1`、大小写 HTTP/HTTPS proxy 配置并清空 NO_PROXY；桩收到实际调用而代理探针收到 **0** 次请求。该版本原始日志和源文件哈希保留于 [初次验证记录](evidence/qa-offline-model-entry-20261002/verification.json)。这些是研发验证，不写入或代签独立 QA 用例结果。
+
+后续交叉复核补充了畸形 HTTP 状态反例：本机桩返回 HTTP 600 时，Node HTTP 接受该状态，但 fetch `Response` 转换抛出 RangeError。初版异步 callback 未捕获该异常，实测入口退出码 1 并保留 owner 锁；[修复前原始日志](evidence/qa-offline-model-entry-20261002/malformed-status-before.tap)完整保留。现将响应转换异常捕获、销毁原响应并 reject 回真实 `GeminiProvider`，实际返回固定 502 `MODEL_UNAVAILABLE`，不伪造正常成功。
+
+新增进程用例验证错误后健康端点仍可用、随后真实 HTTP 合法响应仍能完成 audit、usage 依次记录 failure/success、正常退出码 0 并释放本进程 owner 锁；[修复后专项原始日志](evidence/qa-offline-model-entry-20261002/malformed-status-after.tap)与 [26/26 相关回归](evidence/qa-offline-model-entry-20261002/focused-after-status-fix.tap)通过。该补丁仅修复测试入口的错误边界，未改变正常生成或 provider 失败语义。修复后的源码哈希和构建/原始需求校验结果见 [补修验证记录](evidence/qa-offline-model-entry-20261002/verification-status-fix.json)。
