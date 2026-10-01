@@ -14,11 +14,13 @@ import {
   LifecycleWitness,
   lifecycleRequestSchema,
 } from "./lifecycle-witness.js";
+import { MediaWitness, mediaRequestSchema } from "./media-witness.js";
 
 export const combinedRequestSchema = z.union([
   resourceRequestSchema,
   activityRequestSchema,
   lifecycleRequestSchema,
+  mediaRequestSchema,
 ]);
 export type CombinedRequest = z.infer<typeof combinedRequestSchema>;
 
@@ -47,6 +49,16 @@ export function compatibleRuntimePair(
 ): boolean {
   return (
     compatibleActivityPair(a, b) ||
+    (((a.mode === "hold-media-reference" && b.mode === "hold-media-cleanup") ||
+      (a.mode === "hold-media-cleanup" && b.mode === "hold-media-reference")) &&
+      "mediaId" in a.correlation &&
+      "mediaId" in b.correlation &&
+      a.correlation.mediaId === b.correlation.mediaId &&
+      a.correlation.groupId === b.correlation.groupId &&
+      a.correlation.msgId === b.correlation.msgId &&
+      a.target.apiUrl === b.target.apiUrl &&
+      a.target.pid === b.target.pid &&
+      a.target.revision === b.target.revision) ||
     (a.mode === "module-fail-then-hold" &&
       b.mode === "module-fail-then-hold" &&
       a.correlation.module !== b.correlation.module &&
@@ -61,20 +73,23 @@ export class CombinedRuntimeObservation implements ObservationRuntime<CombinedRe
   readonly resource: RuntimeObservation;
   readonly activity: ActivityWitness;
   readonly lifecycle: LifecycleWitness;
+  readonly media: MediaWitness;
   private readonly owners = new Map<
     string,
-    "activity" | "resource" | "lifecycle"
+    "activity" | "resource" | "lifecycle" | "media"
   >();
   constructor(db: ObservedRuntimeDatabase) {
     this.resource = new RuntimeObservation(db);
     this.activity = new ActivityWitness(db);
     this.lifecycle = new LifecycleWitness(db);
+    this.media = new MediaWitness(db);
   }
   capabilities(): string[] {
     return [
       ...this.resource.capabilities(),
       ...this.activity.capabilities(),
       ...this.lifecycle.capabilities(),
+      ...this.media.capabilities(),
     ];
   }
   async establish(
@@ -85,12 +100,15 @@ export class CombinedRuntimeObservation implements ObservationRuntime<CombinedRe
   ): Promise<ObservationSnapshot> {
     const request = combinedRequestSchema.parse(raw);
     const owner =
-      request.correlation.kind === "activity"
-        ? "activity"
-        : request.correlation.kind === "tool-wait" ||
-            request.correlation.kind === "message-recovery"
-          ? "lifecycle"
-          : "resource";
+      request.correlation.kind === "media-reference" ||
+      request.correlation.kind === "media-cleanup"
+        ? "media"
+        : request.correlation.kind === "activity"
+          ? "activity"
+          : request.correlation.kind === "tool-wait" ||
+              request.correlation.kind === "message-recovery"
+            ? "lifecycle"
+            : "resource";
     const old = this.owners.get(id);
     if (old && old !== owner)
       throw new ControlError(
@@ -98,6 +116,11 @@ export class CombinedRuntimeObservation implements ObservationRuntime<CombinedRe
         "Lease identity cannot change observation domain",
       );
     this.owners.set(id, owner);
+    if (
+      request.mode === "hold-media-reference" ||
+      request.mode === "hold-media-cleanup"
+    )
+      return this.media.establish(id, request, expiresAt, binding);
     if (
       request.mode === "observe-tool-wait" ||
       request.mode === "observe-agent-lifecycle" ||
@@ -118,15 +141,17 @@ export class CombinedRuntimeObservation implements ObservationRuntime<CombinedRe
   }
   private forLease(
     id: string,
-  ): ActivityWitness | RuntimeObservation | LifecycleWitness {
+  ): ActivityWitness | RuntimeObservation | LifecycleWitness | MediaWitness {
     const owner = this.owners.get(id);
     if (!owner)
       throw new ControlError(404, "Unknown runtime observation lease");
-    return owner === "activity"
-      ? this.activity
-      : owner === "lifecycle"
-        ? this.lifecycle
-        : this.resource;
+    return owner === "media"
+      ? this.media
+      : owner === "activity"
+        ? this.activity
+        : owner === "lifecycle"
+          ? this.lifecycle
+          : this.resource;
   }
   snapshot(id: string): ObservationSnapshot {
     return this.forLease(id).snapshot(id);
@@ -142,6 +167,7 @@ export class CombinedRuntimeObservation implements ObservationRuntime<CombinedRe
       this.activity.close(),
       this.resource.close(),
       this.lifecycle.close(),
+      this.media.close(),
     ]);
     const failures = results.filter((r) => r.status === "rejected");
     if (failures.length)

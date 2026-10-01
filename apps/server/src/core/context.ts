@@ -6,6 +6,7 @@ import type { TestMessageObserver } from "./test-message-observer.js";
 import type { TestRuntimeObserver } from "./test-runtime-observer.js";
 import type { TestActivityObserver } from "./test-activity-observer.js";
 import type { TestLifecycleObserver } from "./test-lifecycle-observer.js";
+import type { TestMediaObserver } from "./test-media-observer.js";
 export interface AppContext {
   db: Database;
   gateway: RemoteClient;
@@ -16,4 +17,5 @@ export interface AppContext {
   testRuntimeObserver?: TestRuntimeObserver;
   testActivityObserver?: TestActivityObserver;
   testLifecycleObserver?: TestLifecycleObserver;
+  testMediaObserver?: TestMediaObserver;
 }

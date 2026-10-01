@@ -25,6 +25,7 @@ export async function runtimeFixture(
   options: {
     entry?: string;
     configureRemote?: (remote: FastifyInstance) => void;
+    extraEnv?: Record<string, string>;
   } = {},
 ) {
   assert.ok(
@@ -99,6 +100,7 @@ export async function runtimeFixture(
           AGENT_URL: remote.listeningOrigin,
           QA_ACCEPTANCE_RESOURCE_TOKEN: token,
           QA_RUNTIME_REGISTRY_DIR: directory,
+          ...options.extraEnv,
         },
       },
     );

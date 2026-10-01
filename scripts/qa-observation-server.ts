@@ -84,6 +84,7 @@ try {
       ctx.testRuntimeObserver = runtime?.resource;
       ctx.testActivityObserver = runtime?.activity;
       ctx.testLifecycleObserver = runtime?.lifecycle;
+      ctx.testMediaObserver = runtime?.media;
       const gateway = createGatewayModule(ctx);
       return [gateway, createAutomationModule(ctx, gateway)];
     },

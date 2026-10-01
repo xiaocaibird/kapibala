@@ -90,7 +90,7 @@ export class AgentTools {
       await this.host.completeStep(
         run,
         step,
-        await this.recent(run, step.input as { limit: number }),
+        await this.recent(run, step, step.input as { limit: number }),
       );
       return;
     }
@@ -102,8 +102,12 @@ export class AgentTools {
   }
   private async recent(
     run: RunRow,
+    step: StepRow,
     input: { limit: number },
   ): Promise<ToolOutcome> {
+    let mediaObservation:
+      | import("../../core/test-media-observer.js").TestMediaOperation
+      | undefined;
     const rows = await this.ctx.db.transaction(async (tx) => {
       const rows = (
         await tx.query<RecentRow>(
@@ -111,14 +115,21 @@ export class AgentTools {
           [run.group_id, Math.min(input.limit, 50)],
         )
       ).rows.reverse();
-      await referenceMedia(
+      mediaObservation = await referenceMedia(
         tx,
         run.id,
         run.group_id,
         rows.map((row) => row.msg_id),
+        this.ctx.testMediaObserver
+          ? {
+              observer: this.ctx.testMediaObserver,
+              operation: { kind: "history", toolUseId: step.tool_use_id! },
+            }
+          : undefined,
       );
       return rows;
     });
+    if (mediaObservation) await mediaObservation.stage("reference-committed");
     let truncated = false;
     const messages = rows.map((row) => {
       const chars = [...row.text];

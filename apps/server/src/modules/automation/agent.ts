@@ -205,6 +205,9 @@ export class AgentModule {
   private async startNext(groupId: string): Promise<void> {
     const before = performance.now();
     let created: RunRow | undefined;
+    let mediaObservation:
+      | import("../../core/test-media-observer.js").TestMediaOperation
+      | undefined;
     let transactionEnteredAt: number | undefined;
     let insertWindow: [number, number] | undefined;
     const transactionBoundaries: TransactionBoundaryFact[] = [];
@@ -280,11 +283,20 @@ export class AgentModule {
           ).rows[0]!;
           insertWindow = [insertBefore, performance.now()];
           created = run;
-          await referenceMedia(
+          mediaObservation = await referenceMedia(
             tx,
             id,
             groupId,
             messages.map((message) => message.msg_id),
+            this.ctx.testMediaObserver
+              ? {
+                  observer: this.ctx.testMediaObserver,
+                  operation: {
+                    kind: "trigger",
+                    messageIds: messages.map((message) => message.id),
+                  },
+                }
+              : undefined,
           );
           await tx.query(
             "UPDATE agent_pending SET run_id=$1 WHERE message_id=ANY($2::text[])",
@@ -294,6 +306,7 @@ export class AgentModule {
         }),
     );
     if (committed && created) {
+      if (mediaObservation) await mediaObservation.stage("reference-committed");
       this.ctx.testLifecycleObserver?.record({
         kind: "agent-run-created",
         groupId: created.group_id,

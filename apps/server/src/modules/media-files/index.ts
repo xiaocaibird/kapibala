@@ -5,6 +5,11 @@ import { resolve, join } from "node:path";
 import type { AppContext } from "../../core/context.js";
 import { currentOperationSignal, emit, type Queryable } from "../../core/db.js";
 import type { Message } from "../../../../../packages/contracts/src/index.js";
+import type {
+  MediaReferenceOperation,
+  TestMediaObserver,
+  TestMediaOperation,
+} from "../../core/test-media-observer.js";
 
 interface MediaRow {
   id: string;
@@ -108,17 +113,40 @@ export async function referenceMedia(
   runId: string,
   groupId: string,
   msgIds: (string | null)[],
-): Promise<void> {
+  observation?: {
+    observer: TestMediaObserver;
+    operation: MediaReferenceOperation;
+  },
+): Promise<TestMediaOperation | undefined> {
   if (!msgIds.length) return;
+  const witness = observation
+    ? await observation.observer.reference(tx, {
+        groupId,
+        runId,
+        msgIds,
+        operation: observation.operation,
+      })
+    : undefined;
   const files = await tx.query<{ id: string }>(
     "SELECT id FROM media_files WHERE group_id=$1 AND msg_id=ANY($2::text[]) AND state NOT IN ('deleting','deleted','unavailable') ORDER BY id FOR UPDATE",
     [groupId, msgIds.filter((id): id is string => id !== null)],
   );
+  if (witness)
+    await witness.stage(
+      "reference-locked",
+      files.rows.map((file) => file.id),
+    );
   for (const file of files.rows)
     await tx.query(
       "INSERT INTO agent_media_references(run_id,media_id) VALUES($1,$2) ON CONFLICT DO NOTHING",
       [runId, file.id],
     );
+  if (witness)
+    await witness.stage(
+      "reference-registered",
+      files.rows.map((file) => file.id),
+    );
+  return witness;
 }
 
 /** Content snapshots stay frozen; file availability is a current resource field.
@@ -405,7 +433,15 @@ export class MediaFiles {
     );
     for (const file of candidates.rows) {
       this.stop.signal.throwIfAborted();
+      let witness: TestMediaOperation | undefined;
       const deleting = await this.ctx.db.transaction(async (tx) => {
+        witness = this.ctx.testMediaObserver
+          ? await this.ctx.testMediaObserver.cleanup(tx, {
+              groupId: file.group_id,
+              msgId: file.msg_id,
+              mediaId: file.id,
+            })
+          : undefined;
         const row = (
           await tx.query<MediaRow>(
             "SELECT * FROM media_files WHERE id=$1 FOR UPDATE",
@@ -429,7 +465,11 @@ export class MediaFiles {
         await this.projectPath(tx, file, null);
         return true;
       });
-      if (!deleting) continue;
+      if (!deleting) {
+        if (witness) await witness.stage("cleanup-skipped");
+        continue;
+      }
+      if (witness) await witness.stage("cleanup-claimed");
       try {
         if (file.storage_root !== this.options.directory)
           throw new Error("MEDIA_DIR mismatch during cleanup");
@@ -440,6 +480,7 @@ export class MediaFiles {
           "UPDATE media_files SET state='deleted',partial_name=NULL,last_error=NULL WHERE id=$1 AND state='deleting'",
           [file.id],
         );
+        if (witness) await witness.stage("cleanup-completed");
       } catch (error) {
         currentOperationSignal()?.throwIfAborted();
         this.stop.signal.throwIfAborted();
