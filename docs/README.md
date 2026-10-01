@@ -24,6 +24,8 @@ QA 对未知外部结果的[强恢复归因](qa-recovery-boundary-followup-20261
 
 | 目的 | 文档 |
 |---|---|
+| 集中查看负责人提出的问题、判断、决定及实际落实结果 | [人工评审与需求调整记录](human-review-record.md)；分类索引保留原决策、变更与证据归属 |
+| 查看人工验收发现的路由、导航与返回问题初步方案 | [路由与导航初步评估](navigation-review-proposal.md)；仅评估记录，暂不实施 |
 | 开始逐项评审：先看实际机制和用例，再看执行结果 | [A0-1 数据库迁移与启动保护](acceptance.md#review-a0-migration)；[完整A/B评审卡](acceptance.md#mechanism-review)，工程侧准备材料，负责人判断充分性 |
 | 定位已有证据、版本及尚未执行的反例 | [核心验收证据索引与补验证清单](acceptance-evidence-index.md)；现已加入第二轮机制和执行证据，用户验收仍独立；方法修订见[决策D032](decisions.md) |
 | 区分原始要求未闭合与额外产品增强 | [核心缺口与证据复核](core-requirements-gap-review.md)；[额外增强建议](product-enhancement-proposal.md)；[旧PI提案映射](product-improvement-proposal.md) |
