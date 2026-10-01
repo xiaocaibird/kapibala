@@ -270,6 +270,27 @@ test("pre-existing inflight work reports the real recovery pause with incomplete
   assert.equal(latest.activeElapsedMs, undefined);
   assert.equal(f.witness.snapshot(hold.id).state, "armed");
   assert.equal(f.turns.length, 0);
+  assert.equal(
+    (latest.epochObservation as { continuous: boolean }).continuous,
+    false,
+  );
+  await f.db.query(
+    "UPDATE agent_runs SET cancel_requested=true WHERE id='unrecorded-response'",
+  );
+  await f.automation.tick();
+  await until(
+    async () => (await f.readRun("unrecorded-response")).status === "cancelled",
+  );
+  // The original leases retain the witness. A later subscriber has no pause
+  // event in its own history, so the witness-level continuity flag must survive.
+  const late = await f.arm("unrecorded-response");
+  assert.equal(late.snapshot.events.length, 1);
+  assert.equal(late.snapshot.events[0]!.kind, "activity-terminal");
+  assert.equal(
+    (late.snapshot.events[0]!.epochObservation as { continuous: boolean })
+      .continuous,
+    false,
+  );
   t.diagnostic(
     JSON.stringify({
       latest,

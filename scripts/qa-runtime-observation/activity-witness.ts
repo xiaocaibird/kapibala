@@ -235,6 +235,10 @@ export class ActivityWitness
     if (!witness || this.closed) return;
     // A paused run's later cancellation must not charge its recovery pause.
     if (!witness.ended) witness.ended = at;
+    // A later terminal event or newly established lease must not forget a
+    // recovery pause merely because that lease's event history starts later.
+    if (state === "recovery-paused")
+      witness.epochObservation.continuous = false;
     witness.state = state;
     this.changed(witness);
     for (const lease of this.matching(runId)) this.unhold(lease);
