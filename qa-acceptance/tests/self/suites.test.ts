@@ -241,6 +241,7 @@ test('real shared manifests select only existing automation and keep smoke inten
       'qa-8e047-dispatched-kick-budget',
       'qa-01f-first-round-observation',
       'qa-01f-save-driver-correction',
+      'qa-first-round-kick-work',
     ],
   );
   const observation = suites.find((suite) => suite.id === 'qa-01f-first-round-observation')!;

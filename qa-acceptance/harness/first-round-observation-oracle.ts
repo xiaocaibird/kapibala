@@ -54,6 +54,24 @@ export interface KickCancellationEvidence {
   exclusiveFetchFailureCause: 'NOT_ASSERTED';
   transportCode?: string;
 }
+export interface OriginalKickWorkCancellationEvidence extends OriginalKickCancellationEvidence {
+  /** The original event remains kick-work-budget-signal-aborted. */
+  actualSource: 'kick-work-budget';
+  budgetMs: number;
+  workBudgetMs: number;
+  settlementBudgetMs: number;
+}
+export interface KickWorkPendingEvidence extends Omit<KickPendingEvidence, 'proof'> {
+  proof: 'original-confirmation-fetch-pending-at-actual-kick-work-budget-source-abort';
+  actualSource: 'kick-work-budget';
+}
+export interface KickWorkCancellationEvidence extends Omit<KickCancellationEvidence, 'proof'> {
+  proof: 'actual-request-combined-signal-reason-matches-original-kick-work-budget-source';
+  actualSource: 'kick-work-budget';
+}
+type BudgetSource = 'activity-budget' | 'kick-work-budget';
+const budgetKind = (source: BudgetSource) =>
+  source === 'activity-budget' ? 'kick-budget-signal-aborted' : 'kick-work-budget-signal-aborted';
 const name = (event: RuntimeEvent) => String(event.kind);
 const text = (value: unknown): value is string => typeof value === 'string' && value.trim() !== '';
 function need(value: unknown, message: string): asserts value {
@@ -134,13 +152,13 @@ function sampledWindow(event: RuntimeEvent, budget = false): Window {
   // Nanoseconds are retained, never divided/subtracted as performance milliseconds.
   return observed;
 }
-function sourceSets(event: RuntimeEvent) {
+function sourceSets(event: RuntimeEvent, actualSource: BudgetSource = 'activity-budget') {
   const configured = strings(event.configuredSources, 'configuredSources');
   const aborted = strings(event.abortedSources, 'abortedSources');
   const matched = strings(event.reasonMatchedSources, 'reasonMatchedSources');
   need(
-    configured.includes('request-deadline') && configured.includes('activity-budget'),
-    '原请求缺少实际deadline或activity-budget来源',
+    configured.includes('request-deadline') && configured.includes(actualSource),
+    `原请求缺少实际deadline或${actualSource}来源`,
   );
   need(
     aborted.every((source) => configured.includes(source)) &&
@@ -156,6 +174,47 @@ function sourceSets(event: RuntimeEvent) {
 export function inspectOriginalKickCancellationEvidence(
   events: readonly RuntimeEvent[],
   binding: KickObservationBinding,
+): OriginalKickCancellationEvidence {
+  return inspectKickCancellation(events, binding, 'activity-budget');
+}
+
+/** Work expiry is a distinct observation. It does not require, create or rename
+ * a hard-budget listener, and is not itself proof of the 60000ms activity bound. */
+export function inspectKickWorkCancellationEvidence(
+  events: readonly RuntimeEvent[],
+  binding: KickObservationBinding,
+): OriginalKickWorkCancellationEvidence {
+  const evidence = inspectKickCancellation(events, binding, 'kick-work-budget');
+  const signal = evidence.budgetSignal;
+  validateWorkAllocation(signal);
+  return {
+    ...evidence,
+    actualSource: 'kick-work-budget',
+    budgetMs: signal.budgetMs as number,
+    workBudgetMs: signal.workBudgetMs as number,
+    settlementBudgetMs: signal.settlementBudgetMs as number,
+  };
+}
+
+function validateWorkAllocation(signal: RuntimeEvent): void {
+  need(
+    signal.source === 'kick-work-budget' && signal.signalSource === 'kick-work-budget',
+    'work预算source/signalSource不一致，不能按hard预算代签',
+  );
+  const fields = [signal.budgetMs, signal.workBudgetMs, signal.settlementBudgetMs];
+  need(
+    fields.every((part) => typeof part === 'number' && Number.isFinite(part) && part > 0) &&
+      (signal.budgetMs as number) <= 60_000 &&
+      (signal.workBudgetMs as number) < (signal.budgetMs as number) &&
+      (signal.workBudgetMs as number) + (signal.settlementBudgetMs as number) === signal.budgetMs,
+    'work预算缺少真实budget/work/settlement分配或数值相互矛盾',
+  );
+}
+
+function inspectKickCancellation(
+  events: readonly RuntimeEvent[],
+  binding: KickObservationBinding,
+  actualSource: BudgetSource,
 ): OriginalKickCancellationEvidence {
   const attached = one(events, 'lifecycle-observation-attached');
   processBound(attached, binding);
@@ -179,17 +238,32 @@ export function inspectOriginalKickCancellationEvidence(
     (event) => name(event).startsWith('kick-') && event.attemptId === binding.attemptId,
   );
   need(relevant.length > 0, '缺少原kick执行事实');
+  let previousSequence = 0;
+  let previousWindow: Window | undefined;
   for (const event of relevant) {
     processBound(event, binding);
     need(
       event.toolUseId === binding.toolUseId && event.stepId === binding.stepId,
       '同attempt混入其他tool/step',
     );
-    need(Number.isSafeInteger(event.sourceSeq) && Number(event.sourceSeq) > 0, '缺少真实sourceSeq');
+    need(
+      Number.isSafeInteger(event.sourceSeq) && Number(event.sourceSeq) > previousSequence,
+      '真实sourceSeq缺失、重复或断序',
+    );
+    const currentWindow = sampledWindow(
+      event,
+      ['kick-budget-signal-aborted', 'kick-work-budget-signal-aborted'].includes(name(event)),
+    );
+    need(
+      !previousWindow || previousWindow[1] <= currentWindow[0],
+      '同进程真实观察包络倒退或重叠，不能拼接取消链',
+    );
+    previousSequence = Number(event.sourceSeq);
+    previousWindow = currentWindow;
   }
-  const budgetSignal = one(relevant, 'kick-budget-signal-aborted');
+  const budgetSignal = one(relevant, budgetKind(actualSource));
   need(
-    budgetSignal.source === 'activity-budget' &&
+    budgetSignal.source === actualSource &&
       typeof budgetSignal.budgetMs === 'number' &&
       Number.isFinite(budgetSignal.budgetMs) &&
       budgetSignal.budgetMs > 0 &&
@@ -197,7 +271,12 @@ export function inspectOriginalKickCancellationEvidence(
     '原budget signal来源或原始余额无效',
   );
   const budgetSignalWindowMs = sampledWindow(budgetSignal, true);
-  const remote = relevant.filter((event) => name(event) !== 'kick-budget-signal-aborted');
+  // Both listeners are facts about their own real signals, never remote requests.
+  // The selected listener above remains strictly unique and source-specific.
+  const remote = relevant.filter(
+    (event) =>
+      !['kick-budget-signal-aborted', 'kick-work-budget-signal-aborted'].includes(name(event)),
+  );
   for (const event of remote) {
     need(
       ['post', 'confirmation', 'projection'].includes(String(event.requestPurpose)),
@@ -214,7 +293,7 @@ export function inspectOriginalKickCancellationEvidence(
       'remote方法/用途/原15秒deadline/pending/request身份不一致',
     );
     sampledWindow(event);
-    sourceSets(event);
+    sourceSets(event, actualSource);
   }
   const post = remote.filter((event) => event.requestPurpose === 'post');
   const confirmation = remote.filter((event) => event.requestPurpose === 'confirmation');
@@ -266,13 +345,40 @@ export function inspectOriginalKickCancellationEvidence(
 export function assertKickBudgetPending(
   evidence: OriginalKickCancellationEvidence,
 ): KickPendingEvidence {
+  return {
+    ...assertBudgetPending(evidence, 'activity-budget'),
+    proof: 'original-confirmation-fetch-pending-at-actual-budget-source-abort',
+  };
+}
+
+export function assertKickWorkBudgetPending(
+  evidence: OriginalKickWorkCancellationEvidence,
+): KickWorkPendingEvidence {
+  need(evidence.actualSource === 'kick-work-budget', 'work证据未保留实际source');
+  validateWorkAllocation(evidence.budgetSignal);
+  return {
+    ...assertBudgetPending(evidence, 'kick-work-budget'),
+    actualSource: 'kick-work-budget',
+    proof: 'original-confirmation-fetch-pending-at-actual-kick-work-budget-source-abort',
+  };
+}
+
+function assertBudgetPending(
+  evidence: OriginalKickCancellationEvidence,
+  actualSource: BudgetSource,
+): Omit<KickPendingEvidence, 'proof'> {
+  need(
+    name(evidence.budgetSignal) === budgetKind(actualSource) &&
+      evidence.budgetSignal.source === actualSource,
+    '预算listener的真实kind/source与判定入口不符',
+  );
   const source = one(
-    evidence.confirmation.filter((event) => event.source === 'activity-budget'),
+    evidence.confirmation.filter((event) => event.source === actualSource),
     'kick-confirmation-source-aborted',
   );
-  const sets = sourceSets(source);
+  const sets = sourceSets(source, actualSource);
   need(
-    sets.aborted.includes('activity-budget') &&
+    sets.aborted.includes(actualSource) &&
       source.fetchPending === true &&
       source.bodyPending === false,
     '原GET在实际budget来源abort时没有直接fetch pending正证',
@@ -291,7 +397,6 @@ export function assertKickBudgetPending(
   );
   need(!earlierSettle, '原GET在budget来源listener前已经settled，pending事实矛盾');
   return {
-    proof: 'original-confirmation-fetch-pending-at-actual-budget-source-abort',
     budgetSignalWindowMs: [...evidence.budgetSignalWindowMs],
     requestBudgetSourceWindowMs: sourceWindow,
     requestId: evidence.binding.confirmationRequestId,
@@ -305,13 +410,35 @@ export function assertKickBudgetPending(
 export function assertKickBudgetCancellation(
   evidence: OriginalKickCancellationEvidence,
 ): KickCancellationEvidence {
-  const pending = assertKickBudgetPending(evidence);
+  return {
+    ...assertBudgetCancellation(evidence, 'activity-budget'),
+    proof: 'actual-request-combined-signal-reason-matches-original-budget-source',
+  };
+}
+
+export function assertKickWorkBudgetCancellation(
+  evidence: OriginalKickWorkCancellationEvidence,
+): KickWorkCancellationEvidence {
+  need(evidence.actualSource === 'kick-work-budget', 'work证据未保留实际source');
+  validateWorkAllocation(evidence.budgetSignal);
+  return {
+    ...assertBudgetCancellation(evidence, 'kick-work-budget'),
+    actualSource: 'kick-work-budget',
+    proof: 'actual-request-combined-signal-reason-matches-original-kick-work-budget-source',
+  };
+}
+
+function assertBudgetCancellation(
+  evidence: OriginalKickCancellationEvidence,
+  actualSource: BudgetSource,
+): Omit<KickCancellationEvidence, 'proof'> {
+  const pending = assertBudgetPending(evidence, actualSource);
   const combined = one(evidence.confirmation, 'kick-confirmation-combined-aborted');
   const fetch = one(evidence.confirmation, 'kick-confirmation-fetch-settled');
   const settled = one(evidence.confirmation, 'kick-confirmation-request-settled');
   for (const event of [combined, fetch, settled])
     need(
-      sourceSets(event).matched.includes('activity-budget'),
+      sourceSets(event, actualSource).matched.includes(actualSource),
       `${name(event)}没有实际组合reason与原budget signal对象身份匹配`,
     );
   need(
@@ -346,13 +473,13 @@ export function assertKickBudgetCancellation(
       fetchWindow[1] <= settledWindow[0],
     '实际budget/combined abort→原fetch拒绝→原请求返回顺序缺失',
   );
-  const atEnd = sourceSets(settled);
+  const atEnd = sourceSets(settled, actualSource);
   const sourceAbortFacts = evidence.confirmation.filter(
     (event) => name(event) === 'kick-confirmation-source-aborted',
   );
   for (const event of sourceAbortFacts)
     need(
-      text(event.source) && sourceSets(event).aborted.includes(event.source),
+      text(event.source) && sourceSets(event, actualSource).aborted.includes(event.source),
       'source-aborted回调与其真实来源集合不一致',
     );
   const triggered = new Set([
@@ -360,7 +487,6 @@ export function assertKickBudgetCancellation(
     ...sourceAbortFacts.map((event) => String(event.source)),
   ]);
   return {
-    proof: 'actual-request-combined-signal-reason-matches-original-budget-source',
     requestId: evidence.binding.confirmationRequestId,
     budgetSourceWindowMs: pending.requestBudgetSourceWindowMs,
     combinedAbortWindowMs: combinedWindow,
