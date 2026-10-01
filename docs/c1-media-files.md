@@ -62,3 +62,14 @@ npm run dev:isolated -- --smoke
 ```
 
 如果运行 `agent-kick-recovery.test.ts`，先提交工程源码；受控 SUT 的既有归属检查会拒绝未提交的产品/控制器代码。4 个既有跳过项为前端 20 秒 refresh 等待及三个需显式开启的长时间 automation timing 用例，本轮没有将它们计为通过。
+
+## 文件生命周期补充复核
+
+在 `fc5f213f7de81c18a650d311dfbc61335116f627` 基础上局部补齐两个边界：
+
+- 移除 `.part` 后再次同步目录，然后才清空持久 `partial_name`。恢复时删除旧临时文件、错误处理中删除本次临时文件也遵守相同顺序；同步失败时不清除恢复线索。这是持久顺序加固，本轮没有进行整机断电或文件系统掉电测试。
+- 已完整落盘的 `.bin` 在 `ready` 提交前发生 SIGKILL，重启降低文件大小上限而拒绝它时，事务保存 `deleting` 并清消息路径，随后复用既有删除流程。活动 run 的持久引用仍保护物理文件，终态后才删除；待删且受保护的记录不会挤占清理候选批次。没有新增状态、迁移、对外接口或模型字段。
+
+[修前反例](evidence/c1-media-followup-before.tap)：两项均明确失败，实际记录 `state=unavailable`、`.bin` 仍存在、消息路径为空、仅一次 HTTP 下载。反例使用真实子进程 SIGKILL，固定在完整文件已落盘而 `ready` 尚未提交，重启将上限从默认 20 MiB 调低到 4 字节。
+
+[修后完整媒体专项](evidence/c1-media-followup-after.tap)：**19 通过、0 失败/跳过**。无 pin 的拒绝文件通过持久删除流程移除；有 running pin 时保持文件和 `deleting` 意图，另一个 worker 也不能删除，run 进入终态后移除。消息与媒体路径全程为空，不重新下载。原有下载、清理、并发和三处崩溃用例一并通过。[build](evidence/c1-media-followup-build.txt)、[原文校验](evidence/c1-media-followup-original.txt)通过；[本次独立资源清理](evidence/c1-media-followup-cleanup.json)另存，不覆盖前次证据。

@@ -734,16 +734,30 @@ test("C1 SIGKILL during a streamed body discards its partial and retries on rest
   );
 });
 
-for (const stage of ["ready", "deleted"] as const)
+for (const stage of [
+  "ready",
+  "deleted",
+  "rejected",
+  "rejected-pinned",
+] as const)
   test(`C1 SIGKILL at ${stage} DB save recovers from the durable filesystem/intent boundary`, async (t) => {
     const f = await fixture(t);
     await f.inbound("crash", "/media/crash");
+    const checkpoint = stage === "deleted" ? "deleted" : "ready";
+    if (stage === "rejected-pinned") {
+      await f.db.query(
+        "INSERT INTO agent_runs(id,group_id,recovery_note) VALUES('pinned','g','unknown remote turn')",
+      );
+      await f.db.transaction((tx) =>
+        referenceMedia(tx, "pinned", "g", ["crash"]),
+      );
+    }
     if (stage === "deleted") {
       await f.worker.tick();
       await f.expire();
     }
     await f.db.query(
-      `CREATE FUNCTION media_save_barrier() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.state='${stage}' THEN PERFORM pg_sleep(10); END IF; RETURN NEW; END $$; CREATE TRIGGER media_save_barrier BEFORE UPDATE ON media_files FOR EACH ROW EXECUTE FUNCTION media_save_barrier()`,
+      `CREATE FUNCTION media_save_barrier() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.state='${checkpoint}' THEN PERFORM pg_sleep(10); END IF; RETURN NEW; END $$; CREATE TRIGGER media_save_barrier BEFORE UPDATE ON media_files FOR EACH ROW EXECUTE FUNCTION media_save_barrier()`,
     );
     const child = spawn(
       process.execPath,
@@ -781,7 +795,7 @@ for (const stage of ["ready", "deleted"] as const)
     );
     const atBarrier = await f.row("crash");
     const finalPath = join(f.directory, `media-${atBarrier.id}.bin`);
-    if (stage === "ready") {
+    if (checkpoint === "ready") {
       assert.equal(atBarrier.state, "downloading");
       assert.equal(await readFile(finalPath, "utf8"), "attachment bytes");
     } else {
@@ -803,9 +817,63 @@ for (const stage of ["ready", "deleted"] as const)
       "DROP TRIGGER media_save_barrier ON media_files; DROP FUNCTION media_save_barrier()",
     );
     f.handlers.set("crash", (reply) => reply.code(404).send());
-    const restarted = new MediaFiles(f.ctx, f.settings);
+    const rejected = stage.startsWith("rejected");
+    const restarted = new MediaFiles(f.ctx, {
+      ...f.settings,
+      ...(rejected ? { maxBytes: 4 } : {}),
+    });
     await restarted.recover();
     await restarted.tick();
+    if (rejected) {
+      const row = await f.row("crash");
+      t.diagnostic(
+        JSON.stringify({
+          checkpoint,
+          loweredMaxBytes: 4,
+          state: row.state,
+          runningPin: stage === "rejected-pinned",
+          fileStillExists: await stat(finalPath).then(
+            () => true,
+            () => false,
+          ),
+          localFilePath: row.local_file_path,
+          downloads: f.calls.length,
+        }),
+      );
+      assert.equal(row.local_file_path, null);
+      assert.equal(
+        (
+          await f.db.query(
+            "SELECT local_file_path FROM messages WHERE msg_id='crash'",
+          )
+        ).rows[0]!.local_file_path,
+        null,
+      );
+      assert.deepEqual(
+        f.calls,
+        ["crash"],
+        "a configuration rejection never re-downloads the complete body",
+      );
+      if (stage === "rejected-pinned") {
+        assert.equal(row.state, "deleting");
+        assert.equal(await readFile(finalPath, "utf8"), "attachment bytes");
+        await new MediaFiles(f.ctx, {
+          ...f.settings,
+          maxBytes: 4,
+        }).cleanupExpired();
+        assert.equal(await readFile(finalPath, "utf8"), "attachment bytes");
+        await f.db.query(
+          "UPDATE agent_runs SET status='finished',end_reason='final' WHERE id='pinned'",
+        );
+        await restarted.cleanupExpired();
+      }
+      assert.equal((await f.row("crash")).state, "deleted");
+      assert.deepEqual(await readdir(f.directory), []);
+      t.diagnostic(
+        "rejected complete body removed through durable deletion, after any running reference ends",
+      );
+      return;
+    }
     assert.equal((await f.row("crash")).state, stage);
     assert.deepEqual(
       f.calls,

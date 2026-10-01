@@ -60,6 +60,7 @@ export function mediaOptions(): MediaOptions {
   };
 }
 class UnavailableMedia extends Error {}
+class RejectedStoredMedia extends UnavailableMedia {}
 
 /** Accept only the configured gateway's media endpoint; never follow redirects. */
 export function trustedMediaUrl(source: string, gateway: string): URL {
@@ -253,12 +254,17 @@ export class MediaFiles {
       ...(operation ? [operation] : []),
     ]);
     let response: Response | undefined;
+    let directoryReady = false;
     try {
       const url = trustedMediaUrl(file.source_url, this.ctx.gateway.baseUrl);
       if (file.storage_root && file.storage_root !== this.options.directory)
         throw new Error("MEDIA_DIR mismatch");
       await mkdir(this.options.directory, { recursive: true, mode: 0o700 });
-      if (file.partial_name) await remove(this.partial(file.partial_name));
+      directoryReady = true;
+      if (file.partial_name) {
+        await remove(this.partial(file.partial_name));
+        await syncDirectory(this.options.directory);
+      }
       // Only complete, fsynced bodies are linked at this stable name. Reuse a
       // completed download after a crash before publishing its DB result.
       try {
@@ -269,7 +275,7 @@ export class MediaFiles {
         try {
           const info = await existing.stat();
           if (!info.isFile() || info.size > this.options.maxBytes)
-            throw new UnavailableMedia("INVALID_STORED_MEDIA");
+            throw new RejectedStoredMedia("INVALID_STORED_MEDIA");
         } finally {
           await existing.close();
         }
@@ -342,23 +348,39 @@ export class MediaFiles {
       }
       await syncDirectory(this.options.directory);
       await remove(partialPath);
+      await syncDirectory(this.options.directory);
       signal.throwIfAborted();
       await this.publish(file, path);
     } catch (error) {
       await remove(partialPath);
+      // Clearing partial_name must follow durable removal, including a retry
+      // after unlink succeeded but its first directory sync failed.
+      if (directoryReady) await syncDirectory(this.options.directory);
       if (operation?.aborted || this.stop.signal.aborted) throw error;
       const permanent = error instanceof UnavailableMedia;
-      await this.ctx.db.query(
-        "UPDATE media_files SET state=$2,partial_name=NULL,last_error=$3,next_attempt_at=now()+$4*interval '1 millisecond' WHERE id=$1",
-        [
-          file.id,
-          permanent ? "unavailable" : "pending",
-          error instanceof Error
-            ? error.message.slice(0, 300)
-            : "MEDIA_DOWNLOAD_FAILED",
-          Math.min(300000, 1000 * 2 ** Math.min(file.attempts, 9)),
-        ],
-      );
+      if (error instanceof RejectedStoredMedia) {
+        // A completed body can outlive its ready transaction and then exceed a
+        // newly lowered limit. Keep a durable cleanup intent, not an orphan in
+        // unavailable. Cleanup still waits for every running reference to end.
+        await this.ctx.db.transaction(async (tx) => {
+          await tx.query(
+            "UPDATE media_files SET state='deleting',local_file_path=NULL,partial_name=NULL,storage_root=$2,last_error=$3,next_attempt_at=now() WHERE id=$1",
+            [file.id, this.options.directory, error.message],
+          );
+          await this.projectPath(tx, file, null);
+        });
+      } else
+        await this.ctx.db.query(
+          "UPDATE media_files SET state=$2,partial_name=NULL,last_error=$3,next_attempt_at=now()+$4*interval '1 millisecond' WHERE id=$1",
+          [
+            file.id,
+            permanent ? "unavailable" : "pending",
+            error instanceof Error
+              ? error.message.slice(0, 300)
+              : "MEDIA_DOWNLOAD_FAILED",
+            Math.min(300000, 1000 * 2 ** Math.min(file.attempts, 9)),
+          ],
+        );
       this.ctx.log.warn(
         { mediaId: file.id, permanent },
         "媒体下载未完成，消息文本已保留",
@@ -371,7 +393,7 @@ export class MediaFiles {
   }
   async cleanupExpired(): Promise<number> {
     const candidates = await this.ctx.db.query<MediaRow>(
-      "SELECT * FROM media_files f WHERE (state='deleting' AND next_attempt_at<=now()) OR (state='ready' AND downloaded_at < now()-$1*interval '1 day' AND NOT EXISTS(SELECT 1 FROM agent_media_references p JOIN agent_runs r ON r.id=p.run_id WHERE p.media_id=f.id AND r.status='running')) ORDER BY downloaded_at NULLS FIRST,id LIMIT 50",
+      "SELECT * FROM media_files f WHERE ((state='deleting' AND next_attempt_at<=now()) OR (state='ready' AND downloaded_at < now()-$1*interval '1 day')) AND NOT EXISTS(SELECT 1 FROM agent_media_references p JOIN agent_runs r ON r.id=p.run_id WHERE p.media_id=f.id AND r.status='running') ORDER BY downloaded_at NULLS FIRST,id LIMIT 50",
       [this.options.retentionDays],
     );
     for (const file of candidates.rows) {
