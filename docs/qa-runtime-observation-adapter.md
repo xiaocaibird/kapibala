@@ -2,7 +2,7 @@
 
 本工程接入对应 `qa-acceptance/contracts/runtime-observation.md` 的 `qa-runtime-observation/1`。账号与模块的首次开发验证基线为 `d614eba0305d23786c8d2d4fbeae9767e65ebb3d`；下文 27 项结果保留该次版本，不代表最新候选全量测试。**开发证据不是 QA 独立验收结论。** 最新组合入口、固定版本及结果见[最终接入交付](qa-remediation-final-20261001.md)。
 
-当前声明能力为 `account-local-save`、`account-intent-wait`、`module-tick`、`activity-witness`、`activity-safe-boundary`。后两项的挂点、完整性条件与跨重启不完整证据见[活动见证说明](qa-activity-witness-20261001.md)。不能把持久采样量或单个进程在线时间冒充跨重启完整活动时间；相关业务要求仍由 QA 独立判定。
+账号及模块能力为 `account-local-save`、`account-intent-wait`、`module-tick`；第二轮接入新增 `module-tick-independent`，允许同一已核实实例的不同模块分别持有独立租约，见[多模块契约](qa-multimodule-observation-20261002.md)。活动与生命周期观察能力以当前 capabilities 响应为准；活动挂点、完整性条件与跨重启不完整证据见[活动见证说明](qa-activity-witness-20261001.md)。不能把持久采样量或单个进程在线时间冒充跨重启完整活动时间；相关业务要求仍由 QA 独立判定。
 
 ## 入口与身份
 
@@ -33,7 +33,7 @@ node --import tsx scripts/qa-runtime-observation-controller.ts
 
 ## 租约、TTL 与退出
 
-- 每个 UUID 固定绑定请求及实例，重放不续期；修改请求返回 409。默认每个应用实例只允许一个未释放租约；唯一明确放行的组合是同一 group/run 的一个 `observe-activity` 与一个 `hold-safe-activity-boundary`，其余并存请求拒绝。不同 UUID 的历史、TTL 与清理保持隔离；同一租约的读取、推进、释放顺序化，迟到读取不得把已解除的门改回 held。
+- 每个 UUID 固定绑定请求及实例，重放不续期；修改请求返回 409。默认每个应用实例只允许一个未释放租约；明确兼容的例外为既有同一 group/run 的活动/生命周期观察组合，以及 `module-tick-independent` 声明的不同模块 `module-fail-then-hold` 组合。相同模块或账号/模块混合仍拒绝；不同模块的数量不另设正好两个的上限，每个已注册模块最多一个活动租约。不同 UUID 的历史、TTL 与清理保持隔离；同一租约的读取、推进、释放顺序化，迟到读取不得把已解除的门改回 held。
 - TTL 为 5–120 秒。SUT 内部计时器和独立控制器均触发本租约释放，DELETE 幂等。advance 仅释放已经命中的当前门；未命中时无事发生，已完成模块生命周期保持门不因多余 advance 解除。
 - 释放表示取消本租约未来注入和解除本租约的 JavaScript 门，**不代表业务事务、SQL、网络请求已取消或结束**。例如 TTL 放行原账号重试后，真正 COMMIT 仍可追加到已 released 的历史。失效数据库连接或永久占用资源不是本入口的终止保证。
 - 停止顺序为 runtime.close 释放门、bridge.close、app.close 等待真实调度收尾、db.close。进程死亡后独立控制器保留已经观察到的事件前缀；不伪补最后未读到的事件。控制器本身重启不提供持久历史恢复保证。

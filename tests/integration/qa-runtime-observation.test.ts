@@ -28,6 +28,7 @@ test("RT02 real savepoint fault preserves original transaction and observes newe
     "account-local-save",
     "account-intent-wait",
     "module-tick",
+    "module-tick-independent",
     "activity-witness",
     "activity-safe-boundary",
     "tool-wait-witness",

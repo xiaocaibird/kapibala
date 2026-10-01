@@ -81,7 +81,12 @@ export class RuntimeObservation
     db.observer = this;
   }
   capabilities(): string[] {
-    return ["account-local-save", "account-intent-wait", "module-tick"];
+    return [
+      "account-local-save",
+      "account-intent-wait",
+      "module-tick",
+      "module-tick-independent",
+    ];
   }
   modules(names: string[]): void {
     this.names = new Set(names);
