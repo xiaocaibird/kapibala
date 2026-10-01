@@ -30,7 +30,6 @@ export class MessageObservationRuntime
   readonly protocol = protocol;
   private readonly leases = new Map<string, Lease>();
   private closed = false;
-  private databaseIdentity?: string;
   constructor(private readonly db: Database) {}
   capabilities() {
     return [
@@ -124,24 +123,27 @@ export class MessageObservationRuntime
       // already selected boundary while evidence queries are in progress.
       l.reached = true;
       try {
-        if (!this.databaseIdentity) {
-          const facts = (
-            await this.db.query(
-              "SELECT current_database() AS database,inet_server_addr()::text AS address,inet_server_port() AS port,pg_postmaster_start_time()::text AS started",
-            )
-          ).rows[0];
-          this.databaseIdentity = createHash("sha256")
-            .update(JSON.stringify(facts))
-            .digest("hex");
-        }
-        const receipt = o.msgId
-          ? (
-              await this.db.query<{ observed_at: Date | null }>(
+        const facts = await Promise.race([
+          this.db.query(
+            "SELECT current_database() AS database,inet_server_addr()::text AS address,inet_server_port() AS port,pg_postmaster_start_time()::text AS started",
+          ),
+          l.gate.promise.then(() => null),
+        ]);
+        if (!facts) return;
+        const databaseIdentity = createHash("sha256")
+          .update(JSON.stringify(facts.rows[0]))
+          .digest("hex");
+        const rows = o.msgId
+          ? await Promise.race([
+              this.db.query<{ observed_at: Date | null }>(
                 "SELECT observed_at FROM message_sent_receipts WHERE client_msg_id=$1 AND msg_id=$2",
                 [o.clientMsgId, o.msgId],
-              )
-            ).rows[0]
+              ),
+              l.gate.promise.then(() => null),
+            ])
           : undefined;
+        if (rows === null) return;
+        const receipt = rows?.rows[0];
         if (this.snapshot(l.snapshot.leaseId).state === "released") return;
         const before = o.phase === "receipt-before-commit";
         const invalid = before && Boolean(receipt);
@@ -152,7 +154,7 @@ export class MessageObservationRuntime
           kind: invalid ? "window-unavailable" : "window-held",
           ...o,
           instancePid: l.snapshot.binding.pid,
-          databaseIdentity: this.databaseIdentity,
+          databaseIdentity,
           localBoundary: before
             ? "receipt-insert-not-issued"
             : o.phase === "receipt-committed-before-business"
