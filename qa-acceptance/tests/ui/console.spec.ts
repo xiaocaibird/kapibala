@@ -1,4 +1,7 @@
 import type { Page, Locator, Request } from '@playwright/test';
+import assert from 'node:assert/strict';
+import { randomUUID } from 'node:crypto';
+import { observe } from '../../harness/observation.js';
 import { mkdir } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { test, expect } from '../fixtures.js';
@@ -2214,5 +2217,338 @@ test('[UI-036] 编辑卸载后迟到成功不能污染新页面或重放提交',
     release();
     await originalDocument?.dispose();
     await page.unrouteAll({ behavior: 'wait' });
+  }
+});
+
+
+test('[UI-038] 审计阻塞说明不否认前序真实成功副作用', async ({ qa, page }) => {
+  function assertScopedBlockedCopy(text: string): void {
+    assert.match(text, /本次工具|当前工具|this tool|current tool/i, '阻塞说明须限定本次工具');
+    assert.match(
+      text,
+      /未执行|没有执行|blocked before its side effect|not executed/i,
+      '说明须明确本次工具未执行副作用',
+    );
+    assert.match(
+      text,
+      /此前步骤|先前步骤|前序步骤|earlier.*steps|previous.*steps/i,
+      '说明须保留前序步骤可能已执行的事实',
+    );
+    assert.doesNotMatch(
+      text,
+      /The run is blocked; no side effect was executed|整个运行.{0,15}(未执行|没有|无)副作用|所有步骤.{0,10}未执行|全部.{0,8}(已撤销|已回滚)|审计阻塞\s*[·—-]\s*副作用未执行|审计未得到明确结论，副作用已阻止/i,
+      '不得将本次阻止扩写为整个运行没有副作用或已回滚',
+    );
+  }
+  await qa.api.login();
+  const { group } = await qa.api.createGroup();
+  const suffix = randomUUID(),
+    first = `already-sent-${suffix}`,
+    second = `must-not-send-${suffix}`;
+  const firstText = `先前已真实发送 ${suffix}`,
+    secondText = `本次审计阻塞 ${suffix}`;
+  const barrier = `second-tool-response-${suffix}`;
+  const before = qa.gateway.snapshot();
+  const plan = (id: string, text: string) => ({
+    body: {
+      stop_reason: 'tool_use',
+      content: [
+        { type: 'tool_use', id, name: 'send_message', input: { text, idempotency_key: id } },
+      ],
+    },
+  });
+  qa.agent.enqueueTurns(plan(first, firstText), {
+    ...plan(second, secondText),
+    barrier: { phase: 'before-response', name: barrier },
+  });
+  qa.agent.enqueueAudits(
+    { body: { verdict: 'pass', reason: 'independent QA pass' } },
+    { status: 500 },
+    { rawBody: 'invalid' },
+    { body: { verdict: 'unknown' } },
+  );
+  let runId: string | undefined;
+  try {
+    await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { agentEnabled: true }));
+    qa.gateway.emitMessage({
+      groupId: group.gatewayGroupId,
+      senderPlatformUserId: 'copy-probe',
+      text: `真实两工具场景 ${suffix}`,
+    });
+    const created = await observe({
+      read: () => qa.api.require(qa.api.get<AgentRun[]>(`/api/groups/${group.id}/agent-runs`)),
+      invariant: (items) => assert.ok(items.length <= 1, '独立群不应创建多个run'),
+      complete: (items) => items.length === 1,
+      durationMs: 15_000,
+    });
+    if (!created.complete) throw new BlockedError('有限观察未取得真实run；不是新增15秒SLA');
+    runId = created.last[0]!.id;
+    try {
+      await qa.agent.barriers.waitFor(barrier, 15_000);
+    } catch (error) {
+      const actual = await qa.api.agentRun(runId);
+      await qa.evidence('ui038-copy-first-window-missed', { actual, error: String(error) });
+      assert.equal(actual.status, 'running', '合法两工具计划不应在第二轮前提前终态');
+      throw new BlockedError('未取得第二工具响应屏障；不得假称已建立前序副作用');
+    }
+    const prior = await observe({
+      read: () => qa.api.messages(group.id),
+      invariant: (list) =>
+        assert.ok(list.items.filter((m) => m.isOwn && m.text === firstText).length <= 1),
+      complete: (list) =>
+        list.items.some((m) => m.isOwn && m.text === firstText && m.deliveryStatus === 'sent'),
+      durationMs: 5_000,
+    });
+    if (!prior.complete) throw new BlockedError('未取得前序实际sent；不拿accepted冒充落地');
+    const firstState = await qa.api.agentRun(runId);
+    assert.equal(firstState.steps.length, 1);
+    assert.equal(firstState.steps[0]!.toolUseId, first);
+    assert.equal(firstState.steps[0]!.isError, false);
+    const landed = qa.gateway
+      .snapshot()
+      .messages.filter((m) => m.groupId === group.gatewayGroupId && m.text === firstText);
+    assert.equal(landed.length, 1, '公开sent必须同时有独立远端落地');
+    await qa.evidence('ui038-copy-prior-effect', {
+      run: firstState,
+      publicMessages: prior.last,
+      landed,
+    });
+    qa.agent.barriers.release(barrier);
+    const terminal = await observe({
+      read: () => qa.api.agentRun(runId!),
+      invariant: (actual) => {
+        assert.equal(actual.id, runId);
+        assert.ok(actual.steps.length <= 2);
+        assert.equal(
+          qa.gateway
+            .snapshot()
+            .messages.filter((m) => m.groupId === group.gatewayGroupId && m.text === secondText)
+            .length,
+          0,
+          '本次工具三次审计无明确pass，禁止真实发送',
+        );
+      },
+      complete: (actual) => actual.status !== 'running',
+      durationMs: 25_000,
+    });
+    if (!terminal.complete) throw new BlockedError('有限诊断未见审计终态；保留全部副作用观测');
+    const actual = terminal.last;
+    assert.equal(actual.status, 'blocked');
+    assert.equal(actual.endReason, 'audit_blocked');
+    assert.equal(actual.steps.length, 2);
+    assert.equal(actual.steps[0]!.toolUseId, first);
+    assert.equal(actual.steps[0]!.isError, false);
+    assert.equal(actual.steps[1]!.toolUseId, second);
+    assert.equal((await qa.api.group(group.id)).activeAgentRunId, null);
+    const facts = qa.gateway.snapshot();
+    assert.equal(
+      facts.messages.filter((m) => m.groupId === group.gatewayGroupId && m.text === firstText)
+        .length,
+      1,
+    );
+    assert.equal(
+      facts.requests
+        .slice(before.requests.length)
+        .filter((r) => r.method === 'POST' && r.path.endsWith('/send')).length,
+      1,
+    );
+    // The public audit protocol binds groupId/text, not runId.
+    const audits = qa.agent
+      .snapshot()
+      .audits.filter((r) => (r.body as { groupId?: string }).groupId === group.id);
+    assert.equal(audits.length, 4, '第一工具审计pass一次，第二工具真实三次无结论');
+    assert.equal(audits.filter((r) => (r.body as { text?: string }).text === firstText).length, 1);
+    assert.equal(audits.filter((r) => (r.body as { text?: string }).text === secondText).length, 3);
+    await login(page, qa);
+    await go(page, qa, 'group', group.id);
+    const link = element(page, qa, 'runLink').and(
+      page.locator(`a[href$="/${encodeURIComponent(runId)}"]`),
+    );
+    await expect(link).toHaveCount(1);
+    await expect(link).toBeVisible();
+    const listText = await link.innerText();
+    assertScopedBlockedCopy(listText);
+    await link.click();
+    await expect(page).toHaveURL((url) => decodeURIComponent(url.href).endsWith(`/${runId}`));
+    for (const input of [firstText, secondText]) {
+      if (!(await page.locator('main').innerText()).includes(input)) {
+        const collapsed = page.locator('main details:not([open])').filter({ hasText: input });
+        // Only operate a unique actual public disclosure. Never turn hidden DOM
+        // text into evidence that an operator can read the input.
+        if ((await collapsed.count()) === 1) {
+          const disclosure = collapsed.locator(':scope > summary');
+          await expect(disclosure).toBeVisible();
+          await disclosure.click();
+        }
+      }
+    }
+    const detailText = await page.locator('main').innerText();
+    expect(detailText).toContain(firstText);
+    expect(detailText).toContain(secondText);
+    assertScopedBlockedCopy(detailText);
+    const afterBrowser = await qa.api.agentRun(runId);
+    assert.deepEqual(afterBrowser, actual, '纯查看不改变已落地/阻塞轨迹');
+    await qa.evidence('ui038-copy-blocked-after-effect', {
+      actual,
+      audits,
+      publicMessages: await qa.api.messages(group.id),
+      gateway: facts,
+      listText,
+      detailText,
+    });
+  } finally {
+    qa.agent.barriers.release(barrier);
+    await qa.evidence('ui038-copy-final-facts', {
+      runId,
+      agent: qa.agent.snapshot(),
+      gateway: qa.gateway.snapshot(),
+    });
+  }
+});
+
+test('[UI-039] 真实零步骤failed与cancelled详情不再提示等待第一步', async ({ qa, page }) => {
+  const blockers: string[] = [];
+  const outcomes: Record<string, unknown> = {};
+  await qa.api.login();
+  const { group } = await qa.api.createGroup();
+  const barrier = `zero-step-cancel-${randomUUID()}`;
+  const before = qa.gateway.snapshot();
+  const noUnexpectedEffect = () => {
+    const facts = qa.gateway.snapshot();
+    expect(
+      facts.messages.filter((m) => m.groupId === group.gatewayGroupId && m.accountId !== null),
+    ).toHaveLength(0);
+    expect(
+      facts.requests
+        .slice(before.requests.length)
+        .filter((r) => r.method === 'POST' && /\/(send|kick)$/.test(r.path)),
+    ).toHaveLength(0);
+    expect(qa.agent.snapshot().audits).toHaveLength(0);
+  };
+  const verifyEmptyTerminal = async (actual: AgentRun, status: 'failed' | 'cancelled') => {
+    expect(actual.status).toBe(status);
+    expect(actual.endReason).toBe(status === 'failed' ? 'wall_clock' : 'cancelled');
+    expect(actual.steps).toHaveLength(0);
+    expect((await qa.api.group(actual.groupId)).activeAgentRunId).toBeNull();
+    await login(page, qa);
+    await go(page, qa, 'group', actual.groupId);
+    const link = element(page, qa, 'runLink').and(
+      page.locator(`a[href$="/${encodeURIComponent(actual.id)}"]`),
+    );
+    await expect(link).toHaveCount(1);
+    await link.click();
+    await expect(page).toHaveURL((url) => decodeURIComponent(url.href).endsWith(`/${actual.id}`));
+    await expect(page.locator('main')).toContainText(
+      status === 'failed' ? /失败|failed/ : /已取消|cancelled/,
+    );
+    await expect(page.locator('main')).toContainText(
+      /暂无步骤|没有步骤|无步骤|no steps|no step records/i,
+    );
+    const visibleText = await page.locator('main').innerText();
+    expect(visibleText).not.toMatch(
+      /正在等待第一步结果|waiting for (?:the )?first (?:step|result)/i,
+    );
+    expect(await qa.api.agentRun(actual.id)).toEqual(actual);
+    await qa.evidence(`ui039-${status}-copy`, { actual, visibleText });
+    outcomes[status] = { status: 'PASS', runId: actual.id, evidence: `ui039-${status}-copy` };
+  };
+  // The existing external response barrier observes an already dispatched first
+  // model request. It is a real cancellation probe, not a pre-dispatch guarantee.
+  qa.agent.enqueueTurns({
+    barrier: { phase: 'before-response', name: barrier },
+    body: {
+      stop_reason: 'end_turn',
+      content: [{ type: 'text', text: '零步骤取消前提：当前模型轮真实返回' }],
+    },
+  });
+  try {
+    await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { agentEnabled: true }));
+    incoming(qa, group, barrier);
+    const created = await observe({
+      read: () => qa.api.require(qa.api.get<AgentRun[]>(`/api/groups/${group.id}/agent-runs`)),
+      invariant: (items) => {
+        expect(items.length).toBeLessThanOrEqual(1);
+        noUnexpectedEffect();
+      },
+      complete: (items) => items.length === 1,
+      durationMs: 10_000,
+    });
+    if (!created.complete) {
+      blockers.push('cancelled：有限观察未取得本轮真实run，不将10秒诊断上限作为业务SLA');
+      outcomes.cancelled = { status: 'BLOCKED', observed: created };
+    } else {
+      const runId = created.last[0]!.id;
+      let hit;
+      try {
+        hit = await qa.agent.barriers.waitFor(barrier, 5_000);
+      } catch (error) {
+        blockers.push(`cancelled：首个模型响应屏障未命中：${String(error)}`);
+      }
+      const heldState = await qa.api.agentRun(runId);
+      await qa.evidence('ui039-cancelled-before-disable', { hit, heldState });
+      await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { agentEnabled: false }));
+      // Allow the actual current model round to finish; do not require terminal
+      // state while held and do not discard a real returned step to make zero.
+      qa.agent.barriers.release(barrier);
+      const terminal = await observe({
+        read: () => qa.api.agentRun(runId),
+        invariant: (actual) => {
+          expect(actual.id).toBe(runId);
+          expect(actual.groupId).toBe(group.id);
+          if (actual.status === 'cancelled') expect(actual.endReason).toBe('cancelled');
+          if (actual.status === 'failed')
+            expect(['wall_clock', 'budget_exhausted', 'protocol_errors']).toContain(
+              actual.endReason,
+            );
+          noUnexpectedEffect();
+        },
+        complete: (actual) => actual.status !== 'running',
+        durationMs: 20_000,
+      });
+      await qa.evidence('ui039-cancelled-terminal-premise', terminal);
+      if (
+        terminal.complete &&
+        terminal.last.status === 'cancelled' &&
+        terminal.last.steps.length === 0 &&
+        hit
+      ) {
+        await verifyEmptyTerminal(terminal.last, 'cancelled');
+      } else {
+        blockers.push(
+          'cancelled：未形成可证实的真实cancelled/steps=[]；当前轮产生步骤不等于文案失败',
+        );
+        outcomes.cancelled = { status: 'BLOCKED', observed: terminal };
+      }
+      // A coincident genuine zero-step wall_clock result may independently supply
+      // the failed-state UI premise, but is never relabelled as cancelled.
+      if (
+        terminal.complete &&
+        terminal.last.status === 'failed' &&
+        terminal.last.endReason === 'wall_clock' &&
+        terminal.last.steps.length === 0
+      )
+        await verifyEmptyTerminal(terminal.last, 'failed');
+    }
+    if (!outcomes.failed) {
+      blockers.push(
+        'failed：当前交付观察协议无真实创建后/首轮派发前活动hold；模型超时会产生步骤，禁止SQL写终态或active_ms伪造零步骤',
+      );
+      outcomes.failed = {
+        status: 'BLOCKED',
+        dependency:
+          'owned pre-first-dispatch active window with actual run identity; not delivered',
+      };
+    }
+    noUnexpectedEffect();
+    if (blockers.length) throw new BlockedError(blockers.join('；'));
+  } finally {
+    qa.agent.barriers.release(barrier);
+    await qa.evidence('ui039-per-state-results', {
+      outcomes,
+      blockers,
+      gateway: qa.gateway.snapshot(),
+      agent: qa.agent.snapshot(),
+      boundary: '两个零步骤终态分别必须有真实公开状态与页面证据；任一缺少不得判整例PASS',
+    });
   }
 });

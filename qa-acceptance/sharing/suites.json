@@ -529,6 +529,101 @@
         "组合控制需capacity/runtime同一SUT归属与两份独立registry；真实完整上下界不加5000/60000容差，不采信开发计量判定。",
         "UI实际公开操作和真实焦点另取证，UI008逐项目合并仅适用于同候选相容配置；真人IME/跨窗口红点不由自动化替代。"
       ]
+    },
+    {
+      "id": "qa-8e047-system-retest",
+      "title": "阶段准入和PG观察修复独立后端回归",
+      "purpose": "固定8e047，按既有活动预算、实际工具等待、容量与重启不重放要求复测受影响公开流程。",
+      "caseIds": [
+        "MSG-001",
+        "MSG-002",
+        "MSG-003",
+        "MSG-004",
+        "MSG-005",
+        "MSG-006",
+        "MSG-007",
+        "MSG-008",
+        "MSG-016",
+        "AGENT-001",
+        "AGENT-003",
+        "AGENT-012",
+        "AGENT-014",
+        "AGENT-015",
+        "AGENT-016",
+        "AGENT-017",
+        "AGENT-018",
+        "AGENT-019",
+        "AGENT-020",
+        "AGENT-022",
+        "AGENT-024",
+        "AGENT-025",
+        "AGENT-028",
+        "AGENT-029",
+        "AGENT-030",
+        "AGENT-031",
+        "AGENT-032",
+        "AGENT-033",
+        "CAP-001",
+        "CAP-002",
+        "CAP-003",
+        "CAP-004",
+        "CAP-005",
+        "CAP-006",
+        "CAP-007",
+        "CAP-008",
+        "CAP-009",
+        "CAP-010",
+        "INT-ACT-001",
+        "REC-006",
+        "REC-007",
+        "BLK-EXT-004",
+        "BLK-EXT-005"
+      ],
+      "projects": [
+        "system"
+      ],
+      "riskBoundaries": [
+        "实际停止决定和物理结果严格保留原60s/5s上限，早于上界终止合法；不截断活动真值。",
+        "固定版本的注册子集，零自动重试；不称新版本已全量通过；未知副作用恢复原标准不豁免。"
+      ]
+    },
+    {
+      "id": "qa-8e047-ui-retest",
+      "title": "Agent真实历史和终态提示独立浏览器回归",
+      "purpose": "实际公开Agent运行与外部账本建立状态，再验证提示只描述本次工具、不掩盖前序效果、零步终态不冒称等待。",
+      "caseIds": [
+        "UI-001",
+        "UI-003",
+        "UI-006",
+        "UI-007",
+        "UI-008",
+        "UI-038",
+        "UI-039"
+      ],
+      "projects": [
+        "chromium",
+        "firefox-smoke",
+        "webkit-smoke"
+      ],
+      "riskBoundaries": [
+        "Chromium覆盖新增场景；Firefox/WebKit仅已有compat登记，不冒称三浏览器全量。",
+        "真人输入法/跨app焦点/未预读理解不能被自动化替代。零步前置缺失明确BLOCKED，不伪造产品状态。"
+      ]
+    },
+    {
+      "id": "qa-8e047-read-boundary",
+      "title": "真实PG读锁及清理故障独立接入专项",
+      "purpose": "真实归属DB表锁、实际tool-wait与PG后台状态核对；副作用及原5秒时限以公开账本和独立实际事件裁判。",
+      "caseIds": [
+        "INT-READ-001"
+      ],
+      "projects": [
+        "system"
+      ],
+      "riskBoundaries": [
+        "缺少特定tool-query/ROLLBACK关联接口时记录接入阻塞，不能声称已证明串行清理或成功尾段。",
+        "schema与PG状态只定位故障窗口，不能按业务内部持久实现倒推正确预期。真实时限或副作用违例仍记FAIL。"
+      ]
     }
   ]
 }

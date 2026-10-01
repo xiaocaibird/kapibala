@@ -222,7 +222,7 @@
 
 **前置条件**
 
-1. C2单独批准；选定Claude或Gemini、费用与凭据使用范围已授权
+1. C2执行单独批准；Gemini已由D047选定，费用与凭据使用范围需绑定该候选
 2. 只用合成非敏感群内容，凭据不进入证据
 
 **执行步骤**
@@ -257,7 +257,7 @@
 
 ```json
 {
-  "provider": "待用户选定",
+  "provider": "Gemini（D047已确认；真实QA费用与凭据使用范围另行冻结）",
   "tools": [
     "get_recent_messages",
     "send_message",
