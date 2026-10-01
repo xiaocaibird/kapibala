@@ -1,0 +1,56 @@
+[
+  {
+    "name": "final-build",
+    "source": "d46669a231d33612b86d0c4c83ca04f4a5226f57",
+    "startedAt": "2026-10-01T17:07:53.523396+00:00",
+    "durationMs": 1332,
+    "exitCode": 0,
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "log": "final-build.log.txt"
+  },
+  {
+    "name": "final-original",
+    "source": "d46669a231d33612b86d0c4c83ca04f4a5226f57",
+    "startedAt": "2026-10-01T17:07:54.856180+00:00",
+    "durationMs": 142,
+    "exitCode": 0,
+    "command": [
+      "npm",
+      "run",
+      "verify:original"
+    ],
+    "log": "final-original.log.txt"
+  },
+  {
+    "name": "final-frontend",
+    "source": "d46669a231d33612b86d0c4c83ca04f4a5226f57",
+    "startedAt": "2026-10-01T17:07:54.998268+00:00",
+    "durationMs": 259,
+    "exitCode": 0,
+    "command": [
+      "node_modules/.bin/tsx",
+      "--test",
+      "--test-reporter=tap",
+      "apps/web/tests/agent-navigation-session.test.ts",
+      "apps/web/tests/agent-navigation.test.ts",
+      "apps/web/tests/core-console.test.ts",
+      "apps/web/tests/directoryAttention.test.ts",
+      "apps/web/tests/group-directory.test.ts",
+      "apps/web/tests/group-profile.test.ts",
+      "apps/web/tests/page-attention-core.test.ts",
+      "apps/web/tests/page-attention-directory.test.ts",
+      "apps/web/tests/pageAttentionAdapters.test.ts",
+      "apps/web/tests/reliability.test.ts",
+      "apps/web/tests/resource-recovery.test.ts",
+      "apps/web/tests/sequence-requests.test.ts",
+      "apps/web/tests/session-boundary.test.ts",
+      "apps/web/tests/session-cookie.test.ts",
+      "apps/web/tests/timeline-recovery.test.ts"
+    ],
+    "log": "final-frontend.log.txt"
+  }
+]

@@ -2,11 +2,11 @@
 
 ## 首轮验收自主收尾（2026-10-02）
 
-最新四条工作线、固定版本与尚未关闭的问题统一查看[首轮验收收尾与交付状态](first-acceptance-closeout-20261001.md)。[独立 QA 交付报告](../qa-acceptance/reports/acceptance/20261002-current-delivery/report.md)已签发：旧完整基线254条为240通过、9失败、5阻塞；修复候选51条差异用例为46通过、5失败。预算停止、容量等待、安全阶段重启和状态文案的本轮场景通过；五秒等待及未知结果续跑仍不符合，不能合并为新版全量通过。已授权的预算×已派发kick组合补证单独继续，真实输入法与跨窗口提醒待真人复验。C1/C2待第二轮独立联调，V3全部P0/P1（含路由最小修复）已批准开发自测，完成后等待负责人审阅，不自动合main或提测。
+最新四条工作线、固定版本与尚未关闭的问题统一查看[首轮验收收尾与交付状态](first-acceptance-closeout-20261001.md)。[独立 QA 交付报告](../qa-acceptance/reports/acceptance/20261002-current-delivery/report.md)已签发：旧完整基线254条为240通过、9失败、5阻塞；修复候选51条差异用例为46通过、5失败。预算停止、容量等待、安全阶段重启和状态文案的本轮场景通过；五秒等待及未知结果续跑仍不符合，不能合并为新版全量通过。已授权的预算×已派发kick组合补证已独立签发BLOCKED，详见收尾汇总，真实输入法与跨窗口提醒待真人复验。C1/C2待第二轮独立联调，V3全部P0/P1（含路由最小修复）已批准开发自测，完成后等待负责人审阅，不自动合main或提测。
 
 ## 最终交付改进与第二轮准备（2026-10-02）
 
-[最终交付改进建议 V3：P0 / P1](product-enhancement-proposal.md)中的五项P0和五项P1已按D050批准，三条工作线开发与自测中。[第二轮需求交接](second-round-qa-intake-20261002.md)按D051整合C1/C2及本轮改进，由QA独立准备用例；研发不修改QA目录，新轮实际联调及验收仍待负责人指示。原20小时窗口不重新起算。[V2原稿](product-enhancement-proposal-v2-20261001.md)及PI编号保留，表外暂缓建议未纳入本轮；集中人工验收计划放在两轮QA之后，零散反馈继续记录。
+[最终交付改进建议 V3：P0 / P1](product-enhancement-proposal.md)中的五项P0和五项P1已按D050批准，本轮产品开发及集成自测结果见[开发交付汇总](final-enhancement-delivery-20261002.md)。最终产品源d46669a；较早组合回归562通过、0失败、10跳过，最终前端134通过、0失败、1跳过及构建通过，分别保留版本范围。代码仍在独立分支，等待负责人审阅。[第二轮需求交接](second-round-qa-intake-20261002.md)按D051整合C1/C2及本轮改进，由QA独立准备用例；研发不修改QA目录，新轮实际联调及验收仍待负责人指示。原20小时窗口不重新起算。[V2原稿](product-enhancement-proposal-v2-20261001.md)及PI编号保留，表外暂缓建议未纳入本轮；集中人工验收计划放在两轮QA之后，零散反馈继续记录。
 
 ## QA 联调固定版本与未闭合事项（2026-10-01）
 
@@ -43,7 +43,7 @@ QA 对未知外部结果的[强恢复归因](qa-recovery-boundary-followup-20261
 | 目的 | 文档 |
 |---|---|
 | 集中查看负责人提出的问题、判断、决定及实际落实结果 | [人工评审与需求调整记录](human-review-record.md)；分类索引保留原决策、变更与证据归属 |
-| 查看人工验收发现的路由、导航与返回问题初步方案 | [路由与导航初步评估](navigation-review-proposal.md)；仅评估记录，暂不实施 |
+| 查看人工验收发现的路由、导航与返回问题初步方案 | [路由与导航初步评估](navigation-review-proposal.md)；两入口最小范围已按P1-02开发，见[前端记录](final-enhancement-ui-20261002.md)，其余全站方案暂缓 |
 | 开始逐项评审：先看实际机制和用例，再看执行结果 | [A0-1 数据库迁移与启动保护](acceptance.md#review-a0-migration)；[完整A/B评审卡](acceptance.md#mechanism-review)，工程侧准备材料，负责人判断充分性 |
 | 定位已有证据、版本及尚未执行的反例 | [核心验收证据索引与补验证清单](acceptance-evidence-index.md)；现已加入第二轮机制和执行证据，用户验收仍独立；方法修订见[决策D032](decisions.md) |
 | 区分原始要求未闭合与额外产品增强 | [核心缺口与证据复核](core-requirements-gap-review.md)；[额外增强建议](product-enhancement-proposal.md)；[旧PI提案映射](product-improvement-proposal.md) |
