@@ -20,8 +20,8 @@ import type {
   ObservationRequest as LeaseRequest,
   ObservationSnapshot as Snapshot,
 } from "./types.js";
-interface Record {
-  request: LeaseRequest;
+interface Record<R extends LeaseRequest> {
+  request: R;
   registration: Registration;
   snapshot?: Snapshot;
   expiresAt: string;
@@ -32,11 +32,13 @@ export async function createObservationController<R extends LeaseRequest>({
   prefix,
   protocol,
   requestSchema,
+  canShareInstance,
 }: {
   directory: string;
   prefix: string;
   protocol: string;
   requestSchema: z.ZodType<R>;
+  canShareInstance?: (existing: R, incoming: R) => boolean;
 }) {
   const folder = await registryDirectory(directory);
   const app = Fastify({ logger: false, bodyLimit: 16_384 });
@@ -59,7 +61,7 @@ export async function createObservationController<R extends LeaseRequest>({
       }
     },
   );
-  const leases = new Map<string, Record>();
+  const leases = new Map<string, Record<R>>();
   let creation: Promise<unknown> = Promise.resolve();
   let refreshing = false;
   app.setErrorHandler((error, _request, reply) =>
@@ -130,7 +132,7 @@ export async function createObservationController<R extends LeaseRequest>({
       "No live owned SUT matches API, guardian, token source and revision",
     );
   }
-  function retain(record: Record, snapshot: Snapshot): Snapshot {
+  function retain(record: Record<R>, snapshot: Snapshot): Snapshot {
     if (record.snapshot) {
       const old = record.snapshot;
       const common = Math.min(old.events.length, snapshot.events.length);
@@ -150,7 +152,7 @@ export async function createObservationController<R extends LeaseRequest>({
     record.snapshot = structuredClone(snapshot);
     return structuredClone(record.snapshot);
   }
-  async function gone(record: Record): Promise<boolean> {
+  async function gone(record: Record<R>): Promise<boolean> {
     try {
       process.kill(record.registration.appPid, 0);
     } catch (error) {
@@ -247,7 +249,10 @@ export async function createObservationController<R extends LeaseRequest>({
               record.registration.instanceId === registration.instanceId &&
               record.snapshot?.state !== "released"
             ) {
-              if ((await refresh(otherId)).state !== "released")
+              if (
+                (await refresh(otherId)).state !== "released" &&
+                !canShareInstance?.(record.request, body)
+              )
                 throw new ControlError(
                   409,
                   "Target already has an independently owned lease",
@@ -255,7 +260,7 @@ export async function createObservationController<R extends LeaseRequest>({
             }
           }
           const expiresAt = new Date(Date.now() + body.ttlMs).toISOString();
-          const record: Record = {
+          const record: Record<R> = {
             request: body,
             registration,
             expiresAt,
