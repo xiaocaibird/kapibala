@@ -16,6 +16,35 @@ import { createRuntimeObservationController } from "../../scripts/qa-runtime-obs
 import { capacityFixture } from "../support/capacity-control-fixture.js";
 import { until } from "../support/core-automation-fixture.js";
 
+test("CO03 explicit observation entries reject missing remotes before DB access", async () => {
+  const results = await Promise.allSettled(
+    [
+      "scripts/qa-observation-server.ts",
+      "scripts/qa-capacity-server.ts",
+      "scripts/qa-message-observation-server.ts",
+      "scripts/qa-runtime-observation-server.ts",
+    ].flatMap((entry) =>
+      ["GATEWAY_URL", "AGENT_URL"].map(async (missing) => {
+        await assert.rejects(
+          promisify(execFile)(process.execPath, ["--import", "tsx", entry], {
+            timeout: 5000,
+            env: {
+              ...process.env,
+              GATEWAY_URL: "http://127.0.0.1:1",
+              AGENT_URL: "http://127.0.0.1:1",
+              [missing]: "",
+              DATABASE_URL: "postgres://invalid@127.0.0.1:1/never-open",
+            },
+          }),
+          new RegExp(`Explicit ${missing} required`),
+        );
+      }),
+    ),
+  );
+  for (const result of results)
+    if (result.status === "rejected") throw result.reason;
+});
+
 test("CO02 registry aliases cannot bind different protocols to one real directory", async (t) => {
   const root = await mkdtemp("/tmp/kap-alias-");
   const alias = root + "-link";
@@ -35,6 +64,8 @@ test("CO02 registry aliases cannot bind different protocols to one real director
           ...process.env,
           PORT: "12345",
           DATABASE_URL: "postgres://invalid@127.0.0.1:1/never-open",
+          GATEWAY_URL: "http://127.0.0.1:1",
+          AGENT_URL: "http://127.0.0.1:1",
           QA_ACCEPTANCE_RESOURCE_TOKEN: randomUUID(),
           QA_CAPACITY_REGISTRY_DIR: join(root, "registry"),
           QA_MESSAGE_REGISTRY_DIR: join(alias, "registry"),

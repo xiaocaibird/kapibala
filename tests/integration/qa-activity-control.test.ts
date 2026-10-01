@@ -89,7 +89,18 @@ test("AC01 real controller permits witness plus same-run safe boundary and expos
   );
   const oldTarget = f.target();
   f.evidence({ witness: await f.snapshot(witness.id), safe: held });
+  const immediatelyBeforeKill = await f.snapshot(safe.id);
+  assert.equal(immediatelyBeforeKill.state, "held");
+  const expiresAt = Date.parse(immediatelyBeforeKill.expiresAt);
+  const killBefore = Date.now();
+  assert.ok(killBefore < expiresAt);
   await f.kill();
+  const killAfter = Date.now();
+  assert.ok(
+    killAfter < expiresAt,
+    "Kill must finish inside the actual held lease, not after TTL",
+  );
+  f.evidence({ immediatelyBeforeKill, killBefore, killAfter });
   await f.start();
   assert.notEqual(f.target().pid, oldTarget.pid);
   const resumed = await arm("observe-activity");

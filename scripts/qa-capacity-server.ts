@@ -1,10 +1,12 @@
 // Explicit engineering entry. Normal apps/server/src/main.ts never imports this.
 import "dotenv/config";
+import { requireObservationRemotes } from "./qa-observation/remote-config.js";
 import { createApp } from "../apps/server/src/app.js";
 import { createGatewayModule } from "../apps/server/src/modules/gateway/index.js";
 import { createAutomationModule } from "../apps/server/src/modules/automation/index.js";
 import { CapacityRuntime, ControlledDatabase } from "./qa-capacity/runtime.js";
 import { sourceRevision } from "./qa-capacity/ownership.js";
+requireObservationRemotes();
 const directory = process.env.QA_CAPACITY_REGISTRY_DIR;
 if (
   !directory ||

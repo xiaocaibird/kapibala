@@ -26,6 +26,7 @@ interface Record<R extends LeaseRequest> {
   snapshot?: Snapshot;
   expiresAt: string;
   timer: NodeJS.Timeout;
+  refreshing?: Promise<unknown>;
 }
 export async function createObservationController<R extends LeaseRequest>({
   directory,
@@ -183,6 +184,19 @@ export async function createObservationController<R extends LeaseRequest>({
     const record = leases.get(id);
     if (!record)
       throw new ControlError(404, "Unknown lease; no resource was touched");
+    // A snapshot taken before advance must not arrive later and restore held.
+    // Serialize only this lease; independent SUTs/leases remain independent.
+    const operation = (record.refreshing ?? Promise.resolve())
+      .catch(() => undefined)
+      .then(() => refreshRecord(id, record, method));
+    record.refreshing = operation;
+    return operation;
+  }
+  async function refreshRecord(
+    id: string,
+    record: Record<R>,
+    method: "GET" | "DELETE" | "POST",
+  ): Promise<Snapshot> {
     try {
       return retain(
         record,

@@ -1,6 +1,7 @@
 // Explicit, combined engineering entry. Production main never imports this.
 import "dotenv/config";
 import { realpath } from "node:fs/promises";
+import { requireObservationRemotes } from "./qa-observation/remote-config.js";
 import { createApp } from "../apps/server/src/app.js";
 import { createGatewayModule } from "../apps/server/src/modules/gateway/index.js";
 import { createAutomationModule } from "../apps/server/src/modules/automation/index.js";
@@ -11,6 +12,7 @@ import { createObservationBridge } from "./qa-observation/bridge.js";
 import { ObservedRuntimeDatabase } from "./qa-runtime-observation/runtime.js";
 import { CombinedRuntimeObservation } from "./qa-runtime-observation/combined.js";
 
+requireObservationRemotes();
 const directories = {
   capacity: process.env.QA_CAPACITY_REGISTRY_DIR,
   message: process.env.QA_MESSAGE_REGISTRY_DIR,

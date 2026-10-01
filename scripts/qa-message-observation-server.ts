@@ -1,5 +1,6 @@
 // Explicit isolated engineering entry; production main never imports this.
 import "dotenv/config";
+import { requireObservationRemotes } from "./qa-observation/remote-config.js";
 import { createApp } from "../apps/server/src/app.js";
 import { Database } from "../apps/server/src/core/db.js";
 import { createGatewayModule } from "../apps/server/src/modules/gateway/index.js";
@@ -7,6 +8,7 @@ import { createAutomationModule } from "../apps/server/src/modules/automation/in
 import { MessageObservationRuntime } from "./qa-message-observation/runtime.js";
 import { createObservationBridge } from "./qa-observation/bridge.js";
 import { sourceRevision } from "./qa-capacity/ownership.js";
+requireObservationRemotes();
 const directory = process.env.QA_MESSAGE_REGISTRY_DIR;
 if (
   !directory ||
