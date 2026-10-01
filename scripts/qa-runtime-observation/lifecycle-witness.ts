@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
 import { z } from "zod";
 import type { Database } from "../../apps/server/src/core/db.js";
@@ -116,6 +116,7 @@ export class LifecycleWitness
       sourceSeq: event.seq,
       seq: lease.snapshot.events.length + 1,
       instancePid: lease.snapshot.binding.pid,
+      correlation: lease.request.correlation,
     });
   }
   async establish(
@@ -186,6 +187,7 @@ export class LifecycleWitness
       seq: 1,
       at: new Date().toISOString(),
       kind: "lifecycle-observation-attached",
+      attemptId: randomUUID(),
       ...clockFields(),
       instancePid: binding.pid,
       databaseIdentity: createHash("sha256")
