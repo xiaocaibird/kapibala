@@ -1,0 +1,58 @@
+{
+  "source": "aea111aa5438db1773e2990dc2fd0d26ea52c5b9",
+  "startedAt": "2026-10-01T19:38:48.047804+00:00",
+  "finishedAt": "2026-10-01T19:44:33.093922+00:00",
+  "durationMs": 345019.0755829972,
+  "exitCode": 0,
+  "testConcurrency": 2,
+  "explicitLongExperiment": "KICK_SETTLEMENT_OBSERVATION_EXPERIMENT=1",
+  "liveModelTests": false,
+  "log": "final-aea111a-regression.tap",
+  "counts": {
+    "tests": 580,
+    "pass": 569,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 11,
+    "todo": 0,
+    "duration_ms": 344987.884208
+  },
+  "skips": [
+    "ok 119 - timing: the real twenty-second refresh abort releases a queued login # SKIP",
+    "ok 180 - real terminal lock can outlast 60s even after an immediate model final and an early real decision # SKIP",
+    "ok 217 - timing: the default twelve-second turn timeout discards the late response # SKIP",
+    "ok 218 - timing: three five-second inconclusive audit attempts block without sending # SKIP",
+    "ok 219 - timing: model admission stops within sixty seconds even below the twelve-step cap # SKIP",
+    "ok 251 - CG08 timing: configured 10000ms turn timeout rejects a genuinely late HTTP response # SKIP",
+    "ok 252 - CG08 timing: configured 15000ms turn timeout rejects a genuinely late HTTP response # SKIP",
+    "ok 343 - C2 LIVE: real Gemini via AGENT_URL completes audited backend tools, rejects unsafe text, and sees error results # SKIP",
+    "ok 384 - real kick POST 504 and pending confirmation share the original budget signal and execution identity # SKIP",
+    "ok 501 - optional real-minute run exposes creation, decision, commit and every dispatch without clipping # SKIP",
+    "ok 545 - STREAM default configuration: public HTTP/WS auth and bounded real-reader experiment (measurement-only) # SKIP"
+  ],
+  "realTimeChain": {
+    "role": "developer-new-strategy-real-time-chain",
+    "clockDomain": "same-process-performance.now",
+    "actualUpperMs": 58021.999958,
+    "creationWindow": [
+      48042.710542,
+      48048.54975
+    ],
+    "terminal": {
+      "transactionAttemptId": "9794320d-47e4-41af-b5b0-38b7a79d661b",
+      "backendPid": 3698,
+      "phase": "commit",
+      "edge": "returned",
+      "windowMs": [
+        106063.786667,
+        106064.7105
+      ]
+    },
+    "posts": 1,
+    "confirmations": 1,
+    "effects": 1,
+    "turns": 3
+  },
+  "timingExtraction": "unchanged leading diagnostic object before ledger; complete original TAP retained",
+  "isIndependentQa": false
+}
