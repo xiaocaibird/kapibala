@@ -421,30 +421,51 @@
   {
     "id": "UI-017",
     "title": "多页过期和原子刷新",
-    "requirements": ["ADD-DIR-08", "ADD-ATT-05"],
+    "requirements": [
+      "ADD-DIR-08",
+      "ADD-ATT-05"
+    ],
     "priority": "P1",
     "mode": "automated",
     "preconditions": [
       "后续产品执行已授权；至少3服务账号；独立PG和候选进程",
-      "通过可见页面确认routes/selectors适配，adapterConfirmed=true；浏览器引擎已安装"
+      "通过可见页面确认routes/selectors适配，adapterConfirmed=true；浏览器引擎已安装",
+      "真实scope水位/历史回放已见、完整首页成功且原5秒周期无相关事件或重连后才加载续页；缺前提BLOCKED，不与首次回放交错归因"
     ],
     "data": {
       "fixtures": "tests/ui/console.spec.ts内显式数据",
-      "projects": ["chromium"],
+      "projects": [
+        "chromium"
+      ],
       "visibilityContract": "断言对话框/提示不可见，不要求产品卸载隐藏DOM",
       "failureClass": "403 permanent read failure for deterministic manual recovery"
     },
-    "steps": ["建23群", "加载第二页", "改变群资料", "刷新503后再成功"],
-    "expected": ["过期后停止旧游标", "失败保留23项", "成功换首页20项"],
-    "timing": ["UI-006严格验证恢复后3秒；其他等待上限仅防测试挂起，产品时限以需求为准"],
+    "steps": [
+      "登录前被动记录目录/WS；建立真实回放及完整首页稳定前提，记录公开cursor实际200续页、23唯一ID与卡片顺序，再注入目标改名与刷新故障",
+      "建23群",
+      "加载第二页",
+      "改变群资料",
+      "刷新503后再成功"
+    ],
+    "expected": [
+      "过期后停止旧游标",
+      "失败保留23项",
+      "成功换首页20项"
+    ],
+    "timing": [
+      "UI-006严格验证恢复后3秒；其他等待上限仅防测试挂起，产品时限以需求为准"
+    ],
     "faults": [
       "持续注入403只读失败，使该人工重试/失败保留场景不与自动退避竞态；暂时503的自动恢复由ARC-UI专项单独覆盖"
     ],
     "evidence": [
       "浏览器trace/关键截图、请求时序和断言",
-      "公开API与Gateway/Agent事实账本、版本及清理manifest"
+      "公开API与Gateway/Agent事实账本、版本及清理manifest",
+      "首次稳定基线、实际首页/续页正文与cursor、全23身份、WS水位/事件完整账本；初始回放干扰不能算目标故障"
     ],
-    "cleanup": ["关闭独立浏览器上下文；finally释放所有故障屏障；清理本用例独立资源"],
+    "cleanup": [
+      "关闭独立浏览器上下文；finally释放所有故障屏障；清理本用例独立资源"
+    ],
     "automation": "tests/ui/console.spec.ts"
   },
   {

@@ -700,38 +700,85 @@ test('[UI-017] 多页过期禁止旧游标，失败保留列表，成功整体�
     first ??= group;
     await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { name: `目录-${i}` }));
   }
-  await login(page, qa);
-  await go(page, qa, 'groups');
-  await expect(element(page, qa, 'directoryItem')).toHaveCount(20);
-  await element(page, qa, 'loadMoreGroups').click();
-  await expect(element(page, qa, 'directoryItem')).toHaveCount(23);
-  await qa.api.require(qa.api.patch(`/api/groups/${first!.id}`, { name: '变化名称' }));
-  await expect(element(page, qa, 'directoryStale')).toBeVisible();
-  const more = element(page, qa, 'loadMoreGroups');
-  await expect.poll(async () => (await more.count()) === 0 || (await more.isDisabled())).toBe(true);
-  let fail = true;
-  await page.route('**/api/group-directory**', async (r) => {
-    if (fail)
-      await r.fulfill({
-        status: 403,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          error: {
-            code: 'FORBIDDEN',
-            message: 'QA refresh failure',
-            requestId: 'refresh',
-          },
-        }),
-      });
-    else await r.continue();
-  });
-  await element(page, qa, 'refreshDirectory').click();
-  await expect(element(page, qa, 'directoryError')).toBeVisible();
-  await expect(element(page, qa, 'directoryItem')).toHaveCount(23);
-  fail = false;
-  await element(page, qa, 'refreshDirectory').click();
-  await expect(element(page, qa, 'directoryItem')).toHaveCount(20);
-  await expect(element(page, qa, 'directoryStale')).toBeHidden();
+  const observer = observeDirectory(page);
+  try {
+    await login(page, qa);
+    await go(page, qa, 'groups');
+    await observer.settle();
+    const boundary = observer.ledger.boundaryVersion;
+    const firstPage = observer.ledger.reads.findLast(
+      (read) => !new URL(read.url).searchParams.has('cursor'),
+    );
+    if (!firstPage || firstPage.status !== 200 || !firstPage.body)
+      throw new BlockedError('UI017实际完整首页和历史回放前提未建立');
+    const firstBody = firstPage.body as { items: { id: string }[]; nextCursor: string | null };
+    if (!firstBody.nextCursor || firstBody.items.length !== 20)
+      throw new BlockedError('UI017首页未形成真实可继续分页链');
+    await expect(element(page, qa, 'directoryItem')).toHaveCount(20);
+    await element(page, qa, 'loadMoreGroups').click();
+    await expect(element(page, qa, 'directoryItem')).toHaveCount(23);
+    observer.unchanged(boundary);
+    await directoryPremise(
+      () =>
+        observer.ledger.reads.some(
+          (read) =>
+            new URL(read.url).searchParams.get('cursor') === firstBody.nextCursor &&
+            read.endedAt !== undefined,
+        ),
+      'UI017原首页cursor实际续页',
+    );
+    const continuation = observer.ledger.reads.findLast(
+      (read) => new URL(read.url).searchParams.get('cursor') === firstBody.nextCursor,
+    )!;
+    expect(continuation.status).toBe(200);
+    const secondBody = continuation.body as { items: { id: string }[] };
+    expect(secondBody.items).toHaveLength(3);
+    const expectedIds = [...firstBody.items, ...secondBody.items].map((row) => row.id);
+    expect(new Set(expectedIds).size).toBe(23);
+    expect(
+      await element(page, qa, 'directoryItem').evaluateAll((cards) =>
+        cards.map((card) => card.getAttribute('data-directory-group-id')),
+      ),
+    ).toEqual(expectedIds);
+    await qa.evidence('ui017-stable-pagination-premise', {
+      boundary,
+      firstPage,
+      continuation,
+      expectedIds,
+    });
+    await qa.api.require(qa.api.patch(`/api/groups/${first!.id}`, { name: '变化名称' }));
+    await expect(element(page, qa, 'directoryStale')).toBeVisible();
+    const more = element(page, qa, 'loadMoreGroups');
+    await expect
+      .poll(async () => (await more.count()) === 0 || (await more.isDisabled()))
+      .toBe(true);
+    let fail = true;
+    await page.route('**/api/group-directory**', async (r) => {
+      if (fail)
+        await r.fulfill({
+          status: 403,
+          contentType: 'application/json',
+          body: JSON.stringify({
+            error: {
+              code: 'FORBIDDEN',
+              message: 'QA refresh failure',
+              requestId: 'refresh',
+            },
+          }),
+        });
+      else await r.continue();
+    });
+    await element(page, qa, 'refreshDirectory').click();
+    await expect(element(page, qa, 'directoryError')).toBeVisible();
+    await expect(element(page, qa, 'directoryItem')).toHaveCount(23);
+    fail = false;
+    await element(page, qa, 'refreshDirectory').click();
+    await expect(element(page, qa, 'directoryItem')).toHaveCount(20);
+    await expect(element(page, qa, 'directoryStale')).toBeHidden();
+  } finally {
+    await qa.evidence('ui017-directory-ledger', observer.ledger);
+    observer.dispose();
+  }
 });
 test('[UI-018] 目录组合筛选、清关键词与重置含义不同', async ({ qa, page }) => {
   const group = await prepare(qa);
