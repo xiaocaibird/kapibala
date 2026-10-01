@@ -30,6 +30,8 @@ INT-ACT-001 历史报告缺少旧进程最终尾段与跨 epoch 关联，仍保�
 
 `snapshotProvenance.applicationStarted` 的 JSON 类型为 **string**，保留 `processIdentity()` 执行 `ps -p <pid> -o ppid=,pgid=,uid=,lstart=` 后匹配出的 `lstart` 原文。它不是 ISO 日期或 Unix 毫秒，不应经 `Date.parse` 用于活动计时；用途是和 registration 的 `appStarted` 逐字比较，配合 PID、uid 和进程组校验身份。`live-bridge` 与 `retained-after-process-exit` 都使用同一注册字符串。直接应用 IPC 的 minute-profile 没经过 HTTP 控制器，因此没有此 provenance；不得为其补造该字段。
 
+固定候选 `2716abd` 的[真实 HTTP 字段样例及取证](qa-epoch-http-provenance-20261001.md)已补齐，包含实时与 app 退出后保留的响应、原始响应头和 `ps` 输出；身份令牌已脱敏。这是序列化与传输证据，不是全程计时通过证明。
+
 QA 若使用会剔除未知字段的 Zod schema，应由 QA 自己更新观察数据适配层，保留上述增量字段及原始响应；这不改变业务断言。没有收到这些字段的旧候选不能用默认值补造连续性或校准。原始样本、snapshot 请求前后窗口和 kill/exit 记录必须保留，不能只保存聚合结果。
 
 ## 重新取证步骤
