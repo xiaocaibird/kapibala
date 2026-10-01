@@ -631,6 +631,7 @@ export class AgentTools {
           budgetMs: remaining,
           workBudgetMs,
           settlementBudgetMs: KICK_SETTLEMENT_BUDGET_MS,
+          signalSource: source,
           source,
         });
       } catch {
