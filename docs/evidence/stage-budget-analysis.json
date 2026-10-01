@@ -1,0 +1,87 @@
+{
+  "source": "stage-budget-final-focused.tap",
+  "testedProductRevision": "d09330434065ecda3aaf72755160efa31ee26ee6",
+  "scope": "developer verification, not independent QA acceptance",
+  "stages": [
+    {
+      "configuredTimeoutMs": 10000,
+      "priorActiveMs": 50500,
+      "persistedActiveMs": 50519,
+      "modelRequests": 0,
+      "endReason": "wall_clock"
+    },
+    {
+      "configuredTimeoutMs": 12000,
+      "priorActiveMs": 48500,
+      "persistedActiveMs": 48518,
+      "modelRequests": 0,
+      "endReason": "wall_clock"
+    },
+    {
+      "configuredTimeoutMs": 15000,
+      "priorActiveMs": 45500,
+      "persistedActiveMs": 45531,
+      "modelRequests": 0,
+      "endReason": "wall_clock"
+    },
+    {
+      "configuredTimeoutMs": 10000,
+      "observedTimeoutMs": 10010.083916,
+      "lateResponseObserved": true
+    },
+    {
+      "configuredTimeoutMs": 15000,
+      "observedTimeoutMs": 15010.434959,
+      "lateResponseObserved": true
+    }
+  ],
+  "terminalLock": {
+    "case": "unbounded-terminal-lock",
+    "runId": "c9ff3775-74fd-4410-966f-95227680a19e",
+    "creationWindowMs": [
+      762.044083,
+      768.107542
+    ],
+    "decisionWindowMs": [
+      819.780542,
+      819.800375
+    ],
+    "decisionElapsedMs": [
+      51.673,
+      57.75629200000003
+    ],
+    "commitElapsedMs": [
+      61015.776125000004,
+      61021.839584
+    ],
+    "persistedActiveMs": 60595,
+    "status": "finished",
+    "endReason": "final",
+    "modelRequests": 1,
+    "strictCommit60000Result": "FAIL",
+    "evidenceRole": "one real-time developer storage-boundary counterexample; not a QA pass",
+    "measurementCaveat": "commitElapsedMs is the local lifecycle callback observation after commit acknowledgement, not the exact PostgreSQL COMMIT physical instant. A real group row lock remains held beyond creationWindow upper + 61000ms; the pre-release read is still running.",
+    "tapDecoding": "Nested JSON string escaping required reversing TAP doubled backslashes; original TAP retained byte-for-byte."
+  },
+  "ordinaryModelLoop": {
+    "runId": "b82b4508-4ce5-453b-8ae1-67a1992199d0",
+    "turns": 6,
+    "activityElapsedMs": [
+      48125,
+      48136
+    ],
+    "creationToDecisionMs": [
+      48125.696833,
+      48131.839875000005
+    ],
+    "creationToTerminalObservationMs": [
+      48129.718833,
+      48135.847583
+    ],
+    "persistedActiveMs": 48132,
+    "decisionStatus": "failed",
+    "endReason": "wall_clock",
+    "strict60000ForThisProfile": "PASS",
+    "scope": "actual local HTTP 8s model fixture; no paid model, not an all-load guarantee"
+  }
+}

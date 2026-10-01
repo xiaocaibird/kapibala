@@ -1,0 +1,485 @@
+TAP version 13
+# Subtest: Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+ok 1 - Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+  ---
+  duration_ms: 451.4535
+  type: 'test'
+  ...
+# Independent database: kapibala_test_f2467691593c411295873f7573757d05
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: Agent capacity wait keeps the original activity budget and does not invent an unknown kick
+ok 2 - Agent capacity wait keeps the original activity budget and does not invent an unknown kick
+  ---
+  duration_ms: 1386.169584
+  type: 'test'
+  ...
+# Independent database: kapibala_test_9ffc2e251e404a8b8880077183bd5539
+# Subtest: Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+ok 3 - Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+  ---
+  duration_ms: 245.628834
+  type: 'test'
+  ...
+# Independent database: kapibala_test_812a4846616942f589cd39ce56dadde6
+# Subtest: Agent cancellation while waiting for capacity ends after the current step without another turn
+ok 4 - Agent cancellation while waiting for capacity ends after the current step without another turn
+  ---
+  duration_ms: 367.049708
+  type: 'test'
+  ...
+# Independent database: kapibala_test_04bd04fd136c45bbab19d56a0261802f
+# Subtest: Agent does not dispatch a model request after its intent write leaves less than the configured turn budget
+ok 5 - Agent does not dispatch a model request after its intent write leaves less than the configured turn budget
+  ---
+  duration_ms: 691.399667
+  type: 'test'
+  ...
+# Independent database: kapibala_test_2ac72e4bfee143d79e03c0c2c6637f61
+# {"runId":"expired-intent","elapsedMs":404.87125000000003,"persistedActiveMs":48186,"modelRequests":0}
+# Subtest: Agent does not dispatch an audit request after its intent write consumes the remaining budget
+ok 6 - Agent does not dispatch an audit request after its intent write consumes the remaining budget
+  ---
+  duration_ms: 582.1175
+  type: 'test'
+  ...
+# Independent database: kapibala_test_ca6e828a975049d596bf63c6c952deb0
+# {"runId":"expired-audit-intent","elapsedMs":386.52495899999997,"persistedActiveMs":60172,"auditRequests":0}
+# Subtest: Agent does not start a configured 10000ms model turn with less than that budget
+ok 7 - Agent does not start a configured 10000ms model turn with less than that budget
+  ---
+  duration_ms: 173.768042
+  type: 'test'
+  ...
+# Independent database: kapibala_test_bbf2b5b502384600a29e0232ff6f4a94
+# {"configuredTimeoutMs":10000,"priorActiveMs":50500,"persistedActiveMs":50522,"modelRequests":0,"endReason":"wall_clock"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: Agent does not start a configured 12000ms model turn with less than that budget
+ok 8 - Agent does not start a configured 12000ms model turn with less than that budget
+  ---
+  duration_ms: 223.234917
+  type: 'test'
+  ...
+# Independent database: kapibala_test_3f6b48ead5f2439e9a7c71fca320b169
+# {"configuredTimeoutMs":12000,"priorActiveMs":48500,"persistedActiveMs":48518,"modelRequests":0,"endReason":"wall_clock"}
+# Subtest: Agent does not start a configured 15000ms model turn with less than that budget
+ok 9 - Agent does not start a configured 15000ms model turn with less than that budget
+  ---
+  duration_ms: 168.276084
+  type: 'test'
+  ...
+# Independent database: kapibala_test_0614a2590bd44eda8aee7c5f6a2148ff
+# {"configuredTimeoutMs":15000,"priorActiveMs":45500,"persistedActiveMs":45524,"modelRequests":0,"endReason":"wall_clock"}
+# Subtest: real terminal lock can outlast 60s even after an immediate model final and an early real decision
+ok 10 - real terminal lock can outlast 60s even after an immediate model final and an early real decision # SKIP
+  ---
+  duration_ms: 0.149292
+  type: 'test'
+  ...
+# Subtest: tool definitions have all required arguments; invalid protocols are rejected
+ok 11 - tool definitions have all required arguments; invalid protocols are rejected
+  ---
+  duration_ms: 109.382541
+  type: 'test'
+  ...
+# Subtest: sequence variables persist overrides and report the first unresolved step
+ok 12 - sequence variables persist overrides and report the first unresolved step
+  ---
+  duration_ms: 0.306292
+  type: 'test'
+  ...
+# Subtest: PostgreSQL serializes concurrent sequence starts and failed preflight creates no run
+ok 13 - PostgreSQL serializes concurrent sequence starts and failed preflight creates no run
+  ---
+  duration_ms: 27.413334
+  type: 'test'
+  ...
+# Subtest: multiple workers create one agent run and same send key is audited and enqueued once
+ok 14 - multiple workers create one agent run and same send key is audited and enqueued once
+  ---
+  duration_ms: 298.870458
+  type: 'test'
+  ...
+# Subtest: bad JSON, unknown tool, duplicate tool id are recorded without corrupting history
+ok 15 - bad JSON, unknown tool, duplicate tool id are recorded without corrupting history
+  ---
+  duration_ms: 140.234375
+  type: 'test'
+  ...
+# Subtest: invalid finish inputs return INVALID_INPUT and allow a later valid completion
+    # Subtest: null followed by end_turn
+    ok 1 - null followed by end_turn
+      ---
+      duration_ms: 129.487291
+      type: 'test'
+      ...
+    # Subtest: null followed by finish
+    ok 2 - null followed by finish
+      ---
+      duration_ms: 117.507917
+      type: 'test'
+      ...
+    # Subtest: missing summary followed by end_turn
+    ok 3 - missing summary followed by end_turn
+      ---
+      duration_ms: 82.467292
+      type: 'test'
+      ...
+    # Subtest: missing summary followed by finish
+    ok 4 - missing summary followed by finish
+      ---
+      duration_ms: 80.552125
+      type: 'test'
+      ...
+    # Subtest: wrong summary type followed by end_turn
+    ok 5 - wrong summary type followed by end_turn
+      ---
+      duration_ms: 82.241125
+      type: 'test'
+      ...
+    # Subtest: wrong summary type followed by finish
+    ok 6 - wrong summary type followed by finish
+      ---
+      duration_ms: 209.081292
+      type: 'test'
+      ...
+    1..6
+ok 16 - invalid finish inputs return INVALID_INPUT and allow a later valid completion
+  ---
+  duration_ms: 702.195833
+  type: 'test'
+  ...
+# Subtest: completed invalid finish recovery honors cancellation and execution limits
+    # Subtest: cancelled
+    ok 1 - cancelled
+      ---
+      duration_ms: 43.133792
+      type: 'test'
+      ...
+    # Subtest: wall_clock
+    ok 2 - wall_clock
+      ---
+      duration_ms: 41.972875
+      type: 'test'
+      ...
+    # Subtest: budget_exhausted
+    ok 3 - budget_exhausted
+      ---
+      duration_ms: 41.556084
+      type: 'test'
+      ...
+    # Subtest: protocol_errors
+    ok 4 - protocol_errors
+      ---
+      duration_ms: 68.22375
+      type: 'test'
+      ...
+    1..4
+ok 17 - completed invalid finish recovery honors cancellation and execution limits
+  ---
+  duration_ms: 195.410666
+  type: 'test'
+  ...
+# Subtest: a successful persisted finish completes recovery without another remote turn
+ok 18 - a successful persisted finish completes recovery without another remote turn
+  ---
+  duration_ms: 44.460542
+  type: 'test'
+  ...
+# Subtest: inconclusive audit blocks without side effects; rejection does not reserve a send key
+ok 19 - inconclusive audit blocks without side effects; rejection does not reserve a send key
+  ---
+  duration_ms: 349.061666
+  type: 'test'
+  ...
+# Subtest: messages arriving during a run become one next trigger and own messages never trigger
+ok 20 - messages arriving during a run become one next trigger and own messages never trigger
+  ---
+  duration_ms: 106.801625
+  type: 'test'
+  ...
+# Subtest: interrupted remote turn is visibly paused and never replayed
+ok 21 - interrupted remote turn is visibly paused and never replayed
+  ---
+  duration_ms: 50.479583
+  type: 'test'
+  ...
+# Subtest: sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step
+ok 22 - sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step
+  ---
+  duration_ms: 54.453916
+  type: 'test'
+  ...
+# Subtest: persisted final and prepared send recover without replaying prior external work
+ok 23 - persisted final and prepared send recover without replaying prior external work
+  ---
+  duration_ms: 87.277583
+  type: 'test'
+  ...
+# Subtest: kick policy and persisted uncertain kick cannot produce a second side effect
+ok 24 - kick policy and persisted uncertain kick cannot produce a second side effect
+  ---
+  duration_ms: 95.126125
+  type: 'test'
+  ...
+# Subtest: repeated reads stop within twelve steps and result bytes remain bounded
+ok 25 - repeated reads stop within twelve steps and result bytes remain bounded
+  ---
+  duration_ms: 705.011375
+  type: 'test'
+  ...
+# Subtest: disabling Agent during its current step cancels after that step, without another turn
+ok 26 - disabling Agent during its current step cancels after that step, without another turn
+  ---
+  duration_ms: 83.747708
+  type: 'test'
+  ...
+# Subtest: activity budget interrupts a late turn and discards the eventual response
+not ok 27 - activity budget interrupts a late turn and discards the eventual response
+  ---
+  duration_ms: 46.894125
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/automation.test.ts:945:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/automation.test.ts:960:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: activity budget expires during audit without authorizing the prepared tool
+ok 28 - activity budget expires during audit without authorizing the prepared tool
+  ---
+  duration_ms: 337.838
+  type: 'test'
+  ...
+# Subtest: an accepted send whose account becomes terminal yields SEND_FAILED without a resend
+ok 29 - an accepted send whose account becomes terminal yields SEND_FAILED without a resend
+  ---
+  duration_ms: 136.54925
+  type: 'test'
+  ...
+# Subtest: restart catches up a committed send before rebasing the next unscheduled step
+ok 30 - restart catches up a committed send before rebasing the next unscheduled step
+  ---
+  duration_ms: 55.887792
+  type: 'test'
+  ...
+# Subtest: kick permission errors remain tool errors and a confirmed kick succeeds
+ok 31 - kick permission errors remain tool errors and a confirmed kick succeeds
+  ---
+  duration_ms: 211.342833
+  type: 'test'
+  ...
+# Subtest: SEND_TIMEOUT retries with the same key read the eventual send without re-auditing
+ok 32 - SEND_TIMEOUT retries with the same key read the eventual send without re-auditing
+  ---
+  duration_ms: 5095.422833
+  type: 'test'
+  ...
+# Subtest: sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp
+ok 33 - sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp
+  ---
+  duration_ms: 62.61925
+  type: 'test'
+  ...
+# Subtest: loss of the advisory-lock connection aborts a turn without saving a false protocol error
+ok 34 - loss of the advisory-lock connection aborts a turn without saving a false protocol error
+  ---
+  duration_ms: 178.634
+  type: 'test'
+  ...
+# Subtest: loss of a run lock during audit prevents old-worker effects and permits safe audit recovery
+ok 35 - loss of a run lock during audit prevents old-worker effects and permits safe audit recovery
+  ---
+  duration_ms: 216.823667
+  type: 'test'
+  ...
+# Subtest: kick budget exhaustion ends the run while retaining an uncertain non-replayable effect
+ok 36 - kick budget exhaustion ends the run while retaining an uncertain non-replayable effect
+  ---
+  duration_ms: 129.464167
+  type: 'test'
+  ...
+# Subtest: a stale scheduler transaction cannot enqueue after its ownership connection is lost
+ok 37 - a stale scheduler transaction cannot enqueue after its ownership connection is lost
+  ---
+  duration_ms: 58.822208
+  type: 'test'
+  ...
+# Subtest: closing and recreating modules preserves activity while excluding actual downtime
+ok 38 - closing and recreating modules preserves activity while excluding actual downtime
+  ---
+  duration_ms: 978.631167
+  type: 'test'
+  ...
+# Subtest: queued runs persist online activity across a real shutdown without counting downtime or a second clock
+ok 39 - queued runs persist online activity across a real shutdown without counting downtime or a second clock
+  ---
+  duration_ms: 2097.127
+  type: 'test'
+  ...
+# Subtest: a follower cannot execute against a stale activity base while the new clock owner initializes
+not ok 40 - a follower cannot execute against a stale activity base while the new clock owner initializes
+  ---
+  duration_ms: 1308.048
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/automation.test.ts:1606:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    follower exhausted the preserved budget: wall_clock
+    + actual - expected
+    
+    + 'failed'
+    - 'finished'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'finished'
+  actual: 'failed'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/automation.test.ts:1673:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: an initialization follower takes over after the blocked clock owner connection is terminated
+not ok 41 - an initialization follower takes over after the blocked clock owner connection is terminated
+  ---
+  duration_ms: 1950.789167
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/automation.test.ts:1712:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'failed'
+    - 'finished'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'finished'
+  actual: 'failed'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/automation.test.ts:1828:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Subtest: frequent activity samples retain subinterval time instead of losing rounded milliseconds
+ok 42 - frequent activity samples retain subinterval time instead of losing rounded milliseconds
+  ---
+  duration_ms: 35.725458
+  type: 'test'
+  ...
+# Subtest: activity clock survives loss of its own PostgreSQL session and only bills once after takeover
+ok 43 - activity clock survives loss of its own PostgreSQL session and only bills once after takeover
+  ---
+  duration_ms: 1528.304959
+  type: 'test'
+  ...
+# Subtest: inconclusive audit step and blocked run roll back together before recovery
+ok 44 - inconclusive audit step and blocked run roll back together before recovery
+  ---
+  duration_ms: 110.323209
+  type: 'test'
+  ...
+# Subtest: persisted legacy audit-block window cannot resume another Agent turn
+ok 45 - persisted legacy audit-block window cannot resume another Agent turn
+  ---
+  duration_ms: 45.838458
+  type: 'test'
+  ...
+# Subtest: timing: the default twelve-second turn timeout discards the late response
+ok 46 - timing: the default twelve-second turn timeout discards the late response # SKIP
+  ---
+  duration_ms: 0.086416
+  type: 'test'
+  ...
+# Subtest: timing: three five-second inconclusive audit attempts block without sending
+ok 47 - timing: three five-second inconclusive audit attempts block without sending # SKIP
+  ---
+  duration_ms: 0.022417
+  type: 'test'
+  ...
+# Subtest: timing: sixty seconds of activity ends the run even below the twelve-step cap
+ok 48 - timing: sixty seconds of activity ends the run even below the twelve-step cap # SKIP
+  ---
+  duration_ms: 0.017208
+  type: 'test'
+  ...
+# Subtest: kick does not enter admission when its real preparation transaction consumes the remaining budget
+ok 49 - kick does not enter admission when its real preparation transaction consumes the remaining budget
+  ---
+  duration_ms: 599.433791
+  type: 'test'
+  ...
+# Independent database: kapibala_test_83b3f6bdaf0343438d359a751b8375bf
+# {"admissions":0,"persistedActiveMs":60194,"recoveryNote":null,"intent":{"accountId":"account-2","dispatchState":"awaiting_admission","targetPlatformUserId":"external-target"}}
+# Subtest: kick blocked across its deadline before fetch ends without inventing an unknown external effect
+ok 50 - kick blocked across its deadline before fetch ends without inventing an unknown external effect
+  ---
+  duration_ms: 1716.716
+  type: 'test'
+  ...
+# Independent database: kapibala_test_29e91460030d4cfeb8b021ff243d8ca5
+# {"blocked":true,"signalAbortedAfterBlock":false,"kickFetchCalls":0,"persistedActiveMs":60536,"recoveryNote":null,"intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}}
+# Subtest: RemoteClient checks the synchronous dispatch guard after real request serialization
+ok 51 - RemoteClient checks the synchronous dispatch guard after real request serialization
+  ---
+  duration_ms: 174.601292
+  type: 'test'
+  ...
+# Independent database: kapibala_test_6b225e0f86644bb4bc219fb615dcc94a
+# {"serialized":true,"elapsedBeyondDeadlineMs":30.680166999999983,"remoteRequests":0}
+# Subtest: a deadline timer already fired before kick fetch is still a known non-dispatch
+ok 52 - a deadline timer already fired before kick fetch is still a known non-dispatch
+  ---
+  duration_ms: 844.579667
+  type: 'test'
+  ...
+# Independent database: kapibala_test_92fb20c04a6b4d7389b257cb5b11f6e5
+# Subtest: failed terminal persistence after a local dispatch rejection keeps the saved intent non-replayable
+ok 53 - failed terminal persistence after a local dispatch rejection keeps the saved intent non-replayable
+  ---
+  duration_ms: 891.152667
+  type: 'test'
+  ...
+# Independent database: kapibala_test_99cb92f1548542c8b4ec5d161972de3c
+# {"attempts":1,"persistedActiveMs":60271,"stateAfterReplacement":"failed","intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}}
+# Subtest: a real kick sent before its deadline remains an unknown effect if its response times out
+ok 54 - a real kick sent before its deadline remains an unknown effect if its response times out
+  ---
+  duration_ms: 704.391416
+  type: 'test'
+  ...
+# Independent database: kapibala_test_6c9266c267024d3f832115540fd3aff8
+# Subtest: kick with sufficient budget still dispatches once and preserves the one audit
+ok 55 - kick with sufficient budget still dispatches once and preserves the one audit
+  ---
+  duration_ms: 157.010958
+  type: 'test'
+  ...
+# Independent database: kapibala_test_b49e75f52cca4fd6804d25e34accb229
+1..55
+# tests 65
+# suites 0
+# pass 58
+# fail 3
+# cancelled 0
+# skipped 4
+# todo 0
+# duration_ms 20039.169708
