@@ -333,6 +333,7 @@ export class RuntimeObservation
     if (!lease) return;
     if (lease.stage === "failed") {
       lease.stage = "before-next";
+      lease.attemptId = randomUUID();
       const hold = this.gate(lease, "running");
       this.event(lease, "module-before-next-held", {
         tickBoundary: "before-activity-and-diagnostics-start",
@@ -370,7 +371,10 @@ export class RuntimeObservation
             ? lease.request.faultMarker
             : undefined,
       });
-    } else if (lease.stage === "executing") {
+    } else if (!succeeded && lease.stage === "executing") {
+      lease.stage = "failed";
+      this.event(lease, "module-failed", { failureSource: "module-operation" });
+    } else if (succeeded && lease.stage === "executing") {
       lease.stage = "succeeded";
       void this.gate(lease);
       this.event(lease, "module-succeeded");
