@@ -1,0 +1,23 @@
+# Subtest: original 60-second activity profile produces bounded cross-epoch evidence without changing its acceptance standard
+not ok 479 - original 60-second activity profile produces bounded cross-epoch evidence without changing its acceptance standard
+  ---
+  duration_ms: 54826.850959
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/qa-followup-integration/kapibala/tests/integration/qa-epoch-process.test.ts:330:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The expression evaluated to a falsy value:
+    
+      assert.ok(combined.activeElapsedMs[0] > (budgetProfile ? 59000 : 1000))
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    scenario (/Users/zcm/.codex/worktrees/qa-followup-integration/kapibala/tests/integration/qa-epoch-process.test.ts:267:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...

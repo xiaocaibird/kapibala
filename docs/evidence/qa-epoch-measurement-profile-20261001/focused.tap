@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: epoch join maps different process clock origins and includes an uncertain killed tail
+ok 1 - epoch join maps different process clock origins and includes an uncertain killed tail
+  ---
+  duration_ms: 0.737417
+  type: 'test'
+  ...
+# Subtest: epoch join rejects cached clocks, absent raw samples, ownership gaps and wrong process identities
+ok 2 - epoch join rejects cached clocks, absent raw samples, ownership gaps and wrong process identities
+  ---
+  duration_ms: 0.397209
+  type: 'test'
+  ...
+# Subtest: real SIGKILL cross-epoch evidence includes process-exit tail and excludes stopped time
+ok 3 - real SIGKILL cross-epoch evidence includes process-exit tail and excludes stopped time
+  ---
+  duration_ms: 2395.267792
+  type: 'test'
+  ...
+# Independent database: kapibala_test_a0d6eb89c38e47b984df40109e11f9bc
+# {"profile":"short-safe-read-recovery","combined":{"runId":"df8200a5-a3b0-4728-b9a9-8dc65c61cedf","groupId":"g","epochIds":["bcdfcab3-b22d-46ea-a19b-bc593217c5c7","512a211f-5d93-4696-a49c-ac03f0971c65"],"parentClockDomain":"parent-performance:37200:26304bb2-2272-4416-9fbe-e2e881ac1111","clockOffsetsMs":[[393.155041,393.68116599999985],[1685.5174160000001,1685.9387080000001]],"oldEpochActiveMs":[876.1875420000002,889.309126],"newEpochActiveMs":[697.585417,705.629125],"activeElapsedMs":[1573.7729590000004,1594.938251],"excludedBetweenEpochsMs":[420.38412500000027,428.68875],"lastAcknowledgedSampleToExitMs":[193.13675100000023,202.20379200000002],"unsavedTailMs":[0,202.20379200000002],"lastAcknowledgedPersistedMs":688,"persistedAfterExitMs":688,"persistenceInterpretation":"ledger is diagnostic; zero tail lower bound is uncertainty, not an assertion of zero lost time","coverage":"two continuously observed ownership epochs including the killed online tail","budget60000":"within-observed-interval"},"publicResult":{"status":"finished","stopReason":"final","recoveryNote":null,"persistedActiveMs":1388,"gatewayOperations":[]}}
+# Subtest: original 60-second cap profile measures substantial cross-epoch activity without requiring budget exhaustion
+ok 4 - original 60-second cap profile measures substantial cross-epoch activity without requiring budget exhaustion
+  ---
+  duration_ms: 54976.366375
+  type: 'test'
+  ...
+# Independent database: kapibala_test_b08b0770a17540c289d5b19bf84d37df
+# {"profile":"7s-turns-17s-before-safe-kill-5s-stopped-original-60s-cap-measurement","combined":{"runId":"0e3a78e5-674a-4a0b-9512-94df0a90c53d","groupId":"g","epochIds":["3751af98-d946-441b-9f43-83a7504389db","08e9d23b-3ef7-439a-bf14-c1f2dd8e6615"],"parentClockDomain":"parent-performance:37200:134943f6-5c39-4bc2-a373-0f9e85a5b21b","clockOffsetsMs":[[2700.469667000001,2701.394209000002],[29221.109,29222.229125]],"oldEpochActiveMs":[21287.08675,21305.174958],"newEpochActiveMs":[28135.387542,28142.4485],"activeElapsedMs":[49422.474292,49447.623458],"excludedBetweenEpochsMs":[5205.770916000001,5220.039666000001],"lastAcknowledgedSampleToExitMs":[191.4163750000007,205.40908299999865],"unsavedTailMs":[0,205.40908299999865],"lastAcknowledgedPersistedMs":21100,"persistedAfterExitMs":21100,"persistenceInterpretation":"ledger is diagnostic; zero tail lower bound is uncertainty, not an assertion of zero lost time","coverage":"two continuously observed ownership epochs including the killed online tail","budget60000":"within-observed-interval"},"publicResult":{"status":"failed","stopReason":"wall_clock","recoveryNote":null,"persistedActiveMs":49240,"gatewayOperations":[]}}
+# Subtest: recovery completing before a lease cannot manufacture a zero-length new epoch
+ok 5 - recovery completing before a lease cannot manufacture a zero-length new epoch
+  ---
+  duration_ms: 2271.06975
+  type: 'test'
+  ...
+# Independent database: kapibala_test_7e01e1d65f69413eb1e2f302ced71d03
+# Actual recovered run completed before lease: late terminal reconstruction rejected, not counted as zero activity
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 59885.463625

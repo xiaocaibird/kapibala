@@ -1,0 +1,49 @@
+{
+  "kind": "engineering-measurement-profile-evidence",
+  "sourceRevision": "d76af74587139f43f82003b12b3d4b4570068d23",
+  "baselineRevision": "bc5d2106cfb0ee86504208511608dde1ae0cc204",
+  "command": "DATABASE_URL=<owned-isolated-postgres> EPOCH_EVIDENCE_DIRECTORY=.runtime/qa-epoch-measurement-profile-20261001 node --import tsx --test --test-reporter=tap tests/integration/qa-epoch-process.test.ts tests/integration/qa-epoch-evidence.test.ts",
+  "nodeVersion": "24.21.0",
+  "baselineFailureSource": {
+    "path": ".runtime/first-acceptance-final-20261001/regression.tap",
+    "sha256": "a3ff3883f89741a8ce383bb82f6ed8d3a69604ca7ad977fd9f247ba72ca4a517",
+    "excerptStartLine": 3346,
+    "excerptEndLine": 3368
+  },
+  "credentialReview": {
+    "observedOwnerToken": "all four values are <redacted> in source JSON; archive preserves source bytes",
+    "credentialFieldsAndUriPatterns": "no unredacted values found in archived files",
+    "sourceEnvOrKeyFilesCopied": false
+  },
+  "files": [
+    {
+      "path": "focused.tap",
+      "bytes": 4034,
+      "sha256": "56505ca70f5ab22350b4d48ec8ad13b05be420109b408b8e12dfdd7cc576ddfe",
+      "matchesRuntimeSource": true
+    },
+    {
+      "path": "minute-profile.json",
+      "bytes": 141770,
+      "sha256": "631c975ffd72b14947dfbae28e61a44ddeffc56cfdf651ee5f9d5dc1f4b69e07",
+      "matchesRuntimeSource": true
+    },
+    {
+      "path": "short-profile.json",
+      "bytes": 24802,
+      "sha256": "0d43474ac09578b2d11a6baea92a69e98374833c48e8385b6612752bcdfe9d1a",
+      "matchesRuntimeSource": true
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 404,
+      "sha256": "503fe37e415ae578f20d1475bb4198d21f1594a759d5e1a2c9f53f67f47bfeba",
+      "matchesRuntimeSource": true
+    },
+    {
+      "path": "baseline-failure-excerpt.tap",
+      "bytes": 1066,
+      "sha256": "47ec517df0ae2ae2b40a2b8b48581d609424476e35e9713ee3d36db64e4c640d"
+    }
+  ]
+}
