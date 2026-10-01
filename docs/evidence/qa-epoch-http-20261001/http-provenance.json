@@ -1,0 +1,105 @@
+{
+  "sourceRevision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+  "sourceStatus": "",
+  "transport": "real HTTP controller -> owned private bridge -> real combined app",
+  "entry": "scripts/qa-observation-server.ts",
+  "snapshotApplicationStartedType": "string",
+  "applicationStartedValue": "Thu Oct  1 21:54:08 2026",
+  "processIdentitySource": {
+    "command": "ps",
+    "args": [
+      "-p",
+      "8343",
+      "-o",
+      "ppid=,pgid=,uid=,lstart="
+    ],
+    "stdout": " 8342  8342   501 Thu Oct  1 21:54:08 2026    \n",
+    "parsing": "stdout.trim().match(/^(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(.+)$/)[4]"
+  },
+  "actualApplicationPid": 8343,
+  "guardianPid": 8342,
+  "appAbsentObserved": true,
+  "killAction": "SIGKILL actual application PID; guardian exits after its child",
+  "killToActualAppAbsenceParentWindowMs": [
+    688.770583,
+    700.301125
+  ],
+  "parentClockDomain": "process-performance:8334:09d78063-a75a-4f80-a1ae-59027205a64a",
+  "exchanges": [
+    {
+      "label": "live-first",
+      "method": "GET",
+      "url": "http://127.0.0.1:57533/qa/runtime/v1/leases/5ed3ff24-2e18-4775-900f-cd8abf898a2d",
+      "status": 200,
+      "responseHeaders": {
+        "connection": "keep-alive",
+        "content-length": "4840",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Thu, 01 Oct 2026 13:54:09 GMT",
+        "keep-alive": "timeout=72"
+      },
+      "parentRequestWindowMs": [
+        683.251958,
+        684.107833
+      ],
+      "rawJsonFile": "live-first.json",
+      "redaction": "Only observedOwnerToken replaced; all other response JSON unchanged"
+    },
+    {
+      "label": "live-before-kill",
+      "method": "GET",
+      "url": "http://127.0.0.1:57533/qa/runtime/v1/leases/5ed3ff24-2e18-4775-900f-cd8abf898a2d",
+      "status": 200,
+      "responseHeaders": {
+        "connection": "keep-alive",
+        "content-length": "4842",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Thu, 01 Oct 2026 13:54:09 GMT",
+        "keep-alive": "timeout=72"
+      },
+      "parentRequestWindowMs": [
+        687.136417,
+        688.164375
+      ],
+      "rawJsonFile": "live-before-kill.json",
+      "redaction": "Only observedOwnerToken replaced; all other response JSON unchanged"
+    },
+    {
+      "label": "retained-after-process-exit",
+      "method": "GET",
+      "url": "http://127.0.0.1:57533/qa/runtime/v1/leases/5ed3ff24-2e18-4775-900f-cd8abf898a2d",
+      "status": 200,
+      "responseHeaders": {
+        "connection": "keep-alive",
+        "content-length": "4862",
+        "content-type": "application/json; charset=utf-8",
+        "date": "Thu, 01 Oct 2026 13:54:09 GMT",
+        "keep-alive": "timeout=72"
+      },
+      "parentRequestWindowMs": [
+        700.377958,
+        701.417583
+      ],
+      "rawJsonFile": "retained-after-process-exit.json",
+      "redaction": "Only observedOwnerToken replaced; all other response JSON unchanged"
+    }
+  ],
+  "assertions": {
+    "liveReadsAdvance": true,
+    "retainedClockUnchanged": true,
+    "eventPrefixUnchanged": true,
+    "retainedHistoryUnchanged": true,
+    "applicationStartedTypeIsString": true,
+    "pidMatchesRealProcess": true
+  },
+  "limits": [
+    "String is opaque OS process identity, not Unix milliseconds or ISO timestamp",
+    "No cross-epoch interval or startup-gap interpretation in this sample",
+    "Retained clock must not calibrate a new HTTP request",
+    "No business acceptance assertion changed"
+  ],
+  "resource": {
+    "uuidDatabase": "kapibala_test_96de24e628cd4b59abde9dad13358e1f",
+    "registryDirectory": "/tmp/kap-run-lpRCgC"
+  }
+}

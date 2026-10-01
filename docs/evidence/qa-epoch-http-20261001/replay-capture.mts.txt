@@ -1,0 +1,100 @@
+import assert from "node:assert/strict";
+import {randomUUID} from "node:crypto";
+import {execFileSync} from "node:child_process";
+import {test} from "node:test";
+import {writeFile} from "node:fs/promises";
+import {join} from "node:path";
+import {pathToFileURL} from "node:url";
+
+const repository=process.cwd();
+const output=process.env.EPOCH_HTTP_OUTPUT!;
+const pin="2716abdd2d43a779b6a0972a6323f895cf2b5b9c";
+assert.equal(execFileSync("git",["rev-parse","HEAD"],{encoding:"utf8"}).trim(),pin);
+const sourceStatus=execFileSync("git",["status","--porcelain","--untracked-files=normal","--","apps/server","packages","scripts","db","package.json","package-lock.json","tsconfig.json"],{encoding:"utf8"});
+assert.equal(sourceStatus,"");
+const {runtimeFixture}=await import(pathToFileURL(join(repository,"tests/support/runtime-observation-fixture.ts")).href);
+const {deferred,end,tool,until}=await import(pathToFileURL(join(repository,"tests/support/core-automation-fixture.ts")).href);
+const fetchOriginal=globalThis.fetch;
+const exchanges: Record<string,unknown>[]=[];
+let recordingLabel="";
+let ownerToken="";
+function redact(value:string){return ownerToken ? value.replaceAll(ownerToken,"<redacted>") : value;}
+globalThis.fetch=async(...args:Parameters<typeof fetch> )=>{
+  const before=performance.now();
+  const response=await fetchOriginal(...args);
+  if(recordingLabel){
+    const raw=await response.clone().text();
+    const after=performance.now();
+    const requestUrl=String(args[0]);
+    assert.match(requestUrl,/\/qa\/runtime\/v1\/leases\//);
+    const label=recordingLabel;
+    const body=redact(raw);
+    await writeFile(join(output,label+".json"),body+"\n");
+    exchanges.push({label,method:args[1]?.method??"GET",url:requestUrl,status:response.status,
+      responseHeaders:Object.fromEntries(response.headers.entries()),parentRequestWindowMs:[before,after],
+      rawJsonFile:label+".json",redaction:"Only observedOwnerToken replaced; all other response JSON unchanged"});
+  }
+  return response;
+};
+
+test("pinned controller serializes real process-start identity as a string in live and retained HTTP snapshots",async(t)=>{
+  t.after(()=>{globalThis.fetch=fetchOriginal;});
+  const gate=deferred();
+  let turns=0;
+  const f=await runtimeFixture(t,false,{entry:"scripts/qa-observation-server.ts",configureRemote:(remote:any)=>
+    remote.post("/agent/turn",async()=>{if(++turns===1){await gate.promise;return tool("http-proof-read","get_recent_messages",{limit:1});} return end("done");})});
+  ownerToken=f.token;
+  f.onCleanup(async()=>gate.resolve());
+  await f.db.query("UPDATE accounts SET status='online',platform_user_id=id");
+  await f.db.query("INSERT INTO groups(id,gateway_group_id,creator_account_id,agent_enabled) VALUES('http-g','remote-http','account-1',true)");
+  await f.db.query("INSERT INTO members(group_id,account_id,platform_user_id,role) VALUES('http-g','account-1','account-1','creator')");
+  await f.db.query("INSERT INTO messages(id,group_id,msg_id,sender_platform_user_id,is_own,text,sent_at) VALUES('http-m','http-g','http-m','external',false,'HTTP observation',now())");
+  await until(async()=>turns===1);
+  const runId=(await f.db.query("SELECT id FROM agent_runs WHERE group_id='http-g'")).rows[0].id;
+  const leaseId=randomUUID();
+  const armed=await f.request("PUT",`/leases/${leaseId}`,{protocol:"qa-runtime-observation/1",target:f.target(),mode:"hold-safe-activity-boundary",ttlMs:20000,correlation:{kind:"activity",groupId:"http-g",runId,toolUseId:"all-run-steps"}});
+  assert.equal(armed.status,200);
+  gate.resolve();
+  await f.event(leaseId,"activity-safe-held");
+  async function get(label:string){recordingLabel=label;try{return await f.snapshot(leaseId);}finally{recordingLabel="";}}
+  const first=await get("live-first");
+  const appPid=first.clockObservation.applicationPid;
+  const psArgs=["-p",String(appPid),"-o","ppid=,pgid=,uid=,lstart="];
+  const psStdout=execFileSync("ps",psArgs,{encoding:"utf8"});
+  const match=psStdout.trim().match(/^(\d+)\s+(\d+)\s+(\d+)\s+(.+)$/)!;
+  assert.ok(match);
+  assert.equal(typeof first.snapshotProvenance.applicationStarted,"string");
+  assert.equal(first.snapshotProvenance.applicationStarted,match[4]);
+  assert.equal(first.snapshotProvenance.applicationPid,appPid);
+  assert.equal(first.snapshotProvenance.source,"live-bridge");
+  assert.notEqual(appPid,f.target().pid);
+  assert.equal(first.binding.revision,pin);
+  const last=await get("live-before-kill");
+  assert.ok(last.clockObservation.monotonicMs>first.clockObservation.monotonicMs);
+  assert.deepEqual(last.events.slice(0,first.events.length),first.events);
+  const beforeKill=performance.now();
+  process.kill(appPid,"SIGKILL");
+  await until(async()=>{try{process.kill(appPid,0);return false;}catch(error){return (error as NodeJS.ErrnoException).code==="ESRCH";}});
+  const afterAppAbsent=performance.now();
+  await until(async()=>{try{process.kill(f.target().pid,0);return false;}catch(error){return (error as NodeJS.ErrnoException).code==="ESRCH";}});
+  const retained=await get("retained-after-process-exit");
+  assert.equal(retained.snapshotProvenance.source,"retained-after-process-exit");
+  assert.equal(typeof retained.snapshotProvenance.applicationStarted,"string");
+  assert.equal(retained.snapshotProvenance.applicationStarted,match[4]);
+  assert.equal(retained.snapshotProvenance.applicationPid,appPid);
+  assert.deepEqual(retained.clockObservation,last.clockObservation);
+  assert.deepEqual(retained.events,last.events);
+  assert.equal(retained.state,"released");
+  const evidence={sourceRevision:pin,sourceStatus,transport:"real HTTP controller -> owned private bridge -> real combined app",entry:"scripts/qa-observation-server.ts",
+    snapshotApplicationStartedType:typeof first.snapshotProvenance.applicationStarted,applicationStartedValue:match[4],
+    processIdentitySource:{command:"ps",args:psArgs,stdout:psStdout,parsing:"stdout.trim().match(/^(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(.+)$/)[4]"},
+    actualApplicationPid:appPid,guardianPid:f.target().pid,appAbsentObserved:true,killAction:"SIGKILL actual application PID; guardian exits after its child",killToActualAppAbsenceParentWindowMs:[beforeKill,afterAppAbsent],
+    parentClockDomain:`process-performance:${process.pid}:${randomUUID()}`,exchanges,
+    assertions:{liveReadsAdvance:true,retainedClockUnchanged:true,eventPrefixUnchanged:true,retainedHistoryUnchanged:true,applicationStartedTypeIsString:true,pidMatchesRealProcess:true},
+    limits:["String is opaque OS process identity, not Unix milliseconds or ISO timestamp", "No cross-epoch interval or startup-gap interpretation in this sample", "Retained clock must not calibrate a new HTTP request", "No business acceptance assertion changed"],
+    resource:{uuidDatabase:new URL(f.url).pathname.slice(1),registryDirectory:f.directory}};
+  const serialized=redact(JSON.stringify(evidence,null,2));
+  assert.ok(!serialized.includes(ownerToken));
+  await writeFile(join(output,"http-provenance.json"),serialized+"\n");
+  t.diagnostic(JSON.stringify({sourceRevision:pin,applicationStartedType:typeof first.snapshotProvenance.applicationStarted,applicationStartedValue:match[4],appPid,guardianPid:f.target().pid}));
+});

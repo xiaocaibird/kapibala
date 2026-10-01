@@ -1,0 +1,31 @@
+TAP version 13
+# Subtest: pinned controller serializes real process-start identity as a string in live and retained HTTP snapshots
+not ok 1 - pinned controller serializes real process-start identity as a string in live and retained HTTP snapshots
+  ---
+  duration_ms: 587.195125
+  type: 'test'
+  location: '/private/tmp/kapibala-epoch-http-20261001/capture.mts:1:2156'
+  failureType: 'hookFailed'
+  error: 'Temporary database cleanup failed'
+  code: 'ERR_TEST_FAILURE'
+  name: 'AggregateError'
+  stack: |-
+    dispose (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/temporary-database.ts:55:13)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async TestHook.run (node:internal/test_runner/test:1409:7)
+    async Test.runHook (node:internal/test_runner/test:1289:9)
+    async after (node:internal/test_runner/test:1342:9)
+    async Test.run (node:internal/test_runner/test:1428:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Developer UUID DB /kapibala_test_5c655313b64447318c688cbb46ebb60e; revision 2716abdd2d43a779b6a0972a6323f895cf2b5b9c; guardian 5799; API http://127.0.0.1:57358
+# {"sourceRevision":"2716abdd2d43a779b6a0972a6323f895cf2b5b9c","applicationStartedType":"string","applicationStartedValue":"Thu Oct  1 21:53:02 2026","appPid":5800,"guardianPid":5799}
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 826.375708
