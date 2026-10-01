@@ -27,6 +27,11 @@ const rejectedPaths = [
   "/med\tia/tab-escape",
   "/media/new\nline",
   "/media/carriage\rreturn",
+  "http:../media/scheme-parent",
+  "http:./media/scheme-dot",
+  "http:%2e%2e/media/scheme-encoded-parent",
+  "http:.%2e/media/scheme-mixed-parent",
+  "HTTP:../media/uppercase-scheme",
 ];
 
 test("C1 rejects dangerous source syntax before URL normalization can erase it", (t) => {
@@ -61,6 +66,10 @@ test("C1 preserves supported same-origin media identifiers and the root endpoint
       "a..b",
       ".hidden",
       "v1.2",
+      "a:..",
+      "a:.",
+      "a:%2e%2e",
+      "%252e",
       "%2Ehidden",
       "file%20name",
       "%E4%B8%AD%E6%96%87",
@@ -86,7 +95,15 @@ test("C1 preserves supported same-origin media identifiers and the root endpoint
     "http://127.0.0.1:3101/media/file-1",
   );
   assert.equal(
+    trustedMediaUrl("http:media/file-1", "http://127.0.0.1:3101").href,
+    "http://127.0.0.1:3101/media/file-1",
+  );
+  assert.equal(
     trustedMediaUrl("file-1", "http://127.0.0.1:3101/media/").href,
+    "http://127.0.0.1:3101/media/file-1",
+  );
+  assert.equal(
+    trustedMediaUrl("http:file-1", "http://127.0.0.1:3101/media/").href,
     "http://127.0.0.1:3101/media/file-1",
   );
 });

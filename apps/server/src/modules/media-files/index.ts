@@ -79,7 +79,10 @@ export function trustedMediaUrl(source: string, gateway: string): URL {
       source.length > 4096 ||
       source !== source.trim() ||
       /[\x00-\x1f\x7f\\]/.test(source) ||
-      /(?:^|\/)(?:\.|%2e){1,2}(?=\/|[?#]|$)/i.test(source)
+      /(?:^|\/)(?:\.|%2e){1,2}(?=\/|[?#]|$)/i.test(
+        // Same-scheme relative URLs may start their path just after "http:".
+        source.replace(/^[a-z][a-z0-9+.-]*:/i, ""),
+      )
     )
       throw new Error();
     url = new URL(source, base);
