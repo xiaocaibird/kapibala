@@ -16,6 +16,7 @@ import { join } from "node:path";
 import { Readable } from "node:stream";
 import { pathToFileURL } from "node:url";
 import Fastify, { type FastifyReply } from "fastify";
+import type { QueryResultRow } from "pg";
 import { createApp } from "../../apps/server/src/app.js";
 import type { AppContext } from "../../apps/server/src/core/context.js";
 import { RemoteClient } from "../../apps/server/src/core/remote.js";
@@ -323,6 +324,46 @@ test("C1 timeout leaves no pointer and a replacement worker retries the interrup
   await f.db.query("UPDATE media_files SET next_attempt_at=now()");
   await new MediaFiles(f.ctx, { ...f.settings, timeoutMs: 1000 }).tick();
   assert.equal((await f.row("slow")).state, "ready");
+});
+
+test("C1 a local file-open failure closes the unconsumed HTTP response before its timeout", async (t) => {
+  const f = await fixture(t, { timeoutMs: 15000 });
+  const release = barrier();
+  f.temporary.onCleanup(async () => release.release());
+  let closed = false;
+  f.handlers.set("blocked-open", (reply) => {
+    reply.raw.on("close", () => {
+      closed = true;
+    });
+    return reply.send(
+      Readable.from(
+        (async function* () {
+          yield Buffer.from("initial bytes");
+          await release.promise;
+        })(),
+      ),
+    );
+  });
+  await f.inbound("blocked-open", "/media/blocked-open");
+  const original = f.db.query.bind(f.db);
+  f.db.query = async <R extends QueryResultRow = QueryResultRow>(
+    query: string,
+    values?: unknown[],
+  ) => {
+    const result = await original<R>(query, values);
+    if (query.startsWith("UPDATE media_files SET state='downloading'"))
+      await mkdir(join(f.directory, values![2] as string));
+    return result;
+  };
+  // The obstructing directory makes both open(O_EXCL) and unlink fail; the
+  // response must still close in the worker's finally block.
+  await assert.rejects(f.worker.tick());
+  await until(
+    async () => closed,
+    "HTTP response stayed open after the local failure",
+  );
+  assert.equal((await f.row("blocked-open")).local_file_path, null);
+  release.release();
 });
 
 test("C1 own-message reconciliation preserves media attached before its acknowledgement", async (t) => {

@@ -252,6 +252,7 @@ export class MediaFiles {
       AbortSignal.timeout(this.options.timeoutMs),
       ...(operation ? [operation] : []),
     ]);
+    let response: Response | undefined;
     try {
       const url = trustedMediaUrl(file.source_url, this.ctx.gateway.baseUrl);
       if (file.storage_root && file.storage_root !== this.options.directory)
@@ -281,7 +282,7 @@ export class MediaFiles {
         "UPDATE media_files SET state='downloading',storage_root=$2,partial_name=$3,attempts=attempts+1 WHERE id=$1",
         [file.id, this.options.directory, partialName],
       );
-      const response = await fetch(url, { redirect: "manual", signal });
+      response = await fetch(url, { redirect: "manual", signal });
       if (!response.ok) {
         await response.body?.cancel();
         if (
@@ -362,6 +363,10 @@ export class MediaFiles {
         { mediaId: file.id, permanent },
         "媒体下载未完成，消息文本已保留",
       );
+    } finally {
+      // A filesystem failure can happen after headers but before consuming the
+      // stream. Release that response before admitting another download.
+      await response?.body?.cancel().catch(() => {});
     }
   }
   async cleanupExpired(): Promise<number> {
