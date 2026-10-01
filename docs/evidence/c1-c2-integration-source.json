@@ -1,0 +1,82 @@
+{
+  "baseRevision": "68d28d80acb059387af14dcb41a2be62f1d14e12",
+  "newRealGeminiCalls": 0,
+  "liveTestsFlag": "GEMINI_LIVE_TESTS=0",
+  "existingCredentialVariablesRemoved": [
+    "GEMINI_API_KEY",
+    "GOOGLE_API_KEY",
+    "GEMINI_ENV_FILE"
+  ],
+  "existingLocalEnvPresent": false,
+  "evidenceType": "Offline integration regression; prior real Gemini evidence is retained and source-hash matched, not rerun.",
+  "previousRealEvidence": "docs/evidence/c2-gemini-live-final.json",
+  "previousRealEvidenceSha256": "329b8d6e15dfcb735f68b103693f76b95d8adca152cf6e5894c085c9b5bd8e72",
+  "existingSourceComparison": [
+    {
+      "path": "apps/gemini-agent/src/app.ts",
+      "expected": "b11172a7e83b2198059ded4d11c53ba2185e4fc6a265e2e579d58fad6bf20798",
+      "actual": "b11172a7e83b2198059ded4d11c53ba2185e4fc6a265e2e579d58fad6bf20798",
+      "matches": true
+    },
+    {
+      "path": "apps/gemini-agent/src/provider.ts",
+      "expected": "f1e070c3c285f6b41f9bee51efe8bd3b3df4c91d918eeca881c41ce63a5c40d1",
+      "actual": "f1e070c3c285f6b41f9bee51efe8bd3b3df4c91d918eeca881c41ce63a5c40d1",
+      "matches": true
+    },
+    {
+      "path": "apps/gemini-agent/src/protocol.ts",
+      "expected": "d66f1053662eca32a55e053b6a09dd0a4188eeceae5485e633480d962c3e417b",
+      "actual": "d66f1053662eca32a55e053b6a09dd0a4188eeceae5485e633480d962c3e417b",
+      "matches": true
+    },
+    {
+      "path": "apps/gemini-agent/src/sessions.ts",
+      "expected": "7754b8a8b00713e6892743fd6c03553a7554d94f49d642090e264a140ac356b2",
+      "actual": "7754b8a8b00713e6892743fd6c03553a7554d94f49d642090e264a140ac356b2",
+      "matches": true
+    },
+    {
+      "path": "tests/integration/gemini-agent-live.test.ts",
+      "expected": "4a34c4aeebadc621e36555e18b9e8f685e508ee2d569e0c9d38a4bd5daf7824a",
+      "actual": "4a34c4aeebadc621e36555e18b9e8f685e508ee2d569e0c9d38a4bd5daf7824a",
+      "matches": true
+    }
+  ],
+  "conflicts": [
+    ".env.example: retained both C1 and C2 configuration sections"
+  ],
+  "adapterFollowup": "Root executionAttemptId forwarding fix was not integrated into this test source.",
+  "initialFullProductRevision": "f5aac7ef0ab1d597c668ca4fbe3b8d691b900450",
+  "finalTargetedProductRevision": "0fd4b7de747c18aff3c4a1c6c92656c066a88928",
+  "nodeVersion": "v24.21.0",
+  "regressionResults": {
+    "initialFull": {
+      "tests": 511,
+      "pass": 500,
+      "fail": 2,
+      "skipped": 9
+    },
+    "receiptMigrationRerun": {
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skipped": 0
+    },
+    "finalTargeted": {
+      "tests": 54,
+      "pass": 54,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "originalToIntegrated": {
+    "9d0e81e": "5df39f938ee30a271a089d1bffb1acae0ae60054",
+    "5e3b5ce": "49f2e20280a575006ba30dd2bac758dde33d3a6a",
+    "fc5f213": "82afcdda47235adf796ea334ddef312a12305978",
+    "f9398fa": "f2464d7d004978abbf7611f189ac7dde5afaef10",
+    "ef167e6": "4cbcd47342fdff14d0599ac2f7816e9f0ec1eaaf",
+    "52b62c8": "f5aac7ef0ab1d597c668ca4fbe3b8d691b900450"
+  },
+  "protectedPathDiff": ""
+}

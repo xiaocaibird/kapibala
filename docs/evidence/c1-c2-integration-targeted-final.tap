@@ -1,0 +1,398 @@
+TAP version 13
+# Subtest: Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+ok 1 - Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+  ---
+  duration_ms: 358.29825
+  type: 'test'
+  ...
+# Independent database: kapibala_test_4f494365c9414790baad500db5de3176
+# Subtest: Agent capacity wait keeps the original activity budget and does not invent an unknown kick
+ok 2 - Agent capacity wait keeps the original activity budget and does not invent an unknown kick
+  ---
+  duration_ms: 1310.65
+  type: 'test'
+  ...
+# Independent database: kapibala_test_939532231ad04908b0ef020c24b989d6
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+ok 3 - Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+  ---
+  duration_ms: 361.004834
+  type: 'test'
+  ...
+# Independent database: kapibala_test_5e810eeb2283472483dd80ed8929daf3
+# Subtest: Agent cancellation while waiting for capacity ends after the current step without another turn
+ok 4 - Agent cancellation while waiting for capacity ends after the current step without another turn
+  ---
+  duration_ms: 218.395541
+  type: 'test'
+  ...
+# Independent database: kapibala_test_b27ad9a97c1b4f7dbb1262641b6cbd2e
+# Subtest: Agent does not dispatch a model request after its intent write consumes the remaining budget
+ok 5 - Agent does not dispatch a model request after its intent write consumes the remaining budget
+  ---
+  duration_ms: 577.576959
+  type: 'test'
+  ...
+# Independent database: kapibala_test_b1f313dcf92d47aca2804f154287051c
+# {"runId":"expired-intent","elapsedMs":389.92825,"persistedActiveMs":60178,"modelRequests":0}
+# Subtest: Agent does not dispatch an audit request after its intent write consumes the remaining budget
+ok 6 - Agent does not dispatch an audit request after its intent write consumes the remaining budget
+  ---
+  duration_ms: 509.044583
+  type: 'test'
+  ...
+# Independent database: kapibala_test_5b83a3e561b2483fb8fcf00400b4d2ef
+# {"runId":"expired-audit-intent","elapsedMs":415.04654199999993,"persistedActiveMs":60200,"auditRequests":0}
+# Subtest: CR01 migration 008 is atomic and repeatable, preserving actual old clocks and unknown historical receipts
+ok 7 - CR01 migration 008 is atomic and repeatable, preserving actual old clocks and unknown historical receipts
+  ---
+  duration_ms: 143.998
+  type: 'test'
+  ...
+# isolated database: kapibala_test_75d811e06a094f6bb003a05ff333f90e
+# Subtest: CR02 business rollback leaves a reliable receipt, and a new event handler reuses its stable identity
+ok 8 - CR02 business rollback leaves a reliable receipt, and a new event handler reuses its stable identity
+  ---
+  duration_ms: 138.645583
+  type: 'test'
+  ...
+# isolated database: kapibala_test_9229ec91a54943378515b75f38181647
+# Subtest: CR03 receipt-write failure prevents business application and a surviving process retains its first clock
+ok 9 - CR03 receipt-write failure prevents business application and a surviving process retains its first clock
+  ---
+  duration_ms: 152.681167
+  type: 'test'
+  ...
+# isolated database: kapibala_test_3a00f82606ca4e6f8c68eda8202642cd
+# Subtest: CR04 SIGKILL after independent receipt commit preserves the clock through a new process and sequence recovery
+ok 10 - CR04 SIGKILL after independent receipt commit preserves the clock through a new process and sequence recovery
+  ---
+  duration_ms: 574.651458
+  type: 'test'
+  ...
+# isolated database: kapibala_test_39d0117c161c410fba79734e4a79e667
+# {"case":"CR04","signal":"SIGKILL","savedObservedAt":1790856643757,"replayStartedAt":1790856644028,"recoveredObservedAt":1790856643757,"nextScheduledAt":1790856703757}
+# Subtest: CR05 two processes keep the first reliable record, not a later writer's earlier physical observation
+ok 11 - CR05 two processes keep the first reliable record, not a later writer's earlier physical observation
+  ---
+  duration_ms: 553.3025
+  type: 'test'
+  ...
+# isolated database: kapibala_test_c8a7faaf802649e6856d1bd1990fcb51
+# {"case":"CR05","earlierProcessStartedAt":1790856644344,"winningProcessStartedAt":1790856644602,"firstReliableObservedAt":1790856644602,"unchangedAfterEarlierObserverContinued":true}
+# Subtest: CR06 SIGKILL before receipt persistence demonstrates the unrecoverable observation window
+ok 12 - CR06 SIGKILL before receipt persistence demonstrates the unrecoverable observation window
+  ---
+  duration_ms: 506.888667
+  type: 'test'
+  ...
+# isolated database: kapibala_test_56d9e1508cc54004970062898f51b075
+# {"case":"CR06","lostProcessStartedAt":1790856644883,"replayStartedAt":1790856645139,"firstReliableObservedAt":1790856645139,"originalPhysicalObservationRecovered":false,"faultInjection":"process paused before receipt SQL submission, then SIGKILL","boundary":"Only the new reliable observation survives; this is not reconstruction of the lost receipt."}
+# Subtest: C2 offline entry: independent process loads only local key fields, random localhost port, sanitized logs and graceful lock release
+ok 13 - C2 offline entry: independent process loads only local key fields, random localhost port, sanitized logs and graceful lock release
+  ---
+  duration_ms: 189.160167
+  type: 'test'
+  ...
+# {"childPid":39712,"exitCode":0,"serviceAddress":"http://127.0.0.1:60011","realGenerationCalls":0,"keyLogged":false,"ownerLockRemoved":true}
+# Subtest: C2 offline: actual backend tools and all four single-block decisions are compatible
+ok 14 - C2 offline: actual backend tools and all four single-block decisions are compatible
+  ---
+  duration_ms: 143.51175
+  type: 'test'
+  ...
+# Subtest: C2 offline: invalid tool declarations and schemas stop before inference
+ok 15 - C2 offline: invalid tool declarations and schemas stop before inference
+  ---
+  duration_ms: 16.058542
+  type: 'test'
+  ...
+# Subtest: C2 offline: malformed requests and oversized histories do not buy inference
+ok 16 - C2 offline: malformed requests and oversized histories do not buy inference
+  ---
+  duration_ms: 9.099333
+  type: 'test'
+  ...
+# Subtest: C2 offline: interleaved runs preserve complete error history and idempotency keys without cross-run state
+ok 17 - C2 offline: interleaved runs preserve complete error history and idempotency keys without cross-run state
+  ---
+  duration_ms: 47.50675
+  type: 'test'
+  ...
+# Subtest: C2 offline: persistent same-request replay and completed-history continuation survive adapter restart
+ok 18 - C2 offline: persistent same-request replay and completed-history continuation survive adapter restart
+  ---
+  duration_ms: 49.309041
+  type: 'test'
+  ...
+# Subtest: C2 offline: conflicting run histories, corrupt state, symlink state and a second writer fail closed
+ok 19 - C2 offline: conflicting run histories, corrupt state, symlink state and a second writer fail closed
+  ---
+  duration_ms: 25.644416
+  type: 'test'
+  ...
+# Subtest: C2 offline: malformed or multiple model decisions never become an invented completion
+ok 20 - C2 offline: malformed or multiple model decisions never become an invented completion
+  ---
+  duration_ms: 119.856584
+  type: 'test'
+  ...
+# Subtest: C2 offline: audit pass/fail preserved, errors never grant permission and audit context stays separate
+ok 21 - C2 offline: audit pass/fail preserved, errors never grant permission and audit context stays separate
+  ---
+  duration_ms: 6.926208
+  type: 'test'
+  ...
+# Subtest: C2 offline: same-run concurrent inference rejected and total live generations bounded to four
+ok 22 - C2 offline: same-run concurrent inference rejected and total live generations bounded to four
+  ---
+  duration_ms: 55.913709
+  type: 'test'
+  ...
+# Subtest: C2 offline provider: official HTTPS request, header-only key, bounded JSON generation, no executable tools
+ok 23 - C2 offline provider: official HTTPS request, header-only key, bounded JSON generation, no executable tools
+  ---
+  duration_ms: 8.619166
+  type: 'test'
+  ...
+# Subtest: C2 offline provider: provider HTTP/auth/rate errors never reflect bodies or manufacture audit verdicts
+ok 24 - C2 offline provider: provider HTTP/auth/rate errors never reflect bodies or manufacture audit verdicts
+  ---
+  duration_ms: 0.856417
+  type: 'test'
+  ...
+# Subtest: C2 offline provider: invalid JSON, multiple candidates, native tools, truncation and safety blocks fail explicitly
+ok 25 - C2 offline provider: invalid JSON, multiple candidates, native tools, truncation and safety blocks fail explicitly
+  ---
+  duration_ms: 2.3
+  type: 'test'
+  ...
+# Subtest: C2 offline provider: actual abort signals stop bounded wait; no hidden automatic retry
+ok 26 - C2 offline provider: actual abort signals stop bounded wait; no hidden automatic retry
+  ---
+  duration_ms: 31.4015
+  type: 'test'
+  ...
+# Subtest: C1 idle ticks leave execution capacity free, while due downloads and cleanup still acquire the real lock
+ok 27 - C1 idle ticks leave execution capacity free, while due downloads and cleanup still acquire the real lock
+  ---
+  duration_ms: 219.671583
+  type: 'test'
+  ...
+# database=kapibala_test_fc8b173265894df79764a6169e35314d files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-WIUoc0
+# Subtest: C1 validates gateway media URLs and the default retention
+ok 28 - C1 validates gateway media URLs and the default retention
+  ---
+  duration_ms: 0.426875
+  type: 'test'
+  ...
+# Subtest: C1 upgrade queues legacy attachments and preserves references of existing running sessions
+ok 29 - C1 upgrade queues legacy attachments and preserves references of existing running sessions
+  ---
+  duration_ms: 87.873209
+  type: 'test'
+  ...
+# database=kapibala_test_25eb0982f2f64e85a06f62728f3bdbbe files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-migrations-EVzMB8
+# Subtest: C1 downloads once across duplicate events/workers and keeps message text
+ok 30 - C1 downloads once across duplicate events/workers and keeps message text
+  ---
+  duration_ms: 134.98975
+  type: 'test'
+  ...
+# database=kapibala_test_f7e98462e53a4864bdbd5669206e5120 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-kL9eWV
+# Subtest: C1 transient failure retries later; expired URL, redirect, and oversized body remain unavailable
+ok 31 - C1 transient failure retries later; expired URL, redirect, and oversized body remain unavailable
+  ---
+  duration_ms: 218.044125
+  type: 'test'
+  ...
+# database=kapibala_test_e9d3a03a66024f0b95527e007d2e3f24 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-SNEWi9
+# Subtest: C1 timeout leaves no pointer and a replacement worker retries the interrupted body
+ok 32 - C1 timeout leaves no pointer and a replacement worker retries the interrupted body
+  ---
+  duration_ms: 160.244084
+  type: 'test'
+  ...
+# database=kapibala_test_1b4dc19a75ca403993c7876904c4c2c4 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-6th5hd
+# Subtest: C1 a local file-open failure closes the unconsumed HTTP response before its timeout
+ok 33 - C1 a local file-open failure closes the unconsumed HTTP response before its timeout
+  ---
+  duration_ms: 97.300417
+  type: 'test'
+  ...
+# database=kapibala_test_d9633e690b844dd8b5294736e106476b files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-HBsmbR
+# Subtest: C1 own-message reconciliation preserves media attached before its acknowledgement
+ok 34 - C1 own-message reconciliation preserves media attached before its acknowledgement
+  ---
+  duration_ms: 118.141792
+  type: 'test'
+  ...
+# database=kapibala_test_e57bdc3cb5834fc987136abf3336514d files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-rvVQ4g
+# Subtest: C1 own-message acknowledgement and expiry cannot restore a deleted file pointer
+ok 35 - C1 own-message acknowledgement and expiry cannot restore a deleted file pointer
+  ---
+  duration_ms: 230.339667
+  type: 'test'
+  ...
+# database=kapibala_test_e12b44ffc7ca4831bd9d0ffd2edd2b20 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-mJs6W4
+# Subtest: C1 configured retention preserves younger files and rejects a changed storage root
+ok 36 - C1 configured retention preserves younger files and rejects a changed storage root
+  ---
+  duration_ms: 166.445042
+  type: 'test'
+  ...
+# database=kapibala_test_00dca914a80f4f12ad19dfd967ed4576 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-OoQJ0N
+# Subtest: C1 a failed unlink retains a retryable tombstone and does not stop other expired files
+ok 37 - C1 a failed unlink retains a retryable tombstone and does not stop other expired files
+  ---
+  duration_ms: 308.287792
+  type: 'test'
+  ...
+# database=kapibala_test_e881a00d28354b15a6cd34e8e7a4eab2 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-WaXh8g
+# Subtest: C1 deletion clears message references and old cursor file availability without changing frozen content
+ok 38 - C1 deletion clears message references and old cursor file availability without changing frozen content
+  ---
+  duration_ms: 259.357458
+  type: 'test'
+  ...
+# database=kapibala_test_172c485f3946485781aadc349695d3ef files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-eXsqTI
+# Subtest: C1 durable references serialize with cleanup and protect paused running sessions after restart
+ok 39 - C1 durable references serialize with cleanup and protect paused running sessions after restart
+  ---
+  duration_ms: 154.040875
+  type: 'test'
+  ...
+# database=kapibala_test_42a22decac20461dae8762cf1b43b115 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-STEqpE
+# Subtest: C1 actual Agent trigger and get_recent_messages register the files their messages reference
+ok 40 - C1 actual Agent trigger and get_recent_messages register the files their messages reference
+  ---
+  duration_ms: 218.81625
+  type: 'test'
+  ...
+# database=kapibala_test_9dfcd6bb91b943738f8373827f11b699 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-uLpFbZ
+# Subtest: C1 cleanup winning the row lock prevents a new run from pinning an unavailable file
+ok 41 - C1 cleanup winning the row lock prevents a new run from pinning an unavailable file
+  ---
+  duration_ms: 538.262792
+  type: 'test'
+  ...
+# database=kapibala_test_b27aba6334ef47f9adcf879b2077a04b files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-6CCHNS
+# Subtest: C1 SIGKILL during a streamed body discards its partial and retries on restart
+ok 42 - C1 SIGKILL during a streamed body discards its partial and retries on restart
+  ---
+  duration_ms: 324.271958
+  type: 'test'
+  ...
+# database=kapibala_test_d0818d83788f44eeb0622ed7b129b7d5 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-nssoQd
+# confirmed SIGKILL with persisted partial; restarted body is complete and partial is gone
+# Subtest: C1 SIGKILL at ready DB save recovers from the durable filesystem/intent boundary
+ok 43 - C1 SIGKILL at ready DB save recovers from the durable filesystem/intent boundary
+  ---
+  duration_ms: 10301.340166
+  type: 'test'
+  ...
+# database=kapibala_test_484403c177614b4cb82a356e4ef337d4 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-7LEOcD
+# confirmed child SIGKILL at ready; recovered state=ready; HTTP downloads=1
+# Subtest: C1 SIGKILL at deleted DB save recovers from the durable filesystem/intent boundary
+ok 44 - C1 SIGKILL at deleted DB save recovers from the durable filesystem/intent boundary
+  ---
+  duration_ms: 10268.77775
+  type: 'test'
+  ...
+# database=kapibala_test_ebdbd1bd635d4b548938ea02db3ea988 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-lMnWUN
+# confirmed child SIGKILL at deleted; recovered state=deleted; HTTP downloads=1
+# Subtest: C1 SIGKILL at rejected DB save recovers from the durable filesystem/intent boundary
+ok 45 - C1 SIGKILL at rejected DB save recovers from the durable filesystem/intent boundary
+  ---
+  duration_ms: 10290.83475
+  type: 'test'
+  ...
+# database=kapibala_test_e4d7ccd7cc0d44a8822c818dfff067ac files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-F5Y9ad
+# {"checkpoint":"ready","loweredMaxBytes":4,"state":"deleted","runningPin":false,"fileStillExists":false,"localFilePath":null,"downloads":1}
+# rejected complete body removed through durable deletion, after any running reference ends
+# Subtest: C1 SIGKILL at rejected-pinned DB save recovers from the durable filesystem/intent boundary
+ok 46 - C1 SIGKILL at rejected-pinned DB save recovers from the durable filesystem/intent boundary
+  ---
+  duration_ms: 10278.969125
+  type: 'test'
+  ...
+# database=kapibala_test_21ed872b38144cd49c05a83462b0b5d6 files=/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-media-YcE4tg
+# {"checkpoint":"ready","loweredMaxBytes":4,"state":"deleting","runningPin":true,"fileStillExists":true,"localFilePath":null,"downloads":1}
+# rejected complete body removed through durable deletion, after any running reference ends
+# Subtest: DC01 normal production main ignores test token and never opens a capacity bridge
+ok 47 - DC01 normal production main ignores test token and never opens a capacity bridge
+  ---
+  duration_ms: 419.439584
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_ad6aaf3d4c3b4e4eb8854fdb4d7117c8; revision 0fd4b7de747c18aff3c4a1c6c92656c066a88928; guardian 39727; API http://127.0.0.1:60032; controller http://127.0.0.1:60031
+# Subtest: DC02 real SUT holders, ownership rejects, immutable lease identity and independent release
+ok 48 - DC02 real SUT holders, ownership rejects, immutable lease identity and independent release
+  ---
+  duration_ms: 990.020625
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_77027b768a854de4b19ceefd27521eb2; revision 0fd4b7de747c18aff3c4a1c6c92656c066a88928; guardian 39733; API http://127.0.0.1:60079; controller http://127.0.0.1:60078
+# {"case":"DC02","eventCount":4,"refusal":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T12:10:46.476Z","kind":"admission-refused","attemptId":"06c739eb-7b75-4629-9def-5136792e6928","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},"terminal":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":4,"at":"2026-10-01T12:10:46.608Z","kind":"run-terminal","status":"finished","endReason":"final","activeElapsedMs":[296,354],"clockSource":"persisted active_ms through last sample; upper includes DB sample-to-terminal-observation tail plus 1ms timestamp resolution; prior hard-crash unsampled tail is not reconstructable"}}
+# Subtest: DC03 lost PUT response remains addressable; TTL and explicit release race preserve history
+ok 49 - DC03 lost PUT response remains addressable; TTL and explicit release race preserve history
+  ---
+  duration_ms: 1487.26225
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_27f9a15df8464c6f9c17d3d2330494d7; revision 0fd4b7de747c18aff3c4a1c6c92656c066a88928; guardian 39925; API http://127.0.0.1:60166; controller http://127.0.0.1:60165
+# {"case":"DC03","expiresAt":"2026-10-01T12:10:48.058Z","final":{"protocol":"qa-capacity-control/1","leaseId":"2ab6d882-261a-4d86-81b8-db99cadb16ad","state":"released","expiresAt":"2026-10-01T12:10:48.058Z","binding":{"apiUrl":"http://127.0.0.1:60166","revision":"0fd4b7de747c18aff3c4a1c6c92656c066a88928","pid":39925,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T12:10:47.274Z","kind":"capacity-held","holderKeys":["qa-capacity:409640c9-8561-4f77-90ea-c988c4aef1d9:2ab6d882-261a-4d86-81b8-db99cadb16ad:0","qa-capacity:409640c9-8561-4f77-90ea-c988c4aef1d9:2ab6d882-261a-4d86-81b8-db99cadb16ad:1","qa-capacity:409640c9-8561-4f77-90ea-c988c4aef1d9:2ab6d882-261a-4d86-81b8-db99cadb16ad:2","qa-capacity:409640c9-8561-4f77-90ea-c988c4aef1d9:2ab6d882-261a-4d86-81b8-db99cadb16ad:3","qa-capacity:409640c9-8561-4f77-90ea-c988c4aef1d9:2ab6d882-261a-4d86-81b8-db99cadb16ad:4","qa-capacity:409640c9-8561-4f77-90ea-c988c4aef1d9:2ab6d882-261a-4d86-81b8-db99cadb16ad:5","qa-capacity:409640c9-8561-4f77-90ea-c988c4aef1d9:2ab6d882-261a-4d86-81b8-db99cadb16ad:6"]},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T12:10:47.286Z","kind":"admission-refused","attemptId":"57ab0703-7a28-4b70-887c-664fcf0a1eca","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":3,"at":"2026-10-01T12:10:47.287Z","kind":"ready-persisted","attemptId":"57ab0703-7a28-4b70-887c-664fcf0a1eca"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":4,"at":"2026-10-01T12:10:47.342Z","kind":"admission-refused","attemptId":"8fedfb25-274f-4554-b9d5-42d19a28c744","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":5,"at":"2026-10-01T12:10:47.343Z","kind":"ready-persisted","attemptId":"8fedfb25-274f-4554-b9d5-42d19a28c744"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":6,"at":"2026-10-01T12:10:47.398Z","kind":"admission-refused","attemptId":"45528b9a-6c24-48e7-9619-1f764b9ef44e","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":7,"at":"2026-10-01T12:10:47.399Z","kind":"ready-persisted","attemptId":"45528b9a-6c24-48e7-9619-1f764b9ef44e"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":8,"at":"2026-10-01T12:10:47.455Z","kind":"admission-refused","attemptId":"d6afd219-30bc-40bb-8dde-00fdbf079743","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":9,"at":"2026-10-01T12:10:47.457Z","kind":"ready-persisted","attemptId":"d6afd219-30bc-40bb-8dde-00fdbf079743"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":10,"at":"2026-10-01T12:10:47.513Z","kind":"admission-refused","attemptId":"3c76b0df-9cdb-49a5-bd35-c569d1040d80","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":11,"at":"2026-10-01T12:10:47.514Z","kind":"ready-persisted","attemptId":"3c76b0df-9cdb-49a5-bd35-c569d1040d80"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":12,"at":"2026-10-01T12:10:47.572Z","kind":"admission-refused","attemptId":"5f6ec03a-5f6a-4c73-9160-ca75bdceac68","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":13,"at":"2026-10-01T12:10:47.572Z","kind":"ready-persisted","attemptId":"5f6ec03a-5f6a-4c73-9160-ca75bdceac68"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":14,"at":"2026-10-01T12:10:47.627Z","kind":"admission-refused","attemptId":"3b45821d-29da-48c8-b67f-ed5a7f796f1b","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":15,"at":"2026-10-01T12:10:47.628Z","kind":"ready-persisted","attemptId":"3b45821d-29da-48c8-b67f-ed5a7f796f1b"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":16,"at":"2026-10-01T12:10:47.683Z","kind":"admission-refused","attemptId":"d234222d-b699-4da4-b949-1b68b50c570c","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":17,"at":"2026-10-01T12:10:47.684Z","kind":"ready-persisted","attemptId":"d234222d-b699-4da4-b949-1b68b50c570c"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":18,"at":"2026-10-01T12:10:47.739Z","kind":"admission-refused","attemptId":"d2fd83c4-7585-4360-a12a-a39047f3f8fd","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":19,"at":"2026-10-01T12:10:47.740Z","kind":"ready-persisted","attemptId":"d2fd83c4-7585-4360-a12a-a39047f3f8fd"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":20,"at":"2026-10-01T12:10:47.795Z","kind":"admission-refused","attemptId":"0b86e61b-0fc0-4709-bfbb-45c666b3ef21","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":21,"at":"2026-10-01T12:10:47.796Z","kind":"ready-persisted","attemptId":"0b86e61b-0fc0-4709-bfbb-45c666b3ef21"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":22,"at":"2026-10-01T12:10:47.851Z","kind":"admission-refused","attemptId":"51686335-937a-44b4-8de2-cae7c15471d7","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":23,"at":"2026-10-01T12:10:47.852Z","kind":"ready-persisted","attemptId":"51686335-937a-44b4-8de2-cae7c15471d7"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":24,"at":"2026-10-01T12:10:47.907Z","kind":"admission-refused","attemptId":"df6ab38f-a37b-42bc-8e20-43a657fce0b1","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":25,"at":"2026-10-01T12:10:47.908Z","kind":"ready-persisted","attemptId":"df6ab38f-a37b-42bc-8e20-43a657fce0b1"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":26,"at":"2026-10-01T12:10:47.963Z","kind":"admission-refused","attemptId":"5dd15e2c-44c0-4753-a7ee-530acb87e611","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":27,"at":"2026-10-01T12:10:47.963Z","kind":"ready-persisted","attemptId":"5dd15e2c-44c0-4753-a7ee-530acb87e611"},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":28,"at":"2026-10-01T12:10:48.020Z","kind":"admission-refused","attemptId":"79305cb0-0375-49bd-a0eb-314273b2e2d5","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":29,"at":"2026-10-01T12:10:48.021Z","kind":"ready-persisted","attemptId":"79305cb0-0375-49bd-a0eb-314273b2e2d5"}]}}
+# Subtest: DC04 exact before-ready crash resumes the saved step and rebinds same API port to new guardian
+ok 50 - DC04 exact before-ready crash resumes the saved step and rebinds same API port to new guardian
+  ---
+  duration_ms: 2610.971333
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_e71e4cebcf85424291820876fa4c22ad; revision 0fd4b7de747c18aff3c4a1c6c92656c066a88928; guardian 40194; API http://127.0.0.1:60246; controller http://127.0.0.1:60245
+# {"case":"DC04-repaired-product-recovery","oldGuardian":40194,"newGuardian":40245,"held":{"protocol":"qa-capacity-control/1","leaseId":"d083b5ca-a4a3-4dae-95f2-20ad690759ec","state":"held","expiresAt":"2026-10-01T12:10:58.750Z","binding":{"apiUrl":"http://127.0.0.1:60246","revision":"0fd4b7de747c18aff3c4a1c6c92656c066a88928","pid":40194,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T12:10:48.766Z","kind":"capacity-held","holderKeys":["qa-capacity:7823897c-c823-4d5a-b315-fa8ea65cb62d:d083b5ca-a4a3-4dae-95f2-20ad690759ec:0","qa-capacity:7823897c-c823-4d5a-b315-fa8ea65cb62d:d083b5ca-a4a3-4dae-95f2-20ad690759ec:1","qa-capacity:7823897c-c823-4d5a-b315-fa8ea65cb62d:d083b5ca-a4a3-4dae-95f2-20ad690759ec:2","qa-capacity:7823897c-c823-4d5a-b315-fa8ea65cb62d:d083b5ca-a4a3-4dae-95f2-20ad690759ec:3","qa-capacity:7823897c-c823-4d5a-b315-fa8ea65cb62d:d083b5ca-a4a3-4dae-95f2-20ad690759ec:4","qa-capacity:7823897c-c823-4d5a-b315-fa8ea65cb62d:d083b5ca-a4a3-4dae-95f2-20ad690759ec:5","qa-capacity:7823897c-c823-4d5a-b315-fa8ea65cb62d:d083b5ca-a4a3-4dae-95f2-20ad690759ec:6"]},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T12:10:48.778Z","kind":"admission-refused","attemptId":"427a0cee-3ac2-490b-acea-e0e7fdeaf735","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":3,"at":"2026-10-01T12:10:48.778Z","kind":"before-ready-held","attemptId":"427a0cee-3ac2-490b-acea-e0e7fdeaf735","reason":"capacity","callbackEntered":false,"remoteRequestCount":0}]},"recovered":{"id":"capacity-run","groupId":"g","status":"finished","endReason":"final","summary":"done","recoveryNote":null,"steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"{\\"kicked\\":true}","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\\"stop_reason\\":\\"tool_use\\",\\"content\\":[{\\"type\\":\\"tool_use\\",\\"id\\":\\"kick-one\\",\\"name\\":\\"kick_user\\",\\"input\\":{\\"platform_user_id\\":\\"external-target\\",\\"reason\\":\\"engineering capacity observation\\"}}]}"},{"ordinal":2,"kind":"final","toolUseId":null,"name":null,"input":null,"resultSummary":"\\"done\\"","isError":false,"errorCode":null,"auditVerdict":null,"rawResponse":"{\\"stop_reason\\":\\"end_turn\\",\\"content\\":[{\\"type\\":\\"text\\",\\"text\\":\\"done\\"}]}"}]},"limit":"Development regression: the saved pre-dispatch intent resumes without repeating its audit or model response. The controller does not repair state. This is not a QA result."}
+# Subtest: DC05 pressure after dispatch holds remaining real slots without attributing a zero-effect refusal
+ok 51 - DC05 pressure after dispatch holds remaining real slots without attributing a zero-effect refusal
+  ---
+  duration_ms: 2796.15975
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_df7adec67d644aa4b12dada1aa91d259; revision 0fd4b7de747c18aff3c4a1c6c92656c066a88928; guardian 40643; API http://127.0.0.1:60336; controller http://127.0.0.1:60335
+# {"case":"DC05","snapshot":{"protocol":"qa-capacity-control/1","leaseId":"7514b9a1-f09d-45de-b975-4885685afc04","state":"held","expiresAt":"2026-10-01T12:11:01.361Z","binding":{"apiUrl":"http://127.0.0.1:60336","revision":"0fd4b7de747c18aff3c4a1c6c92656c066a88928","pid":40643,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T12:10:51.372Z","kind":"capacity-held","holderKeys":["qa-capacity:aed3a601-5044-4d28-babc-2e415b60f399:7514b9a1-f09d-45de-b975-4885685afc04:0","qa-capacity:aed3a601-5044-4d28-babc-2e415b60f399:7514b9a1-f09d-45de-b975-4885685afc04:1","qa-capacity:aed3a601-5044-4d28-babc-2e415b60f399:7514b9a1-f09d-45de-b975-4885685afc04:2","qa-capacity:aed3a601-5044-4d28-babc-2e415b60f399:7514b9a1-f09d-45de-b975-4885685afc04:3","qa-capacity:aed3a601-5044-4d28-babc-2e415b60f399:7514b9a1-f09d-45de-b975-4885685afc04:4","qa-capacity:aed3a601-5044-4d28-babc-2e415b60f399:7514b9a1-f09d-45de-b975-4885685afc04:5"]}]},"kicks":1,"publicRun":{"id":"capacity-run","groupId":"g","status":"finished","endReason":"final","summary":"done","recoveryNote":null,"steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"{\\"kicked\\":true}","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\\"stop_reason\\":\\"tool_use\\",\\"content\\":[{\\"type\\":\\"tool_use\\",\\"id\\":\\"kick-one\\",\\"name\\":\\"kick_user\\",\\"input\\":{\\"platform_user_id\\":\\"external-target\\",\\"reason\\":\\"engineering capacity observation\\"}}]}"},{"ordinal":2,"kind":"final","toolUseId":null,"name":null,"input":null,"resultSummary":"\\"done\\"","isError":false,"errorCode":null,"auditVerdict":null,"rawResponse":"{\\"stop_reason\\":\\"end_turn\\",\\"content\\":[{\\"type\\":\\"text\\",\\"text\\":\\"done\\"}]}"}]}}
+# Subtest: DC06 real uninterrupted budget reports measured active interval without clamping to 60000
+ok 52 - DC06 real uninterrupted budget reports measured active interval without clamping to 60000
+  ---
+  duration_ms: 62011.199875
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_254e7a6ce5dc4646be30911f0fdcf0b8; revision 0fd4b7de747c18aff3c4a1c6c92656c066a88928; guardian 40695; API http://127.0.0.1:60419; controller http://127.0.0.1:60418
+# {"case":"DC06-measurement-only","terminal":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2162,"at":"2026-10-01T12:11:54.037Z","kind":"run-terminal","status":"failed","endReason":"wall_clock","activeElapsedMs":[60001,60049],"clockSource":"persisted active_ms through last sample; upper includes DB sample-to-terminal-observation tail plus 1ms timestamp resolution; prior hard-crash unsampled tail is not reconstructable"},"persisted":60001,"independentElapsedMs":[60002.424666,60018.7995],"limit":"No 60000 clamp or new tolerance; QA classifies its own exact threshold. Valid only for this uninterrupted healthy clock epoch."}
+# Subtest: DC07 TTL releases the precise ready barrier without controller state writes
+ok 53 - DC07 TTL releases the precise ready barrier without controller state writes
+  ---
+  duration_ms: 1361.998125
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_6194f2cffc6d4412b4ec12b23ff5ff2e; revision 0fd4b7de747c18aff3c4a1c6c92656c066a88928; guardian 41822; API http://127.0.0.1:60737; controller http://127.0.0.1:60736
+# {"case":"DC07","snapshot":{"protocol":"qa-capacity-control/1","leaseId":"5577c431-6e8c-4496-a6f1-720ebbb94cb7","state":"released","expiresAt":"2026-10-01T12:11:56.873Z","binding":{"apiUrl":"http://127.0.0.1:60737","revision":"0fd4b7de747c18aff3c4a1c6c92656c066a88928","pid":41822,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T12:11:56.192Z","kind":"capacity-held","holderKeys":["qa-capacity:7e842482-eacf-4937-8d43-8459335eb36f:5577c431-6e8c-4496-a6f1-720ebbb94cb7:0","qa-capacity:7e842482-eacf-4937-8d43-8459335eb36f:5577c431-6e8c-4496-a6f1-720ebbb94cb7:1","qa-capacity:7e842482-eacf-4937-8d43-8459335eb36f:5577c431-6e8c-4496-a6f1-720ebbb94cb7:2","qa-capacity:7e842482-eacf-4937-8d43-8459335eb36f:5577c431-6e8c-4496-a6f1-720ebbb94cb7:3","qa-capacity:7e842482-eacf-4937-8d43-8459335eb36f:5577c431-6e8c-4496-a6f1-720ebbb94cb7:4","qa-capacity:7e842482-eacf-4937-8d43-8459335eb36f:5577c431-6e8c-4496-a6f1-720ebbb94cb7:5","qa-capacity:7e842482-eacf-4937-8d43-8459335eb36f:5577c431-6e8c-4496-a6f1-720ebbb94cb7:6"]},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T12:11:56.205Z","kind":"admission-refused","attemptId":"d024333f-7f6f-4346-b9a7-142b265918b4","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":3,"at":"2026-10-01T12:11:56.205Z","kind":"before-ready-held","attemptId":"d024333f-7f6f-4346-b9a7-142b265918b4","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":4,"at":"2026-10-01T12:11:56.875Z","kind":"ready-persisted","attemptId":"d024333f-7f6f-4346-b9a7-142b265918b4"}]}}
+# Subtest: DC08 a holder connection loss releases only its lease and does not fabricate a target refusal
+ok 54 - DC08 a holder connection loss releases only its lease and does not fabricate a target refusal
+  ---
+  duration_ms: 622.6415
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_c280172ec88a495e8d2f84bfe0362357; revision 0fd4b7de747c18aff3c4a1c6c92656c066a88928; guardian 41889; API http://127.0.0.1:60790; controller http://127.0.0.1:60789
+# {"case":"DC08","terminatedHolderPid":2004,"snapshot":{"protocol":"qa-capacity-control/1","leaseId":"7ecb8389-d130-41f7-a4c6-737c9fedc933","state":"released","expiresAt":"2026-10-01T12:12:07.542Z","binding":{"apiUrl":"http://127.0.0.1:60790","revision":"0fd4b7de747c18aff3c4a1c6c92656c066a88928","pid":41889,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T12:11:57.557Z","kind":"capacity-held","holderKeys":["qa-capacity:afc492fd-ae44-482b-83b5-64d9f4d26287:7ecb8389-d130-41f7-a4c6-737c9fedc933:0","qa-capacity:afc492fd-ae44-482b-83b5-64d9f4d26287:7ecb8389-d130-41f7-a4c6-737c9fedc933:1","qa-capacity:afc492fd-ae44-482b-83b5-64d9f4d26287:7ecb8389-d130-41f7-a4c6-737c9fedc933:2","qa-capacity:afc492fd-ae44-482b-83b5-64d9f4d26287:7ecb8389-d130-41f7-a4c6-737c9fedc933:3","qa-capacity:afc492fd-ae44-482b-83b5-64d9f4d26287:7ecb8389-d130-41f7-a4c6-737c9fedc933:4","qa-capacity:afc492fd-ae44-482b-83b5-64d9f4d26287:7ecb8389-d130-41f7-a4c6-737c9fedc933:5","qa-capacity:afc492fd-ae44-482b-83b5-64d9f4d26287:7ecb8389-d130-41f7-a4c6-737c9fedc933:6"]}]}}
+1..54
+# tests 54
+# suites 0
+# pass 54
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 75932.111334
