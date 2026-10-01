@@ -1,0 +1,47 @@
+TAP version 13
+# Subtest: QA C2 process: malformed HTTP status is safely rejected without killing service or retaining its lock
+not ok 1 - QA C2 process: malformed HTTP status is safely rejected without killing service or retaining its lock
+  ---
+  duration_ms: 180.359542
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/qa-gemini-agent-process.test.ts:1:13549'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+        body: {
+    +     transportError: 'connection closed'
+    -     code: 'MODEL_UNAVAILABLE'
+        },
+    +   status: 0
+    -   status: 502
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    status: 502
+    body:
+      code: 'MODEL_UNAVAILABLE'
+  actual:
+    status: 0
+    body:
+      transportError: 'connection closed'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/qa-gemini-agent-process.test.ts:639:12)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# {"exit":{"code":1,"signal":null},"ownerLockRetained":true,"stderr":"node:internal/deps/undici/undici:11910\\n        throw new RangeError('init[\\"status\\"] must be in the range of 200 to 599, inclusive.');\\n        ^\\n\\nRangeError: init[\\"status\\"] must be in the range of 200 to 599, inclusive.\\n    at initializeResponse (node:internal/deps/undici/undici:11910:15)\\n    at new Response (node:internal/deps/undici/undici:11668:9)\\n    at ClientRequest.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/scripts/qa-gemini-agent.ts:72:27)\\n    at ClientRequest.wrapper (node:events:639:12)\\n    at ClientRequest.emit (node:events:514:28)\\n    at HTTPParser.parserOnIncomingClient [as onIncoming] (node:_http_client:971:27)\\n    at HTTPParser.parserOnHeadersComplete (node:_http_common:125:17)\\n    at Socket.socketOnData (node:_http_client:806:22)\\n    at Socket.emit (node:events:514:28)\\n    at addChunk (node:internal/streams/readable:568:12)\\n\\nNode.js v24.21.0\\n"}
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 290.757333

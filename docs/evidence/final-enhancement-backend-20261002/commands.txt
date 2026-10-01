@@ -1,0 +1,18 @@
+Source: d832573e7302b00e655da17f8dcce2acac96b4b8
+Worktree: /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala
+Independent PostgreSQL: kapibala-final-backend-20261002, 127.0.0.1:60071, PostgreSQL 17.11
+All test commands had DATABASE_URL bound to this owned container; connection credentials are not recorded.
+Real Gemini calls disabled; GEMINI_API_KEY / GOOGLE_API_KEY / GEMINI_ENV_FILE unset.
+
+npm ci
+npm run typecheck
+npm run build
+npm run verify:boundaries -- --self-test
+
+node_modules/.bin/tsx --test --test-reporter=tap --test-concurrency=1 tests/integration/automation-guard-effects.test.ts tests/integration/agent-managed-target.test.ts tests/integration/group-profile-conflict.test.ts tests/integration/agent-capacity.test.ts tests/integration/core-resource-observability.test.ts
+
+node_modules/.bin/tsx --test --test-reporter=tap --test-concurrency=1 tests/integration/automation.test.ts tests/integration/agent-kick-recovery.test.ts tests/integration/qa-runtime-observation.test.ts tests/integration/core-automation-repair.test.ts tests/integration/agent-dispatch-budget.test.ts
+
+node_modules/.bin/tsx scripts/verify-automation-guards.ts --output .runtime/final-enhancement-backend/mutations
+
+Initial focused run: the three newly written tests used an invalid fixture status (offline rather than disconnected), an incorrect persisted step spelling (completed rather than complete), and counted the final response as a tool step. These fixture/expectation errors were corrected before final verification; no product behavior was relaxed. Raw initial-focused.tap retained.

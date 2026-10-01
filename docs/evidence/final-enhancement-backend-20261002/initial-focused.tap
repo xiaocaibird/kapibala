@@ -1,0 +1,116 @@
+✔ managed target: creator cannot be automatically removed (364.548708ms)
+ℹ Independent database: kapibala_test_213bc832ed9e4a8188437cdc43426467
+✔ managed target: admin cannot be automatically removed (141.059083ms)
+ℹ Independent database: kapibala_test_bdaf87348c8f460a87cf5afdeaf42118
+✖ managed target: offline ordinary member cannot be automatically removed (78.664584ms)
+ℹ Independent database: kapibala_test_92d7090dc98f4a1b8f0a27d41f83ca59
+✔ managed target: current account mapping before member projection cannot be automatically removed (243.228916ms)
+ℹ Independent database: kapibala_test_84c8f64a6aae486dab362cd52167371d
+✔ managed target: previous member projection during identity replacement cannot be automatically removed (149.457084ms)
+ℹ Independent database: kapibala_test_7a3cc5b3a36043b18434b1d576b8ac74
+✔ managed target: an external target retains the audited real kick path (247.632792ms)
+ℹ Independent database: kapibala_test_6c94d67f7b62451d8cf5e82d37dd3069
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ managed target: identity becoming managed during audit is checked after audit (245.341125ms)
+ℹ Independent database: kapibala_test_4f4e6c6571db4f2e8c302d4a63c93b31
+✔ managed target: identity is rechecked after waiting to persist dispatch intent (162.926083ms)
+ℹ Independent database: kapibala_test_89fa48064dea4f9791c31483735528d6
+✖ Agent disable transaction delegates cancellation and allows only the current step to finish (144.059792ms)
+ℹ Independent database: kapibala_test_e9dd28d2b4724adbb334b8753274e1c6
+✔ guard effects: audit fail creates no message/key and makes no remote send (386.903333ms)
+ℹ Independent database: kapibala_test_de54bb024fc145068ed5338fcb93229d
+✖ guard effects: same key reuses original identity without a second audit or remote send (363.704416ms)
+ℹ Independent database: kapibala_test_3d5d605c521742ff8f3029dc05acaf4e
+✔ group profile conflict: same-field concurrent edits across instances have one winner (156.86725ms)
+ℹ Independent database: kapibala_test_7bf5923ee36f475789d4d6202a5cca72
+✔ group profile conflict: independent fields can commit concurrently (106.35775ms)
+ℹ Independent database: kapibala_test_316af86fe4ad4cf9919a0108b3a5ef31
+✔ group profile conflict: a stale field rolls back the whole patch without events or Agent cancellation (93.314667ms)
+ℹ Independent database: kapibala_test_fd2a854c19c64b9c8d146807fb671374
+✔ group profile conflict: null and raw original values are compared without normalization (109.607292ms)
+ℹ Independent database: kapibala_test_5dc6ccc7c0854ef5a282b711f62d700b
+✔ group profile conflict: expected is strict nonempty and matches precisely the supplied profile fields (92.678083ms)
+ℹ Independent database: kapibala_test_602a3301c0f74034afb070534a5b93a3
+✔ group profile conflict: legacy requests and successful mixed settings retain existing behavior (97.564875ms)
+ℹ Independent database: kapibala_test_c8a1fd6828b549bea29f6e3e3450c337
+✔ group profile conflict: viewer and unauthenticated requests cannot mutate or inspect conflict details (186.608209ms)
+ℹ Independent database: kapibala_test_00b7271301cf4d99a647567f912f8b18
+✔ Agent disable transaction rolls back profile and delegated cancellation when event persistence fails (88.553375ms)
+ℹ Independent database: kapibala_test_04e9e832a39947cab9c6685d1d995250
+ℹ tests 19
+ℹ suites 0
+ℹ pass 16
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4036.789834
+
+✖ failing tests:
+
+test at tests/integration/agent-managed-target.test.ts:31:3
+✖ managed target: offline ordinary member cannot be automatically removed (78.664584ms)
+  error: new row for relation "accounts" violates check constraint "accounts_status_check"
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:120:20)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-managed-target.test.ts:33:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    length: 277,
+    severity: 'ERROR',
+    code: '23514',
+    detail: 'Failing row contains (account-3, offline, account-3, null, 2026-10-01 16:43:20.468704+00).',
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: 'public',
+    table: 'accounts',
+    column: undefined,
+    dataType: undefined,
+    constraint: 'accounts_status_check',
+    file: 'execMain.c',
+    line: '2074',
+    routine: 'ExecConstraints'
+  }
+
+test at tests/integration/agent-managed-target.test.ts:97:1
+✖ Agent disable transaction delegates cancellation and allows only the current step to finish (144.059792ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 'complete'
+  - 'completed'
+             ^
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/agent-managed-target.test.ts:113:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'complete',
+    expected: 'completed',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/automation-guard-effects.test.ts:42:1
+✖ guard effects: same key reuses original identity without a second audit or remote send (363.704416ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  3 !== 2
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/automation-guard-effects.test.ts:50:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

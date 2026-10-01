@@ -1,0 +1,268 @@
+{
+  "source": "544c4f9ce71b5dd893be286853a35df340072a7d",
+  "sourceFiles": {
+    "apps/server/src/modules/gateway/index.ts": "635372f06e79f3bfe2230f23df6ad6f3e614738cdf1d5645d0286ecc0494d199",
+    "tests/integration/timeline-measurement.test.ts": "7f26b45b4b2f2280d8a91fe457422c1eee16a7df304b35bb8b2a8019f5702fcf"
+  },
+  "database": "kapibala_test_2b6de929841a428d9060c78197329f82",
+  "postgres": {
+    "version": "PostgreSQL 17.11 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+    "work_mem": "4MB"
+  },
+  "node": "v24.21.0",
+  "indexes": [
+    {
+      "indexname": "messages_client_msg_id_key",
+      "indexdef": "CREATE UNIQUE INDEX messages_client_msg_id_key ON public.messages USING btree (client_msg_id)"
+    },
+    {
+      "indexname": "messages_group_id_msg_id_key",
+      "indexdef": "CREATE UNIQUE INDEX messages_group_id_msg_id_key ON public.messages USING btree (group_id, msg_id)"
+    },
+    {
+      "indexname": "messages_pkey",
+      "indexdef": "CREATE UNIQUE INDEX messages_pkey ON public.messages USING btree (id)"
+    },
+    {
+      "indexname": "messages_queue",
+      "indexdef": "CREATE INDEX messages_queue ON public.messages USING btree (account_id, created_at, id) WHERE (delivery_status = ANY (ARRAY['queued'::text, 'unknown'::text]))"
+    },
+    {
+      "indexname": "timeline_snapshots_pkey",
+      "indexdef": "CREATE UNIQUE INDEX timeline_snapshots_pkey ON public.timeline_snapshots USING btree (id)"
+    }
+  ],
+  "statistics": [
+    {
+      "attname": "group_id",
+      "n_distinct": 2,
+      "null_frac": 0,
+      "correlation": -0.5
+    },
+    {
+      "attname": "id",
+      "n_distinct": -1,
+      "null_frac": 0,
+      "correlation": -0.5
+    },
+    {
+      "attname": "sent_at",
+      "n_distinct": 1200,
+      "null_frac": 0,
+      "correlation": 0.4809755
+    }
+  ],
+  "distribution": {
+    "measuredGroup": 10000,
+    "controlGroup": 10000,
+    "total": 20000,
+    "ownFraction": 0.1,
+    "lateTimestampFraction": 0.02,
+    "timestamps": "floor(n/10) seconds; every 50th timestamp is one day earlier; insertion order is n",
+    "text": "synthetic identifier and 224 ASCII sample bytes",
+    "limit": 50
+  },
+  "address": "http://127.0.0.1:49477",
+  "first": {
+    "elapsedMs": 120.65758399999982,
+    "responseBytes": 23065,
+    "heapUsedDelta": 25380664,
+    "rssDelta": 30883840
+  },
+  "continuation": {
+    "elapsedMs": 8.578875000000153,
+    "responseBytes": 23059,
+    "heapUsedDelta": -33800904,
+    "rssDelta": -7241728
+  },
+  "queryObservations": [
+    {
+      "sql": "SELECT * FROM messages WHERE group_id=$1 ORDER BY sent_at DESC,id DESC",
+      "elapsedMs": 29.464375000000018,
+      "rows": 10000,
+      "resultBytes": 7157182,
+      "parameters": [
+        "measured"
+      ]
+    },
+    {
+      "sql": "INSERT INTO timeline_snapshots(id,group_id,items) VALUES($1,$2,$3)",
+      "elapsedMs": 57.10374999999999,
+      "rows": 0,
+      "resultBytes": 2,
+      "parameters": "snapshot omitted; metadata only"
+    },
+    {
+      "sql": "SELECT jsonb_array_length(items) AS total, jsonb_path_query_array(items, '$[$start to $last]'::jsonpath, jsonb_build_object('start', LEAST($3::numeric, jsonb_array_length(items)), 'last', LEAST(jsonb_array_length(items), $3::numeric+$4::int)-1)) AS items FROM timeline_snapshots WHERE id=$1 AND group_id=$2",
+      "elapsedMs": 5.700249999999869,
+      "rows": 1,
+      "resultBytes": 22919,
+      "parameters": [
+        "ea14b14b-6df1-4380-b838-8c8d23a97dd2",
+        "measured",
+        50,
+        50
+      ]
+    }
+  ],
+  "snapshot": {
+    "count": 10000,
+    "storedBytes": 274969,
+    "jsonBytes": 4580182
+  },
+  "plans": [
+    {
+      "sql": "SELECT * FROM messages WHERE group_id=$1 ORDER BY sent_at DESC,id DESC",
+      "parameters": [
+        "measured"
+      ],
+      "plan": [
+        {
+          "Plan": {
+            "Node Type": "Sort",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 4000.39,
+            "Total Cost": 4025.39,
+            "Plan Rows": 10000,
+            "Plan Width": 464,
+            "Actual Startup Time": 4.983,
+            "Actual Total Time": 5.415,
+            "Actual Rows": 10000,
+            "Actual Loops": 1,
+            "Sort Key": [
+              "sent_at DESC",
+              "id DESC"
+            ],
+            "Sort Method": "quicksort",
+            "Sort Space Used": 4021,
+            "Sort Space Type": "Memory",
+            "Shared Hit Blocks": 1000,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Seq Scan",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Relation Name": "messages",
+                "Alias": "messages",
+                "Startup Cost": 0,
+                "Total Cost": 1250,
+                "Plan Rows": 10000,
+                "Plan Width": 464,
+                "Actual Startup Time": 0.006,
+                "Actual Total Time": 1.635,
+                "Actual Rows": 10000,
+                "Actual Loops": 1,
+                "Filter": "(group_id = 'measured'::text)",
+                "Rows Removed by Filter": 10000,
+                "Shared Hit Blocks": 1000,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 1,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.046,
+          "Triggers": [],
+          "Execution Time": 5.854
+        }
+      ]
+    },
+    {
+      "sql": "SELECT jsonb_array_length(items) AS total, jsonb_path_query_array(items, '$[$start to $last]'::jsonpath, jsonb_build_object('start', LEAST($3::numeric, jsonb_array_length(items)), 'last', LEAST(jsonb_array_length(items), $3::numeric+$4::int)-1)) AS items FROM timeline_snapshots WHERE id=$1 AND group_id=$2",
+      "parameters": [
+        "ea14b14b-6df1-4380-b838-8c8d23a97dd2",
+        "measured",
+        50,
+        50
+      ],
+      "plan": [
+        {
+          "Plan": {
+            "Node Type": "Index Scan",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Scan Direction": "Forward",
+            "Index Name": "timeline_snapshots_pkey",
+            "Relation Name": "timeline_snapshots",
+            "Alias": "timeline_snapshots",
+            "Startup Cost": 0.15,
+            "Total Cost": 8.2,
+            "Plan Rows": 1,
+            "Plan Width": 36,
+            "Actual Startup Time": 3.874,
+            "Actual Total Time": 4.302,
+            "Actual Rows": 1,
+            "Actual Loops": 1,
+            "Index Cond": "(id = 'ea14b14b-6df1-4380-b838-8c8d23a97dd2'::text)",
+            "Rows Removed by Index Recheck": 0,
+            "Filter": "(group_id = 'measured'::text)",
+            "Rows Removed by Filter": 0,
+            "Shared Hit Blocks": 146,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning": {
+            "Shared Hit Blocks": 0,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.026,
+          "Triggers": [],
+          "Execution Time": 4.313
+        }
+      ]
+    }
+  ],
+  "semantics": {
+    "sameTimestampOrdering": true,
+    "lateArrivalKeptOutOfOldSnapshot": true,
+    "outboundConfirmationKeptOutOfOldSnapshot": true,
+    "allOldCursorValuesUnchanged": true,
+    "emptySnapshotAndBeyondEndOffsets": true,
+    "freshSnapshotCount": 10001
+  },
+  "measurementLimits": "One first-page and one continuation HTTP sample per scale; EXPLAIN follows those samples on warmed data. Memory is process before/after delta, not peak. No p95, capacity or production-load guarantee. No index/query/product changes."
+}

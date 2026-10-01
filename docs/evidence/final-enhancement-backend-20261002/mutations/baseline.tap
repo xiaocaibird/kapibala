@@ -1,0 +1,26 @@
+TAP version 13
+# Subtest: guard effects: audit fail creates no message/key and makes no remote send
+ok 1 - guard effects: audit fail creates no message/key and makes no remote send
+  ---
+  duration_ms: 330.032541
+  type: 'test'
+  ...
+# Independent database: kapibala_test_d4c677b5a8d7418f9f7eccfd32a52e07
+# {"guard":"audit-fail","audits":1,"remoteSends":0,"messages":0,"keys":0,"errorCode":"AUDIT_REJECTED"}
+# Subtest: guard effects: same key reuses original identity without a second audit or remote send
+ok 2 - guard effects: same key reuses original identity without a second audit or remote send
+  ---
+  duration_ms: 389.724917
+  type: 'test'
+  ...
+# Independent database: kapibala_test_aceb8d496e0a48799bf0ff57bb22a797
+# {"guard":"same-key","audits":1,"remoteSends":1,"messages":1,"keys":1,"results":[{"clientMsgId":"f5bb5db6-5666-4f70-a98f-561175f920dc","deliveryStatus":"accepted"},{"clientMsgId":"f5bb5db6-5666-4f70-a98f-561175f920dc","deliveryStatus":"accepted"}]}
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 928.093125

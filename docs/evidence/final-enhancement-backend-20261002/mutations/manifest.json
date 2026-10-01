@@ -1,0 +1,57 @@
+{
+  "revision": "d832573e7302b00e655da17f8dcce2acac96b4b8",
+  "outcome": "passed",
+  "node": "v24.21.0",
+  "records": [
+    {
+      "name": "baseline",
+      "exitCode": 0,
+      "detectedBy": null,
+      "command": [
+        "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node",
+        "node_modules/tsx/dist/cli.mjs",
+        "--test",
+        "--test-reporter=tap",
+        "--test-concurrency=1",
+        "tests/integration/automation-guard-effects.test.ts"
+      ],
+      "sourceSha256": "13834fd7e526687dc994560ae1e42ae7c96ab48be4a36d52f8e0e9b1b9107038"
+    },
+    {
+      "name": "audit-fail-bypass",
+      "exitCode": 1,
+      "detectedBy": "guard effects: audit fail creates no message/key and makes no remote send",
+      "command": [
+        "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node",
+        "node_modules/tsx/dist/cli.mjs",
+        "--test",
+        "--test-reporter=tap",
+        "--test-concurrency=1",
+        "tests/integration/automation-guard-effects.test.ts"
+      ],
+      "sourceSha256": "3c388d12dedbc534b3531c92548fe0b61bd74c6936dfe2e1a7e7ed9bec0da7e7"
+    },
+    {
+      "name": "same-key-repeat-audit",
+      "exitCode": 1,
+      "detectedBy": "guard effects: same key reuses original identity without a second audit or remote send",
+      "command": [
+        "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node",
+        "node_modules/tsx/dist/cli.mjs",
+        "--test",
+        "--test-reporter=tap",
+        "--test-concurrency=1",
+        "tests/integration/automation-guard-effects.test.ts"
+      ],
+      "sourceSha256": "463a5a1373ba370f01f6f4f36188292f0801a87a87e9ef37f0959357fe36cccb"
+    },
+    {
+      "name": "literal SQL boundary controlled violation",
+      "exitCode": 1,
+      "file": "apps/server/src/modules/gateway/controlled-boundary-violation.ts"
+    }
+  ],
+  "temporaryCopy": "/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-guard-mutation-etMytr",
+  "temporaryCopyRemoved": true,
+  "credentialsIncluded": false
+}

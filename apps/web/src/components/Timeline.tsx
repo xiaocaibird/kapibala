@@ -8,7 +8,7 @@ import {
   messageKey,
 } from "../attention/pageAdapters";
 import { useLayoutEffect, useRef, useState, type FormEvent } from "react";
-import { post } from "../api/client";
+import { getSessionGeneration, post } from "../api/client";
 import { sentSchema, type Account, type Group } from "../api/schemas";
 import { useTimeline } from "../hooks/useTimeline";
 import { useAuth } from "../state/auth";
@@ -69,6 +69,9 @@ export function Timeline({
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<unknown>(null);
+  const draftRevision = useRef(0);
+  const pending = useRef(false);
+  const mounted = useRef(false);
   const scroller = useRef<HTMLDivElement>(null);
   const nearBottom = useRef(true);
   const previousHeight = useRef<number | null>(null);
@@ -113,6 +116,24 @@ export function Timeline({
   });
   const selected = resolveSenderSelection(accountId, candidates);
   const senderAvailable = candidates.some((account) => account.id === selected);
+  const context = JSON.stringify([
+    group.id,
+    user?.username,
+    user?.role,
+    selected,
+  ]);
+  const currentContext = useRef(context);
+  useLayoutEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      draftRevision.current++;
+    };
+  }, []);
+  useLayoutEffect(() => {
+    currentContext.current = context;
+    draftRevision.current++;
+  }, [context]);
   useLayoutEffect(() => {
     // Retain the initial default too, so later snapshots cannot silently change it.
     if (!accountId && selected) setAccountId(selected);
@@ -127,7 +148,20 @@ export function Timeline({
   }, [timeline.items]);
   const send = async (event: FormEvent): Promise<void> => {
     event.preventDefault();
-    if (!text.trim() || !senderAvailable || group.status !== "active") return;
+    if (
+      pending.current ||
+      !text.trim() ||
+      !senderAvailable ||
+      group.status !== "active"
+    )
+      return;
+    pending.current = true;
+    const revision = draftRevision.current;
+    const session = getSessionGeneration();
+    const isCurrentContext = () =>
+      mounted.current &&
+      currentContext.current === context &&
+      getSessionGeneration() === session;
     const clientMsgId = crypto.randomUUID();
     ownSends.register(clientMsgId);
     setBusy(true);
@@ -138,13 +172,16 @@ export function Timeline({
         sentSchema,
         { accountId: selected, text, clientMsgId },
       );
-      setText("");
+      if (!isCurrentContext()) return;
+      // Editing A → B → A is still a new draft, even if its text is identical.
+      if (draftRevision.current === revision) setText("");
       nearBottom.current = true;
       await timeline.reconcile();
     } catch (value) {
-      setError(value);
+      if (isCurrentContext()) setError(value);
     } finally {
-      setBusy(false);
+      pending.current = false;
+      if (mounted.current) setBusy(false);
     }
   };
   return (
@@ -247,7 +284,10 @@ export function Timeline({
                 aria-label="消息内容"
                 placeholder="输入要发送到群的消息…"
                 value={text}
-                onChange={(event) => setText(event.target.value)}
+                onChange={(event) => {
+                  draftRevision.current++;
+                  setText(event.target.value);
+                }}
                 rows={2}
                 maxLength={20_000}
               />
@@ -263,7 +303,10 @@ export function Timeline({
                   <select
                     aria-label="发送身份"
                     value={selected}
-                    onChange={(event) => setAccountId(event.target.value)}
+                    onChange={(event) => {
+                      draftRevision.current++;
+                      setAccountId(event.target.value);
+                    }}
                     disabled={!candidates.length}
                   >
                     <option value="" disabled>

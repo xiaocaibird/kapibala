@@ -5,9 +5,16 @@ import {
 } from "../attention/pageAdapters";
 import { agentRunSchema } from "../api/schemas";
 import { useResource } from "../hooks/useResource";
+import { agentDetailHref } from "../hooks/useRoute";
 import { Badge, Empty, ErrorNotice, Icon, Loading } from "./ui";
 const runsSchema = agentRunSchema.array();
-export function AgentRunList({ groupId }: { groupId: string }) {
+export function AgentRunList({
+  groupId,
+  origin = "groups",
+}: {
+  groupId: string;
+  origin?: "groups" | "agent-runs";
+}) {
   const { data, error, loading, reload, snapshot } = useResource(
     `/api/groups/${encodeURIComponent(groupId)}/agent-runs`,
     runsSchema,
@@ -68,7 +75,7 @@ export function AgentRunList({ groupId }: { groupId: string }) {
           {data.map((run) => (
             <a
               className={`run-list-item ${run.status === "blocked" ? "run-blocked" : ""}`}
-              href={`#/agent-runs/${encodeURIComponent(run.id)}`}
+              href={agentDetailHref(run.id, origin, groupId)}
               key={run.id}
               {...attention.itemProps(run.id)}
             >

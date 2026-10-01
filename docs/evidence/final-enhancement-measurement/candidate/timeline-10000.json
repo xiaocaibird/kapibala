@@ -1,0 +1,414 @@
+{
+  "source": "ac5e8e639237070fb5c48751ce04a7645b4a19ab",
+  "database": "kapibala_test_d2eceb258dd34f8c919d36e0fbe16a5c",
+  "postgres": {
+    "version": "PostgreSQL 17.11 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit",
+    "work_mem": "4MB"
+  },
+  "node": "v24.21.0",
+  "indexes": [
+    {
+      "indexname": "messages_client_msg_id_key",
+      "indexdef": "CREATE UNIQUE INDEX messages_client_msg_id_key ON public.messages USING btree (client_msg_id)"
+    },
+    {
+      "indexname": "messages_group_id_msg_id_key",
+      "indexdef": "CREATE UNIQUE INDEX messages_group_id_msg_id_key ON public.messages USING btree (group_id, msg_id)"
+    },
+    {
+      "indexname": "messages_pkey",
+      "indexdef": "CREATE UNIQUE INDEX messages_pkey ON public.messages USING btree (id)"
+    },
+    {
+      "indexname": "messages_queue",
+      "indexdef": "CREATE INDEX messages_queue ON public.messages USING btree (account_id, created_at, id) WHERE (delivery_status = ANY (ARRAY['queued'::text, 'unknown'::text]))"
+    },
+    {
+      "indexname": "timeline_snapshots_pkey",
+      "indexdef": "CREATE UNIQUE INDEX timeline_snapshots_pkey ON public.timeline_snapshots USING btree (id)"
+    }
+  ],
+  "statistics": [
+    {
+      "attname": "group_id",
+      "n_distinct": 2,
+      "null_frac": 0,
+      "correlation": -0.5
+    },
+    {
+      "attname": "id",
+      "n_distinct": -1,
+      "null_frac": 0,
+      "correlation": -0.5
+    },
+    {
+      "attname": "sent_at",
+      "n_distinct": 1200,
+      "null_frac": 0,
+      "correlation": 0.4809755
+    }
+  ],
+  "distribution": {
+    "measuredGroup": 10000,
+    "controlGroup": 10000,
+    "total": 20000,
+    "ownFraction": 0.1,
+    "lateTimestampFraction": 0.02,
+    "timestamps": "floor(n/10) seconds; every 50th timestamp is one day earlier; insertion order is n",
+    "text": "synthetic identifier and 224 ASCII sample bytes",
+    "limit": 50
+  },
+  "address": "http://127.0.0.1:62162",
+  "first": {
+    "elapsedMs": 107.14520900000002,
+    "responseBytes": 23065,
+    "heapUsedDelta": 25760600,
+    "rssDelta": 30195712
+  },
+  "continuation": {
+    "elapsedMs": 73.23250000000007,
+    "responseBytes": 23059,
+    "heapUsedDelta": -33264184,
+    "rssDelta": -7258112
+  },
+  "queryObservations": [
+    {
+      "sql": "SELECT * FROM messages WHERE group_id=$1 ORDER BY sent_at DESC,id DESC",
+      "elapsedMs": 26.383457999999905,
+      "rows": 10000,
+      "resultBytes": 7157182,
+      "parameters": [
+        "measured"
+      ]
+    },
+    {
+      "sql": "INSERT INTO timeline_snapshots(id,group_id,items) VALUES($1,$2,$3)",
+      "elapsedMs": 47.56045899999992,
+      "rows": 0,
+      "resultBytes": 2,
+      "parameters": "snapshot omitted; metadata only"
+    },
+    {
+      "sql": "SELECT jsonb_array_length(items) AS total, COALESCE((SELECT jsonb_agg(items->position ORDER BY position) FROM generate_series(LEAST($3::numeric, jsonb_array_length(items))::int, LEAST(jsonb_array_length(items), $3::numeric+$4::int)::int-1) AS position), '[]'::jsonb) AS items FROM timeline_snapshots WHERE id=$1 AND group_id=$2",
+      "elapsedMs": 70.39762499999983,
+      "rows": 1,
+      "resultBytes": 22919,
+      "parameters": [
+        "777db09a-a56a-469a-b780-d0393b8e3bfb",
+        "measured",
+        50,
+        50
+      ]
+    }
+  ],
+  "snapshot": {
+    "count": 10000,
+    "storedBytes": 274969,
+    "jsonBytes": 4580182
+  },
+  "plans": [
+    {
+      "sql": "SELECT * FROM messages WHERE group_id=$1 ORDER BY sent_at DESC,id DESC",
+      "parameters": [
+        "measured"
+      ],
+      "plan": [
+        {
+          "Plan": {
+            "Node Type": "Sort",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Startup Cost": 4000.39,
+            "Total Cost": 4025.39,
+            "Plan Rows": 10000,
+            "Plan Width": 464,
+            "Actual Startup Time": 4.039,
+            "Actual Total Time": 4.27,
+            "Actual Rows": 10000,
+            "Actual Loops": 1,
+            "Sort Key": [
+              "sent_at DESC",
+              "id DESC"
+            ],
+            "Sort Method": "quicksort",
+            "Sort Space Used": 4021,
+            "Sort Space Type": "Memory",
+            "Shared Hit Blocks": 1000,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Seq Scan",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Relation Name": "messages",
+                "Alias": "messages",
+                "Startup Cost": 0,
+                "Total Cost": 1250,
+                "Plan Rows": 10000,
+                "Plan Width": 464,
+                "Actual Startup Time": 0.01,
+                "Actual Total Time": 1.231,
+                "Actual Rows": 10000,
+                "Actual Loops": 1,
+                "Filter": "(group_id = 'measured'::text)",
+                "Rows Removed by Filter": 10000,
+                "Shared Hit Blocks": 1000,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 1,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.035,
+          "Triggers": [],
+          "Execution Time": 4.633
+        }
+      ]
+    },
+    {
+      "sql": "SELECT jsonb_array_length(items) AS total, COALESCE((SELECT jsonb_agg(items->position ORDER BY position) FROM generate_series(LEAST($3::numeric, jsonb_array_length(items))::int, LEAST(jsonb_array_length(items), $3::numeric+$4::int)::int-1) AS position), '[]'::jsonb) AS items FROM timeline_snapshots WHERE id=$1 AND group_id=$2",
+      "parameters": [
+        "777db09a-a56a-469a-b780-d0393b8e3bfb",
+        "measured",
+        50,
+        50
+      ],
+      "plan": [
+        {
+          "Plan": {
+            "Node Type": "Index Scan",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Scan Direction": "Forward",
+            "Index Name": "timeline_snapshots_pkey",
+            "Relation Name": "timeline_snapshots",
+            "Alias": "timeline_snapshots",
+            "Startup Cost": 0.15,
+            "Total Cost": 75.54,
+            "Plan Rows": 1,
+            "Plan Width": 36,
+            "Actual Startup Time": 63.499,
+            "Actual Total Time": 63.853,
+            "Actual Rows": 1,
+            "Actual Loops": 1,
+            "Index Cond": "(id = '777db09a-a56a-469a-b780-d0393b8e3bfb'::text)",
+            "Rows Removed by Index Recheck": 0,
+            "Filter": "(group_id = 'measured'::text)",
+            "Rows Removed by Filter": 0,
+            "Shared Hit Blocks": 1910,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Aggregate",
+                "Strategy": "Plain",
+                "Partial Mode": "Simple",
+                "Parent Relationship": "SubPlan",
+                "Subplan Name": "SubPlan 1",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 67.36,
+                "Total Cost": 67.37,
+                "Plan Rows": 1,
+                "Plan Width": 32,
+                "Actual Startup Time": 62.376,
+                "Actual Total Time": 62.376,
+                "Actual Rows": 1,
+                "Actual Loops": 1,
+                "Shared Hit Blocks": 1872,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Sort",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Startup Cost": 59.85,
+                    "Total Cost": 62.35,
+                    "Plan Rows": 1000,
+                    "Plan Width": 4,
+                    "Actual Startup Time": 2.402,
+                    "Actual Total Time": 2.426,
+                    "Actual Rows": 50,
+                    "Actual Loops": 1,
+                    "Sort Key": [
+                      "\"position\".\"position\""
+                    ],
+                    "Sort Method": "quicksort",
+                    "Sort Space Used": 25,
+                    "Sort Space Type": "Memory",
+                    "Shared Hit Blocks": 72,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0,
+                    "Plans": [
+                      {
+                        "Node Type": "Function Scan",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Function Name": "generate_series",
+                        "Alias": "position",
+                        "Startup Cost": 0.02,
+                        "Total Cost": 10.03,
+                        "Plan Rows": 1000,
+                        "Plan Width": 4,
+                        "Actual Startup Time": 2.391,
+                        "Actual Total Time": 2.393,
+                        "Actual Rows": 50,
+                        "Actual Loops": 1,
+                        "Shared Hit Blocks": 72,
+                        "Shared Read Blocks": 0,
+                        "Shared Dirtied Blocks": 0,
+                        "Shared Written Blocks": 0,
+                        "Local Hit Blocks": 0,
+                        "Local Read Blocks": 0,
+                        "Local Dirtied Blocks": 0,
+                        "Local Written Blocks": 0,
+                        "Temp Read Blocks": 0,
+                        "Temp Written Blocks": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 0,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.052,
+          "Triggers": [],
+          "Execution Time": 64.34
+        }
+      ]
+    }
+  ],
+  "candidate": {
+    "sql": "SELECT jsonb_array_length(items) AS total, jsonb_path_query_array(items, '$[$start to $last]'::jsonpath, jsonb_build_object('start', LEAST($3::numeric, jsonb_array_length(items)), 'last', LEAST(jsonb_array_length(items), $3::numeric+$4::int)-1)) AS items FROM timeline_snapshots WHERE id=$1 AND group_id=$2",
+    "elapsedMs": 6.2493339999998625,
+    "plan": [
+      {
+        "Plan": {
+          "Node Type": "Index Scan",
+          "Parallel Aware": false,
+          "Async Capable": false,
+          "Scan Direction": "Forward",
+          "Index Name": "timeline_snapshots_pkey",
+          "Relation Name": "timeline_snapshots",
+          "Alias": "timeline_snapshots",
+          "Startup Cost": 0.15,
+          "Total Cost": 8.2,
+          "Plan Rows": 1,
+          "Plan Width": 36,
+          "Actual Startup Time": 4.103,
+          "Actual Total Time": 4.752,
+          "Actual Rows": 1,
+          "Actual Loops": 1,
+          "Index Cond": "(id = '777db09a-a56a-469a-b780-d0393b8e3bfb'::text)",
+          "Rows Removed by Index Recheck": 0,
+          "Filter": "(group_id = 'measured'::text)",
+          "Rows Removed by Filter": 0,
+          "Shared Hit Blocks": 146,
+          "Shared Read Blocks": 0,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0
+        },
+        "Planning": {
+          "Shared Hit Blocks": 0,
+          "Shared Read Blocks": 0,
+          "Shared Dirtied Blocks": 0,
+          "Shared Written Blocks": 0,
+          "Local Hit Blocks": 0,
+          "Local Read Blocks": 0,
+          "Local Dirtied Blocks": 0,
+          "Local Written Blocks": 0,
+          "Temp Read Blocks": 0,
+          "Temp Written Blocks": 0
+        },
+        "Planning Time": 0.016,
+        "Triggers": [],
+        "Execution Time": 4.76
+      }
+    ],
+    "equalOffsets": [
+      0,
+      49,
+      9999,
+      10000,
+      9007199254740991
+    ],
+    "changedProduct": false
+  },
+  "semantics": {
+    "sameTimestampOrdering": true,
+    "lateArrivalKeptOutOfOldSnapshot": true,
+    "outboundConfirmationKeptOutOfOldSnapshot": true,
+    "allOldCursorValuesUnchanged": true,
+    "freshSnapshotCount": 10001
+  },
+  "measurementLimits": "One first-page and one continuation HTTP sample per scale; EXPLAIN follows those samples on warmed data. Memory is process before/after delta, not peak. No p95, capacity or production-load guarantee. No index/query/product changes."
+}

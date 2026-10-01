@@ -1,0 +1,46 @@
+{
+  "source": "bb6f0561162f6a91ece7f8b110d0dd0021389cf3",
+  "realProviderUsed": false,
+  "scope": "final offline process entry and actual C2 consumer regression",
+  "checks": [
+    {
+      "name": "provider",
+      "command": [
+        "node_modules/.bin/tsx",
+        "--test",
+        "--test-concurrency=1",
+        "tests/integration/qa-gemini-agent-process.test.ts",
+        "tests/integration/gemini-agent-main.test.ts",
+        "tests/integration/gemini-agent-protocol.test.ts",
+        "tests/integration/gemini-agent-usage.test.ts"
+      ],
+      "exitCode": 0,
+      "durationMs": 5447
+    },
+    {
+      "name": "build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "durationMs": 1360
+    },
+    {
+      "name": "original",
+      "command": [
+        "npm",
+        "run",
+        "verify:original"
+      ],
+      "exitCode": 0,
+      "durationMs": 145
+    }
+  ],
+  "sha256": {
+    "provider.log": "4ef9b9ecf5dd6276e5a5c3c0642804bbd634fc9f575b7606e171825351f70dde",
+    "original.log": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa",
+    "build.log": "19b98fcbeb30238280001e86245f9c41e867aabb3d86c79d736bac04f94c77f3"
+  }
+}

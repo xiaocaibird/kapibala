@@ -1,0 +1,64 @@
+{
+  "purpose": "developer integrated regression before main handoff",
+  "source": "f639ee75c5559f3ee8923af5dcbb53e9b41b168c",
+  "owner": "second-round-regression-b4226ce894",
+  "startedAt": "2026-10-01T21:07:23.965294+00:00",
+  "realProviderUsed": false,
+  "results": [
+    {
+      "name": "regression",
+      "command": [
+        "node_modules/.bin/tsx",
+        "--test",
+        "--test-concurrency=1",
+        "tests/integration/*.test.ts",
+        "apps/web/tests/*.test.ts"
+      ],
+      "exitCode": 0,
+      "durationMs": 612964,
+      "log": "regression.log"
+    },
+    {
+      "name": "build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "durationMs": 1554,
+      "log": "build.log"
+    },
+    {
+      "name": "original",
+      "command": [
+        "npm",
+        "run",
+        "verify:original"
+      ],
+      "exitCode": 0,
+      "durationMs": 149,
+      "log": "original.log"
+    }
+  ],
+  "containerId": "191ff7c6a42bd93315536016f6aead04d2674a725bfb523b234356b988128d9d",
+  "volumeNames": [
+    "6a5eda9f9c5db15889adfa14bb7a52cea116471fefe5a511e6b9c49a88b2f6c3"
+  ],
+  "hostPort": 62398,
+  "databaseBeforeCleanup": {
+    "exitCode": 0,
+    "output": "0"
+  },
+  "cleanup": {
+    "exitCode": 0,
+    "containerAbsent": true,
+    "volumesAbsent": true
+  },
+  "endedAt": "2026-10-01T21:17:39.945856+00:00",
+  "logHashes": {
+    "build.log": "6ab502346c0672192eec5745a11fa64ef06e3f0a0822628e2db6fd089bd1d46f",
+    "original.log": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa",
+    "regression.log": "a8b5750b7a1c8a0f4c1000f03c99aaabafbdb3cc8f989af4bf37032b180b1278"
+  }
+}

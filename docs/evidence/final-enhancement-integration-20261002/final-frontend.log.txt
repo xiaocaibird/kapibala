@@ -1,0 +1,820 @@
+TAP version 13
+# Subtest: confirmed same-login refresh restores context but explicit login always rotates it
+ok 1 - confirmed same-login refresh restores context but explicit login always rotates it
+  ---
+  duration_ms: 0.959417
+  type: 'test'
+  ...
+# Subtest: identity mismatch and explicit expiry cannot revive old history origins or list filters
+ok 2 - identity mismatch and explicit expiry cannot revive old history origins or list filters
+  ---
+  duration_ms: 0.216667
+  type: 'test'
+  ...
+# Subtest: unavailable or malformed storage fails closed without failing authentication
+ok 3 - unavailable or malformed storage fails closed without failing authentication
+  ---
+  duration_ms: 0.216583
+  type: 'test'
+  ...
+# Subtest: Agent detail carries only a whitelisted origin and leaves identifiers intact
+ok 4 - Agent detail carries only a whitelisted origin and leaves identifiers intact
+  ---
+  duration_ms: 0.589583
+  type: 'test'
+  ...
+# Subtest: Agent list selection survives internal return with reserved characters
+ok 5 - Agent list selection survives internal return with reserved characters
+  ---
+  duration_ms: 0.186375
+  type: 'test'
+  ...
+# Subtest: old or missing login contexts discard both detail origin and list selection
+ok 6 - old or missing login contexts discard both detail origin and list selection
+  ---
+  duration_ms: 0.104084
+  type: 'test'
+  ...
+# Subtest: group-origin return and direct links have internal loading/failure fallbacks
+ok 7 - group-origin return and direct links have internal loading/failure fallbacks
+  ---
+  duration_ms: 0.375958
+  type: 'test'
+  ...
+# Subtest: malformed deep-link encoding falls back without throwing or copying an external return URL
+ok 8 - malformed deep-link encoding falls back without throwing or copying an external return URL
+  ---
+  duration_ms: 0.0725
+  type: 'test'
+  ...
+# Subtest: an unavailable selected sender stays selected until the user explicitly chooses another identity
+ok 9 - an unavailable selected sender stays selected until the user explicitly chooses another identity
+  ---
+  duration_ms: 0.443
+  type: 'test'
+  ...
+# Subtest: initial default and rate limited sender keep the existing queue policy
+ok 10 - initial default and rate limited sender keep the existing queue policy
+  ---
+  duration_ms: 0.088334
+  type: 'test'
+  ...
+# Subtest: sequence timestamps distinguish confirmed delivery, skipped handling and failed handling
+ok 11 - sequence timestamps distinguish confirmed delivery, skipped handling and failed handling
+  ---
+  duration_ms: 11.722667
+  type: 'test'
+  ...
+# Subtest: member count commit survives replay after REST and unrelated WS events already advanced the snapshot
+ok 12 - member count commit survives replay after REST and unrelated WS events already advanced the snapshot
+  ---
+  duration_ms: 0.815709
+  type: 'test'
+  ...
+# Subtest: active Agent and sequence identity commits survive REST-leading replay without treating steps as card changes
+ok 13 - active Agent and sequence identity commits survive REST-leading replay without treating steps as card changes
+  ---
+  duration_ms: 0.104542
+  type: 'test'
+  ...
+# Subtest: role-only membership, run recovery and step progression remain silent; polling alone creates no candidate
+ok 14 - role-only membership, run recovery and step progression remain silent; polling alone creates no candidate
+  ---
+  duration_ms: 0.294625
+  type: 'test'
+  ...
+# Subtest: legacy coarse events retain uncertainty as a range target instead of claiming an unchanged or read card
+ok 15 - legacy coarse events retain uncertainty as a range target instead of claiming an unchanged or read card
+  ---
+  duration_ms: 0.176333
+  type: 'test'
+  ...
+# Subtest: direct visible group changes remain definitive even with a simultaneous role-only projection marker
+ok 16 - direct visible group changes remain definitive even with a simultaneous role-only projection marker
+  ---
+  duration_ms: 0.074792
+  type: 'test'
+  ...
+# Subtest: directory requests use fixed page size and preserve literal search and opaque cursors
+ok 17 - directory requests use fixed page size and preserve literal search and opaque cursors
+  ---
+  duration_ms: 1.000292
+  type: 'test'
+  ...
+# Subtest: search debounce and order changes abort old requests and ignore late results
+ok 18 - search debounce and order changes abort old requests and ignore late results
+  ---
+  duration_ms: 4.35175
+  type: 'test'
+  ...
+# Subtest: directory query identity includes all server conditions but excludes cursor and request lifecycle
+ok 19 - directory query identity includes all server conditions but excludes cursor and request lifecycle
+  ---
+  duration_ms: 0.647417
+  type: 'test'
+  ...
+# Subtest: filter URL combinations send explicit booleans and omit unselected conditions
+ok 20 - filter URL combinations send explicit booleans and omit unselected conditions
+  ---
+  duration_ms: 0.328958
+  type: 'test'
+  ...
+# Subtest: changing filters abandons a loaded cursor and ignores both late page and prior-filter responses
+ok 21 - changing filters abandons a loaded cursor and ignores both late page and prior-filter responses
+  ---
+  duration_ms: 2.9775
+  type: 'test'
+  ...
+# Subtest: clear search preserves filters and ordering while reset restores every default and cancels late results
+ok 22 - clear search preserves filters and ordering while reset restores every default and cancels late results
+  ---
+  duration_ms: 1.085875
+  type: 'test'
+  ...
+# Subtest: choosing all in one filter preserves the other filter and the search
+ok 23 - choosing all in one filter preserves the other filter and the search
+  ---
+  duration_ms: 0.845125
+  type: 'test'
+  ...
+# Subtest: IME composition defers combined filters until committed and sends them in one first-page query
+ok 24 - IME composition defers combined filters until committed and sends them in one first-page query
+  ---
+  duration_ms: 0.643834
+  type: 'test'
+  ...
+# Subtest: filtered pagination retries and cached returns preserve conditions and stable location
+ok 25 - filtered pagination retries and cached returns preserve conditions and stable location
+  ---
+  duration_ms: 1.105
+  type: 'test'
+  ...
+# Subtest: filter-only empty results are recognized as no matches including Agent disabled
+ok 26 - filter-only empty results are recognized as no matches including Agent disabled
+  ---
+  duration_ms: 0.213125
+  type: 'test'
+  ...
+# Subtest: IME composition suppresses debounce, sort requests and polling until committed
+ok 27 - IME composition suppresses debounce, sort requests and polling until committed
+  ---
+  duration_ms: 0.601459
+  type: 'test'
+  ...
+# Subtest: initial errors remain distinct from a successful empty directory and can retry
+ok 28 - initial errors remain distinct from a successful empty directory and can retry
+  ---
+  duration_ms: 0.747417
+  type: 'test'
+  ...
+# Subtest: next-page failure keeps items and cursor; exact-cursor retry merges stable IDs once
+ok 29 - next-page failure keeps items and cursor; exact-cursor retry merges stable IDs once
+  ---
+  duration_ms: 0.926458
+  type: 'test'
+  ...
+# Subtest: unchanged first-page probes preserve a failed next-page retry and never rotate its cursor
+ok 30 - unchanged first-page probes preserve a failed next-page retry and never rotate its cursor
+  ---
+  duration_ms: 0.815959
+  type: 'test'
+  ...
+# Subtest: changed first-page probes invalidate all cached pages without splicing new rows
+ok 31 - changed first-page probes invalidate all cached pages without splicing new rows
+  ---
+  duration_ms: 0.594417
+  type: 'test'
+  ...
+# Subtest: a relevant change aborts an in-flight next page and ignores its late response
+ok 32 - a relevant change aborts an in-flight next page and ignores its late response
+  ---
+  duration_ms: 0.584
+  type: 'test'
+  ...
+# Subtest: a relevant change during first-page refresh discards that response and coalesces one fresh read
+ok 33 - a relevant change during first-page refresh discards that response and coalesces one fresh read
+  ---
+  duration_ms: 0.71675
+  type: 'test'
+  ...
+# Subtest: leaving and returning retains multi-page query, anchor and stale contents without automatic reset
+ok 34 - leaving and returning retains multi-page query, anchor and stale contents without automatic reset
+  ---
+  duration_ms: 0.536375
+  type: 'test'
+  ...
+# Subtest: off-page request completion is ignored and a one-page cache refreshes on return
+ok 35 - off-page request completion is ignored and a one-page cache refreshes on return
+  ---
+  duration_ms: 0.452
+  type: 'test'
+  ...
+# Subtest: condition changes reset pagination and position without clearing the search silently
+ok 36 - condition changes reset pagination and position without clearing the search silently
+  ---
+  duration_ms: 0.643166
+  type: 'test'
+  ...
+# Subtest: a stopped session cancels pending debounce and late responses; a new session starts clean
+ok 37 - a stopped session cancels pending debounce and late responses; a new session starts clean
+  ---
+  duration_ms: 0.434166
+  type: 'test'
+  ...
+# Subtest: an unchanged non-null next cursor fails visibly instead of repeating a page forever
+ok 38 - an unchanged non-null next cursor fails visibly instead of repeating a page forever
+  ---
+  duration_ms: 0.471459
+  type: 'test'
+  ...
+# Subtest: synchronous loader failure cannot strand the flight or prevent manual retry
+ok 39 - synchronous loader failure cannot strand the flight or prevent manual retry
+  ---
+  duration_ms: 0.244458
+  type: 'test'
+  ...
+# Subtest: directory revision filters unrelated message traffic without changing directory-relevant events
+ok 40 - directory revision filters unrelated message traffic without changing directory-relevant events
+  ---
+  duration_ms: 0.069792
+  type: 'test'
+  ...
+# Subtest: directory runtime schema validates compact rows, dates, counts and cursor without a fake total
+ok 41 - directory runtime schema validates compact rows, dates, counts and cursor without a fake total
+  ---
+  duration_ms: 1.725917
+  type: 'test'
+  ...
+# Subtest: description and platform ID matches remain identifiable without HTML highlighting
+ok 42 - description and platform ID matches remain identifiable without HTML highlighting
+  ---
+  duration_ms: 0.100792
+  type: 'test'
+  ...
+# Subtest: creating a group omits untouched metadata but rejects an explicitly blank name
+ok 43 - creating a group omits untouched metadata but rejects an explicitly blank name
+  ---
+  duration_ms: 1.082666
+  type: 'test'
+  ...
+# Subtest: metadata limits apply after trimming and reject excess input instead of truncating it
+ok 44 - metadata limits apply after trimming and reject excess input instead of truncating it
+  ---
+  duration_ms: 0.151167
+  type: 'test'
+  ...
+# Subtest: profile name limits use trimmed UTF-16 units on create and edit
+ok 45 - profile name limits use trimmed UTF-16 units on create and edit
+  ---
+  duration_ms: 0.173375
+  type: 'test'
+  ...
+# Subtest: profile description limits use trimmed UTF-16 units on create and edit
+ok 46 - profile description limits use trimmed UTF-16 units on create and edit
+  ---
+  duration_ms: 0.083583
+  type: 'test'
+  ...
+# Subtest: legacy over-limit responses stay readable and raw comparison values stay repairable
+ok 47 - legacy over-limit responses stay readable and raw comparison values stay repairable
+  ---
+  duration_ms: 1.636333
+  type: 'test'
+  ...
+# Subtest: profile patches preserve concurrently updated fields the user did not edit
+ok 48 - profile patches preserve concurrently updated fields the user did not edit
+  ---
+  duration_ms: 0.073375
+  type: 'test'
+  ...
+# Subtest: an existing description can be cleared without clearing a group name
+ok 49 - an existing description can be cleared without clearing a group name
+  ---
+  duration_ms: 0.0845
+  type: 'test'
+  ...
+# Subtest: conditional profile writes include raw expected values only for semantically changed fields
+ok 50 - conditional profile writes include raw expected values only for semantically changed fields
+  ---
+  duration_ms: 0.070167
+  type: 'test'
+  ...
+# Subtest: profile conflict parsing requires the exact 409 contract and does not normalize server values
+ok 51 - profile conflict parsing requires the exact 409 contract and does not normalize server values
+  ---
+  duration_ms: 0.60775
+  type: 'test'
+  ...
+# Subtest: a name conflict rebases untouched description without losing the raw submitted draft
+ok 52 - a name conflict rebases untouched description without losing the raw submitted draft
+  ---
+  duration_ms: 0.185875
+  type: 'test'
+  ...
+# Subtest: normalization-only untouched input follows the new snapshot instead of becoming a stale write
+ok 53 - normalization-only untouched input follows the new snapshot instead of becoming a stale write
+  ---
+  duration_ms: 0.082041
+  type: 'test'
+  ...
+# Subtest: multi-field conflict keeps every submitted draft and a reverted field leaves the next conditional write
+ok 54 - multi-field conflict keeps every submitted draft and a reverted field leaves the next conditional write
+  ---
+  duration_ms: 0.096209
+  type: 'test'
+  ...
+# Subtest: clearing a description keeps the raw empty draft and checks the newest description on reconfirmation
+ok 55 - clearing a description keeps the raw empty draft and checks the newest description on reconfirmation
+  ---
+  duration_ms: 0.056042
+  type: 'test'
+  ...
+# Subtest: adopting a matching server snapshot needs no write and invalid drafts retain original validation
+ok 56 - adopting a matching server snapshot needs no write and invalid drafts retain original validation
+  ---
+  duration_ms: 0.108208
+  type: 'test'
+  ...
+# Subtest: profile conflict comparison shows all submitted fields, their drafts and the atomic no-save boundary
+ok 57 - profile conflict comparison shows all submitted fields, their drafts and the atomic no-save boundary
+  ---
+  duration_ms: 2.342416
+  type: 'test'
+  ...
+# Subtest: profile conflict comparison distinguishes an empty server description from the draft clear intent
+ok 58 - profile conflict comparison distinguishes an empty server description from the draft clear intent
+  ---
+  duration_ms: 0.205417
+  type: 'test'
+  ...
+# Subtest: group responses require real metadata fields and a valid UTC creation timestamp
+ok 59 - group responses require real metadata fields and a valid UTC creation timestamp
+  ---
+  duration_ms: 0.341583
+  type: 'test'
+  ...
+# Subtest: group profile shows the server date and read-only content without a viewer edit entry
+ok 60 - group profile shows the server date and read-only content without a viewer edit entry
+  ---
+  duration_ms: 8.957833
+  type: 'test'
+  ...
+# Subtest: group choices retain gateway identity when human names collide
+ok 61 - group choices retain gateway identity when human names collide
+  ---
+  duration_ms: 0.088791
+  type: 'test'
+  ...
+# Subtest: refresh completing after blur and refocus cannot confirm an old view intent
+ok 62 - refresh completing after blur and refocus cannot confirm an old view intent
+  ---
+  duration_ms: 0.5065
+  type: 'test'
+  ...
+# Subtest: a frame paused while hidden remains invalid after refocus and cannot consume a newer action
+ok 63 - a frame paused while hidden remains invalid after refocus and cannot consume a newer action
+  ---
+  duration_ms: 0.062416
+  type: 'test'
+  ...
+# Subtest: same-batch member role changes preserve the original directory count evidence without reviving it after confirmation
+ok 64 - same-batch member role changes preserve the original directory count evidence without reviving it after confirmation
+  ---
+  duration_ms: 0.583667
+  type: 'test'
+  ...
+# Subtest: run creation directory evidence survives same-batch run steps or recovery updates
+ok 65 - run creation directory evidence survives same-batch run steps or recovery updates
+  ---
+  duration_ms: 0.128583
+  type: 'test'
+  ...
+# Subtest: directory projection classifications canonicalize fields and keep missing separate from known empty
+ok 66 - directory projection classifications canonicalize fields and keep missing separate from known empty
+  ---
+  duration_ms: 0.089792
+  type: 'test'
+  ...
+# Subtest: confirming a group name then changing a setting cannot revive profile attention
+ok 67 - confirming a group name then changing a setting cannot revive profile attention
+  ---
+  duration_ms: 0.080667
+  type: 'test'
+  ...
+# Subtest: late-mounted profile and settings retain separate original field sequences
+ok 68 - late-mounted profile and settings retain separate original field sequences
+  ---
+  duration_ms: 0.078125
+  type: 'test'
+  ...
+# Subtest: a definitive field upgrades the same pending event after an ambiguous field without reopening confirmed work
+ok 69 - a definitive field upgrades the same pending event after an ambiguous field without reopening confirmed work
+  ---
+  duration_ms: 0.061417
+  type: 'test'
+  ...
+# Subtest: group message marker excludes history; duplicate created event stays one candidate
+ok 70 - group message marker excludes history; duplicate created event stays one candidate
+  ---
+  duration_ms: 0.056167
+  type: 'test'
+  ...
+# Subtest: late identity confirmation cannot turn a pre-scope pending message into a new update
+ok 71 - late identity confirmation cannot turn a pre-scope pending message into a new update
+  ---
+  duration_ms: 0.093875
+  type: 'test'
+  ...
+# Subtest: ordinary created messages use their event sequence without inventing an older origin
+ok 72 - ordinary created messages use their event sequence without inventing an older origin
+  ---
+  duration_ms: 0.041209
+  type: 'test'
+  ...
+# Subtest: foreground is quiet; leaving pending content promotes a static reminder and focus cannot clear it
+ok 73 - foreground is quiet; leaving pending content promotes a static reminder and focus cannot clear it
+  ---
+  duration_ms: 0.049042
+  type: 'test'
+  ...
+# Subtest: failed reload and snapshots started before the event cannot acknowledge it
+ok 74 - failed reload and snapshots started before the event cannot acknowledge it
+  ---
+  duration_ms: 0.038875
+  type: 'test'
+  ...
+# Subtest: an account row interaction cannot consume another row or a later update
+ok 75 - an account row interaction cannot consume another row or a later update
+  ---
+  duration_ms: 0.027583
+  type: 'test'
+  ...
+# Subtest: same displayed status after a fresh snapshot does not create visible-change attention
+ok 76 - same displayed status after a fresh snapshot does not create visible-change attention
+  ---
+  duration_ms: 0.030333
+  type: 'test'
+  ...
+# Subtest: real account transitions remain pending when online goes away and returns before snapshot
+ok 77 - real account transitions remain pending when online goes away and returns before snapshot
+  ---
+  duration_ms: 0.028166
+  type: 'test'
+  ...
+# Subtest: a definitive replay after REST already rendered its version still requires confirmation
+ok 78 - a definitive replay after REST already rendered its version still requires confirmation
+  ---
+  duration_ms: 0.027917
+  type: 'test'
+  ...
+# Subtest: current event classifier separates precise business changes from legacy invalidation
+ok 79 - current event classifier separates precise business changes from legacy invalidation
+  ---
+  duration_ms: 0.060708
+  type: 'test'
+  ...
+# Subtest: a precise update during first load survives absence of a comparison baseline
+ok 80 - a precise update during first load survives absence of a comparison baseline
+  ---
+  duration_ms: 0.028125
+  type: 'test'
+  ...
+# Subtest: coalesced run status keeps latest sequence and ignores out-of-order arrivals
+ok 81 - coalesced run status keeps latest sequence and ignores out-of-order arrivals
+  ---
+  duration_ms: 0.025666
+  type: 'test'
+  ...
+# Subtest: a removed list row remains range-confirmable; one snapshot cannot clear a newer list change
+ok 82 - a removed list row remains range-confirmable; one snapshot cannot clear a newer list change
+  ---
+  duration_ms: 0.024541
+  type: 'test'
+  ...
+# Subtest: new scope model discards old group candidates without mutating old async callbacks
+ok 83 - new scope model discards old group candidates without mutating old async callbacks
+  ---
+  duration_ms: 0.027541
+  type: 'test'
+  ...
+# Subtest: a message taller than its 510px timeline needs a summary even inside a 1200px window
+ok 84 - a message taller than its 510px timeline needs a summary even inside a 1200px window
+  ---
+  duration_ms: 0.156667
+  type: 'test'
+  ...
+# Subtest: directory attention evidence advances only on applied refresh, never failed or stale reads
+ok 85 - directory attention evidence advances only on applied refresh, never failed or stale reads
+  ---
+  duration_ms: 17.723709
+  type: 'test'
+  ...
+# Subtest: directory query change clears old presentation evidence and never reuses a cursor as a scope
+ok 86 - directory query change clears old presentation evidence and never reuses a cursor as a scope
+  ---
+  duration_ms: 3.846125
+  type: 'test'
+  ...
+# Subtest: directory attention resets successful evidence for actual status and Agent filters
+ok 87 - directory attention resets successful evidence for actual status and Agent filters
+  ---
+  duration_ms: 1.869625
+  type: 'test'
+  ...
+# Subtest: group message attention distinguishes created content, delivery echoes and another group
+ok 88 - group message attention distinguishes created content, delivery echoes and another group
+  ---
+  duration_ms: 0.435667
+  type: 'test'
+  ...
+# Subtest: only the mounted run and exact step identity receive step changes
+ok 89 - only the mounted run and exact step identity receive step changes
+  ---
+  duration_ms: 0.101875
+  type: 'test'
+  ...
+# Subtest: account and group adapters reject unrelated page changes
+ok 90 - account and group adapters reject unrelated page changes
+  ---
+  duration_ms: 0.090083
+  type: 'test'
+  ...
+# Subtest: business projections ignore identity-neutral polling and include visible changes
+ok 91 - business projections ignore identity-neutral polling and include visible changes
+  ---
+  duration_ms: 0.099833
+  type: 'test'
+  ...
+# Subtest: current page journals exclude messages and events from other selected groups
+ok 92 - current page journals exclude messages and events from other selected groups
+  ---
+  duration_ms: 0.083125
+  type: 'test'
+  ...
+# Subtest: definitive changes follow the fields shown by each current-page summary
+ok 93 - definitive changes follow the fields shown by each current-page summary
+  ---
+  duration_ms: 0.095375
+  type: 'test'
+  ...
+# Subtest: concurrent REST 401s and WS refresh share one token rotation
+ok 94 - concurrent REST 401s and WS refresh share one token rotation
+  ---
+  duration_ms: 21.666625
+  type: 'test'
+  ...
+# Subtest: a delayed old-token 401 uses the already refreshed token
+ok 95 - a delayed old-token 401 uses the already refreshed token
+  ---
+  duration_ms: 37.22875
+  type: 'test'
+  ...
+# Subtest: logout first renews expired access and then reaches the server
+ok 96 - logout first renews expired access and then reaches the server
+  ---
+  duration_ms: 0.596542
+  type: 'test'
+  ...
+# Subtest: revoked refresh clears the access token and reports the server error
+ok 97 - revoked refresh clears the access token and reports the server error
+  ---
+  duration_ms: 0.30575
+  type: 'test'
+  ...
+# Subtest: a login or logout cannot be overwritten by an older refresh response
+ok 98 - a login or logout cannot be overwritten by an older refresh response
+  ---
+  duration_ms: 0.148084
+  type: 'test'
+  ...
+# Subtest: own-message return and sentAt correction keep one stable row
+ok 99 - own-message return and sentAt correction keep one stable row
+  ---
+  duration_ms: 0.112375
+  type: 'test'
+  ...
+# Subtest: old snapshot pagination cannot downgrade a row or lose backfilled history
+ok 100 - old snapshot pagination cannot downgrade a row or lose backfilled history
+  ---
+  duration_ms: 4.756333
+  type: 'test'
+  ...
+# Subtest: equal timestamps are ordered consistently by stable identity
+ok 101 - equal timestamps are ordered consistently by stable identity
+  ---
+  duration_ms: 0.076084
+  type: 'test'
+  ...
+# Subtest: a transient resource failure recovers without another event or polling tick
+ok 102 - a transient resource failure recovers without another event or polling tick
+  ---
+  duration_ms: 4.657416
+  type: 'test'
+  ...
+# Subtest: backoff is bounded even with repeated invalidations and a later reload can recover
+ok 103 - backoff is bounded even with repeated invalidations and a later reload can recover
+  ---
+  duration_ms: 1.653875
+  type: 'test'
+  ...
+# Subtest: polls and event bursts share one flight and one serial follow-up
+ok 104 - polls and event bursts share one flight and one serial follow-up
+  ---
+  duration_ms: 0.369667
+  type: 'test'
+  ...
+# Subtest: an invalidation during completion is drained before reload resolves
+ok 105 - an invalidation during completion is drained before reload resolves
+  ---
+  duration_ms: 0.358875
+  type: 'test'
+  ...
+# Subtest: permission, contract, validation and rate-limit errors never schedule automatic retries
+ok 106 - permission, contract, validation and rate-limit errors never schedule automatic retries
+  ---
+  duration_ms: 3.46575
+  type: 'test'
+  ...
+# Subtest: disposing during backoff cancels the timer and resolves the outstanding reload
+ok 107 - disposing during backoff cancels the timer and resolves the outstanding reload
+  ---
+  duration_ms: 0.4955
+  type: 'test'
+  ...
+# Subtest: a replaced resource aborts its read and ignores late values and errors
+ok 108 - a replaced resource aborts its read and ignores late values and errors
+  ---
+  duration_ms: 0.276083
+  type: 'test'
+  ...
+# Subtest: a login while an automatic retry waits cannot issue an old read with the new identity
+ok 109 - a login while an automatic retry waits cannot issue an old read with the new identity
+  ---
+  duration_ms: 11.36675
+  type: 'test'
+  ...
+# Subtest: a login during an active read discards its late result without publishing or retrying
+ok 110 - a login during an active read discards its late result without publishing or retrying
+  ---
+  duration_ms: 0.294375
+  type: 'test'
+  ...
+# Subtest: normal token renewal within the same identity does not cancel a waiting recovery
+ok 111 - normal token renewal within the same identity does not cancel a waiting recovery
+  ---
+  duration_ms: 1.30125
+  type: 'test'
+  ...
+# Subtest: shared sequence definition preserves valid values and boundary sizes
+ok 112 - shared sequence definition preserves valid values and boundary sizes
+  ---
+  duration_ms: 3.126167
+  type: 'test'
+  ...
+# Subtest: shared sequence definition rejects extra fields, invalid order and server bounds
+ok 113 - shared sequence definition rejects extra fields, invalid order and server bounds
+  ---
+  duration_ms: 1.019
+  type: 'test'
+  ...
+# Subtest: shared start request retains defaults, empty values and accepted variable keys
+ok 114 - shared start request retains defaults, empty values and accepted variable keys
+  ---
+  duration_ms: 0.6815
+  type: 'test'
+  ...
+# Subtest: both JSON editors use strict variable and positive canonical step keys
+ok 115 - both JSON editors use strict variable and positive canonical step keys
+  ---
+  duration_ms: 0.37875
+  type: 'test'
+  ...
+# Subtest: a delayed write 401 cannot replay under a newly logged-in identity
+ok 116 - a delayed write 401 cannot replay under a newly logged-in identity
+  ---
+  duration_ms: 11.476625
+  type: 'test'
+  ...
+# Subtest: an old retried request cannot clear the new identity on its delayed 401
+ok 117 - an old retried request cannot clear the new identity on its delayed 401
+  ---
+  duration_ms: 0.968167
+  type: 'test'
+  ...
+# Subtest: a late successful result is not returned into a different session
+ok 118 - a late successful result is not returned into a different session
+  ---
+  duration_ms: 0.293042
+  type: 'test'
+  ...
+# Subtest: a new session owns a new refresh flight and an old finalizer cannot release it
+ok 119 - a new session owns a new refresh flight and an old finalizer cannot release it
+  ---
+  duration_ms: 0.412291
+  type: 'test'
+  ...
+# Subtest: cookie serialization: an old refresh 200 finishes headers/body before logout and new login
+ok 120 - cookie serialization: an old refresh 200 finishes headers/body before logout and new login
+  ---
+  duration_ms: 14.234708
+  type: 'test'
+  ...
+# Subtest: cookie serialization: an old refresh 401 finishes headers/body before logout and new login
+ok 121 - cookie serialization: an old refresh 401 finishes headers/body before logout and new login
+  ---
+  duration_ms: 3.426209
+  type: 'test'
+  ...
+# Subtest: logout revokes the cookie even when an old successful refresh lost its generation before saving access
+ok 122 - logout revokes the cookie even when an old successful refresh lost its generation before saving access
+  ---
+  duration_ms: 0.777292
+  type: 'test'
+  ...
+# Subtest: a TypeError refresh rejection releases the auth queue for a new login
+ok 123 - a TypeError refresh rejection releases the auth queue for a new login
+  ---
+  duration_ms: 0.479958
+  type: 'test'
+  ...
+# Subtest: a TimeoutError refresh rejection releases the auth queue for a new login
+ok 124 - a TimeoutError refresh rejection releases the auth queue for a new login
+  ---
+  duration_ms: 0.54825
+  type: 'test'
+  ...
+# Subtest: logout alone renews expired access inside its queue, then revokes without deadlock
+ok 125 - logout alone renews expired access inside its queue, then revokes without deadlock
+  ---
+  duration_ms: 0.320083
+  type: 'test'
+  ...
+# Subtest: a queued obsolete refresh is rejected before it can rotate a newly logged-in cookie
+ok 126 - a queued obsolete refresh is rejected before it can rotate a newly logged-in cookie
+  ---
+  duration_ms: 0.209125
+  type: 'test'
+  ...
+# Subtest: timing: the real twenty-second refresh abort releases a queued login
+ok 127 - timing: the real twenty-second refresh abort releases a queued login # SKIP
+  ---
+  duration_ms: 0.023375
+  type: 'test'
+  ...
+# Subtest: a failed snapshot retains consumed invalidations and retries without a new event
+ok 128 - a failed snapshot retains consumed invalidations and retries without a new event
+  ---
+  duration_ms: 8.280833
+  type: 'test'
+  ...
+# Subtest: events during a snapshot coalesce into one serial follow-up snapshot
+ok 129 - events during a snapshot coalesce into one serial follow-up snapshot
+  ---
+  duration_ms: 2.956042
+  type: 'test'
+  ...
+# Subtest: snapshot retries use capped backoff and reset their delay after recovery
+ok 130 - snapshot retries use capped backoff and reset their delay after recovery
+  ---
+  duration_ms: 6.618167
+  type: 'test'
+  ...
+# Subtest: disposing a group clears retries and blocks late results from the old group
+ok 131 - disposing a group clears retries and blocks late results from the old group
+  ---
+  duration_ms: 0.9075
+  type: 'test'
+  ...
+# Subtest: an invalidation at snapshot completion cannot get stranded behind the finishing promise
+ok 132 - an invalidation at snapshot completion cannot get stranded behind the finishing promise
+  ---
+  duration_ms: 0.233417
+  type: 'test'
+  ...
+# Subtest: a complete snapshot defeats a late earlier-page cursor and a late earlier-page failure
+ok 133 - a complete snapshot defeats a late earlier-page cursor and a late earlier-page failure
+  ---
+  duration_ms: 0.177166
+  type: 'test'
+  ...
+# Subtest: normal earlier pages still merge, preserve a failed-page cursor and allow retry
+ok 134 - normal earlier pages still merge, preserve a failed-page cursor and allow retry
+  ---
+  duration_ms: 0.157542
+  type: 'test'
+  ...
+# Subtest: switching group invalidates an earlier-page completion without requiring another snapshot
+ok 135 - switching group invalidates an earlier-page completion without requiring another snapshot
+  ---
+  duration_ms: 0.07225
+  type: 'test'
+  ...
+1..135
+# tests 135
+# suites 0
+# pass 134
+# fail 0
+# cancelled 0
+# skipped 1
+# todo 0
+# duration_ms 194.6225

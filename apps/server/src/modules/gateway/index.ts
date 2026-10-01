@@ -26,6 +26,7 @@ import { registerGroupDirectory } from "./group-directory.js";
 import { Messages } from "./messages.js";
 import { type GroupRow, type MessageRow, messageDto } from "./models.js";
 import { MediaFiles, withCurrentFiles } from "../media-files/index.js";
+import { requestGroupAgentCancellation } from "../automation/lifecycle.js";
 
 function parse<T>(schema: z.ZodType<T>, input: unknown): T {
   const result = schema.safeParse(input);
@@ -218,10 +219,7 @@ export function createGatewayModule(
             },
           );
         if (input.agentEnabled === false)
-          await tx.query(
-            "UPDATE agent_runs SET cancel_requested=true WHERE group_id=$1 AND status='running'",
-            [id],
-          );
+          await requestGroupAgentCancellation(tx, id);
         if (changedFields.length)
           await emit(tx, "group_changed", { groupId: id, changedFields });
       });
@@ -282,10 +280,11 @@ export function createGatewayModule(
         }
         const snapshot = (
           await ctx.db.query<{ items: Message[]; total: number }>(
-            // Slice in PostgreSQL: old cursors and frozen ordering stay intact,
-            // while continuation pages no longer transfer the complete snapshot.
-            // PostgreSQL still reads the JSONB value; this is not incremental storage.
-            "SELECT jsonb_array_length(items) AS total, COALESCE((SELECT jsonb_agg(items->position ORDER BY position) FROM generate_series(LEAST($3::numeric, jsonb_array_length(items))::int, LEAST(jsonb_array_length(items), $3::numeric+$4::int)::int-1) AS position), '[]'::jsonb) AS items FROM timeline_snapshots WHERE id=$1 AND group_id=$2",
+            // Slice the same frozen JSONB once, rather than extracting each item
+            // separately (which repeatedly detoasts large snapshots). Clamp both
+            // bounds before JSONPath's integer subscripts; old/beyond-end cursors
+            // still return the same ordered slice. Storage remains a full snapshot.
+            "SELECT jsonb_array_length(items) AS total, jsonb_path_query_array(items, '$[$start to $last]'::jsonpath, jsonb_build_object('start', LEAST($3::numeric, jsonb_array_length(items)), 'last', LEAST(jsonb_array_length(items), $3::numeric+$4::int)-1)) AS items FROM timeline_snapshots WHERE id=$1 AND group_id=$2",
             [snapshotId, id, offset, limit],
           )
         ).rows[0];

@@ -328,3 +328,25 @@ test("group profile conflict: viewer and unauthenticated requests cannot mutate 
   assert.equal(missing.statusCode, 404, missing.body);
   assert.deepEqual(await f.state(), before);
 });
+
+test("Agent disable transaction rolls back profile and delegated cancellation when event persistence fails", async (t) => {
+  const f = await fixture(t);
+  const before = await f.state();
+  await f.db.query(
+    `CREATE FUNCTION reject_group_change() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.type='group_changed' THEN RAISE EXCEPTION 'controlled event persistence failure'; END IF; RETURN NEW; END $$`,
+  );
+  await f.db.query(
+    "CREATE TRIGGER reject_group_change BEFORE INSERT ON events FOR EACH ROW EXECUTE FUNCTION reject_group_change()",
+  );
+  const response = await f.patch({
+    agentEnabled: false,
+    name: "must rollback",
+    expected: { name: "原名称" },
+  });
+  assert.equal(response.statusCode, 500, response.body);
+  assert.deepEqual(
+    await f.state(),
+    before,
+    "profile, cancellation and event must share one transaction",
+  );
+});

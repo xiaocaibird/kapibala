@@ -1,0 +1,40 @@
+diff --git a/apps/server/src/modules/automation/tool-execution.ts b/apps/server/src/modules/automation/tool-execution.ts
+index bcbad1a..61b411a 100644
+--- a/apps/server/src/modules/automation/tool-execution.ts
++++ b/apps/server/src/modules/automation/tool-execution.ts
+@@ -775,20 +775,23 @@ export class AgentTools {
+         ].includes(code);
+       const definiteRejection =
+         !unknown &&
+-        [
+-          "ACCOUNT_SUSPENDED",
+-          "SESSION_EXPIRED",
+-          "GROUP_WRITE_FORBIDDEN",
+-          "OWNER_LEFT",
+-          "NO_PERMISSION",
+-          "GROUP_UNREACHABLE",
+-          "NO_AVAILABLE_ACCOUNT",
+-          "SEND_TIMEOUT",
+-        ].includes(code);
++        ((error instanceof AppError && code === "POLICY_DENIED") ||
++          [
++            "ACCOUNT_SUSPENDED",
++            "SESSION_EXPIRED",
++            "GROUP_WRITE_FORBIDDEN",
++            "OWNER_LEFT",
++            "NO_PERMISSION",
++            "GROUP_UNREACHABLE",
++            "NO_AVAILABLE_ACCOUNT",
++            "SEND_TIMEOUT",
++          ].includes(code));
+       if (definiteRejection) {
+-        // A received rejection remains definite even if its local state repair
+-        // consumed the rest of the work allocation. Save the original mapping.
++        // A local pre-dispatch policy denial or received rejection remains known
++        // across the work cutoff. Only AppError proves the new policy denial is
++        // local; a matching remote code does not establish non-dispatch.
+         const mapped = [
++          "POLICY_DENIED",
+           "OWNER_LEFT",
+           "NO_PERMISSION",
+           "GROUP_UNREACHABLE",

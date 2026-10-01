@@ -1,0 +1,44 @@
+TAP version 13
+# Subtest: guard effects: audit fail creates no message/key and makes no remote send
+ok 1 - guard effects: audit fail creates no message/key and makes no remote send
+  ---
+  duration_ms: 265.990708
+  type: 'test'
+  ...
+# Independent database: kapibala_test_4739e6b2166241758f3a6c333516e850
+# {"guard":"audit-fail","audits":1,"remoteSends":0,"messages":0,"keys":0,"errorCode":"AUDIT_REJECTED"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: guard effects: same key reuses original identity without a second audit or remote send
+not ok 2 - guard effects: same key reuses original identity without a second audit or remote send
+  ---
+  duration_ms: 401.400834
+  type: 'test'
+  location: '/private/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-guard-mutation-etMytr/tests/integration/automation-guard-effects.test.ts:80:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    same key must not repeat audit
+    
+    2 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 2
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/private/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-guard-mutation-etMytr/tests/integration/automation-guard-effects.test.ts:134:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Independent database: kapibala_test_a3edb6ce21a645c2ab6417383a1981f6
+# {"guard":"same-key","audits":2,"remoteSends":1,"messages":1,"keys":1,"results":[{"clientMsgId":"212bfa21-355d-4fe1-896e-e49234cd0a17","deliveryStatus":"accepted"},{"clientMsgId":"212bfa21-355d-4fe1-896e-e49234cd0a17","deliveryStatus":"accepted"}]}
+1..2
+# tests 2
+# suites 0
+# pass 1
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 843.378042

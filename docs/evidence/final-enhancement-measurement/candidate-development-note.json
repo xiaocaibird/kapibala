@@ -1,0 +1,6 @@
+{
+  "kind": "development probe note, transcribed from tool output; not a raw test log",
+  "finding": "An initial JSONPath expression using an unclamped Number.MAX_SAFE_INTEGER offset failed on the real PostgreSQL server with: jsonpath array subscript is out of integer range",
+  "resolution": "Both path variables use LEAST against jsonb_array_length before becoming JSONPath subscripts. The actual candidate comparison then passed offsets 0,49,count-1,count,Number.MAX_SAFE_INTEGER at both scales; final HTTP tests also passed empty/beyond-end cases.",
+  "productChange": "Only the clamped form was committed; original SQL/cursor/limit schema unchanged elsewhere."
+}

@@ -1,0 +1,26 @@
+Worktree: /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala
+Base: f639ee75c5559f3ee8923af5dcbb53e9b41b168c
+Branch: agent/second-round-managed-rejection-fix
+
+Each test command explicitly set DATABASE_URL to the task-owned PostgreSQL container at 127.0.0.1:63669/postgres, using disposable local test credentials. Tests create and drop UUID databases; no default database fallback was used.
+
+Before (product source unchanged; same new test), exit 1:
+node_modules/.bin/tsx --test tests/integration/kick-managed-rejection-budget.test.ts > before.txt 2>&1
+The original spec reporter output was renamed from before.tap to before.txt without editing, then losslessly archived as before.txt.gz. Its four reporter-generated whitespace-only lines are preserved in the archive; gzip round-trip equality and the original byte SHA-256 are recorded in results.json.
+
+After, exit 0:
+node_modules/.bin/tsx --test --test-reporter=tap tests/integration/kick-managed-rejection-budget.test.ts > after.tap 2>&1
+
+Related regressions, exit 0 (31 pass, 0 fail, 1 existing opt-in experiment skipped):
+node_modules/.bin/tsx --test --test-reporter=tap --test-concurrency=1 tests/integration/agent-managed-target.test.ts tests/integration/agent-capacity.test.ts tests/integration/kick-dispatch-budget.test.ts tests/integration/kick-settlement-budget.test.ts > related.tap 2>&1
+
+Separately enabled the original full initial-run experiment, exit 0 (1 pass, 0 fail, 0 skip):
+KICK_SETTLEMENT_OBSERVATION_EXPERIMENT=1 node_modules/.bin/tsx --test --test-reporter=tap --test-name-pattern='real initial run cancels pending kick confirmation' tests/integration/kick-settlement-budget.test.ts > initial-run-settlement.tap 2>&1
+
+Static checks, exit 0:
+npm run typecheck > typecheck.txt 2>&1
+npm run verify:original > original.txt 2>&1
+git diff --check
+
+Owned container:
+docker run --detach --name kapibala-managed-rejection-20261002 --label codex.task=second-round-managed-rejection --publish 127.0.0.1::5432 --tmpfs /var/lib/postgresql/data:rw --env POSTGRES_USER=kapibala_fix --env POSTGRES_PASSWORD=<disposable-local-test-password> --env POSTGRES_DB=postgres postgres:17

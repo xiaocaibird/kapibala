@@ -1,0 +1,161 @@
+TAP version 13
+# Subtest: C2 offline entry: independent process loads only local key fields, random localhost port, sanitized logs and graceful lock release
+ok 1 - C2 offline entry: independent process loads only local key fields, random localhost port, sanitized logs and graceful lock release
+  ---
+  duration_ms: 231.61425
+  type: 'test'
+  ...
+# {"childPid":62036,"exitCode":0,"serviceAddress":"http://127.0.0.1:53191","realGenerationCalls":0,"keyLogged":false,"ownerLockRemoved":true}
+# Subtest: C2 offline: actual backend tools and all four single-block decisions are compatible
+ok 2 - C2 offline: actual backend tools and all four single-block decisions are compatible
+  ---
+  duration_ms: 193.520875
+  type: 'test'
+  ...
+# Subtest: C2 offline: invalid tool declarations and schemas stop before inference
+ok 3 - C2 offline: invalid tool declarations and schemas stop before inference
+  ---
+  duration_ms: 15.733084
+  type: 'test'
+  ...
+# Subtest: C2 offline: malformed requests and oversized histories do not buy inference
+ok 4 - C2 offline: malformed requests and oversized histories do not buy inference
+  ---
+  duration_ms: 14.743333
+  type: 'test'
+  ...
+# Subtest: C2 offline: interleaved runs preserve complete error history and idempotency keys without cross-run state
+ok 5 - C2 offline: interleaved runs preserve complete error history and idempotency keys without cross-run state
+  ---
+  duration_ms: 82.422542
+  type: 'test'
+  ...
+# Subtest: C2 offline: persistent same-request replay and completed-history continuation survive adapter restart
+ok 6 - C2 offline: persistent same-request replay and completed-history continuation survive adapter restart
+  ---
+  duration_ms: 51.431792
+  type: 'test'
+  ...
+# Subtest: C2 offline: conflicting run histories, corrupt state, symlink state and a second writer fail closed
+ok 7 - C2 offline: conflicting run histories, corrupt state, symlink state and a second writer fail closed
+  ---
+  duration_ms: 25.8545
+  type: 'test'
+  ...
+# Subtest: C2 offline: malformed or multiple model decisions never become an invented completion
+ok 8 - C2 offline: malformed or multiple model decisions never become an invented completion
+  ---
+  duration_ms: 123.841917
+  type: 'test'
+  ...
+# Subtest: C2 offline: audit pass/fail preserved, errors never grant permission and audit context stays separate
+ok 9 - C2 offline: audit pass/fail preserved, errors never grant permission and audit context stays separate
+  ---
+  duration_ms: 6.96525
+  type: 'test'
+  ...
+# Subtest: C2 offline: same-run concurrent inference rejected and total live generations bounded to four
+ok 10 - C2 offline: same-run concurrent inference rejected and total live generations bounded to four
+  ---
+  duration_ms: 52.011833
+  type: 'test'
+  ...
+# Subtest: C2 offline provider: official HTTPS request, header-only key, bounded JSON generation, no executable tools
+ok 11 - C2 offline provider: official HTTPS request, header-only key, bounded JSON generation, no executable tools
+  ---
+  duration_ms: 10.459917
+  type: 'test'
+  ...
+# Subtest: C2 offline provider: provider HTTP/auth/rate errors never reflect bodies or manufacture audit verdicts
+ok 12 - C2 offline provider: provider HTTP/auth/rate errors never reflect bodies or manufacture audit verdicts
+  ---
+  duration_ms: 1.553209
+  type: 'test'
+  ...
+# Subtest: C2 offline provider: invalid JSON, multiple candidates, native tools, truncation and safety blocks fail explicitly
+ok 13 - C2 offline provider: invalid JSON, multiple candidates, native tools, truncation and safety blocks fail explicitly
+  ---
+  duration_ms: 3.612166
+  type: 'test'
+  ...
+# Subtest: C2 offline provider: actual abort signals stop bounded wait; no hidden automatic retry
+ok 14 - C2 offline provider: actual abort signals stop bounded wait; no hidden automatic retry
+  ---
+  duration_ms: 31.787834
+  type: 'test'
+  ...
+# Subtest: usage: real provider adapter records validated turn/audit attempts, cache adds no inference and missing/error usage stays unknown
+ok 15 - usage: real provider adapter records validated turn/audit attempts, cache adds no inference and missing/error usage stays unknown
+  ---
+  duration_ms: 154.472375
+  type: 'test'
+  ...
+# Subtest: usage: provider timeout and cancellation each emit one failed attempt without invented zero usage
+ok 16 - usage: provider timeout and cancellation each emit one failed attempt without invented zero usage
+  ---
+  duration_ms: 21.884458
+  type: 'test'
+  ...
+# Subtest: usage: retention bounds count, bytes and age, cleans only owned crash temporary files and preserves private permissions
+ok 17 - usage: retention bounds count, bytes and age, cleans only owned crash temporary files and preserves private permissions
+  ---
+  duration_ms: 77.62
+  type: 'test'
+  ...
+# Subtest: usage: disabled config makes no files; unsafe storage and invalid config degrade with fixed diagnostics
+ok 18 - usage: disabled config makes no files; unsafe storage and invalid config degrade with fixed diagnostics
+  ---
+  duration_ms: 11.745958
+  type: 'test'
+  ...
+# Subtest: usage: optional journal write failure and bounded-queue overflow do not reject successful model responses
+ok 19 - usage: optional journal write failure and bounded-queue overflow do not reject successful model responses
+  ---
+  duration_ms: 53.316709
+  type: 'test'
+  ...
+# Subtest: QA C2 process: actual provider HTTP, complete history, replay, restart and usage with synthetic credentials
+ok 20 - QA C2 process: actual provider HTTP, complete history, replay, restart and usage with synthetic credentials
+  ---
+  duration_ms: 514.541
+  type: 'test'
+  ...
+# Subtest: QA C2 process: real HTTP status and invalid outputs preserve provider errors and known versus unknown usage
+ok 21 - QA C2 process: real HTTP status and invalid outputs preserve provider errors and known versus unknown usage
+  ---
+  duration_ms: 184.951625
+  type: 'test'
+  ...
+# Subtest: QA C2 process: explicit offline and canonical numeric loopback origin required before resources are acquired
+ok 22 - QA C2 process: explicit offline and canonical numeric loopback origin required before resources are acquired
+  ---
+  duration_ms: 2179.762833
+  type: 'test'
+  ...
+# Subtest: QA C2 process: redirects are rejected without a second request or fallback
+ok 23 - QA C2 process: redirects are rejected without a second request or fallback
+  ---
+  duration_ms: 185.675458
+  type: 'test'
+  ...
+# Subtest: QA C2 process: exclusive owner, SIGINT release, crash lock and changed owner are preserved
+ok 24 - QA C2 process: exclusive owner, SIGINT release, crash lock and changed owner are preserved
+  ---
+  duration_ms: 741.111334
+  type: 'test'
+  ...
+# Subtest: QA C2 process: graceful stop aborts actual in-flight provider request and settles usage
+ok 25 - QA C2 process: graceful stop aborts actual in-flight provider request and settles usage
+  ---
+  duration_ms: 171.804417
+  type: 'test'
+  ...
+1..25
+# tests 25
+# suites 0
+# pass 25
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4126.56675

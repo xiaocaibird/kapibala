@@ -1,0 +1,65 @@
+npm notice run kapibala-platform@0.1.0 npx
+npm notice run 'tsx' apps/web/tests/verify-final-enhancement.mjs
+PASS draft-late-B
+FAIL draft-late-A: Error: locator.waitFor: Error: strict mode violation: getByRole('link', { name: '定时序列', exact: true }) resolved to 2 elements:
+    1) <a class="" href="#/sequences">…</a> aka getByRole('navigation').getByRole('link', { name: '定时序列' })
+    2) <a class="button secondary" href="#/sequences/ui-group-a">定时序列</a> aka getByRole('main').getByRole('link', { name: '定时序列' })
+
+Call log:
+[2m  - waiting for getByRole('link', { name: '定时序列', exact: true }) to be visible[22m
+
+PASS draft-unchanged-clears
+FAIL draft-failure-retained: TimeoutError: locator.inputValue: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('textbox', { name: '消息内容' })[22m
+
+FAIL draft-sender-changed: Error: locator.waitFor: Error: strict mode violation: getByRole('link', { name: '定时序列', exact: true }) resolved to 2 elements:
+    1) <a class="" href="#/sequences">…</a> aka getByRole('navigation').getByRole('link', { name: '定时序列' })
+    2) <a class="button secondary" href="#/sequences/ui-group-a">定时序列</a> aka getByRole('main').getByRole('link', { name: '定时序列' })
+
+Call log:
+[2m  - waiting for getByRole('link', { name: '定时序列', exact: true }) to be visible[22m
+
+FAIL draft-group-changed: Error: locator.waitFor: Error: strict mode violation: getByRole('link', { name: '定时序列', exact: true }) resolved to 2 elements:
+    1) <a class="" href="#/sequences">…</a> aka getByRole('navigation').getByRole('link', { name: '定时序列' })
+    2) <a class="button secondary" href="#/sequences/ui-group-a">定时序列</a> aka getByRole('main').getByRole('link', { name: '定时序列' })
+
+Call log:
+[2m  - waiting for getByRole('link', { name: '定时序列', exact: true }) to be visible[22m
+
+FAIL draft-double-submit: Error: locator.waitFor: Error: strict mode violation: getByRole('link', { name: '定时序列', exact: true }) resolved to 2 elements:
+    1) <a class="" href="#/sequences">…</a> aka getByRole('navigation').getByRole('link', { name: '定时序列' })
+    2) <a class="button secondary" href="#/sequences/ui-group-a">定时序列</a> aka getByRole('main').getByRole('link', { name: '定时序列' })
+
+Call log:
+[2m  - waiting for getByRole('link', { name: '定时序列', exact: true }) to be visible[22m
+
+PASS create-dirty-x
+PASS create-dirty-escape
+PASS create-dirty-cancel
+FAIL create-pending-locks-close-and-edit: AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+200 !== 201
+
+PASS preview-stale-group
+PASS preview-stale-group-aba
+PASS preview-stale-vars
+PASS preview-stale-template
+PASS preview-disappeared-target
+PASS preview-role-change-invalidates
+PASS create-invalid-json-retained
+PASS preview-invalid-deep-link
+PASS preview-frozen-summary-and-start
+12:44:39 AM [vite] ws proxy error:
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+12:44:39 AM [vite] ws proxy socket error:
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:216:20)
+PASS navigation-group-origin
+PASS navigation-list-origin
+FAIL navigation-deep-link-fallbacks: TimeoutError: locator.waitFor: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('heading', { name: '未能读取运行记录' }) to be visible[22m
+
+PASS navigation-identity-clears-context

@@ -536,6 +536,13 @@ test("diagnostics: failures, hung ticks and later recovery are distinguishable w
   assert.equal(failure.successfulTicks, 0);
   assert.ok(failure.lastFailedAt);
   assert.equal(failure.recovery, "succeeded");
+  assert.equal(failure.lastFailure.reason, "UNEXPECTED_FAILURE");
+  assert.equal(failure.lastFailure.occurredAt, failure.lastFailedAt);
+  assert.equal(failure.lastFailure.correlation.module, failure.name);
+  assert.equal(failure.lastFailure.correlation.tickId, failure.tickId);
+  assert.match(failure.tickId, /^[a-f0-9-]{36}$/);
+  assert.equal(failure.lastFailure.recoveredAt, null);
+  assert.match(failure.nextStep, /尚不能据此判断业务是否完成/);
   await until(async () => (await current()).status === "running");
   await delay(130);
   const hanging = await current();
@@ -545,15 +552,69 @@ test("diagnostics: failures, hung ticks and later recovery are distinguishable w
     "an in-flight tick cannot launch another concurrent tick",
   );
   assert.ok(hanging.runningForMs >= 100);
+  assert.notEqual(hanging.tickId, failure.tickId);
+  assert.deepEqual(hanging.lastFailure, failure.lastFailure);
   assert.equal((await f.app.inject("/api/health")).json().ok, true);
   assert.equal(JSON.stringify(hanging).includes("credentials"), false);
   release();
   await until(async () => (await current()).successfulTicks >= 1);
   const recovered = await current();
+  assert.equal(recovered.lastFailure.reason, failure.lastFailure.reason);
+  assert.deepEqual(
+    recovered.lastFailure.correlation,
+    failure.lastFailure.correlation,
+  );
+  assert.ok(recovered.lastFailure.recoveredAt);
+  assert.match(recovered.nextStep, /不代表此前业务或未知远端操作已完成/);
+  assert.equal(JSON.stringify(recovered).includes("credentials"), false);
   assert.equal(recovered.consecutiveFailures, 0);
   assert.ok(recovered.lastSucceededAt);
   assert.ok(
     recovered.lastFailedAt,
     "latest failure is retained after scheduler recovery",
   );
+});
+
+test("diagnostics: a real PostgreSQL statement cancellation has a stable safe reason and retained recovery history", async (t) => {
+  let tick = 0;
+  let release!: () => void;
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  const f = await fixture(t, {
+    background: true,
+    modules: (ctx) => [
+      {
+        name: "database-observation",
+        async register() {},
+        async tick() {
+          tick++;
+          if (tick === 1)
+            await ctx.db.transaction(async (tx) => {
+              await tx.query("SET LOCAL statement_timeout='10ms'");
+              await tx.query("SELECT pg_sleep(0.1)");
+            });
+          if (tick === 2) await held;
+        },
+      },
+    ],
+  });
+  f.onCleanup(async () => release());
+  const current = async () =>
+    (await f.get("/api/diagnostics/background")).json().modules[0];
+  await until(
+    async () =>
+      (await current()).lastFailure?.reason === "DATABASE_QUERY_CANCELLED",
+  );
+  const failure = (await current()).lastFailure;
+  assert.equal(failure.correlation.module, "database-observation");
+  assert.ok(failure.correlation.tickId);
+  assert.match(failure.nextStep, /取消来源/);
+  assert.equal(JSON.stringify(failure).includes("pg_sleep"), false);
+  release();
+  await until(async () => (await current()).successfulTicks >= 1);
+  const recovered = await current();
+  assert.deepEqual(recovered.lastFailure.correlation, failure.correlation);
+  assert.equal(recovered.lastFailure.reason, "DATABASE_QUERY_CANCELLED");
+  assert.ok(recovered.lastFailure.recoveredAt);
 });
