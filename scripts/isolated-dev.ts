@@ -248,8 +248,8 @@ async function start(smoke: boolean): Promise<void> {
     interrupted = true;
     wake();
   };
-  process.once("SIGINT", onSignal);
-  process.once("SIGTERM", onSignal);
+  process.on("SIGINT", onSignal);
+  process.on("SIGTERM", onSignal);
   const check = () => {
     if (interrupted) throw new Error("Isolated startup interrupted");
   };
@@ -427,7 +427,7 @@ async function start(smoke: boolean): Promise<void> {
         // The orchestrator owns process signals and HTTP lifecycle. Vite's
         // standalone mode exits the process before our Docker cleanup finishes.
         middlewareMode: { server: webHttp },
-        hmr: { server: webHttp },
+        ws: { server: webHttp },
         proxy: {
           "/api": { target: api.listeningOrigin },
           "/ws": {
@@ -496,9 +496,14 @@ async function start(smoke: boolean): Promise<void> {
       );
     } else await stopped;
   } finally {
-    process.removeListener("SIGINT", onSignal);
-    process.removeListener("SIGTERM", onSignal);
-    await close();
+    // Keep signal handlers installed through asynchronous cleanup. The tsx
+    // launcher may relay a foreground signal while cleanup is still running.
+    try {
+      await close();
+    } finally {
+      process.removeListener("SIGINT", onSignal);
+      process.removeListener("SIGTERM", onSignal);
+    }
   }
 }
 
