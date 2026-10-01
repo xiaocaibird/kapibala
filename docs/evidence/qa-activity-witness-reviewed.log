@@ -1,0 +1,36 @@
+✔ activity witness keeps pre-lease creation time and holds only a committed read continuation (1169.698334ms)
+ℹ Independent database: kapibala_test_fb57604d8dae4e7794937beb4784bb59
+ℹ {"safe":{"seq":3,"at":"2026-10-01T06:26:12.693Z","kind":"activity-safe-held","correlation":{"kind":"activity","groupId":"g","runId":"328d8ead-80d6-42cb-90cf-53257cbb63ac","toolUseId":"all-run-steps"},"attemptId":"90b19278-2f2d-4401-83fe-c53a262de242","instancePid":94197,"activityState":"active","includesUnsavedTail":true,"epochIds":["98c9023d-b9c1-400c-b898-58dd40e3a87e"],"persistedActiveMs":148,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[157,163],"stepId":"2ce881186444bbc0e23d34c37fd75e1e2239e0f5d2ce348d1b9831895d32a18b","continuationDurable":true,"remoteInFlightCount":0,"safeBoundary":"read-tool-result-outer-commit-confirmed-before-next-dispatch"},"terminal":{"seq":8,"at":"2026-10-01T06:26:13.542Z","kind":"activity-terminal","correlation":{"kind":"activity","groupId":"g","runId":"328d8ead-80d6-42cb-90cf-53257cbb63ac","toolUseId":"all-run-steps"},"attemptId":"90b19278-2f2d-4401-83fe-c53a262de242","instancePid":94197,"activityState":"terminal","includesUnsavedTail":true,"epochIds":["98c9023d-b9c1-400c-b898-58dd40e3a87e"],"persistedActiveMs":1009,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[1003,1012]},"limitation":"same-process monotonic creation-to-terminal brackets; not a 60-second acceptance result"}
+✔ safe activity lease TTL releases the actual wait while the product clock keeps billing it (5156.817375ms)
+ℹ Independent database: kapibala_test_e2cb46f55a6144de918976bfb09bc26f
+ℹ {"terminal":{"seq":16,"at":"2026-10-01T06:26:18.700Z","kind":"activity-terminal","correlation":{"kind":"activity","groupId":"g","runId":"a7ea90be-4d4d-41a9-b567-cf0723bb741b","toolUseId":"all-run-steps"},"attemptId":"767d7789-efec-412f-bd16-59e18ca55dde","instancePid":94197,"activityState":"terminal","includesUnsavedTail":true,"epochIds":["6479f88f-5d4a-4292-9cc2-a7836cbf1dc6"],"persistedActiveMs":5048,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5042,5053]},"holdState":"released"}
+✔ DELETE releases only its matched safe wait without deleting historical events (149.356916ms)
+ℹ Independent database: kapibala_test_6ae6198637c7429dae3dd9ec3472bb80
+✔ loss of the real run lock invalidates a safe hold before a new worker may resume (273.712125ms)
+ℹ Independent database: kapibala_test_8f3d2571ff28446a984d3f474ca8095b
+✔ loss of the clock owner invalidates completeness instead of treating a rebased epoch as continuous (281.5205ms)
+ℹ Independent database: kapibala_test_2e779261f6144d03aff3b7b8b00972df
+✔ pre-existing inflight work reports the real recovery pause with incomplete earlier activity (96.657709ms)
+ℹ Independent database: kapibala_test_5a52f93a685f477d9c9e29243df19b3e
+ℹ {"latest":{"seq":4,"at":"2026-10-01T06:26:19.509Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"unrecorded-response","toolUseId":"all-run-steps"},"attemptId":"0533a529-7ed2-40b4-babe-de0aad9de15f","instancePid":94197,"activityState":"recovery-paused","includesUnsavedTail":false,"epochIds":["96223b4e-1aab-41bf-9562-d39d80eb5319"],"persistedActiveMs":0,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","observedEpochActiveMs":[12,16],"incompleteReason":"A pre-existing run was rebased after clock ownership acquisition; prior unsaved activity is not reconstructable."},"qaCompatibility":"Current QA requires activeElapsedMs even when incomplete, so this honest partial witness is BLOCKED at schema validation."}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ audit-blocked commits publish terminal activity without relying on Agent.finish (800.721334ms)
+ℹ Independent database: kapibala_test_c0130ae0b92043349f518ff571787a1b
+✔ a rolled-back creation transaction cannot publish a run creation witness (117.97875ms)
+ℹ Independent database: kapibala_test_b5ed9cd66e214350ad7d7f3110bf8dc1
+✔ subscribing to an already paused run never bills the pause before its later cancellation (232.4255ms)
+ℹ Independent database: kapibala_test_35739cc94aeb44d5a3b7640dbd099498
+✔ a delayed notification of real clock acquisition cannot overwrite a newer committed recovery pause (99.440125ms)
+ℹ Independent database: kapibala_test_464f12780924489ba83dcf7718ace154
+✔ SIGKILL ends the held instance and a real replacement cannot inherit its lease or invent its unsaved tail (840.016458ms)
+ℹ Independent database: kapibala_test_7e7dda9d39374b139c9089f37ee892f3
+ℹ {"killedAt":1790835981107,"oldOwnerPid":95388,"newOwnerPid":95391,"safe":{"seq":3,"at":"2026-10-01T06:26:21.080Z","kind":"activity-safe-held","correlation":{"kind":"activity","groupId":"g","runId":"fbb22e6a-d1f3-40a0-a4ac-64f6eba1d2a5","toolUseId":"all-run-steps"},"attemptId":"9591b226-4b1f-4203-87a2-8fe011a63e6c","instancePid":95388,"activityState":"active","includesUnsavedTail":true,"epochIds":["870074f1-9be5-435e-98cb-68e89dfca274"],"persistedActiveMs":45,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[48,55],"stepId":"06713ccdb6eb35a32d63c1eea91e29bd80477b989bee1b4342decd300ff6fc20","continuationDurable":true,"remoteInFlightCount":0,"safeBoundary":"read-tool-result-outer-commit-confirmed-before-next-dispatch"},"terminal":{"seq":7,"at":"2026-10-01T06:26:21.567Z","kind":"activity-terminal","correlation":{"kind":"activity","groupId":"g","runId":"fbb22e6a-d1f3-40a0-a4ac-64f6eba1d2a5","toolUseId":"all-run-steps"},"attemptId":"0389e783-9bc9-4410-a70a-ea573add6f39","instancePid":95391,"activityState":"terminal","includesUnsavedTail":false,"epochIds":["524cb429-3e15-4445-9bb2-a5722a7116d8"],"persistedActiveMs":83,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","observedEpochActiveMs":[36,41],"incompleteReason":"A pre-existing run was rebased after clock ownership acquisition; prior unsaved activity is not reconstructable."},"limitation":"Actual old online tail was lost on SIGKILL; no whole-run finite activity interval is asserted."}
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 9378.936291

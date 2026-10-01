@@ -1,0 +1,66 @@
+✔ Agent does not dispatch a model request after its intent write consumes the remaining budget (621.710792ms)
+ℹ Independent database: kapibala_test_49c54e6273d24ccfaf97f50156b0c8d7
+ℹ {"runId":"expired-intent","elapsedMs":396.102292,"persistedActiveMs":60182,"modelRequests":0}
+✔ Agent does not dispatch an audit request after its intent write consumes the remaining budget (488.795667ms)
+ℹ Independent database: kapibala_test_d7eee19a986047f5af849e6c2d7b1b2c
+ℹ {"runId":"expired-audit-intent","elapsedMs":404.6689590000001,"persistedActiveMs":60191,"auditRequests":0}
+✔ checkpoint connection-pool exhaustion rejects and late checkout returns without reviving the stage (1716.062959ms)
+ℹ Independent database: kapibala_test_b190e422880442b5a118b21c9f28cf8a
+ℹ {"poolWaitMs":1502.490292}
+✔ blocked checkpoint query destroys its owning lease before another owner resumes (1309.560833ms)
+ℹ Independent database: kapibala_test_f715fdc3fffe461c951272c711b58503
+ℹ {"blockedQueryWaitMs":1205.688334,"remainingOwners":0}
+✔ continuous targeted wakes leave periodic accounting available for queued runs (1424.285666ms)
+ℹ Independent database: kapibala_test_cbbcb4703e0648ca822ac5f58c39a1c7
+ℹ {"notifications":183,"elapsedMs":1204.9117500000002,"queuedActiveMs":995}
+✔ an unresponsive owner cannot acknowledge a follower checkpoint, then takeover excludes the outage (1932.063291ms)
+ℹ Independent database: kapibala_test_eb80569ee3254bb3b80fa62c04dca493
+ℹ {"unresponsiveOwnerWaitMs":1519.6806670000005,"beforeActiveMs":1,"afterActiveMs":7,"caveat":"hard termination still loses the unpersisted online tail"}
+✔ activity checkpoints persist a completed model wait shorter than the sampling interval (290.209166ms)
+ℹ Independent database: kapibala_test_58bacb8cc19241ed8c3b1e958a2a888e
+ℹ {"activeMs":181,"modelWaitMs":139.74562500000047}
+✔ activity checkpoints persist audit waiting and a follower wakes only the shared owner (575.89175ms)
+ℹ Independent database: kapibala_test_2b60a0e4416d4955bb4f40caba182996
+ℹ {"auditWaitMs":142.06779199999983,"elapsedMs":353.13916699999936,"activeMs":324,"writers":[184],"ownerPid":184}
+✔ activity checkpoint failure at model:before blocks the next remote or durable stage (221.649875ms)
+ℹ Independent database: kapibala_test_a78fd7535868416a9675c7d6e00b1e2c
+ℹ {"phase":"model:before","turns":0,"audits":0,"inflightTurn":false,"steps":0,"activeMs":0,"elapsedMs":1.0284169999995356}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ activity checkpoint failure at model:after blocks the next remote or durable stage (262.744667ms)
+ℹ Independent database: kapibala_test_82aa2ae7d35642d887aa429016a69a97
+ℹ {"phase":"model:after","turns":1,"audits":0,"inflightTurn":true,"steps":0,"activeMs":13,"elapsedMs":0.8747499999999491}
+✔ activity checkpoint failure at audit:before blocks the next remote or durable stage (222.355834ms)
+ℹ Independent database: kapibala_test_c6c2b9229ac34d3788d833b0c5282b6d
+ℹ {"phase":"audit:before","turns":1,"audits":0,"inflightTurn":false,"steps":1,"activeMs":16,"elapsedMs":0.6790000000000873}
+✔ activity checkpoint failure at audit:after blocks the next remote or durable stage (129.204667ms)
+ℹ Independent database: kapibala_test_5fbc271ac0d44fa6b598e2148d13e5d0
+ℹ {"phase":"audit:after","turns":1,"audits":1,"inflightTurn":false,"steps":1,"activeMs":21,"elapsedMs":0.6868749999994179}
+✔ activity witness keeps pre-lease creation time and holds only a committed read continuation (1191.3715ms)
+ℹ Independent database: kapibala_test_bcf12d7356724e07b4052e5825ae7771
+ℹ {"safe":{"seq":3,"at":"2026-10-01T06:22:21.878Z","kind":"activity-safe-held","correlation":{"kind":"activity","groupId":"g","runId":"b57a2ca0-28f6-43a2-a041-9fc364f7616e","toolUseId":"all-run-steps"},"attemptId":"8eb1375f-27b0-4e45-b1e5-b12907a9bc4b","instancePid":77035,"activityState":"active","includesUnsavedTail":true,"epochIds":["ff83ecd4-9834-41ca-a0f6-7351801a9933"],"persistedActiveMs":135,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[142,148],"stepId":"791f551adb134615c0c54f37ce385d8ef992d1929b24371e7ee5d8390180418d","continuationDurable":true,"remoteInFlightCount":0,"safeBoundary":"read-tool-result-outer-commit-confirmed-before-next-dispatch"},"terminal":{"seq":8,"at":"2026-10-01T06:22:22.750Z","kind":"activity-terminal","correlation":{"kind":"activity","groupId":"g","runId":"b57a2ca0-28f6-43a2-a041-9fc364f7616e","toolUseId":"all-run-steps"},"attemptId":"8eb1375f-27b0-4e45-b1e5-b12907a9bc4b","instancePid":77035,"activityState":"terminal","includesUnsavedTail":true,"epochIds":["ff83ecd4-9834-41ca-a0f6-7351801a9933"],"persistedActiveMs":1016,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[1011,1021]},"limitation":"same-process monotonic creation-to-terminal brackets; not a 60-second acceptance result"}
+✔ safe activity lease TTL releases the actual wait while the product clock keeps billing it (5184.103625ms)
+ℹ Independent database: kapibala_test_3e16511715b54c5fae335641ab3e3201
+ℹ {"terminal":{"seq":16,"at":"2026-10-01T06:22:27.899Z","kind":"activity-terminal","correlation":{"kind":"activity","groupId":"g","runId":"987e4aae-f3ee-4088-ac5c-9b49e53e1241","toolUseId":"all-run-steps"},"attemptId":"f28b5e2c-b6c8-4556-8b26-163d7039b88b","instancePid":77035,"activityState":"terminal","includesUnsavedTail":true,"epochIds":["40a0159c-5d56-4bc7-9eb9-e8debce56008"],"persistedActiveMs":5047,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5042,5052]},"holdState":"released"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ DELETE releases only its matched safe wait without deleting historical events (290.504625ms)
+ℹ Independent database: kapibala_test_8d8966fc83ff4f89929a898e7210310e
+✔ loss of the real run lock invalidates a safe hold before a new worker may resume (313.68275ms)
+ℹ Independent database: kapibala_test_bd742f3ffb8a43d983d1c7d1da9c706a
+✔ loss of the clock owner invalidates completeness instead of treating a rebased epoch as continuous (267.611375ms)
+ℹ Independent database: kapibala_test_486d2ec3cb6c42fda2d7ba7b31425dd1
+✔ pre-existing inflight work reports the real recovery pause with incomplete earlier activity (216.709125ms)
+ℹ Independent database: kapibala_test_04efaffb0b7b417783148d5fe8d12de7
+ℹ {"latest":{"seq":4,"at":"2026-10-01T06:22:28.915Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"unrecorded-response","toolUseId":"all-run-steps"},"attemptId":"46eecbf8-1c3b-4a54-81c2-a28a69e55b02","instancePid":77035,"activityState":"recovery-paused","includesUnsavedTail":false,"epochIds":["77140c81-0f1c-46f8-bc4c-ea6c763f44d3"],"persistedActiveMs":1,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","observedEpochActiveMs":[11,18],"incompleteReason":"A pre-existing run was rebased after clock ownership acquisition; prior unsaved activity is not reconstructable."},"qaCompatibility":"Current QA requires activeElapsedMs even when incomplete, so this honest partial witness is BLOCKED at schema validation."}
+✔ audit-blocked commits publish terminal activity without relying on Agent.finish (706.886667ms)
+ℹ Independent database: kapibala_test_7730b638e2ab4f368eda46d5777c8c5e
+✔ a rolled-back creation transaction cannot publish a run creation witness (103.731458ms)
+ℹ Independent database: kapibala_test_484a4aea44ea4401a9b834812f537f50
+ℹ tests 20
+ℹ suites 0
+ℹ pass 20
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8448.648125

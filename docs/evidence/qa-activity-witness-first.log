@@ -1,0 +1,45 @@
+✖ activity witness keeps pre-lease creation time and holds only a committed read continuation (1014.182583ms)
+ℹ Independent database: kapibala_test_12219865d985408499390eaa7770dd81
+✔ safe activity lease TTL releases the actual wait while the product clock keeps billing it (5165.243125ms)
+ℹ Independent database: kapibala_test_bb4e7b190b1a4c52a6e2560330d6574a
+ℹ {"terminal":{"seq":16,"at":"2026-10-01T06:21:04.830Z","kind":"activity-terminal","correlation":{"kind":"activity","groupId":"g","runId":"cf01be74-45d9-4a2b-a866-c6ff29fe4113","toolUseId":"all-run-steps"},"attemptId":"651ed833-5467-4752-928f-c9bd46f54006","instancePid":74726,"activityState":"terminal","includesUnsavedTail":true,"epochIds":["a2c0840c-0c57-4062-9246-1f2b27798309"],"persistedActiveMs":5046,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","activeElapsedMs":[5041,5051]},"holdState":"released"}
+✔ DELETE releases only its matched safe wait without deleting historical events (260.131042ms)
+ℹ Independent database: kapibala_test_66fcce03d9274543b49d71b96d5d19ff
+✔ loss of the real run lock invalidates a safe hold before a new worker may resume (179.530875ms)
+ℹ Independent database: kapibala_test_fa0bab7f936e47949b1170241e3eb574
+✔ loss of the clock owner invalidates completeness instead of treating a rebased epoch as continuous (145.490125ms)
+ℹ Independent database: kapibala_test_ae5ba4c5e9c849dda2223d9205ff8f97
+✔ pre-existing inflight work reports the real recovery pause with incomplete earlier activity (101.778417ms)
+ℹ Independent database: kapibala_test_4741f9fc358f44f7873955ae41c21e42
+ℹ {"latest":{"seq":4,"at":"2026-10-01T06:21:05.535Z","kind":"activity-checkpoint","correlation":{"kind":"activity","groupId":"g","runId":"unrecorded-response","toolUseId":"all-run-steps"},"attemptId":"a75ba3e8-d40a-4e2d-b62a-413a6ce2752d","instancePid":74726,"activityState":"recovery-paused","includesUnsavedTail":false,"epochIds":["87f19591-7afd-4e85-9876-0bf3963e55a2"],"persistedActiveMs":1,"clockSource":"process performance.now brackets around confirmed product creation, ownership and terminal boundaries","observedEpochActiveMs":[13,18],"incompleteReason":"A pre-existing run was rebased after clock ownership acquisition; prior unsaved activity is not reconstructable."},"qaCompatibility":"Current QA requires activeElapsedMs even when incomplete, so this honest partial witness is BLOCKED at schema validation."}
+✔ audit-blocked commits publish terminal activity without relying on Agent.finish (789.555333ms)
+ℹ Independent database: kapibala_test_27d8b96d28e249009578d9b9239c1efd
+✔ a rolled-back creation transaction cannot publish a run creation witness (111.609416ms)
+ℹ Independent database: kapibala_test_a583fe30bd51410d8b70e51fdcf9b187
+ℹ tests 8
+ℹ suites 0
+ℹ pass 7
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7936.901875
+
+✖ failing tests:
+
+test at tests/integration/qa-activity-witness.test.ts:83:1
+✖ activity witness keeps pre-lease creation time and holds only a committed read continuation (1014.182583ms)
+  AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+  
+    assert.ok(
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/qa-activity-witness.test.ts:113:10)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
