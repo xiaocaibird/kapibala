@@ -9,6 +9,10 @@ import {
   type Queryable,
 } from "../../core/db.js";
 import { AppError, RemoteError } from "../../core/errors.js";
+import type {
+  RemoteObservation,
+  RemoteSignalSource,
+} from "../../core/remote.js";
 import {
   KICK_POST_TIMEOUT_MS,
   type KickOptions,
@@ -667,6 +671,28 @@ export class Messages implements MessagingService {
     input: { groupId: string; accountId: string; targetPlatformUserId: string },
     options?: KickOptions,
   ): Promise<{ kicked: true }> {
+    const observer = this.ctx.testLifecycleObserver;
+    const kickAttemptId = observer
+      ? (options?.observation?.attemptId ?? randomUUID())
+      : "";
+    const observeRemote = (
+      requestPurpose: "post" | "confirmation" | "projection",
+    ) =>
+      observer
+        ? (fact: RemoteObservation) => {
+            observer.record({
+              kind: `kick-${requestPurpose}-${fact.stage}`,
+              groupId: input.groupId,
+              accountId: input.accountId,
+              runId: options?.observation?.runId,
+              toolUseId: options?.observation?.toolUseId,
+              stepId: options?.observation?.stepId,
+              attemptId: kickAttemptId,
+              requestPurpose,
+              ...fact,
+            });
+          }
+        : undefined;
     options?.assertDispatchAllowed?.();
     options?.signal?.throwIfAborted();
     const result = await this.ctx.db.tryWithLock(
@@ -675,6 +701,19 @@ export class Messages implements MessagingService {
         const signal = options?.signal
           ? AbortSignal.any([options.signal, lockSignal])
           : lockSignal;
+        const signalSources: RemoteSignalSource[] | undefined = observer
+          ? [
+              { source: "kick-lock", signal: lockSignal },
+              ...(options?.signal && options.observation
+                ? [
+                    {
+                      source: options.observation.signalSource,
+                      signal: options.signal,
+                    },
+                  ]
+                : []),
+            ]
+          : undefined;
         options?.assertDispatchAllowed?.();
         signal.throwIfAborted();
         const group = (
@@ -709,6 +748,8 @@ export class Messages implements MessagingService {
               KICK_POST_TIMEOUT_MS,
               signal,
               options?.assertDispatchAllowed,
+              observeRemote("post"),
+              signalSources,
             ),
           );
         } catch (error) {
@@ -747,6 +788,9 @@ export class Messages implements MessagingService {
                 undefined,
                 15000,
                 signal,
+                undefined,
+                observeRemote("confirmation"),
+                signalSources,
               ),
             );
           if (
@@ -775,6 +819,9 @@ export class Messages implements MessagingService {
                   undefined,
                   15000,
                   signal,
+                  undefined,
+                  observeRemote("projection"),
+                  signalSources,
                 ),
               );
           } catch (error) {

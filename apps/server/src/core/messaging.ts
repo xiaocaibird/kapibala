@@ -14,6 +14,15 @@ export interface SendInput {
 export const KICK_POST_TIMEOUT_MS = 15000;
 export interface KickOptions {
   signal?: AbortSignal;
+  /** Engineering-only correlation and source identity for the actual signal.
+   * These fields do not add a signal or change cancellation semantics. */
+  observation?: {
+    runId: string;
+    toolUseId: string;
+    stepId: string;
+    attemptId: string;
+    signalSource: "activity-budget";
+  };
   /** Runs after local admission and validation, before any remote kick. A
    * rejection prevents dispatch; durable intent writes must commit here. */
   beforeDispatch?: () => Promise<void>;

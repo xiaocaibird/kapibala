@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import type { ActivityPauseCause } from "../../core/test-activity-observer.js";
 import { setTimeout as delay } from "node:timers/promises";
 import type { LifecycleFact } from "../../core/test-lifecycle-observer.js";
 import type { AppContext } from "../../core/context.js";
@@ -40,7 +41,7 @@ export interface ToolExecutionHost {
     status: AgentRun["status"],
     reason: string,
   ): Promise<void>;
-  pause(run: RunRow, reason: string): Promise<void>;
+  pause(run: RunRow, reason: string, cause: ActivityPauseCause): Promise<void>;
   readRun(id: string): Promise<RunRow | undefined>;
   checkpoint(run: RunRow, phase: string): Promise<void>;
 }
@@ -236,8 +237,31 @@ export class AgentTools {
     const observe = (kind: string, fields: Record<string, unknown> = {}) =>
       this.ctx.testLifecycleObserver?.record({ ...fact, kind, ...fields });
     observe("send-tool-entered");
-    const complete = (outcome: ToolOutcome) =>
-      this.host.completeStep(run, step, outcome, undefined, fact.attemptId);
+    const complete = async (outcome: ToolOutcome) => {
+      observe("send-tool-history-save-started");
+      try {
+        await this.host.completeStep(
+          run,
+          step,
+          outcome,
+          undefined,
+          fact.attemptId,
+        );
+        // This is the caller's return, not a fabricated transaction COMMIT.
+        // The actual host emits its existing send-tool-history-committed fact.
+        observe("send-tool-history-save-returned");
+      } catch (error) {
+        const code =
+          error instanceof Error && "code" in error ? error.code : undefined;
+        observe("send-tool-history-save-failed", {
+          errorName: error instanceof Error ? error.name : "UnknownError",
+          ...(typeof code === "string" && /^[A-Z0-9]{5}$/.test(code)
+            ? { sqlState: code }
+            : {}),
+        });
+        throw error;
+      }
+    };
     const deliver = async (clientMsgId: string, keyReused: boolean) => {
       observe("send-key-resolved", { clientMsgId, keyReused });
       const result = await this.delivery(clientMsgId, run, fact);
@@ -341,7 +365,7 @@ export class AgentTools {
       attemptId: String(fact.attemptId),
       clientMsgId,
     });
-    const outcome = await this.waitForDelivery(clientMsgId, run);
+    const outcome = await this.waitForDelivery(clientMsgId, run, fact);
     this.ctx.testLifecycleObserver?.record({
       ...fact,
       kind: "send-wait-result-ready",
@@ -355,6 +379,7 @@ export class AgentTools {
   private async waitForDelivery(
     clientMsgId: string,
     run: RunRow,
+    fact: Omit<LifecycleFact, "kind">,
   ): Promise<ToolOutcome> {
     const deadline =
       performance.now() + Math.min(5000, this.host.remaining(run));
@@ -399,6 +424,16 @@ export class AgentTools {
             );
           return undefined;
         },
+        this.ctx.testLifecycleObserver
+          ? (event) =>
+              this.ctx.testLifecycleObserver!.record({
+                ...fact,
+                groupId: run.group_id,
+                attemptId: String(fact.attemptId),
+                clientMsgId,
+                ...event,
+              })
+          : undefined,
       );
       // A local read timeout gives no new delivery fact. Keep the original
       // observation window and idempotency key; never fail the stored message.
@@ -437,6 +472,7 @@ export class AgentTools {
       await this.host.pause(
         run,
         "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
+        "unrecorded-kick-response",
       );
       return;
     }
@@ -537,6 +573,36 @@ export class AgentTools {
       return;
     }
     const deadline = AbortSignal.timeout(remaining);
+    const observation = this.ctx.testLifecycleObserver
+      ? {
+          groupId: run.group_id,
+          runId: run.id,
+          toolUseId: step.tool_use_id!,
+          stepId: `${run.id}:${step.ordinal}`,
+          attemptId: randomUUID(),
+          signalSource: "activity-budget" as const,
+        }
+      : undefined;
+    const budgetAborted = () => {
+      if (!observation) return;
+      try {
+        const before = performance.now();
+        const signalObservedAtMonoNs = process.hrtime.bigint().toString();
+        const after = performance.now();
+        this.ctx.testLifecycleObserver?.record({
+          ...observation,
+          kind: "kick-budget-signal-aborted",
+          signalObservedAtMonoNs,
+          signalObservedWindowMs: [before, after],
+          budgetMs: remaining,
+          source: "activity-budget",
+        });
+      } catch {
+        /* A test observer cannot change cancellation handling. */
+      }
+    };
+    if (observation)
+      deadline.addEventListener("abort", budgetAborted, { once: true });
     const assertDispatchAllowed = () => {
       currentOperationSignal()?.throwIfAborted();
       if (this.host.remaining(run) < KICK_POST_TIMEOUT_MS)
@@ -560,6 +626,7 @@ export class AgentTools {
           },
           {
             signal: deadline,
+            observation,
             assertDispatchAllowed,
             beforeDispatch: async () => {
               assertDispatchAllowed();
@@ -626,6 +693,7 @@ export class AgentTools {
         await this.host.pause(
           run,
           "The activity budget expired during a kick. Its external result remains unknown and the saved intent will not be replayed.",
+          "kick-budget-exhausted",
         );
         await this.host.finish(run, "failed", "wall_clock");
         return;
@@ -647,6 +715,7 @@ export class AgentTools {
         await this.host.pause(
           run,
           "The dispatched kick has no provable outcome; automatic replay is paused.",
+          "kick-outcome-unknown",
         );
         return;
       }
@@ -659,6 +728,8 @@ export class AgentTools {
         : "SEND_FAILED";
       await this.host.completeStep(run, step, toolError(mapped, code));
       return;
+    } finally {
+      if (observation) deadline.removeEventListener("abort", budgetAborted);
     }
     await this.host.completeStep(run, step, { value: { kicked: true } });
   }
