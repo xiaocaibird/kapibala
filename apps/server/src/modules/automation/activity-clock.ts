@@ -229,7 +229,7 @@ export class ActivityClock {
         signal?.throwIfAborted();
         if (this.closed || performance.now() >= deadline)
           throw new Error(
-            "Activity checkpoint was not confirmed before its deadline",
+            "Activity checkpoint timed out before confirmation",
           );
         const row = (
           await this.observe<{
@@ -244,7 +244,7 @@ export class ActivityClock {
         ).rows[0];
         if (performance.now() >= deadline)
           throw new Error(
-            "Activity checkpoint was not confirmed before its deadline",
+            "Activity checkpoint timed out before confirmation",
           );
         if (!row || row.status !== "running" || row.recovery_note) return;
         if (row.activity_updated_at.getTime() >= boundary.at.getTime()) return;
