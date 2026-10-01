@@ -1,0 +1,239 @@
+{
+  "kind": "independent-read-only-retest-evidence-review",
+  "reviewConclusion": "stored evidence supports ARC-UI-015 PASS in this frozen Chromium run",
+  "qaRevision": "526d814db45d15896f96563e7a2a8b8f75064f81",
+  "sutRevision": "e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb",
+  "phase": "developer-preflight",
+  "runId": "2026-10-01T12-46-08.250Z-9b50fc8a",
+  "firstRunStatusUnchanged": "BLOCKED",
+  "execution": {
+    "status": "passed",
+    "retry": 0,
+    "duration": 10595,
+    "startTime": "2026-10-01T12:47:05.802Z",
+    "errors": []
+  },
+  "clockDomain": "QA worker performance.now milliseconds; no subtraction with wallclock or another process",
+  "sequenceId": "ebc362a5-d14b-41f1-8746-507177883438",
+  "seedRequestId": "17b8e631-f865-4dd0-9d86-31d4ba532e3c",
+  "refreshPremise": {
+    "count": 1,
+    "visible": true,
+    "enabled": true
+  },
+  "reads": [
+    {
+      "at": 3595.83325,
+      "url": "http://127.0.0.1:56846/api/sequences",
+      "attempt": 1,
+      "phase": "exhaustion"
+    },
+    {
+      "at": 3851.63575,
+      "url": "http://127.0.0.1:56846/api/sequences",
+      "attempt": 2,
+      "phase": "exhaustion"
+    },
+    {
+      "at": 4354.506917,
+      "url": "http://127.0.0.1:56846/api/sequences",
+      "attempt": 3,
+      "phase": "exhaustion"
+    },
+    {
+      "at": 5359.259959,
+      "url": "http://127.0.0.1:56846/api/sequences",
+      "attempt": 4,
+      "phase": "exhaustion"
+    },
+    {
+      "at": 8543.136125,
+      "url": "http://127.0.0.1:56846/api/sequences",
+      "attempt": 5,
+      "phase": "explicit-refresh"
+    }
+  ],
+  "responses": [
+    {
+      "at": 3602.244084,
+      "method": "RESPONSE GET",
+      "path": "/api/sequences",
+      "status": 503
+    },
+    {
+      "at": 3852.686709,
+      "method": "RESPONSE GET",
+      "path": "/api/sequences",
+      "status": 503
+    },
+    {
+      "at": 4355.459,
+      "method": "RESPONSE GET",
+      "path": "/api/sequences",
+      "status": 503
+    },
+    {
+      "at": 5361.255125,
+      "method": "RESPONSE GET",
+      "path": "/api/sequences",
+      "status": 503
+    },
+    {
+      "at": 8558.384625,
+      "method": "RESPONSE GET",
+      "path": "/api/sequences",
+      "status": 200
+    }
+  ],
+  "responseScopeSync": {
+    "requestAt": 8543.136125,
+    "responseAt": 8558.3965,
+    "requireReady": true
+  },
+  "matchingPostResponseMarker": {
+    "at": 8563.277667,
+    "socketId": 1,
+    "requestId": "add8bde5-9df8-4178-84b2-dfbf42b7b52d"
+  },
+  "matchingPostResponseReady": {
+    "at": 8567.636542,
+    "socketId": 1,
+    "requestId": "add8bde5-9df8-4178-84b2-dfbf42b7b52d",
+    "startSeq": 1
+  },
+  "scopeResponseToMarkerMs": 4.88116699999955,
+  "markerToReadyMs": 4.358874999999898,
+  "continuity": {
+    "checks": 119,
+    "allSameDocument": true,
+    "before": {
+      "url": "http://127.0.0.1:56846/#/sequences",
+      "navigations": 2,
+      "socketChanges": 1,
+      "scopeReady": 2,
+      "scopeMarkers": 2,
+      "staleScopeReady": 0,
+      "scopeEstablished": true
+    },
+    "after": {
+      "url": "http://127.0.0.1:56846/#/sequences",
+      "navigations": 2,
+      "socketChanges": 1,
+      "scopeReady": 3,
+      "scopeMarkers": 3,
+      "staleScopeReady": 0,
+      "scopeEstablished": true
+    },
+    "authentications": 1,
+    "socketChanges": 1,
+    "businessEvents": [
+      {
+        "at": 3015.955042,
+        "seq": 1,
+        "type": "sequence_definition_changed",
+        "payload": {
+          "sequenceId": "ebc362a5-d14b-41f1-8746-507177883438",
+          "changedFields": [
+            "created"
+          ]
+        }
+      }
+    ],
+    "businessEventsAfterFirstRead": []
+  },
+  "assertions": {
+    "labels": {
+      "refresh-response": 1,
+      "sequence-presented": 1,
+      "stable-request-count": 55,
+      "post-response-scope-settled": 1
+    },
+    "allSucceededWithContinuity": true,
+    "stableRequestCountFirstBoundaryMs": 8572.81975,
+    "stableRequestCountLastBoundaryMs": 11634.037334,
+    "stableRequestCountObservedSpanMs": 3061.217584,
+    "last503ToActionBaselineMs": 3151.1686250000002,
+    "successResponseToLastBoundaryMs": 3084.099458999999
+  },
+  "cleanup": {
+    "completedAt": "2026-10-01T12:47:17.427Z",
+    "failures": []
+  },
+  "limits": [
+    "This is a Chromium developer-preflight case, not a full acceptance or release decision.",
+    "Document identity is stable; no claim that all DOM nodes or internal controllers stayed identical.",
+    "RequestId/socket/watermark prove the control handshake association, not hidden product scope internals.",
+    "The 3000ms stable window is the versioned QA observation profile, not a new unbounded guarantee.",
+    "Passed cases retain raw JSON/screenshots, not a trace.zip, under retain-on-failure configuration.",
+    "Original first-run BLOCKED is retained separately; no original evidence or results were overwritten."
+  ],
+  "sourceHashes": [
+    {
+      "path": "tests/ui/architecture.spec.ts",
+      "sha256": "1783fe03ea2fafe03d4c2038d73bfe5b0751077889fa35072fb230c7806e1774",
+      "revision": "526d814db45d15896f96563e7a2a8b8f75064f81"
+    },
+    {
+      "path": "tests/ui/page-continuity.ts",
+      "sha256": "32fd21b441d01b1639d3240914715348e699dd1d5987abcd8b7699364d46ee5d",
+      "revision": "526d814db45d15896f96563e7a2a8b8f75064f81"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha256": "4a063f59db9037042c62f6e4df550e53972db3edf9a5923a06a4304df84c245e",
+      "revision": "526d814db45d15896f96563e7a2a8b8f75064f81"
+    }
+  ],
+  "inputHashes": [
+    {
+      "path": "reports/preflight/2026-10-01T12-46-08.250Z-9b50fc8a/manifest.json",
+      "sha256": "e2feea04c4d1476daf061a0e4ea7233bcb8b39c43e6761a98b1088d94bf611b5",
+      "bytes": 80342
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-46-08.250Z-9b50fc8a/results.json",
+      "sha256": "5793ca3fe8055bc17f0d659fd3c6d9a52800bf39ca3093d3795db5596e01f596",
+      "bytes": 213734
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-46-08.250Z-9b50fc8a/playwright.json",
+      "sha256": "e65d9817ecfc3594cecc057e2a2655d0957d5fb57185b7156fc771557821429d",
+      "bytes": 11058
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-31-30.250Z-1384f257/results.json",
+      "sha256": "f5bb338e72b21cfc564092de9d78d73cc072d0c2bf58776888eb397f57b57432",
+      "bytes": 216042
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-46-08.250Z-9b50fc8a/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/evidence/architecture-explicit-refresh-continuity.json",
+      "sha256": "386e21b5b496fedaf5bb678d13e3791398bd9103950f97aaa3008941044eecda",
+      "bytes": 75544
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-46-08.250Z-9b50fc8a/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/evidence/architecture-browser.json",
+      "sha256": "26e46b63e5fde568713e44d0f0497ea3b7c5e3cee079fab553a901d8fcc5a6fe",
+      "bytes": 1687
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-46-08.250Z-9b50fc8a/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/evidence/architecture-final.json",
+      "sha256": "fe90598f41d4506071ebd467ebe55830336cd37c4e4f5032055de5c0aec01a49",
+      "bytes": 1274
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-46-08.250Z-9b50fc8a/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/evidence/cleanup.json",
+      "sha256": "d3f3483ebdb00e74e7c476a5a43d0174415fc992f33c6e5d0a8207a7e563ebce",
+      "bytes": 65
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-46-08.250Z-9b50fc8a/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/evidence/api.ndjson",
+      "sha256": "4a39c6d262af367c9b5c9b7ae413410be4882afce3817ed5f57c13f4129143ff",
+      "bytes": 5353
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-46-08.250Z-9b50fc8a/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/evidence/architecture-final.png",
+      "sha256": "90ad69d85c0ac4e553b0f6a7546781adcd9b18ce7c105242712b738927ddc79f",
+      "bytes": 108604
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+<testsuites id="" name="" tests="8" failures="1" skipped="0" errors="0" time="86.035784">
+<testsuite name="system/capacity-control.spec.ts" timestamp="2026-10-01T12:34:40.585Z" hostname="system" tests="4" failures="1" skipped="0" time="73.221" errors="0">
+<testcase name="[CAP-001] confirmed capacity refusal makes no request and release resumes the original audited step once" classname="system/capacity-control.spec.ts" time="3.328">
+</testcase>
+<testcase name="[CAP-003] persistent admission refusal consumes the original active budget without resetting the clock" classname="system/capacity-control.spec.ts" time="62.039">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/error-context.md]]
+
+[[ATTACHMENT|artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/trace.zip]]
+]]>
+</system-out>
+<failure message="已确定超过活动预算才停止" type="expect.toBeLessThanOrEqual">
+<![CDATA[  [system] › system/capacity-control.spec.ts:340:1 › [CAP-003] persistent admission refusal consumes the original active budget without resetting the clock 
+
+    Error: 已确定超过活动预算才停止
+
+    expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 60000
+    Received:    60004
+
+      429 |         '控制器实际活动区间与独立公开观察区间不相交',
+      430 |       ).toBeLessThanOrEqual(Math.min(independentElapsedBounds[1], bounds[1]));
+    > 431 |       expect(bounds[0], '已确定超过活动预算才停止').toBeLessThanOrEqual(60_000);
+          |                                         ^
+      432 |       expect(bounds[1], '已确定提前冒充预算耗尽').toBeGreaterThanOrEqual(60_000);
+      433 |       if (bounds[1] > 60_000)
+      434 |         throw new BlockedError('预算决定测量区间跨60秒边界；保留证据，不擅加计时容差');
+        at deferred.clock (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/capacity-control.spec.ts:431:41)
+        at deferred (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/capacity-control.spec.ts:289:5)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/capacity-control.spec.ts:344:3
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T12-34-40.057Z-b8ab8bd7/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T12-34-40.057Z-b8ab8bd7/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T12-34-40.057Z-b8ab8bd7/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T12-34-40.057Z-b8ab8bd7/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="[CAP-009] crash after proven zero-effect refusal before durable readiness resumes the original run without replaying audit" classname="system/capacity-control.spec.ts" time="3.666">
+</testcase>
+<testcase name="[CAP-010] admission pressure after a dispatched convergent 504 does not reset and replay the unknown kick" classname="system/capacity-control.spec.ts" time="4.188">
+</testcase>
+</testsuite>
+<testsuite name="system/capacity.spec.ts" timestamp="2026-10-01T12:34:40.585Z" hostname="system" tests="4" failures="0" skipped="0" time="9.766" errors="0">
+<testcase name="[CAP-REG-001] independent groups preserve one audit and one kick per run during overlapping requests" classname="system/capacity.spec.ts" time="3.927">
+</testcase>
+<testcase name="[CAP-REG-002] disabling kick policy while audit is pending prevents dispatch after audit passes" classname="system/capacity.spec.ts" time="1.918">
+</testcase>
+<testcase name="[CAP-REG-003] offline actors are rechecked after a pending audit instead of dispatching a stale choice" classname="system/capacity.spec.ts" time="1.935">
+</testcase>
+<testcase name="[CAP-REG-004] an online removed administrator and an online ordinary member cannot substitute for an eligible actor" classname="system/capacity.spec.ts" time="1.986">
+</testcase>
+</testsuite>
+</testsuites>

@@ -4,9 +4,11 @@
 
 ## 阅读入口
 
+- **[e85候选补充复测报告](reports/followup/20261001-e85ae61-retest/report.md)**：本轮30条唯一用例最新24 PASS / 3 FAIL / 3 BLOCKED，首次29条及修正后复测分别留档。两条严格60秒及一条严格5秒仍失败；不替代下方完整业务报告，不外推后续C1/C2候选或上线结论。
+
 - [七项工程补证与三项真人体验](requirements/evidence-followup/README.md)：负责人已授权的后续接入；新候选、观测与正式人工运行分别绑定。[本次交付与体验收尾记录](reports/followup/20261001-seven-blockers/report.md)。准备和工具校验不改变原报告结论。
 
-- **[本轮正式验收报告](reports/acceptance/20261001-business/report.md)**：[逐项审定](reports/acceptance/20261001-business/adjudicated-baseline.md)、[缺陷](reports/acceptance/20261001-business/defects.json)、[需决策与补证项](reports/acceptance/20261001-business/pending-decisions.json)。这是当前结论；以下接收/准备/首轮记录按各自历史时间解读。
+- **[已签发完整业务验收报告](reports/acceptance/20261001-business/report.md)**：[逐项审定](reports/acceptance/20261001-business/adjudicated-baseline.md)、[缺陷](reports/acceptance/20261001-business/defects.json)、[需决策与补证项](reports/acceptance/20261001-business/pending-decisions.json)。按报告绑定版本解读；后续固定候选补充复测单列，不覆盖原始结论。
 
 - [工程接入候选接收记录](requirements/engineering-candidate-intake-20261001.md)：新候选0af6443的版本和证据核对；当时工程已交付与QA实际接入分别记录，后续修复/复测见正式报告。
 

@@ -1,0 +1,170 @@
+[
+  {
+    "id": "E85-F-01",
+    "caseId": "AGENT-025",
+    "status": "FAIL",
+    "severity": "S2",
+    "title": "完整活动超过严格60秒上限",
+    "actual": "同一epoch完整活动[60011,60023]ms；已保存lifecycle事后复核从创建事务至实际终止决定[60011.182125,60016.268708]ms。",
+    "reproduction": "单epoch持续工具/模型活动；通过受控等待建立实际活动，观察终止决定及公开终态。原测试在活动下界断言停止，后续lifecycle断言是事后分析。",
+    "sourceCaseSteps": [
+      "每轮8秒、交替参数合法read持续运行",
+      "按automation中逐项断言读取公开REST/WS结果并对照独立外部事实账本"
+    ],
+    "expected": [
+      "从创建累计60秒后failed/wall_clock，未到12步预算"
+    ],
+    "requirements": [
+      "R-A5-06"
+    ],
+    "sutRevision": "e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb",
+    "qaRevision": "105ed289e0fbed6306025cd3dc1889730b17a423",
+    "runId": "2026-10-01T12-23-10.195Z-e84c34eb",
+    "evidence": "backend-postmortem/README.md",
+    "owner": "development/protocol integration",
+    "acceptedException": false
+  },
+  {
+    "id": "E85-F-02",
+    "caseId": "AGENT-028",
+    "status": "FAIL",
+    "severity": "S2",
+    "title": "工具状态等待超过严格5秒上限",
+    "actual": "第一次实际等待[5000.021624999999,5000.157999999999]ms；不加容差、不向下取整。",
+    "reproduction": "首发延迟至SEND_TIMEOUT；恢复后同clientMsgId查询sent。已执行一次审计/发送/落地断言；第一次时间断言FAIL后，history和第二次时间仅事后复核。",
+    "sourceCaseSteps": [
+      "send504后查询503超过5秒；工具超时；恢复后同key重试",
+      "按automation中逐项断言读取公开REST/WS结果并对照独立外部事实账本"
+    ],
+    "expected": [
+      "5秒得到SEND_TIMEOUT；恢复后同key返回现状，审计/send各一次"
+    ],
+    "requirements": [
+      "R-A5-10",
+      "R-A5-16"
+    ],
+    "sutRevision": "e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb",
+    "qaRevision": "105ed289e0fbed6306025cd3dc1889730b17a423",
+    "runId": "2026-10-01T12-23-10.195Z-e84c34eb",
+    "evidence": "backend-postmortem/README.md",
+    "owner": "development/protocol integration",
+    "acceptedException": false
+  },
+  {
+    "id": "E85-B-02",
+    "caseId": "BLK-EXT-001",
+    "status": "BLOCKED",
+    "severity": null,
+    "title": "远端没有效果且无确定性查询结果的恢复缺口",
+    "actual": "静默支路观察10010.733209ms/170样本，1发送、0落地、127次查询、无新派发，仍unknown；10秒不是产品时限，也不证明永久不恢复。",
+    "reproduction": "一个支路远端落地并可见sent；另一支路远端无效果且普通查询404。需要协议提供权威结果/无效果判据，或负责人明确例外；不盲重试。",
+    "sourceCaseSteps": [
+      "request屏障保持原发送未响应且未生效，读取公开发送意图并杀进程",
+      "重启保留网关原请求，在至少2.5秒相同在途前缀逐次核对不得盲重发",
+      "分别释放为原请求落地/无效果，不给原请求增加504的2秒保证，核对本地记录、msgId和独立效果账本"
+    ],
+    "expected": [
+      "已观察重复效果、在没有确认前重发、sent而无落地、落地被记失败均FAIL",
+      "外部落地有且仅有一条对应本地记录；两分支都取得真实终态证据才可通过",
+      "10秒观察仍unknown仅证明本次观察不足，记BLOCKED，不能把等待解释为通过或永久不恢复"
+    ],
+    "requirements": [
+      "R-A2-01",
+      "R-A5-11"
+    ],
+    "sutRevision": "e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb",
+    "qaRevision": "105ed289e0fbed6306025cd3dc1889730b17a423",
+    "runId": "2026-10-01T12-23-10.195Z-e84c34eb",
+    "evidence": "backend-postmortem/README.md",
+    "owner": "development/protocol integration",
+    "acceptedException": false
+  },
+  {
+    "id": "E85-F-03",
+    "caseId": "CAP-003",
+    "status": "FAIL",
+    "severity": "S2",
+    "title": "容量场景活动超过严格60秒上限，QA-DEF-002仍复现",
+    "actual": "受控活动区间[60004,60071]ms。公开HTTP独立区间[59915.466292,60171.70175]ms跨界，单独不足判FAIL；FAIL依据完整活动下界。",
+    "reproduction": "按CAP-003建立真实工程容量拒绝与活动预算证据，观察原run终态；不得将调度延迟或公开轮询上界替代完整活动区间。",
+    "sourceCaseSteps": [
+      "冻结权威活动计时起点；保持目标 kick 一直被容量拒绝而非 Agent 网络超时",
+      "记录每次拒绝、活动耗时、最后 running 与首次终态时间区间，持续到原活动预算耗尽",
+      "到期后释放容量并确认不会迟发 kick 或继续请求 turn"
+    ],
+    "expected": [
+      "waiting 消耗原 run 的 60 秒活动预算，不随重试或 ready 恢复而归零；终态 failed/wall_clock",
+      "预算耗尽前后均无远端 kick；没有审计/工具步骤膨胀",
+      "活动下界>60000明确FAIL；上界<60000而声称wall_clock明确FAIL；有效区间上界>60000且下界未超记BLOCKED，不加容差",
+      "允许[59999,60000]这类含阈值且上界不超限的完整见证，不自造必须精确[60000,60000]的仪器要求"
+    ],
+    "requirements": [
+      "ENG-ADMISSION-01",
+      "R-A5-05",
+      "R-A5-06"
+    ],
+    "sutRevision": "e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb",
+    "qaRevision": "105ed289e0fbed6306025cd3dc1889730b17a423",
+    "runId": "2026-10-01T12-34-40.057Z-b8ab8bd7",
+    "evidence": "runs/2026-10-01T12-34-40.057Z-b8ab8bd7/evidence-index.json",
+    "owner": "development/protocol integration",
+    "acceptedException": false
+  },
+  {
+    "id": "E85-B-01",
+    "caseId": "INT-ACT-001",
+    "status": "BLOCKED",
+    "severity": null,
+    "title": "重启前未保存尾段没有完整跨epoch证据",
+    "actual": "旧epoch安全活动[21101,21109]ms，新epoch[38911,38919]ms，includesUnsavedTail=false；不能相加或仅凭持久化60013ms判FAIL/PASS。",
+    "reproduction": "保留网关和数据库，kill真实活动进程并恢复同run；需要旧尾段和接管epoch完整关联的实际观测。",
+    "sourceCaseSteps": [
+      "建群开启Agent，外部消息触发不同入参的只读工具循环并记录创建区间",
+      "绑定真实run，17秒后请求安全屏障；须确认响应及续跑状态已持久化、零外部在途且独立Agent均已响应，再保持屏障SIGKILL停机5秒",
+      "保留DB/桩启动新SUT，以新pid重新验证绑定原run观测",
+      "逐次读取公开run及真实活动状态到终态；在线/停机测量只给出活动上界，实际活动由完整epoch及未保存尾段见证判定"
+    ],
+    "expected": [
+      "恢复同runId，最终failed/wall_clock且活跃指针清空，网关零发送",
+      "活动下界>60000则证明超时FAIL；wall_clock但上界<60000则提前宣告FAIL；上界<=60000可证上限",
+      "区间跨上限或缺未保存尾段真值记BLOCKED，不接受固定500ms/其他尾差容忍，不把persistedActiveMs冒充真值",
+      "恢复暂停待人工/外部确认而无法自动续跑记原A5.8恢复FAIL，不能误归预算；缺实际活动见证BLOCKED；进程在线下界不能当活动下界",
+      "只覆盖已证明安全阶段重启预算；在途未知结果及任意崩溃强恢复要求保留，不因本例改变预期"
+    ],
+    "requirements": [
+      "R-A5-06",
+      "R-A5-11"
+    ],
+    "sutRevision": "e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb",
+    "qaRevision": "105ed289e0fbed6306025cd3dc1889730b17a423",
+    "runId": "2026-10-01T12-23-10.195Z-e84c34eb",
+    "evidence": "runs/2026-10-01T12-23-10.195Z-e84c34eb/evidence-index.json",
+    "owner": "development/protocol integration",
+    "acceptedException": false
+  },
+  {
+    "id": "E85-B-03",
+    "caseId": "UI-032",
+    "status": "BLOCKED",
+    "severity": null,
+    "title": "缺少只确认已呈现变化的公开独立操作",
+    "actual": "实际加载23项多页目录并由一次元数据变化建立目录过期和提醒；独立确认入口匹配0，未完成清提示后旧游标仍不可用的验证。",
+    "reproduction": "加载目录多页，后台变更元数据；寻找不刷新目录的公开相关确认操作。开发需提供对应操作/契约；QA不伪造按钮或内部已读状态。",
+    "sourceCaseSteps": [
+      "加载目录多页；后台改元数据使目录过期；经公开且不刷新目录的相关确认操作清提示"
+    ],
+    "expected": [
+      "清提示之后仍禁止旧游标且无后页请求；没有可适配合法确认入口则BLOCKED，不伪造内部已读状态"
+    ],
+    "requirements": [
+      "ADD-ATT-05",
+      "ADD-DIR-08"
+    ],
+    "sutRevision": "e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb",
+    "qaRevision": "105ed289e0fbed6306025cd3dc1889730b17a423",
+    "runId": "2026-10-01T12-31-30.250Z-1384f257",
+    "evidence": "runs/2026-10-01T12-31-30.250Z-1384f257/evidence-index.json",
+    "owner": "development/protocol integration",
+    "acceptedException": false
+  }
+]

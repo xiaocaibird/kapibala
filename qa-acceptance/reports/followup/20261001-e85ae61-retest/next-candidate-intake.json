@@ -1,0 +1,38 @@
+{
+  "recordedAt": "2026-10-01T12:45:00.569219+00:00",
+  "state": "MATERIALS_RECEIVED_NOT_EXECUTED",
+  "candidate": "2cf74d2e8aecd013d7598df25e73554329f13e90",
+  "mainHandoff": "92c33987811b68bf58cb2a748d39288f2c52ac40",
+  "sourceTreeSha256": "c80b10472da0252dc287c6aa97a67c6c409d75bb7e883e02f7e09cdca861797b",
+  "sourceBlobCount": 226,
+  "documents": [
+    {
+      "path": "docs/c1-c2-delivery-20261001.md",
+      "sha256": "bffcd58e4b669c334e2d470521f4188646c8765df8912803642db787e2fd5491",
+      "bytes": 5016
+    },
+    {
+      "path": "docs/c1-c2-final-combination-20261001.md",
+      "sha256": "2e8bf9e3bfbc778f7b418e331f9916300633ab78b5e3ba10e99483961d911473",
+      "bytes": 5233
+    },
+    {
+      "path": "docs/evidence/c1-c2-root-delivery.json",
+      "sha256": "31cc2ae7e9543a86e89f9bbd48cbce102315002493022260aa5cd4a798a71a38",
+      "bytes": 2271
+    }
+  ],
+  "currentReportCandidateUnchanged": "e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb",
+  "developmentResultsNotQAResults": true,
+  "paidCallsAuthorizedByThisIntake": false,
+  "qaProductExecutions": 0,
+  "initialImpact": [
+    "新增schema9须独立迁移/旧schema拒启验证，不机械改旧版断言",
+    "每专属DB配自有持久MEDIA_DIR；重启保留，多实例共享物理目录，身份/清理须接入QA资源台账",
+    "C1四条候选涵盖下载、7天清理、失效路径、活动run引用保护；需独立下载故障/重启/竞争夹具和实际文件证据",
+    "C2保留turn/audit公开契约，独立服务与私有GEMINI_SESSION_DIR须单列fixture；先离线协议，真实凭据/费用不由本交接追加",
+    "新媒体worker与run pin影响容量/锁/预算和消息/分页契约，需新版本冒烟及相关回归",
+    "owner.lock硬崩溃处理、TURN_OUTCOME_UNCERTAIN、总盘配额/共享目录边界纳入风险；旧严格时限/协议缺口不关闭"
+  ],
+  "nextPhase": "当前e85报告先完成；C1/C2单独更新QA范围和自动化接入后执行，不能把现有五条候选设计称作新版本验收ready"
+}

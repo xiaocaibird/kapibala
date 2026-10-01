@@ -1,0 +1,34 @@
+{
+  "capturedAt": "2026-10-01T12:46:09.155282+00:00",
+  "cause": "start",
+  "container": "266e710af88a1188e949e8e84d30a3eb37f49fc0c96e4add5f15f4e71c9014fd",
+  "attribution": "Unassigned until matched to exact suite CLI, run time and environment. qa.owner alone is insufficient.",
+  "records": [
+    {
+      "argv": [
+        "docker",
+        "--host",
+        "unix:///var/run/docker.sock",
+        "inspect",
+        "--format",
+        "{\"id\":{{json .Id}},\"name\":{{json .Name}},\"created\":{{json .Created}},\"owner\":{{json (index .Config.Labels \"qa.owner\")}},\"status\":{{json .State.Status}},\"ports\":{{json .NetworkSettings.Ports}},\"mounts\":{{json .Mounts}}}",
+        "266e710af88a1188e949e8e84d30a3eb37f49fc0c96e4add5f15f4e71c9014fd"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"id\":\"266e710af88a1188e949e8e84d30a3eb37f49fc0c96e4add5f15f4e71c9014fd\",\"name\":\"/qa-acceptance-d340600c-2da1-435b-8ece-5b4fe959f108\",\"created\":\"2026-10-01T12:46:08.964561467Z\",\"owner\":\"d340600c-2da1-435b-8ece-5b4fe959f108\",\"status\":\"running\",\"ports\":{\"5432/tcp\":[{\"HostIp\":\"127.0.0.1\",\"HostPort\":\"56467\"}]},\"mounts\":[{\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"Name\":\"2cd68f18dd550f9cdceea601150580223ba7d19e037d3beb25d0c644750ccccb\",\"Propagation\":\"\",\"RW\":true,\"Source\":\"/var/lib/docker/volumes/2cd68f18dd550f9cdceea601150580223ba7d19e037d3beb25d0c644750ccccb/_data\",\"Type\":\"volume\"}]}\n",
+      "stderr": "",
+      "at": "2026-10-01T12:46:09.090572+00:00"
+    },
+    {
+      "argv": [
+        "lsof",
+        "-nP",
+        "-iTCP:56467"
+      ],
+      "exitCode": 0,
+      "stdout": "COMMAND     PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\ncom.docke 59212  zcm  123u  IPv4 0xd5c2c7b3b9f64c39      0t0  TCP 127.0.0.1:56467 (LISTEN)\n",
+      "stderr": "",
+      "at": "2026-10-01T12:46:09.155206+00:00"
+    }
+  ]
+}

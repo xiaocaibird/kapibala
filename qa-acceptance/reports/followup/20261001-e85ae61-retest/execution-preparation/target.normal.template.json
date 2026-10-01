@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "sut": {
+    "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+    "revision": "e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb",
+    "start": {
+      "command": "node",
+      "args": [
+        "--import",
+        "tsx",
+        "apps/server/src/main.ts"
+      ]
+    },
+    "migrate": {
+      "command": "node",
+      "args": [
+        "--import",
+        "tsx",
+        "scripts/migrate.ts"
+      ]
+    },
+    "web": {
+      "command": "npm",
+      "args": [
+        "exec",
+        "--workspace",
+        "apps/web",
+        "--",
+        "vite",
+        "preview",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "{WEB_PORT}",
+        "--strictPort"
+      ]
+    },
+    "env": {
+      "AGENT_TURN_TIMEOUT_MS": "12000"
+    },
+    "startupTimeoutMs": 45000
+  },
+  "database": {
+    "image": "postgres:17-alpine"
+  },
+  "ui": {
+    "routes": {
+      "login": "/",
+      "accounts": "/#/accounts",
+      "groups": "/#/groups",
+      "group": "/#/groups/{id}",
+      "agentRun": "/#/agent-runs/{id}",
+      "sequences": "/#/sequences"
+    },
+    "selectors": {
+      "username": "input[autocomplete=\"username\"]",
+      "password": "input[autocomplete=\"current-password\"]",
+      "login": "button.login-submit",
+      "groupName": "input[aria-describedby=\"create-group-name-help\"],input[aria-describedby=\"edit-group-name-help\"]",
+      "groupDescription": "textarea[aria-describedby=\"create-group-description-help\"],textarea[aria-describedby=\"edit-group-description-help\"]",
+      "createGroup": ".page-header button:has-text(\"创建群组\")",
+      "editProfile": "button:text-is(\"编辑资料\")",
+      "saveProfile": "dialog:has(> .modal-heading > h2:text-is(\"编辑群资料\")) form button.primary",
+      "confirmConflict": "dialog:has(> .modal-heading > h2:text-is(\"编辑群资料\")) form button.primary",
+      "profileDialog": "dialog:has(> .modal-heading > h2:text-is(\"编辑群资料\"))",
+      "closeProfile": "dialog:has(> .modal-heading > h2:text-is(\"编辑群资料\")) > .modal-heading > button[aria-label=\"关闭弹窗\"]",
+      "closeCreateGroup": "dialog:has(> .modal-heading > h2:text-is(\"创建群组\")) > .modal-heading > button[aria-label=\"关闭弹窗\"]",
+      "continueEditing": "button:text-is(\"继续编辑\")",
+      "discardChanges": "button:text-is(\"放弃修改\")",
+      "search": "input[type=\"search\"]",
+      "statusFilter": ".directory-tools label:has-text(\"群状态\") select",
+      "agentFilter": ".directory-tools label:has-text(\"Agent 自动应答\") select",
+      "order": ".directory-tools label:has-text(\"创建时间\") select",
+      "clearSearch": ".directory-tools button:text-is(\"清除搜索\")",
+      "resetFilters": ".directory-tools button:text-is(\"重置条件\")",
+      "refreshDirectory": ".directory-tools button:has-text(\"刷新\")",
+      "directoryItem": "a[data-directory-group-id]",
+      "directoryLink": "xpath=.",
+      "directorySummary": ".directory-description",
+      "directoryLoadedCount": ".section-heading > [aria-live=\"polite\"]",
+      "directoryEmpty": ".empty:has(> strong:text-is(\"没有匹配的群\")),.empty:has(> strong:text-is(\"从第一个群组开始\"))",
+      "directoryError": ".directory-empty [role=\"alert\"],.directory-page-error [role=\"alert\"],div:has(> .warning-text:text-is(\"刷新失败，当前显示上次取得的结果。\")) > [role=\"alert\"]",
+      "retryDirectory": ".directory-empty [role=\"alert\"] button,.directory-page-error [role=\"alert\"] button,div:has(> .warning-text:text-is(\"刷新失败，当前显示上次取得的结果。\")) > [role=\"alert\"] button",
+      "directoryStale": ".section-heading > [aria-live=\"polite\"]:has-text(\"列表待刷新\")",
+      "loadMoreGroups": ".directory-load-more > button",
+      "groupCreatedAt": ".group-created > time,.group-profile > div:has(> dt:text-is(\"创建时间\")) > dd",
+      "groupDescriptionView": ".group-profile > div:has(> dt:text-is(\"群简介\")) > dd",
+      "accountRow": "section:has(> .panel-header > h2:text-is(\"账号列表\")) tbody > tr",
+      "logout": "button[aria-label=\"退出登录\"]",
+      "navAccounts": "nav a[href=\"#/accounts\"]",
+      "navSequences": "nav a[href=\"#/sequences\"]",
+      "messageInput": "textarea[aria-label=\"消息内容\"]",
+      "senderAccount": "select[aria-label=\"发送身份\"]",
+      "sendMessage": "form.composer button.primary",
+      "messageRow": "article[data-message-id]",
+      "messageError": ".timeline [role=\"alert\"]",
+      "retryMessages": ".timeline > [role=\"alert\"] button",
+      "loadEarlier": ".timeline-load > button",
+      "runLink": "a.run-list-item",
+      "rawResponseToggle": ".raw-response > summary",
+      "sequenceGroup": ".sequence-form label:has-text(\"目标群组\") > select",
+      "sequence": ".sequence-form label:has-text(\"消息序列\") > select",
+      "sequenceVars": "textarea[aria-describedby=\"vars-help\"]",
+      "sequenceStepVars": "textarea[aria-describedby=\"step-vars-help\"]",
+      "previewSequence": "form.sequence-form > button.primary",
+      "startSequence": "dialog:has(> .modal-heading > h2:text-is(\"预检通过 · 确认发送内容\")) .modal-footer > button.primary",
+      "sequencePreview": "dialog:has(> .modal-heading > h2:text-is(\"预检通过 · 确认发送内容\"))",
+      "sequencePreviewError": "main > [role=\"alert\"]",
+      "sequenceErrorStepIndex": "span:has-text(\"步缺少变量\")",
+      "sequenceErrorKey": "code",
+      "createSequence": ".page-header button:text-is(\"新建序列\")",
+      "sequenceDefinitionInput": "dialog:has(> .modal-heading > h2:text-is(\"新建消息序列\")) textarea",
+      "saveSequenceDefinition": "dialog:has(> .modal-heading > h2:text-is(\"新建消息序列\")) form button.primary",
+      "sequenceDefinitionError": "dialog:has(> .modal-heading > h2:text-is(\"新建消息序列\")) [role=\"alert\"]",
+      "sequenceInputError": "main > [role=\"alert\"]",
+      "sequenceResourceError": "main > [role=\"alert\"]",
+      "attentionConfirm": ".attention-summary button:text-is(\"确认这条更新摘要\")",
+      "attentionRefresh": ".attention-notice > button",
+      "attentionScopeConfirm": ".attention-summary button:text-is(\"确认当前范围更新\")",
+      "attentionScopeSummary": ".attention-summary:has(button:text-is(\"确认当前范围更新\"))",
+      "sequenceResourceRefresh": "main > [role=\"alert\"] button:text-is(\"重试\")"
+    },
+    "adapterConfirmed": true,
+    "headless": true
+  },
+  "release": {
+    "approvedProfile": null,
+    "concurrentUsers": null,
+    "durationSeconds": null,
+    "p95LatencyMs": null,
+    "maxErrorRate": null,
+    "soakSeconds": null,
+    "rpoSeconds": null,
+    "rtoSeconds": null,
+    "monitoringEvidence": null,
+    "backupRestoreEvidence": null,
+    "rollbackEvidence": null,
+    "productionSecurityEvidence": null
+  }
+}

@@ -1,0 +1,154 @@
+<testsuites id="" name="" tests="2" failures="0" skipped="0" errors="2" time="40.686322999999994">
+<testsuite name="ui/architecture.spec.ts" timestamp="2026-10-01T12:31:30.631Z" hostname="chromium" tests="1" failures="0" skipped="0" time="8.193" errors="1">
+<testcase name="[ARC-UI-015] 耗尽后显式同页刷新可开始新一轮" classname="ui/architecture.spec.ts" time="8.193">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/attachments/architecture-final-e047dbb02ff9e078fbedf171dfa3608bd3aac7ba.png]]
+
+[[ATTACHMENT|artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/attachments/architecture-browser-f387719a2b25e3ffb414968f97c5b0de41601055.json]]
+
+[[ATTACHMENT|artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/attachments/architecture-final-709333ddcb7ba5e1c18112d6a50198bdee19fd99.json]]
+
+[[ATTACHMENT|artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/video.webm]]
+
+[[ATTACHMENT|artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/error-context.md]]
+
+[[ATTACHMENT|artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="[BLOCKED] 动作窗口出现document/URL/主frame导航/WS连接或scope_ready变化，不能把范围重建当作原页面确认或恢复" type="BlockedError">
+<![CDATA[  [chromium] › ui/architecture.spec.ts:559:1 › [ARC-UI-015] 耗尽后显式同页刷新可开始新一轮 ────────────────────────
+
+    BlockedError: [BLOCKED] 动作窗口出现document/URL/主frame导航/WS连接或scope_ready变化，不能把范围重建当作原页面确认或恢复
+
+       at ui/page-continuity.ts:86
+
+      84 |       )
+      85 |     )
+    > 86 |       throw new BlockedError(
+         |             ^
+      87 |         '动作窗口出现document/URL/主frame导航/WS连接或scope_ready变化，不能把范围重建当作原页面确认或恢复',
+      88 |       );
+      89 |   }
+        at ContinuityLedger.assertUnchanged (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/page-continuity.ts:86:13)
+        at Object.unchanged (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/page-continuity.ts:210:14)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/architecture.spec.ts:608:9
+        at boundary (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/page-continuity.ts:121:7)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/page-continuity.ts:139:21
+        at continuityOutcome (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/architecture.spec.ts:620:9)
+        at withContinuityEvidence (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/page-continuity.ts:130:5)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/architecture.spec.ts:606:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: architecture-final (image/png) ──────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/attachments/architecture-final-e047dbb02ff9e078fbedf171dfa3608bd3aac7ba.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: architecture-browser (application/json) ─────────────────────────────────────────
+    ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/attachments/architecture-browser-f387719a2b25e3ffb414968f97c5b0de41601055.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: architecture-final (application/json) ───────────────────────────────────────────
+    ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/attachments/architecture-final-709333ddcb7ba5e1c18112d6a50198bdee19fd99.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/error-context.md
+
+    attachment #8: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="ui/console.spec.ts" timestamp="2026-10-01T12:31:30.631Z" hostname="chromium" tests="1" failures="0" skipped="0" time="28.901" errors="1">
+<testcase name="[UI-032] 提醒确认不能恢复多页过期旧游标" classname="ui/console.spec.ts" time="28.901">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/attachments/ui-final-screenshot-592b3e30232e6827afa692e21e698be421619ede.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/attachments/ui-final-state-f56d543a16fe33c243367745444a0ca24cb5755d.json]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/video-1.webm]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/video.webm]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/error-context.md]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/trace.zip]]
+]]>
+</system-out>
+<error message="[BLOCKED] 需要唯一可见且可用、独立于整体刷新且只确认已呈现相关变化的公开操作；不可用入口不能伪造或强制点击（匹配0，可见null，可用null）" type="BlockedError">
+<![CDATA[  [chromium] › ui/console.spec.ts:1402:1 › [UI-032] 提醒确认不能恢复多页过期旧游标 ────────────────────────────────
+
+    BlockedError: [BLOCKED] 需要唯一可见且可用、独立于整体刷新且只确认已呈现相关变化的公开操作；不可用入口不能伪造或强制点击（匹配0，可见null，可用null）
+
+       at ui/public-action-premise.ts:24
+
+      22 |   observe(sample);
+      23 |   if (count !== 1 || !sample.visible || !sample.enabled)
+    > 24 |     throw new BlockedError(
+         |           ^
+      25 |       `${reason}（匹配${count}，可见${sample.visible}，可用${sample.enabled}）`,
+      26 |     );
+      27 | }
+        at requireAvailablePublicAction (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/public-action-premise.ts:24:11)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/console.spec.ts:1503:7
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: ui-final-screenshot (image/png) ─────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/attachments/ui-final-screenshot-592b3e30232e6827afa692e21e698be421619ede.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: ui-final-state (application/json) ───────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/attachments/ui-final-state-f56d543a16fe33c243367745444a0ca24cb5755d.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/video-1.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #7: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/error-context.md
+
+    attachment #9: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-console--UI-032-提醒确认不能恢复多页过期旧游标-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+</testsuites>

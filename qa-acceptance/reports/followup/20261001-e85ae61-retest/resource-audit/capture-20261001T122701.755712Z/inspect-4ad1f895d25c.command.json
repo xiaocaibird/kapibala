@@ -1,0 +1,14 @@
+{
+  "command": [
+    "docker",
+    "--host",
+    "unix:///var/run/docker.sock",
+    "inspect",
+    "--format",
+    "{\"id\":{{json .Id}},\"name\":{{json .Name}},\"created\":{{json .Created}},\"owner\":{{json (index .Config.Labels \"qa.owner\")}},\"state\":{\"status\":{{json .State.Status}},\"running\":{{json .State.Running}},\"pid\":{{json .State.Pid}},\"startedAt\":{{json .State.StartedAt}},\"finishedAt\":{{json .State.FinishedAt}}},\"ports\":{{json .NetworkSettings.Ports}},\"mounts\":{{json .Mounts}}}",
+    "4ad1f895d25ce9fe62a7a70de901441fa3d6cb2462701e8183b840427bcf8dc2"
+  ],
+  "startedAt": "2026-10-01T12:27:02.097520+00:00",
+  "completedAt": "2026-10-01T12:27:02.113281+00:00",
+  "exitCode": 0
+}

@@ -1,0 +1,16 @@
+npm notice run kapibala-independent-qa@0.1.0 preflight
+npm notice run tsx harness/cli.ts preflight --suite developer-smoke --target .runtime/evidence-retest-20261001/target.normal.json --authorization .runtime/evidence-retest-20261001/authority/developer-smoke-b6496813.json
+
+Running 6 tests using 1 worker
+
+(node:75143) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 [system] › tests/api/auth.spec.ts:4:1 › [AUTH-001] health, login and UTC account contract (1.2s)
+  ✓  2 [system] › tests/api/auth.spec.ts:23:1 › [AUTH-002] protected reads reject missing and invalid credentials (765ms)
+  ✓  3 [system] › tests/api/auth.spec.ts:40:1 › [AUTH-003] viewer cannot execute any original business write endpoint (1.7s)
+  ✓  4 [system] › tests/api/auth.spec.ts:177:1 › [AUTH-006] logout invalidates the existing access token immediately (761ms)
+  ✓  5 [system] › tests/api/messages.spec.ts:31:1 › [MSG-001] accepted is observable until message_sent and own echo stays one row (3.3s)
+  ✓  6 [system] › tests/system/sequence.spec.ts:12:1 › [SEQ-001] variables inherit latest nonempty override with original source (3.4s)
+
+  6 passed (12.7s)
+开发预跑（不构成正式验收）证据: /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T12-21-58.171Z-627cb313

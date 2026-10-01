@@ -1,0 +1,294 @@
+{
+  "kind": "postmortem-saved-evidence-analysis",
+  "generatedAt": "2026-10-01T12:32:04.386Z",
+  "rawRun": "reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb",
+  "sourceSutRevision": "e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb",
+  "sourceQaRevision": "105ed289e0fbed6306025cd3dc1889730b17a423",
+  "originalPhase": "developer-preflight",
+  "originalResultsModified": false,
+  "productExecuted": false,
+  "originalAssertionsRetroactivelyMarkedPassed": false,
+  "script": {
+    "path": "reports/followup/20261001-e85ae61-retest/backend-postmortem/analyze.ts",
+    "sha256": "7a526affc55b18f55eaf04df1ddb605f2753d57003e92309b29ee788d4b9db89"
+  },
+  "helpers": [
+    {
+      "path": "harness/runtime-observation.ts",
+      "sha256": "a83c26cdc63b175674a14618f5e6147ec89bdcdd3690e765fdd3d516b4998580",
+      "sameAsFrozenQaRevision": true
+    },
+    {
+      "path": "harness/lifecycle-observation.ts",
+      "sha256": "8532291ba0e28843deacc6b0e3e1f25c0c8770ff1a5b1c14d4e58bd4bf0ff0f9",
+      "sameAsFrozenQaRevision": true
+    },
+    {
+      "path": "harness/security.ts",
+      "sha256": "d33bc73d240102c5780b6b6ccc6e007ba69616d14200f824b951659489a273e5",
+      "sameAsFrozenQaRevision": true
+    }
+  ],
+  "inputs": [
+    {
+      "path": "reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/manifest.json",
+      "sha256": "cacac6277ab237faeb74faef298040fd955901a0535f4fa6b446b2517b28dc5c",
+      "bytes": 63972
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/results.json",
+      "sha256": "ee51d9b7fe45ae330dc87dbf930abc49eee77e43078a6ff4539b33f5e1784d71",
+      "bytes": 211941
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-agent--AGENT-025-ru-6b311-budget-including-slow-turns-system/evidence/wall-clock-window.json",
+      "sha256": "5f4ed3223aa9f60d928605fe8f160fa6c76551f8ca029efe066f17229066a6ef",
+      "bytes": 885738
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/evidence/send-timeout-window.json",
+      "sha256": "d8ace2ef4dd7c478d98c3fb4353f2f18cd355732a67ed191f64946b462badd3c",
+      "bytes": 26815
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/evidence/send-timeout-actual-interval.json",
+      "sha256": "7185f5e95300e3a4ed35f09ac8166c3738c4f8c5f7a78a6071cf63d552164c6b",
+      "bytes": 6817
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/evidence/lands-outcome.json",
+      "sha256": "5151510c87248eb6b032298c9f37cb19d399d426eef77a8b247bd9262ceea4e7",
+      "bytes": 30476
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/evidence/lands-recovery-diagnosis.json",
+      "sha256": "96fc2d1dd1904643bd43f87073cbb6f1d29f6f57f119f371924855abc09dd148",
+      "bytes": 132028
+    }
+  ],
+  "agent025": {
+    "originalStatus": "FAIL",
+    "originalTestStop": "assertSingleEpochActivityBudget: activity lower bound exceeds 60000ms",
+    "laterLifecycleAssertionExecutedInOriginalTest": false,
+    "runId": "831e3bf0-6fd0-49ba-9859-705fd86f1611",
+    "groupId": "ff700d5b-72c0-49c4-88e6-29d33db05a6d",
+    "clockDomain": "process-performance:82534:6d5ba4af-d8bf-49f1-89de-263b1477de21",
+    "guardianPid": 82509,
+    "applicationPid": 82534,
+    "fullActivityMs": [
+      60011,
+      60023
+    ],
+    "epochIds": [
+      "dbd73aed-08db-4087-9182-c2a058483837"
+    ],
+    "creationTransactionWindowMs": [
+      1563.590667,
+      1568.651083
+    ],
+    "creationInsertWindowMs": [
+      1566.036125,
+      1566.822167
+    ],
+    "terminationDecisionWindowMs": [
+      61579.833208,
+      61579.859375
+    ],
+    "transactionToDecisionMs": [
+      60011.182125,
+      60016.268708
+    ],
+    "insertToDecisionMs": [
+      60013.011041,
+      60013.82325
+    ],
+    "decisionToCommitMs": [
+      6.497208000000683,
+      6.523375000004307
+    ],
+    "terminalAttemptId": "d2e37201-b7ac-4d72-b840-e320f6a1ea01",
+    "terminalStatus": "failed",
+    "terminalReason": "wall_clock",
+    "postmortemLifecycleCheck": {
+      "outcome": "ASSERTION_FAILED",
+      "reason": "AssertionError [ERR_ASSERTION]: 真实决定或新turn派发已超过原始60000ms上限"
+    }
+  },
+  "agent028": {
+    "originalStatus": "FAIL",
+    "originalTestStop": "first actual tool wait lower bound exceeds 5000ms",
+    "firstHistoryAndSecondToolTimingAssertionsExecutedInOriginalTest": false,
+    "first": {
+      "runId": "37597c3d-4c7b-4fb3-b76a-fe073334de6c",
+      "stepId": "37597c3d-4c7b-4fb3-b76a-fe073334de6c:1",
+      "toolUseId": "send-timeout",
+      "attemptId": "37bdafb7-0c4e-443f-b822-afac0aca2125",
+      "clientMsgId": "c5b2e387-9278-40b3-ade3-b5428811d28c",
+      "keyReused": false,
+      "clockDomain": "process-performance:90774:e22a3a65-fddc-471f-b856-566bac93933f",
+      "start": [
+        1596.629875,
+        1596.672
+      ],
+      "end": [
+        6596.693625,
+        6596.787875
+      ],
+      "elapsedMs": [
+        5000.021624999999,
+        5000.157999999999
+      ],
+      "actualResult": {
+        "code": "SEND_TIMEOUT",
+        "message": "Delivery could not be confirmed within five seconds.",
+        "hint": "Retrying this idempotency key reads the same outbound message."
+      },
+      "errorCode": "SEND_TIMEOUT",
+      "historyIdentity": [
+        {
+          "seq": 13,
+          "sourceSeq": 256,
+          "attemptId": "37bdafb7-0c4e-443f-b822-afac0aca2125",
+          "runId": "37597c3d-4c7b-4fb3-b76a-fe073334de6c",
+          "stepId": "37597c3d-4c7b-4fb3-b76a-fe073334de6c:1",
+          "toolUseId": "send-timeout",
+          "clockDomain": "process-performance:90774:e22a3a65-fddc-471f-b856-566bac93933f",
+          "commitBoundary": "outer-commit-confirmed",
+          "result": {
+            "code": "SEND_TIMEOUT",
+            "message": "Delivery could not be confirmed within five seconds.",
+            "hint": "Retrying this idempotency key reads the same outbound message."
+          }
+        }
+      ],
+      "postmortemTimingCheck": {
+        "outcome": "ASSERTION_FAILED",
+        "reason": "AssertionError [ERR_ASSERTION]: 实际工具状态等待下界超过原始5000ms上限"
+      },
+      "postmortemHistoryCheck": {
+        "outcome": "SATISFIED_BY_STORED_EVIDENCE"
+      }
+    },
+    "second": {
+      "runId": "37597c3d-4c7b-4fb3-b76a-fe073334de6c",
+      "stepId": "37597c3d-4c7b-4fb3-b76a-fe073334de6c:2",
+      "toolUseId": "same-timeout",
+      "attemptId": "0ff5d8f3-62be-4742-bc68-8f581701ed84",
+      "clientMsgId": "c5b2e387-9278-40b3-ade3-b5428811d28c",
+      "keyReused": true,
+      "clockDomain": "process-performance:90774:e22a3a65-fddc-471f-b856-566bac93933f",
+      "start": [
+        6696.814459,
+        6696.832417
+      ],
+      "end": [
+        6697.781542,
+        6697.793375
+      ],
+      "elapsedMs": [
+        0.9491250000000946,
+        0.9789160000000265
+      ],
+      "actualResult": {
+        "clientMsgId": "c5b2e387-9278-40b3-ade3-b5428811d28c",
+        "deliveryStatus": "sent"
+      },
+      "errorCode": null,
+      "historyIdentity": [
+        {
+          "seq": 22,
+          "sourceSeq": 270,
+          "attemptId": "0ff5d8f3-62be-4742-bc68-8f581701ed84",
+          "runId": "37597c3d-4c7b-4fb3-b76a-fe073334de6c",
+          "stepId": "37597c3d-4c7b-4fb3-b76a-fe073334de6c:2",
+          "toolUseId": "same-timeout",
+          "clockDomain": "process-performance:90774:e22a3a65-fddc-471f-b856-566bac93933f",
+          "commitBoundary": "outer-commit-confirmed",
+          "result": {
+            "clientMsgId": "c5b2e387-9278-40b3-ade3-b5428811d28c",
+            "deliveryStatus": "sent"
+          }
+        }
+      ],
+      "postmortemTimingCheck": {
+        "outcome": "SATISFIED_BY_STORED_EVIDENCE"
+      },
+      "postmortemHistoryCheck": {
+        "outcome": "SATISFIED_BY_STORED_EVIDENCE"
+      }
+    },
+    "boundary": "Both history checks and second timing judgment below are postmortem analysis, never recorded as original test PASS."
+  },
+  "external": {
+    "originalStatus": "BLOCKED",
+    "branch": "lands",
+    "clientMsgId": "ee43413e-255f-4f25-8591-24a6ac8fe504",
+    "messageId": "46acbc61-0b35-4148-b0d2-91fe0c22f30f",
+    "msgId": "gateway-message-1",
+    "publicObservation": {
+      "complete": true,
+      "last": {
+        "items": [
+          {
+            "id": "46acbc61-0b35-4148-b0d2-91fe0c22f30f",
+            "msgId": "gateway-message-1",
+            "clientMsgId": "ee43413e-255f-4f25-8591-24a6ac8fe504",
+            "senderPlatformUserId": "platform-account-1",
+            "isOwn": true,
+            "text": "unacknowledged original lands",
+            "sentAt": "2026-10-01T12:25:37.174Z",
+            "deliveryStatus": "sent",
+            "failCode": null
+          }
+        ],
+        "nextCursor": null,
+        "snapshotId": "e1c97b98-743b-4b4b-bc69-2ef78bf062ce"
+      },
+      "samples": 2,
+      "elapsedMs": 66.70191599999998
+    },
+    "actualLandedMessage": {
+      "groupId": "gateway-group-1",
+      "accountId": "account-1",
+      "clientMsgId": "ee43413e-255f-4f25-8591-24a6ac8fe504",
+      "msgId": "gateway-message-1",
+      "senderPlatformUserId": "platform-account-1",
+      "text": "unacknowledged original lands",
+      "sentAt": "2026-10-01T12:25:37.174Z"
+    },
+    "gatewayPublicEvents": [
+      {
+        "eventId": 3,
+        "type": "message_sent",
+        "recordedAt": "2026-10-01T12:25:37.174Z",
+        "data": {
+          "clientMsgId": "ee43413e-255f-4f25-8591-24a6ac8fe504",
+          "msgId": "gateway-message-1",
+          "sentAt": "2026-10-01T12:25:37.174Z",
+          "eventId": 3,
+          "type": "message_sent"
+        }
+      },
+      {
+        "eventId": 4,
+        "type": "message",
+        "recordedAt": "2026-10-01T12:25:37.174Z",
+        "data": {
+          "groupId": "gateway-group-1",
+          "msgId": "gateway-message-1",
+          "senderPlatformUserId": "platform-account-1",
+          "text": "unacknowledged original lands",
+          "sentAt": "2026-10-01T12:25:37.174Z",
+          "eventId": 4,
+          "type": "message"
+        }
+      }
+    ],
+    "queryCount": 28,
+    "queryHeadersAndBodies": 56,
+    "allObservedQueryResponsesWere404": true,
+    "positiveQueryCommitCount": 0,
+    "conclusion": "Public REST observed sent and the independent Gateway recorded the unique matching landed message plus message_sent/echo events. No positive query result was observed. These files do not identify which inbound event the SUT used; do not attribute sent to a positive query.",
+    "silentBranch": "Not replaced by this landed branch; original no-terminal-evidence BLOCKED remains unchanged."
+  }
+}

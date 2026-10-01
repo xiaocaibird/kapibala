@@ -1,0 +1,86 @@
+{
+  "capturedAt": "2026-10-01T12:35:50.051657+00:00",
+  "cause": "start-plus-2s",
+  "container": "27720b9ddf038421e559e64da381dac50bb248ea9e37d670db9e7ceff73ec88f",
+  "attribution": "Unassigned until matched to exact suite CLI, run time and environment. qa.owner alone is insufficient.",
+  "records": [
+    {
+      "argv": [
+        "docker",
+        "--host",
+        "unix:///var/run/docker.sock",
+        "inspect",
+        "--format",
+        "{\"id\":{{json .Id}},\"name\":{{json .Name}},\"created\":{{json .Created}},\"owner\":{{json (index .Config.Labels \"qa.owner\")}},\"status\":{{json .State.Status}},\"ports\":{{json .NetworkSettings.Ports}},\"mounts\":{{json .Mounts}}}",
+        "27720b9ddf038421e559e64da381dac50bb248ea9e37d670db9e7ceff73ec88f"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"id\":\"27720b9ddf038421e559e64da381dac50bb248ea9e37d670db9e7ceff73ec88f\",\"name\":\"/qa-acceptance-3f2542fe-2527-49f3-ad30-41e73ee3ff9c\",\"created\":\"2026-10-01T12:35:47.757586138Z\",\"owner\":\"3f2542fe-2527-49f3-ad30-41e73ee3ff9c\",\"status\":\"running\",\"ports\":{\"5432/tcp\":[{\"HostIp\":\"127.0.0.1\",\"HostPort\":\"54027\"}]},\"mounts\":[{\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"Name\":\"4a0ab3a00f51115df63b15e63f4301a7850dfcc664ae0f0047d8e3f66072c647\",\"Propagation\":\"\",\"RW\":true,\"Source\":\"/var/lib/docker/volumes/4a0ab3a00f51115df63b15e63f4301a7850dfcc664ae0f0047d8e3f66072c647/_data\",\"Type\":\"volume\"}]}\n",
+      "stderr": "",
+      "at": "2026-10-01T12:35:49.968916+00:00"
+    },
+    {
+      "argv": [
+        "lsof",
+        "-nP",
+        "-iTCP:54027"
+      ],
+      "exitCode": 0,
+      "stdout": "COMMAND     PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\nnode      37059  zcm   25u  IPv4 0x4ff03fa86f8b6261      0t0  TCP 127.0.0.1:54058->127.0.0.1:54027 (ESTABLISHED)\nnode      37059  zcm   26u  IPv4 0x9a658453e4a905e8      0t0  TCP 127.0.0.1:54050->127.0.0.1:54027 (ESTABLISHED)\nnode      37059  zcm   30u  IPv4 0xa2a1ebaf75a1774d      0t0  TCP 127.0.0.1:54053->127.0.0.1:54027 (ESTABLISHED)\nnode      37059  zcm   32u  IPv4 0x64eb4cb6805a7232      0t0  TCP 127.0.0.1:54055->127.0.0.1:54027 (ESTABLISHED)\nnode      37059  zcm   33u  IPv4 0xfbcdfb7d5ebd094e      0t0  TCP 127.0.0.1:54059->127.0.0.1:54027 (ESTABLISHED)\nnode      37059  zcm   36u  IPv4 0xdbed795066991c25      0t0  TCP 127.0.0.1:54062->127.0.0.1:54027 (ESTABLISHED)\ncom.docke 59212  zcm   53u  IPv4 0x7a9fe574a4f7c12e      0t0  TCP 127.0.0.1:54027 (LISTEN)\ncom.docke 59212  zcm   90u  IPv4 0x799c4ad74996dea0      0t0  TCP 127.0.0.1:54027->127.0.0.1:54050 (ESTABLISHED)\ncom.docke 59212  zcm  123u  IPv4 0xd4907b16bc42f2b7      0t0  TCP 127.0.0.1:54027->127.0.0.1:54053 (ESTABLISHED)\ncom.docke 59212  zcm  128u  IPv4 0x375722fe6fc5dc1a      0t0  TCP 127.0.0.1:54027->127.0.0.1:54055 (ESTABLISHED)\ncom.docke 59212  zcm  130u  IPv4 0xf1ff70eecea334ac      0t0  TCP 127.0.0.1:54027->127.0.0.1:54058 (ESTABLISHED)\ncom.docke 59212  zcm  133u  IPv4 0x1155b39ce4d8d8f3      0t0  TCP 127.0.0.1:54027->127.0.0.1:54059 (ESTABLISHED)\ncom.docke 59212  zcm  136u  IPv4 0xc6999d1d6c823049      0t0  TCP 127.0.0.1:54027->127.0.0.1:54062 (ESTABLISHED)\n",
+      "stderr": "",
+      "at": "2026-10-01T12:35:50.039361+00:00"
+    },
+    {
+      "argv": [
+        "ps",
+        "-p",
+        "37059",
+        "-o",
+        "pid=,ppid=,pgid=,lstart=,command="
+      ],
+      "exitCode": 0,
+      "stdout": "37059 34047 33732 Thu Oct  1 20:35:47 2026     /Users/zcm/.nvm/versions/node/v24.21.0/bin/node /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/node_modules/playwright/lib/worker/workerProcessEntry.js\n",
+      "stderr": "",
+      "at": "2026-10-01T12:35:50.042373+00:00"
+    },
+    {
+      "argv": [
+        "ps",
+        "-p",
+        "34047",
+        "-o",
+        "pid=,ppid=,pgid=,lstart=,command="
+      ],
+      "exitCode": 0,
+      "stdout": "34047 33956 33732 Thu Oct  1 20:34:40 2026     /Users/zcm/.nvm/versions/node/v24.21.0/bin/node /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/node_modules/@playwright/test/cli.js test --grep (?:^|\\s)\\[(?:CAP-REG-001|CAP-REG-002|CAP-REG-003|CAP-REG-004|CAP-001|CAP-003|CAP-009|CAP-010)\\](?=\\s|$) --project=system\n",
+      "stderr": "",
+      "at": "2026-10-01T12:35:50.045407+00:00"
+    },
+    {
+      "argv": [
+        "ps",
+        "-p",
+        "33956",
+        "-o",
+        "pid=,ppid=,pgid=,lstart=,command="
+      ],
+      "exitCode": 0,
+      "stdout": "33956 33955 33732 Thu Oct  1 20:34:39 2026     /Users/zcm/.nvm/versions/node/v24.21.0/bin/node --require /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/node_modules/tsx/dist/preflight.cjs --import file:///Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/node_modules/tsx/dist/loader.mjs harness/cli.ts preflight --suite budget-dispatch-followup-20261001 --target .runtime/evidence-retest-20261001/prepared-capacity-1ba803f0/target.json --authorization .runtime/evidence-retest-20261001/authority/budget-dispatch-followup-20261001-6bf1c373.json\n",
+      "stderr": "",
+      "at": "2026-10-01T12:35:50.048452+00:00"
+    },
+    {
+      "argv": [
+        "ps",
+        "-p",
+        "33955",
+        "-o",
+        "pid=,ppid=,pgid=,lstart=,command="
+      ],
+      "exitCode": 0,
+      "stdout": "33955 33732 33732 Thu Oct  1 20:34:39 2026     node /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/node_modules/.bin/tsx harness/cli.ts preflight --suite budget-dispatch-followup-20261001 --target .runtime/evidence-retest-20261001/prepared-capacity-1ba803f0/target.json --authorization .runtime/evidence-retest-20261001/authority/budget-dispatch-followup-20261001-6bf1c373.json\n",
+      "stderr": "",
+      "at": "2026-10-01T12:35:50.051604+00:00"
+    }
+  ]
+}

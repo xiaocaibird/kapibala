@@ -1,0 +1,42 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="1" time="263.48784">
+<testsuite name="system/integration-streams.spec.ts" timestamp="2026-10-01T12:26:30.558Z" hostname="system" tests="1" failures="0" skipped="0" time="261.643" errors="1">
+<testcase name="[INT-STREAM-001] real paused reader leaves healthy consumer working and received-cursor replay complete" classname="system/integration-streams.spec.ts" time="261.643">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/error-context.md]]
+
+[[ATTACHMENT|artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/trace.zip]]
+]]>
+</system-out>
+<error message="[BLOCKED] Bounded healthy drain did not establish the complete injected set; no throughput SLA inferred" type="BlockedError">
+<![CDATA[  [system] › system/integration-streams.spec.ts:79:1 › [INT-STREAM-001] real paused reader leaves healthy consumer working and received-cursor replay complete 
+
+    BlockedError: [BLOCKED] Bounded healthy drain did not establish the complete injected set; no throughput SLA inferred
+
+      205 |     });
+      206 |     if (!drained.complete || expected.size === 0)
+    > 207 |       throw new BlockedError(
+          |             ^
+      208 |         'Bounded healthy drain did not establish the complete injected set; no throughput SLA inferred',
+      209 |       );
+      210 |     assertCompleteReceipts(drained.last, new Set(expected.keys()));
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/integration-streams.spec.ts:207:13
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T12-26-30.110Z-c5165321/artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T12-26-30.110Z-c5165321/artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T12-26-30.110Z-c5165321/artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T12-26-30.110Z-c5165321/artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+</testsuites>
