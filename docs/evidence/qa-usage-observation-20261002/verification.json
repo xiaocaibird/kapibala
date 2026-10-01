@@ -1,0 +1,63 @@
+{
+  "recordedAt": "2026-10-01T22:28:25.919927+00:00",
+  "baseCommit": "2c1826bdee0665b3c57f5714603a59931c7d05ca",
+  "branch": "agent/second-round-usage-observation",
+  "node": "v24.21.0",
+  "sourceSha256": {
+    "apps/gemini-agent/src/usage.ts": "c57cc8e74910b2d215dfbe2a91d25b9ac9539bce0d2e86b24a7c6c3573b7a252",
+    "scripts/qa-gemini-agent.ts": "10c0a68f872a5ab0c07a93294afe62d0d9c76e8ca68f20ac5bebf54d4172eb50",
+    "scripts/qa-gemini-transport.ts": "19fa71f94e8138746840b59380dd5eb2593cf3010050ddd5481968312df1edf7",
+    "scripts/qa-usage-observation.ts": "b17d74ff4f4b85bc1afaa533bf6c78c1523d971effc68ea6bb17700177d79bb2",
+    "tests/integration/qa-gemini-usage-observation.test.ts": "bf1f77967878aca9e1f0521b651a479ee371185a5837fad2ab597eaf64aa2cdc",
+    "tests/integration/qa-gemini-transport.test.ts": "285d0965653857841284a5bef3425698331c9513b5b73fcf58c9eaa2eb864f71",
+    "docs/qa-usage-observation-20261002.md": "7ba8da56ecfaa6b3478a0baefd7acb24db9e7d41bfe8e581da2ac2b302fda321",
+    "docs/qa-offline-model-entry-20261002.md": "f8c30dccc1e7d688d982427378e04593152322fe76237fb9615fe91cd514b10c"
+  },
+  "commands": [
+    "QA_USAGE_EVIDENCE_DIR=docs/evidence/qa-usage-observation-20261002 node --import tsx --test --test-reporter=tap tests/integration/qa-gemini-agent-process.test.ts tests/integration/qa-gemini-usage-observation.test.ts tests/integration/qa-gemini-transport.test.ts tests/integration/gemini-agent-provider.test.ts tests/integration/gemini-agent-protocol.test.ts tests/integration/gemini-agent-usage.test.ts tests/integration/gemini-agent-main.test.ts",
+    "npm run build",
+    "npm run verify:original"
+  ],
+  "results": {
+    "focused": {
+      "pass": 31,
+      "fail": 0,
+      "skip": 0
+    },
+    "build": "PASS",
+    "original": "PASS"
+  },
+  "facts": {
+    "realProviderCallsInOverflow": 141,
+    "heldActiveBatch": 1,
+    "heldWaitingQueue": 64,
+    "realRejectedRecords": 76,
+    "persistedAfterRelease": 65,
+    "queuedExcludesActiveBatch": true,
+    "factoryUsageOmittedCreatesJournal": false,
+    "ownerLockPreservedAfterSigkill": true,
+    "allOwnedTestResourcesCleaned": true
+  },
+  "limits": [
+    "synthetic offline HTTP only; no real key or paid provider",
+    "provider transport observation is not whole-process egress proof",
+    "signal-aborted marks local signal, not remote cancellation completion",
+    "SIGKILL event tail is incomplete; external exit and filesystem evidence remain necessary",
+    "owner.lock and uncertain-turn recovery semantics unchanged",
+    "development tests only; no QA acceptance result written"
+  ],
+  "artifactSha256": {
+    "build.log": "7f4b26f6ef2307a94aa0aee383afb5b38a56d50f3d533ac4cc420ce07a06e51f",
+    "focused.tap": "f92de9661bdd7265e444193b25761d0dd2b9b5a44d599ac977d803efe4d8f650",
+    "mode-factory-false.json": "043251c135b0ed759e5b50d6a502fc2c03e69c3906dc9f64c5bb847927456488",
+    "mode-factory-true.json": "719deb2355deacbb3cece985d2de2cb3fd7867ec898331091e7a6257bec5b94e",
+    "mode-main-false.json": "7ec713d5eb7fa35f27a91b36411ebef367379621167fadcec3f71b54151d0a37",
+    "mode-main-true.json": "ca4b9098f54878913386e88eb6fa425596be22f07f173bb97fe729bab90d13b7",
+    "normal-exit.json": "1b82a7d982562d57d149d1c3c37c52f5f0468cb84445cbbf9f053e14ec06d317",
+    "original.log": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa",
+    "overflow-held.json": "49fd4f4a16b9a16f8cbbba489f605557bc2760879895bb7693201a750b41a6fd",
+    "overflow-settled.json": "0b8fe5b874a1f56f7346822ce17ed2328a14ed3c2f14918fa1fac1687f18b014",
+    "queued-write-killed.json": "77b0cd41a21ab7b759cbd885a5d51b1ec8e51f943558db2ff39163838d14cd1e",
+    "ttl-released.json": "4bf37646ec559c13f38b3e6c48fca7a0411ed0ad1fae191ee62f5780d9f106e7"
+  }
+}

@@ -49,6 +49,8 @@ export interface UsageJournalOptions {
   maxRecords?: number;
   maxBytes?: number;
   maxAgeDays?: number;
+  /** Explicit engineering injection only; normal entry configuration never sets it. */
+  testObserver?: UsageTestObserver;
   warn?: (
     code:
       | "USAGE_STORE_UNAVAILABLE"
@@ -56,6 +58,38 @@ export interface UsageJournalOptions {
       | "USAGE_QUEUE_FULL"
       | "USAGE_RECORD_INVALID",
   ) => void;
+}
+export interface UsageQueueEvent {
+  seq: number;
+  at: string;
+  monotonicMs: number;
+  kind:
+    | "initialized"
+    | "enqueued"
+    | "rejected-queue-full"
+    | "rejected-closed"
+    | "diagnostic"
+    | "batch-dequeued"
+    | "before-write"
+    | "write-started"
+    | "write-settled"
+    | "write-failed"
+    | "batch-settled"
+    | "closing"
+    | "closed";
+  queued: number;
+  activeBatch: number;
+  dropped: number;
+  writeFailures: number;
+  batchId: string | null;
+  attemptIds: string[];
+  requestId?: string;
+  attemptId?: string;
+  diagnosticCode?: string;
+}
+export interface UsageTestObserver {
+  event(event: UsageQueueEvent): void;
+  beforeWrite(event: UsageQueueEvent): Promise<void>;
 }
 const hardMaxBytes = 16 * 1024 * 1024;
 const fileName = "usage.jsonl";
@@ -68,6 +102,10 @@ export class UsageJournal {
   private writing?: Promise<void>;
   private closed = false;
   private warned = new Set<string>();
+  private activeBatch: { id: string; attemptIds: string[] } | undefined;
+  private dropped = 0;
+  private writeFailures = 0;
+  private observationSequence = 0;
   private constructor(
     private directory: string,
     private limits: {
@@ -76,6 +114,7 @@ export class UsageJournal {
       maxAgeDays: number;
     },
     private warn: NonNullable<UsageJournalOptions["warn"]>,
+    private testObserver?: UsageTestObserver,
   ) {}
   static async open(
     directory: string,
@@ -91,7 +130,12 @@ export class UsageJournal {
       maxBytes: options.maxBytes ?? 2 * 1024 * 1024,
       maxAgeDays: options.maxAgeDays ?? 30,
     };
-    const journal = new UsageJournal(directory, limits, warn);
+    const journal = new UsageJournal(
+      directory,
+      limits,
+      warn,
+      options.testObserver,
+    );
     try {
       if (
         !Number.isInteger(limits.maxRecords) ||
@@ -167,6 +211,7 @@ export class UsageJournal {
       }
       journal.entries = journal.retain(journal.entries);
       await journal.persist(journal.entries);
+      journal.observe("initialized");
       return journal;
     } catch {
       journal.diagnostic("USAGE_STORE_UNAVAILABLE");
@@ -178,6 +223,7 @@ export class UsageJournal {
   ): void {
     if (this.warned.has(code)) return;
     this.warned.add(code);
+    this.observe("diagnostic", { diagnosticCode: code });
     try {
       this.warn(code);
     } catch {
@@ -185,7 +231,10 @@ export class UsageJournal {
     }
   }
   record(value: UsageObservation): void {
-    if (this.closed) return;
+    if (this.closed) {
+      this.observe("rejected-closed");
+      return;
+    }
     let line: string;
     try {
       line = JSON.stringify(recordSchema.parse(value));
@@ -195,10 +244,19 @@ export class UsageJournal {
       return;
     }
     if (this.queue.length >= 64) {
+      this.dropped++;
+      this.observe("rejected-queue-full", {
+        requestId: value.requestId,
+        attemptId: value.attemptId,
+      });
       this.diagnostic("USAGE_QUEUE_FULL");
       return;
     }
     this.queue.push(line);
+    this.observe("enqueued", {
+      requestId: value.requestId,
+      attemptId: value.attemptId,
+    });
     if (!this.writing) this.writing = this.drain();
   }
   private retain(lines: string[]): string[] {
@@ -224,7 +282,7 @@ export class UsageJournal {
   }
   private async persist(lines: string[]): Promise<void> {
     const temporary = join(this.directory, `usage-${randomUUID()}.tmp`);
-    const file = await open(
+    const opening = open(
       temporary,
       constants.O_CREAT |
         constants.O_EXCL |
@@ -232,6 +290,9 @@ export class UsageJournal {
         constants.O_NOFOLLOW,
       0o600,
     );
+    // The physical open has been issued; this is not a completion/fsync claim.
+    this.observe("write-started");
+    const file = await opening;
     try {
       await file.writeFile(lines.length ? `${lines.join("\n")}\n` : "");
       await file.sync();
@@ -246,12 +307,30 @@ export class UsageJournal {
     try {
       while (this.queue.length) {
         const batch = this.queue.splice(0);
+        if (this.testObserver)
+          this.activeBatch = {
+            id: randomUUID(),
+            attemptIds: batch.map(
+              (line) => (JSON.parse(line) as UsageObservation).attemptId,
+            ),
+          };
+        this.observe("batch-dequeued");
         try {
           const next = this.retain([...this.entries, ...batch]);
+          if (this.testObserver) {
+            const event = this.observe("before-write")!;
+            await this.testObserver.beforeWrite(event);
+          }
           await this.persist(next);
           this.entries = next;
+          this.observe("write-settled");
         } catch {
+          this.writeFailures++;
+          this.observe("write-failed");
           this.diagnostic("USAGE_WRITE_FAILED");
+        } finally {
+          this.activeBatch = undefined;
+          this.observe("batch-settled");
         }
       }
     } finally {
@@ -260,7 +339,37 @@ export class UsageJournal {
   }
   async close(): Promise<void> {
     this.closed = true;
+    this.observe("closing");
     await this.writing;
+    this.observe("closed");
+  }
+  private observe(
+    kind: UsageQueueEvent["kind"],
+    fields: Pick<
+      UsageQueueEvent,
+      "requestId" | "attemptId" | "diagnosticCode"
+    > = {},
+  ): UsageQueueEvent | undefined {
+    if (!this.testObserver) return undefined;
+    const event: UsageQueueEvent = {
+      seq: ++this.observationSequence,
+      at: new Date().toISOString(),
+      monotonicMs: performance.now(),
+      kind,
+      queued: this.queue.length,
+      activeBatch: this.activeBatch?.attemptIds.length ?? 0,
+      dropped: this.dropped,
+      writeFailures: this.writeFailures,
+      batchId: this.activeBatch?.id ?? null,
+      attemptIds: [...(this.activeBatch?.attemptIds ?? [])],
+      ...fields,
+    };
+    try {
+      this.testObserver.event(structuredClone(event));
+    } catch {
+      /* Observation failures cannot change normal usage behavior. */
+    }
+    return event;
   }
 }
 

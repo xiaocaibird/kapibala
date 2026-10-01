@@ -1,10 +1,10 @@
-import { request as httpRequest } from "node:http";
 import { isAbsolute, resolve } from "node:path";
-import { Readable } from "node:stream";
 import { createGeminiAgent } from "../apps/gemini-agent/src/app.js";
 import { GeminiProvider } from "../apps/gemini-agent/src/provider.js";
 import { AgentError } from "../apps/gemini-agent/src/protocol.js";
 import { usageOptions } from "../apps/gemini-agent/src/usage.js";
+import { QaUsageObservation } from "./qa-usage-observation.js";
+import { createQaGeminiTransport } from "./qa-gemini-transport.js";
 
 // A development-only process entry. Never load main.ts, dotenv or key fields.
 async function main() {
@@ -28,68 +28,59 @@ async function main() {
   const providerPath = `/v1beta/models/${model}:generateContent`;
   const expectedUrl = `https://generativelanguage.googleapis.com${providerPath}`;
 
-  // Adapt only the transport. Native http pins the socket to numeric loopback
-  // and cannot consult fetch's global dispatcher or environment proxy settings.
-  // Provider body, headers, response bytes and abort signal remain unchanged.
-  const localTransport: typeof fetch = async (input, options) => {
-    const url = input instanceof Request ? input.url : String(input);
-    if (
-      url !== expectedUrl ||
-      options?.method !== "POST" ||
-      typeof options.body !== "string"
-    )
-      throw new Error("QA_PROVIDER_REQUEST_REJECTED");
-    return new Promise<Response>((resolveResponse, reject) => {
-      const request = httpRequest(
-        {
-          hostname: "127.0.0.1",
-          port: providerPort,
-          path: providerPath,
-          method: options.method,
-          // Do not use Node's process-global agent, which may enable env proxies.
-          agent: false,
-          headers: Object.fromEntries(new Headers(options.headers)),
-          signal: options.signal ?? undefined,
-        },
-        (response) => {
-          try {
-            const status = response.statusCode ?? 502;
-            // There is no redirect request path, even to another loopback server.
-            if ([301, 302, 303, 307, 308].includes(status))
-              throw new Error("QA_PROVIDER_REDIRECT_REJECTED");
-            const headers = new Headers();
-            for (let index = 0; index < response.rawHeaders.length; index += 2)
-              headers.append(
-                response.rawHeaders[index]!,
-                response.rawHeaders[index + 1]!,
-              );
-            const body = [204, 205, 304].includes(status)
-              ? null
-              : (Readable.toWeb(response) as ReadableStream<Uint8Array>);
-            const result = new Response(body, { status, headers });
-            if (body === null) response.resume();
-            resolveResponse(result);
-          } catch (error) {
-            // HTTP callbacks execute after the Promise constructor returns.
-            // Reject conversion failures so GeminiProvider handles them safely.
-            response.destroy();
-            reject(error);
-          }
-        },
-      );
-      request.once("error", reject);
-      request.end(options.body);
-    });
-  };
+  const usageEntry = process.env.QA_GEMINI_USAGE_ENTRY ?? "main";
+  if (!["main", "factory"].includes(usageEntry))
+    throw new AgentError(500, "QA_USAGE_ENTRY_INVALID");
+  const factoryUsage = process.env.QA_GEMINI_FACTORY_USAGE;
+  if (factoryUsage !== undefined && !["true", "false"].includes(factoryUsage))
+    throw new AgentError(500, "QA_FACTORY_USAGE_INVALID");
+  const usage =
+    usageEntry === "main"
+      ? usageOptions(process.env)
+      : factoryUsage === "true"
+        ? { ...usageOptions(process.env), enabled: true }
+        : undefined;
+  const usageEnabled = process.env.QA_GEMINI_USAGE_OBSERVATION === "true";
+  const transportEnabled =
+    process.env.QA_GEMINI_TRANSPORT_OBSERVATION === "true";
+  const token = process.env.QA_ACCEPTANCE_RESOURCE_TOKEN;
+  if (
+    (usageEnabled || transportEnabled) &&
+    (!token || token.length < 32 || token.length > 256)
+  )
+    throw new AgentError(500, "QA_OBSERVATION_TOKEN_REQUIRED");
+  const observation =
+    usageEnabled || transportEnabled
+      ? new QaUsageObservation({
+          token: token!,
+          usageEnabled,
+          transportEnabled,
+          entry: usageEntry as "main" | "factory",
+          optionsSupplied: usage !== undefined,
+          configuredEnabled: usage !== undefined && usage.enabled !== false,
+        })
+      : undefined;
+  if (usage && usageEnabled) usage.testObserver = observation;
+  const syntheticKey = "qa-offline-synthetic-key";
+  const localTransport = createQaGeminiTransport({
+    providerPort,
+    providerPath,
+    expectedUrl,
+    syntheticKey,
+    ...(transportEnabled
+      ? { observe: (event) => observation!.transport(event) }
+      : {}),
+  });
   const app = await createGeminiAgent({
     stateDirectory: sessionDirectory,
     provider: new GeminiProvider({
-      apiKey: "qa-offline-synthetic-key",
+      apiKey: syntheticKey,
       model,
       fetch: localTransport,
     }),
-    usage: usageOptions(process.env),
+    ...(usage ? { usage } : {}),
   });
+  observation?.register(app);
   try {
     const address = await app.listen({ host: "127.0.0.1", port: 0 });
     console.log(
@@ -102,9 +93,22 @@ async function main() {
         providerTransport: "loopback-http",
         credentialSource: "synthetic",
         sessionDirectory,
+        ...(process.env.QA_GEMINI_USAGE_ENTRY ? { usageEntry } : {}),
+        ...(observation
+          ? {
+              observation: {
+                protocol: observation.protocol,
+                instanceId: observation.instanceId,
+                basePath: observation.basePath,
+                usageEnabled,
+                transportEnabled,
+              },
+            }
+          : {}),
       }),
     );
   } catch (error) {
+    observation?.close();
     await app.close();
     throw error;
   }
@@ -113,6 +117,7 @@ async function main() {
     process.once(signal, () => {
       if (stopping) return;
       stopping = true;
+      observation?.close();
       void app.close().then(
         () => process.exit(0),
         (error: unknown) => {
