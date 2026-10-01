@@ -1,0 +1,218 @@
+{
+  "startedAt": "2026-10-01T11:29:47.443Z",
+  "mode": "LIVE Gemini API, synthetic business data only",
+  "model": "gemini-3.1-flash-lite",
+  "databaseName": "/kapibala_test_740b8a26379f4b78a9b6c5c1187db443",
+  "directory": "/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-c2-live-aSgnbc",
+  "address": "http://127.0.0.1:59266",
+  "agentUrl": "http://127.0.0.1:59262",
+  "gatewayUrl": "http://127.0.0.1:59261",
+  "limits": {
+    "maxProviderCalls": 8,
+    "maxInputBytesPerCall": 32768,
+    "turnOutputTokens": 2048,
+    "auditOutputTokens": 1024,
+    "turnTimeoutMs": 9000,
+    "auditTimeoutMs": 4000,
+    "testTimeoutMs": 120000
+  },
+  "requests": [
+    {
+      "purpose": "turn",
+      "inputBytes": 1971,
+      "inputSha256": "3afdf3ac6ff28c390f1e8fffb4b774ea6e046b624e1ab96e1312e12619264334",
+      "elapsedMs": 2050.046625
+    },
+    {
+      "purpose": "turn",
+      "inputBytes": 2611,
+      "inputSha256": "a9823900f925ebaf5cda1d3d7b2c6ebe491bec5b92665d08769f510fe3d60248",
+      "elapsedMs": 2655.3431669999995
+    },
+    {
+      "purpose": "audit",
+      "inputBytes": 93,
+      "inputSha256": "9b65a947b5d4b56798a1350129dc2e02184385ab5b3f0f4d160e953f8e08c9f1",
+      "elapsedMs": 2859.4337909999995
+    },
+    {
+      "purpose": "turn",
+      "inputBytes": 3049,
+      "inputSha256": "6fd8c05b97bd204b166ea16b5136d8bb26c624cb60c6331be2728f6232ef2ce8",
+      "elapsedMs": 1935.447333
+    },
+    {
+      "purpose": "audit",
+      "inputBytes": 141,
+      "inputSha256": "37a418760bdc5222950bf52491bc8912544e679c2b5a778ba6321269e5ba5486",
+      "elapsedMs": 2405.6253340000003
+    },
+    {
+      "purpose": "turn",
+      "inputBytes": 2233,
+      "inputSha256": "d3db2f31e1cbc5607557eb267190620121a9bf8e65f722698fded3d6acb9eaa2",
+      "elapsedMs": 3832.1951249999984
+    }
+  ],
+  "observations": [
+    {
+      "purpose": "turn",
+      "model": "gemini-3.1-flash-lite",
+      "elapsedMs": 2049.9367919999995,
+      "inputTokens": 991,
+      "outputTokens": 40,
+      "totalTokens": 1031
+    },
+    {
+      "purpose": "turn",
+      "model": "gemini-3.1-flash-lite",
+      "elapsedMs": 2655.336541,
+      "inputTokens": 1228,
+      "outputTokens": 89,
+      "totalTokens": 1317
+    },
+    {
+      "purpose": "audit",
+      "model": "gemini-3.1-flash-lite",
+      "elapsedMs": 2859.428416999999,
+      "inputTokens": 234,
+      "outputTokens": 35,
+      "totalTokens": 269
+    },
+    {
+      "purpose": "turn",
+      "model": "gemini-3.1-flash-lite",
+      "elapsedMs": 1935.4399580000008,
+      "inputTokens": 1445,
+      "outputTokens": 41,
+      "totalTokens": 1486
+    },
+    {
+      "purpose": "audit",
+      "model": "gemini-3.1-flash-lite",
+      "elapsedMs": 2405.62075,
+      "inputTokens": 246,
+      "outputTokens": 39,
+      "totalTokens": 285
+    },
+    {
+      "purpose": "turn",
+      "model": "gemini-3.1-flash-lite",
+      "elapsedMs": 3832.188792000001,
+      "inputTokens": 1015,
+      "outputTokens": 64,
+      "totalTokens": 1079
+    }
+  ],
+  "run": {
+    "id": "43d8d9d5-fc0e-4806-a429-bea4dd3f145c",
+    "groupId": "0c9059b0-9699-4584-88a5-f8d2024006b4",
+    "status": "finished",
+    "endReason": "final",
+    "summary": "已成功发送确认消息。",
+    "recoveryNote": null,
+    "steps": [
+      {
+        "ordinal": 1,
+        "kind": "tool_use",
+        "toolUseId": "6edc9aaf-bb9e-41aa-aaac-08df6a174995",
+        "name": "get_recent_messages",
+        "input": {
+          "limit": 5
+        },
+        "resultSummary": "{\"messages\":[{\"msgId\":\"1a63fd56-53fc-46e2-a2ab-4dacebc35275\",\"senderPlatformUserId\":\"synthetic-c2-user\",\"isOwn\":false,\"text\":\"这是一次合成测试。请先读取最近消息确认上下文，再发送一句‘已收到本次合成测试消息’，确认发送成功后结束。不要踢人。\",\"sentAt\":\"2026-",
+        "isError": false,
+        "errorCode": null,
+        "auditVerdict": null,
+        "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"6edc9aaf-bb9e-41aa-aaac-08df6a174995\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":5}}]}"
+      },
+      {
+        "ordinal": 2,
+        "kind": "tool_use",
+        "toolUseId": "31603479-8736-4e22-9f88-c8f45372a3b3",
+        "name": "send_message",
+        "input": {
+          "text": "已收到本次合成测试消息",
+          "idempotency_key": "43d8d9d5-fc0e-4806-a429-bea4dd3f145c-1"
+        },
+        "resultSummary": "{\"clientMsgId\":\"6d24352d-36eb-47a9-b73d-602d357e4b59\",\"deliveryStatus\":\"accepted\"}",
+        "isError": false,
+        "errorCode": null,
+        "auditVerdict": "pass",
+        "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"31603479-8736-4e22-9f88-c8f45372a3b3\",\"name\":\"send_message\",\"input\":{\"text\":\"已收到本次合成测试消息\",\"idempotency_key\":\"43d8d9d5-fc0e-4806-a429-bea4dd3f145c-1\"}}]}"
+      },
+      {
+        "ordinal": 3,
+        "kind": "tool_use",
+        "toolUseId": "d7c26cdf-7c6b-4b2d-9092-310d53a4d28c",
+        "name": "finish",
+        "input": {
+          "summary": "已成功发送确认消息。"
+        },
+        "resultSummary": "{\"ok\":true}",
+        "isError": false,
+        "errorCode": null,
+        "auditVerdict": null,
+        "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"d7c26cdf-7c6b-4b2d-9092-310d53a4d28c\",\"name\":\"finish\",\"input\":{\"summary\":\"已成功发送确认消息。\"}}]}"
+      }
+    ]
+  },
+  "history": {
+    "items": [
+      {
+        "id": "b7f5fa8c-98bf-4826-8977-f99c27c03d0b",
+        "msgId": "f23e1730-6bb2-41e6-bfa6-acc9bf31ea25",
+        "clientMsgId": "6d24352d-36eb-47a9-b73d-602d357e4b59",
+        "senderPlatformUserId": "platform-account-2",
+        "isOwn": true,
+        "text": "已收到本次合成测试消息",
+        "sentAt": "2026-10-01T11:29:56.253Z",
+        "deliveryStatus": "sent",
+        "failCode": null
+      },
+      {
+        "id": "a94392c7-a6f6-43f9-9edd-e6a41132baaa",
+        "msgId": "1a63fd56-53fc-46e2-a2ab-4dacebc35275",
+        "clientMsgId": null,
+        "senderPlatformUserId": "synthetic-c2-user",
+        "isOwn": false,
+        "text": "这是一次合成测试。请先读取最近消息确认上下文，再发送一句‘已收到本次合成测试消息’，确认发送成功后结束。不要踢人。",
+        "sentAt": "2026-10-01T11:29:48.183Z",
+        "deliveryStatus": null,
+        "failCode": null
+      }
+    ],
+    "nextCursor": null,
+    "snapshotId": "1f9e0b78-48cb-4dd1-a5c7-0258400f4616"
+  },
+  "rejectedAudit": {
+    "verdict": "fail",
+    "reason": "The message contains instructions to bypass security protocols and attempts to solicit sensitive credentials (passwords and API keys)."
+  },
+  "syntheticErrorContext": {
+    "runId": "b742e6a3-4e2c-49a7-ac51-8a055c8818c0",
+    "response": {
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "05edeff5-4137-45c0-bcf1-ef88b2fea0be",
+          "name": "finish",
+          "input": {
+            "summary": "The previous attempt to send a message resulted in a SEND_TIMEOUT error. Per instructions, I am finishing the run and reporting the error code."
+          }
+        }
+      ]
+    }
+  },
+  "outcome": "LIVE observed: backend tools/audit round trip, content rejection and synthetic error continuation",
+  "finishedAt": "2026-10-01T11:30:04.314Z",
+  "sourceSha256": {
+    "apps/gemini-agent/src/app.ts": "b11172a7e83b2198059ded4d11c53ba2185e4fc6a265e2e579d58fad6bf20798",
+    "apps/gemini-agent/src/provider.ts": "f1e070c3c285f6b41f9bee51efe8bd3b3df4c91d918eeca881c41ce63a5c40d1",
+    "apps/gemini-agent/src/protocol.ts": "d66f1053662eca32a55e053b6a09dd0a4188eeceae5485e633480d962c3e417b",
+    "apps/gemini-agent/src/sessions.ts": "7754b8a8b00713e6892743fd6c03553a7554d94f49d642090e264a140ac356b2",
+    "tests/integration/gemini-agent-live.test.ts": "4a34c4aeebadc621e36555e18b9e8f685e508ee2d569e0c9d38a4bd5daf7824a"
+  },
+  "cleanupFinishedAt": "2026-10-01T11:30:08.350Z"
+}

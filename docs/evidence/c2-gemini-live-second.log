@@ -1,0 +1,32 @@
+✖ C2 LIVE: real Gemini via AGENT_URL completes audited backend tools, rejects unsafe text, and sees error results (28737.937458ms)
+ℹ {"outcome":"LIVE failed; no offline result substitutes for this attempt","model":"gemini-3.5-flash-lite","calls":5,"observations":[{"purpose":"turn","model":"gemini-3.5-flash-lite","elapsedMs":5135.3775,"inputTokens":993,"outputTokens":41,"totalTokens":1034},{"purpose":"turn","model":"gemini-3.5-flash-lite","elapsedMs":6397.7197909999995,"inputTokens":1247,"outputTokens":71,"totalTokens":1318}],"databaseName":"/kapibala_test_643c2349869043c789952835a8d8cc53","directory":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-c2-live-LQUyz0"}
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 28937.427083
+
+✖ failing tests:
+
+test at tests/integration/gemini-agent-live.test.ts:1:1067
+✖ C2 LIVE: real Gemini via AGENT_URL completes audited backend tools, rejects unsafe text, and sees error results (28737.937458ms)
+  AssertionError [ERR_ASSERTION]: {"id":"7333ff8e-7b68-448e-ac28-0f357b982a9d","groupId":"fad054c9-d060-4e7e-8b73-04e39e997252","status":"blocked","endReason":"audit_blocked","summary":null,"recoveryNote":null,"steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"6f427ef2-0230-4836-9480-82733a74715a","name":"get_recent_messages","input":{"limit":10},"resultSummary":"{\"messages\":[{\"msgId\":\"f9e0898f-0ea2-4617-ad4a-3439dde00c9a\",\"senderPlatformUserId\":\"synthetic-c2-user\",\"isOwn\":false,\"text\":\"这是一次合成测试。请先读取最近消息确认上下文，再发送一句‘已收到本次合成测试消息’，确认发送成功后结束。不要踢人。\",\"sentAt\":\"2026-","isError":false,"errorCode":null,"auditVerdict":null,"rawResponse":"{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"6f427ef2-0230-4836-9480-82733a74715a\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":10}}]}"},{"ordinal":2,"kind":"tool_use","toolUseId":"6dee5a6d-044e-4809-a1fb-f021ce1ea861","name":"send_message","input":{"text":"已收到本次合成测试消息","idempotency_key":"synth-test-msg-20261001-1"},"resultSummary":"{\"code\":\"AUDIT_REJECTED\",\"message\":\"Audit service returned no conclusive verdict after three attempts.\",\"hint\":\"The run is blocked; no side effect was executed.\"}","isError":true,"errorCode":"AUDIT_REJECTED","auditVerdict":null,"rawResponse":"{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"6dee5a6d-044e-4809-a1fb-f021ce1ea861\",\"name\":\"send_message\",\"input\":{\"text\":\"已收到本次合成测试消息\",\"idempotency_key\":\"synth-test-msg-20261001-1\"}}]}"}]}
+  + actual - expected
+  
+  + 'blocked'
+  - 'finished'
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/gemini-agent-live.test.ts:209:14)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'blocked',
+    expected: 'finished',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,111 @@
+{
+  "startedAt": "2026-10-01T11:24:18.388Z",
+  "mode": "LIVE Gemini API, synthetic business data only",
+  "model": "gemini-3.5-flash-lite",
+  "databaseName": "/kapibala_test_1647b9e224c647ca95039e9c7c12ae88",
+  "directory": "/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-c2-live-Fq2lrU",
+  "address": "http://127.0.0.1:56892",
+  "agentUrl": "http://127.0.0.1:56888",
+  "gatewayUrl": "http://127.0.0.1:56887",
+  "limits": {
+    "maxProviderCalls": 8,
+    "maxInputBytesPerCall": 32768,
+    "turnOutputTokens": 2048,
+    "auditOutputTokens": 1024,
+    "turnTimeoutMs": 9000,
+    "auditTimeoutMs": 4000,
+    "testTimeoutMs": 120000
+  },
+  "requests": [
+    {
+      "purpose": "turn",
+      "inputBytes": 1971,
+      "inputSha256": "605dc1aaa1de47351f250b12bf2e7bc583dacfbf789f4ac35d5a12616911c03e"
+    },
+    {
+      "purpose": "turn",
+      "inputBytes": 2113,
+      "inputSha256": "36282fce6a28c8eb231b160fdd07282405761eb5e243b5bf976f448f9a015f35"
+    },
+    {
+      "purpose": "turn",
+      "inputBytes": 2255,
+      "inputSha256": "0669c0d1b2f0d81849d5fc2e732e9ffedf46341c04d4cfa281b867ad78902978"
+    }
+  ],
+  "observations": [],
+  "run": {
+    "id": "d1407a7a-2f63-4540-9d46-b1608450d50f",
+    "groupId": "dba91bac-eac7-4806-ab88-21e2f9c05cb5",
+    "status": "failed",
+    "endReason": "protocol_errors",
+    "summary": null,
+    "recoveryNote": null,
+    "steps": [
+      {
+        "ordinal": 1,
+        "kind": "protocol_error",
+        "toolUseId": null,
+        "name": null,
+        "input": null,
+        "resultSummary": "BAD_JSON",
+        "isError": true,
+        "errorCode": "BAD_JSON",
+        "auditVerdict": null,
+        "rawResponse": "{\"code\":\"MODEL_UNAVAILABLE\"}"
+      },
+      {
+        "ordinal": 2,
+        "kind": "protocol_error",
+        "toolUseId": null,
+        "name": null,
+        "input": null,
+        "resultSummary": "BAD_JSON",
+        "isError": true,
+        "errorCode": "BAD_JSON",
+        "auditVerdict": null,
+        "rawResponse": "{\"code\":\"MODEL_UNAVAILABLE\"}"
+      },
+      {
+        "ordinal": 3,
+        "kind": "protocol_error",
+        "toolUseId": null,
+        "name": null,
+        "input": null,
+        "resultSummary": "BAD_JSON",
+        "isError": true,
+        "errorCode": "BAD_JSON",
+        "auditVerdict": null,
+        "rawResponse": "{\"code\":\"MODEL_UNAVAILABLE\"}"
+      }
+    ]
+  },
+  "history": {
+    "items": [
+      {
+        "id": "8160cbf8-531a-40ec-947f-49d887ddac70",
+        "msgId": "b46b7f9f-c83a-4b14-851b-eabe7879cfef",
+        "clientMsgId": null,
+        "senderPlatformUserId": "synthetic-c2-user",
+        "isOwn": false,
+        "text": "这是一次合成测试。请先读取最近消息确认上下文，再发送一句‘已收到本次合成测试消息’，确认发送成功后结束。不要踢人。",
+        "sentAt": "2026-10-01T11:24:19.124Z",
+        "deliveryStatus": null,
+        "failCode": null
+      }
+    ],
+    "nextCursor": null,
+    "snapshotId": "36115d9a-81f0-4816-85e7-ed6817dd95e6"
+  },
+  "outcome": "LIVE failed; no offline result substitutes for this attempt",
+  "failure": "AssertionError [ERR_ASSERTION]: {\"id\":\"d1407a7a-2f63-4540-9d46-b1608450d50f\",\"groupId\":\"dba91bac-eac7-4806-ab88-21e2f9c05cb5\",\"status\":\"failed\",\"endReason\":\"protocol_errors\",\"summary\":null,\"recoveryNote\":null,\"steps\":[{\"ordinal\":1,\"kind\":\"protocol_error\",\"toolUseId\":null,\"name\":null,\"input\":null,\"resultSummary\":\"BAD_JSON\",\"isError\":true,\"errorCode\":\"BAD_JSON\",\"auditVerdict\":null,\"rawResponse\":\"{\\\"code\\\":\\\"MODEL_UNAVAILABLE\\\"}\"},{\"ordinal\":2,\"kind\":\"protocol_error\",\"toolUseId\":null,\"name\":null,\"input\":null,\"resultSummary\":\"BAD_JSON\",\"isError\":true,\"errorCode\":\"BAD_JSON\",\"auditVerdict\":null,\"rawResponse\":\"{\\\"code\\\":\\\"MODEL_UNAVAILABLE\\\"}\"},{\"ordinal\":3,\"kind\":\"protocol_error\",\"toolUseId\":null,\"name\":null,\"input\":null,\"resultSummary\":\"BAD_JSON\",\"isError\":true,\"errorCode\":\"BAD_JSON\",\"auditVerdict\":null,\"rawResponse\":\"{\\\"code\\\":\\\"MODEL_UNAVAILABLE\\\"}\"}]}\n+ actual - expected\n\n+ 'failed'\n- 'finished'\n",
+  "finishedAt": "2026-10-01T11:24:20.168Z",
+  "sourceSha256": {
+    "apps/gemini-agent/src/app.ts": "b11172a7e83b2198059ded4d11c53ba2185e4fc6a265e2e579d58fad6bf20798",
+    "apps/gemini-agent/src/provider.ts": "944420bddb156b62e57adcccfab2bb7d209ddb49e288c61116965eff9e746e79",
+    "apps/gemini-agent/src/protocol.ts": "d66f1053662eca32a55e053b6a09dd0a4188eeceae5485e633480d962c3e417b",
+    "apps/gemini-agent/src/sessions.ts": "168ef0c66007949e34e8b3fadff6aa071e56956d8d3f53db6b137f7902ce06bd",
+    "tests/integration/gemini-agent-live.test.ts": "bc6e67d0b1f787f652cd6898758db562f48878fa29a9e22de261f01ba9face25"
+  },
+  "cleanupFinishedAt": "2026-10-01T11:24:24.192Z"
+}

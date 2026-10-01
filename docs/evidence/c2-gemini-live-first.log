@@ -1,0 +1,32 @@
+✖ C2 LIVE: real Gemini via AGENT_URL completes audited backend tools, rejects unsafe text, and sees error results (5951.805792ms)
+ℹ {"outcome":"LIVE failed; no offline result substitutes for this attempt","model":"gemini-3.5-flash-lite","calls":3,"observations":[],"databaseName":"/kapibala_test_1647b9e224c647ca95039e9c7c12ae88","directory":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-c2-live-Fq2lrU"}
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6179.311708
+
+✖ failing tests:
+
+test at tests/integration/gemini-agent-live.test.ts:1:1067
+✖ C2 LIVE: real Gemini via AGENT_URL completes audited backend tools, rejects unsafe text, and sees error results (5951.805792ms)
+  AssertionError [ERR_ASSERTION]: {"id":"d1407a7a-2f63-4540-9d46-b1608450d50f","groupId":"dba91bac-eac7-4806-ab88-21e2f9c05cb5","status":"failed","endReason":"protocol_errors","summary":null,"recoveryNote":null,"steps":[{"ordinal":1,"kind":"protocol_error","toolUseId":null,"name":null,"input":null,"resultSummary":"BAD_JSON","isError":true,"errorCode":"BAD_JSON","auditVerdict":null,"rawResponse":"{\"code\":\"MODEL_UNAVAILABLE\"}"},{"ordinal":2,"kind":"protocol_error","toolUseId":null,"name":null,"input":null,"resultSummary":"BAD_JSON","isError":true,"errorCode":"BAD_JSON","auditVerdict":null,"rawResponse":"{\"code\":\"MODEL_UNAVAILABLE\"}"},{"ordinal":3,"kind":"protocol_error","toolUseId":null,"name":null,"input":null,"resultSummary":"BAD_JSON","isError":true,"errorCode":"BAD_JSON","auditVerdict":null,"rawResponse":"{\"code\":\"MODEL_UNAVAILABLE\"}"}]}
+  + actual - expected
+  
+  + 'failed'
+  - 'finished'
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/gemini-agent-live.test.ts:209:14)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'failed',
+    expected: 'finished',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

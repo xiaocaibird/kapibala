@@ -1,0 +1,131 @@
+{
+  "startedAt": "2026-10-01T11:25:49.687Z",
+  "mode": "LIVE Gemini API, synthetic business data only",
+  "model": "gemini-3.5-flash-lite",
+  "databaseName": "/kapibala_test_643c2349869043c789952835a8d8cc53",
+  "directory": "/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-c2-live-LQUyz0",
+  "address": "http://127.0.0.1:57211",
+  "agentUrl": "http://127.0.0.1:57207",
+  "gatewayUrl": "http://127.0.0.1:57206",
+  "limits": {
+    "maxProviderCalls": 8,
+    "maxInputBytesPerCall": 32768,
+    "turnOutputTokens": 2048,
+    "auditOutputTokens": 1024,
+    "turnTimeoutMs": 9000,
+    "auditTimeoutMs": 4000,
+    "testTimeoutMs": 120000
+  },
+  "requests": [
+    {
+      "purpose": "turn",
+      "inputBytes": 1971,
+      "inputSha256": "9abd6535353fd3c38378b0e8d926a0ab3ca92537d91730808052a091c5e6bc72"
+    },
+    {
+      "purpose": "turn",
+      "inputBytes": 2612,
+      "inputSha256": "926494062f7a94ffdc1bb0ad50724b1ef3d2fab47af97b1f0d43bc409c54bd34"
+    },
+    {
+      "purpose": "audit",
+      "inputBytes": 93,
+      "inputSha256": "a7d5655b37ed1f46d9d85a971a36a13f6f181061c40d72da755282efba36bcc8"
+    },
+    {
+      "purpose": "audit",
+      "inputBytes": 93,
+      "inputSha256": "a7d5655b37ed1f46d9d85a971a36a13f6f181061c40d72da755282efba36bcc8"
+    },
+    {
+      "purpose": "audit",
+      "inputBytes": 93,
+      "inputSha256": "a7d5655b37ed1f46d9d85a971a36a13f6f181061c40d72da755282efba36bcc8"
+    }
+  ],
+  "observations": [
+    {
+      "purpose": "turn",
+      "model": "gemini-3.5-flash-lite",
+      "elapsedMs": 5135.3775,
+      "inputTokens": 993,
+      "outputTokens": 41,
+      "totalTokens": 1034
+    },
+    {
+      "purpose": "turn",
+      "model": "gemini-3.5-flash-lite",
+      "elapsedMs": 6397.7197909999995,
+      "inputTokens": 1247,
+      "outputTokens": 71,
+      "totalTokens": 1318
+    }
+  ],
+  "run": {
+    "id": "7333ff8e-7b68-448e-ac28-0f357b982a9d",
+    "groupId": "fad054c9-d060-4e7e-8b73-04e39e997252",
+    "status": "blocked",
+    "endReason": "audit_blocked",
+    "summary": null,
+    "recoveryNote": null,
+    "steps": [
+      {
+        "ordinal": 1,
+        "kind": "tool_use",
+        "toolUseId": "6f427ef2-0230-4836-9480-82733a74715a",
+        "name": "get_recent_messages",
+        "input": {
+          "limit": 10
+        },
+        "resultSummary": "{\"messages\":[{\"msgId\":\"f9e0898f-0ea2-4617-ad4a-3439dde00c9a\",\"senderPlatformUserId\":\"synthetic-c2-user\",\"isOwn\":false,\"text\":\"这是一次合成测试。请先读取最近消息确认上下文，再发送一句‘已收到本次合成测试消息’，确认发送成功后结束。不要踢人。\",\"sentAt\":\"2026-",
+        "isError": false,
+        "errorCode": null,
+        "auditVerdict": null,
+        "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"6f427ef2-0230-4836-9480-82733a74715a\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":10}}]}"
+      },
+      {
+        "ordinal": 2,
+        "kind": "tool_use",
+        "toolUseId": "6dee5a6d-044e-4809-a1fb-f021ce1ea861",
+        "name": "send_message",
+        "input": {
+          "text": "已收到本次合成测试消息",
+          "idempotency_key": "synth-test-msg-20261001-1"
+        },
+        "resultSummary": "{\"code\":\"AUDIT_REJECTED\",\"message\":\"Audit service returned no conclusive verdict after three attempts.\",\"hint\":\"The run is blocked; no side effect was executed.\"}",
+        "isError": true,
+        "errorCode": "AUDIT_REJECTED",
+        "auditVerdict": null,
+        "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"6dee5a6d-044e-4809-a1fb-f021ce1ea861\",\"name\":\"send_message\",\"input\":{\"text\":\"已收到本次合成测试消息\",\"idempotency_key\":\"synth-test-msg-20261001-1\"}}]}"
+      }
+    ]
+  },
+  "history": {
+    "items": [
+      {
+        "id": "1bc6f1c5-440c-48cb-b4b3-40c65d26ac4f",
+        "msgId": "f9e0898f-0ea2-4617-ad4a-3439dde00c9a",
+        "clientMsgId": null,
+        "senderPlatformUserId": "synthetic-c2-user",
+        "isOwn": false,
+        "text": "这是一次合成测试。请先读取最近消息确认上下文，再发送一句‘已收到本次合成测试消息’，确认发送成功后结束。不要踢人。",
+        "sentAt": "2026-10-01T11:25:50.428Z",
+        "deliveryStatus": null,
+        "failCode": null
+      }
+    ],
+    "nextCursor": null,
+    "snapshotId": "00addcc8-2633-4b3d-b0f5-78b03c61be60"
+  },
+  "outcome": "LIVE failed; no offline result substitutes for this attempt",
+  "failure": "AssertionError [ERR_ASSERTION]: {\"id\":\"7333ff8e-7b68-448e-ac28-0f357b982a9d\",\"groupId\":\"fad054c9-d060-4e7e-8b73-04e39e997252\",\"status\":\"blocked\",\"endReason\":\"audit_blocked\",\"summary\":null,\"recoveryNote\":null,\"steps\":[{\"ordinal\":1,\"kind\":\"tool_use\",\"toolUseId\":\"6f427ef2-0230-4836-9480-82733a74715a\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":10},\"resultSummary\":\"{\\\"messages\\\":[{\\\"msgId\\\":\\\"f9e0898f-0ea2-4617-ad4a-3439dde00c9a\\\",\\\"senderPlatformUserId\\\":\\\"synthetic-c2-user\\\",\\\"isOwn\\\":false,\\\"text\\\":\\\"这是一次合成测试。请先读取最近消息确认上下文，再发送一句‘已收到本次合成测试消息’，确认发送成功后结束。不要踢人。\\\",\\\"sentAt\\\":\\\"2026-\",\"isError\":false,\"errorCode\":null,\"auditVerdict\":null,\"rawResponse\":\"{\\\"stop_reason\\\":\\\"tool_use\\\",\\\"content\\\":[{\\\"type\\\":\\\"tool_use\\\",\\\"id\\\":\\\"6f427ef2-0230-4836-9480-82733a74715a\\\",\\\"name\\\":\\\"get_recent_messages\\\",\\\"input\\\":{\\\"limit\\\":10}}]}\"},{\"ordinal\":2,\"kind\":\"tool_use\",\"toolUseId\":\"6dee5a6d-044e-4809-a1fb-f021ce1ea861\",\"name\":\"send_message\",\"input\":{\"text\":\"已收到本次合成测试消息\",\"idempotency_key\":\"synth-test-msg-20261001-1\"},\"resultSummary\":\"{\\\"code\\\":\\\"AUDIT_REJECTED\\\",\\\"message\\\":\\\"Audit service returned no conclusive verdict after three attempts.\\\",\\\"hint\\\":\\\"The run is blocked; no side effect was executed.\\\"}\",\"isError\":true,\"errorCode\":\"AUDIT_REJECTED\",\"auditVerdict\":null,\"rawResponse\":\"{\\\"stop_reason\\\":\\\"tool_use\\\",\\\"content\\\":[{\\\"type\\\":\\\"tool_use\\\",\\\"id\\\":\\\"6dee5a6d-044e-4809-a1fb-f021ce1ea861\\\",\\\"name\\\":\\\"send_message\\\",\\\"input\\\":{\\\"text\\\":\\\"已收到本次合成测试消息\\\",\\\"idempotency_key\\\":\\\"synth-test-msg-20261001-1\\\"}}]}\"}]}\n+ actual - expected\n\n+ 'blocked'\n- 'finished'\n",
+  "finishedAt": "2026-10-01T11:26:14.254Z",
+  "sourceSha256": {
+    "apps/gemini-agent/src/app.ts": "b11172a7e83b2198059ded4d11c53ba2185e4fc6a265e2e579d58fad6bf20798",
+    "apps/gemini-agent/src/provider.ts": "6190e4b3bd520c08b67df7b5664b83652ce524826b258ac68b66ce3494491071",
+    "apps/gemini-agent/src/protocol.ts": "d66f1053662eca32a55e053b6a09dd0a4188eeceae5485e633480d962c3e417b",
+    "apps/gemini-agent/src/sessions.ts": "168ef0c66007949e34e8b3fadff6aa071e56956d8d3f53db6b137f7902ce06bd",
+    "tests/integration/gemini-agent-live.test.ts": "bc6e67d0b1f787f652cd6898758db562f48878fa29a9e22de261f01ba9face25"
+  },
+  "cleanupFinishedAt": "2026-10-01T11:26:18.293Z"
+}

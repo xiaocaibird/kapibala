@@ -38,6 +38,20 @@ npm run dev:isolated -- --smoke
 
 原有 `npm run dev` 和 Docker Compose 仍供主动配置固定本地环境使用，可能访问 `.env` 或默认端口，**不作为全新隔离复现步骤**。迁移命令不会自动升级运行中的已有数据库；已有数据升级仍须按下节处理。
 
+## 可选 C2：真实 Gemini Agent
+
+独立服务提供原协议的 `/agent/turn` 和 `/agent/audit`。在本地 `.env` 设置 `GEMINI_API_KEY`（或显式环境变量），然后启动：
+
+```sh
+npm run dev:gemini-agent
+```
+
+服务默认只监听 `127.0.0.1` 的随机端口，终端输出 `gemini-agent-ready.address`。在你已经配置好的后端环境中，仅把 `AGENT_URL` 改为该地址后启动后端；其数据库、网关、权限、工具执行、审计重试和原有时间预算均不变。`dev:isolated` 仍默认使用模拟 Agent，不会自动启用付费模型。
+
+可用 `GEMINI_ENV_FILE=/absolute/path/to/main-workspace/.env` 只读取已有文件的 Key 字段，不复制该文件，也不导入其中的数据库或网关配置。默认模型为本次 Key 实测完成工具往返的稳定 `gemini-3.1-flash-lite`，可用 `GEMINI_MODEL` 指定其他可用 Gemini 型号；不自动切换或重试计费请求。`GEMINI_AGENT_PORT` 可指定固定空闲端口，`GEMINI_SESSION_DIR` 指定该服务独占的私有会话目录。
+
+密钥、群上下文和会话文件不要提交；服务默认不打印请求正文、令牌或模型原始异常。会话持久化、故障保守处理、费用/资源上限和真实测试中的失败记录见 [C2 接入与验证](docs/c2-gemini-agent.md)。这项接入不消除既有后端未知执行结果或严格 60 秒终态的限制。
+
 ## 数据库升级边界
 
 新库由上面的隔离入口执行迁移后启动。已有001–006且没有checksum列的旧库必须先停止旧服务、保留数据库与模拟器一致备份，并按[旧六版基线核验](docs/core-migration-integrity.md#已部署六版库的兼容路径)显式处理，再执行普通迁移。不能直接回填当前SQL哈希冒充历史已经验证。007要求没有running序列；应让旧版运行自然完成后再停服务，不通过修改状态绕过。
