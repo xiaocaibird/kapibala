@@ -18,11 +18,26 @@ async function fixture(t: TestContext, unknown = false) {
   const streams = new Set<ServerResponse>();
   const first = deferred(),
     final = deferred();
+  const kickLedger: {
+    method: string;
+    url: string;
+    status: number;
+    at: string;
+  }[] = [];
   let turns = 0,
     kicks = 0;
   const f = await runtimeFixture(t, false, {
     extraEnv: { MEDIA_DIR: mediaDirectory, MEDIA_CLEANUP_INTERVAL_MS: "100" },
     configureRemote(remote) {
+      remote.addHook("onResponse", async (request, reply) => {
+        if (request.url === "/groups/remote-g/kick")
+          kickLedger.push({
+            method: request.method,
+            url: request.url,
+            status: reply.statusCode,
+            at: new Date().toISOString(),
+          });
+      });
       remote.addHook("onRequest", (req, reply, done) => {
         if (req.url.split("?")[0] === "/events") {
           streams.add(reply.raw);
@@ -171,6 +186,7 @@ async function fixture(t: TestContext, unknown = false) {
     final,
     kicks: () => kicks,
     turns: () => turns,
+    kickLedger,
   };
 }
 
@@ -363,6 +379,20 @@ test(
     assert.equal(beforeRun.status, 200);
     assert.equal((beforeRun.value as { status: string }).status, "running");
     assert.equal(f.kicks(), 1);
+    assert.deepEqual(
+      f.kickLedger.map(({ method, url, status }) => ({ method, url, status })),
+      [{ method: "POST", url: "/groups/remote-g/kick", status: 503 }],
+    );
+    const intents = async () =>
+      (
+        await f.db.query(
+          "SELECT run_id,ordinal,state,intent FROM agent_steps WHERE run_id=$1 ORDER BY ordinal",
+          [runId],
+        )
+      ).rows;
+    const beforeIntents = await intents();
+    assert.equal(beforeIntents[0]?.state, "executing");
+    assert.equal(beforeIntents[0]?.intent.dispatchState, "dispatching");
     const refs = await f.refs();
     assert.equal(refs.length, 1);
     await f.expire();
@@ -380,6 +410,7 @@ test(
       (beforeRun.value as { recoveryNote: string }).recoveryNote,
     );
     assert.deepEqual(await f.refs(), refs);
+    assert.deepEqual(await intents(), beforeIntents);
     assert.equal(f.kicks(), 1);
     assert.equal(f.turns(), 1);
     assert.equal((await f.file()).state, "ready");
@@ -403,6 +434,9 @@ test(
       file: await f.file(),
       kicks: f.kicks(),
       turns: f.turns(),
+      kickLedger: f.kickLedger,
+      beforeIntents,
+      afterIntents: await intents(),
       oldLease,
     });
     const cancel = await f.api("/api/groups/g", "PATCH", {
