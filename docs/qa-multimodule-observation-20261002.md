@@ -4,7 +4,7 @@
 
 ## 缺口与最小变更
 
-原公开 controller 对同一实例仅允许既有同 group/run 活动/生命周期观察组合；第二个 `module-fail-then-hold` 请求返回 409。真实基线开发复现见 `evidence/qa-multimodule-observation-20261002/before.tap`：同一 guardian、同一 API/应用进程创建 gateway 租约后，automation 租约被拒绝。两次单模块或两个 SUT 实例都不能替代同一进程的双模块同时失败。
+原公开 controller 对同一实例仅允许既有同 group/run 活动/生命周期观察组合；第二个 `module-fail-then-hold` 请求返回 409。真实基线开发复现见 `evidence/qa-multimodule-observation-20261002/before.tap.gz`：同一 guardian、同一 API/应用进程创建 gateway 租约后，automation 租约被拒绝。两次单模块或两个 SUT 实例都不能替代同一进程的双模块同时失败。
 
 新 controller 仅增加一种兼容关系：两条请求都为 `module-fail-then-hold`、实际 `target.apiUrl/pid/revision` 完全相同、`correlation.module` 不同。原 `locate` 仍核对 live instance/socket、完整提交、真实监听 PID、guardian/进程组、启动时间与资源 token。RuntimeObservation 原本就按模块名独占，且 gate、计时器、事件、advance、release 都归属各自 lease UUID；本次不改其阶段逻辑。
 
@@ -54,6 +54,17 @@
 
 ## 验证范围与资源
 
-新增开发测试 `tests/integration/qa-multimodule-observation.test.ts` 通过公开控制器 HTTP 和真实 SUT 管理员 API 验证：同进程双失败、逐模块推进/恢复、A 的 DELETE/TTL 与旧 UUID 不影响 B 或新租约、重复模块/错误 binding/改绑/混合模式拒绝；原单租约及正常 main 不开放控制的测试继续保留。具体被测候选、结果、命令、原始记录与自有资源清理将在开发验证完成后归档，本文件此时不预填通过。
+新增开发测试 `tests/integration/qa-multimodule-observation.test.ts` 通过公开控制器 HTTP 和真实 SUT 管理员 API 验证：同进程双失败、逐模块推进/恢复、A 的 DELETE/TTL 与旧 UUID 不影响 B 或新租约、重复模块/错误 binding/改绑/混合模式拒绝；原单租约及正常 main 不开放控制的测试继续保留。
+
+2026-10-02 的开发验证固定候选为 `4d308641703521c4c266f538cb7c894474710ed8`，先提交源文件再启动真实 SUT，未绕过 sourceRevision 脏树保护：
+
+| 检查 | 结果 |
+| --- | --- |
+| 基线 `2c1826b` + 新增 MM01/MM02 | 0 PASS / 2 FAIL / 0 SKIP，两例均在第二模块建立时收到真实 409 |
+| 候选 `4d30864` + 新增 MM01/MM02 | 2 PASS / 0 FAIL / 0 SKIP |
+| 原 runtime / activity / combined / core-resource 集成回归 | 22 PASS / 0 FAIL / 0 SKIP |
+| typecheck（含架构边界及 web 类型）/ verify:original | 均 exit 0；原题摘要 `c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75` |
+
+原始 TAP、执行命令、摘要、校验和与清理记录见[独立开发证据目录](evidence/qa-multimodule-observation-20261002/README.md)。使用独立 `postgres:17` 临时容器，实际 PostgreSQL 17.11，绑定 `127.0.0.1:53166`，每例 UUID 数据库。全部测试结束后数据库余留为零，容器和 tmpfs 已删除，无命名卷；未使用演示或 QA 数据库。上述开发结果只验证此观察能力及相关回归，未代替 QA 自己对重新冻结 SUT 的 SR-BE-DIA-005 验收。
 
 生产入口不导入这些观察脚本；仅设置环境变量不会开启控制。此补充不修改业务模块、公开后台诊断字段或故障判定、外部 gateway 协议、QA 工程目录，也不把研发证据记为 QA 用例通过。完整所有权与启动要求沿用[原接入契约](qa-runtime-observation-adapter.md)。
