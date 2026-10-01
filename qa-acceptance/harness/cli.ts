@@ -24,7 +24,7 @@ async function regenerate(out: string): Promise<void> {
   const events = JSON.parse(await readFile(resolve(out, 'events.json'), 'utf8')) as CaseResult[];
   if (!Array.isArray(events)) throw new Error('events必须为执行结果数组');
   const manifest = JSON.parse(await readFile(resolve(out, 'manifest.json'), 'utf8'));
-  if (!['execution', 'developer-preflight'].includes(manifest.phase))
+  if (!['execution', 'business-acceptance', 'developer-preflight'].includes(manifest.phase))
     throw new Error('再生成报告缺少有效执行用途；准备状态请用 prepare');
   validatePlanManifest(await executionPlan(root, manifest.phase, manifest.suite?.id), manifest);
   let runner: Record<string, unknown>;
@@ -82,7 +82,10 @@ if (action === 'hash-target') {
 } else if (action === 'hash-suite') {
   const plan = await executionPlan(root, 'developer-preflight', option('--suite'));
   console.log(plan.suiteSha256);
-} else if (action === 'run' || action === 'preflight') {
+} else if (action === 'hash-business') {
+  if (args.length) throw new Error('完整业务范围摘要不接受筛选参数');
+  console.log((await executionPlan(root, 'business-acceptance')).businessSha256);
+} else if (action === 'run' || action === 'business' || action === 'preflight') {
   const allowedOptions = new Set(['--target', '--authorization', '--suite']);
   const seenOptions = new Set<string>();
   for (let i = 0; i < args.length; i += 2) {
@@ -94,16 +97,22 @@ if (action === 'hash-target') {
   }
   const plan = await executionPlan(
     root,
-    action === 'run' ? 'execution' : 'developer-preflight',
+    action === 'run'
+      ? 'execution'
+      : action === 'business'
+        ? 'business-acceptance'
+        : 'developer-preflight',
     option('--suite'),
   );
   process.env.QA_EXECUTION_KIND = plan.phase;
   delete process.env.QA_EXECUTION_SUITE_ID;
   delete process.env.QA_EXECUTION_SUITE_SHA256;
+  delete process.env.QA_EXECUTION_BUSINESS_SHA256;
   if (plan.suite) {
     process.env.QA_EXECUTION_SUITE_ID = plan.suite.id;
     process.env.QA_EXECUTION_SUITE_SHA256 = plan.suiteSha256;
   }
+  if (plan.businessSha256) process.env.QA_EXECUTION_BUSINESS_SHA256 = plan.businessSha256;
   const targetPath = option('--target'),
     authPath = option('--authorization');
   if (!targetPath || !authPath)
@@ -124,7 +133,7 @@ if (action === 'hash-target') {
   const runId = `${new Date().toISOString().replaceAll(':', '-')}-${randomUUID().slice(0, 8)}`;
   const out = await reportDirectory(
     root,
-    `reports/${plan.phase === 'execution' ? 'runs' : 'preflight'}/${runId}`,
+    `reports/${plan.phase === 'developer-preflight' ? 'preflight' : 'runs'}/${runId}`,
     true,
   );
   process.env.QA_RUN_DIRECTORY = out;
@@ -156,6 +165,7 @@ if (action === 'hash-target') {
         expiresAt: authorization.expiresAt,
         suiteId: authorization.suiteId,
         suiteSha256: authorization.suiteSha256,
+        businessSha256: authorization.businessSha256,
         targetSha256: authorization.targetSha256,
       },
       changeReview,
@@ -192,16 +202,19 @@ if (action === 'hash-target') {
     const passed =
       plan.phase === 'execution'
         ? summary.conclusions.unconditionalPass === true
-        : summary.preflight?.verdict === 'PASS' && summary.preflight?.suiteId === plan.suite!.id;
+        : plan.phase === 'business-acceptance'
+          ? summary.businessAcceptance?.verdict === 'PASS' &&
+            summary.businessAcceptance?.businessSha256 === plan.businessSha256
+          : summary.preflight?.verdict === 'PASS' && summary.preflight?.suiteId === plan.suite!.id;
     if (!passed && process.exitCode === 0) process.exitCode = 2;
   } catch {
     process.exitCode = process.exitCode || 2;
     console.error('执行器未生成完整报告，不能判通过');
   }
   console.log(
-    `${plan.phase === 'execution' ? '正式验收' : '开发预跑（不构成正式验收）'}证据: ${out}`,
+    `${plan.phase === 'execution' ? '正式验收' : plan.phase === 'business-acceptance' ? '正式业务验收（上线另评）' : '开发预跑（不构成正式验收）'}证据: ${out}`,
   );
 } else
   throw new Error(
-    '用法: prepare | hash-target --target <file> | report --run <dir> | record-manual --run <dir> --input <review.json> | hash-suite --suite <id> | run --target <file> --authorization <file> | preflight --suite <id> --target <file> --authorization <file>',
+    '用法: prepare | hash-target --target <file> | report --run <dir> | record-manual --run <dir> --input <review.json> | hash-suite --suite <id> | hash-business | run --target <file> --authorization <file> | business --target <file> --authorization <file> | preflight --suite <id> --target <file> --authorization <file>',
   );

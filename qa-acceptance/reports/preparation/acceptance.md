@@ -4,10 +4,10 @@
 
 本报告是准备状态清单，未启动或连接被测系统，不能用于宣称产品验收通过。
 
-准备状态专项登记 24 条：脚本可进入后续授权试跑 11；仍缺工程/夹具接入 13；业务口径待决 0。这是准备状态，不是产品执行结果。自动化数量增加不能解释为这些依赖已解决。
+准备状态专项登记 35 条：脚本可进入后续授权试跑 18；仍缺工程/夹具接入 17；业务口径待决 0。这是准备状态，不是产品执行结果。自动化数量增加不能解释为这些依赖已解决。
 
-- 范围内用例：247；通过 0，失败 0，阻塞 0，未执行 247。
-- 方法登记（非就绪统计）：自动化 237，人工 10，尚缺完整执行方案 0，候选 5。
+- 范围内用例：258；通过 0，失败 0，阻塞 0，未执行 258。
+- 方法登记（非就绪统计）：自动化 248，人工 10，尚缺完整执行方案 0，候选 5。
 - 有用例覆盖、实际执行和通过率分别统计；跳过、缺少浏览器项目、缺少环境均不作通过。JSON另列required/release/candidate各范围计数及已执行通过率；多范围用例分别计数，不可直接相加。
 
 ## 版本、环境与授权
@@ -18,7 +18,7 @@
   "sutExecutionAuthorized": false,
   "productTestsExecuted": 0,
   "qaTree": {
-    "sha256": "4bdd1d9293cfd25ae651202559abc5e6436fa9682c7c493c7b0f88a4936cde50",
+    "sha256": "69f1c49f561f70db62f22af7c832559ef23949857f267ff65e3465641f5f5dd5",
     "files": [
       {
         "path": ".gitignore",
@@ -105,6 +105,18 @@
         "sha256": "355d1ea290cbb754de378f21c5b6c9e123c9a052dbfcea6c94b3fb257d131db9"
       },
       {
+        "path": "cases/generated/integration-message-timing.md",
+        "sha256": "d28ae43917e56aa0f6e3bf53385dfe19e8162b6a9257bed7da0c0cc25b1abec4"
+      },
+      {
+        "path": "cases/generated/integration-runtime.md",
+        "sha256": "ebe41032344a14a756203b47acad7fe1f8e966f3fd267ff1ff35c2cbf94f0fef"
+      },
+      {
+        "path": "cases/generated/integration-streams.md",
+        "sha256": "9fdd4c9b1c01d73625d13f6b556870e644497282dd16ef7d22e69e070743570b"
+      },
+      {
         "path": "cases/generated/manual.md",
         "sha256": "406f26b4f276afe1a8af9f3460d8d1a3d07b444e15bb5ab146bc481b42ac301b"
       },
@@ -135,6 +147,18 @@
       {
         "path": "cases/integration-diagnostics.json",
         "sha256": "11d29d4931c38d3a59f891e16febba15e8109bf14939b86e162a3772ce953986"
+      },
+      {
+        "path": "cases/integration-message-timing.json",
+        "sha256": "b982b66135a54195c98c18c06d5fea6a3101024d9b53e86ff39361e75fa51c0c"
+      },
+      {
+        "path": "cases/integration-runtime.json",
+        "sha256": "ae9560eba0779e54d607e17b98b63dc4fb8b99e521fbbc8daa0dee346e68ccba"
+      },
+      {
+        "path": "cases/integration-streams.json",
+        "sha256": "957a45ee9d20abe4f8d93cd1164cef0b5a22851eea10bc964a5801e98041b266"
       },
       {
         "path": "cases/manual.json",
@@ -210,11 +234,19 @@
       },
       {
         "path": "contracts/fixture-artifacts.md",
-        "sha256": "caa28d6b83ffb1235fbb1e1c9c8dc3656880acdd4ba3038950ca2dc87d46bcf7"
+        "sha256": "d5da45a634f027b15258567eb673a9ac4845e3e810d74990f628b75f8fde558b"
+      },
+      {
+        "path": "contracts/message-receipt-observation.md",
+        "sha256": "b4f7b183d932d553456ce06c88073eab21ed2fdc76486b393999495a2fd821dd"
       },
       {
         "path": "contracts/public-api.ts",
         "sha256": "85d5069b89869e9aff6a6ba3e64b913630f810e32783aac3e2ff8a43e3bc84a2"
+      },
+      {
+        "path": "contracts/runtime-observation.md",
+        "sha256": "b6c9d30d52821ed2a2fad61efd0813ac62532f905fff5ba864b3aeb94e5e103e"
       },
       {
         "path": "contracts/simulator.md",
@@ -227,6 +259,10 @@
       {
         "path": "harness/barrier.ts",
         "sha256": "3c7b7636bc2c8488bc28a4bd7068171a521d71ac0c256c938a65c8f022b4b177"
+      },
+      {
+        "path": "harness/business-scope.ts",
+        "sha256": "f11522b38606b2965e8158d1d4f66ebea58dbc9092afebb243d304ebf2e49fa8"
       },
       {
         "path": "harness/capacity-control.ts",
@@ -254,7 +290,7 @@
       },
       {
         "path": "harness/cli.ts",
-        "sha256": "ae0997be4cbedc692e74b987e31d1912f689bfb904d46c37c89c95a434c29cd0"
+        "sha256": "2efc746529d1d38e4234a53bd18b4bcb648f4bbc3b1fac0b81b6bab33efef743"
       },
       {
         "path": "harness/database.ts",
@@ -266,11 +302,11 @@
       },
       {
         "path": "harness/execution-gate.ts",
-        "sha256": "743ee9ef26a3e1cb69944dadbb528e2cd60718c3aa8beb873ddd12b445c21437"
+        "sha256": "f9975961f0667a65f0ffb2370326dfb6d86b26eac62509886944379cf6563932"
       },
       {
         "path": "harness/execution-plan.ts",
-        "sha256": "428db84da8047471dcebf601ea7186468f86ae18cbc783b51eb0a13230ba4c3f"
+        "sha256": "6422c9768170aa8e51d31c75a97162acd2b7c8408990d5c7c09ed33c4a8d1549"
       },
       {
         "path": "harness/fixture-artifacts.ts",
@@ -278,7 +314,7 @@
       },
       {
         "path": "harness/gateway.ts",
-        "sha256": "67deeb1186d503425526c39c75e5b968ed5a5dcbb0a0f2b2ea88c672befed20a"
+        "sha256": "966292c0866702435f147834988fd5f444143e0be7d03157603f52a2805d1077"
       },
       {
         "path": "harness/http-server.ts",
@@ -286,7 +322,7 @@
       },
       {
         "path": "harness/manual.ts",
-        "sha256": "1622607c6d6a553e04cd4cc81bfea07dfd5c5e7dd9fde0f973e4b76119b638f3"
+        "sha256": "e197c71216e4b181241185a5e4eb43a00180ab8fafdebe187038f02324b2ae9d"
       },
       {
         "path": "harness/network.ts",
@@ -309,6 +345,10 @@
         "sha256": "10e3661ba876c9ba9ee490e36784e69b61f1b9a9c09f646a6931de1c7781a342"
       },
       {
+        "path": "harness/receipt-socket.ts",
+        "sha256": "05ffe45fe611aa50f926092638d8ecace67ea57bc9ef491ffd19426cf8db5932"
+      },
+      {
         "path": "harness/recovery-drill.ts",
         "sha256": "f9934e587a58e5f30bbc3151114c89c68beb2252c6c64a273028a620390313ec"
       },
@@ -318,15 +358,19 @@
       },
       {
         "path": "harness/report.ts",
-        "sha256": "da209b5752c4bde87c28b6ea9c1c030285e082ded7ba95c6274047ad97a9da42"
+        "sha256": "5db1991ee0c25a000ca1333209c432e844f100340be08dc46c45b92fbac61f8f"
       },
       {
         "path": "harness/reporter.ts",
         "sha256": "9cd59b41071aedae085b46bea8c0c46b69ce04efc2e7c7589d02d541fc6f7794"
       },
       {
+        "path": "harness/runtime-observation.ts",
+        "sha256": "187918599d9b79b33b5587ee1db970368098dbbdacfef756fa5caa322e09c1a5"
+      },
+      {
         "path": "harness/security.ts",
-        "sha256": "296f28438f92ee2951a97c3c296fdc4f098b3b1c11ef9f3531db7763eecff1f2"
+        "sha256": "30a5c509e906efa245e06cfbda539242efa2a3a9e04d008133a1e8c73bbc4698"
       },
       {
         "path": "harness/suites-check.ts",
@@ -338,11 +382,11 @@
       },
       {
         "path": "harness/types.ts",
-        "sha256": "4cf3a35cb633052f2405bfdf4bed2280f93c02d6c3e37105e566556fc581be92"
+        "sha256": "b35b436a19c13a448f9fd4115732b5722d8954bc0f440e55fc1dfed453638005"
       },
       {
         "path": "harness/verify-tools.ts",
-        "sha256": "d19cb49593f32f93832d59663f812a3b6a0e793d58ec9c60d73fb798abc21075"
+        "sha256": "d269ffa546bc2c477f870491c198ede53a925cb4b73f46779399970805dafb96"
       },
       {
         "path": "package-lock.json",
@@ -350,7 +394,7 @@
       },
       {
         "path": "package.json",
-        "sha256": "07d5d8a19130d7e7037da29184929f07fe2fb797a84959bc4e18c74ce9aa4df1"
+        "sha256": "6d8de82b1cd439f839c69a3e472b8ca253836eeca7bd4fd4e3a1b3bbf7af764b"
       },
       {
         "path": "playwright.config.ts",
@@ -358,7 +402,7 @@
       },
       {
         "path": "README.md",
-        "sha256": "3028217860e64d2bb29a324d336cefc2d3a81dce7b782099e80a50bee560c6ed"
+        "sha256": "dff4147d4712337b2984ad9ed5e915e0e1dda61c87a40679542a83a29143ae81"
       },
       {
         "path": "requirements/architecture-impact.md",
@@ -366,7 +410,7 @@
       },
       {
         "path": "requirements/baseline.json",
-        "sha256": "d11dee52636dc11f4edf1a9f3821faaf252740cf1b5a046addfef3286c8815ea"
+        "sha256": "fc909783677cd54cde10f71a4aab80a467312f4f46e593ff0ffd285b86a17d82"
       },
       {
         "path": "requirements/blocker-reassessment.md",
@@ -374,7 +418,7 @@
       },
       {
         "path": "requirements/catalog.json",
-        "sha256": "5d7928762c0849a4f5c8d454ec0b841891c2f0085d864c43a8ce4198d7ef9fbe"
+        "sha256": "07689a14f445f1bf5b3c92ad0fe3a55094b6b97ebe99c39e60dcd0a3aaa4fce6"
       },
       {
         "path": "requirements/change-reviews.json",
@@ -398,11 +442,15 @@
       },
       {
         "path": "requirements/integration-risk-review-20261001.md",
-        "sha256": "0177e583b7e4e52d52ca0582e7041409d3a7924be13dfcf86c05d1648f67384a"
+        "sha256": "187ba6c714769454919261d23b43a092465f081f19ff5aebb228fcd38e43716a"
       },
       {
         "path": "requirements/left-members-decision.md",
         "sha256": "691a8f1445ad7a93bd5ca88085b9a64ec3ba6aae9cbb1e598cab583e9101af20"
+      },
+      {
+        "path": "requirements/next-integration-preparation-20261001.md",
+        "sha256": "713cd172ac0d53bc27f4691342b31fa28d163dd886e2e2b4eb24ebe6718217a6"
       },
       {
         "path": "requirements/release-gates.md",
@@ -422,7 +470,11 @@
       },
       {
         "path": "requirements/traceability.md",
-        "sha256": "df69822281c3760145879451f5008a464867e5250c3bc497e6d488bcbb9e467d"
+        "sha256": "ac9c57bfd757eba38f194b543b2357027bf144b8e2db72d8de89c0f2ba07383f"
+      },
+      {
+        "path": "sharing/business-acceptance.md",
+        "sha256": "e75ed41093e23ad6d481e0e0397d1ab2db889cb10a3f333ac942b8ad87407a70"
       },
       {
         "path": "sharing/README.md",
@@ -482,7 +534,11 @@
       },
       {
         "path": "tests/self/authorization-projects.test.ts",
-        "sha256": "8da85c9c1a06b07468b7c679007b48ec8aec40c69e99e8ffade85b3ba842ecb4"
+        "sha256": "6ad27adc0a265270cd73a9fb8db2ae8310bec55b97e284bb9a9e063980fd5491"
+      },
+      {
+        "path": "tests/self/business-acceptance.test.ts",
+        "sha256": "a7336707d53e2e85a7ee67f2346ec7005f2495b255048360e2c8c2f63ec4e72f"
       },
       {
         "path": "tests/self/capacity-control.test.ts",
@@ -505,6 +561,10 @@
         "sha256": "6ffbf445060266b2e04d4f84dde140c94dc809119fd97794bfda408dcb597301"
       },
       {
+        "path": "tests/self/gateway-timing-evidence.test.ts",
+        "sha256": "f624690035be93b35514b63f92991e5ad5191f88994da6a93723dfa6e1338f82"
+      },
+      {
         "path": "tests/self/infrastructure.test.ts",
         "sha256": "4a6abe6ba45f61c65c05869420816330301e0a2dc9fb44a95a6076681f56a6ad"
       },
@@ -514,15 +574,23 @@
       },
       {
         "path": "tests/self/preflight-execution.test.ts",
-        "sha256": "32570c7c6d5810f81403e97a97e39da81cbe4eb0f610ae202b0ba54e42a59c3d"
+        "sha256": "4cbaae8d842dd2f6cb98cf721510ca160def3aaa4e80eb4b69eece839a57e7c4"
       },
       {
         "path": "tests/self/preflight-report.test.ts",
         "sha256": "ec6925b6f18a1245215f5bb727facf9f559d49cc802b3011b807aff610cf36de"
       },
       {
+        "path": "tests/self/receipt-socket.test.ts",
+        "sha256": "e5b95eb7427dd20df5569f4d1c2f98b2c25b0365265004f160896a211a9e5992"
+      },
+      {
         "path": "tests/self/recovery-tools.test.ts",
         "sha256": "438865585136b45fa30da1481c4e67b76d1e3131f96d63f15c19d64d7043b35c"
+      },
+      {
+        "path": "tests/self/runtime-observation.test.ts",
+        "sha256": "1533fd035adfeb444d4eb17624630bd131c776a3dbad7cad912a08b8d2007d91"
       },
       {
         "path": "tests/self/simulators.test.ts",
@@ -551,6 +619,18 @@
       {
         "path": "tests/system/fixture-boundaries.spec.ts",
         "sha256": "14bc528c07ad1b536d13324c0387af9226ba2782c67c9ef7d212f809f444a597"
+      },
+      {
+        "path": "tests/system/integration-message-timing.spec.ts",
+        "sha256": "52c213d14cbc05b68dbbd9a5a6fafb67e4c42c78ccb284ef335b8e345e67136d"
+      },
+      {
+        "path": "tests/system/integration-runtime.spec.ts",
+        "sha256": "b0be33a1bb6acc5ef1c02f478e2070238361cab4b6496792f8729e0c39ab1bfb"
+      },
+      {
+        "path": "tests/system/integration-streams.spec.ts",
+        "sha256": "68bdfa096d6023a8d58d34532afa994eb2dbe3cb6b941e314c3f4e906f419c3b"
       },
       {
         "path": "tests/system/protocol-boundaries.spec.ts",
@@ -867,6 +947,36 @@
         "impactReview": "qa-acceptance/requirements/integration-intake-20261001.md",
         "riskReview": "qa-acceptance/requirements/integration-risk-review-20261001.md",
         "productTestingAuthorized": false
+      },
+      {
+        "id": "QA-REV-05",
+        "date": "2026-10-01",
+        "qaBranch": "agent/qa-next-integration-preparation",
+        "qaBaseCommit": "4c035b8c24e95f33182b4248ee676fcd184f74a5",
+        "classification": "首轮六条联调之后补齐既有需求风险组合和版本化D043/D044/D045技术契约，业务验收与上线评估分开；不放松原始强保证",
+        "requirementIds": [
+          "ENG-ACCOUNT-RECOVERY-01",
+          "ENG-STREAM-01",
+          "ENG-DIAG-01"
+        ],
+        "riskReview": "qa-acceptance/requirements/integration-risk-review-20261001.md",
+        "preparationReview": "qa-acceptance/requirements/next-integration-preparation-20261001.md",
+        "productTestingAuthorized": false,
+        "scopeNote": "该false只指本次新增专项/正式业务执行尚未启动；此前6条已获授权并实际完成，见executionHistory"
+      }
+    ],
+    "executionHistory": [
+      {
+        "phase": "developer-preflight",
+        "suite": "developer-smoke",
+        "runId": "2026-10-01T04-48-30.855Z-08486f22",
+        "caseCount": 6,
+        "pass": 6,
+        "retries": 0,
+        "sutRevision": "993f7588c1105894e0543554209a8c085423589f",
+        "qaRevision": "1e40092b2acd295e5bac8ae495a5e32243f487a9",
+        "report": "qa-acceptance/reports/integration/20261001-smoke.md",
+        "note": "独立授权只用于该范围；原executionPolicy保留资产创建时的基线快照，不是当前执行结果或全量授权。"
       }
     ]
   }
@@ -1068,6 +1178,17 @@
 |BASE-002 交付声明与栈约束入口|R-A0-06|NOT_RUN|尚未执行||
 |API-001 独立公开API结构契约|R-A0-03, R-A0-06, R-A3-05, R-A5-14, R-B1-05|NOT_RUN|尚未执行||
 |DIAG-001 后台诊断仅管理员可读且不泄漏测试凭据或业务样本|ENG-DIAG-01|NOT_RUN|尚未执行||
+|INT-MSG-001 旧404跨过2秒确认窗不能否定已真实落地消息|R-A2-03, R-A2-04|NOT_RUN|尚未执行||
+|INT-MSG-002 真实查询响应持续延迟跨5秒后仍unknown并按恢复2秒收敛|R-A2-03, R-A2-04|NOT_RUN|尚未执行||
+|INT-MSG-003 慢但可用的确认查询仍从最初504计五秒|R-A2-03|NOT_RUN|尚未执行||
+|INT-MSG-004 查询503恢复成慢200后仍保留原两秒判定|R-A2-04|NOT_RUN|尚未执行||
+|INT-MSG-005 同一确认以不同eventId迟到并在公开提交后重启不改排期|R-B1-07, R-B1-09, R-A2-08|NOT_RUN|尚未执行||
+|INT-ACT-001 安全阶段重启累计活动预算、恢复归因与完整尾段真值|R-A5-06, R-A5-11|NOT_RUN|尚未执行||
+|INT-ACCOUNT-001 远端成功后的局部保存暂错在原事务恢复，新断开不被旧连接覆盖|R-A1-03, R-A1-05, R-A1-07, R-A1-08, ENG-ACCOUNT-RECOVERY-01|NOT_RUN|尚未执行||
+|INT-ACCOUNT-002 持续本地保存失败显式回滚，无虚假状态事件或远端自动重放|R-A1-05, R-A1-07, ENG-ACCOUNT-RECOVERY-01|NOT_RUN|尚未执行||
+|INT-DIAG-002 真实tick失败、进行中保持与恢复诊断及错误样本脱敏|ENG-DIAG-01|NOT_RUN|尚未执行||
+|INT-STREAM-001 真实暂停TCP读取与健康消费者并行、按实际已收游标重放|ENG-STREAM-01, R-A4-03, R-A4-04|NOT_RUN|尚未执行||
+|INT-STREAM-002 续页改变页大小并交错发送确认、历史补投与新消息，冻结集合内容保持|ENG-STREAM-01, R-A4-01, R-A4-02|NOT_RUN|尚未执行||
 |MAN-UX-001 操作员能识别阻断、失败与账号/群角色含义|R-A6-03, ADD-COPY-01|NOT_RUN|尚未执行||
 |MAN-IME-001 真实操作系统中文输入法不触发中间查询|ADD-DIR-11|NOT_RUN|尚未执行||
 |MAN-FOCUS-001 真实失焦与浏览器标签标题favicon呈现|ADD-ATT-02, ADD-ATT-03|NOT_RUN|尚未执行||
@@ -1146,6 +1267,17 @@
 |CAP-010|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
 |ARC-UI-BLK-001|dependency-pending|QA|账号通用读取失败与提醒确认脚本已实现；尚需授权后确认候选真实页面定位及消费者关联，adapterConfirmed当前不代表已确认|
 |BLK-MIG-001|dependency-pending|QA与候选交付方|解析、恢复与断言已实现；真实版本化dump及独立manifest尚未提供；制品双哈希和对应版本/出处需按contracts/fixture-artifacts.md准备；授权后仅导入本轮新建专属库|
+|INT-MSG-001|script-ready|QA|独立公开协议操作与断言已实现；仅静态及协议桩自测，尚未对SUT执行；不包含504已收到后本地保存暂停、接收记录保存前后或多实例物理首次窗口，见contracts/message-receipt-observation.md|
+|INT-MSG-002|script-ready|QA|独立公开协议操作与断言已实现；仅静态及协议桩自测，尚未对SUT执行；不包含504已收到后本地保存暂停、接收记录保存前后或多实例物理首次窗口，见contracts/message-receipt-observation.md|
+|INT-MSG-003|script-ready|QA|独立公开协议操作与断言已实现；仅静态及协议桩自测，尚未对SUT执行；不包含504已收到后本地保存暂停、接收记录保存前后或多实例物理首次窗口，见contracts/message-receipt-observation.md|
+|INT-MSG-004|script-ready|QA|独立公开协议操作与断言已实现；仅静态及协议桩自测，尚未对SUT执行；不包含504已收到后本地保存暂停、接收记录保存前后或多实例物理首次窗口，见contracts/message-receipt-observation.md|
+|INT-MSG-005|script-ready|QA|独立公开协议操作与断言已实现；仅静态及协议桩自测，尚未对SUT执行；不包含504已收到后本地保存暂停、接收记录保存前后或多实例物理首次窗口，见contracts/message-receipt-observation.md|
+|INT-ACT-001|dependency-pending|工程提供真实观测与局部故障，QA接入验收|QA客户端与四条操作/断言已实现，真实工程控制器尚未交付；最小合同contracts/runtime-observation.md；工具自测不证明工程接入或产品通过；新增安全阶段屏障和实际恢复状态见证是待工程接入条件，不声称纯预算已实测|
+|INT-ACCOUNT-001|dependency-pending|工程提供真实观测与局部故障，QA接入验收|QA客户端与四条操作/断言已实现，真实工程控制器尚未交付；最小合同contracts/runtime-observation.md；工具自测不证明工程接入或产品通过；真实后请求等待观测和原外层COMMIT边界仍需工程证明|
+|INT-ACCOUNT-002|dependency-pending|工程提供真实观测与局部故障，QA接入验收|QA客户端与四条操作/断言已实现，真实工程控制器尚未交付；最小合同contracts/runtime-observation.md；工具自测不证明工程接入或产品通过|
+|INT-DIAG-002|dependency-pending|工程提供真实观测与局部故障，QA接入验收|QA客户端与四条操作/断言已实现，真实工程控制器尚未交付；最小合同contracts/runtime-observation.md；工具自测不证明工程接入或产品通过|
+|INT-STREAM-001|script-ready|QA|公开接口/独立网关/真实客户端操作及断言已准备；产品结果仍为NOT_RUN；真实有限负载能否触发慢端关闭和回放缺口需后续授权实跑；未建立前提必须BLOCKED，不能用工具自测代填通过|
+|INT-STREAM-002|script-ready|QA|公开接口/独立网关/真实客户端操作及断言已准备；产品结果仍为NOT_RUN；真实有限负载能否触发慢端关闭和回放缺口需后续授权实跑；未建立前提必须BLOCKED，不能用工具自测代填通过|
 |BLK-EXT-001|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过；外部强恢复风险保留，明确违约FAIL、观察不足BLOCKED；不虚造协议幂等或恢复期限|
 |BLK-EXT-002|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过；外部强恢复风险保留，明确违约FAIL、观察不足BLOCKED；不虚造协议幂等或恢复期限|
 |BLK-EXT-003|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过；外部强恢复风险保留，明确违约FAIL、观察不足BLOCKED；不虚造协议幂等或恢复期限|

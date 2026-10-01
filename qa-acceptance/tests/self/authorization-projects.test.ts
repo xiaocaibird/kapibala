@@ -134,9 +134,11 @@ test('repeated fixture authorization resolves the real suite and rejects stale d
     'QA_EXECUTION_KIND',
     'QA_EXECUTION_SUITE_ID',
     'QA_EXECUTION_SUITE_SHA256',
+    'QA_EXECUTION_BUSINESS_SHA256',
     'QA_EXECUTION_AUTHORIZATION',
   ];
   const previous = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
+  delete process.env.QA_EXECUTION_BUSINESS_SHA256;
   t.after(() => {
     for (const key of keys)
       if (previous[key] === undefined) delete process.env[key];

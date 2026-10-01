@@ -4,6 +4,8 @@
 
 ## 阅读入口
 
+- [下一轮专项准备与交接](requirements/next-integration-preparation-20261001.md)、[完整业务验收入口](sharing/business-acceptance.md)：风险组合补强及仍需真实工程接入的边界；上线评估继续单列。
+
 - [首轮隔离联调报告](reports/integration/20261001-smoke.md)、[证据索引](reports/integration/20261001-smoke-evidence.json)：六条首轮通过、完整证据及资源清理；不构成正式验收。
 
 - [开发交接接收与首轮联调](requirements/integration-intake-20261001.md)、[候选风险与剩余覆盖准备](requirements/integration-risk-review-20261001.md)：固定993f758；六条 system 冒烟已执行通过，原13项接入与新评审专项仍待完成。
@@ -56,7 +58,7 @@ PLAYWRIGHT_BROWSERS_PATH="$PWD/.runtime/browsers" npm exec playwright install ch
 
 5. 通过实际可见页面确认 `ui.routes` 与 `ui.selectors` 后设置 `adapterConfirmed=true`。这些是定位适配，不是对 DOM 属性、页面路由或 UI 库的产品要求。模板中的 `data-qa`/`data-testid` 只是占位定位方式；不要求开发为测试改业务代码。定位缺失先修适配，不降低业务断言。真实 OS 输入法、系统标签栏焦点和主观可读性另有人工用例。
    旧版本库和微秒分页还须按 [制品接入](contracts/fixture-artifacts.md) 提供独立期望及双哈希归档；容量专项须按 [容量接入](contracts/capacity-observation.md) 提供实际工程控制器。当前模板、解析器和客户端不等于这些外部依赖已经交付。
-6. 填写批准的上线 profile 和指标。负载脚本的固定混合为账号／群／消息读取及发送各 25%，外部依赖为独立模拟器；报告只对这个拓扑与负载成立。不能拿本地模拟结果代替生产目标环境的容量证明。`durationSeconds`、`soakSeconds`、并发、p95、错误率、RPO／RTO 均不提供武断默认值。
+6. 涉及上线评估时填写批准的上线 profile 和指标；完整业务入口不要求虚填这些值。负载脚本的固定混合为账号／群／消息读取及发送各 25%，外部依赖为独立模拟器；报告只对这个拓扑与负载成立。不能拿本地模拟结果代替生产目标环境的容量证明。`durationSeconds`、`soakSeconds`、并发、p95、错误率、RPO／RTO 均不提供武断默认值。
 7. 计算目标配置摘要，将后续真实授权记录到 `config/authorization.local.json`；目标、命令、环境或 UI 适配变化后重新记录对应摘要。
 
 ```sh
@@ -85,11 +87,17 @@ npm run preflight -- --suite developer-smoke --target config/target.local.json -
 # 本轮变更回归使用 architecture-regression，并填写与它匹配的独立授权记录。
 ```
 
-预跑仅引用既有用例和断言，不接收额外 grep 或任意命令。结果写入 `reports/preflight/<run-id>/`：冻结子集、所选项目、选择参数和摘要；未选用例在全量 JSON 中继续 NOT_RUN。退出码 0 仅表示该子集每个要求的用例/项目组合均通过且无完整性错误；缺项、阻塞、失败或执行器错误为非零。开发报告明确标为预跑，正式需求符合性与上线准备度不作通过结论，不能导入正式验收作为已执行证据。正式验收入口始终完整执行。报告再生成同样核对用途、冻结子集摘要和批准记录，须使用该运行对应的 QA 资产；不会因为改名、删去缺跑项目或覆盖执行器摘要而升级结论。
+预跑仅引用既有用例和断言，不接收额外 grep 或任意命令。结果写入 `reports/preflight/<run-id>/`：冻结子集、所选项目、选择参数和摘要；未选用例在全量 JSON 中继续 NOT_RUN。退出码 0 仅表示该子集每个要求的用例/项目组合均通过且无完整性错误；缺项、阻塞、失败或执行器错误为非零。开发报告明确标为预跑，正式需求符合性与上线准备度不作通过结论，不能导入正式验收作为已执行证据。原完整验收入口始终完整执行；仅业务验收使用新的 `acceptance:business`，仍自动纳入全部业务必验项，详见[业务入口](sharing/business-acceptance.md)。报告再生成同样核对用途、冻结子集摘要和批准记录，须使用该运行对应的 QA 资产；不会因为改名、删去缺跑项目或覆盖执行器摘要而升级结论。
 
 ## 执行及取证
 
-只有收到后续授权后才运行：
+仅在取得对应完整范围执行授权后运行。业务与上线分开时使用：
+
+```sh
+npm run acceptance:business -- --target config/target.local.json --authorization .runtime/authorization.business.json
+```
+
+业务和上线门禁同时执行的原入口：
 
 ```sh
 npm run acceptance -- --target config/target.local.json --authorization config/authorization.local.json
@@ -136,4 +144,4 @@ npm run report -- --run reports/runs/<run-id>
 
 上线自动化只对批准的闭环负载、低速持续运行和静态样本备份恢复演练提供证据，不能替代生产容量、长期稳定性或持续复制证明。
 
-尚未对候选工程进行联通或端到端试跑。首次授权执行包含环境接入检查；适配问题、产品失败与需求阻塞在报告中分开记录。
+候选 993f758 的六条 system 联调已执行通过，原始范围和证据见首轮报告。新增专项及浏览器端到端尚未试跑；后续按具体执行范围检查环境接入，适配问题、产品失败与需求阻塞分别记录。

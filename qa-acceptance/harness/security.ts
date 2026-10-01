@@ -159,6 +159,66 @@ export async function loadTarget(path: string, qaRoot: string): Promise<TargetCo
   }
   if (c.adapters?.fixtureArtifacts !== undefined)
     validateFixtureArtifactBinding(c.adapters.fixtureArtifacts);
+  if (c.adapters?.runtimeObservation !== undefined) {
+    const adapter = c.adapters.runtimeObservation;
+    let url: URL;
+    try {
+      if (!record(adapter) || typeof adapter.url !== 'string') throw new Error('invalid adapter');
+      url = new URL(adapter.url);
+    } catch {
+      throw new BlockedError('运行观测控制器URL无效');
+    }
+    if (
+      url.protocol !== 'http:' ||
+      url.hostname !== '127.0.0.1' ||
+      !url.port ||
+      url.username ||
+      url.password ||
+      url.search ||
+      url.hash ||
+      url.pathname !== '/' ||
+      typeof adapter.contractReference !== 'string' ||
+      !adapter.contractReference.trim() ||
+      /REQUIRED|REPLACE/.test(adapter.contractReference)
+    )
+      throw new BlockedError('运行观测控制器需显式loopback origin及已确认契约引用');
+    if (adapter.diagnostics !== undefined) {
+      const profile = adapter.diagnostics;
+      const pointers = [
+        'modulesPointer',
+        'namePointer',
+        'statePointer',
+        'consecutiveFailuresPointer',
+        'lastFailureAtPointer',
+        'lastSuccessAtPointer',
+        'currentDurationMsPointer',
+        'tickCountPointer',
+      ];
+      const nonempty = (v: unknown) => typeof v === 'string' && !!v.trim() && !/[\r\n\0]/.test(v);
+      if (
+        !record(profile) ||
+        !nonempty(profile.module) ||
+        Object.keys(profile).some((k) => !['module', 'states', ...pointers].includes(k)) ||
+        pointers.some((k) => {
+          const value = (profile as unknown as Record<string, unknown>)[k];
+          return (
+            typeof value !== 'string' ||
+            ((value !== '' || k !== 'modulesPointer') && !value.startsWith('/')) ||
+            /~(?![01])|[\r\n\0]/.test(value)
+          );
+        }) ||
+        !record(profile.states) ||
+        Object.keys(profile.states).some((k) => !['failed', 'running', 'healthy'].includes(k)) ||
+        !['failed', 'running', 'healthy'].every((k) =>
+          nonempty((profile.states as Record<string, unknown>)[k]),
+        ) ||
+        new Set(Object.values(profile.states)).size !== 3
+      )
+        throw new BlockedError(
+          '诊断映射仅支持模块、合法JSON pointer及三个不同状态文本，不接受代码或阈值',
+        );
+    }
+  }
   if (!record(c.ui.routes) || !record(c.ui.selectors)) throw new BlockedError('UI适配器格式无效');
   for (const route of Object.values(c.ui.routes))
     if (
@@ -173,6 +233,16 @@ export async function loadTarget(path: string, qaRoot: string): Promise<TargetCo
 }
 export function executionPurpose(env: NodeJS.ProcessEnv = process.env): ExecutionPurpose {
   const phase = env.QA_EXECUTION_KIND ?? 'execution';
+  if (phase === 'business-acceptance') {
+    if (
+      env.QA_EXECUTION_SUITE_ID ||
+      env.QA_EXECUTION_SUITE_SHA256 ||
+      !/^[a-f0-9]{64}$/.test(env.QA_EXECUTION_BUSINESS_SHA256 ?? '')
+    )
+      throw new BlockedError('正式业务验收须绑定完整业务摘要，不能选择子集');
+    return { phase, businessSha256: env.QA_EXECUTION_BUSINESS_SHA256! };
+  }
+  if (env.QA_EXECUTION_BUSINESS_SHA256) throw new BlockedError('当前执行阶段不能携带业务验收摘要');
   if (phase === 'execution') {
     if (env.QA_EXECUTION_SUITE_ID || env.QA_EXECUTION_SUITE_SHA256)
       throw new BlockedError('正式验收不能携带开发子集环境变量');
@@ -199,7 +269,12 @@ export function validateAuthorization(
 ): void {
   if (
     a.version !== 1 ||
-    a.scope !== (purpose.phase === 'execution' ? 'all-required' : 'developer-preflight') ||
+    a.scope !==
+      (purpose.phase === 'execution'
+        ? 'all-required'
+        : purpose.phase === 'business-acceptance'
+          ? 'all-business'
+          : 'developer-preflight') ||
     typeof a.approvedBy !== 'string' ||
     !a.approvedBy.trim() ||
     /REQUIRED/.test(a.approvedBy) ||
@@ -215,8 +290,19 @@ export function validateAuthorization(
       !/^[a-f0-9]{64}$/.test(purpose.suiteSha256))
   )
     throw new BlockedError('预跑授权未绑定当前 QA 子集及内容摘要');
-  if (purpose.phase === 'execution' && (a.suiteId !== undefined || a.suiteSha256 !== undefined))
+  if (
+    purpose.phase !== 'developer-preflight' &&
+    (a.suiteId !== undefined || a.suiteSha256 !== undefined)
+  )
     throw new BlockedError('正式验收授权不可携带开发子集');
+  if (purpose.phase === 'business-acceptance') {
+    if (
+      !/^[a-f0-9]{64}$/.test(purpose.businessSha256) ||
+      a.businessSha256 !== purpose.businessSha256
+    )
+      throw new BlockedError('业务验收授权未绑定完整业务基线摘要');
+  } else if (a.businessSha256 !== undefined)
+    throw new BlockedError('非业务验收授权不可携带业务摘要');
   const from = Date.parse(a.approvedAt),
     until = Date.parse(a.expiresAt);
   if (
@@ -260,12 +346,12 @@ export async function requireAuthorization(target: TargetConfig): Promise<Author
   a.sutDirectory = await realpath(a.sutDirectory);
   const purpose = executionPurpose();
   let verifiedProjects: readonly string[] | undefined;
-  if (purpose.phase === 'developer-preflight') {
+  if (purpose.phase !== 'execution') {
     // Resolve QA metadata and recheck the selected digest on every authorization
     // check, including fixture/restart calls. Never trust an environment project list.
     const { currentExecutionPlan } = await import('./execution-plan.js');
     const plan = await currentExecutionPlan(fileURLToPath(new URL('../', import.meta.url)));
-    verifiedProjects = plan.suite?.projects;
+    verifiedProjects = purpose.phase === 'developer-preflight' ? plan.suite?.projects : undefined;
   }
   validateAuthorization(a, target, Date.now(), purpose, verifiedProjects);
   const workspace = (

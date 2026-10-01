@@ -164,6 +164,7 @@ test('CLI static hash works without a target and missing authorization never sta
     'QA_EXECUTION_KIND',
     'QA_EXECUTION_SUITE_ID',
     'QA_EXECUTION_SUITE_SHA256',
+    'QA_EXECUTION_BUSINESS_SHA256',
   ])
     delete env[key];
   const command = resolve(root, 'node_modules/tsx/dist/cli.mjs');

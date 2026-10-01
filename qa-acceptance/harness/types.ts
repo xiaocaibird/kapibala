@@ -54,6 +54,18 @@ export interface Command {
   command: string;
   args: string[];
 }
+export interface RuntimeDiagnosticsProfile {
+  module: string;
+  modulesPointer: string;
+  namePointer: string;
+  statePointer: string;
+  consecutiveFailuresPointer: string;
+  lastFailureAtPointer: string;
+  lastSuccessAtPointer: string;
+  currentDurationMsPointer: string;
+  tickCountPointer: string;
+  states: { failed: string; running: string; healthy: string };
+}
 export interface TargetConfig {
   version: 1;
   sut: {
@@ -68,6 +80,11 @@ export interface TargetConfig {
   adapters?: {
     capacityControl?: { url: string; contractReference: string };
     fixtureArtifacts?: { configPath: string; sha256: string };
+    runtimeObservation?: {
+      url: string;
+      contractReference: string;
+      diagnostics?: RuntimeDiagnosticsProfile;
+    };
   };
   database: { image: string };
   ui: {
@@ -100,10 +117,13 @@ export interface Authorization {
   sutDirectory: string;
   targetSha256: string;
   allowedActions: string[];
-  scope: 'all-required' | 'developer-preflight';
+  scope: 'all-required' | 'all-business' | 'developer-preflight';
   suiteId?: string;
   suiteSha256?: string;
+  businessSha256?: string;
 }
 
 export type ExecutionPurpose =
-  { phase: 'execution' } | { phase: 'developer-preflight'; suiteId: string; suiteSha256: string };
+  | { phase: 'execution' }
+  | { phase: 'developer-preflight'; suiteId: string; suiteSha256: string }
+  | { phase: 'business-acceptance'; businessSha256: string };

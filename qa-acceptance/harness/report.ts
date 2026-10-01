@@ -7,6 +7,7 @@ import { redact } from './security.js';
 import { caseProjects } from './catalog.js';
 import { resolveSuiteDefinition, type ResolvedSuite } from './suites.js';
 import { suiteFingerprint } from './execution-plan.js';
+import { businessFingerprint, resolveBusinessScope, type BusinessScope } from './business-scope.js';
 
 const rank: Record<ResultStatus, number> = { FAIL: 4, BLOCKED: 3, NOT_RUN: 2, PASS: 1 };
 export function aggregateResults(cases: CaseDefinition[], events: CaseResult[]): CaseResult[] {
@@ -146,9 +147,12 @@ export async function writeReport(
   await mkdir(root, { recursive: true });
   const integrity: string[] = [];
   const developerPreflight = metadata.phase === 'developer-preflight';
+  const formalBusiness = metadata.phase === 'business-acceptance';
   if (
     typeof metadata.phase !== 'string' ||
-    !['preparation', 'execution', 'developer-preflight'].includes(metadata.phase)
+    !['preparation', 'execution', 'business-acceptance', 'developer-preflight'].includes(
+      metadata.phase,
+    )
   )
     integrity.push(`缺失或未知报告阶段: ${String(metadata.phase)}`);
   if (metadata.phase === 'execution') {
@@ -171,8 +175,45 @@ export async function writeReport(
     integrity.push('准备报告忽略所有传入执行结果，产品用例保持NOT_RUN');
   const attempts = metadata.phase === 'preparation' ? [] : events;
   let suite: ResolvedSuite | undefined;
+  let businessScope: BusinessScope | undefined;
   let admittedAttempts = attempts;
   const rejectedAttempts: CaseResult[] = [];
+  if (formalBusiness) {
+    try {
+      businessScope = resolveBusinessScope(requirements, cases);
+      const approval = metadata.executionApproval as Record<string, unknown> | undefined;
+      if (
+        !isDeepStrictEqual(metadata.businessScope, businessScope) ||
+        metadata.businessSha256 !== businessFingerprint(businessScope) ||
+        !isDeepStrictEqual(metadata.playwrightArgs, businessScope.playwrightArgs) ||
+        !approval ||
+        approval.scope !== 'all-business' ||
+        approval.businessSha256 !== metadata.businessSha256 ||
+        approval.suiteId !== undefined ||
+        approval.suiteSha256 !== undefined ||
+        metadata.suite !== undefined ||
+        metadata.suiteSha256 !== undefined
+      )
+        throw new Error('业务快照、全部项目、授权或摘要不匹配');
+    } catch (error) {
+      integrity.push(`完整业务验收范围无效: ${String(error)}`);
+    }
+    const pairs = new Set(
+      businessScope?.cases.flatMap((c) => caseProjects(c).map((p) => `${c.id}:${p}`)) ?? [],
+    );
+    admittedAttempts = attempts.filter((attempt) => {
+      if (pairs.has(`${attempt.id}:${attempt.project}`)) return true;
+      rejectedAttempts.push(attempt);
+      integrity.push(`业务验收包含范围外用例或项目: ${attempt.id}:${String(attempt.project)}`);
+      return false;
+    });
+  } else if (
+    metadata.businessScope !== undefined ||
+    metadata.businessSha256 !== undefined ||
+    (metadata.executionApproval as Record<string, unknown> | undefined)?.businessSha256 !==
+      undefined
+  )
+    integrity.push('非业务验收报告不可携带业务范围');
   if (developerPreflight) {
     try {
       suite = checkedSuite(metadata, cases);
@@ -200,11 +241,11 @@ export async function writeReport(
     (event) => event.status === 'FAIL' && cases.some((c) => c.id === event.id),
   );
   if (
-    developerPreflight &&
+    (developerPreflight || formalBusiness) &&
     (typeof metadata.runnerStatus !== 'string' ||
       !['passed', 'failed'].includes(metadata.runnerStatus))
   )
-    integrity.push('开发预跑缺少有效执行器最终状态passed/failed，不能仅凭suite和事件宣称通过');
+    integrity.push('范围执行缺少有效执行器最终状态passed/failed，不能仅凭范围和事件宣称通过');
   if (
     metadata.runnerStatus &&
     metadata.runnerStatus !== 'passed' &&
@@ -239,7 +280,9 @@ export async function writeReport(
         ? 'INCOMPLETE'
         : rawFunctionality,
     release =
-      developerPreflight || (rawRelease === 'PASS' && integrity.length) ? 'INCOMPLETE' : rawRelease;
+      developerPreflight || formalBusiness || (rawRelease === 'PASS' && integrity.length)
+        ? 'INCOMPLETE'
+        : rawRelease;
   const selectedCases =
     suite?.cases.map((selected) => {
       const original = cases.find((c) => c.id === selected.id)!;
@@ -286,12 +329,17 @@ export async function writeReport(
         authority: '开发预跑，仅对该子集有效，不是正式QA验收或发布结论。',
       }
     : undefined;
-  const total = cases.filter((c) => c.mode !== 'candidate').length;
+  const primaryCases = formalBusiness ? scope('required') : cases;
+  const primaryIds = new Set(primaryCases.map((c) => c.id));
+  const total = primaryCases.filter((c) => c.mode !== 'candidate').length;
   const counts = Object.fromEntries(
     ['PASS', 'FAIL', 'BLOCKED', 'NOT_RUN'].map((s) => [
       s,
       results.filter(
-        (r) => r.status === s && cases.find((c) => c.id === r.id)?.mode !== 'candidate',
+        (r) =>
+          r.status === s &&
+          primaryIds.has(r.id) &&
+          cases.find((c) => c.id === r.id)?.mode !== 'candidate',
       ).length,
     ]),
   );
@@ -357,7 +405,7 @@ export async function writeReport(
     scope: r.scope,
     cases: cases.filter((c) => c.requirements.includes(r.id)).map((c) => c.id),
   }));
-  const preparationEntries = cases
+  const preparationEntries = primaryCases
     .filter((c) => c.preparation)
     .map((c) => ({
       caseId: c.id,
@@ -378,6 +426,22 @@ export async function writeReport(
     generatedAt: new Date().toISOString(),
     metadata,
     ...(preflight ? { preflight } : {}),
+    ...(formalBusiness
+      ? {
+          businessAcceptance: {
+            verdict: functionality,
+            businessSha256: metadata.businessSha256,
+            requirementCount: requirements.filter((r) => r.scope === 'required').length,
+            caseCount: total,
+            caseProjectCount: primaryCases.reduce((sum, c) => sum + caseProjects(c).length, 0),
+            counts,
+            results: results.filter((r) => primaryIds.has(r.id)),
+            rejectedAttempts,
+            integrity,
+            authority: '全部业务要求的正式验收；不包含上线准备度，不构成all-required无条件通过。',
+          },
+        }
+      : {}),
     conclusions: {
       functionality,
       release,
@@ -389,13 +453,18 @@ export async function writeReport(
     },
     metrics: {
       preparationReadiness,
-      requirements: requirements.length,
-      requirementsWithCases: mapping.filter((m) => m.cases.length).length,
+      ...(formalBusiness ? { primaryScope: 'required' } : {}),
+      requirements: formalBusiness
+        ? requirements.filter((r) => r.scope === 'required').length
+        : requirements.length,
+      requirementsWithCases: mapping.filter(
+        (m) => m.cases.length && (!formalBusiness || m.scope === 'required'),
+      ).length,
       requiredCases: total,
-      automated: cases.filter((c) => c.mode === 'automated').length,
-      manual: cases.filter((c) => c.mode === 'manual').length,
-      blockedDesign: cases.filter((c) => c.mode === 'blocked').length,
-      candidate: cases.filter((c) => c.mode === 'candidate').length,
+      automated: primaryCases.filter((c) => c.mode === 'automated').length,
+      manual: primaryCases.filter((c) => c.mode === 'manual').length,
+      blockedDesign: primaryCases.filter((c) => c.mode === 'blocked').length,
+      candidate: primaryCases.filter((c) => c.mode === 'candidate').length,
       counts,
       executionRate: total ? completed / total : 0,
       passRateOfRequired: total ? (counts.PASS ?? 0) / total : 0,
@@ -419,7 +488,9 @@ export async function writeReport(
   });
   const header = preflight
     ? `# 开发预跑报告\n\n子集：**${cell(preflight.suiteId ?? '无有效suite')}**；预跑结论：**${preflight.verdict}**。\n\n这是开发预跑，不是正式 QA 验收。正式需求符合性及上线准备度均为 **INCOMPLETE**，不能据此宣称正式验收或无条件通过。\n\n`
-    : `# 独立 QA 验收报告\n\n需求符合性：**${functionality}**；上线准备度：**${release}**。\n\n${metadata.phase === 'preparation' ? '本报告是准备状态清单，未启动或连接被测系统，不能用于宣称产品验收通过。' : '仅对所记录版本、环境、用例和证据成立；有限故障实验不证明任意时刻绝对保证。'}\n\n`;
+    : formalBusiness
+      ? `# 正式业务验收报告\n\n完整业务验收：**${functionality}**。上线评估另算，本轮上线准备度保持 **INCOMPLETE**；不构成发布或 all-required 无条件通过。\n\n下列统计和表格仅包含全部业务用例及必需项目，人工、阻塞或未执行项均阻止业务通过。JSON保留完整catalog和范围外未执行项。有限故障实验不证明任意时刻绝对保证。\n\n`
+      : `# 独立 QA 验收报告\n\n需求符合性：**${functionality}**；上线准备度：**${release}**。\n\n${metadata.phase === 'preparation' ? '本报告是准备状态清单，未启动或连接被测系统，不能用于宣称产品验收通过。' : '仅对所记录版本、环境、用例和证据成立；有限故障实验不证明任意时刻绝对保证。'}\n\n`;
   const preflightText = preflight
     ? `所选 ${preflight.selectedCaseCount} 条用例、${preflight.selectedProjectCount} 个项目，共 ${preflight.selectedCaseProjectCount} 个用例/项目组合。未选项保持 NOT_RUN；仅完成Chromium不等于完成该用例要求的所有浏览器。JSON保留全部attempt及被拒绝的越界结果。\n\n## 预跑项目结果\n\n|用例|项目|结果|说明|\n|---|---|---|---|\n${preflight.projectResults.map((r) => `|${cell(r.id)}|${cell(r.project)}|${r.status}|${cell(r.reason ?? '')}|`).join('\n')}\n\n${preflight.riskBoundaries.map((risk) => `- ${cell(risk)}`).join('\n')}\n\n以下是完整catalog的观测清单，不能转用为正式验收结果。\n\n`
     : '';
@@ -430,7 +501,7 @@ export async function writeReport(
       ? `准备状态专项登记 ${preparationReadiness.trackedCases} 条：脚本可进入后续授权试跑 ${preparationReadiness.scriptReady}；仍缺工程/夹具接入 ${preparationReadiness.dependenciesPending}；业务口径待决 ${preparationReadiness.decisionsPending}。这是准备状态，不是产品执行结果。自动化数量增加不能解释为这些依赖已解决。\n\n`
       : '') +
     `- 范围内用例：${total}；通过 ${counts.PASS}，失败 ${counts.FAIL}，阻塞 ${counts.BLOCKED}，未执行 ${counts.NOT_RUN}。\n- 方法登记（非就绪统计）：自动化 ${report.metrics.automated}，人工 ${report.metrics.manual}，尚缺完整执行方案 ${report.metrics.blockedDesign}，候选 ${report.metrics.candidate}。\n- 有用例覆盖、实际执行和通过率分别统计；跳过、缺少浏览器项目、缺少环境均不作通过。JSON另列required/release/candidate各范围计数及已执行通过率；多范围用例分别计数，不可直接相加。\n\n## 版本、环境与授权\n\n\x60\x60\x60json\n${redact(metadata)}\n\x60\x60\x60\n\n## 逐项结果\n\n|用例|需求|结果|说明|证据|\n|---|---|---|---|---|\n` +
-    cases
+    primaryCases
       .map((c) => {
         const r = results.find((r) => r.id === c.id)!;
         return `|${c.id} ${cell(c.title)}|${c.requirements.join(', ')}|${r.status}|${cell(r.reason ?? '')}|${r.evidence.map((e) => `[证据](${e})`).join(' ')}|`;
@@ -462,13 +533,19 @@ export async function writeReport(
   await writeFile(resolve(root, 'acceptance.md'), text, {
     flag: constants.O_CREAT | constants.O_WRONLY | constants.O_TRUNC | constants.O_NOFOLLOW,
   });
-  const junitResults = preflight ? preflight.projectResults : results;
+  const junitResults = preflight
+    ? preflight.projectResults
+    : formalBusiness
+      ? results.filter((r) => primaryIds.has(r.id))
+      : results;
   const junitIntegrity = integrity.length
     ? `<testcase classname="report-integrity" name="${preflight ? 'PREFLIGHT-INTEGRITY' : 'REPORT-INTEGRITY'}" time="0"><error message="${xml(integrity.join('; '))}"/></testcase>`
     : '';
   const junitName = preflight
     ? `developer-preflight:${preflight.suiteId ?? 'invalid-suite'}`
-    : 'independent-qa';
+    : formalBusiness
+      ? 'business-acceptance:all-business'
+      : 'independent-qa';
   await writeFile(
     resolve(root, 'junit.xml'),
     `<?xml version="1.0" encoding="UTF-8"?>\n<testsuite name="${xml(junitName)}" tests="${junitResults.length + (junitIntegrity ? 1 : 0)}" failures="${junitResults.filter((r) => r.status === 'FAIL').length}" errors="${junitIntegrity ? 1 : 0}" skipped="${junitResults.filter((r) => r.status === 'BLOCKED' || r.status === 'NOT_RUN').length}">${junitResults.map((r) => `<testcase name="${xml(preflight ? `${r.id} [${r.project}]` : r.id)}" time="${(r.durationMs ?? 0) / 1000}">${r.status === 'PASS' ? '' : r.status === 'FAIL' ? `<failure message="${xml(r.reason ?? 'failed')}"/>` : `<skipped message="${xml(`${r.status}: ${r.reason ?? ''}`)}"/>`}</testcase>`).join('')}${junitIntegrity}</testsuite>\n`,
