@@ -79,10 +79,16 @@ test("audit-blocked lifecycle retains the real terminal transaction for a late s
   const history = snapshot.events.find(
     (e) => e.kind === "send-tool-history-committed",
   )!;
+  const entered = snapshot.events.find((e) => e.kind === "send-tool-entered")!;
+  assert.ok(entered.attemptId);
   assert.equal(terminal.reason, "audit_blocked");
   assert.equal(terminal.status, "blocked");
+  assert.equal(decision.attemptId, entered.attemptId);
   assert.equal(decision.attemptId, terminal.attemptId);
   assert.equal(history.attemptId, terminal.attemptId);
+  assert.equal(history.toolUseId, entered.toolUseId);
+  assert.equal(history.stepId, entered.stepId);
+  assert.ok(time(entered) <= time(decision));
   assert.ok(time(decision) <= time(terminal));
   assert.ok(time(terminal) < time(snapshot.events[0]!));
   assert.equal(f.audits.length, 3);
@@ -214,6 +220,27 @@ test("real send wait resolves before history/next turn; same key reuses one outb
   assert.equal(returned.errorCode, "SEND_TIMEOUT");
   assert.equal(returned.attemptId, started.attemptId);
   assert.equal(returned.clientMsgId, row.client_msg_id);
+  for (const toolUseId of ["send-1", "send-2"]) {
+    const entered = one("send-tool-entered", toolUseId);
+    assert.ok(entered.attemptId);
+    for (const kind of [
+      "send-key-resolved",
+      "send-wait-started",
+      "send-wait-result-ready",
+      "send-tool-result-returned",
+      "send-tool-history-committed",
+    ]) {
+      const stage = one(kind, toolUseId);
+      assert.equal(stage.attemptId, entered.attemptId, `${toolUseId}: ${kind}`);
+      assert.equal(stage.runId, entered.runId);
+      assert.equal(stage.stepId, entered.stepId);
+    }
+  }
+  assert.notEqual(
+    one("send-tool-entered", "send-1").attemptId,
+    one("send-tool-entered", "send-2").attemptId,
+    "reusing the message key must retain separate tool execution attempts",
+  );
   assert.ok(time(started) <= time(ready) && time(ready) <= time(returned));
   assert.ok(
     time(started) <= time(returned) && time(returned) <= time(committed),

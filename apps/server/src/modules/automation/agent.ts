@@ -61,8 +61,8 @@ export class AgentModule {
   ) {
     this.activityClock = new ActivityClock(ctx);
     this.toolRunner = new AgentTools(ctx, messaging, {
-      completeStep: (run, step, outcome, endReason) =>
-        this.completeStep(run, step, outcome, endReason),
+      completeStep: (run, step, outcome, endReason, executionAttemptId) =>
+        this.completeStep(run, step, outcome, endReason, executionAttemptId),
       finishAfterStep: (run, text) => this.finishAfterStep(run, text),
       remaining: (run) => this.remaining(run),
       finish: (run, status, reason) => this.finish(run, status, reason),

@@ -1,0 +1,54 @@
+✖ audit-blocked lifecycle retains the real terminal transaction for a late subscription (321.357625ms)
+ℹ Independent database: kapibala_test_99ecf0d6332040f3aaa74a93e3cd7638
+✖ real send wait resolves before history/next turn; same key reuses one outbound after real 504 and positive query (5187.80525ms)
+ℹ Independent database: kapibala_test_6ea38621679949048a6bb922219b838b
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5704.187917
+
+✖ failing tests:
+
+test at tests/integration/qa-backend-lifecycle.test.ts:27:1
+✖ audit-blocked lifecycle retains the real terminal transaction for a late subscription (321.357625ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + '8537b9c9-9709-4b22-9bb5-f18b7494986f'
+  - '9a4cccf3-808f-44bb-aa7f-846d26707e9d'
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/qa-followup-integration/kapibala/tests/integration/qa-backend-lifecycle.test.ts:86:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: '8537b9c9-9709-4b22-9bb5-f18b7494986f',
+    expected: '9a4cccf3-808f-44bb-aa7f-846d26707e9d',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/qa-backend-lifecycle.test.ts:101:1
+✖ real send wait resolves before history/next turn; same key reuses one outbound after real 504 and positive query (5187.80525ms)
+  AssertionError [ERR_ASSERTION]: send-1: send-tool-history-committed
+  + actual - expected
+  
+  + 'f23db215-b0d2-4acf-97c0-96481f913294'
+  - 'c9b71ddf-6732-4fed-9892-2935ee71fdbc'
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/qa-followup-integration/kapibala/tests/integration/qa-backend-lifecycle.test.ts:234:14)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 'f23db215-b0d2-4acf-97c0-96481f913294',
+    expected: 'c9b71ddf-6732-4fed-9892-2935ee71fdbc',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

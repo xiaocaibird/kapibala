@@ -1,0 +1,35 @@
+{
+  "baseRevision": "68d28d80acb059387af14dcb41a2be62f1d14e12",
+  "sourceState": "working tree changes atop baseRevision; hashes identify tested code",
+  "scope": "Forward the existing executionAttemptId through the real AgentModule tool host adapter; no timing or QA changes",
+  "developmentVerification": {
+    "before": {
+      "tests": 2,
+      "pass": 0,
+      "fail": 2,
+      "reason": "New end-to-end attempt correlation assertions fail through the actual AgentModule adapter"
+    },
+    "after": {
+      "tests": 2,
+      "pass": 2,
+      "fail": 0
+    },
+    "typecheckExit": 0,
+    "formatExit": 0,
+    "diffCheckExit": 0,
+    "command": "DATABASE_URL=<owned container on 127.0.0.1:57635/postgres> node_modules/.bin/tsx --test --test-name-pattern='audit-blocked lifecycle|real send wait resolves' tests/integration/qa-backend-lifecycle.test.ts",
+    "qaExecution": "not run",
+    "timingAcceptance": "not asserted; existing 5000/60000 failures remain unresolved"
+  },
+  "sourceSha256": {
+    "apps/server/src/modules/automation/agent.ts": "23ef3b416515efbf02026cc21bd4997fb6e0f671bf1da1dc1dacad2852fdd0af",
+    "tests/integration/qa-backend-lifecycle.test.ts": "96230cf67e43ae40c8094b42ee68f421a8e50c1044eb393fe30360c4c439932d"
+  },
+  "evidenceSha256": {
+    "after.log": "4d1420b9893558e82a27310c6314e4c7597b382e3b8fd36a27c337b89e18a0dd",
+    "before.log": "783f7f4b3fc3e008e91a329c674ced14d8434f60e6f11f95808c19a2c76ecd61",
+    "cleanup.json": "02a16ad97d8fc83d568d579c26f0d792dfaa270f33d489ef8299cdd3a1bea813",
+    "format.log": "17aa973d3f004560237d9a95171210b0671deff23d61628eecf7322ff5938f20",
+    "typecheck.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
