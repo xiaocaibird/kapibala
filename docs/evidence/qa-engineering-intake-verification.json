@@ -1,0 +1,118 @@
+{
+  "kind": "DEVELOPER_REGRESSION_NOT_QA",
+  "revision": "5a85a43c7dfbfeece8bbf4482c7d18431cf23488",
+  "owner": "kapibala-qa-intake-ceba9a38-826",
+  "startedAt": "2026-10-01T05:28:29.167Z",
+  "checks": [
+    {
+      "name": "regression",
+      "command": ["npm", "test"],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-engineering-intake-regression.log",
+      "bytes": 76289,
+      "sha256": "a384ac2e0f4a8340fe95d3e16f8354d2cc233053b39d8ce08728d9858e2f0de5"
+    },
+    {
+      "name": "build",
+      "command": ["npm", "run", "build"],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-engineering-intake-build.log",
+      "bytes": 732,
+      "sha256": "cdb0aa74cf0903980a6fddd739b694be6446792350982e6a17d0af1c85285536"
+    },
+    {
+      "name": "original",
+      "command": ["npm", "run", "verify:original"],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-engineering-intake-original.log",
+      "bytes": 196,
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa"
+    },
+    {
+      "name": "fixture-guards",
+      "command": [
+        "node",
+        "--test",
+        "scripts/fixtures/producer-guards.test.mjs"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-engineering-intake-fixture-guards.log",
+      "bytes": 415,
+      "sha256": "94f6a3d13384687d50a298bf66a9fcacb07e9d915613c85f40200e3ba622e16b"
+    }
+  ],
+  "cleanup": {
+    "remainingDatabases": "",
+    "containerAbsent": true,
+    "remainingOwnedVolumes": []
+  },
+  "database": {
+    "container": "fdfecb7a90c8eaaa575cdb6f12de2704c1e74db00264e6bc1bb95c6c45b97e28",
+    "port": "60482",
+    "volumes": [
+      "76f1e0e08964a06da61b8ac2d43be320d1a2e90d6f79359f1087da39adec10ca"
+    ]
+  },
+  "passed": true,
+  "finishedAt": "2026-10-01T05:30:27.236Z",
+  "candidateRevision": "0af644334b00eb13e2e56df33c70f22358a6a0f7",
+  "qaAssetRevision": "6db3089f739847edd03b8f4a2d9aff2f123b194b",
+  "sourceEquality": {
+    "verified": true,
+    "testedRevision": "5a85a43c7dfbfeece8bbf4482c7d18431cf23488",
+    "candidateRevision": "0af644334b00eb13e2e56df33c70f22358a6a0f7",
+    "paths": [
+      "apps",
+      "packages",
+      "db",
+      "scripts",
+      "tests",
+      "package.json",
+      "package-lock.json",
+      "tsconfig.json"
+    ],
+    "qaTreeEqualsSource": true
+  },
+  "timingFlags": {
+    "AUTOMATION_TIMING_TESTS": "1",
+    "CORE_AUTOMATION_TIMING_TESTS": "1",
+    "SESSION_COOKIE_TIMING_TESTS": "1"
+  },
+  "resultSummary": {
+    "regression": {
+      "tests": 424,
+      "pass": 424,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "durationMs": 114700.016417
+    },
+    "fixtureGuards": {
+      "tests": 3,
+      "pass": 3,
+      "fail": 0
+    },
+    "interpretation": "Developer checks include observations of known product failures. Passing these checks is not QA acceptance or proof that all business requirements pass."
+  },
+  "knownProductObservations": [
+    {
+      "id": "DC04",
+      "qaScenarioReference": "CAP-009",
+      "status": "unfixed-development-reproduction-not-QA-result",
+      "observation": "After real capacity refusal and a hard crash before ready is saved, the run remains running with a recoveryNote and does not automatically continue; no remote kick was dispatched."
+    },
+    {
+      "id": "DC06",
+      "qaScenarioReference": "CAP-003",
+      "status": "unfixed-development-reproduction-not-QA-result",
+      "persistedActiveMs": 60004,
+      "controllerActiveIntervalMs": [60004, 60108],
+      "independentElapsedIntervalMs": [59995.81825, 60010.316875],
+      "observation": "Persisted active lower bound exceeds 60000 ms; measurement is neither clamped nor excused by a new tolerance."
+    }
+  ]
+}
