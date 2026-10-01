@@ -12,15 +12,17 @@
       "boundaryRequestedAfterMs": 17000
     },
     "steps": [
-      "建群开启Agent，外部消息触发不同入参的只读工具循环并记录创建区间",
-      "绑定真实run，17秒后请求安全屏障；须确认响应及续跑状态已持久化、零外部在途且独立Agent均已响应，再保持屏障SIGKILL停机5秒",
-      "保留DB/桩启动新SUT，以新pid重新验证绑定原run观测",
-      "逐次读取公开run及真实活动状态到终态；在线/停机测量只给出活动上界，实际活动由完整epoch及未保存尾段见证判定"
+      "建群开启Agent，外部消息触发7秒不同入参只读工具循环；同一QA父单调时钟记录真实创建区间",
+      "17秒后请求安全屏障；独立Agent完成账本及自有库只读确认工具结果/续跑history已持久化、零外部在途，保持held",
+      "两次live snapshot保存真实app时钟、父请求窗口和原ps启动身份；只kill自有进程组，并独立确认实际app身份退出，不能只等guardian",
+      "保存退出及停机5秒后的只读账本；保留DB/桩启动新SUT，以新guardian/app身份绑定同run，取实际clock-acquisition连续epoch",
+      "读取公开run、活动流和生命周期到终态；独立映射旧创建→真实退出、新接管→真实停止决定，核对同attempt COMMIT；原始terminal/公开可见时间单列",
+      "完整保存两侧raw/live-cache/kill/ledger。仅扣明确无app区间，初始化空档上界保守计入；真实两段安全下界超限先FAIL，否则按完整证据和全程上界判定"
     ],
     "expected": [
       "恢复同runId，最终failed/wall_clock且活跃指针清空，网关零发送",
-      "完整活动下界>60000则证明超时FAIL；完整上界<=60000可证上限，不要求wall_clock必须跑满60秒；真实原因及恢复语义分别核查",
-      "区间跨上限或缺未保存尾段真值记BLOCKED，不接受固定500ms/其他尾差容忍，不把persistedActiveMs冒充真值",
+      "真实活动两段安全下界>60000即FAIL；含未知初始化空档的完整保守上界<=60000且其余义务齐全可证上限，不要求wall_clock跑满60秒；较晚COMMIT/公开终态不能冒充迟停止决定",
+      "新进程includesUnsavedTail=false保持；QA独立桥接旧尾段。缓存校准、身份/连续性缺失、真实停止或COMMIT缺证、上界跨限记BLOCKED；缺COMMIT不遮已证实际活动超限，不接受固定尾差容忍或persistedActiveMs替代",
       "恢复暂停待人工/外部确认而无法自动续跑记原A5.8恢复FAIL，不能误归预算；缺实际活动见证BLOCKED；进程在线下界不能当活动下界",
       "只覆盖已证明安全阶段重启预算；在途未知结果及任意崩溃强恢复要求保留，不因本例改变预期"
     ],
@@ -31,15 +33,18 @@
     "faults": ["真实安全阶段保持后SUT硬终止、5秒专属停机；不得修改时钟/补状态/清恢复标记/预置结果"],
     "evidence": [
       "旧/新实际归属、真实安全步骤持久/零在途证明、独立Agent完成账本、epoch/活动状态/终态",
-      "创建/kill/start/最后running/首次terminal区间与独立Gateway账本"
+      "创建/kill/start/最后running/首次terminal区间与独立Gateway账本",
+      "双live父请求包围、真实app PID/lstart/PGID/UID及退出ps、不同clock/epoch连续性、原始停止决定与同attempt COMMIT",
+      "自有库只读ledger（持久化诊断）、startup未证明inactive空档、QA独立区间计算及最后已确认采样→退出未知尾段"
     ],
     "priority": "P1",
     "mode": "automated",
     "preconditions": [
       "仅取得对应产品执行授权后在冻结候选、QA版本和隔离环境运行；本次准备不执行产品",
       "真实PG、独立Gateway/Agent与QA专属进程；控制器核对实际应用归属guardian/PGID并读取资源token",
-      "工程控制器未交付；缺配置/能力/真实窗口/时间真值/profile记BLOCKED，不以fake-controller替代",
-      "额外activity-safe-boundary能力及真实hold-safe-activity-boundary未接入则BLOCKED；公开running不证明可安全崩溃"
+      "工程候选须提供contracts/cross-epoch-observation.md增量字段；缺真实live/连续活动/安全屏障/生命周期能力记BLOCKED，不用fake-controller替代",
+      "额外activity-safe-boundary能力及真实hold-safe-activity-boundary未接入则BLOCKED；公开running不证明可安全崩溃",
+      "同主机稳定速率单调时钟，无实验期间主机休眠/时钟源切换；新observe须在实际epoch仍活动时接入"
     ],
     "cleanup": [
       "finally仅按客户端UUID释放本轮故障租约、关闭本例WS；工程TTL独立兜底",
@@ -48,11 +53,10 @@
     "automation": "tests/system/integration-runtime.spec.ts",
     "preparation": {
       "state": "dependency-pending",
-      "owner": "工程提供真实观测与局部故障，QA接入验收",
+      "owner": "QA独立适配，待冻结候选隔离执行",
       "details": [
-        "QA客户端与四条操作/断言已实现，真实工程控制器尚未交付",
-        "最小合同contracts/runtime-observation.md；工具自测不证明工程接入或产品通过",
-        "新增安全阶段屏障和实际恢复状态见证是待工程接入条件，不声称纯预算已实测"
+        "跨epoch字段/父请求窗口/实际app退出与独立算式已实现，仅工具自测，不改历史结果",
+        "候选2716abdd提供公开观察协议；contracts/cross-epoch-observation.md约束真实取证，未运行产品前不宣称解除BLOCKED"
       ]
     }
   },

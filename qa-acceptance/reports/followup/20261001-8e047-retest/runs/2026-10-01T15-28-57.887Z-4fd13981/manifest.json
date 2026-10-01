@@ -1,0 +1,1647 @@
+{
+  "runId": "2026-10-01T15-28-57.887Z-4fd13981",
+  "phase": "developer-preflight",
+  "suite": {
+    "id": "qa-8e047-ui-retest",
+    "title": "Agent真实历史和终态提示独立浏览器回归",
+    "purpose": "实际公开Agent运行与外部账本建立状态，再验证提示只描述本次工具、不掩盖前序效果、零步终态不冒称等待。",
+    "caseIds": [
+      "UI-001",
+      "UI-003",
+      "UI-006",
+      "UI-007",
+      "UI-008",
+      "UI-038",
+      "UI-039"
+    ],
+    "projects": [
+      "chromium",
+      "firefox-smoke",
+      "webkit-smoke"
+    ],
+    "riskBoundaries": [
+      "Chromium覆盖新增场景；Firefox/WebKit仅已有compat登记，不冒称三浏览器全量。",
+      "真人输入法/跨app焦点/未预读理解不能被自动化替代。零步前置缺失明确BLOCKED，不伪造产品状态。"
+    ],
+    "grep": "(?:^|\\s)\\[(?:UI-001|UI-003|UI-006|UI-007|UI-008|UI-038|UI-039)\\](?=\\s|$)",
+    "cases": [
+      {
+        "id": "UI-001",
+        "title": "viewer登录后各页不提供业务写入口",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium",
+          "firefox-smoke",
+          "webkit-smoke"
+        ]
+      },
+      {
+        "id": "UI-003",
+        "title": "群角色及消息回流只显示一行",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium",
+          "firefox-smoke",
+          "webkit-smoke"
+        ]
+      },
+      {
+        "id": "UI-006",
+        "title": "前端断线3秒内补齐",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium",
+          "firefox-smoke",
+          "webkit-smoke"
+        ]
+      },
+      {
+        "id": "UI-007",
+        "title": "审计阻断显示在群运行列表",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "UI-008",
+        "title": "登录至Agent步骤详情完整旅程",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium",
+          "firefox-smoke",
+          "webkit-smoke"
+        ]
+      },
+      {
+        "id": "UI-038",
+        "title": "审计阻塞说明不否认前序真实成功副作用",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      },
+      {
+        "id": "UI-039",
+        "title": "真实零步骤failed与cancelled详情不再提示等待第一步",
+        "automation": "tests/ui/console.spec.ts",
+        "projects": [
+          "chromium"
+        ]
+      }
+    ]
+  },
+  "suiteSha256": "0f39345861c13ae1a1e424423e3acf16664db9abb178cbd372dee6d987ad733e",
+  "playwrightArgs": [
+    "test",
+    "--grep",
+    "(?:^|\\s)\\[(?:UI-001|UI-003|UI-006|UI-007|UI-008|UI-038|UI-039)\\](?=\\s|$)",
+    "--project=chromium",
+    "--project=firefox-smoke",
+    "--project=webkit-smoke"
+  ],
+  "startedAt": "2026-10-01T15:28:57.932Z",
+  "baseline": {
+    "schemaVersion": 1,
+    "name": "多账号群组消息平台独立QA验收基线",
+    "createdDate": "2026-10-01",
+    "timeZone": "Asia/Shanghai",
+    "baseRef": "main",
+    "baseCommit": "9087630de475a91fc6244c39cd08c6bc4dadb278",
+    "qaBranch": "agent/independent-qa-acceptance",
+    "originalRequirement": {
+      "path": "docs/original-interview-question.md",
+      "sha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+      "immutable": true
+    },
+    "sourceSnapshots": [
+      {
+        "path": "docs/original-interview-question.md",
+        "sha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+        "usage": "只采用需求、已批准范围和公开契约；不采用实现入口、旧测试、修复结论、运行证据或旧通过状态"
+      },
+      {
+        "path": "docs/engineering-requirements.md",
+        "sha256": "3a8ed32ba6d6086cd253d420dc058c21530afcdb3b7375c4c3272e610114e56d",
+        "usage": "只采用需求、已批准范围和公开契约；不采用实现入口、旧测试、修复结论、运行证据或旧通过状态"
+      },
+      {
+        "path": "docs/change-requests.md",
+        "sha256": "5c3bec0fbb00d0ea5145974227e7956185d44b921f4c1cc4fc874cedc13334f4",
+        "usage": "只采用需求、已批准范围和公开契约；不采用实现入口、旧测试、修复结论、运行证据或旧通过状态"
+      },
+      {
+        "path": "docs/group-directory-profile-proposal.md",
+        "sha256": "c38470a4d68e6a84ab9dc94c09a4952f55dad875146eb30540577b884e2164f1",
+        "usage": "只采用需求、已批准范围和公开契约；不采用实现入口、旧测试、修复结论、运行证据或旧通过状态"
+      },
+      {
+        "path": "docs/group-profile-conflict-review.md",
+        "sha256": "81c47b552a5f76292816de3409443e2334018a5846534aba1b655cb702ab7ba7",
+        "usage": "只采用需求、已批准范围和公开契约；不采用实现入口、旧测试、修复结论、运行证据或旧通过状态"
+      },
+      {
+        "path": "docs/page-update-notification-implementation.md",
+        "sha256": "5afe8d29b3c2a292046e79fcf8c3af844aa09a61d4b54aee4b7aa96fc3e98a19",
+        "usage": "只采用需求、已批准范围和公开契约；不采用实现入口、旧测试、修复结论、运行证据或旧通过状态"
+      },
+      {
+        "path": "docs/page-update-notification-proposal.md",
+        "sha256": "2c31b688b67d31b2454a2ee4f3e1445f5bae50a93071eeb17cdc11f712d6f21b",
+        "usage": "仅用户已选择原则及后续已批准范围对应语义；未采纳实现接入点、旧验证清单和未批准建议"
+      },
+      {
+        "path": "docs/decisions.md",
+        "sha256": "d9566e00c35705a9adcbb1b94aae1d5fd3447cc2975e7bee2ef8da7a17e4837e",
+        "atCommit": "48adfd96f470532cc78c2d3c559414a09434eeff",
+        "revision": "QA-REV-02",
+        "usage": "仅采用D036/D037的实际批准范围、实施选择与合并边界；不采用开发验证通过或人工验收结论"
+      },
+      {
+        "path": "docs/architecture-reviews/2026-10-01-baseline.md",
+        "sha256": "476a579465dd8a1f01498e1c6fe5d3b3d6696d664b5370c3061e536cdd8e1b94",
+        "atCommit": "48adfd96f470532cc78c2d3c559414a09434eeff",
+        "revision": "QA-REV-02",
+        "usage": "仅采用D036明确批准的AR-04/08/09/10质量行为及未授权范围边界；源码事实、建议和旧通过数均不作为独立QA期望"
+      },
+      {
+        "path": "docs/architecture-quality-closeout.md",
+        "sha256": "ae4ec49e7c54382640f2103b5d06f193cf285c087d2eed5228caf8a80faeb9f4",
+        "atCommit": "48adfd96f470532cc78c2d3c559414a09434eeff",
+        "revision": "QA-REV-02",
+        "usage": "仅用于变更影响识别和版本化技术参数分类；实现机制及开发测试结果不作为独立QA裁判、不代替新验收"
+      },
+      {
+        "path": "docs/decisions.md",
+        "sha256": "e4189c2af1c3933346ac5d296d7ac6dd954f8c4785cc29cae9faef870c5cfa6f",
+        "atCommit": "993f7588c1105894e0543554209a8c085423589f",
+        "revision": "QA-REV-04",
+        "usage": "只采用明确决策、版本化公开契约和交付配置；开发自测/实现不作为QA通过或原始预期来源"
+      },
+      {
+        "path": "docs/qa-integration-handoff.md",
+        "sha256": "e10a433edcb6a33387ca7c132a707224617983b07c38f6d83406368a6c81ac4f",
+        "atCommit": "bdf27432ed35cabcf998a8dc0dd8110d63725a02",
+        "revision": "QA-REV-04",
+        "usage": "只采用明确决策、版本化公开契约和交付配置；开发自测/实现不作为QA通过或原始预期来源"
+      },
+      {
+        "path": "docs/core-resource-observability.md",
+        "sha256": "24b12c3eb3d88471eef0cb3b427457e7769f8e1086a97e4cb4f536466886d3d9",
+        "atCommit": "993f7588c1105894e0543554209a8c085423589f",
+        "revision": "QA-REV-04",
+        "usage": "只采用明确决策、版本化公开契约和交付配置；开发自测/实现不作为QA通过或原始预期来源"
+      }
+    ],
+    "authorityOrder": [
+      "本次用户明确确认",
+      "原始A/B要求与对其明确批准的补充",
+      "已批准CR要求与公开契约",
+      "仅作为待澄清项的技术建议"
+    ],
+    "confirmedDecisions": [
+      {
+        "id": "QA-D1",
+        "source": "用户批准的《独立 QA 验收体系建设计划》（当前会话）",
+        "decision": "本轮最终功能验收覆盖A/B及已批准追加需求；C1/C2只建候选；忽略面试/笔试/限时/选做语境。"
+      },
+      {
+        "id": "QA-D2",
+        "source": "用户批准的《独立 QA 验收体系建设计划》（当前会话）",
+        "decision": "消息分页以首次分页时已有记录为固定遍历集合；新到及变更消息实时按身份合并、重新排序。该语义不套用群目录活数据分页。"
+      },
+      {
+        "id": "QA-D3",
+        "source": "用户批准的《独立 QA 验收体系建设计划》（当前会话）",
+        "decision": "leave-all后本地与网关成员一致性比较服务账号投影，外部用户可继续在群。"
+      },
+      {
+        "id": "QA-D4",
+        "source": "用户批准的《独立 QA 验收体系建设计划》（当前会话）",
+        "decision": "创建独立QA资产并只自检QA工具；实际产品测试须在开发及自测完成后获得用户单独授权。"
+      },
+      {
+        "id": "QA-D5",
+        "source": "用户本次明确授权必要QA资产调整；D036/D037批准范围见docs/decisions.md:53–57",
+        "decision": "补齐容量耗尽、触发停止、读写重试、取消/预算/政策交错等通用质量风险的QA设计；原遗漏属于QA覆盖不足，不以新增业务需求解释。仅调整QA资产并自检工具，产品执行仍须单独授权。"
+      },
+      {
+        "id": "QA-D6",
+        "source": "2026-10-01本会话：QA建议普通序列失败使整条run为failed且停止后续发送，用户明确回复“按你的建议执行”；详见qa-acceptance/requirements/sequence-failure-policy.md",
+        "decision": "补充原B1未规定的普通发送失败策略：步骤及run为failed，后续不发送，重启不恢复后续发送；保留原无匹配账号skipped继续、rate_limited等待、unknown确认流程和群不可写stopped。只授权QA资产更新，产品执行仍须单独授权。"
+      },
+      {
+        "id": "QA-D7",
+        "source": "docs/decisions.md D042最终确认@993f7588c1105894e0543554209a8c085423589f；交接DEV-QA-20261001-01",
+        "decision": "采用已单独确认的退群公开成员语义：只退出托管成员，left群公开members保留外部成员。明确取代原2.3 members=[]部分；QA-D3托管投影与原群不可写/停止自动化/失败保护不变。不代填验收通过。"
+      }
+    ],
+    "requiredAdditions": [
+      "CR-001",
+      "CR-002",
+      "CR-004",
+      "CR-005",
+      "CR-006",
+      "CR-007",
+      "CR-008",
+      "CR-009",
+      "CR-010",
+      "CR-011",
+      "CR-012",
+      "CR-013",
+      "ADD-SEQ-FAIL-01",
+      "ADD-LEFT-MEMBERS-01",
+      "ENG-DIAG-01"
+    ],
+    "additionNotes": {
+      "CR-003": "排序方向最终由CR-007承接，不能把早期实现默认值冒充当时用户确认。",
+      "CR-014": "原始核心质量修复仍映射A/B，不增加独立业务能力或把旧修复证据当验收。",
+      "C3": "本次QA交付包含Playwright端到端旅程，作为A/B及已批准追加需求的验证手段。"
+    },
+    "excludedOrDeferred": [
+      "C1/C2产品执行和生产凭据使用，待明确批准",
+      "i18n/主题切换/响应式不属于基础承诺",
+      "未批准PI-03剩余部分及PI-04～23等新功能",
+      "公开部署/推送/操作用户演示或生产数据"
+    ],
+    "independence": {
+      "ignored": "业务实现、既有测试、旧缺陷修复及验收报告不作为期望值来源",
+      "systemUnderTest": "后续明确交付的候选构建，经HTTP/SSE/WS与浏览器观察；隔离故障控制和副作用账本用于独立裁判",
+      "forbiddenShortcut": "不得从源码结果生成期望值；不得改QA mock以迁就实现；不得省略强保证换取通过"
+    },
+    "executionPolicy": {
+      "productTestingAuthorized": false,
+      "initialResult": "NOT_RUN",
+      "testPreparation": "只生成用例、自动化及报告模板并自检自身；不得启动SUT或连接其数据库",
+      "reportAuthority": "根报告统一生成所有用例状态；用例文件不预填通过"
+    },
+    "typicalScenarioMapping": {
+      "S1": [
+        "R-A2-02"
+      ],
+      "S2": [
+        "R-A2-05",
+        "R-A5-01"
+      ],
+      "S3": [
+        "R-A2-06"
+      ],
+      "S4": [
+        "R-A1-06",
+        "R-A2-09"
+      ],
+      "S5": [
+        "R-A2-03",
+        "R-A5-10"
+      ],
+      "S6": [
+        "R-A5-03",
+        "R-A5-04",
+        "R-A5-05"
+      ],
+      "S7": [
+        "R-B1-06"
+      ],
+      "S8": [
+        "R-B1-04"
+      ]
+    },
+    "openClarifications": "qa-acceptance/requirements/clarifications.md",
+    "releaseGates": "qa-acceptance/requirements/release-gates.md",
+    "revisions": [
+      {
+        "id": "QA-REV-02",
+        "date": "2026-10-01",
+        "reviewedRange": {
+          "from": "cc5d3d2",
+          "to": "48adfd96f470532cc78c2d3c559414a09434eeff"
+        },
+        "qaBranch": "agent/qa-architecture-impact",
+        "classification": "已有工程质量具体化与QA风险覆盖修正；无新增业务域/外部服务协议",
+        "requirementIds": [
+          "ENG-ADMISSION-01",
+          "ENG-CONTRACT-01",
+          "ENG-READ-01",
+          "ENG-READ-02"
+        ],
+        "preserves": [
+          "原始需求内容和SHA-256",
+          "原baseCommit、原sourceSnapshots与QA-D1至QA-D4",
+          "A/B硬性行为和既有待澄清强保证",
+          "产品未执行状态"
+        ],
+        "impactReview": "qa-acceptance/requirements/architecture-impact.md",
+        "riskReview": "qa-acceptance/requirements/risk-coverage-review.md",
+        "productTestingAuthorized": false
+      },
+      {
+        "id": "QA-REV-03",
+        "date": "2026-10-01",
+        "qaBaseCommit": "7cfa1743c71656d561419db75bb0c8f5583d466c",
+        "qaBranch": "agent/qa-sequence-failure-policy",
+        "classification": "用户批准原B1普通失败终止的补充口径；同步修正原A2可选重发的过约束断言",
+        "requirementIds": [
+          "ADD-SEQ-FAIL-01"
+        ],
+        "decisionIds": [
+          "QA-D6"
+        ],
+        "decisionRecord": "qa-acceptance/requirements/sequence-failure-policy.md",
+        "preserves": [
+          "原始需求内容和SHA-256、原baseCommit及sourceSnapshots",
+          "原跳过/限流等待/unknown确认/群不可写stopped规则",
+          "13项工程接入依赖及产品NOT_RUN状态"
+        ],
+        "productTestingAuthorized": false
+      },
+      {
+        "id": "QA-REV-04",
+        "date": "2026-10-01",
+        "qaBranch": "agent/qa-integration-intake",
+        "reviewedRange": {
+          "from": "48adfd96f470532cc78c2d3c559414a09434eeff",
+          "to": "993f7588c1105894e0543554209a8c085423589f"
+        },
+        "classification": "接收开发提测；D042明确需求差异与D045诊断公开profile纳入；其余保留原要求、补强弱断言并登记接入/覆盖缺口",
+        "requirementIds": [
+          "ADD-LEFT-MEMBERS-01",
+          "ENG-DIAG-01"
+        ],
+        "impactReview": "qa-acceptance/requirements/integration-intake-20261001.md",
+        "riskReview": "qa-acceptance/requirements/integration-risk-review-20261001.md",
+        "productTestingAuthorized": false
+      },
+      {
+        "id": "QA-REV-05",
+        "date": "2026-10-01",
+        "qaBranch": "agent/qa-next-integration-preparation",
+        "qaBaseCommit": "4c035b8c24e95f33182b4248ee676fcd184f74a5",
+        "classification": "首轮六条联调之后补齐既有需求风险组合和版本化D043/D044/D045技术契约，业务验收与上线评估分开；不放松原始强保证",
+        "requirementIds": [
+          "ENG-ACCOUNT-RECOVERY-01",
+          "ENG-STREAM-01",
+          "ENG-DIAG-01"
+        ],
+        "riskReview": "qa-acceptance/requirements/integration-risk-review-20261001.md",
+        "preparationReview": "qa-acceptance/requirements/next-integration-preparation-20261001.md",
+        "productTestingAuthorized": false,
+        "scopeNote": "该false只指本次新增专项/正式业务执行尚未启动；此前6条已获授权并实际完成，见executionHistory"
+      }
+    ],
+    "executionHistory": [
+      {
+        "phase": "developer-preflight",
+        "suite": "developer-smoke",
+        "runId": "2026-10-01T04-48-30.855Z-08486f22",
+        "caseCount": 6,
+        "pass": 6,
+        "retries": 0,
+        "sutRevision": "993f7588c1105894e0543554209a8c085423589f",
+        "qaRevision": "1e40092b2acd295e5bac8ae495a5e32243f487a9",
+        "report": "qa-acceptance/reports/integration/20261001-smoke.md",
+        "note": "独立授权只用于该范围；原executionPolicy保留资产创建时的基线快照，不是当前执行结果或全量授权。"
+      }
+    ]
+  },
+  "qaRevision": "02ea807faed44ebaed8a41741f4056de8e04e87a",
+  "qaDirtyState": "?? qa-acceptance/reports/acceptance/20261001-2716abd-business/__pycache__/build-summary.cpython-314.pyc\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/adjudicated-results.json\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/adjudicated-results.md\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/adjudicated-results.xml\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/archive-full-run.py\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/build-summary.py\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/case-results.md\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/defects.json\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/manual-delivery-description-normalized.json\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/manual-recording-preparation-error.json\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/manual-recording.json\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/pending-decisions.json\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/preserve-automation-original.py\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/raw-run/acceptance.md\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/raw-run/events.json\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/raw-run/evidence-index.json\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/raw-run/evidence.tar.gz\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/raw-run/junit.xml\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/raw-run/manifest.json\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/raw-run/playwright.json\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/raw-run/playwright.junit.xml\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/raw-run/results.json\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/raw-run/runner-summary.json\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/requirement-results.json\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/requirement-results.md\n?? qa-acceptance/reports/acceptance/20261001-2716abd-business/summary.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/backend-review/analyze-backend.py\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/backend-review/backend-facts.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/backend-review/backend-review.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/build-preparation.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/candidate-intake-errata.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/controller-stop-request.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/controllers/controller-44af578a-4b01-4016-a3b4-c53acc28db78/lifecycle-script.ts\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/controllers/controller-44af578a-4b01-4016-a3b4-c53acc28db78/lifecycle.ndjson\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/controllers/controller-44af578a-4b01-4016-a3b4-c53acc28db78/ready.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/controllers/controller-858c46a6-2e91-45ff-8d4f-74ba33762975/lifecycle-script.ts\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/controllers/controller-858c46a6-2e91-45ff-8d4f-74ba33762975/lifecycle.ndjson\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/controllers/controller-858c46a6-2e91-45ff-8d4f-74ba33762975/ready.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/controllers/controller-8f58a7d0-a3a2-4d56-9c39-314d5fe9ab84/lifecycle-script.ts\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/controllers/controller-8f58a7d0-a3a2-4d56-9c39-314d5fe9ab84/lifecycle.ndjson\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/controllers/controller-8f58a7d0-a3a2-4d56-9c39-314d5fe9ab84/ready.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/execution-preparation/archive-run.py\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/execution-preparation/bind-authority.ts\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/execution-preparation/bind-business.ts\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/execution-preparation/index.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/execution-preparation/owned-capacity-controller.ts\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/execution-preparation/owned-message-controller.ts\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/execution-preparation/owned-runtime-controller.ts\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/execution-preparation/prepare-combined.ts\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/execution-preparation/run-groups.py\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/execution-preparation/run-suite.py\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/execution-preparation/target.business.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/execution-preparation/target.combined.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/execution-preparation/target.combined.template.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/execution-preparation/target.normal.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/execution-preparation/target.ui.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/executor-logs/20261001T141331-developer-smoke.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/executor-logs/20261001T141444-qa-2716-ui-retest.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/executor-logs/20261001T141515-qa-2716-ui-retest.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/executor-logs/20261001T141932-qa-2716-ui-compat.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/executor-logs/20261001T141951-qa-2716-combined-smoke.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/executor-logs/20261001T142003-qa-2716-send-regression.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/executor-logs/20261001T142023-qa-2716-controller-regression.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/executor-logs/20261001T142033-qa-2716-budget-retest.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/executor-logs/20261001T142624-all-business.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/cleanup.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/directory-precision.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/file-index.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/fixture-binding.integration-2716abd.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/fixtures.integration-2716abd.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/independent-oracle.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/legacy-schema.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/legacy-schema7-data.sql\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/legacy-schema7-schema.sql\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/loader-validation.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/official-migration.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/owned-resource.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/precision-schema8-data.sql\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/precision-schema8-schema.sql\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/precision-schema9-data.sql\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/precision-schema9-roundtrip-data.sql\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/precision-schema9-roundtrip-schema.sql\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/precision-schema9-schema.sql\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/precision-schema9.dump\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/preparation-script.ts\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/restore-qa_996f9b35a6da4320bf2882c9.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/restore-qa_d3a0de6574b044fd91707c6c.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/restore-qa_e758bb4f326f4d74a7e689fe.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/review.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/focused-first-execution.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/full-backend-review/analyze-full-backend.py\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/full-backend-review/backend-facts.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/full-backend-review/backend-review.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/full-review/build-recovery-adjudication.py\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/full-review/inspect-recovery-evidence.py\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/full-review/policy-source-index.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/full-review/preparation-snapshot.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/full-review/recovery-adjudication-final-binding.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/full-review/recovery-adjudication-final-binding.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/full-review/recovery-adjudication-six-cases.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/full-review/recovery-adjudication-six-cases.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/full-review/triage-policy.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/group-execution.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/README.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/admin-accounts.png\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/admin-groups.png\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/approved-additions.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/.nvmrc\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/README.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/README.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/account-operation-copy.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/change-requests.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/core-verification-closeout.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/decisions.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/feature-matrix.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/group-directory-filter-review.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/group-directory-profile-proposal.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/group-profile-conflict-review.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/human-review-record.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/isolated-local-reproduction.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/original-interview-question.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/page-update-notification-implementation.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/page-update-notification-proposal.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/qa-final-boundaries-followup-20261001.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/candidate-source/package.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/capture.py\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/doc-traceability.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/evidence-index.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/execute-readme-first.mjs\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/execute-readme.mjs\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/finalize.py\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/first-admin-accounts.png\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/inputs/DOC-MAN-001.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/inputs/MAN-DELIVERY-001.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/inputs/MAN-DELIVERY-002.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/inputs/MAN-FOCUS-001.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/inputs/MAN-IME-001.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/inputs/MAN-UX-001.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/manual-review-inputs.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/preparation/build-preparation.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/qa-source/cases/manual.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/qa-source/cases/release.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/qa-source/requirements/catalog.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/qa-source/requirements/left-members-decision.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/qa-source/requirements/sequence-failure-policy.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/readme-execution-first.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/readme-execution.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/readme-preparation.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/readme-smoke-cleanup.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/readme-smoke-resources.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/readme-ui-cleanup.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/readme-ui-recheck-cleanup.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/readme-ui-recheck-resources.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/readme-ui-resources.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/source-index-preparation-04e4166.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/source-index.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/viewer-accounts.png\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/manual-review/viewer-groups.png\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/next-candidate-impact/README.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/next-candidate-impact/artifact-index.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/next-candidate-impact/budget-after-kick-dispatch-plan.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/next-candidate-impact/capture-static-review.py\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/next-candidate-impact/delivery-read-case-design.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/next-candidate-impact/delivery-read-preparation-verification.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/next-candidate-impact/draft-selftest.tap\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/next-candidate-impact/draft-support.test.ts\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/next-candidate-impact/draft-support.ts\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/next-candidate-impact/new-case-drafts.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/next-candidate-impact/source-index.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/next-candidate-impact/static-checks.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/next-candidate-impact/tsconfig.draft.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/next-candidate-impact/ui-blocked-after-effect.draft.ts\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/next-candidate-impact/ui-zero-step-terminal.draft.ts\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/README.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/early-read-command-absence.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/early-smoke-event-extract.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/live-mounts-2026-10-01T14-15-48.093543+00-00.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T141800.090532Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T141935.317960Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T141954.071984Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T142104.785276Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T142149.864684Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T142321.962324Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T142400.483443Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T142525.065566Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T142651.338229Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T143009.933263Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T143114.618910Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T143305.654858Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T143628.923080Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T143911.106968Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T144045.246703Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T144155.271273Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T144249.770905Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T144339.280362Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T144540.905537Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T144718.083808Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T144904.884120Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T145048.833537Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T145300.350843Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T145509.845393Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T145548.226806Z-during-run.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot-20261001T150810.193685Z-post-cleanup.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/snapshot.py\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/stage-summary.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/resource-audit/volume-events-20261001T141901Z.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-13-32.001Z-bf0b40fe/acceptance.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-13-32.001Z-bf0b40fe/events.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-13-32.001Z-bf0b40fe/evidence-index.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-13-32.001Z-bf0b40fe/evidence.tar.gz\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-13-32.001Z-bf0b40fe/junit.xml\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-13-32.001Z-bf0b40fe/manifest.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-13-32.001Z-bf0b40fe/playwright.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-13-32.001Z-bf0b40fe/playwright.junit.xml\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-13-32.001Z-bf0b40fe/results.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-13-32.001Z-bf0b40fe/runner-summary.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-15-16.243Z-aa9bdaa2/acceptance.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-15-16.243Z-aa9bdaa2/events.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-15-16.243Z-aa9bdaa2/evidence-index.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-15-16.243Z-aa9bdaa2/evidence.tar.gz\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-15-16.243Z-aa9bdaa2/junit.xml\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-15-16.243Z-aa9bdaa2/manifest.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-15-16.243Z-aa9bdaa2/playwright.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-15-16.243Z-aa9bdaa2/playwright.junit.xml\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-15-16.243Z-aa9bdaa2/results.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-15-16.243Z-aa9bdaa2/runner-summary.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-33.170Z-1a337670/acceptance.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-33.170Z-1a337670/events.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-33.170Z-1a337670/evidence-index.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-33.170Z-1a337670/evidence.tar.gz\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-33.170Z-1a337670/junit.xml\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-33.170Z-1a337670/manifest.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-33.170Z-1a337670/playwright.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-33.170Z-1a337670/playwright.junit.xml\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-33.170Z-1a337670/results.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-33.170Z-1a337670/runner-summary.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-52.354Z-e0113042/acceptance.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-52.354Z-e0113042/events.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-52.354Z-e0113042/evidence-index.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-52.354Z-e0113042/evidence.tar.gz\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-52.354Z-e0113042/junit.xml\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-52.354Z-e0113042/manifest.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-52.354Z-e0113042/playwright.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-52.354Z-e0113042/playwright.junit.xml\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-52.354Z-e0113042/results.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-19-52.354Z-e0113042/runner-summary.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-03.813Z-b8814855/acceptance.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-03.813Z-b8814855/events.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-03.813Z-b8814855/evidence-index.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-03.813Z-b8814855/evidence.tar.gz\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-03.813Z-b8814855/junit.xml\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-03.813Z-b8814855/manifest.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-03.813Z-b8814855/playwright.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-03.813Z-b8814855/playwright.junit.xml\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-03.813Z-b8814855/results.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-03.813Z-b8814855/runner-summary.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-23.975Z-fb954b05/acceptance.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-23.975Z-fb954b05/events.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-23.975Z-fb954b05/evidence-index.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-23.975Z-fb954b05/evidence.tar.gz\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-23.975Z-fb954b05/junit.xml\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-23.975Z-fb954b05/manifest.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-23.975Z-fb954b05/playwright.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-23.975Z-fb954b05/playwright.junit.xml\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-23.975Z-fb954b05/results.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-23.975Z-fb954b05/runner-summary.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-34.304Z-c2b3a488/acceptance.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-34.304Z-c2b3a488/events.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-34.304Z-c2b3a488/evidence-index.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-34.304Z-c2b3a488/evidence.tar.gz\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-34.304Z-c2b3a488/junit.xml\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-34.304Z-c2b3a488/manifest.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-34.304Z-c2b3a488/playwright.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-34.304Z-c2b3a488/playwright.junit.xml\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-34.304Z-c2b3a488/results.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/runs/2026-10-01T14-20-34.304Z-c2b3a488/runner-summary.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/tooling-verification.json\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/ui-triage/analyze-ui017.py\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/ui-triage/ui017-review.md\n?? qa-acceptance/reports/followup/20261001-2716abd-retest/ui-triage/ui017-trace-facts.json\n?? qa-acceptance/reports/followup/20261001-8e047-retest/controllers/controller-3bdabbc7-11e5-45d0-b270-ff45112eb626/lifecycle-script.ts\n?? qa-acceptance/reports/followup/20261001-8e047-retest/controllers/controller-3bdabbc7-11e5-45d0-b270-ff45112eb626/lifecycle.ndjson\n?? qa-acceptance/reports/followup/20261001-8e047-retest/controllers/controller-3bdabbc7-11e5-45d0-b270-ff45112eb626/ready.json\n?? qa-acceptance/reports/followup/20261001-8e047-retest/controllers/controller-d82ae025-3fb8-4e2d-aa62-d3cd188045ce/lifecycle-script.ts\n?? qa-acceptance/reports/followup/20261001-8e047-retest/controllers/controller-d82ae025-3fb8-4e2d-aa62-d3cd188045ce/lifecycle.ndjson\n?? qa-acceptance/reports/followup/20261001-8e047-retest/controllers/controller-d82ae025-3fb8-4e2d-aa62-d3cd188045ce/ready.json\n?? qa-acceptance/reports/followup/20261001-8e047-retest/executor-logs/20261001T152240-qa-8e047-system-retest.json\n?? qa-acceptance/reports/followup/20261001-8e047-retest/preparation/preparation.json\n?? qa-acceptance/reports/followup/20261001-8e047-retest/tooling/preserved-original-preparation.json\n?? qa-acceptance/reports/followup/20261001-8e047-retest/tooling/verification.json\n",
+  "qaTree": {
+    "sha256": "750fb6a6395683331f9e4506bc9f62861dc49c00018fa493188f74e0d67f1dbb",
+    "files": [
+      {
+        "path": ".gitignore",
+        "sha256": "419ced137b12d10386b0c3d71d1247a2ec99e8f841b3f1e1ba28018230801ab8"
+      },
+      {
+        "path": ".prettierrc.json",
+        "sha256": "8123eeaf657f177f4617a71e78584ac602b6ca7b4fa7e1e6c24e59c2dee1a2b7"
+      },
+      {
+        "path": "cases/architecture-capacity.json",
+        "sha256": "8fb87cc80e27605fb5201ab14c1f50c10c799886c033db034d62eb08a22e0cf7"
+      },
+      {
+        "path": "cases/architecture-contract.json",
+        "sha256": "2664fe797b4a38c81df3a7054015b2a04a2a6c5bbcea7043573dcfd41e39adb0"
+      },
+      {
+        "path": "cases/architecture-observation.json",
+        "sha256": "8ebe6cff255a6e50fe581ad6bfd3a198a26a734d2ddfd6c9c997e3fa75f343fe"
+      },
+      {
+        "path": "cases/architecture-ui.json",
+        "sha256": "bec51c6d708dc28167dd69be15505225a91915bb7428e2e9d4ddd0395c12a9a3"
+      },
+      {
+        "path": "cases/backend.json",
+        "sha256": "c505dc0caf4b35fdd1dfc18a9845bcc3c8f7d4f958b06264b668e4252b6845af"
+      },
+      {
+        "path": "cases/candidates.json",
+        "sha256": "579317811498a824df838f14c2cd22357e247ae31442829c68b44d121b405f7c"
+      },
+      {
+        "path": "cases/delivery-read-boundaries.json",
+        "sha256": "747fb9fe8ea80bb1a765745bdd93bae3f63e17164eea342dced70320a59a00a2"
+      },
+      {
+        "path": "cases/extensions.json",
+        "sha256": "074baa35d0bc74cc10deaf18b2964a303eca4dfe2cfd018d7352485226fa7f58"
+      },
+      {
+        "path": "cases/fixture-boundaries.json",
+        "sha256": "a1c9961d2152aa9f4cd73aacaf29f6a3e06eb00d37fbc1a85f9fd90c70887434"
+      },
+      {
+        "path": "cases/foundation.json",
+        "sha256": "ec233fc421a1fbc3269c03cf4a28890a5236b75f03ea4cf9daad3a92e9ad83b1"
+      },
+      {
+        "path": "cases/generated/architecture-capacity.md",
+        "sha256": "d3cedf1f0862e2dece19dd2c25f677fbd0f0a527f230bf1b84d1291eda4d4b7c"
+      },
+      {
+        "path": "cases/generated/architecture-contract.md",
+        "sha256": "b4724c249fe3b35b66d246c200ddfea71d48f339afa20fe72b19fd4e6bb8e2a7"
+      },
+      {
+        "path": "cases/generated/architecture-observation.md",
+        "sha256": "f70e22926b46e57ad4c09192620931b3ffe19057ace9be85098a80400520661e"
+      },
+      {
+        "path": "cases/generated/architecture-ui.md",
+        "sha256": "554d33f9804e43493326edf301fc6f4e9198cc8a54e6d0749c3f6d8c39aaa5ec"
+      },
+      {
+        "path": "cases/generated/backend.md",
+        "sha256": "99567b2280de3847df6f2f859bc0a61dfd65019d042e6e8f47b6bf918fdfe8fd"
+      },
+      {
+        "path": "cases/generated/candidates.md",
+        "sha256": "f4dd58be827b143eb0b78ccb9f94e4e121f843cf5fdfa67cc634f4181153d88f"
+      },
+      {
+        "path": "cases/generated/delivery-read-boundaries.md",
+        "sha256": "b1dcff95f40ba4832430f24050eb16cdc42fdb8f4c02cc49717018776a821a28"
+      },
+      {
+        "path": "cases/generated/extensions.md",
+        "sha256": "8b1591b8f450fe984e8f0c7d59fdf0b622c7b5573587184f80fead2e57b53b03"
+      },
+      {
+        "path": "cases/generated/fixture-boundaries.md",
+        "sha256": "b744d74442b9f5105834e2a67c919c8a3a80e2918ad36df45292ec321fa944a6"
+      },
+      {
+        "path": "cases/generated/foundation.md",
+        "sha256": "102f91ecae3b27404e554aa576a34e085cecd63d9727ab1d2b28e36c83bd7865"
+      },
+      {
+        "path": "cases/generated/integration-diagnostics.md",
+        "sha256": "355d1ea290cbb754de378f21c5b6c9e123c9a052dbfcea6c94b3fb257d131db9"
+      },
+      {
+        "path": "cases/generated/integration-message-boundaries.md",
+        "sha256": "b7bc9f399416d7006659b13c2297601839b91f94110dbd69894c4f48cdc6604f"
+      },
+      {
+        "path": "cases/generated/integration-message-timing.md",
+        "sha256": "d28ae43917e56aa0f6e3bf53385dfe19e8162b6a9257bed7da0c0cc25b1abec4"
+      },
+      {
+        "path": "cases/generated/integration-runtime.md",
+        "sha256": "ed148e0e68e3631d19264dd55fe0a0994718480ec6b89ae1a46f4792859bd060"
+      },
+      {
+        "path": "cases/generated/integration-streams.md",
+        "sha256": "613112c3560b091624d1146e87987694969e60f4d5e786d8bba154a2b51aacfc"
+      },
+      {
+        "path": "cases/generated/manual.md",
+        "sha256": "406f26b4f276afe1a8af9f3460d8d1a3d07b444e15bb5ab146bc481b42ac301b"
+      },
+      {
+        "path": "cases/generated/protocol-boundaries.md",
+        "sha256": "b510e69b193cd2b177e150400ffcb2d2a677127053d0a164469846b974ad621e"
+      },
+      {
+        "path": "cases/generated/release.md",
+        "sha256": "837b108b673cde29a511b1731b21d55d3a1d8a37bdd076a7719ea0ead63d1539"
+      },
+      {
+        "path": "cases/generated/sequence-failure-policy.md",
+        "sha256": "8c1a6c4a7387af03a65954d85bb0a92119ba9e9cf961c1d40641d95224bf423b"
+      },
+      {
+        "path": "cases/generated/spec-boundaries.md",
+        "sha256": "fdbdb1f133788378d3f1a771578503aa5a7547a8f3e4a5a10c46b5120c883080"
+      },
+      {
+        "path": "cases/generated/ui-extra.md",
+        "sha256": "56b0c8d37a9320df7c43f5baa5b4407423364ad29f4b29079fddd99f6334d1e6"
+      },
+      {
+        "path": "cases/generated/ui.md",
+        "sha256": "ee0e4518558e4d6c002122f103b1659001822179fdcff759aaab122251261957"
+      },
+      {
+        "path": "cases/integration-diagnostics.json",
+        "sha256": "11d29d4931c38d3a59f891e16febba15e8109bf14939b86e162a3772ce953986"
+      },
+      {
+        "path": "cases/integration-message-boundaries.json",
+        "sha256": "50d2339ddec3e5f852425e1b515fe84ca710361345cff86eac33a09fdf7dfe9b"
+      },
+      {
+        "path": "cases/integration-message-timing.json",
+        "sha256": "b982b66135a54195c98c18c06d5fea6a3101024d9b53e86ff39361e75fa51c0c"
+      },
+      {
+        "path": "cases/integration-runtime.json",
+        "sha256": "2abd74d0e2dee34a080d23342efb826b8c7f6a1916090fb747e13324a5dcdfd1"
+      },
+      {
+        "path": "cases/integration-streams.json",
+        "sha256": "6730582b51755e012f1ef9f23896fce98b2216c83bba12235add73bd192ba9a2"
+      },
+      {
+        "path": "cases/manual.json",
+        "sha256": "c39ae9f01a41e2668dfca386d377cac1a9ae616d4c00aea1fda736a6c2b168de"
+      },
+      {
+        "path": "cases/protocol-boundaries.json",
+        "sha256": "1568eb71e8d6ec2c443eebf540ce307ed9dc380330a20a10901755f6391a647d"
+      },
+      {
+        "path": "cases/README.md",
+        "sha256": "31e0c1e80083864ae2d6f58c5bc621291b942b07b075903ebbb11f0269247f2f"
+      },
+      {
+        "path": "cases/release.json",
+        "sha256": "222f7f0acc1e75306962898ee42d38fcc2d32edb65672a5fe16695c33bad77d5"
+      },
+      {
+        "path": "cases/sequence-failure-policy.json",
+        "sha256": "117a74dfc124e38165f7d7a900741cb53147066d1a3a0ef8c397132048884168"
+      },
+      {
+        "path": "cases/spec-boundaries.json",
+        "sha256": "5a90daa846daa1678b6bdaaf7648588cd2113c0db2864994c3d0696d6cc2bb84"
+      },
+      {
+        "path": "cases/ui-extra.json",
+        "sha256": "bf3fe4b5768ae988e0a03c011a394af17f668b8357204c80de90ad8d79fb1143"
+      },
+      {
+        "path": "cases/ui.json",
+        "sha256": "5a1856a2276b2edff2a370ca8cc92effafee50557fc81a7149784da60d050716"
+      },
+      {
+        "path": "config/authorization.example.json",
+        "sha256": "730d90bffa800678a795c3f7d6b49c46ddb0eda32a411e84470996a2eabda92d"
+      },
+      {
+        "path": "config/fixture-binding.example.json",
+        "sha256": "04afa7758840d5fcce194a3ba759d0485f943af526135f14d8986e06093fa865"
+      },
+      {
+        "path": "config/fixture-binding.integration-0af6443-startup.json",
+        "sha256": "0aed2583724d574ae9a91d507196dd6683291f85d1c73587ce8ded221d2d20cc"
+      },
+      {
+        "path": "config/fixture-binding.integration-0af6443.json",
+        "sha256": "37734439d1b87063623f9a398d858d8e07234f4289a7223ac2a71bf28921a80f"
+      },
+      {
+        "path": "config/fixture-binding.integration-86ad4e7.json",
+        "sha256": "ea502d281bb9823b858dc026ab4b475ead90ebd6b256a125ed2326c10dd6f266"
+      },
+      {
+        "path": "config/fixtures.example.json",
+        "sha256": "dfe0b94771afa7fe47f2994a6e7024ae4316e48f2f613501e4669d65e2f2d7e1"
+      },
+      {
+        "path": "config/fixtures.integration-0af6443-startup.json",
+        "sha256": "46e50f4e7da54e555b788b0785a6bdcb84313928ea9a8d38e9fb7a9e3a2fdb62"
+      },
+      {
+        "path": "config/fixtures.integration-0af6443.json",
+        "sha256": "c0581223556f09b81455c5b014689d67faeaf7b3482ef533eaefb25686c92ec6"
+      },
+      {
+        "path": "config/fixtures.integration-86ad4e7.json",
+        "sha256": "f9c8420f6890b76b6ef2485c7527a4035abbd94b13e9fb271d76a9d32f2d2346"
+      },
+      {
+        "path": "config/integration-plan-993f758.json",
+        "sha256": "bc22c1206499ec7bd7238ecdd000ec7f2084664a14d6a923579dbd06fd14deca"
+      },
+      {
+        "path": "config/manual-evidence-template.json",
+        "sha256": "7880a942a57848a939edd727d309db9b5376e98d08bc2fb767248b30b200a3d2"
+      },
+      {
+        "path": "config/manual-review.example.json",
+        "sha256": "0ab5a4ff86e729179ea82bd00e6d98890a7bcacc49e659a46669aadde8f31bb8"
+      },
+      {
+        "path": "config/preflight-authorization.example.json",
+        "sha256": "4fd1a5409585e9aa42cb616212134df49d9d975ae047943712ab97c6253d5530"
+      },
+      {
+        "path": "config/preflight-authorization.local.json",
+        "sha256": "13baf6a171e4747871c3f9fc94aaaee5fd0f84d54a08fe319b58106549079db6"
+      },
+      {
+        "path": "config/slow-reader-profile.ts",
+        "sha256": "f4b59b4d1220ed60558a8f12379021fb014f82dd326920e41bde1f2812fd7cdb"
+      },
+      {
+        "path": "config/target.example.json",
+        "sha256": "f0cfc7ff8cf3d372e1fa5578fa7cbdb41cb87b2082c68062b68fe1660b0475ba"
+      },
+      {
+        "path": "config/target.integration-993f758.json",
+        "sha256": "e3588fa34e3add96e200521acdc71223cb75baa44b330462dc2c62e7adaf03ca"
+      },
+      {
+        "path": "config/target.manual-followup-20261001.json",
+        "sha256": "13783578afd31445cb37f99734e744c42693f9f9c58dea989a77bd3116b8a943"
+      },
+      {
+        "path": "config/ui-adapter-0af6443-retest.json",
+        "sha256": "a19888556291e3bab55b7e3cdc481f89ab366a27ae80ef0188dc5c7afa1f8627"
+      },
+      {
+        "path": "config/ui-adapter-0af6443.json",
+        "sha256": "df2223cc48f1cfd8a98ab82ae96b89259156f940efe54c12f2696f863888350a"
+      },
+      {
+        "path": "contracts/capacity-observation.md",
+        "sha256": "661b0a821e75e58f17c5b5493fc8d289d46e80dc5ffee7fdc61475c680d1932e"
+      },
+      {
+        "path": "contracts/cross-epoch-observation.md",
+        "sha256": "ba4aaa62ed685a6cfa8b01fbe73d4acce9949b39f1a0b696d86b6daa3c08cb7a"
+      },
+      {
+        "path": "contracts/declared-json-schema.ts",
+        "sha256": "1b4e17b13ad40596e76feaa01e5e8dc199373dd093de0f8acca5c06908fe530d"
+      },
+      {
+        "path": "contracts/fixture-artifacts.md",
+        "sha256": "724d47a508a475c6d750c94a130e010a41d604545d55d2c0298c854de9374ec2"
+      },
+      {
+        "path": "contracts/message-receipt-observation.md",
+        "sha256": "b8fe423b10ab038cfb9100fa82938c2af28302d461d18ebd73a4071bdd7b122e"
+      },
+      {
+        "path": "contracts/public-api.ts",
+        "sha256": "85d5069b89869e9aff6a6ba3e64b913630f810e32783aac3e2ff8a43e3bc84a2"
+      },
+      {
+        "path": "contracts/runtime-observation.md",
+        "sha256": "b9898c2538f06607d51d6981a63f0a4d1c3675ce22c73e408394910f503e8d4b"
+      },
+      {
+        "path": "contracts/simulator.md",
+        "sha256": "1c7f64df8b0c1528c6dc80c573b7e1865e5bb2f6e1d160950ab647614a1eb971"
+      },
+      {
+        "path": "fixtures/20261001-0af6443/directory-precision.json",
+        "sha256": "c0b6a9b11663343673af60994fb3bcf0261a573f2f8c5cdc6b1bb63e6d1cef11"
+      },
+      {
+        "path": "fixtures/20261001-0af6443/legacy-schema.json",
+        "sha256": "2d6a383ea0d22a30c2dc1157b9261a513c4a20729297b967ff85c4bcff4fad36"
+      },
+      {
+        "path": "fixtures/20261001-0af6443/legacy.dump",
+        "sha256": "24f49db6ecfb7cf54e614d6d00a3e9f77e7ade2f5dfd040ba31bb7550990cb4f"
+      },
+      {
+        "path": "fixtures/20261001-0af6443/precision.dump",
+        "sha256": "0554319ab7ad4483f0a03fcb78416168267a0cd46ecf77b3a204cdea7e23ea38"
+      },
+      {
+        "path": "fixtures/20261001-86ad4e7/directory-precision.json",
+        "sha256": "b74456924618450e6471d054fb4b9a793664d1304f8a9277760dcbc582d98add"
+      },
+      {
+        "path": "fixtures/20261001-86ad4e7/legacy-schema.json",
+        "sha256": "93985edc23351de52aa79c99015d02d67f862a1de507f57704b2a268f7a2f846"
+      },
+      {
+        "path": "harness/agent.ts",
+        "sha256": "d9906d9fa9da3884cc8390e1b028fab525ae7e7a66d3bac3238d715a344b036b"
+      },
+      {
+        "path": "harness/application-exit-observation.ts",
+        "sha256": "3276de33611c9947f97d9c184d7cc0f811a1ef30954b2dc3f7ca8501f2061e40"
+      },
+      {
+        "path": "harness/barrier.ts",
+        "sha256": "3c7b7636bc2c8488bc28a4bd7068171a521d71ac0c256c938a65c8f022b4b177"
+      },
+      {
+        "path": "harness/business-scope.ts",
+        "sha256": "f11522b38606b2965e8158d1d4f66ebea58dbc9092afebb243d304ebf2e49fa8"
+      },
+      {
+        "path": "harness/capacity-control.ts",
+        "sha256": "c231c8002ac55c7e9f72eb62104569f8d306e1b70b60f2c3addc1744d3b929e4"
+      },
+      {
+        "path": "harness/capacity-probe.ts",
+        "sha256": "74cfdc37ca6b66d81e2d4b2397c8a3fbfd4de968a1195818403da646e85dc958"
+      },
+      {
+        "path": "harness/catalog-check.ts",
+        "sha256": "239e57aa09c2e95162cedc2bdc4a86e5b7298a634d6951c45257a785dc5fe434"
+      },
+      {
+        "path": "harness/catalog.ts",
+        "sha256": "5001a2b1172cb4b8f07ca5ef80f22ea752b47a9a7ac0b6920f5ccadc5ca35411"
+      },
+      {
+        "path": "harness/change-review-check.ts",
+        "sha256": "5458c44daf92dc9806d836a2e63ab75e0ab31502d85b552e8fd52ddf63735950"
+      },
+      {
+        "path": "harness/change-review.ts",
+        "sha256": "866bb98382624aedb931e01b0547830a87b26a941082e20b9fcd44a1651e4316"
+      },
+      {
+        "path": "harness/cli.ts",
+        "sha256": "2efc746529d1d38e4234a53bd18b4bcb648f4bbc3b1fac0b81b6bab33efef743"
+      },
+      {
+        "path": "harness/cross-epoch-evidence.ts",
+        "sha256": "70b54b31ceeb68524c08d3a07bcfff4f144cdc22a01b222ba00bf562173afe24"
+      },
+      {
+        "path": "harness/database.ts",
+        "sha256": "d0f69b102bcc9c792ba5c395792b5be18a4ec3e783498c511d267987c3dd6bcb"
+      },
+      {
+        "path": "harness/environment.ts",
+        "sha256": "9e84c047bfd704352a5c605bdf02c92f4b4a365fcc9d06a36cf592097055660a"
+      },
+      {
+        "path": "harness/execution-gate.ts",
+        "sha256": "f9975961f0667a65f0ffb2370326dfb6d86b26eac62509886944379cf6563932"
+      },
+      {
+        "path": "harness/execution-plan.ts",
+        "sha256": "6422c9768170aa8e51d31c75a97162acd2b7c8408990d5c7c09ed33c4a8d1549"
+      },
+      {
+        "path": "harness/fixture-artifacts.ts",
+        "sha256": "96a05c3b9b021a75e043bcd7056d82420d80c21a309e5e96d5467ef91f2143fe"
+      },
+      {
+        "path": "harness/gateway.ts",
+        "sha256": "966292c0866702435f147834988fd5f444143e0be7d03157603f52a2805d1077"
+      },
+      {
+        "path": "harness/http-server.ts",
+        "sha256": "c4f5b6a80b79f3f88dec987fe133558def705ec6e065c53fa956f64af932c07d"
+      },
+      {
+        "path": "harness/lifecycle-observation.ts",
+        "sha256": "dad97f04a9016e82bdd1ca5e38cc46ee4d9b7110afe038c285e0dbb8604892c8"
+      },
+      {
+        "path": "harness/manual-environment.ts",
+        "sha256": "c8993d0f3de860fa148de1b90202569a14027a30986ae121497707899a928e1b"
+      },
+      {
+        "path": "harness/manual-followup-cli.ts",
+        "sha256": "49df3de13436c7eba431efdd0bd776c985dc6cbc7437d7095aa7b95115c83a22"
+      },
+      {
+        "path": "harness/manual-followup-live.ts",
+        "sha256": "40942150aad6406b8d0fb052a2e29685011a38723085436c7ed2f768a16d9afe"
+      },
+      {
+        "path": "harness/manual-followup.ts",
+        "sha256": "3dc2d1cfed0323b1bac1785df0716db204b121f38c4d2a59a9ea5a98d8eae7b4"
+      },
+      {
+        "path": "harness/manual.ts",
+        "sha256": "e197c71216e4b181241185a5e4eb43a00180ab8fafdebe187038f02324b2ae9d"
+      },
+      {
+        "path": "harness/message-observation.ts",
+        "sha256": "32e6f16c3a110af7bf100d2f6a56d8c29260f690dc23d9bb49991f523e196743"
+      },
+      {
+        "path": "harness/network.ts",
+        "sha256": "be935118cc6b719ff340a8a04355d7ca6fd64175189c1b6368a2fff941090030"
+      },
+      {
+        "path": "harness/observation.ts",
+        "sha256": "8fc04d7fffc3bfb023d77368cb1979a17331322f25d6dc6b7498080079fe27b8"
+      },
+      {
+        "path": "harness/platform-client.ts",
+        "sha256": "fc14a9420981cf046ac015f31f25b9c657d71bfe2bafc99aa79939a8df404c23"
+      },
+      {
+        "path": "harness/process.ts",
+        "sha256": "e0047da7d54a2b7f2a8e9055e2b21f49b7e1d655b268c101b6d7758cb072ee0e"
+      },
+      {
+        "path": "harness/provenance.ts",
+        "sha256": "10e3661ba876c9ba9ee490e36784e69b61f1b9a9c09f646a6931de1c7781a342"
+      },
+      {
+        "path": "harness/receipt-socket.ts",
+        "sha256": "3a14bb53debc48313290056ef7b8b8c806e23470e3ad0d67051dca6e3c0643c3"
+      },
+      {
+        "path": "harness/recovery-drill.ts",
+        "sha256": "07dfbc2db5f9842edcfcba7d3ceae7e7520d8c3d682bac71fc9895fc92189f2e"
+      },
+      {
+        "path": "harness/render-cases.ts",
+        "sha256": "b83e78b005aabe2cd2f9a45c394d10e5ef0b1009f0b3ddd1e97d1e365c830dd7"
+      },
+      {
+        "path": "harness/report.ts",
+        "sha256": "4ef3ab79354c3e3a374d5031e13671f725c4801717daa0e120a7309c9ad53a97"
+      },
+      {
+        "path": "harness/reporter.ts",
+        "sha256": "9cd59b41071aedae085b46bea8c0c46b69ce04efc2e7c7589d02d541fc6f7794"
+      },
+      {
+        "path": "harness/runtime-observation.ts",
+        "sha256": "d45cd5e0dada4f7a2757a62c1e4e3f4e240e7079fe9b7ae624a39f528b53583f"
+      },
+      {
+        "path": "harness/security.ts",
+        "sha256": "d33bc73d240102c5780b6b6ccc6e007ba69616d14200f824b951659489a273e5"
+      },
+      {
+        "path": "harness/stream-close-observation.ts",
+        "sha256": "cfb21f06c94d5c4fe0433230eff8932a8558805d73cc2bff697c393d608306c1"
+      },
+      {
+        "path": "harness/stream-invariants.ts",
+        "sha256": "873c5e357097ce24e2db622d355447777b31d80be92e9b0e3b811ceb4f27a86e"
+      },
+      {
+        "path": "harness/suites-check.ts",
+        "sha256": "ee03bf05a199bb826f9b61ac890d1302e14db0debde21bf252bc5757346393c6"
+      },
+      {
+        "path": "harness/suites.ts",
+        "sha256": "b85ed0a9097060f7f2ff240e8013f14925874963f30c7b8a074871f38dec4735"
+      },
+      {
+        "path": "harness/types.ts",
+        "sha256": "0f7ad0b87255e338a48ed61331b08cec966148239d0984f033775459836db0e9"
+      },
+      {
+        "path": "harness/verify-tools.ts",
+        "sha256": "d269ffa546bc2c477f870491c198ede53a925cb4b73f46779399970805dafb96"
+      },
+      {
+        "path": "package-lock.json",
+        "sha256": "7462a4670d1e4036156d1639ebfeaa0cd4276bc918d1b805b3677d862c2cb883"
+      },
+      {
+        "path": "package.json",
+        "sha256": "6d8de82b1cd439f839c69a3e472b8ca253836eeca7bd4fd4e3a1b3bbf7af764b"
+      },
+      {
+        "path": "playwright.config.ts",
+        "sha256": "4a063f59db9037042c62f6e4df550e53972db3edf9a5923a06a4304df84c245e"
+      },
+      {
+        "path": "README.md",
+        "sha256": "0ed7568139826b5abb3f9366cdcea41cd4187e1df650668223cee417b3840b2f"
+      },
+      {
+        "path": "requirements/architecture-impact.md",
+        "sha256": "8be2e077a3d5c68cd4067fb689f241fffcd816f69dcf404388abebf6a4e57477"
+      },
+      {
+        "path": "requirements/baseline.json",
+        "sha256": "fc909783677cd54cde10f71a4aab80a467312f4f46e593ff0ffd285b86a17d82"
+      },
+      {
+        "path": "requirements/blocker-reassessment.md",
+        "sha256": "f2c901aa22aaa72448673245574ff06f5a591ab9f5ddf74d444761c4e92e7404"
+      },
+      {
+        "path": "requirements/catalog.json",
+        "sha256": "07689a14f445f1bf5b3c92ad0fe3a55094b6b97ebe99c39e60dcd0a3aaa4fce6"
+      },
+      {
+        "path": "requirements/change-reviews.json",
+        "sha256": "cd37cc6599c758ba7c7ecdbb4966c2b107cf97a4872113b724e0ca8133a493c1"
+      },
+      {
+        "path": "requirements/clarifications.md",
+        "sha256": "805cb9d65a139a0520496680a306aa1d10ff34d7f97956111b7e177b5ad86b32"
+      },
+      {
+        "path": "requirements/collaboration.md",
+        "sha256": "5bd518dda0c35fe037aafa9c26a57cf97cd44cf0ad434ecdbc8f2f38d0022073"
+      },
+      {
+        "path": "requirements/coverage.md",
+        "sha256": "202ce9cb58785950a909189c9ddd5d37df323b189c972b38fc19228f70d2b363"
+      },
+      {
+        "path": "requirements/engineering-candidate-intake-20261001.md",
+        "sha256": "89a4056f807ff750a847c5ea9bed9cc365de9f982cf6f28e4f02a7cd5e992e47"
+      },
+      {
+        "path": "requirements/evidence-followup/agent025-observation-adapter-20261001.md",
+        "sha256": "049b0150a29c1dc68195a666528346b224d7c30f6cefb4943ce6742ca4813415"
+      },
+      {
+        "path": "requirements/evidence-followup/backend-requirements-20261001.md",
+        "sha256": "ae0c7baeae896be2c1d9325b50bf00ad7a65d23cf5d953b9e05233f04dcbabd0"
+      },
+      {
+        "path": "requirements/evidence-followup/final-boundaries-ui-intake-20261001.md",
+        "sha256": "ea4bc7fde9789906b21edbe09754cbe2619943df77695d28f4decff9027a9a92"
+      },
+      {
+        "path": "requirements/evidence-followup/final-intake-2716abd-20261001.md",
+        "sha256": "b4977cc7606b51ed8287570991f4d6a9c7404abdb3f59c28be3d41f9d66c2f90"
+      },
+      {
+        "path": "requirements/evidence-followup/final-intake-e85ae61-20261001.md",
+        "sha256": "fb32cd733da829bf4a3c73c66c778e485802a672fc58df439c52c8c1b5718ebe"
+      },
+      {
+        "path": "requirements/evidence-followup/manual-candidate-20261001.md",
+        "sha256": "ffbe576f77ccd617e59568fc7f0b683a71edc3a2d533476aed3714ceaac56d25"
+      },
+      {
+        "path": "requirements/evidence-followup/preintake-68d28d8-20261001.md",
+        "sha256": "74987504ada7ee20d3d9227b9503367243f46f0664325c0d08c164b6e69435d6"
+      },
+      {
+        "path": "requirements/evidence-followup/README.md",
+        "sha256": "143d2400f53b27c4729d85aaa308baa2bfa1646d23f36adb3872f9ab0c924c3c"
+      },
+      {
+        "path": "requirements/evidence-followup/repair-intake-8e047-20261001.md",
+        "sha256": "954989913432b1bfe5c8d26bb0837c61e4b0439115b58b56a12abbbbfe6d7691"
+      },
+      {
+        "path": "requirements/evidence-followup/static-closeout-contract-20261001.md",
+        "sha256": "a45b6a2471c0bd76999e4a98120fb1398677b31cb3aa32b1c8be1911c3eb52b2"
+      },
+      {
+        "path": "requirements/evidence-followup/stream-qa-adaptation.md",
+        "sha256": "1c479ed7b32ca0650cc28e197838e82c7c394063da328093726ab8ef79ac4f23"
+      },
+      {
+        "path": "requirements/evidence-followup/ui-prehandoff-68d28d8.md",
+        "sha256": "eae8b9012eff567a6832c9628279de7295814ab5f64d43687961d4c84a3ddda1"
+      },
+      {
+        "path": "requirements/evidence-followup/ui-qa-adaptation.md",
+        "sha256": "077e20bb63584e36a4c53e0b7cffda53cbb8643ed6f84b3eea08d950f9d308f3"
+      },
+      {
+        "path": "requirements/evidence-followup/ui-stream-requirements-20261001.md",
+        "sha256": "c3f7956fd68b94ff77f6f40a81a48540d66eeb1f6ba9487177f7e12d3186faef"
+      },
+      {
+        "path": "requirements/integration-intake-20261001.md",
+        "sha256": "8b05f6133bcab992480d26cd71c7fa5230051c1965794959cf1dbcabd23b01a2"
+      },
+      {
+        "path": "requirements/integration-risk-review-20261001.md",
+        "sha256": "187ba6c714769454919261d23b43a092465f081f19ff5aebb228fcd38e43716a"
+      },
+      {
+        "path": "requirements/left-members-decision.md",
+        "sha256": "691a8f1445ad7a93bd5ca88085b9a64ec3ba6aae9cbb1e598cab583e9101af20"
+      },
+      {
+        "path": "requirements/next-integration-preparation-20261001.md",
+        "sha256": "40eeb2640d7f16e0d1ee4967fb9d07e8cf6e95b71d026296f8208b8c3a036b8a"
+      },
+      {
+        "path": "requirements/qa-correction-attention-test-premises-20261001.md",
+        "sha256": "3e75af636f12f2413b63012ed5fd30f583d04afa3096b456e0bfbb7077d2787d"
+      },
+      {
+        "path": "requirements/qa-correction-auxiliary-startup-20261001.md",
+        "sha256": "63a5516443d039753778db68f6aa203c1d2291ba06cc70575001c85c7c10351e"
+      },
+      {
+        "path": "requirements/qa-correction-browser-adapter-20261001.md",
+        "sha256": "659a48f7cbaaf018ed7a047c2885fd8088ff5ecca40309c94eb30ce82c625f4d"
+      },
+      {
+        "path": "requirements/qa-correction-capacity-cancellation-20261001.md",
+        "sha256": "26ed780083635e173959e6fb3c91d778df99efcc463a8b41120d010118b844e8"
+      },
+      {
+        "path": "requirements/qa-correction-directory-premises-20261001.md",
+        "sha256": "0ef2b6c42d24167b240f38a69b358e4b0c46676b7e0aefc82c681616c55a9fe5"
+      },
+      {
+        "path": "requirements/qa-correction-group-prerequisites-20261001.md",
+        "sha256": "9dc7877d0cdbe3400a6266766dd9c7b482dc94237e93de5e20c003e52218d63b"
+      },
+      {
+        "path": "requirements/qa-correction-pagination-reference-20261001.md",
+        "sha256": "20e6f0bd5a9da66ed85b059967ef0b7be9b230cc881b21135f724997ed63c5bd"
+      },
+      {
+        "path": "requirements/qa-correction-recovery-ws-20261001.md",
+        "sha256": "34f36103ea8105ee34927e3aab55edd0f4dcbfb7e40c9b49814127bcd631d6a7"
+      },
+      {
+        "path": "requirements/qa-correction-sequence-failed-sent-at-20261001.md",
+        "sha256": "f99d7ba7e18c617396c8b7971ef8e17c7d78edb5dfc85b7485216f4fd99550a8"
+      },
+      {
+        "path": "requirements/qa-correction-spec006-schema-dialect-20261001.md",
+        "sha256": "bdda2e2c849a718729af6b3d8599b28bcf56b68bbd473c0ba8891efb874057ba"
+      },
+      {
+        "path": "requirements/qa-correction-ui-concurrency-pagination-20261001.md",
+        "sha256": "896d04635de34e2f3bce591e0f1178de3f49b9f9715dd21043c21973493e95a4"
+      },
+      {
+        "path": "requirements/release-gates.md",
+        "sha256": "0757bbe778819225ca5106cade3bd13ae70e2458dfe5ea2d3501682771f19a40"
+      },
+      {
+        "path": "requirements/remediation-batch1-intake-20261001.md",
+        "sha256": "f5a3687ca45be6dfa68c9f35c4666826bd1c9dc404f22329bd807e8f19b17154"
+      },
+      {
+        "path": "requirements/remediation-final-intake-20261001.md",
+        "sha256": "b14aed1865a8f3a39395b6186f2d534cbe202704c9395a52fbece245070f5328"
+      },
+      {
+        "path": "requirements/risk-coverage-review.md",
+        "sha256": "1f58a3f5e8d50779ac70073d1073a851a037298c75d7fbedeb00d0d9223f1c88"
+      },
+      {
+        "path": "requirements/sequence-failure-policy.md",
+        "sha256": "7198bf020dda26110e7104e5fc9d963695911c4e86b9adeafbd38c4ca8afb105"
+      },
+      {
+        "path": "requirements/spec-boundaries-resolution.md",
+        "sha256": "82de0ec1595d600033cd3a4661a89f6b508fa3067a3d823b7735334baab8e262"
+      },
+      {
+        "path": "requirements/traceability.md",
+        "sha256": "7e53f466541a10218830cfe9e30cd0295d46d283f9e45e7799a16db246d82bbe"
+      },
+      {
+        "path": "requirements/utf16-remediation-intake-20261001.md",
+        "sha256": "8c088708428f03c417a41b1dd09cda61f164ec191102f45a6e34eb815b09b2be"
+      },
+      {
+        "path": "sharing/business-acceptance.md",
+        "sha256": "e75ed41093e23ad6d481e0e0397d1ab2db889cb10a3f333ac942b8ad87407a70"
+      },
+      {
+        "path": "sharing/manual-execution-20261001.md",
+        "sha256": "c421a3855a6bd21ee8bdb9b466b696c428a6153d31da6a5cda8d01b73262220c"
+      },
+      {
+        "path": "sharing/README.md",
+        "sha256": "28fb1600dd60cf95c8115667e544e9fcd43be260e4c0b97368d215e02ea668db"
+      },
+      {
+        "path": "sharing/suites.json",
+        "sha256": "4e676004256887f93a02093eb0a5da224b93ece384224b498725af6ab262b8f2"
+      },
+      {
+        "path": "tests/api/accounts.spec.ts",
+        "sha256": "0dd82760e6733f5bd43cf3dd31b5706b7547048a4e4f83c2f4a29094a0ce88b1"
+      },
+      {
+        "path": "tests/api/auth.spec.ts",
+        "sha256": "ac579fe93a50e2f68c03b2102bdb3ba5511ca785aab77844b60952ff31b6dc0e"
+      },
+      {
+        "path": "tests/api/diagnostics.spec.ts",
+        "sha256": "64f802e0952b3ab65924a012c48e43d85a49953a1c868ed151999ec1f0d509f0"
+      },
+      {
+        "path": "tests/api/groups.spec.ts",
+        "sha256": "7d995ba75ecce1cdda2f881b1a8946c3c46aa4b9990e0626de90bb15d704190e"
+      },
+      {
+        "path": "tests/api/messages.spec.ts",
+        "sha256": "d034ca319f4862fcbaf1a53b33487d7bb2a01f273c637531d13348001df617af"
+      },
+      {
+        "path": "tests/api/realtime.spec.ts",
+        "sha256": "9ec54083fb257fe2de805ec803943ad93aaf4ade0526244841f7355fb38d3a37"
+      },
+      {
+        "path": "tests/api/sequence-contracts.spec.ts",
+        "sha256": "82ccf634ea4b37fda481766773e66e6e899ae11f055b4d0a8bfe6d329cd8d5c7"
+      },
+      {
+        "path": "tests/extensions/api.spec.ts",
+        "sha256": "0f67b5af5b25803ce679128f38adf48392799b61f75abc8588e6886d66e974a3"
+      },
+      {
+        "path": "tests/fixtures.ts",
+        "sha256": "db89ae4a3c75848f832fb1d911a8fb01c36ca6b13c9fc26a6be87c59e3e3d7e1"
+      },
+      {
+        "path": "tests/foundation/contracts.spec.ts",
+        "sha256": "0990ad89aa348469accfa1a00ca1dc55bda4b8edc7a5c1f04eb55c5f4f94f2c4"
+      },
+      {
+        "path": "tests/foundation/startup.spec.ts",
+        "sha256": "f1ad6daff9c215aa7d8692ba492c4799e64e7dbc03c41a1ad00da9d259574238"
+      },
+      {
+        "path": "tests/release/operations.spec.ts",
+        "sha256": "418ce615bb184bcdc0ee461354a8adce44c8dd726e288e9232effef67aff293b"
+      },
+      {
+        "path": "tests/self/agent-activity-budget.test.ts",
+        "sha256": "047b2bb29baf42dfb77bee58079e3e29ffddda258ccbaf80359c71ebcda4637b"
+      },
+      {
+        "path": "tests/self/application-exit-observation.test.ts",
+        "sha256": "a63ab32dcf44e6843b7d4faace461a042c6339c432b6ca5e85dafd5b651065bb"
+      },
+      {
+        "path": "tests/self/authorization-projects.test.ts",
+        "sha256": "6ad27adc0a265270cd73a9fb8db2ae8310bec55b97e284bb9a9e063980fd5491"
+      },
+      {
+        "path": "tests/self/auxiliary-startup.test.ts",
+        "sha256": "c8354461071868b13572dd2167747e3ca219d22adcfd01ccae7e62b40c22d84e"
+      },
+      {
+        "path": "tests/self/business-acceptance.test.ts",
+        "sha256": "a7336707d53e2e85a7ee67f2346ec7005f2495b255048360e2c8c2f63ec4e72f"
+      },
+      {
+        "path": "tests/self/capacity-control.test.ts",
+        "sha256": "11d5e0c6cf9836d25ffa348bd12ece0f3cb693bef7e5cf67f8cb18ca1a7076aa"
+      },
+      {
+        "path": "tests/self/capacity-prerequisites.test.ts",
+        "sha256": "d702e3dc07fb56186db290b12db172273a71ddaf6908259cbc755862b4f48fad"
+      },
+      {
+        "path": "tests/self/capacity-registry.test.ts",
+        "sha256": "36013d1d75dbd4ade6f9347c9a1683578a6a37670c8d962be8b173fb4b560cbc"
+      },
+      {
+        "path": "tests/self/change-review.test.ts",
+        "sha256": "66d74355d476cca2f5a5abb17d5108c5e4e824f39b81f3df1c3517f70b5e8010"
+      },
+      {
+        "path": "tests/self/contracts.test.ts",
+        "sha256": "19ac7aab7fc096f22557a87384838d8012b62180366c17d5e65e6e96880149b0"
+      },
+      {
+        "path": "tests/self/cross-epoch-evidence.test.ts",
+        "sha256": "c470fa3d9aba6e6632f8c872dcc091d156538f108167b9fce505672c4e6ecd1a"
+      },
+      {
+        "path": "tests/self/database-cleanup.test.ts",
+        "sha256": "c725b5aa17a7b6e5909e1cbc7947947c2030e915060a22b5f2387bec8a9b524b"
+      },
+      {
+        "path": "tests/self/declared-json-schema.test.ts",
+        "sha256": "d0673beea17761fcc086a7b0ece99ded5f867d7c8b24d01a8822f57f9ffadf4a"
+      },
+      {
+        "path": "tests/self/delivery-read-observation.test.ts",
+        "sha256": "84759163c7d4c6f5db031b12823076a9a5634bd363c96dbff53868b8684d2623"
+      },
+      {
+        "path": "tests/self/directory-observer.test.ts",
+        "sha256": "2b050d8a34d66828e190404ef65f0b30b5421f5b38dc312e86ca46bbb7fc656d"
+      },
+      {
+        "path": "tests/self/directory-refresh-boundary.test.ts",
+        "sha256": "7534894efe3079f8b09beeb538365f5f246ab71e2d6316393f139f3d02712f45"
+      },
+      {
+        "path": "tests/self/fixture-artifacts.test.ts",
+        "sha256": "6ffbf445060266b2e04d4f84dde140c94dc809119fd97794bfda408dcb597301"
+      },
+      {
+        "path": "tests/self/gateway-timing-evidence.test.ts",
+        "sha256": "f624690035be93b35514b63f92991e5ad5191f88994da6a93723dfa6e1338f82"
+      },
+      {
+        "path": "tests/self/group-prerequisites.test.ts",
+        "sha256": "272b27e561c1126d9136eb012990bff708873c0d8c68699a74f2d3f498d9c1f3"
+      },
+      {
+        "path": "tests/self/infrastructure.test.ts",
+        "sha256": "e5c9750449e3d0c912a8c42769029dd71d064273c7d896f45eaf8b98df9cdbb3"
+      },
+      {
+        "path": "tests/self/lifecycle-observation.test.ts",
+        "sha256": "0df7adb4bbedc9d2216420e29cd1ed49dc08a3bf59ff993d6e9d91ce14f3a8a0"
+      },
+      {
+        "path": "tests/self/manual-followup.test.ts",
+        "sha256": "0b559ea7e4eaf354fc082747f67da335e320af5d39e9d2ec26e91efe2a55ae0c"
+      },
+      {
+        "path": "tests/self/message-observation.test.ts",
+        "sha256": "4657f56206fea8de2f975ec5c4099d7e0777558f16aad81e1f7a0606032fee43"
+      },
+      {
+        "path": "tests/self/message-registry.test.ts",
+        "sha256": "173443626c0b4ee05cb02d1ec936fa37673274a5b0b3d4ae49528e99d6ecc9dc"
+      },
+      {
+        "path": "tests/self/observation.test.ts",
+        "sha256": "7bdd33818f79f012ee260f4c38aed6c04271fb99e1783a5e73ef84a8aafde2d9"
+      },
+      {
+        "path": "tests/self/page-continuity.test.ts",
+        "sha256": "15bec5e26f2de05d19f43ec1ca5d54c996f46a92bbd96a3d6d07cc6e60a4017d"
+      },
+      {
+        "path": "tests/self/preflight-execution.test.ts",
+        "sha256": "4cbaae8d842dd2f6cb98cf721510ca160def3aaa4e80eb4b69eece839a57e7c4"
+      },
+      {
+        "path": "tests/self/preflight-report.test.ts",
+        "sha256": "def226d1859c556efd02c7884b8ac1d7da7d0203ace5dcfb9fa2c1b3e0f28516"
+      },
+      {
+        "path": "tests/self/public-action-premise.test.ts",
+        "sha256": "3ed827c8285afadf22c2bf0637614ca4a830197b31a1e2eef40ac252ab49d150"
+      },
+      {
+        "path": "tests/self/receipt-socket.test.ts",
+        "sha256": "e5b95eb7427dd20df5569f4d1c2f98b2c25b0365265004f160896a211a9e5992"
+      },
+      {
+        "path": "tests/self/receipt-transport-observation.test.ts",
+        "sha256": "38a148e3793da0ece70e79d269301380677c5c35bd90ec1f1c0e5f348e7b10d8"
+      },
+      {
+        "path": "tests/self/recovery-tools.test.ts",
+        "sha256": "438865585136b45fa30da1481c4e67b76d1e3131f96d63f15c19d64d7043b35c"
+      },
+      {
+        "path": "tests/self/recovery-ws-prerequisites.test.ts",
+        "sha256": "c124c1ea80a04f5ff873ba8d22a38da5f2ddfdc8b0b0703bec490f56204ba788"
+      },
+      {
+        "path": "tests/self/runtime-observation.test.ts",
+        "sha256": "92d0c81e90695885449ca54b5e37fdd2a609108be1ccb2bfbc90fb4473db1927"
+      },
+      {
+        "path": "tests/self/runtime-registry.test.ts",
+        "sha256": "43f792bfaab7780abfc2ba8581cf6798cf72eadc3f4a5350829c41a31185751d"
+      },
+      {
+        "path": "tests/self/simulators.test.ts",
+        "sha256": "50c2cc5db05f4514146fa29e53d7a8b98d02d3138cd4e67951197dcece7e5b38"
+      },
+      {
+        "path": "tests/self/slow-reader-profile.test.ts",
+        "sha256": "beb9001dd3df4894d8263ca267e905b2f6d12b50a3cb30e7d21d473df2e0c278"
+      },
+      {
+        "path": "tests/self/stream-close-observation.test.ts",
+        "sha256": "48112d6f4edbe6833346c7c21f532678a983d29c67e050820b56bf2b5ef2fc0b"
+      },
+      {
+        "path": "tests/self/stream-invariants.test.ts",
+        "sha256": "136dbb644156125bc22d0a0eb74a9c75b910fa6c9e35625b9830a8b5f1c9bf21"
+      },
+      {
+        "path": "tests/self/suites.test.ts",
+        "sha256": "b01275cd00254301740d2d4e0fde9b045a5e5d9bce46fe3e10725eff02af7352"
+      },
+      {
+        "path": "tests/support/agent-activity-budget.ts",
+        "sha256": "3ef26daae42550d7fcee1131eb219ac36d9213939024b3b000327cc46f94cae7"
+      },
+      {
+        "path": "tests/support/delivery-read-observation.ts",
+        "sha256": "f17fe2cea098c8b36b03343a59053be75cfd7f7a293eeafde6792f2ab33984b7"
+      },
+      {
+        "path": "tests/support/sequence-timeout-policy.ts",
+        "sha256": "59c8745b02f362fd816e025f86daf939a77d25ceb817255ed9caae2681448b44"
+      },
+      {
+        "path": "tests/system/agent.spec.ts",
+        "sha256": "3a18c9a959ef438621f71af8a0d861bd75a908892f05393301e6d38df02392b5"
+      },
+      {
+        "path": "tests/system/capacity-control.spec.ts",
+        "sha256": "6e286c02fd1119ab3412c2a98aa8e614eae89431a6e0093cf5efbfb754f7bab3"
+      },
+      {
+        "path": "tests/system/capacity.spec.ts",
+        "sha256": "2bad4b9fe01ceae7b8ab46945ec3b5e1eff2900e9bec6eec69fd52d49f89c467"
+      },
+      {
+        "path": "tests/system/delivery-read-boundaries.spec.ts",
+        "sha256": "3809d61b94be6e3c210d81f23c5c7cba89484947bfe25cb5258dacf56bc98694"
+      },
+      {
+        "path": "tests/system/fixture-boundaries.spec.ts",
+        "sha256": "14bc528c07ad1b536d13324c0387af9226ba2782c67c9ef7d212f809f444a597"
+      },
+      {
+        "path": "tests/system/integration-message-boundaries.spec.ts",
+        "sha256": "dabf3cfda975c436b99eef8c689fc58c9b6b244a1fb1300b724a1f03423d8a99"
+      },
+      {
+        "path": "tests/system/integration-message-timing.spec.ts",
+        "sha256": "52c213d14cbc05b68dbbd9a5a6fafb67e4c42c78ccb284ef335b8e345e67136d"
+      },
+      {
+        "path": "tests/system/integration-runtime.spec.ts",
+        "sha256": "add5416e026acab68ab7bea226c7afb6d2048c92e7b15a4324fe25a71e4fd429"
+      },
+      {
+        "path": "tests/system/integration-streams.spec.ts",
+        "sha256": "3edaf07b25a1c0e1b5063f283af83fc0fa617699d4812b214326d30349eca986"
+      },
+      {
+        "path": "tests/system/protocol-boundaries.spec.ts",
+        "sha256": "76e2a9693beae2750f294eaf7e02bfdcde632ca0813dd5075f647e421f1cea69"
+      },
+      {
+        "path": "tests/system/recovery.spec.ts",
+        "sha256": "4c3d39d1ac48df9c6f46b4f4e642507fc0df838a8de8b8de2dd9df7a5a97b2e6"
+      },
+      {
+        "path": "tests/system/sequence-failure-policy.spec.ts",
+        "sha256": "c5ba9ec47e993e3862b384baf094a387b304ad9f935b5a3cc1b83242f84267f4"
+      },
+      {
+        "path": "tests/system/sequence.spec.ts",
+        "sha256": "cfcf92bbc0a3ae007ee2c20cf36fa871fe5f4c89e036f2d9e49270438f527875"
+      },
+      {
+        "path": "tests/system/spec-boundaries.spec.ts",
+        "sha256": "5a2cbf9d9d97a8400008bbd1de31cafe2de95b9e0902d9864e39cf161240059f"
+      },
+      {
+        "path": "tests/ui/architecture.spec.ts",
+        "sha256": "1783fe03ea2fafe03d4c2038d73bfe5b0751077889fa35072fb230c7806e1774"
+      },
+      {
+        "path": "tests/ui/console.spec.ts",
+        "sha256": "94363628267920edf03406f014cc95378c74b67e1dc1428aa930dc22cba862ae"
+      },
+      {
+        "path": "tests/ui/directory-observer.ts",
+        "sha256": "fa7f5490d86e3f4600a6b7482ce040f5045b2593ebfc278807904829d9aba27a"
+      },
+      {
+        "path": "tests/ui/directory-refresh-boundary.ts",
+        "sha256": "b2cff29148e6fe0669e5faf54a170beeae27f67dc4cb5b39a10c9671ecf7878b"
+      },
+      {
+        "path": "tests/ui/native-focus.ts",
+        "sha256": "ef918c3770635466fc65b99153dac7e041e5ecd60b21eb7ef58c97a59102d617"
+      },
+      {
+        "path": "tests/ui/observation-boundaries.spec.ts",
+        "sha256": "1f7c5b3337c092da5eddbfe7f518ff41ef86d8458ec158ec5e47875da80438ec"
+      },
+      {
+        "path": "tests/ui/page-continuity.ts",
+        "sha256": "32fd21b441d01b1639d3240914715348e699dd1d5987abcd8b7699364d46ee5d"
+      },
+      {
+        "path": "tests/ui/public-action-premise.ts",
+        "sha256": "8909ff51ea81a379f7612929ef25951a95ae0a75e4f36408243bbf6ea4db733d"
+      },
+      {
+        "path": "tsconfig.json",
+        "sha256": "e2464fea00f8b0217ffac5386447dc802c2ee896951b81a0e5b4adf38cf6e403"
+      }
+    ],
+    "excluded": [
+      "node_modules (package-lock hash recorded)",
+      "reports",
+      ".runtime",
+      "test-results",
+      "playwright-report",
+      ".git (revision and dirty state recorded)"
+    ]
+  },
+  "sutRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+  "targetSha256": "f4b8af5af353520cbf776b42be407f97598c5f032fd4ff04219eb57f38557aab",
+  "target": {
+    "version": 1,
+    "sut": {
+      "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+      "revision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+      "start": {
+        "command": "node",
+        "args": [
+          "--import",
+          "tsx",
+          "scripts/qa-observation-server.ts"
+        ]
+      },
+      "migrate": {
+        "command": "node",
+        "args": [
+          "--import",
+          "tsx",
+          "scripts/migrate.ts"
+        ]
+      },
+      "web": {
+        "command": "npm",
+        "args": [
+          "exec",
+          "--workspace",
+          "apps/web",
+          "--",
+          "vite",
+          "preview",
+          "--host",
+          "127.0.0.1",
+          "--port",
+          "{WEB_PORT}",
+          "--strictPort"
+        ]
+      },
+      "env": {
+        "AGENT_TURN_TIMEOUT_MS": "12000"
+      },
+      "startupTimeoutMs": 45000
+    },
+    "database": {
+      "image": "postgres:17-alpine"
+    },
+    "ui": {
+      "routes": {
+        "login": "/",
+        "accounts": "/#/accounts",
+        "groups": "/#/groups",
+        "group": "/#/groups/{id}",
+        "agentRun": "/#/agent-runs/{id}",
+        "sequences": "/#/sequences"
+      },
+      "selectors": {
+        "username": "input[autocomplete=\"username\"]",
+        "password": "[REDACTED]",
+        "login": "button.login-submit",
+        "groupName": "input[aria-describedby=\"create-group-name-help\"],input[aria-describedby=\"edit-group-name-help\"]",
+        "groupDescription": "textarea[aria-describedby=\"create-group-description-help\"],textarea[aria-describedby=\"edit-group-description-help\"]",
+        "createGroup": ".page-header button:has-text(\"创建群组\")",
+        "editProfile": "button:text-is(\"编辑资料\")",
+        "saveProfile": "dialog:has(> .modal-heading > h2:text-is(\"编辑群资料\")) form button.primary",
+        "confirmConflict": "dialog:has(> .modal-heading > h2:text-is(\"编辑群资料\")) form button.primary",
+        "profileDialog": "dialog:has(> .modal-heading > h2:text-is(\"编辑群资料\"))",
+        "closeProfile": "dialog:has(> .modal-heading > h2:text-is(\"编辑群资料\")) > .modal-heading > button[aria-label=\"关闭弹窗\"]",
+        "closeCreateGroup": "dialog:has(> .modal-heading > h2:text-is(\"创建群组\")) > .modal-heading > button[aria-label=\"关闭弹窗\"]",
+        "continueEditing": "button:text-is(\"继续编辑\")",
+        "discardChanges": "button:text-is(\"放弃修改\")",
+        "search": "input[type=\"search\"]",
+        "statusFilter": ".directory-tools label:has-text(\"群状态\") select",
+        "agentFilter": ".directory-tools label:has-text(\"Agent 自动应答\") select",
+        "order": ".directory-tools label:has-text(\"创建时间\") select",
+        "clearSearch": ".directory-tools button:text-is(\"清除搜索\")",
+        "resetFilters": ".directory-tools button:text-is(\"重置条件\")",
+        "refreshDirectory": ".directory-tools button:has-text(\"刷新\")",
+        "directoryItem": "a[data-directory-group-id]",
+        "directoryLink": "xpath=.",
+        "directorySummary": ".directory-description",
+        "directoryLoadedCount": ".section-heading > [aria-live=\"polite\"]",
+        "directoryEmpty": ".empty:has(> strong:text-is(\"没有匹配的群\")),.empty:has(> strong:text-is(\"从第一个群组开始\"))",
+        "directoryError": ".directory-empty [role=\"alert\"],.directory-page-error [role=\"alert\"],div:has(> .warning-text:text-is(\"刷新失败，当前显示上次取得的结果。\")) > [role=\"alert\"]",
+        "retryDirectory": ".directory-empty [role=\"alert\"] button,.directory-page-error [role=\"alert\"] button,div:has(> .warning-text:text-is(\"刷新失败，当前显示上次取得的结果。\")) > [role=\"alert\"] button",
+        "directoryStale": ".section-heading > [aria-live=\"polite\"]:has-text(\"列表待刷新\")",
+        "loadMoreGroups": ".directory-load-more > button",
+        "groupCreatedAt": ".group-created > time,.group-profile > div:has(> dt:text-is(\"创建时间\")) > dd",
+        "groupDescriptionView": ".group-profile > div:has(> dt:text-is(\"群简介\")) > dd",
+        "accountRow": "section:has(> .panel-header > h2:text-is(\"账号列表\")) tbody > tr",
+        "logout": "button[aria-label=\"退出登录\"]",
+        "navAccounts": "nav a[href=\"#/accounts\"]",
+        "navSequences": "nav a[href=\"#/sequences\"]",
+        "messageInput": "textarea[aria-label=\"消息内容\"]",
+        "senderAccount": "select[aria-label=\"发送身份\"]",
+        "sendMessage": "form.composer button.primary",
+        "messageRow": "article[data-message-id]",
+        "messageError": ".timeline [role=\"alert\"]",
+        "retryMessages": ".timeline > [role=\"alert\"] button",
+        "loadEarlier": ".timeline-load > button",
+        "runLink": "a.run-list-item",
+        "rawResponseToggle": ".raw-response > summary",
+        "sequenceGroup": ".sequence-form label:has-text(\"目标群组\") > select",
+        "sequence": ".sequence-form label:has-text(\"消息序列\") > select",
+        "sequenceVars": "textarea[aria-describedby=\"vars-help\"]",
+        "sequenceStepVars": "textarea[aria-describedby=\"step-vars-help\"]",
+        "previewSequence": "form.sequence-form > button.primary",
+        "startSequence": "dialog:has(> .modal-heading > h2:text-is(\"预检通过 · 确认发送内容\")) .modal-footer > button.primary",
+        "sequencePreview": "dialog:has(> .modal-heading > h2:text-is(\"预检通过 · 确认发送内容\"))",
+        "sequencePreviewError": "main > [role=\"alert\"]",
+        "sequenceErrorStepIndex": "span:has-text(\"步缺少变量\")",
+        "sequenceErrorKey": "code",
+        "createSequence": ".page-header button:text-is(\"新建序列\")",
+        "sequenceDefinitionInput": "dialog:has(> .modal-heading > h2:text-is(\"新建消息序列\")) textarea",
+        "saveSequenceDefinition": "dialog:has(> .modal-heading > h2:text-is(\"新建消息序列\")) form button.primary",
+        "sequenceDefinitionError": "dialog:has(> .modal-heading > h2:text-is(\"新建消息序列\")) [role=\"alert\"]",
+        "sequenceInputError": "main > [role=\"alert\"]",
+        "sequenceResourceError": "main > [role=\"alert\"]",
+        "attentionConfirm": ".attention-summary button:text-is(\"确认这条更新摘要\")",
+        "attentionRefresh": ".attention-notice > button",
+        "attentionScopeConfirm": ".attention-summary button:text-is(\"确认当前范围更新\")",
+        "attentionScopeSummary": ".attention-summary:has(button:text-is(\"确认当前范围更新\"))",
+        "sequenceResourceRefresh": "main > [role=\"alert\"] button:text-is(\"重试\")"
+      },
+      "adapterConfirmed": true,
+      "headless": false
+    },
+    "release": {
+      "approvedProfile": null,
+      "concurrentUsers": null,
+      "durationSeconds": null,
+      "p95LatencyMs": null,
+      "maxErrorRate": null,
+      "soakSeconds": null,
+      "rpoSeconds": null,
+      "rtoSeconds": null,
+      "monitoringEvidence": null,
+      "backupRestoreEvidence": null,
+      "rollbackEvidence": null,
+      "productionSecurityEvidence": null
+    },
+    "adapters": {
+      "capacityControl": {
+        "url": "http://127.0.0.1:60933",
+        "registryDirectory": "/private/tmp/qa-cap-h1berq",
+        "contractReference": "docs/qa-final-boundaries-followup-20261001.md @ 8e047aea842bfcec64802e4918b52b460b93c48b"
+      },
+      "runtimeObservation": {
+        "url": "http://127.0.0.1:60929",
+        "registryDirectory": "/private/tmp/qa-rte-N0rSqz",
+        "contractReference": "docs/qa-final-boundaries-followup-20261001.md @ 8e047aea842bfcec64802e4918b52b460b93c48b",
+        "diagnostics": {
+          "module": "gateway",
+          "modulesPointer": "/modules",
+          "namePointer": "/name",
+          "statePointer": "/status",
+          "consecutiveFailuresPointer": "/consecutiveFailures",
+          "lastFailureAtPointer": "/lastFailedAt",
+          "lastSuccessAtPointer": "/lastSucceededAt",
+          "currentDurationMsPointer": "/runningForMs",
+          "tickCountPointer": "/ticks",
+          "states": {
+            "failed": "failed",
+            "running": "running",
+            "healthy": "idle"
+          }
+        }
+      }
+    }
+  },
+  "authorization": "[REDACTED]",
+  "executionApproval": {
+    "scope": "developer-preflight",
+    "approvedBy": "project owner via current QA conversation",
+    "approvalReference": "Persistent user authorization: 从现在开始你一直执行到出报告，中间不要中断；合理修复对接、隔离联调及验收；本次固定8e047固定修复候选独立复测。approvedAt records binding time of continuing authority, not a newly requested approval.",
+    "approvedAt": "2026-10-01T15:28:57.401Z",
+    "expiresAt": "2026-10-02T03:28:57.401Z",
+    "suiteId": "qa-8e047-ui-retest",
+    "suiteSha256": "0f39345861c13ae1a1e424423e3acf16664db9abb178cbd372dee6d987ad733e",
+    "targetSha256": "f4b8af5af353520cbf776b42be407f97598c5f032fd4ff04219eb57f38557aab"
+  },
+  "changeReview": {
+    "id": "QA-IMPACT-20261001-STAGE-AND-READ-REPAIR",
+    "fromRevision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+    "reviewedRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+    "state": "assets-prepared-not-executed",
+    "artifact": "requirements/evidence-followup/repair-intake-8e047-20261001.md",
+    "riskReview": "requirements/evidence-followup/repair-intake-8e047-20261001.md",
+    "artifactSha256": "954989913432b1bfe5c8d26bb0837c61e4b0439115b58b56a12abbbbfe6d7691",
+    "riskReviewSha256": "954989913432b1bfe5c8d26bb0837c61e4b0439115b58b56a12abbbbfe6d7691",
+    "candidateRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+    "changesOutsideAcceptanceScope": [],
+    "conclusion": "已做变更影响评审；不代表场景充分性或产品通过"
+  },
+  "originalSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+  "dependencyLockSha256": "7462a4670d1e4036156d1639ebfeaa0cd4276bc918d1b805b3677d862c2cb883",
+  "node": "v24.21.0",
+  "timezone": "Asia/Shanghai"
+}

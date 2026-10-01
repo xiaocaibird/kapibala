@@ -1,0 +1,2560 @@
+{
+  "reviewedAt": "2026-10-01T16:03:18.770350+00:00",
+  "reviewer": "Independent AI QA, completed raw artifacts only",
+  "basis": {
+    "runId": "2026-10-01T15-58-10.937Z-4ed62619",
+    "phase": "developer-preflight",
+    "sutRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+    "qaRevision": "b076790de087406de12336bdfd385a569b014f83",
+    "targetSha256": "f4b8af5af353520cbf776b42be407f97598c5f032fd4ff04219eb57f38557aab",
+    "qaTreeSha256": "3f3a11385b0f8008fc604b543e4ce89a6b687a391f63aa2f4b19c5c5588301bd"
+  },
+  "caseId": "INT-READ-001",
+  "project": "system",
+  "rawStatus": "FAIL",
+  "reviewedStatus": "FAIL",
+  "reason": "同原工具/进程时钟的等待区间为[5000.443875,5000.529792]ms，安全下界严格超过原5000ms；真实锁内发生，未把history COMMIT或下一turn计入工具返回。后续PG查询/ROLLBACK归属缺证不覆盖已证硬FAIL。",
+  "rawEvent": {
+    "id": "INT-READ-001",
+    "status": "FAIL",
+    "reason": "AssertionError: 实际工具状态等待下界超过原始5000ms上限",
+    "durationMs": 7240,
+    "attempt": 0,
+    "startedAt": "2026-10-01T15:58:11.584Z",
+    "completedAt": "2026-10-01T15:58:18.824Z",
+    "project": "system",
+    "evidence": [
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence",
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/error-context.md",
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/trace.zip"
+    ]
+  },
+  "runner": {
+    "runnerStatus": "failed",
+    "runnerErrors": [],
+    "completedAt": "2026-10-01T15:58:20.187Z"
+  },
+  "rawIntegrity": [],
+  "originalRawPreserved": true,
+  "previousAttempt": {
+    "runId": "2026-10-01T15-29-58.209Z-a06abe2a",
+    "qaRevision": "02ea807faed44ebaed8a41741f4056de8e04e87a",
+    "rawStatus": "BLOCKED",
+    "cause": "QA OID numeric/string diagnostic comparison",
+    "review": "reports/followup/20261001-8e047-retest/review/delivery-read-first-attempt-review.json",
+    "notOverwritten": true
+  },
+  "correlation": {
+    "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+    "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+    "clientMsgId": "3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+    "toolUseId": "read-lock-send",
+    "attemptId": "523986d2-09d4-4a0f-8290-2bc9ac6729c3"
+  },
+  "strictToolTiming": [
+    {
+      "toolUseId": "read-lock-send",
+      "attemptId": "523986d2-09d4-4a0f-8290-2bc9ac6729c3",
+      "stepId": "14672e0e-634d-4b73-98ef-d38a1fb6f545:1",
+      "keyReused": false,
+      "clockDomain": "process-performance:46391:fa0a00e2-541f-4d67-a309-3cdb5f5e741e",
+      "applicationPid": 46391,
+      "startMsDecimal": [
+        "1600.735416",
+        "1600.790041"
+      ],
+      "endMsDecimal": [
+        "6601.233916",
+        "6601.265208"
+      ],
+      "elapsedMsDecimal": [
+        "5000.443875",
+        "5000.529792"
+      ],
+      "result": {
+        "code": "SEND_TIMEOUT",
+        "message": "Delivery could not be confirmed within five seconds.",
+        "hint": "Retrying this idempotency key reads the same outbound message."
+      },
+      "errorCode": "SEND_TIMEOUT",
+      "requiredMaximumMs": 5000,
+      "timingStatus": "FAIL",
+      "historyCommitMsDecimal": [
+        "6605.6145",
+        "6605.6145"
+      ],
+      "returnToHistoryMsDecimal": [
+        "4.349292",
+        "4.380584"
+      ],
+      "historySameExecutionAttempt": true,
+      "sourceEvents": {
+        "keyResolved": {
+          "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+          "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+          "stepId": "14672e0e-634d-4b73-98ef-d38a1fb6f545:1",
+          "toolUseId": "read-lock-send",
+          "attemptId": "523986d2-09d4-4a0f-8290-2bc9ac6729c3",
+          "idempotencyKey": "read-lock-same-key",
+          "kind": "send-key-resolved",
+          "clientMsgId": "3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+          "keyReused": false,
+          "clockDomain": "process-performance:46391:fa0a00e2-541f-4d67-a309-3cdb5f5e741e",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            1600.735416,
+            1600.735416
+          ],
+          "applicationPid": 46391,
+          "at": "2026-10-01T15:58:14.676Z",
+          "seq": 9,
+          "sourceSeq": 8,
+          "instancePid": 46367,
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+            "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+            "toolUseId": "all-run-steps"
+          }
+        },
+        "waitStarted": {
+          "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+          "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+          "stepId": "14672e0e-634d-4b73-98ef-d38a1fb6f545:1",
+          "toolUseId": "read-lock-send",
+          "attemptId": "523986d2-09d4-4a0f-8290-2bc9ac6729c3",
+          "idempotencyKey": "read-lock-same-key",
+          "kind": "send-wait-started",
+          "clientMsgId": "3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+          "clockDomain": "process-performance:46391:fa0a00e2-541f-4d67-a309-3cdb5f5e741e",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            1600.790041,
+            1600.790041
+          ],
+          "applicationPid": 46391,
+          "at": "2026-10-01T15:58:14.676Z",
+          "seq": 10,
+          "sourceSeq": 9,
+          "instancePid": 46367,
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+            "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+            "toolUseId": "all-run-steps"
+          }
+        },
+        "ready": {
+          "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+          "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+          "stepId": "14672e0e-634d-4b73-98ef-d38a1fb6f545:1",
+          "toolUseId": "read-lock-send",
+          "attemptId": "523986d2-09d4-4a0f-8290-2bc9ac6729c3",
+          "idempotencyKey": "read-lock-same-key",
+          "kind": "send-wait-result-ready",
+          "clientMsgId": "3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+          "errorCode": "SEND_TIMEOUT",
+          "clockDomain": "process-performance:46391:fa0a00e2-541f-4d67-a309-3cdb5f5e741e",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            6601.233916,
+            6601.233916
+          ],
+          "applicationPid": 46391,
+          "at": "2026-10-01T15:58:19.677Z",
+          "seq": 11,
+          "sourceSeq": 14,
+          "instancePid": 46367,
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+            "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+            "toolUseId": "all-run-steps"
+          }
+        },
+        "returned": {
+          "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+          "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+          "stepId": "14672e0e-634d-4b73-98ef-d38a1fb6f545:1",
+          "toolUseId": "read-lock-send",
+          "attemptId": "523986d2-09d4-4a0f-8290-2bc9ac6729c3",
+          "idempotencyKey": "read-lock-same-key",
+          "kind": "send-tool-result-returned",
+          "clientMsgId": "3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+          "errorCode": "SEND_TIMEOUT",
+          "result": {
+            "code": "SEND_TIMEOUT",
+            "message": "Delivery could not be confirmed within five seconds.",
+            "hint": "Retrying this idempotency key reads the same outbound message."
+          },
+          "clockDomain": "process-performance:46391:fa0a00e2-541f-4d67-a309-3cdb5f5e741e",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            6601.265208,
+            6601.265208
+          ],
+          "applicationPid": 46391,
+          "at": "2026-10-01T15:58:19.677Z",
+          "seq": 12,
+          "sourceSeq": 15,
+          "instancePid": 46367,
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+            "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+            "toolUseId": "all-run-steps"
+          }
+        },
+        "history": {
+          "kind": "send-tool-history-committed",
+          "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+          "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+          "attemptId": "523986d2-09d4-4a0f-8290-2bc9ac6729c3",
+          "stepId": "14672e0e-634d-4b73-98ef-d38a1fb6f545:1",
+          "toolUseId": "read-lock-send",
+          "errorCode": "SEND_TIMEOUT",
+          "result": {
+            "code": "SEND_TIMEOUT",
+            "message": "Delivery could not be confirmed within five seconds.",
+            "hint": "Retrying this idempotency key reads the same outbound message."
+          },
+          "commitBoundary": "outer-commit-confirmed",
+          "clockDomain": "process-performance:46391:fa0a00e2-541f-4d67-a309-3cdb5f5e741e",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            6605.6145,
+            6605.6145
+          ],
+          "applicationPid": 46391,
+          "at": "2026-10-01T15:58:19.681Z",
+          "seq": 13,
+          "sourceSeq": 16,
+          "instancePid": 46367,
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+            "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+            "toolUseId": "all-run-steps"
+          }
+        }
+      },
+      "historyCommitNotUsedAsToolReturn": true
+    },
+    {
+      "toolUseId": "read-lock-reuse",
+      "attemptId": "229b78b5-62e0-4259-92b5-35ed92ac1603",
+      "stepId": "14672e0e-634d-4b73-98ef-d38a1fb6f545:2",
+      "keyReused": true,
+      "clockDomain": "process-performance:46391:fa0a00e2-541f-4d67-a309-3cdb5f5e741e",
+      "applicationPid": 46391,
+      "startMsDecimal": [
+        "6718.966875",
+        "6718.994166"
+      ],
+      "endMsDecimal": [
+        "6720.786291",
+        "6720.815"
+      ],
+      "elapsedMsDecimal": [
+        "1.792125",
+        "1.848125"
+      ],
+      "result": {
+        "clientMsgId": "3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+        "deliveryStatus": "sent"
+      },
+      "errorCode": null,
+      "requiredMaximumMs": 5000,
+      "timingStatus": "PASS",
+      "historyCommitMsDecimal": [
+        "6723.749541",
+        "6723.749541"
+      ],
+      "returnToHistoryMsDecimal": [
+        "2.934541",
+        "2.963250"
+      ],
+      "historySameExecutionAttempt": true,
+      "sourceEvents": {
+        "keyResolved": {
+          "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+          "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+          "stepId": "14672e0e-634d-4b73-98ef-d38a1fb6f545:2",
+          "toolUseId": "read-lock-reuse",
+          "attemptId": "229b78b5-62e0-4259-92b5-35ed92ac1603",
+          "idempotencyKey": "read-lock-same-key",
+          "kind": "send-key-resolved",
+          "clientMsgId": "3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+          "keyReused": true,
+          "clockDomain": "process-performance:46391:fa0a00e2-541f-4d67-a309-3cdb5f5e741e",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            6718.966875,
+            6718.966875
+          ],
+          "applicationPid": 46391,
+          "at": "2026-10-01T15:58:19.795Z",
+          "seq": 18,
+          "sourceSeq": 26,
+          "instancePid": 46367,
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+            "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+            "toolUseId": "all-run-steps"
+          }
+        },
+        "waitStarted": {
+          "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+          "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+          "stepId": "14672e0e-634d-4b73-98ef-d38a1fb6f545:2",
+          "toolUseId": "read-lock-reuse",
+          "attemptId": "229b78b5-62e0-4259-92b5-35ed92ac1603",
+          "idempotencyKey": "read-lock-same-key",
+          "kind": "send-wait-started",
+          "clientMsgId": "3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+          "clockDomain": "process-performance:46391:fa0a00e2-541f-4d67-a309-3cdb5f5e741e",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            6718.994166,
+            6718.994166
+          ],
+          "applicationPid": 46391,
+          "at": "2026-10-01T15:58:19.795Z",
+          "seq": 19,
+          "sourceSeq": 27,
+          "instancePid": 46367,
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+            "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+            "toolUseId": "all-run-steps"
+          }
+        },
+        "ready": {
+          "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+          "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+          "stepId": "14672e0e-634d-4b73-98ef-d38a1fb6f545:2",
+          "toolUseId": "read-lock-reuse",
+          "attemptId": "229b78b5-62e0-4259-92b5-35ed92ac1603",
+          "idempotencyKey": "read-lock-same-key",
+          "kind": "send-wait-result-ready",
+          "clientMsgId": "3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+          "errorCode": null,
+          "clockDomain": "process-performance:46391:fa0a00e2-541f-4d67-a309-3cdb5f5e741e",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            6720.786291,
+            6720.786291
+          ],
+          "applicationPid": 46391,
+          "at": "2026-10-01T15:58:19.796Z",
+          "seq": 20,
+          "sourceSeq": 28,
+          "instancePid": 46367,
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+            "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+            "toolUseId": "all-run-steps"
+          }
+        },
+        "returned": {
+          "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+          "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+          "stepId": "14672e0e-634d-4b73-98ef-d38a1fb6f545:2",
+          "toolUseId": "read-lock-reuse",
+          "attemptId": "229b78b5-62e0-4259-92b5-35ed92ac1603",
+          "idempotencyKey": "read-lock-same-key",
+          "kind": "send-tool-result-returned",
+          "clientMsgId": "3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+          "errorCode": null,
+          "result": {
+            "clientMsgId": "3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+            "deliveryStatus": "sent"
+          },
+          "clockDomain": "process-performance:46391:fa0a00e2-541f-4d67-a309-3cdb5f5e741e",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            6720.815,
+            6720.815
+          ],
+          "applicationPid": 46391,
+          "at": "2026-10-01T15:58:19.796Z",
+          "seq": 21,
+          "sourceSeq": 29,
+          "instancePid": 46367,
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+            "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+            "toolUseId": "all-run-steps"
+          }
+        },
+        "history": {
+          "kind": "send-tool-history-committed",
+          "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+          "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+          "attemptId": "229b78b5-62e0-4259-92b5-35ed92ac1603",
+          "stepId": "14672e0e-634d-4b73-98ef-d38a1fb6f545:2",
+          "toolUseId": "read-lock-reuse",
+          "errorCode": null,
+          "result": {
+            "clientMsgId": "3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+            "deliveryStatus": "sent"
+          },
+          "commitBoundary": "outer-commit-confirmed",
+          "clockDomain": "process-performance:46391:fa0a00e2-541f-4d67-a309-3cdb5f5e741e",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            6723.749541,
+            6723.749541
+          ],
+          "applicationPid": 46391,
+          "at": "2026-10-01T15:58:19.799Z",
+          "seq": 22,
+          "sourceSeq": 30,
+          "instancePid": 46367,
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+            "runId": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+            "toolUseId": "all-run-steps"
+          }
+        }
+      },
+      "historyCommitNotUsedAsToolReturn": true
+    }
+  ],
+  "pgFault": {
+    "container": {
+      "id": "3d9ee663bedb8c271c3ea5b170a6d320d877e69dba414532336e8a36a1b2cacc",
+      "name": "qa-acceptance-f50f8f80-1ea9-4ba5-b935-e77b556780b0",
+      "port": 54949,
+      "labels": {
+        "qa.owner": "f50f8f80-1ea9-4ba5-b935-e77b556780b0"
+      },
+      "state": {
+        "Status": "running",
+        "Running": true,
+        "Paused": false,
+        "Restarting": false,
+        "OOMKilled": false,
+        "Dead": false,
+        "Pid": 27775,
+        "ExitCode": 0,
+        "Error": "",
+        "StartedAt": "2026-10-01T15:58:11.72654801Z",
+        "FinishedAt": "0001-01-01T00:00:00Z"
+      },
+      "network": {
+        "SandboxID": "faf84b6eba5ab3b4b834acc1dcf002f8e3c451c4f688084c711b5076c7b97eb6",
+        "SandboxKey": "/var/run/docker/netns/faf84b6eba5a",
+        "Ports": {
+          "5432/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "54949"
+            }
+          ]
+        },
+        "Networks": {
+          "bridge": {
+            "IPAMConfig": null,
+            "Links": null,
+            "Aliases": null,
+            "DriverOpts": null,
+            "GwPriority": 0,
+            "NetworkID": "05d67f28baedbefc4bd9bb28b7db59ca58f0cc94c05d6e42079498700373c793",
+            "EndpointID": "35eda58a18896a933dae54e58463bf983fb83fe5a1157160640c50695322cc6e",
+            "Gateway": "172.17.0.1",
+            "IPAddress": "172.17.0.2",
+            "MacAddress": "8a:c3:d0:f1:19:74",
+            "IPPrefixLen": 16,
+            "IPv6Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "DNSNames": null
+          }
+        }
+      },
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "bb0811928a165b27c2aa47629d94e2389325acbe188ea0e6bf22e3f9e8995d57",
+          "Source": "/var/lib/docker/volumes/bb0811928a165b27c2aa47629d94e2389325acbe188ea0e6bf22e3f9e8995d57/_data",
+          "Destination": "/var/lib/postgresql/data",
+          "Driver": "local",
+          "Mode": "",
+          "RW": true,
+          "Propagation": ""
+        }
+      ]
+    },
+    "database": "qa_8334bfd4143c4424bcf8c2b7",
+    "lockOwner": {
+      "database": "qa_8334bfd4143c4424bcf8c2b7",
+      "lockerPid": 69,
+      "lockerStart": "2026-10-01 15:58:13.571831+00",
+      "relationOid": 16447
+    },
+    "lockHeld": {
+      "at": "2026-10-01T15:58:14.757Z",
+      "parentMs": 3355.879542
+    },
+    "qaLockerRollback": {
+      "beforeMs": 8310.533667,
+      "afterMs": 8311.000208,
+      "at": "2026-10-01T15:58:19.712Z"
+    },
+    "samples": 197,
+    "samplesWithActualBlockedReader": 195,
+    "distinctQueryInstances": 34,
+    "distinctBackendPids": [
+      68,
+      71,
+      72
+    ],
+    "queryInstancesPerBackend": {
+      "68": 32,
+      "72": 1,
+      "71": 1
+    },
+    "allSamplesConfirmOwnedExclusiveLock": true,
+    "firstSampleWindowMs": [
+      3355.927833,
+      3359.010375
+    ],
+    "lastSampleWindowMs": [
+      8308.807458,
+      8310.373875
+    ],
+    "lastObservedCandidates": {
+      "actuallyReturned": true,
+      "candidates": [
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:14.780461+00",
+            "query_start": "2026-10-01 15:58:14.781381+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 72,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:14.789529+00",
+            "xact_start": "2026-10-01 15:58:14.793142+00",
+            "query_start": "2026-10-01 15:58:14.793142+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT DISTINCT account_id FROM messages WHERE account_id IS NOT NULL AND delivery_status IN ('queued','accepted','unknown')",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "same-query-still-active"
+        },
+        {
+          "candidate": {
+            "pid": 71,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:14.789428+00",
+            "xact_start": "2026-10-01 15:58:14.815591+00",
+            "query_start": "2026-10-01 15:58:14.815591+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT DISTINCT m.group_id FROM messages m WHERE NOT m.is_own AND NOT EXISTS(SELECT 1 FROM agent_pending p WHERE p.message_id=m.id)",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "same-query-still-active"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:14.936641+00",
+            "query_start": "2026-10-01 15:58:14.937644+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:15.090017+00",
+            "query_start": "2026-10-01 15:58:15.091126+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:15.249625+00",
+            "query_start": "2026-10-01 15:58:15.250818+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:15.402905+00",
+            "query_start": "2026-10-01 15:58:15.404397+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:15.556746+00",
+            "query_start": "2026-10-01 15:58:15.557761+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:15.711191+00",
+            "query_start": "2026-10-01 15:58:15.712439+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:15.866239+00",
+            "query_start": "2026-10-01 15:58:15.867411+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:16.020154+00",
+            "query_start": "2026-10-01 15:58:16.021578+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:16.179139+00",
+            "query_start": "2026-10-01 15:58:16.181128+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:16.334643+00",
+            "query_start": "2026-10-01 15:58:16.336465+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:16.489517+00",
+            "query_start": "2026-10-01 15:58:16.49109+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:16.648071+00",
+            "query_start": "2026-10-01 15:58:16.649369+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:16.805868+00",
+            "query_start": "2026-10-01 15:58:16.807054+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:16.961204+00",
+            "query_start": "2026-10-01 15:58:16.962767+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:17.114473+00",
+            "query_start": "2026-10-01 15:58:17.116452+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:17.269743+00",
+            "query_start": "2026-10-01 15:58:17.270936+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:17.424648+00",
+            "query_start": "2026-10-01 15:58:17.42576+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:17.579367+00",
+            "query_start": "2026-10-01 15:58:17.581451+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:17.733687+00",
+            "query_start": "2026-10-01 15:58:17.734652+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:17.88696+00",
+            "query_start": "2026-10-01 15:58:17.88796+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:18.039433+00",
+            "query_start": "2026-10-01 15:58:18.040637+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:18.193669+00",
+            "query_start": "2026-10-01 15:58:18.194903+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:18.347076+00",
+            "query_start": "2026-10-01 15:58:18.348081+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:18.502237+00",
+            "query_start": "2026-10-01 15:58:18.503558+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:18.657343+00",
+            "query_start": "2026-10-01 15:58:18.658551+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:18.813155+00",
+            "query_start": "2026-10-01 15:58:18.81468+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:18.967968+00",
+            "query_start": "2026-10-01 15:58:18.969402+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:19.122754+00",
+            "query_start": "2026-10-01 15:58:19.124288+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:19.277177+00",
+            "query_start": "2026-10-01 15:58:19.278503+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:19.433889+00",
+            "query_start": "2026-10-01 15:58:19.434883+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        },
+        {
+          "candidate": {
+            "pid": 68,
+            "datname": "qa_8334bfd4143c4424bcf8c2b7",
+            "usename": "qa",
+            "application_name": "",
+            "backend_start": "2026-10-01 15:58:13.483466+00",
+            "xact_start": "2026-10-01 15:58:19.589069+00",
+            "query_start": "2026-10-01 15:58:19.590067+00",
+            "state": "active",
+            "wait_event_type": "Lock",
+            "wait_event": "relation",
+            "query": "SELECT * FROM messages WHERE client_msg_id=$1",
+            "blockers": [
+              69
+            ],
+            "relation_locks": [
+              {
+                "relation": 16447,
+                "mode": "AccessShareLock",
+                "granted": false
+              }
+            ]
+          },
+          "diagnostic": "idle-without-transaction"
+        }
+      ]
+    },
+    "lastBackend68": {
+      "pid": 68,
+      "datname": "qa_8334bfd4143c4424bcf8c2b7",
+      "usename": "qa",
+      "application_name": "",
+      "backend_start": "2026-10-01 15:58:13.483466+00",
+      "xact_start": null,
+      "query_start": "2026-10-01 15:58:19.685315+00",
+      "state": "idle",
+      "wait_event_type": "Client",
+      "wait_event": "ClientRead",
+      "query": "UPDATE agent_runs SET inflight_turn=true WHERE id=$1",
+      "blockers": [],
+      "relation_locks": []
+    },
+    "attribution": "query text/PG identity proves a real table-read wait; no supplied mapping to the tool query execution attempt, so backend68 is a candidate, not a proved tool-query identity. Backend71/72 remain blocked readers, not proved abandoned waitForDelivery queries."
+  },
+  "publicRecovery": {
+    "sentObservation": {
+      "complete": true,
+      "last": {
+        "items": [
+          {
+            "id": "1e6c5e68-acc1-4847-a1a5-00e28ee520c4",
+            "msgId": "gateway-message-2",
+            "clientMsgId": "3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+            "senderPlatformUserId": "platform-account-2",
+            "isOwn": true,
+            "text": "independent QA delivery read under real PG lock",
+            "sentAt": "2026-10-01T15:58:16.198Z",
+            "deliveryStatus": "sent",
+            "failCode": null
+          },
+          {
+            "id": "560f3110-887b-47ae-9c44-2b5531327567",
+            "msgId": "gateway-message-1",
+            "clientMsgId": null,
+            "senderPlatformUserId": "read-lock-external",
+            "isOwn": false,
+            "text": "start delivery read check",
+            "sentAt": "2026-10-01T15:58:14.511Z",
+            "deliveryStatus": null,
+            "failCode": null
+          }
+        ],
+        "nextCursor": null,
+        "snapshotId": "b9e6e01e-7561-4b01-ab04-549d67635f4e"
+      },
+      "samples": 2,
+      "elapsedMs": 65.23825000000033
+    },
+    "finalRun": {
+      "complete": true,
+      "last": {
+        "id": "14672e0e-634d-4b73-98ef-d38a1fb6f545",
+        "groupId": "660e3e54-90a0-461b-ba88-16cd4af999d4",
+        "status": "finished",
+        "endReason": "final",
+        "summary": "done",
+        "recoveryNote": null,
+        "steps": [
+          {
+            "ordinal": 1,
+            "kind": "tool_use",
+            "toolUseId": "read-lock-send",
+            "name": "send_message",
+            "input": {
+              "text": "independent QA delivery read under real PG lock",
+              "idempotency_key": "read-lock-same-key"
+            },
+            "resultSummary": "{\"code\":\"SEND_TIMEOUT\",\"message\":\"Delivery could not be confirmed within five seconds.\",\"hint\":\"Retrying this idempotency key reads the same outbound message.\"}",
+            "isError": true,
+            "errorCode": "SEND_TIMEOUT",
+            "auditVerdict": "pass",
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"read-lock-send\",\"name\":\"send_message\",\"input\":{\"text\":\"independent QA delivery read under real PG lock\",\"idempotency_key\":\"read-lock-same-key\"}}]}"
+          },
+          {
+            "ordinal": 2,
+            "kind": "tool_use",
+            "toolUseId": "read-lock-reuse",
+            "name": "send_message",
+            "input": {
+              "text": "independent QA delivery read under real PG lock",
+              "idempotency_key": "read-lock-same-key"
+            },
+            "resultSummary": "{\"clientMsgId\":\"3f3d3c3d-4677-4465-89d8-305e924ac8b0\",\"deliveryStatus\":\"sent\"}",
+            "isError": false,
+            "errorCode": null,
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"read-lock-reuse\",\"name\":\"send_message\",\"input\":{\"text\":\"independent QA delivery read under real PG lock\",\"idempotency_key\":\"read-lock-same-key\"}}]}"
+          },
+          {
+            "ordinal": 3,
+            "kind": "final",
+            "toolUseId": null,
+            "name": null,
+            "input": null,
+            "resultSummary": "\"done\"",
+            "isError": false,
+            "errorCode": null,
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"end_turn\",\"content\":[{\"type\":\"text\",\"text\":\"done\"}]}"
+          }
+        ]
+      },
+      "samples": 2,
+      "elapsedMs": 59.06291699999929
+    },
+    "sameOriginalClientMsgId": true,
+    "auditCount": 1,
+    "sendRequestCount": 1,
+    "actualSendEffectCount": 1,
+    "persistedToolHistoriesSameAttempt": true,
+    "originalSend": {
+      "id": 15,
+      "at": "2026-10-01T15:58:14.696Z",
+      "method": "POST",
+      "path": "/groups/gateway-group-1/send",
+      "body": {
+        "accountId": "account-2",
+        "clientMsgId": "3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+        "text": "independent QA delivery read under real PG lock"
+      },
+      "responsePreparedAt": "2026-10-01T15:58:14.697Z",
+      "preparedResponseStatus": 504,
+      "responseStatus": 504,
+      "completedAt": "2026-10-01T15:58:14.760Z",
+      "responseFinishedAt": "2026-10-01T15:58:14.761Z",
+      "responseClosedAt": "2026-10-01T15:58:14.761Z",
+      "responseClosedBeforeFinish": false
+    },
+    "actualSendEffect": {
+      "at": "2026-10-01T15:58:16.198Z",
+      "kind": "send",
+      "accountId": "account-2",
+      "groupId": "gateway-group-1",
+      "clientMsgId": "3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+      "msgId": "gateway-message-2"
+    },
+    "confirmationQueries": [
+      {
+        "id": 16,
+        "at": "2026-10-01T15:58:19.727Z",
+        "method": "GET",
+        "path": "/groups/gateway-group-1/messages/by-client-id/3f3d3c3d-4677-4465-89d8-305e924ac8b0",
+        "body": null,
+        "responsePreparedAt": "2026-10-01T15:58:19.727Z",
+        "preparedResponseStatus": 200,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T15:58:19.727Z",
+        "responseFinishedAt": "2026-10-01T15:58:19.727Z",
+        "responseClosedAt": "2026-10-01T15:58:19.727Z",
+        "responseClosedBeforeFinish": false
+      }
+    ],
+    "qualification": "No actual 503 confirmation-query response is recorded before release; unavailable was configured, but table lock blocked other readers. Do not claim a 503 query branch was exercised."
+  },
+  "causalGaps": [
+    {
+      "status": "BLOCKED",
+      "obligation": "exact tool-to-PG-query/transaction attribution, server cancellation and serial SUT ROLLBACK",
+      "reason": "PG真实锁链已取证但公开tool-wait未关联backend PID/backend_start/query attempt；不能唯一归属waitForDelivery，也不能确认其服务端取消与串行ROLLBACK。缺口须以真实只读观测契约补齐，不能伪造事件",
+      "claimedPass": false,
+      "idleSampleIsNotCompleteRollbackProof": true
+    }
+  ],
+  "cleanup": {
+    "qaClientEnd": [
+      {
+        "role": "locker",
+        "endCompleted": true,
+        "at": "2026-10-01T15:58:19.845Z"
+      },
+      {
+        "role": "observer",
+        "endCompleted": true,
+        "at": "2026-10-01T15:58:19.847Z"
+      }
+    ],
+    "pgErrors": [],
+    "fixtureCleanup": {
+      "completedAt": "2026-10-01T15:58:19.942Z",
+      "failures": []
+    },
+    "qaLockerRollbackObserved": true,
+    "sutRollbackProven": false,
+    "containerVolumeDeletionIndependentlyReobservedByThisReview": false,
+    "qualification": "File-only review confirms QA locker rollback/end and fixture cleanup failure list; no new Docker or PG request made. The idle-in-transaction locker is QA-owned, not a SUT leak."
+  },
+  "distinctProductViolationCountInThisCase": 1,
+  "repeatObservationsOfSameViolation": [
+    {
+      "stage": "strict original tool window",
+      "error": "AssertionError [ERR_ASSERTION]: 实际工具状态等待下界超过原始5000ms上限"
+    },
+    {
+      "stage": "original tool after release timing",
+      "error": "AssertionError [ERR_ASSERTION]: 实际工具状态等待下界超过原始5000ms上限"
+    },
+    {
+      "stage": "read-lock-send timing",
+      "error": "AssertionError [ERR_ASSERTION]: 实际工具状态等待下界超过原始5000ms上限"
+    }
+  ],
+  "scope": "Independent registered singleton retest, not new whole-business acceptance or release readiness",
+  "frozenSourceBindings": [
+    {
+      "path": "tests/system/delivery-read-boundaries.spec.ts",
+      "qaRevision": "b076790de087406de12336bdfd385a569b014f83",
+      "sha256": "fda948b8390525d4b99e7748e1ceb21fffce240255dff59840e867a0256bf109",
+      "bytes": 20333
+    },
+    {
+      "path": "tests/support/delivery-read-observation.ts",
+      "qaRevision": "b076790de087406de12336bdfd385a569b014f83",
+      "sha256": "f17fe2cea098c8b36b03343a59053be75cfd7f7a293eeafde6792f2ab33984b7",
+      "bytes": 4000
+    },
+    {
+      "path": "harness/lifecycle-observation.ts",
+      "qaRevision": "b076790de087406de12336bdfd385a569b014f83",
+      "sha256": "dad97f04a9016e82bdd1ca5e38cc46ee4d9b7110afe038c285e0dbb8604892c8",
+      "bytes": 20622
+    },
+    {
+      "path": "harness/runtime-observation.ts",
+      "qaRevision": "b076790de087406de12336bdfd385a569b014f83",
+      "sha256": "d45cd5e0dada4f7a2757a62c1e4e3f4e240e7079fe9b7ae624a39f528b53583f",
+      "bytes": 24672
+    },
+    {
+      "path": "cases/delivery-read-boundaries.json",
+      "qaRevision": "b076790de087406de12336bdfd385a569b014f83",
+      "sha256": "747fb9fe8ea80bb1a765745bdd93bae3f63e17164eea342dced70320a59a00a2",
+      "bytes": 5149
+    }
+  ],
+  "sourceIndex": {
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/manifest.json": {
+      "sha256": "22850111014f3ed4d65be981aad96f3ddf2070c6ece69870cfc51f50ceb66349",
+      "bytes": 106864
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/events.json": {
+      "sha256": "2468b70a15e2e14e38716d88d9f2f179b3ccdbfd5e2da666cfe09ace5d3beae1",
+      "bytes": 1013
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/results.json": {
+      "sha256": "1a87dba25fd5e20696f3b3964e2de78ed5c1adfd6eb6a02ff042a9d99b840eae",
+      "bytes": 244560
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/runner-summary.json": {
+      "sha256": "a36274f3121b77e09128830fea6d2a52445279b9d1efd496b97152bb98f8c458",
+      "bytes": 97
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/delivery-read-raw-database-observation.json": {
+      "sha256": "5afdf828abe2170522420c8720da1dd7718275a0e8e741a2ca68a75b25f2810d",
+      "bytes": 2164949
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/delivery-read-before-lock.json": {
+      "sha256": "38e27ca31f800f43c804aa2f6c12f423aecedff24f8b488deb4be0a8accda627",
+      "bytes": 9852
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/delivery-read-while-locked.json": {
+      "sha256": "794fcbb103e127312085817b28d6528fdedd658649760df853afa6e063a81fcb",
+      "bytes": 14961
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/delivery-read-after-unlock-messages.json": {
+      "sha256": "6d0be4306fd05eb93e806a3e4ad4df04346083e1769b07336d8f5120e4e4a0c3",
+      "bytes": 976
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/delivery-read-final-public-run.json": {
+      "sha256": "f222cf14f37606fb76730f0723ad6e9728cbb3d09cf33715da839fde8a935b79",
+      "bytes": 2272
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/delivery-read-final-tool-witness.json": {
+      "sha256": "35387aa5db60bf01787741ef54d43b4da688894ec15da83b509800e14c88659b",
+      "bytes": 25268
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/external-facts.json": {
+      "sha256": "8c4dc5ff0a00ad059ac2328225e80f5cadd54b190b26d8fe72a2f441bcc235ec",
+      "bytes": 35647
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/cleanup.json": {
+      "sha256": "c6d40d01a8f67cff79c00822dccdf1cf982e9a7acbdf273b6d6fa762b14c67fa",
+      "bytes": 65
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/environment.json": {
+      "sha256": "7bd9cee0f38797aca1939a9b3f585f825b1be5c579658c2dce356f27a426335a",
+      "bytes": 1165
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/.last-run.json": {
+      "sha256": "232ebb7482f8ec787839a74108661ea52a3bbd7356283fe8eda66cc61d9f2a1d",
+      "bytes": 96
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/error-context.md": {
+      "sha256": "1d732ed406d3a8a1ee315fd17105321f9ba6e99dcd5de9306dccac82acbdddf9",
+      "bytes": 10537
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/api.ndjson": {
+      "sha256": "91b9ccd5c1a2e105f30e7db5a20b59c5f004bf452fb8cf69b1ee8b192f826af5",
+      "bytes": 47942
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/delivery-read-original-tool-after-release.json": {
+      "sha256": "2740e3e0f60402b0435ea12dc46094280d54764f9ce26de0ac53fe6a39eff109",
+      "bytes": 14061
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/migration.log": {
+      "sha256": "9dd90bf24dd3134a570752f5c060fdf377fb2ac09c36d5cac3839e9c40ee3c76",
+      "bytes": 19
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-00b6131a-53ca-4b10-927b-f7f3d52d9e9f.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-03e0dc4c-732d-48e8-a145-c5e4dca9f486.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-0626d245-0f88-4002-9300-c832db37cd73.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-064ce2c5-b421-4cc2-9841-2e432bf24844.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-08331013-c963-4374-8eb7-35725f002ced.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-0c45954e-c1da-4d8e-9abe-508f15efe658.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-0cef4502-be98-4d31-ac86-7b910bffc485.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-0cfc8121-9616-4fce-8810-88411922e12f.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-0d862c6e-a978-44f5-82f1-65eed4a15f36.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-0da0059f-fbac-4591-9aef-696fb17cb32b.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-0e161084-67f8-4d7f-a9a5-fd2550ff2495.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-1256c6ae-7304-43a7-92b1-27bff391884d.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-1352d1fb-5f7d-4611-b32c-272a49d5f107.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-13973116-32a9-479c-a649-8197da748c39.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-13b8d66a-8d01-4b82-9d57-cb6b85fd50c7.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-15939610-2c65-4c60-9f7e-8b8a4f1a7d65.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-1636cc6b-f939-4603-b96f-6ce6c10db796.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-17475923-b1ef-4f9e-bcff-a75de4c5f237.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-1927dd78-941f-4793-bfc6-05db116d4562.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-19d213af-dee5-45d0-b621-89b5d89fa32a.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-1adb6734-0ffa-4513-b683-528a392de244.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-1adc92a1-1629-457e-988d-b15c6402bb4d.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-1c01d60e-a538-4501-b54f-5f825ae5effb.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-1d7da693-c0bd-4bb4-8af8-ab0648cb3ae3.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-1e45ecea-2368-4d00-930b-544d3a19afa4.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-2264c8ca-a60d-4e08-a355-0722a03ab832.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-23ab3bb6-5b48-47a6-9b0d-449b7cd4e8e9.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-23d5af86-a796-4d5c-96a2-bc95865023a8.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-243aa71c-0911-428c-a6f7-5a4cf10b5274.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-24f0fe07-8fc1-47e1-93dd-89136e08bdff.json": {
+      "sha256": "17e721c68d460a216accd2f8a5c126c29caf28319e02984890df54dae257fd4b",
+      "bytes": 15007
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-2658c0c6-aef9-49b7-be27-5d638b1c3d09.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-266e895c-2c30-4669-a071-dc5e2824baf3.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-27e6bce8-8535-49bd-b1b6-f34a85bc78a6.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-28746b14-ef0a-4e6b-9768-e8848895a1ec.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-29f1b337-e9e7-4ea4-8530-dcccb99c2a61.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-2cb9c887-b2b8-4c14-a56b-48d7c9497b03.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-2e35e149-6a60-4031-8581-cd634017b756.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-2e970bf7-bd26-4821-8f2b-cfa4a505be12.json": {
+      "sha256": "f072861032734d1b3a4523d0661b142f627ab6efd6ee158bd2517863135ad661",
+      "bytes": 26870
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-2ed035ab-f3b4-4a4e-9be2-5f2328da8cb3.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-2ef4f788-8fce-4897-8b60-6ed491a466a4.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-3017dc33-6679-43e9-aa5b-9292e8340637.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-326b326c-66b9-4c59-bd33-25a8be18f77e.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-32d71fd9-f4ed-4c09-8fdd-355701121d5f.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-331c43b1-ec14-4bf4-9fd8-0c4f1180e206.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-33fc3768-fcb6-4e22-9c89-b216383c6a5c.json": {
+      "sha256": "17e721c68d460a216accd2f8a5c126c29caf28319e02984890df54dae257fd4b",
+      "bytes": 15007
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-3828e738-0a96-4340-b38f-eb7fe5310f00.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-383514b8-71c8-47b0-b59d-0b14067b32c4.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-39454b43-0301-4e69-861a-c75f41fec6ce.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-39afec39-4261-4cae-913c-512903d5ba10.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-3d8c8fe4-f988-4abe-99e4-4acef37f3d6b.json": {
+      "sha256": "f24cfa846ca32ea1b5924c9348be7dae34f5a9315ec63ee5e9f9c9c95fb1fce4",
+      "bytes": 26876
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-3ff31b4e-098c-419e-9a87-ea04e6849052.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-40c3061c-3a44-4a66-bdab-2007fd9b111d.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-4219fc32-1bf6-4fa3-b650-785f62493562.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-45628125-6257-4b13-aebf-9c3b2f15a715.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-45f4fef4-0461-4db3-a35d-ac70075c149b.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-46c8ed5b-c03f-4344-a7a3-4909e7d75794.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-4870c108-3b35-4966-9e67-d73f3334ba26.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-48a855f7-34d8-4a05-a43f-0ce74818b626.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-49243951-e54e-4838-b4e3-6a54d399e262.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-4931c5a2-d300-4f14-aa68-350d9ef1dd08.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-4a4a8fcf-4424-4050-88a0-74aad62c0bac.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-4bea879f-f0bc-4cee-b11d-9685b0a96ce3.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-4cd053cd-3a80-464f-859d-7fc398c9e696.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-4cd26137-b74a-4a26-b66e-c453b21eddb4.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-4cebfb98-886e-4321-b61d-f48341233c52.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-4d0b7195-229d-4270-9e87-54d145b90201.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-4f88ff57-9bfb-42bc-a66c-4c511a0595c7.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-528aa2aa-d37b-42ac-affc-a8bee75139da.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-554d80ca-690e-4df5-b7d2-c328c3551c2a.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-55f97303-5d7f-4297-a18b-b881076bb843.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-5b090ff8-e214-47e1-b005-e4d58855f4a2.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-5c4da853-5d36-4b77-8d98-d1b694a94a16.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-5c517f8c-3945-4865-96c3-ecb756f6e2c0.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-5d8c135d-df4e-4ca6-9944-4acdb8dbb26f.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-5e67a2f5-77c4-4fe4-b6f6-ea07780149e1.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-5f9dbc84-e0d5-4e94-b918-0209622bfd18.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-632f5948-1602-4cef-8445-92dc07824387.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-6408bf6f-a728-4c56-a003-0bed51019bc0.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-653753b3-5096-404b-85ed-4bbde3a4e6fc.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-66483ed7-b9ad-4838-9866-af04fb541512.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-66594f44-4010-475e-be4e-21c5abcf8e1c.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-677c4be7-7b93-473c-96b5-e4fe56606c12.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-67aa1dd2-6d2b-45bc-a882-480268e91b05.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-67ff43af-c8bd-4558-bb5f-41c73f8ec923.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-68bd539a-80c3-42a3-8782-7cfa96938849.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-68cd7aec-6f15-4704-b8e5-36a027e721ce.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-6a336bcf-ae1a-4963-a958-44eadfc053ef.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-6a52cb16-7b73-410d-ad1f-558f1cd203bc.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-6c43874f-3455-47e7-80eb-3484a02e8009.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-6e8dc20e-a251-49f5-a1eb-e752a071e550.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-733cf2f4-f46c-4838-b6e3-bf656fc60a77.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-740915f3-36bd-45ba-91d2-bcf58f7720a4.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-74767589-bf8e-4a40-85a6-55ceaec142ba.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-74e923d5-f6d2-4f99-a585-6f263c4c1d07.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-75c69be6-1740-4da7-ae3c-f92dfb254cdb.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-763b1b27-ee08-4fb9-8609-7fe7df78eae1.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-764f2b6a-3d79-4e5c-873c-d7397dfbd676.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-76709379-e9cc-448b-a5a7-c1d49b586334.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-7a885cb0-a636-4960-93e4-b153b6d4067b.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-7be3f4b5-9dfa-4c1d-9580-6d99482e6e51.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-7d655a5e-4c7b-4592-9a3b-8f140cb6c9bc.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-7fc345e0-0f5b-4af4-839e-5f81ad9a626d.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-822e15d8-6c3d-4f31-8447-f67f98db3f0d.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-82e7d6cf-646a-4ea0-80e1-2168a971dad2.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-855705f9-596d-457f-932a-942c87d4b98f.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-85a1f0cb-7044-4d20-9c3f-e171b7294c88.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-85bd6d03-8545-4f30-9f13-79dd50930a59.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-86782266-d5bb-408c-a713-b949cdf307f9.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-86a3fb3c-173a-40ee-92af-678608aa7ea2.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-880c4603-909e-48b4-af7b-0943b5b8f1c3.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-892b13eb-96cc-4d81-95aa-992bb2b21507.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-895037b5-5e77-4e0f-9b8f-ed75258c4f12.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-8ab1e438-a6f2-405f-ab1a-7f411b1bfda1.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-8bc8a129-7ee9-4f1c-9573-09185c329a89.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-8be44861-c76e-4d60-aaa5-dea38e585625.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-8cd4f8a9-16e6-40cd-a386-714676b6b3e0.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-8eb43b91-fca7-4271-8ed2-0ff15946303e.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-8ec9c71b-c4f1-4a99-81d5-799b9d16216b.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-8f6ca48c-3980-4985-a76f-a7ee69d22e7d.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-938284de-c515-4c56-a48a-04055e8f4475.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-999316a4-5c00-4a6d-9bcd-331b22ec74be.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-99f49dfb-1aad-41f5-96f0-608b5dd45d05.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-9b352d9b-c161-44ec-bbcf-db2cf5ebe61d.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-9f689415-e5c4-4d49-8af4-c69000126614.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-a195ef00-38fa-4613-bd75-05a21af93d91.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-a2979744-9c6d-4018-9c60-09f8d1cfa70e.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-a32b786c-aa29-4e9e-9bdb-5263678d6915.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-a8f97585-dc88-4fab-a342-ef95245c1a4e.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-ac218007-3a91-4e7f-ad55-92cc9e84171b.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-ad89fda9-b74b-4882-95b5-9b8bbbc4d004.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-afbabbba-9c05-49bf-9fd7-c3c32e2405f5.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-afbddc2f-e566-48a0-9827-6f3659de2176.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-b0536739-fafa-439b-b1e9-fc9aebbb72e2.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-b23d0002-375e-4fb0-bc95-8dd096964586.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-b2928c49-4e26-4c73-b424-255eb2163498.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-b293374e-7023-4515-ac10-bcc70daea728.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-b8d44662-c2f8-47f1-aa3e-da04c0e7606f.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-bbb3b24d-e2dc-458d-87d0-591884ad2254.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-bc343612-68cb-429c-9faf-0fab64193d23.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-bc9c4dea-19d3-4e53-8747-1a4c803826b8.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-bcb43fc0-1991-4407-9e7c-675f833023d5.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-be1a4670-339a-475c-9f68-3cdf6a55ee1e.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-bf9d37b8-6bbd-484c-ad86-83544eff5179.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-bfb5ac29-56f8-4b0b-b90f-a844e7ff666c.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-c0151728-49ff-4fe5-b638-aad76d66aea4.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-c0583ef4-5787-441d-8296-71168d6fd611.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-c0a90053-f1de-4045-9b67-56cd6b276e59.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-c360b327-a593-4a4c-81a4-be46239936eb.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-c6a152f9-1736-4c5a-b9cb-12be3c1cceb5.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-c6fe861a-2b2a-48d2-85d5-9d486898ca40.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-c75c87bb-1597-4f24-80e4-50078fd7ceb0.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-c7a82fb8-f17b-4b4a-92f6-60794f8922ef.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-c84a94f9-d943-497c-9717-5b3b68b036b9.json": {
+      "sha256": "dc9656e3d01af6e940664ff5ca3161a66131f233ce84d44bca79454aa3d59e22",
+      "bytes": 688
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-c8aa682c-a68f-4d64-b86c-84abc182f541.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-c9bd4f74-deec-4de5-9eb1-8b2930522aae.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-cab8105a-b202-484a-b81c-eb32df412db0.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-cc4c5227-3e8d-45ff-9db0-1931850460b8.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-cc8324c7-7d95-4619-98c2-ae1dae9c45d5.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-cd14ad57-faf5-40fd-a26b-b8bc94f909a7.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-ce7e67d7-16b5-45c8-9e27-eaee8774baa6.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-cf19f1f9-7741-4eaf-ad9f-218c86cadf5a.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-cf6ed8d0-b0b0-4fd1-9cd0-11f557c4104b.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-cf86b63f-849b-48bf-a451-6fd7de3246cc.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-d0fa7ada-6c78-4de6-9f25-237b8e356338.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-d2964079-0e65-45d4-a718-7817cc40216e.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-d3598603-591c-485b-baaa-063f2f25a041.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-d83af847-79b1-493f-a3c1-d299e8a3eb6d.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-dcbfd476-a8e4-411b-9262-dd2ab0077158.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-dcc076d4-9318-4370-a69c-61d7199f0258.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-e1456b26-8750-415f-8b3e-52b0e6cca49c.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-e3c8266f-6d86-415c-b6b3-7d5d956ade38.json": {
+      "sha256": "1cdf7982087a6a7b3975f733865e9d281720bbd518356f3de7de818385701868",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-e3ef073b-b0d8-44ba-8fb9-01a0f4febeeb.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-e43329ce-e077-48a0-b47a-376c3924bdc8.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-e4516b4a-f6fc-4199-a30c-7d4754ef6d5b.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-e481fd68-f339-4e55-8724-2263f219c81a.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-e4c3d8aa-7fd8-450e-b058-1dd0f5f352c5.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-e50a87bd-5af7-4812-a6df-66f164c91b58.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-e5446e91-96c3-4f5c-80f3-6ac039e73d4a.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-e58fc91d-1611-4756-bd94-120dc58eed27.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-e625dbfd-7c80-47e2-9f14-0d045f074b91.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-e6e22478-dd80-417f-9bbf-14ba1a4b6eaa.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-e7fb0381-2ee2-4658-a0ca-b393eee58010.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-e9f01094-5c2a-438e-866f-5024d52da9bb.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-ed811119-7d86-4b01-9b2a-bff331f4eeda.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-ed9af5ac-023f-45f5-8d1d-11bfdbf51e14.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-ef7f7446-f5e5-4f8c-857d-71652a35c8b5.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-f246ef7d-e2bf-487a-b5de-8763a51842ff.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-f29095b5-fb5d-4b3e-b722-385140968097.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-f3844b03-d4b2-4223-a07e-a04ba7ae2cfa.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-f3a07f07-fa85-47c0-9f8b-2cef8df663d2.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-f3c160cd-cf14-42dc-8dfd-8f234f7740ca.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-f6541e1a-510a-4522-960a-a31c5a6825a4.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-f6580809-c19c-406c-a927-5ee8cc7cd573.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-f6cd6267-d0fb-4dd1-8916-af094b4d4269.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-fa464b1a-ea0d-404a-aa20-96b10f0092a1.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-fb9a4769-0f37-4efa-8284-6b276c3cec05.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-fc1801dc-f0e5-460a-95ce-db4eab2f7af7.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-fc26f242-d3ff-4885-b517-9fa0bb46fa67.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-fc704963-779c-4106-9391-cbd77b80ce43.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-fc986fe2-6988-4577-9aa2-d0dd47d3a8a4.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-ff511a3e-bcc3-44a0-8f02-82e9c370ae37.json": {
+      "sha256": "ff929216cc8d40fd5dd7f10345bced6adcf0eeff4de16b00678dbae6cd382ac9",
+      "bytes": 10562
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/server.log": {
+      "sha256": "f805e43ae9ae1b14b6fd2664155d42cf45f93fbe24714e70e2ad8c239671a6f0",
+      "bytes": 21141
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/trace.zip": {
+      "sha256": "a47bbdf085219dfdfd2b0f54ca84e0bc50ca941bc8774585f19ea38c50a56b83",
+      "bytes": 7494
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/acceptance.md": {
+      "sha256": "c28a5276e95fc93d2668b4ecfc1c84ba979d416349213870b2a319776f37ad4c",
+      "bytes": 192285
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/junit.xml": {
+      "sha256": "f9bfe4f12c7d32cfd91365f5492a0601884d83faeb507c3b680be5b814c6f78b",
+      "bytes": 312
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/playwright.json": {
+      "sha256": "60175e26be709b29b0f19150254265f6d1e83fb81962c681043c8757b17166c6",
+      "bytes": 11129
+    },
+    "reports/preflight/2026-10-01T15-58-10.937Z-4ed62619/playwright.junit.xml": {
+      "sha256": "5501e63ea59d2120ec34d04743f393cdd289d56ca4483073bcf9f19e4a23f613",
+      "bytes": 4283
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "caseId": "DOC-MAN-001",
+  "sutRevision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+  "qaRevision": "ec46f9b30fb2f5a312c92fc78463ddbfe200042f",
+  "requiredAdditionalRequirementCount": 32,
+  "groups": [
+    {
+      "requirementIds": ["ADD-META-01", "ADD-META-02", "ADD-META-03", "ADD-META-04"],
+      "directSources": ["candidate-source/docs/change-requests.md:30-76", "candidate-source/docs/feature-matrix.md:88-100"],
+      "review": "CR001/002/005记录名称、简介和真实创建时间的要求、局部metadata影响与验收项；提出日期由台账头部给出。长度/清空表达被明确标为实施建议，未冒充用户原话；省略字段兼容及旧数据边界单列。版本和开发验证不冒充用户验收。"
+    },
+    {
+      "requirementIds": ["ADD-DOC-01"],
+      "directSources": ["candidate-source/docs/change-requests.md:3-28", "candidate-source/docs/change-requests.md:60-66", "candidate-source/docs/README.md"],
+      "review": "独立CR台账有统一提出日期、状态定义、实现版本和验收导航。没有精确时刻的明确记未留存，不补造；10月1日CR014另在正文记录具体授权日期。"
+    },
+    {
+      "requirementIds": ["ADD-DIR-01", "ADD-DIR-02", "ADD-DIR-03", "ADD-DIR-04", "ADD-DIR-05", "ADD-DIR-06", "ADD-DIR-07", "ADD-DIR-08", "ADD-DIR-09", "ADD-DIR-10", "ADD-DIR-11", "ADD-DIR-12"],
+      "directSources": ["candidate-source/docs/change-requests.md:50-58", "candidate-source/docs/change-requests.md:78-102", "candidate-source/docs/change-requests.md:120-126", "candidate-source/docs/decisions.md:41-44", "candidate-source/docs/group-directory-profile-proposal.md", "candidate-source/docs/group-directory-filter-review.md"],
+      "review": "CR003早期排序未定由CR007/D024承接，明确没有倒写早期批准。CR007/008/009覆盖排序、搜索、摘要、分页、过期、恢复、输入法和空态；D024标明服务端分页的新增批准；CR012/D027补组合筛选且不扩展运行态。版本、GD/GF验收入口与真实OS输入法未验边界分别记录。"
+    },
+    {
+      "requirementIds": ["ADD-FORM-01", "ADD-FORM-02"],
+      "directSources": ["candidate-source/docs/change-requests.md:104-110", "candidate-source/docs/decisions.md:41", "candidate-source/docs/group-directory-profile-proposal.md"],
+      "review": "CR010仅创建群和编辑群资料两处保护，区分dirty/busy、失败、卸载迟到；没有借此批准全站或序列表单保护。关联d450359及GD11/GD12和后续补证。"
+    },
+    {
+      "requirementIds": ["ADD-COPY-01"],
+      "directSources": ["candidate-source/docs/change-requests.md:112-118", "candidate-source/docs/account-operation-copy.md", "candidate-source/docs/decisions.md:47"],
+      "review": "CR011只改账号操作和角色文案，保留状态机/API；f1257c1及AC01-04检查与用户待验分开。"
+    },
+    {
+      "requirementIds": ["ADD-CONFLICT-01", "ADD-CONFLICT-02", "ADD-CONFLICT-03", "ADD-CONFLICT-04"],
+      "directSources": ["candidate-source/docs/change-requests.md:128-134", "candidate-source/docs/decisions.md:47-48", "candidate-source/docs/group-profile-conflict-review.md"],
+      "review": "CR013/D029/D030仅批准PI03同字段冲突部分；expected、零副作用、不同字段共存、旧调用兼容及草稿再确认有公开契约，后端/前端版本和GC01-06有入口。PI03其他项和PI04-23未混为已交付。"
+    },
+    {
+      "requirementIds": ["ADD-ATT-01", "ADD-ATT-02", "ADD-ATT-03", "ADD-ATT-04", "ADD-ATT-05", "ADD-ATT-06"],
+      "directSources": ["candidate-source/docs/change-requests.md:240-244", "candidate-source/docs/decisions.md:45-46", "candidate-source/docs/page-update-notification-implementation.md:5-9", "candidate-source/docs/page-update-notification-implementation.md:18-57", "candidate-source/docs/page-update-notification-proposal.md"],
+      "review": "CR006和D-ATT-01明确替代早期暂停，限定六类视图和挂载任务；当前范围/失焦/真实呈现确认/目录过期/手动身份与自动消息均可追踪，实施提交及PA01-08独立。新H16/H17缺陷和H18有限认可另外保留，不把原开发浏览器结果当真人通过。"
+    },
+    {
+      "requirementIds": ["ADD-SEQ-FAIL-01"],
+      "directSources": ["qa-source/requirements/sequence-failure-policy.md", "qa-source/requirements/catalog.json"],
+      "review": "QA-D6保存本会话用户按建议执行的明确追加裁定和原文未规定部分，保留原有skipped、rate_limited、unknown和不可写stopped分支。来源为QA维护的批准补充，不伪造研发CR编号或旧批准时间。"
+    },
+    {
+      "requirementIds": ["ADD-LEFT-MEMBERS-01"],
+      "directSources": ["qa-source/requirements/left-members-decision.md", "candidate-source/docs/decisions.md:95-105", "candidate-source/docs/core-verification-closeout.md:18-36"],
+      "review": "D042及QA裁定明确仅退出托管成员、保留外部成员和不可写约束；记录与原接口members=[]存在差异，不称两种原文同时满足，也不重复列为待决。"
+    }
+  ],
+  "statusAndProvenanceChecks": [
+    "candidate-source/docs/feature-matrix.md头部将旧版本当前/待决措辞标为历史；版本来源、实现、开发验证、用户验收使用独立列。",
+    "candidate-source/docs/decisions.md D039/D041和candidate-source/docs/core-verification-closeout.md明确已确认工程方向，不等于原强保证通过。",
+    "candidate-source/docs/human-review-record.md H16/H17保留真实人工修复待复验；H18只认可四态文案，不补写未知状态体验或正式QA通过；H19导航方案仅评估。",
+    "candidate-source/docs/qa-final-boundaries-followup-20261001.md绑定工程源/历史QA结果，保留真实时限失败、观测边界及未批准新策略，不以开发回归通过替代QA判定。",
+    "C1/C2在D047按新日期授权并在功能表单列；旧不纳入结论保留历史。该实施授权不自动改本次QA业务分母或宣称已独立验收。"
+  ],
+  "scopeLimit": "这是固定候选文件与已批准来源的独立文档审核；不证明所述每条产品行为运行正确，也不重新代签用户来源或真人体验。原始测试报告及历史状态未改写。"
+}

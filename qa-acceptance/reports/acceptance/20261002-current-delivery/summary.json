@@ -1,0 +1,885 @@
+{
+  "formatVersion": 1,
+  "reportState": "FINAL_DELIVERY_ASSESSMENT",
+  "issuedAt": "2026-10-01T16:16:06.262812+00:00",
+  "currentProductCandidate": "8e047aea842bfcec64802e4918b52b460b93c48b",
+  "observedMainAtVersionBinding": "0fc63e491fd8df889266d618d8dc91cf666b05b9",
+  "conclusions": {
+    "businessConformity": "FAIL",
+    "unconditionalAcceptance": false,
+    "productionReadiness": "NOT_ASSESSED",
+    "fullBusinessRerunOn8e": "NOT_CLAIMED"
+  },
+  "baselineFullAcceptance": {
+    "sutRevision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+    "cases": 254,
+    "counts": {
+      "PASS": 240,
+      "FAIL": 9,
+      "BLOCKED": 5
+    },
+    "requirements": 116,
+    "requirementCounts": {
+      "PASS": 97,
+      "BLOCKED": 7,
+      "FAIL": 12
+    },
+    "report": "../20261001-2716abd-business/report.md"
+  },
+  "currentCandidateDelta": {
+    "scope": "51独立用例/59用例项目最新义务，保留6run/62历史执行；不是新版254条完整复跑。",
+    "counts": {
+      "count": 51,
+      "counts": {
+        "PASS": 46,
+        "NOT_RUN": 0,
+        "BLOCKED": 0,
+        "FAIL": 5
+      },
+      "aggregation": "Select latest explicitly authorized valid-premise repeat per (case,project), then worst status across required projects. Preserve all earlier execution records."
+    },
+    "obligations": {
+      "count": 59,
+      "counts": {
+        "PASS": 54,
+        "NOT_RUN": 0,
+        "BLOCKED": 0,
+        "FAIL": 5
+      }
+    },
+    "rawHistory": {
+      "obligations": 62,
+      "counts": {
+        "PASS": 54,
+        "NOT_RUN": 0,
+        "BLOCKED": 4,
+        "FAIL": 4
+      },
+      "automaticRetries": 0,
+      "originalFirstThreeRuns": {
+        "obligations": 59,
+        "counts": {
+          "PASS": 53,
+          "FAIL": 2,
+          "BLOCKED": 4,
+          "NOT_RUN": 0
+        }
+      }
+    },
+    "reviewedHistory": {
+      "obligations": 62,
+      "counts": {
+        "PASS": 54,
+        "NOT_RUN": 0,
+        "BLOCKED": 3,
+        "FAIL": 5
+      }
+    },
+    "report": "../../followup/20261001-8e047-retest/report.md"
+  },
+  "currentConfirmedDefects": [
+    {
+      "id": "QA8E-D01",
+      "severity": "P2",
+      "title": "工具实际等待超过原始5秒上限",
+      "cases": [
+        "AGENT-028",
+        "INT-READ-001"
+      ],
+      "facts": "普通发送工具 [5001.359666,5001.471375] ms；真实数据库持锁样本 [5000.443875,5000.529792] ms。实际结果就绪已超限，不将 COMMIT 尾段计入违约下界。",
+      "evidence": [
+        "../../followup/20261001-8e047-retest/backend-review/backend-review.md",
+        "../../followup/20261001-8e047-retest/review/delivery-read-corrected-attempt-review.md"
+      ],
+      "status": "OPEN_CONFIRMED_ON_FIXED_8E",
+      "sutRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+      "reproduction": "执行绑定的独立冻结用例与目标；固定用例步骤、故障时点和原始错误上下文见所选 run 的归档及 latest-results.json。",
+      "caseResults": [
+        {
+          "id": "AGENT-028",
+          "title": "unknown send times out in five seconds and same key still cannot resend",
+          "status": "FAIL",
+          "projects": [
+            {
+              "id": "AGENT-028",
+              "project": "system",
+              "status": "FAIL",
+              "rawStatus": "FAIL",
+              "title": "unknown send times out in five seconds and same key still cannot resend",
+              "selectedExecutionKey": "2026-10-01T15-22-40.633Z-4281d669/system/AGENT-028/attempt-0",
+              "selectedRunId": "2026-10-01T15-22-40.633Z-4281d669",
+              "reason": "Original registered run result; no independent override.",
+              "reviewSources": [
+                "reports/followup/20261001-8e047-retest/backend-review/backend-facts.json"
+              ],
+              "reviewDetails": [],
+              "historyExecutionKeys": [
+                "2026-10-01T15-22-40.633Z-4281d669/system/AGENT-028/attempt-0"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "INT-READ-001",
+          "title": "真实PostgreSQL表锁下发送状态读取不遗弃与同key恢复",
+          "status": "FAIL",
+          "projects": [
+            {
+              "id": "INT-READ-001",
+              "project": "system",
+              "status": "FAIL",
+              "rawStatus": "FAIL",
+              "title": "真实PostgreSQL表锁下发送状态读取不遗弃与同key恢复",
+              "selectedExecutionKey": "2026-10-01T15-58-10.937Z-4ed62619/system/INT-READ-001/attempt-0",
+              "selectedRunId": "2026-10-01T15-58-10.937Z-4ed62619",
+              "reason": "同原工具/进程时钟的等待区间为[5000.443875,5000.529792]ms，安全下界严格超过原5000ms；真实锁内发生，未把history COMMIT或下一turn计入工具返回。后续PG查询/ROLLBACK归属缺证不覆盖已证硬FAIL。",
+              "reviewSources": [
+                "reports/followup/20261001-8e047-retest/review/delivery-read-corrected-attempt-review.json"
+              ],
+              "reviewDetails": [
+                {
+                  "caseId": "INT-READ-001",
+                  "project": "system",
+                  "rawStatus": "FAIL",
+                  "reviewedStatus": "FAIL",
+                  "reason": "同原工具/进程时钟的等待区间为[5000.443875,5000.529792]ms，安全下界严格超过原5000ms；真实锁内发生，未把history COMMIT或下一turn计入工具返回。后续PG查询/ROLLBACK归属缺证不覆盖已证硬FAIL。"
+                }
+              ],
+              "historyExecutionKeys": [
+                "2026-10-01T15-29-58.209Z-a06abe2a/system/INT-READ-001/attempt-0",
+                "2026-10-01T15-58-10.937Z-4ed62619/system/INT-READ-001/attempt-0"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "QA8E-D02",
+      "severity": "P1",
+      "title": "kick远端结果未记录后原run明确暂停续跑",
+      "cases": [
+        "BLK-EXT-004",
+        "REC-007"
+      ],
+      "facts": "实际副作用与完整故障链已取证；公开恢复说明明确暂停，原任意时刻重启续跑承诺未满足。未以有限轮询时间发明恢复期限。",
+      "evidence": [
+        "../../followup/20261001-8e047-retest/review/recovery-adjudication-three-cases.md"
+      ],
+      "status": "OPEN_CONFIRMED_ON_FIXED_8E",
+      "sutRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+      "reproduction": "执行绑定的独立冻结用例与目标；固定用例步骤、故障时点和原始错误上下文见所选 run 的归档及 latest-results.json。",
+      "caseResults": [
+        {
+          "id": "BLK-EXT-004",
+          "title": "kick已生效后目标重新加入：恢复不重踢",
+          "status": "FAIL",
+          "projects": [
+            {
+              "id": "BLK-EXT-004",
+              "project": "system",
+              "status": "FAIL",
+              "rawStatus": "BLOCKED",
+              "title": "kick已生效后目标重新加入：恢复不重踢",
+              "selectedExecutionKey": "2026-10-01T15-22-40.633Z-4281d669/system/BLK-EXT-004/attempt-0",
+              "selectedRunId": "2026-10-01T15-22-40.633Z-4281d669",
+              "reason": "本次完整故障链和同资源真实公开recoveryNote，与本次8e047固定版本公开恢复说明共同证实保守暂停、不自动完成原任务；有限20/30秒不是失败依据。不要求盲重放，未观测重复效果不得写成已发生。",
+              "reviewSources": [
+                "reports/followup/20261001-8e047-retest/review/recovery-adjudication-three-cases.json"
+              ],
+              "reviewDetails": [
+                {
+                  "caseId": "BLK-EXT-004",
+                  "project": "system",
+                  "rawStatus": "BLOCKED",
+                  "rawReason": "BlockedError: [BLOCKED] Restarted kick run remains open within 20s observation budget; no arbitrary recovery deadline asserted",
+                  "rawStatusSource": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/error-context.md",
+                  "rawStatusBinding": "Completed events.json: exact unique attempt 0, case/project and status matched;原raw未改。",
+                  "reviewedStatus": "FAIL",
+                  "state": "INDEPENDENT_CASE_REVIEW_COMPLETED",
+                  "environment": {
+                    "revision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+                    "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+                    "apiPort": 65054,
+                    "database": "qa_14b28fc63b604f6b89241752",
+                    "startedAt": "2026-10-01T15:27:34.702Z"
+                  },
+                  "kill": {
+                    "at": "2026-10-01T15:27:35.777Z",
+                    "pid": 91989
+                  },
+                  "cleanup": {
+                    "completedAt": "2026-10-01T15:27:57.361Z",
+                    "failures": []
+                  },
+                  "evidenceDirectory": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence",
+                  "engineeringDirectionConfirmed": true,
+                  "acceptanceStandardChanged": false,
+                  "deviationAcceptedByThisReview": false,
+                  "faultChain": {
+                    "resourceId": "0386b1c3-fd52-485d-861d-4661c883557d",
+                    "actualKick": {
+                      "at": "2026-10-01T15:27:35.772Z",
+                      "kind": "kick",
+                      "accountId": "account-2",
+                      "groupId": "gateway-group-1",
+                      "platformUserId": "kick-rejoin-target"
+                    },
+                    "request": {
+                      "id": 16,
+                      "at": "2026-10-01T15:27:35.772Z",
+                      "method": "POST",
+                      "path": "/groups/gateway-group-1/kick",
+                      "body": {
+                        "byAccountId": "account-2",
+                        "targetPlatformUserId": "kick-rejoin-target"
+                      },
+                      "responsePreparedAt": "2026-10-01T15:27:35.772Z",
+                      "preparedResponseStatus": 200,
+                      "responseClosedAt": "2026-10-01T15:27:35.782Z",
+                      "responseClosedBeforeFinish": true,
+                      "responseStatus": 200,
+                      "completedAt": "2026-10-01T15:27:36.782Z"
+                    },
+                    "oldMemberLeft": {
+                      "eventId": 5,
+                      "type": "member_left",
+                      "recordedAt": "2026-10-01T15:27:36.782Z",
+                      "data": {
+                        "groupId": "gateway-group-1",
+                        "platformUserId": "kick-rejoin-target",
+                        "eventId": 5,
+                        "type": "member_left"
+                      }
+                    },
+                    "subsequentRejoin": {
+                      "eventId": 6,
+                      "type": "member_joined",
+                      "recordedAt": "2026-10-01T15:27:36.804Z",
+                      "data": {
+                        "groupId": "gateway-group-1",
+                        "platformUserId": "kick-rejoin-target",
+                        "eventId": 6,
+                        "type": "member_joined"
+                      }
+                    },
+                    "finalKickCallCount": 1,
+                    "rejoinedTargetStillPresent": true,
+                    "observations": 349
+                  },
+                  "publicNoteEvidence": {
+                    "source": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence/api.ndjson",
+                    "matchingResponseCount": 349,
+                    "first": {
+                      "line": 72,
+                      "qaRequestId": "bf2229a9-c388-42dd-8988-8abcc0d31cdc",
+                      "startedAt": "2026-10-01T15:27:37.286Z",
+                      "path": "/api/agent-runs/0386b1c3-fd52-485d-861d-4661c883557d",
+                      "body": {
+                        "id": "0386b1c3-fd52-485d-861d-4661c883557d",
+                        "groupId": "b233feaa-b2bf-4e0e-bad2-914fa2db94c9",
+                        "status": "running",
+                        "endReason": null,
+                        "summary": null,
+                        "recoveryNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
+                        "steps": [
+                          {
+                            "ordinal": 1,
+                            "kind": "tool_use",
+                            "toolUseId": "kick-before-rejoin",
+                            "name": "kick_user",
+                            "input": {
+                              "reason": "single authorized removal",
+                              "platform_user_id": "kick-rejoin-target"
+                            },
+                            "resultSummary": "",
+                            "isError": false,
+                            "errorCode": null,
+                            "auditVerdict": "pass",
+                            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"kick-before-rejoin\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"kick-rejoin-target\",\"reason\":\"single authorized removal\"}}]}"
+                          }
+                        ]
+                      }
+                    },
+                    "last": {
+                      "line": 768,
+                      "qaRequestId": "4f1ce805-5541-46a9-8f31-179cd51aea15",
+                      "startedAt": "2026-10-01T15:27:57.287Z",
+                      "path": "/api/agent-runs/0386b1c3-fd52-485d-861d-4661c883557d",
+                      "body": {
+                        "id": "0386b1c3-fd52-485d-861d-4661c883557d",
+                        "groupId": "b233feaa-b2bf-4e0e-bad2-914fa2db94c9",
+                        "status": "running",
+                        "endReason": null,
+                        "summary": null,
+                        "recoveryNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
+                        "steps": [
+                          {
+                            "ordinal": 1,
+                            "kind": "tool_use",
+                            "toolUseId": "kick-before-rejoin",
+                            "name": "kick_user",
+                            "input": {
+                              "reason": "single authorized removal",
+                              "platform_user_id": "kick-rejoin-target"
+                            },
+                            "resultSummary": "",
+                            "isError": false,
+                            "errorCode": null,
+                            "auditVerdict": "pass",
+                            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"kick-before-rejoin\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"kick-rejoin-target\",\"reason\":\"single authorized removal\"}}]}"
+                          }
+                        ]
+                      }
+                    },
+                    "exactNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe."
+                  },
+                  "decision": "D039",
+                  "requirements": [
+                    "原总则192任意重启",
+                    "原A5.8/264同run续跑、效果不重复不记失败"
+                  ],
+                  "reason": "本次完整故障链和同资源真实公开recoveryNote，与本次8e047固定版本公开恢复说明共同证实保守暂停、不自动完成原任务；有限20/30秒不是失败依据。不要求盲重放，未观测重复效果不得写成已发生。",
+                  "rawEventsConfirmed": true
+                }
+              ],
+              "historyExecutionKeys": [
+                "2026-10-01T15-22-40.633Z-4281d669/system/BLK-EXT-004/attempt-0"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "REC-007",
+          "title": "agent restart after kick effect uses membership reconciliation without repeating kick",
+          "status": "FAIL",
+          "projects": [
+            {
+              "id": "REC-007",
+              "project": "system",
+              "status": "FAIL",
+              "rawStatus": "FAIL",
+              "title": "agent restart after kick effect uses membership reconciliation without repeating kick",
+              "selectedExecutionKey": "2026-10-01T15-22-40.633Z-4281d669/system/REC-007/attempt-0",
+              "selectedRunId": "2026-10-01T15-22-40.633Z-4281d669",
+              "reason": "本次完整故障链和同资源真实公开recoveryNote，与本次8e047固定版本公开恢复说明共同证实保守暂停、不自动完成原任务；有限20/30秒不是失败依据。不要求盲重放，未观测重复效果不得写成已发生。",
+              "reviewSources": [
+                "reports/followup/20261001-8e047-retest/review/recovery-adjudication-three-cases.json"
+              ],
+              "reviewDetails": [
+                {
+                  "caseId": "REC-007",
+                  "project": "system",
+                  "rawStatus": "FAIL",
+                  "rawReason": "Error: Condition not reached: /api/agent-runs/da8a8d00-5135-4a0a-8182-613fcffdd78a; last={\"id\":\"da8a8d00-5135-4a0a-8182-613fcffdd78a\",\"groupId\":\"4d07b094-010f-410f-b1d6-f0e764836ca0\",\"status\":\"running\",\"endReason\":null,\"summary\":null,\"recoveryNote\":\"A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.\",\"steps\":[{\"ordinal\":1,\"kind\":\"tool_use\",\"toolUseId\":\"recover-kick\",\"name\":\"kick_user\",\"input\":{\"reason\":\"recovery\",\"platform_user_id\":\"recover-kick-target\"},\"resultSummary\":\"\",\"isError\":false,\"errorCode\":null,\"auditVerdict\":\"pass\",\"rawResponse\":\"{\\\"stop_reason\\\":\\\"tool_use\\\",\\\"content\\\":[{\\\"type\\\":\\\"tool_use\\\",\\\"id\\\":\\\"recover-kick\\\",\\\"name\\\":\\\"kick_user\\\",\\\"input\\\":{\\\"platform_user_id\\\":\\\"recover-kick-target\\\",\\\"reason\\\":\\\"recovery\\\"}}]}\"}]}",
+                  "rawStatusSource": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/error-context.md",
+                  "rawStatusBinding": "Completed events.json: exact unique attempt 0, case/project and status matched;原raw未改。",
+                  "reviewedStatus": "FAIL",
+                  "state": "INDEPENDENT_CASE_REVIEW_COMPLETED",
+                  "environment": {
+                    "revision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+                    "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+                    "apiPort": 65289,
+                    "database": "qa_f6cb0f31c1fe4b27aa2ad7a1",
+                    "startedAt": "2026-10-01T15:28:25.408Z"
+                  },
+                  "kill": {
+                    "at": "2026-10-01T15:28:26.483Z",
+                    "pid": 93417
+                  },
+                  "cleanup": {
+                    "completedAt": "2026-10-01T15:28:57.086Z",
+                    "failures": []
+                  },
+                  "evidenceDirectory": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence",
+                  "engineeringDirectionConfirmed": true,
+                  "acceptanceStandardChanged": false,
+                  "deviationAcceptedByThisReview": false,
+                  "faultChain": {
+                    "resourceId": "da8a8d00-5135-4a0a-8182-613fcffdd78a",
+                    "actualKick": {
+                      "at": "2026-10-01T15:28:26.479Z",
+                      "kind": "kick",
+                      "accountId": "account-2",
+                      "groupId": "gateway-group-1",
+                      "platformUserId": "recover-kick-target"
+                    },
+                    "request": {
+                      "id": 16,
+                      "at": "2026-10-01T15:28:26.479Z",
+                      "method": "POST",
+                      "path": "/groups/gateway-group-1/kick",
+                      "body": {
+                        "byAccountId": "account-2",
+                        "targetPlatformUserId": "recover-kick-target"
+                      },
+                      "responsePreparedAt": "2026-10-01T15:28:26.479Z",
+                      "preparedResponseStatus": 200,
+                      "responseClosedAt": "2026-10-01T15:28:26.488Z",
+                      "responseClosedBeforeFinish": true,
+                      "responseStatus": 200,
+                      "completedAt": "2026-10-01T15:28:27.489Z"
+                    },
+                    "targetAbsent": true,
+                    "finalKickCallCount": 1,
+                    "barriers": [
+                      {
+                        "name": "kick-landed",
+                        "at": "2026-10-01T15:28:26.479Z",
+                        "hits": 1
+                      }
+                    ]
+                  },
+                  "publicNoteEvidence": {
+                    "source": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence/api.ndjson",
+                    "matchingResponseCount": 534,
+                    "first": {
+                      "line": 72,
+                      "qaRequestId": "66eb32e5-3b51-473c-9385-e29b3b20a479",
+                      "startedAt": "2026-10-01T15:28:26.954Z",
+                      "path": "/api/agent-runs/da8a8d00-5135-4a0a-8182-613fcffdd78a",
+                      "body": {
+                        "id": "da8a8d00-5135-4a0a-8182-613fcffdd78a",
+                        "groupId": "4d07b094-010f-410f-b1d6-f0e764836ca0",
+                        "status": "running",
+                        "endReason": null,
+                        "summary": null,
+                        "recoveryNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
+                        "steps": [
+                          {
+                            "ordinal": 1,
+                            "kind": "tool_use",
+                            "toolUseId": "recover-kick",
+                            "name": "kick_user",
+                            "input": {
+                              "reason": "recovery",
+                              "platform_user_id": "recover-kick-target"
+                            },
+                            "resultSummary": "",
+                            "isError": false,
+                            "errorCode": null,
+                            "auditVerdict": "pass",
+                            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"recover-kick\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"recover-kick-target\",\"reason\":\"recovery\"}}]}"
+                          }
+                        ]
+                      }
+                    },
+                    "last": {
+                      "line": 1138,
+                      "qaRequestId": "5b9b1f8a-8d55-413b-96d4-a3658d8cc63b",
+                      "startedAt": "2026-10-01T15:28:56.951Z",
+                      "path": "/api/agent-runs/da8a8d00-5135-4a0a-8182-613fcffdd78a",
+                      "body": {
+                        "id": "da8a8d00-5135-4a0a-8182-613fcffdd78a",
+                        "groupId": "4d07b094-010f-410f-b1d6-f0e764836ca0",
+                        "status": "running",
+                        "endReason": null,
+                        "summary": null,
+                        "recoveryNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
+                        "steps": [
+                          {
+                            "ordinal": 1,
+                            "kind": "tool_use",
+                            "toolUseId": "recover-kick",
+                            "name": "kick_user",
+                            "input": {
+                              "reason": "recovery",
+                              "platform_user_id": "recover-kick-target"
+                            },
+                            "resultSummary": "",
+                            "isError": false,
+                            "errorCode": null,
+                            "auditVerdict": "pass",
+                            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"recover-kick\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"recover-kick-target\",\"reason\":\"recovery\"}}]}"
+                          }
+                        ]
+                      }
+                    },
+                    "exactNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe."
+                  },
+                  "decision": "D039",
+                  "requirements": [
+                    "原总则192任意重启",
+                    "原A5.8/264同run续跑、效果不重复不记失败"
+                  ],
+                  "reason": "本次完整故障链和同资源真实公开recoveryNote，与本次8e047固定版本公开恢复说明共同证实保守暂停、不自动完成原任务；有限20/30秒不是失败依据。不要求盲重放，未观测重复效果不得写成已发生。",
+                  "rawEventsConfirmed": true
+                }
+              ],
+              "historyExecutionKeys": [
+                "2026-10-01T15-22-40.633Z-4281d669/system/REC-007/attempt-0"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "QA8E-D03",
+      "severity": "P1",
+      "title": "模型响应未记录即中断后原run明确暂停续跑",
+      "cases": [
+        "BLK-EXT-005"
+      ],
+      "facts": "消息/历史保留，但原任务不自动续跑。要求不包含模型逐字确定性重放；保守暂停的工程方向已决定，原验收标准未因此改变。",
+      "evidence": [
+        "../../followup/20261001-8e047-retest/review/recovery-adjudication-three-cases.md"
+      ],
+      "status": "OPEN_CONFIRMED_ON_FIXED_8E",
+      "sutRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+      "reproduction": "执行绑定的独立冻结用例与目标；固定用例步骤、故障时点和原始错误上下文见所选 run 的归档及 latest-results.json。",
+      "caseResults": [
+        {
+          "id": "BLK-EXT-005",
+          "title": "模型未执行响应丢失：允许不同合法响应且保留已持久历史",
+          "status": "FAIL",
+          "projects": [
+            {
+              "id": "BLK-EXT-005",
+              "project": "system",
+              "status": "FAIL",
+              "rawStatus": "BLOCKED",
+              "title": "模型未执行响应丢失：允许不同合法响应且保留已持久历史",
+              "selectedExecutionKey": "2026-10-01T15-22-40.633Z-4281d669/system/BLK-EXT-005/attempt-0",
+              "selectedRunId": "2026-10-01T15-22-40.633Z-4281d669",
+              "reason": "本次完整故障链和同资源真实公开recoveryNote，与本次8e047固定版本公开恢复说明共同证实保守暂停、不自动完成原任务；有限20/30秒不是失败依据。不要求盲重放，未观测重复效果不得写成已发生。",
+              "reviewSources": [
+                "reports/followup/20261001-8e047-retest/review/recovery-adjudication-three-cases.json"
+              ],
+              "reviewDetails": [
+                {
+                  "caseId": "BLK-EXT-005",
+                  "project": "system",
+                  "rawStatus": "BLOCKED",
+                  "rawReason": "BlockedError: [BLOCKED] Run not terminal within 20s probe; original recovery obligation retained without inventing a deadline",
+                  "rawStatusSource": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/error-context.md",
+                  "rawStatusBinding": "Completed events.json: exact unique attempt 0, case/project and status matched;原raw未改。",
+                  "reviewedStatus": "FAIL",
+                  "state": "INDEPENDENT_CASE_REVIEW_COMPLETED",
+                  "environment": {
+                    "revision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+                    "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+                    "apiPort": 65162,
+                    "database": "qa_5174944a799f4567b44b35e6",
+                    "startedAt": "2026-10-01T15:27:59.357Z"
+                  },
+                  "kill": {
+                    "at": "2026-10-01T15:28:00.559Z",
+                    "pid": 92224
+                  },
+                  "cleanup": {
+                    "completedAt": "2026-10-01T15:28:21.082Z",
+                    "failures": []
+                  },
+                  "evidenceDirectory": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence",
+                  "engineeringDirectionConfirmed": true,
+                  "acceptanceStandardChanged": false,
+                  "deviationAcceptedByThisReview": false,
+                  "faultChain": {
+                    "resourceId": "b333f5b8-a1d2-4b98-93f0-4546b88bb7b6",
+                    "persistedPriorToolResult": {
+                      "type": "tool_result",
+                      "content": "{\"clientMsgId\":\"2c18ec6f-3287-4885-af29-5526b39196c8\",\"deliveryStatus\":\"sent\"}",
+                      "tool_use_id": "persisted-send"
+                    },
+                    "lostResponseRequest": {
+                      "id": 3,
+                      "at": "2026-10-01T15:28:00.551Z",
+                      "path": "/agent/turn"
+                    },
+                    "lostResponseCompletedAtCrash": false,
+                    "barrier": [
+                      {
+                        "name": "lost-model-response",
+                        "hits": 1,
+                        "at": "2026-10-01T15:28:00.551Z"
+                      }
+                    ],
+                    "actualSendEffects": [
+                      {
+                        "at": "2026-10-01T15:28:00.503Z",
+                        "kind": "send",
+                        "accountId": "account-2",
+                        "groupId": "gateway-group-1",
+                        "clientMsgId": "2c18ec6f-3287-4885-af29-5526b39196c8",
+                        "msgId": "gateway-message-2"
+                      }
+                    ],
+                    "finalSendCallCount": 1,
+                    "finalTurnCount": 2,
+                    "observations": 349,
+                    "notRequired": "Identical lost unexecuted model response is not an acceptance requirement."
+                  },
+                  "publicNoteEvidence": {
+                    "source": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence/api.ndjson",
+                    "matchingResponseCount": 349,
+                    "first": {
+                      "line": 72,
+                      "qaRequestId": "84d2c845-6ce6-40ff-aa64-6499aacafb56",
+                      "startedAt": "2026-10-01T15:28:01.024Z",
+                      "path": "/api/agent-runs/b333f5b8-a1d2-4b98-93f0-4546b88bb7b6",
+                      "body": {
+                        "id": "b333f5b8-a1d2-4b98-93f0-4546b88bb7b6",
+                        "groupId": "2fa9b5eb-5ec7-4553-b791-b6d92dfbea0c",
+                        "status": "running",
+                        "endReason": null,
+                        "summary": null,
+                        "recoveryNote": "An Agent turn was sent before interruption; the protocol cannot safely replay an unrecorded response.",
+                        "steps": [
+                          {
+                            "ordinal": 1,
+                            "kind": "tool_use",
+                            "toolUseId": "persisted-send",
+                            "name": "send_message",
+                            "input": {
+                              "text": "effect before lost model turn",
+                              "idempotency_key": "persisted-send-key"
+                            },
+                            "resultSummary": "{\"clientMsgId\":\"2c18ec6f-3287-4885-af29-5526b39196c8\",\"deliveryStatus\":\"sent\"}",
+                            "isError": false,
+                            "errorCode": null,
+                            "auditVerdict": "pass",
+                            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"persisted-send\",\"name\":\"send_message\",\"input\":{\"text\":\"effect before lost model turn\",\"idempotency_key\":\"persisted-send-key\"}}]}"
+                          }
+                        ]
+                      }
+                    },
+                    "last": {
+                      "line": 768,
+                      "qaRequestId": "0c2224b1-52d9-4e38-bfe2-74ab979015f2",
+                      "startedAt": "2026-10-01T15:28:21.024Z",
+                      "path": "/api/agent-runs/b333f5b8-a1d2-4b98-93f0-4546b88bb7b6",
+                      "body": {
+                        "id": "b333f5b8-a1d2-4b98-93f0-4546b88bb7b6",
+                        "groupId": "2fa9b5eb-5ec7-4553-b791-b6d92dfbea0c",
+                        "status": "running",
+                        "endReason": null,
+                        "summary": null,
+                        "recoveryNote": "An Agent turn was sent before interruption; the protocol cannot safely replay an unrecorded response.",
+                        "steps": [
+                          {
+                            "ordinal": 1,
+                            "kind": "tool_use",
+                            "toolUseId": "persisted-send",
+                            "name": "send_message",
+                            "input": {
+                              "text": "effect before lost model turn",
+                              "idempotency_key": "persisted-send-key"
+                            },
+                            "resultSummary": "{\"clientMsgId\":\"2c18ec6f-3287-4885-af29-5526b39196c8\",\"deliveryStatus\":\"sent\"}",
+                            "isError": false,
+                            "errorCode": null,
+                            "auditVerdict": "pass",
+                            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"persisted-send\",\"name\":\"send_message\",\"input\":{\"text\":\"effect before lost model turn\",\"idempotency_key\":\"persisted-send-key\"}}]}"
+                          }
+                        ]
+                      }
+                    },
+                    "exactNote": "An Agent turn was sent before interruption; the protocol cannot safely replay an unrecorded response."
+                  },
+                  "decision": "D039",
+                  "requirements": [
+                    "原总则192任意重启",
+                    "原A5.8/264同run续跑、效果不重复不记失败"
+                  ],
+                  "reason": "本次完整故障链和同资源真实公开recoveryNote，与本次8e047固定版本公开恢复说明共同证实保守暂停、不自动完成原任务；有限20/30秒不是失败依据。不要求盲重放，未观测重复效果不得写成已发生。",
+                  "rawEventsConfirmed": true
+                }
+              ],
+              "historyExecutionKeys": [
+                "2026-10-01T15-22-40.633Z-4281d669/system/BLK-EXT-005/attempt-0"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "historicalUnclosedNotRetested": [
+    {
+      "caseId": "INT-MSG-007",
+      "status": "NOT_RETESTED_ON_8E",
+      "firstResult": "FAIL",
+      "basis": "2716 full acceptance",
+      "interpretation": "仍需关闭/复验；不宣称本候选已重现，也不导入旧版本PASS。"
+    },
+    {
+      "caseId": "BLK-EXT-002",
+      "status": "NOT_RETESTED_ON_8E",
+      "firstResult": "FAIL",
+      "basis": "2716 full acceptance",
+      "interpretation": "仍需关闭/复验；不宣称本候选已重现，也不导入旧版本PASS。"
+    },
+    {
+      "caseId": "BLK-EXT-003",
+      "status": "NOT_RETESTED_ON_8E",
+      "firstResult": "FAIL",
+      "basis": "2716 full acceptance",
+      "interpretation": "仍需关闭/复验；不宣称本候选已重现，也不导入旧版本PASS。"
+    }
+  ],
+  "pendingItems": [
+    {
+      "caseId": "BLK-EXT-001",
+      "status": "BLOCKED_ON_2716_NOT_RETESTED_ON_8E",
+      "reason": "缺未落地分支的权威结果或明确永久停止证据；有限观察不能证明永久不恢复。"
+    },
+    {
+      "caseId": "INT-MSG-007",
+      "status": "NOT_RETESTED_ON_8E",
+      "firstResult": "FAIL",
+      "basis": "2716 full acceptance",
+      "interpretation": "仍需关闭/复验；不宣称本候选已重现，也不导入旧版本PASS。"
+    },
+    {
+      "caseId": "BLK-EXT-002",
+      "status": "NOT_RETESTED_ON_8E",
+      "firstResult": "FAIL",
+      "basis": "2716 full acceptance",
+      "interpretation": "仍需关闭/复验；不宣称本候选已重现，也不导入旧版本PASS。"
+    },
+    {
+      "caseId": "BLK-EXT-003",
+      "status": "NOT_RETESTED_ON_8E",
+      "firstResult": "FAIL",
+      "basis": "2716 full acceptance",
+      "interpretation": "仍需关闭/复验；不宣称本候选已重现，也不导入旧版本PASS。"
+    },
+    {
+      "id": "GAP-BUDGET-AFTER-DISPATCH-KICK",
+      "kind": "QA_COVERAGE_STRENGTHENING_NOT_NEW_BUSINESS_RULE",
+      "status": "NOT_RUN",
+      "scope": "预算逼近上界 × 已派发 kick 的完整交叉窗口未实际执行；CAP003 容量拒绝与 CAP010 2秒收敛各自通过不可合成此组合已覆盖。",
+      "owner": "QA/工程接入",
+      "notInExecutedCounts": true
+    },
+    {
+      "id": "MANUAL-FOLLOWUP",
+      "kind": "REAL_HUMAN_EVIDENCE",
+      "status": "NOT_RUN_IN_THIS_DELTA",
+      "cases": [
+        "MAN-IME-001",
+        "MAN-FOCUS-001",
+        "MAN-UX-001"
+      ],
+      "scope": "不代签真人、不把自动化浏览器当真实IME/跨app焦点；H18四态有限接受及文案体验closed-by-user保留，不为本次差异报告重开。",
+      "notInExecutedCounts": true
+    },
+    {
+      "id": "D039/D041",
+      "kind": "ENGINEERING_DIRECTION_ALREADY_DECIDED_ACCEPTANCE_DEVIATION_UNCHANGED",
+      "status": "NOT_A_NEW_PENDING_DIRECTION_DECISION",
+      "scope": "保守暂停工程方向已决定；原任意重启续跑标准未变，本次已观察暂停仍判FAIL。若要更改验收承诺，需单独明确决定。",
+      "notInExecutedCounts": true
+    },
+    {
+      "id": "READ-CAUSAL-1",
+      "kind": "ENGINEERING_OBSERVATION_GAP_WITH_EXISTING_CASE_FAIL",
+      "status": "BLOCKED",
+      "scope": "exact tool-to-PG-query/transaction attribution, server cancellation and serial SUT ROLLBACK；PG真实锁链已取证但公开tool-wait未关联backend PID/backend_start/query attempt；不能唯一归属waitForDelivery，也不能确认其服务端取消与串行ROLLBACK。缺口须以真实只读观测契约补齐，不能伪造事件",
+      "notInExecutedCounts": true
+    },
+    {
+      "id": "GAP-RUNNING-SECOND-INSTANCE-COMPETITION",
+      "status": "NOT_RUN",
+      "scope": "预算×已派发kick期间的运行中第二实例竞争未测，单独登记，不作为两因素专项关单的新必要条件；终态后启动第二实例不能证明运行中竞争。",
+      "owner": "QA覆盖补强",
+      "notInExecutedCounts": true
+    }
+  ],
+  "cleanup": {
+    "formatVersion": 1,
+    "reviewedAt": "2026-10-01T16:03:44.993108+00:00",
+    "snapshot": "reports/followup/20261001-8e047-retest/resource-audit/snapshot-20261001T160210.396514Z-post-cleanup.json",
+    "snapshotSha256": "099faa9a46df657e1b61f2927994ba55bc61a63710534663b570524f8b9490fd",
+    "sutRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+    "runs": 6,
+    "caseEnvironmentsWithCompletedCleanup": 62,
+    "reportedCleanupFailures": 0,
+    "independentlyMappedContainerAbsenceChecks": 2,
+    "exactMappedVolumesAbsent": 2,
+    "controllerRegistriesAbsent": 2,
+    "controllerPortsUnoccupied": [
+      60929,
+      60933
+    ],
+    "liveTrackedInfrastructure": [
+      {
+        "pid": "59212",
+        "role": "shared Docker Desktop backend, predates run, intentionally retained"
+      }
+    ],
+    "controllers": [
+      {
+        "directory": "reports/followup/20261001-8e047-retest/controllers/controller-d82ae025-3fb8-4e2d-aa62-d3cd188045ce",
+        "events": [
+          {
+            "at": "2026-10-01T16:01:57.578Z",
+            "kind": "owned-controller-stopped",
+            "guardianPid": 61848
+          },
+          {
+            "at": "2026-10-01T16:01:57.580Z",
+            "kind": "owned-registry-removed",
+            "registry": "/private/tmp/qa-cap-h1berq",
+            "registryIdentity": {
+              "dev": 16777231,
+              "ino": 38822008
+            }
+          }
+        ]
+      },
+      {
+        "directory": "reports/followup/20261001-8e047-retest/controllers/controller-3bdabbc7-11e5-45d0-b270-ff45112eb626",
+        "events": [
+          {
+            "at": "2026-10-01T16:01:57.492Z",
+            "kind": "owned-controller-stopped",
+            "guardianPid": 61605
+          },
+          {
+            "at": "2026-10-01T16:01:57.495Z",
+            "kind": "owned-registry-removed",
+            "registry": "/private/tmp/qa-rte-N0rSqz",
+            "registryIdentity": {
+              "dev": 16777231,
+              "ino": 38821998
+            }
+          }
+        ]
+      }
+    ],
+    "allAnonymousVolumesIndependentlyProvenRemoved": false,
+    "limits": [
+      "Early 8e containers had already disappeared before live Mounts capture; their anonymous-volume identities cannot be retroactively proven.",
+      "Case cleanup failures=[] is the executor cleanup record, not a complete independent historical-volume inventory.",
+      "No unknown resource was removed and no generic prune was used."
+    ]
+  },
+  "inputIndex": {
+    "reports/acceptance/20261001-2716abd-business/adjudicated-results.json": {
+      "sha256": "5664b920fb4f51874298c328ebbf4eba6e28c3dcc0f3aad3796423a8864beed4",
+      "bytes": 984374
+    },
+    "reports/followup/20261001-8e047-retest/summary.json": {
+      "sha256": "da5ddbd2c9a0891196a3b2ea43156d0cd0a47fa19eeefc107b307062211e4db4",
+      "bytes": 322304
+    },
+    "reports/followup/20261001-8e047-retest/latest-results.json": {
+      "sha256": "740f02b10108ec8b5a19a3c7efcda702786670b28e82cd1fc7b52c7936909cf6",
+      "bytes": 274045
+    },
+    "reports/followup/20261001-8e047-retest/main-product-version-binding.json": {
+      "sha256": "595c26e373da25f46ec50594e145afeffd60d5b9e7bea86ac9f4b27f763b4a52",
+      "bytes": 2014
+    },
+    "reports/followup/20261001-8e047-retest/resource-cleanup-review.json": {
+      "sha256": "f3e4b5db713e7e20f05319e591c9e8249ce8103a0236ffcaf186c094b9931b17",
+      "bytes": 2332
+    }
+  },
+  "automaticRetries": 0,
+  "productionGatesExcluded": 7,
+  "C1C2CandidateCasesExcluded": 5,
+  "paidModelCalls": 0
+}

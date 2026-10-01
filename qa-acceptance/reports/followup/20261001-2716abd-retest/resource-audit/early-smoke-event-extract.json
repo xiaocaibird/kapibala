@@ -1,0 +1,28 @@
+{
+  "recordType": "manual-extract-from-original-tool-stdout",
+  "source": "Read-only docker events command executed before snapshot.py was created; original tool response preserved these fields. This file is an extract, not the original raw command-output file.",
+  "command": "docker --host unix:///var/run/docker.sock events --since 2026-10-01T14:13:00Z --until 2026-10-01T14:16:00Z --filter type=container --filter label=qa.owner --format {{json .}}",
+  "runCandidate": "2026-10-01T14-13-32.001Z-bf0b40fe",
+  "volumeMapping": null,
+  "limitation": "No live Mounts captured. The original command used a future --until 14:16 UTC boundary; its exact completion timestamp was not captured. It was not reused as a watcher. snapshot.py now always sets an already-past end time.",
+  "events": [
+    {
+      "Type": "container",
+      "Action": "create",
+      "Actor": {
+        "ID": "39f52d29c003a9239b3ba8487d13c206ad9826ca31a053bd711c1c6f0de79307",
+        "Attributes": { "qa.owner": "e8cab339-3d2d-4a09-b738-e4398eede9d8", "name": "qa-acceptance-e8cab339-3d2d-4a09-b738-e4398eede9d8" }
+      },
+      "timeNano": 1790864012697809547
+    },
+    {
+      "Type": "container",
+      "Action": "destroy",
+      "Actor": {
+        "ID": "39f52d29c003a9239b3ba8487d13c206ad9826ca31a053bd711c1c6f0de79307",
+        "Attributes": { "qa.owner": "e8cab339-3d2d-4a09-b738-e4398eede9d8", "name": "qa-acceptance-e8cab339-3d2d-4a09-b738-e4398eede9d8" }
+      },
+      "timeNano": 1790864024481656970
+    }
+  ]
+}

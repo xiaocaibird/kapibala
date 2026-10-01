@@ -1,0 +1,161 @@
+{
+  "formatVersion": 1,
+  "issuedAt": "2026-10-01T15:25:37.446890+00:00",
+  "basis": {
+    "runId": "2026-10-01T14-26-25.068Z-1e0cb38a",
+    "candidate": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+    "qaRevision": "ec46f9b30fb2f5a312c92fc78463ddbfe200042f",
+    "qaTreeBeforeSha256": "40b301c87542929beab4974f140879da2a698ac9498056cc2c3a3c5c1f52b0bd",
+    "qaTreeAfterSha256": "40b301c87542929beab4974f140879da2a698ac9498056cc2c3a3c5c1f52b0bd",
+    "targetSha256": "6ccd4df091116eea6ee0324771526dde531bb834d5e3264bc76c5e9f706a028e",
+    "businessSha256": "8738023cc523dfbddebf347135a4c2883bac6eab98afea93c0b79e387b6d500c",
+    "originalRequirementSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+    "dependencyLockSha256": "7462a4670d1e4036156d1639ebfeaa0cd4276bc918d1b805b3677d862c2cb883",
+    "startedAt": "2026-10-01T14:26:25.113Z",
+    "automaticCompletedAt": "2026-10-01T15:04:32.133Z"
+  },
+  "interpretation": "本表不是全部等待用户回答的清单。已决定工程方向不重问；可执行修复/补证由研发与QA继续。只有选择带偏差交付或安排真人参与时涉及负责人决定，未代填偏差接受。",
+  "settledDecisions": [
+    {
+      "id": "D039",
+      "status": "DECIDED",
+      "decision": "本次不新增外部服务能力，保留安全策略及协议限制。",
+      "mustNotInfer": "不是强恢复符合或偏差接受，不重问相同工程方向。"
+    },
+    {
+      "id": "D040/D041",
+      "status": "DECIDED_ENGINEERING_DIRECTION",
+      "decision": "加强活动记账/故障测量，最小可靠接收记录。",
+      "mustNotInfer": "未放宽原60秒/5秒；极端保存前窗口仍如实判定。"
+    },
+    {
+      "id": "D042",
+      "status": "APPROVED_PUBLIC_SEMANTICS",
+      "decision": "只清托管成员、保留外部成员，left仍不可写。",
+      "mustNotInfer": "不以旧members=[]重新制造需求矛盾。"
+    },
+    {
+      "id": "H18",
+      "status": "CLOSED_BY_USER_LIMITED_EXPERIENCE",
+      "decision": "审计阻塞/完成/失败/取消四态有限认可，文案体验阶段关闭。",
+      "mustNotInfer": "不重复四态、不造unknown；完整未经预读真人UX或恢复保证不自动PASS。"
+    },
+    {
+      "id": "D047",
+      "status": "AUTHORIZED_SEPARATE_SCOPE",
+      "decision": "C1/C2已授权，30天保留、Gemini方向已定。",
+      "mustNotInfer": "本报告5条候选用例未执行，开发材料不当独立QA通过；不重复索要已定参数。"
+    }
+  ],
+  "engineeringAndQaWork": [
+    {
+      "id": "TIME-FIX",
+      "caseIds": [
+        "AGENT-025",
+        "AGENT-028",
+        "INT-ACT-001"
+      ],
+      "owner": "engineering + QA",
+      "status": "FIX_AND_RETEST_REQUIRED",
+      "ownerDecisionRequiredNow": false,
+      "action": "严格原上限下修复并固定版本独立复测。后续差量不覆盖2716首次FAIL。"
+    },
+    {
+      "id": "CAP-INTERVAL",
+      "caseIds": [
+        "CAP-003"
+      ],
+      "owner": "engineering observation + QA",
+      "status": "EVIDENCE_INSUFFICIENT",
+      "ownerDecisionRequiredNow": false,
+      "action": "取得更窄且完整的实际停止真值区间；不可用持久诊断/公开终态替代或加容差。"
+    },
+    {
+      "id": "UNKNOWN-SEND",
+      "caseIds": [
+        "BLK-EXT-001"
+      ],
+      "owner": "engineering + QA",
+      "status": "PROTOCOL_OBSERVATION_LIMIT",
+      "ownerDecisionRequiredNow": false,
+      "action": "保留未落地分支有限观察无终态；现协议内补证，不凭10秒认永久暂停，不盲重发，不擅加外部能力。"
+    }
+  ],
+  "humanEvidence": [
+    {
+      "id": "MAN-IME-001",
+      "status": "BLOCKED",
+      "owner": "real operator + QA assistant",
+      "action": "固定修复候选ready后，真实系统中文输入法执行目录搜索并取网络时间线；合成composition不替代。",
+      "reopenClosedCopyExperience": false
+    },
+    {
+      "id": "MAN-FOCUS-001",
+      "status": "BLOCKED",
+      "owner": "real operator + QA assistant",
+      "action": "固定修复候选下真实跨应用/窗口/标签栏确认标题与favicon；headed自动化不冒充真人。",
+      "reopenClosedCopyExperience": false
+    },
+    {
+      "id": "MAN-UX-001",
+      "status": "FORMAL_EVIDENCE_BLOCKED_WORKFLOW_CLOSED",
+      "owner": "QA / appropriate independent operator if complete formal UX conclusion requested",
+      "action": "正式项缺证保留。只在未来需要完整正式UX结论时建立合适新证据，不据此重开本次文案体验。",
+      "reopenClosedCopyExperience": false
+    }
+  ],
+  "acceptanceDeviations": [
+    {
+      "id": "RECOVERY-LIMITS",
+      "defectIds": [
+        "QA2716-D04",
+        "QA2716-D05",
+        "QA2716-D06",
+        "QA2716-D07"
+      ],
+      "status": "NOT_ACCEPTED_AS_FULL_CONFORMANCE",
+      "engineeringDirectionAlreadyDecided": true,
+      "ownerDecisionTrigger": "仅在决定保留这些强恢复偏差交付时。",
+      "requiredRecord": "固定版本、场景、影响、处置与接受决定；未记录前技术FAIL保留。"
+    },
+    {
+      "id": "FIRST-RECEIPT-WINDOW",
+      "defectIds": [
+        "QA2716-D03"
+      ],
+      "status": "NOT_ACCEPTED_AS_FULL_CONFORMANCE",
+      "engineeringDirectionAlreadyDecided": true,
+      "ownerDecisionTrigger": "仅在决定保留已证保存前首收基准丢失偏差交付时。",
+      "requiredRecord": "单独接受具体保存前硬崩溃窗口，不以D041方向或泛称极端合理处理代填符合。"
+    },
+    {
+      "id": "TIMING",
+      "defectIds": [
+        "QA2716-D01",
+        "QA2716-D02"
+      ],
+      "status": "NO_TOLERANCE_AUTHORIZED",
+      "engineeringDirectionAlreadyDecided": true,
+      "ownerDecisionTrigger": "仅在提出明确标准例外而不是继续修复时。",
+      "requiredRecord": "原上限不自动变更，不用未量化容差掩盖已有FAIL。"
+    }
+  ],
+  "outOfThisReport": [
+    {
+      "scope": "7 release gates",
+      "status": "NOT_ASSESSED",
+      "action": "另案冻结上线指标/环境，补安全、容量性能、持续运行、备份恢复/RPO/RTO、监控与发布回滚；不混入当前业务阻塞统计。"
+    },
+    {
+      "scope": "5 C1/C2 cases",
+      "status": "MATERIALS_RECEIVED_NOT_EXECUTED",
+      "action": "另案接收实际媒体/Gemini组合。本轮真实模型调用0、费用0；不得继承研发结果。"
+    }
+  ],
+  "sourceReferences": [
+    "reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/decisions.md",
+    "reports/followup/20261001-2716abd-retest/manual-review/candidate-source/docs/human-review-record.md",
+    "reports/followup/20261001-static-closeout-contract/manual-disposition.json",
+    "reports/followup/20261001-2716abd-retest/full-review/recovery-adjudication-final-binding.json"
+  ]
+}

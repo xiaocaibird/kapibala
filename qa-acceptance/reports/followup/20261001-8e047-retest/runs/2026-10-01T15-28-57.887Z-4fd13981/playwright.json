@@ -1,0 +1,968 @@
+{
+  "config": {
+    "argv": [
+      "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node",
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/node_modules/@playwright/test/cli.js",
+      "test",
+      "--grep",
+      "(?:^|\\s)\\[(?:UI-001|UI-003|UI-006|UI-007|UI-008|UI-038|UI-039)\\](?=\\s|$)",
+      "--project=chromium",
+      "--project=firefox-smoke",
+      "--project=webkit-smoke"
+    ],
+    "configFile": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/playwright.config.ts",
+    "rootDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/execution-gate.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "system",
+        "name": "system",
+        "testDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests",
+        "testIgnore": [
+          "**/ui/**"
+        ],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/ui/*.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox-smoke",
+        "name": "firefox-smoke",
+        "testDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/ui/*.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit-smoke",
+        "name": "webkit-smoke",
+        "testDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/ui/*.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/reporter.ts",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/playwright.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/playwright.junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "ui/console.spec.ts",
+      "file": "ui/console.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "[UI-001] viewer通过浏览器登录且各页无写入口 @compat",
+          "ok": true,
+          "tags": [
+            "compat"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4742,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:28:58.392Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "ui-final-screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-chromium/attachments/ui-final-screenshot-49558a44765a774f261db522ed44cd7537552ae2.png"
+                    },
+                    {
+                      "name": "ui-final-state",
+                      "contentType": "application/json",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-chromium/attachments/ui-final-state-8d7b2acc0a33c6d9412fc3c548f9ac03670e7a2c.json"
+                    },
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI4LTU3Ljg4N1otNGZkMTM5ODEvYXJ0aWZhY3RzL3VpLWNvbnNvbGUtLVVJLTAwMS12aWV3ZXLpgJrov4fmtY/op4jlmajnmbvlvZXkuJTlkITpobXml6DlhpnlhaXlj6MtY29tcGF0LWNocm9taXVtL2V2aWRlbmNl"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b5f53d03cc1c6148a9d1-010907367ab7d948c2dc",
+          "file": "ui/console.spec.ts",
+          "line": 191,
+          "column": 1
+        },
+        {
+          "title": "[UI-003] 群详情显示角色和实时消息，回流不重复 @compat",
+          "ok": true,
+          "tags": [
+            "compat"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4276,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:29:04.494Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "ui-final-screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-003-群详情显示角色和实时消息，回流不重复-compat-chromium/attachments/ui-final-screenshot-68d31f196c1687bb73297ecb88c4e1efb9b448ae.png"
+                    },
+                    {
+                      "name": "ui-final-state",
+                      "contentType": "application/json",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-003-群详情显示角色和实时消息，回流不重复-compat-chromium/attachments/ui-final-state-2ad147311fd89bcb2004a5f6e2343fa20cf7361f.json"
+                    },
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI4LTU3Ljg4N1otNGZkMTM5ODEvYXJ0aWZhY3RzL3VpLWNvbnNvbGUtLVVJLTAwMy3nvqTor6bmg4XmmL7npLrop5LoibLlkozlrp7ml7bmtojmga/vvIzlm57mtYHkuI3ph43lpI0tY29tcGF0LWNocm9taXVtL2V2aWRlbmNl"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b5f53d03cc1c6148a9d1-02f7447be104e5c6bed6",
+          "file": "ui/console.spec.ts",
+          "line": 220,
+          "column": 1
+        },
+        {
+          "title": "[UI-006] 浏览器断线恢复后3秒内补齐 @compat",
+          "ok": true,
+          "tags": [
+            "compat"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2939,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:29:08.774Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "ui-final-screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-006-浏览器断线恢复后3秒内补齐-compat-chromium/attachments/ui-final-screenshot-6f907a0f9f57922c2044568b6a3b0249509f2a1b.png"
+                    },
+                    {
+                      "name": "ui-final-state",
+                      "contentType": "application/json",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-006-浏览器断线恢复后3秒内补齐-compat-chromium/attachments/ui-final-state-5856c93138f760ba814c4c9208bc02d582e47765.json"
+                    },
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI4LTU3Ljg4N1otNGZkMTM5ODEvYXJ0aWZhY3RzL3VpLWNvbnNvbGUtLVVJLTAwNi3mtY/op4jlmajmlq3nur/mgaLlpI3lkI4z56eS5YaF6KGl6b2QLWNvbXBhdC1jaHJvbWl1bS9ldmlkZW5jZQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b5f53d03cc1c6148a9d1-3a76e626d3d059e77f5e",
+          "file": "ui/console.spec.ts",
+          "line": 273,
+          "column": 1
+        },
+        {
+          "title": "[UI-007] 审计阻断在群运行列表醒目可见",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2984,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:29:11.719Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "ui-final-screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-007-审计阻断在群运行列表醒目可见-chromium/attachments/ui-final-screenshot-677b126ddd51271c254886b645b436c99c5bc31f.png"
+                    },
+                    {
+                      "name": "ui-final-state",
+                      "contentType": "application/json",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-007-审计阻断在群运行列表醒目可见-chromium/attachments/ui-final-state-4c2f48e5786a581d4f330f1081e71234bbba8413.json"
+                    },
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI4LTU3Ljg4N1otNGZkMTM5ODEvYXJ0aWZhY3RzL3VpLWNvbnNvbGUtLVVJLTAwNy3lrqHorqHpmLvmlq3lnKjnvqTov5DooYzliJfooajphpLnm67lj6/op4EtY2hyb21pdW0vZXZpZGVuY2U="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b5f53d03cc1c6148a9d1-4c40ba9c3fda282173f8",
+          "file": "ui/console.spec.ts",
+          "line": 289,
+          "column": 1
+        },
+        {
+          "title": "[UI-008] 登录到群再到Agent步骤，错误原文和审计结果可读 @compat",
+          "ok": true,
+          "tags": [
+            "compat"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3176,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:29:14.707Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "ui-final-screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-chromium/attachments/ui-final-screenshot-b343a17ad0429b9dfe0a4a8479ae4084a73bcc45.png"
+                    },
+                    {
+                      "name": "ui-final-state",
+                      "contentType": "application/json",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-chromium/attachments/ui-final-state-82d4d7296acc15a7fb69d5ba53ad5bd9b6f5e169.json"
+                    },
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI4LTU3Ljg4N1otNGZkMTM5ODEvYXJ0aWZhY3RzL3VpLWNvbnNvbGUtLVVJLTAwOC3nmbvlvZXliLDnvqTlho3liLBBZ2VudOatpemqpO+8jOmUmeivr+WOn+aWh+WSjOWuoeiuoee7k+aenOWPr+ivuy1jb21wYXQtY2hyb21pdW0vZXZpZGVuY2U="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b5f53d03cc1c6148a9d1-08f2464ff1844929dd42",
+          "file": "ui/console.spec.ts",
+          "line": 314,
+          "column": 1
+        },
+        {
+          "title": "[UI-038] 审计阻塞说明不否认前序真实成功副作用",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3227,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:29:17.890Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "ui-final-screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-038-审计阻塞说明不否认前序真实成功副作用-chromium/attachments/ui-final-screenshot-0788d0d68655fde90c1211d290c03afafb29c633.png"
+                    },
+                    {
+                      "name": "ui-final-state",
+                      "contentType": "application/json",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-038-审计阻塞说明不否认前序真实成功副作用-chromium/attachments/ui-final-state-436f3a64a0b8db9a7d13d09652164f4cabf4ee5c.json"
+                    },
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI4LTU3Ljg4N1otNGZkMTM5ODEvYXJ0aWZhY3RzL3VpLWNvbnNvbGUtLVVJLTAzOC3lrqHorqHpmLvloZ7or7TmmI7kuI3lkKborqTliY3luo/nnJ/lrp7miJDlip/lia/kvZznlKgtY2hyb21pdW0vZXZpZGVuY2U="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b5f53d03cc1c6148a9d1-bbf0ab627ffc4a407ff5",
+          "file": "ui/console.spec.ts",
+          "line": 2224,
+          "column": 1
+        },
+        {
+          "title": "[UI-039] 真实零步骤failed与cancelled详情不再提示等待第一步",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 2778,
+                  "error": {
+                    "message": "BlockedError: [BLOCKED] cancelled：未形成可证实的真实cancelled/steps=[]；当前轮产生步骤不等于文案失败；failed：当前交付观察协议无真实创建后/首轮派发前活动hold；模型超时会产生步骤，禁止SQL写终态或active_ms伪造零步骤",
+                    "stack": "BlockedError: [BLOCKED] cancelled：未形成可证实的真实cancelled/steps=[]；当前轮产生步骤不等于文案失败；failed：当前交付观察协议无真实创建后/首轮派发前活动hold；模型超时会产生步骤，禁止SQL写终态或active_ms伪造零步骤\n    at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/console.spec.ts:2543:32",
+                    "location": {
+                      "file": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/console.spec.ts",
+                      "column": 32,
+                      "line": 2543
+                    },
+                    "snippet": "  2541 |     }\n  2542 |     noUnexpectedEffect();\n> 2543 |     if (blockers.length) throw new BlockedError(blockers.join('；'));\n       |                                ^\n  2544 |   } finally {\n  2545 |     qa.agent.barriers.release(barrier);\n  2546 |     await qa.evidence('ui039-per-state-results', {"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/console.spec.ts",
+                        "column": 32,
+                        "line": 2543
+                      },
+                      "message": "BlockedError: [BLOCKED] cancelled：未形成可证实的真实cancelled/steps=[]；当前轮产生步骤不等于文案失败；failed：当前交付观察协议无真实创建后/首轮派发前活动hold；模型超时会产生步骤，禁止SQL写终态或active_ms伪造零步骤\n\n  2541 |     }\n  2542 |     noUnexpectedEffect();\n> 2543 |     if (blockers.length) throw new BlockedError(blockers.join('；'));\n       |                                ^\n  2544 |   } finally {\n  2545 |     qa.agent.barriers.release(barrier);\n  2546 |     await qa.evidence('ui039-per-state-results', {\n    at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/console.spec.ts:2543:32"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:29:21.122Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "ui-final-screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/attachments/ui-final-screenshot-a28365a5210750e4020a28263457d309dd409d4f.png"
+                    },
+                    {
+                      "name": "ui-final-state",
+                      "contentType": "application/json",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/attachments/ui-final-state-fb546613a8b3a37ffb0cfb29bd743e4d2f5def43.json"
+                    },
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI4LTU3Ljg4N1otNGZkMTM5ODEvYXJ0aWZhY3RzL3VpLWNvbnNvbGUtLVVJLTAzOS3nnJ/lrp7pm7bmraXpqqRmYWlsZWTkuI5jYW5jZWxsZWTor6bmg4XkuI3lho3mj5DnpLrnrYnlvoXnrKzkuIDmraUtY2hyb21pdW0vZXZpZGVuY2U="
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/console.spec.ts",
+                    "column": 32,
+                    "line": 2543
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "b5f53d03cc1c6148a9d1-8ffff530ee2b6f049809",
+          "file": "ui/console.spec.ts",
+          "line": 2409,
+          "column": 1
+        },
+        {
+          "title": "[UI-001] viewer通过浏览器登录且各页无写入口 @compat",
+          "ok": true,
+          "tags": [
+            "compat"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox-smoke",
+              "projectName": "firefox-smoke",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4751,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:29:24.393Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "ui-final-screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-firefox-smoke/attachments/ui-final-screenshot-99e1452ceb621a551bad208f6d27a57d205fbad3.png"
+                    },
+                    {
+                      "name": "ui-final-state",
+                      "contentType": "application/json",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-firefox-smoke/attachments/ui-final-state-826836560d25b00c5656c965572b0640d264e1c4.json"
+                    },
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI4LTU3Ljg4N1otNGZkMTM5ODEvYXJ0aWZhY3RzL3VpLWNvbnNvbGUtLVVJLTAwMS12aWV3ZXLpgJrov4fmtY/op4jlmajnmbvlvZXkuJTlkITpobXml6DlhpnlhaXlj6MtY29tcGF0LWZpcmVmb3gtc21va2UvZXZpZGVuY2U="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b5f53d03cc1c6148a9d1-5e9d50f76f47917f1b5b",
+          "file": "ui/console.spec.ts",
+          "line": 191,
+          "column": 1
+        },
+        {
+          "title": "[UI-003] 群详情显示角色和实时消息，回流不重复 @compat",
+          "ok": true,
+          "tags": [
+            "compat"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox-smoke",
+              "projectName": "firefox-smoke",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4127,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:29:30.659Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "ui-final-screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-003-群详情显示角色和实时消息，回流不重复-compat-firefox-smoke/attachments/ui-final-screenshot-32beb736cdddeffb79177d24bcb0bc1e385cbb5d.png"
+                    },
+                    {
+                      "name": "ui-final-state",
+                      "contentType": "application/json",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-003-群详情显示角色和实时消息，回流不重复-compat-firefox-smoke/attachments/ui-final-state-6189c10d89e0e82cb2d2e0d45268fc61a141db68.json"
+                    },
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI4LTU3Ljg4N1otNGZkMTM5ODEvYXJ0aWZhY3RzL3VpLWNvbnNvbGUtLVVJLTAwMy3nvqTor6bmg4XmmL7npLrop5LoibLlkozlrp7ml7bmtojmga/vvIzlm57mtYHkuI3ph43lpI0tY29tcGF0LWZpcmVmb3gtc21va2UvZXZpZGVuY2U="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b5f53d03cc1c6148a9d1-7a71abd437df29759b4f",
+          "file": "ui/console.spec.ts",
+          "line": 220,
+          "column": 1
+        },
+        {
+          "title": "[UI-006] 浏览器断线恢复后3秒内补齐 @compat",
+          "ok": true,
+          "tags": [
+            "compat"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox-smoke",
+              "projectName": "firefox-smoke",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2837,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:29:34.791Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "ui-final-screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-006-浏览器断线恢复后3秒内补齐-compat-firefox-smoke/attachments/ui-final-screenshot-c2867a7437a1770e6ae6de4e0dbe57274149a91b.png"
+                    },
+                    {
+                      "name": "ui-final-state",
+                      "contentType": "application/json",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-006-浏览器断线恢复后3秒内补齐-compat-firefox-smoke/attachments/ui-final-state-e3f66231f4e1959800f02258713d2d1bfd82193b.json"
+                    },
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI4LTU3Ljg4N1otNGZkMTM5ODEvYXJ0aWZhY3RzL3VpLWNvbnNvbGUtLVVJLTAwNi3mtY/op4jlmajmlq3nur/mgaLlpI3lkI4z56eS5YaF6KGl6b2QLWNvbXBhdC1maXJlZm94LXNtb2tlL2V2aWRlbmNl"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b5f53d03cc1c6148a9d1-486debc1fd6452ed408d",
+          "file": "ui/console.spec.ts",
+          "line": 273,
+          "column": 1
+        },
+        {
+          "title": "[UI-008] 登录到群再到Agent步骤，错误原文和审计结果可读 @compat",
+          "ok": true,
+          "tags": [
+            "compat"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox-smoke",
+              "projectName": "firefox-smoke",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3193,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:29:37.632Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "ui-final-screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-firefox-smoke/attachments/ui-final-screenshot-d0def3772a9260238b70c03014c4bf22dfdd32d2.png"
+                    },
+                    {
+                      "name": "ui-final-state",
+                      "contentType": "application/json",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-firefox-smoke/attachments/ui-final-state-292a3805423da87f907e3d417c058d3761abbba2.json"
+                    },
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI4LTU3Ljg4N1otNGZkMTM5ODEvYXJ0aWZhY3RzL3VpLWNvbnNvbGUtLVVJLTAwOC3nmbvlvZXliLDnvqTlho3liLBBZ2VudOatpemqpO+8jOmUmeivr+WOn+aWh+WSjOWuoeiuoee7k+aenOWPr+ivuy1jb21wYXQtZmlyZWZveC1zbW9rZS9ldmlkZW5jZQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b5f53d03cc1c6148a9d1-f21579a8c0aebc8f3d74",
+          "file": "ui/console.spec.ts",
+          "line": 314,
+          "column": 1
+        },
+        {
+          "title": "[UI-001] viewer通过浏览器登录且各页无写入口 @compat",
+          "ok": true,
+          "tags": [
+            "compat"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-smoke",
+              "projectName": "webkit-smoke",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4768,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:29:41.378Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "ui-final-screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-webkit-smoke/attachments/ui-final-screenshot-e8927e9918c7ee8ec5256adcb61ebc00154b9bfb.png"
+                    },
+                    {
+                      "name": "ui-final-state",
+                      "contentType": "application/json",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-webkit-smoke/attachments/ui-final-state-5b2f30c9cfb30f5bf7a0eb1f93e6fdd64cf3cef5.json"
+                    },
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI4LTU3Ljg4N1otNGZkMTM5ODEvYXJ0aWZhY3RzL3VpLWNvbnNvbGUtLVVJLTAwMS12aWV3ZXLpgJrov4fmtY/op4jlmajnmbvlvZXkuJTlkITpobXml6DlhpnlhaXlj6MtY29tcGF0LXdlYmtpdC1zbW9rZS9ldmlkZW5jZQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b5f53d03cc1c6148a9d1-908bff053e786215574f",
+          "file": "ui/console.spec.ts",
+          "line": 191,
+          "column": 1
+        },
+        {
+          "title": "[UI-003] 群详情显示角色和实时消息，回流不重复 @compat",
+          "ok": true,
+          "tags": [
+            "compat"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-smoke",
+              "projectName": "webkit-smoke",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4170,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:29:47.249Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "ui-final-screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-003-群详情显示角色和实时消息，回流不重复-compat-webkit-smoke/attachments/ui-final-screenshot-c40195c302dc6c51ae04ab3a154aed6e9a08f320.png"
+                    },
+                    {
+                      "name": "ui-final-state",
+                      "contentType": "application/json",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-003-群详情显示角色和实时消息，回流不重复-compat-webkit-smoke/attachments/ui-final-state-94cd57d0e37f771a470faec55302be2651ab7253.json"
+                    },
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI4LTU3Ljg4N1otNGZkMTM5ODEvYXJ0aWZhY3RzL3VpLWNvbnNvbGUtLVVJLTAwMy3nvqTor6bmg4XmmL7npLrop5LoibLlkozlrp7ml7bmtojmga/vvIzlm57mtYHkuI3ph43lpI0tY29tcGF0LXdlYmtpdC1zbW9rZS9ldmlkZW5jZQ=="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b5f53d03cc1c6148a9d1-530c673f55f46e862c38",
+          "file": "ui/console.spec.ts",
+          "line": 220,
+          "column": 1
+        },
+        {
+          "title": "[UI-006] 浏览器断线恢复后3秒内补齐 @compat",
+          "ok": true,
+          "tags": [
+            "compat"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-smoke",
+              "projectName": "webkit-smoke",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2788,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:29:51.424Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "ui-final-screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-006-浏览器断线恢复后3秒内补齐-compat-webkit-smoke/attachments/ui-final-screenshot-a6c52b8462eccb0b341b80586646d8eff822f95d.png"
+                    },
+                    {
+                      "name": "ui-final-state",
+                      "contentType": "application/json",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-006-浏览器断线恢复后3秒内补齐-compat-webkit-smoke/attachments/ui-final-state-3997656ddabf3876e7ddf62c7f5f96aeff12d1b1.json"
+                    },
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI4LTU3Ljg4N1otNGZkMTM5ODEvYXJ0aWZhY3RzL3VpLWNvbnNvbGUtLVVJLTAwNi3mtY/op4jlmajmlq3nur/mgaLlpI3lkI4z56eS5YaF6KGl6b2QLWNvbXBhdC13ZWJraXQtc21va2UvZXZpZGVuY2U="
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b5f53d03cc1c6148a9d1-0fdb50ea140ae6d3e475",
+          "file": "ui/console.spec.ts",
+          "line": 273,
+          "column": 1
+        },
+        {
+          "title": "[UI-008] 登录到群再到Agent步骤，错误原文和审计结果可读 @compat",
+          "ok": true,
+          "tags": [
+            "compat"
+          ],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit-smoke",
+              "projectName": "webkit-smoke",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3157,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:29:54.217Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "ui-final-screenshot",
+                      "contentType": "image/png",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-webkit-smoke/attachments/ui-final-screenshot-9748d175d272383b7bc4f2c8fe3a75f2e09a7dd1.png"
+                    },
+                    {
+                      "name": "ui-final-state",
+                      "contentType": "application/json",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-28-57.887Z-4fd13981/artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-webkit-smoke/attachments/ui-final-state-2f62ab2b59cc386b285c8e25bfc0cb52fbab9cf9.json"
+                    },
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI4LTU3Ljg4N1otNGZkMTM5ODEvYXJ0aWZhY3RzL3VpLWNvbnNvbGUtLVVJLTAwOC3nmbvlvZXliLDnvqTlho3liLBBZ2VudOatpemqpO+8jOmUmeivr+WOn+aWh+WSjOWuoeiuoee7k+aenOWPr+ivuy1jb21wYXQtd2Via2l0LXNtb2tlL2V2aWRlbmNl"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b5f53d03cc1c6148a9d1-6fdde887695fb3c71d98",
+          "file": "ui/console.spec.ts",
+          "line": 314,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-01T15:28:58.121Z",
+    "duration": 59480.361,
+    "expected": 14,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

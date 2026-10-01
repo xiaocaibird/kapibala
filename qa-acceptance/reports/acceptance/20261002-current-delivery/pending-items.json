@@ -1,0 +1,74 @@
+{
+  "formatVersion": 1,
+  "issuedAt": "2026-10-01T16:16:06.262812+00:00",
+  "items": [
+    {
+      "caseId": "BLK-EXT-001",
+      "status": "BLOCKED_ON_2716_NOT_RETESTED_ON_8E",
+      "reason": "缺未落地分支的权威结果或明确永久停止证据；有限观察不能证明永久不恢复。"
+    },
+    {
+      "caseId": "INT-MSG-007",
+      "status": "NOT_RETESTED_ON_8E",
+      "firstResult": "FAIL",
+      "basis": "2716 full acceptance",
+      "interpretation": "仍需关闭/复验；不宣称本候选已重现，也不导入旧版本PASS。"
+    },
+    {
+      "caseId": "BLK-EXT-002",
+      "status": "NOT_RETESTED_ON_8E",
+      "firstResult": "FAIL",
+      "basis": "2716 full acceptance",
+      "interpretation": "仍需关闭/复验；不宣称本候选已重现，也不导入旧版本PASS。"
+    },
+    {
+      "caseId": "BLK-EXT-003",
+      "status": "NOT_RETESTED_ON_8E",
+      "firstResult": "FAIL",
+      "basis": "2716 full acceptance",
+      "interpretation": "仍需关闭/复验；不宣称本候选已重现，也不导入旧版本PASS。"
+    },
+    {
+      "id": "GAP-BUDGET-AFTER-DISPATCH-KICK",
+      "kind": "QA_COVERAGE_STRENGTHENING_NOT_NEW_BUSINESS_RULE",
+      "status": "NOT_RUN",
+      "scope": "预算逼近上界 × 已派发 kick 的完整交叉窗口未实际执行；CAP003 容量拒绝与 CAP010 2秒收敛各自通过不可合成此组合已覆盖。",
+      "owner": "QA/工程接入",
+      "notInExecutedCounts": true
+    },
+    {
+      "id": "MANUAL-FOLLOWUP",
+      "kind": "REAL_HUMAN_EVIDENCE",
+      "status": "NOT_RUN_IN_THIS_DELTA",
+      "cases": [
+        "MAN-IME-001",
+        "MAN-FOCUS-001",
+        "MAN-UX-001"
+      ],
+      "scope": "不代签真人、不把自动化浏览器当真实IME/跨app焦点；H18四态有限接受及文案体验closed-by-user保留，不为本次差异报告重开。",
+      "notInExecutedCounts": true
+    },
+    {
+      "id": "D039/D041",
+      "kind": "ENGINEERING_DIRECTION_ALREADY_DECIDED_ACCEPTANCE_DEVIATION_UNCHANGED",
+      "status": "NOT_A_NEW_PENDING_DIRECTION_DECISION",
+      "scope": "保守暂停工程方向已决定；原任意重启续跑标准未变，本次已观察暂停仍判FAIL。若要更改验收承诺，需单独明确决定。",
+      "notInExecutedCounts": true
+    },
+    {
+      "id": "READ-CAUSAL-1",
+      "kind": "ENGINEERING_OBSERVATION_GAP_WITH_EXISTING_CASE_FAIL",
+      "status": "BLOCKED",
+      "scope": "exact tool-to-PG-query/transaction attribution, server cancellation and serial SUT ROLLBACK；PG真实锁链已取证但公开tool-wait未关联backend PID/backend_start/query attempt；不能唯一归属waitForDelivery，也不能确认其服务端取消与串行ROLLBACK。缺口须以真实只读观测契约补齐，不能伪造事件",
+      "notInExecutedCounts": true
+    },
+    {
+      "id": "GAP-RUNNING-SECOND-INSTANCE-COMPETITION",
+      "status": "NOT_RUN",
+      "scope": "预算×已派发kick期间的运行中第二实例竞争未测，单独登记，不作为两因素专项关单的新必要条件；终态后启动第二实例不能证明运行中竞争。",
+      "owner": "QA覆盖补强",
+      "notInExecutedCounts": true
+    }
+  ],
+  "settledDirections": "D039–D042及D047已有决定，不重问工程/账号/模型方向；标准不符合仍保留。H18有限四态认可不重开；完整真人证据不代签。"
+}

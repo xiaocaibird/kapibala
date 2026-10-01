@@ -1,0 +1,55 @@
+<testsuites id="" name="" tests="4" failures="0" skipped="0" errors="1" time="19.307309">
+<testsuite name="system/agent.spec.ts" timestamp="2026-10-01T14:20:04.245Z" hostname="system" tests="3" failures="0" skipped="0" time="14.259" errors="1">
+<testcase name="[AGENT-016] idempotency retry returns current sent state without another audit or send" classname="system/agent.spec.ts" time="5.224">
+</testcase>
+<testcase name="[AGENT-028] unknown send times out in five seconds and same key still cannot resend" classname="system/agent.spec.ts" time="7.015">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/error-context.md]]
+
+[[ATTACHMENT|artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/trace.zip]]
+]]>
+</system-out>
+<error message="实际工具状态等待下界超过原始5000ms上限" type="AssertionError">
+<![CDATA[  [system] › system/agent.spec.ts:1037:1 › [AGENT-028] unknown send times out in five seconds and same key still cannot resend 
+
+    AssertionError: 实际工具状态等待下界超过原始5000ms上限
+
+       at ../harness/lifecycle-observation.ts:326
+
+      324 |   assert.equal(window.errorCode, expectedCode, '实际工具交还结果错误');
+      325 |   assert.equal(window.readyErrorCode, expectedCode, '状态等待结果与交还结果不一致');
+    > 326 |   assert.ok(window.elapsed[0] <= 5000, '实际工具状态等待下界超过原始5000ms上限');
+          |          ^
+      327 |   if (expectedCode === 'SEND_TIMEOUT')
+      328 |     assert.ok(window.elapsed[1] >= 5000, '未满5秒且无结论却提前宣告SEND_TIMEOUT');
+      329 |   if (window.elapsed[1] > 5000)
+        at assertToolWaitBudget (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/lifecycle-observation.ts:326:10)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/agent.spec.ts:1145:9
+        at optionalActivityObservation (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/support/agent-activity-budget.ts:21:12)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/agent.spec.ts:1137:5
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T14-20-03.813Z-b8814855/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T14-20-03.813Z-b8814855/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T14-20-03.813Z-b8814855/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T14-20-03.813Z-b8814855/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="[AGENT-030] account becoming terminal during send returns SEND_FAILED and run continues" classname="system/agent.spec.ts" time="2.02">
+</testcase>
+</testsuite>
+<testsuite name="system/recovery.spec.ts" timestamp="2026-10-01T14:20:04.245Z" hostname="system" tests="1" failures="0" skipped="0" time="2.379" errors="0">
+<testcase name="[REC-006] agent restarts with same run id and reconciles already-sent tool effect" classname="system/recovery.spec.ts" time="2.379">
+</testcase>
+</testsuite>
+</testsuites>

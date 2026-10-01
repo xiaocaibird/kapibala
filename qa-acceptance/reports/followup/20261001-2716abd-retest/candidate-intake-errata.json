@@ -1,0 +1,34 @@
+{
+  "kind": "candidate-intake-factual-correction",
+  "at": "2026-10-01T14:33:15.326034+00:00",
+  "originalReportsModified": false,
+  "frozenQaSourceModifiedDuringRun": false,
+  "candidateProductTestsAdded": 0,
+  "paidModelCalls": 0,
+  "items": [
+    {
+      "artifact": "reports/followup/20261001-e85ae61-retest/next-candidate-intake.json",
+      "incorrect": "C1 7天清理",
+      "correct": "原始C1默认30天且可配置；对应cases/candidates.json C1-002已正确为30天",
+      "effect": "接收元数据事实更正，旧报告原字节保留；不导入C1通过结论"
+    },
+    {
+      "artifact": "cases/candidates.json C2-001 data.provider",
+      "incorrect": "待用户选定",
+      "correct": "Gemini 已由D047确认；实际QA联调执行/凭据及费用使用范围独立冻结",
+      "effect": "正在运行的QA源保持；全量结束后在独立源码提交更新此已决定事实；不用重新问用户选择provider"
+    }
+  ],
+  "sources": [
+    {
+      "path": "docs/original-interview-question.md",
+      "sha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+      "sutRevision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c"
+    },
+    {
+      "path": "docs/decisions.md",
+      "sha256": "4386d7399b745438a4c8d792edb0ce9e63649d40e26812d48b850408797b633c",
+      "sutRevision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c"
+    }
+  ]
+}

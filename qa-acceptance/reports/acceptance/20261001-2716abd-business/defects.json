@@ -1,0 +1,618 @@
+{
+  "formatVersion": 1,
+  "issuedAt": "2026-10-01T15:25:37.446890+00:00",
+  "basis": {
+    "runId": "2026-10-01T14-26-25.068Z-1e0cb38a",
+    "candidate": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+    "qaRevision": "ec46f9b30fb2f5a312c92fc78463ddbfe200042f",
+    "qaTreeBeforeSha256": "40b301c87542929beab4974f140879da2a698ac9498056cc2c3a3c5c1f52b0bd",
+    "qaTreeAfterSha256": "40b301c87542929beab4974f140879da2a698ac9498056cc2c3a3c5c1f52b0bd",
+    "targetSha256": "6ccd4df091116eea6ee0324771526dde531bb834d5e3264bc76c5e9f706a028e",
+    "businessSha256": "8738023cc523dfbddebf347135a4c2883bac6eab98afea93c0b79e387b6d500c",
+    "originalRequirementSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+    "dependencyLockSha256": "7462a4670d1e4036156d1639ebfeaa0cd4276bc918d1b805b3677d862c2cb883",
+    "startedAt": "2026-10-01T14:26:25.113Z",
+    "automaticCompletedAt": "2026-10-01T15:04:32.133Z"
+  },
+  "deduplication": "9个审定FAIL归7组；D01两个预算表现不宣称共同代码根因，D06两个kick变体合组；证据BLOCKED不计产品缺陷。",
+  "severityPolicy": {
+    "P1": "故障触发核心任务无法按原强恢复要求自动完成，影响任务收口。",
+    "P2": "已证时限或排期偏离，未虚构生产损失、最坏上界或安全事故。",
+    "priorityVsSeverity": "用例执行优先级不等于缺陷影响严重度。"
+  },
+  "counts": {
+    "groups": 7,
+    "P1": 4,
+    "P2": 3,
+    "affectedFailCases": 9
+  },
+  "defects": [
+    {
+      "id": "QA2716-D01",
+      "title": "单进程及安全阶段重启活动预算超限",
+      "caseIds": [
+        "AGENT-025",
+        "INT-ACT-001"
+      ],
+      "severity": "P2",
+      "classification": "STRICT_TIMING_NONCONFORMITY",
+      "status": "OPEN_AT_PINNED_VERSION",
+      "requirements": [
+        "R-A5-06",
+        "R-A5-11"
+      ],
+      "firstObservedAt": "2026-10-01T14:45:53.871Z",
+      "lastObservedAt": "2026-10-01T14:51:39.187Z",
+      "rawStatuses": {
+        "AGENT-025": "FAIL",
+        "INT-ACT-001": "FAIL"
+      },
+      "adjudicatedStatus": "FAIL",
+      "expected": "累计活动最多60000ms，停机不计，重启不得重置预算。",
+      "actual": {
+        "AGENT-025": "同epoch实际停止区间[60011.253958,60018.070083]ms，下界超60000，未计COMMIT尾段。",
+        "INT-ACT-001": "生前live校准、实际应用退出及恢复实际停止支持两段活动下界60039.716459ms，未用retained/持久账本补尾。"
+      },
+      "impact": "违反硬时限；本次超出量不是生产最坏上界。",
+      "reproductionFromFrozenCases": {
+        "AGENT-025": {
+          "preconditions": [
+            "尚未对产品执行；执行前必须取得用户显式授权并冻结SUT/QA版本与配置",
+            "每用例独立真实PostgreSQL数据库、进程、网关/Agent桩，默认不重试",
+            "通过公开admin登录/连接/建群准备数据；测试所需种子不足记BLOCKED，不作为产品缺陷"
+          ],
+          "data": {},
+          "steps": [
+            "每轮8秒、交替参数合法read持续运行",
+            "按automation中逐项断言读取公开REST/WS结果并对照独立外部事实账本"
+          ],
+          "faults": [
+            "慢Agent响应"
+          ],
+          "timing": [
+            "记录run创建与最后running/首次terminal的独立单调时钟区间；触发前verify观测能力，取得真实runId后arm；只有工程从模块启动保留真实创建至终止且完整单epoch的activity-witness可判活动预算，不把订阅起点当创建",
+            "完整活动/实际停止决定下界>60000为FAIL，上界<=60000证明最大预算；活动或决定区间跨60000、缺完整见证为BLOCKED；wall_clock但早于60秒本身不自动FAIL，不引入最低时长、容差或精确单点；预算后或真实终止决定后新turn仍为FAIL",
+            "观测缺失仍检查公开终态、steps、active引用与网关/Agent副作用；65秒为诊断观察预算，无独立违约的未终态不能凭此判产品超时",
+            "真实创建、连续同epoch活动、停止决定、同attempt终态COMMIT和公开终态分开取证；公开轮询下界及COMMIT延迟不冒充活动决定时间"
+          ],
+          "expected": [
+            "合法慢read推进后以failed/wall_clock结束且未超过原run创建起60秒活动上限；未到12步，不要求必须跑满60秒；终止后不再派发"
+          ],
+          "cleanup": [
+            "fixture仅清理本用例创建的进程、数据库、代理和测试桩；恢复数据库代理并释放所有屏障",
+            "失败证据写入reports/<run-id>并保留，禁止删除其他运行资源"
+          ]
+        },
+        "INT-ACT-001": {
+          "preconditions": [
+            "仅取得对应产品执行授权后在冻结候选、QA版本和隔离环境运行；本次准备不执行产品",
+            "真实PG、独立Gateway/Agent与QA专属进程；控制器核对实际应用归属guardian/PGID并读取资源token",
+            "工程候选须提供contracts/cross-epoch-observation.md增量字段；缺真实live/连续活动/安全屏障/生命周期能力记BLOCKED，不用fake-controller替代",
+            "额外activity-safe-boundary能力及真实hold-safe-activity-boundary未接入则BLOCKED；公开running不证明可安全崩溃",
+            "同主机稳定速率单调时钟，无实验期间主机休眠/时钟源切换；新observe须在实际epoch仍活动时接入"
+          ],
+          "data": {
+            "risk": "INT-R02",
+            "mode": "observe-activity",
+            "downtimeMs": 5000,
+            "turnDelayMs": 7000,
+            "crashBoundaryMode": "hold-safe-activity-boundary",
+            "boundaryRequestedAfterMs": 17000
+          },
+          "steps": [
+            "建群开启Agent，外部消息触发7秒不同入参只读工具循环；同一QA父单调时钟记录真实创建区间",
+            "17秒后请求安全屏障；独立Agent完成账本及自有库只读确认工具结果/续跑history已持久化、零外部在途，保持held",
+            "两次live snapshot保存真实app时钟、父请求窗口和原ps启动身份；只kill自有进程组，并独立确认实际app身份退出，不能只等guardian",
+            "保存退出及停机5秒后的只读账本；保留DB/桩启动新SUT，以新guardian/app身份绑定同run，取实际clock-acquisition连续epoch",
+            "读取公开run、活动流和生命周期到终态；独立映射旧创建→真实退出、新接管→真实停止决定，核对同attempt COMMIT；原始terminal/公开可见时间单列",
+            "完整保存两侧raw/live-cache/kill/ledger。仅扣明确无app区间，初始化空档上界保守计入；真实两段安全下界超限先FAIL，否则按完整证据和全程上界判定"
+          ],
+          "faults": [
+            "真实安全阶段保持后SUT硬终止、5秒专属停机；不得修改时钟/补状态/清恢复标记/预置结果"
+          ],
+          "timing": [
+            "原60秒累计活动、停机不计规则不变",
+            "85秒是终态诊断预算，未观察完整记BLOCKED，不是新业务SLA"
+          ],
+          "expected": [
+            "恢复同runId，最终failed/wall_clock且活跃指针清空，网关零发送",
+            "真实活动两段安全下界>60000即FAIL；含未知初始化空档的完整保守上界<=60000且其余义务齐全可证上限，不要求wall_clock跑满60秒；较晚COMMIT/公开终态不能冒充迟停止决定",
+            "新进程includesUnsavedTail=false保持；QA独立桥接旧尾段。缓存校准、身份/连续性缺失、真实停止或COMMIT缺证、上界跨限记BLOCKED；缺COMMIT不遮已证实际活动超限，不接受固定尾差容忍或persistedActiveMs替代",
+            "恢复暂停待人工/外部确认而无法自动续跑记原A5.8恢复FAIL，不能误归预算；缺实际活动见证BLOCKED；进程在线下界不能当活动下界",
+            "只覆盖已证明安全阶段重启预算；在途未知结果及任意崩溃强恢复要求保留，不因本例改变预期"
+          ],
+          "cleanup": [
+            "finally仅按客户端UUID释放本轮故障租约、关闭本例WS；工程TTL独立兜底",
+            "重启保留DB及外部桩；第一次业务失败与清理失败分别保留，不清理全局资源"
+          ]
+        }
+      },
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/trace.zip",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/trace.zip"
+      ],
+      "independentReview": [
+        "reports/followup/20261001-2716abd-retest/full-backend-review/backend-review.md"
+      ],
+      "finalRawBinding": "reports/followup/20261001-2716abd-retest/full-backend-review/backend-facts.json",
+      "closureEvidenceRequired": "同标准补真实停止上界不超60000ms；跨epoch继续证明活校准/实际退出/活动归属。",
+      "limits": "相同预算条款两个表现归组，不宣称共同代码根因；不增加等足60秒下限。",
+      "retest": {
+        "samePinnedVersion": null,
+        "laterCandidateResultImported": false,
+        "appendix": null
+      }
+    },
+    {
+      "id": "QA2716-D02",
+      "title": "发送工具实际等待超过5秒",
+      "caseIds": [
+        "AGENT-028"
+      ],
+      "severity": "P2",
+      "classification": "STRICT_TIMING_NONCONFORMITY",
+      "status": "OPEN_AT_PINNED_VERSION",
+      "requirements": [
+        "R-A5-10",
+        "R-A5-16"
+      ],
+      "firstObservedAt": "2026-10-01T14:47:01.088Z",
+      "lastObservedAt": "2026-10-01T14:47:08.216Z",
+      "rawStatuses": {
+        "AGENT-028": "FAIL"
+      },
+      "adjudicatedStatus": "FAIL",
+      "expected": "状态等待最多5000ms，未知返回SEND_TIMEOUT，同key不得重发。",
+      "actual": {
+        "AGENT-028": "实际工具等待[5001.806125,5001.989875]ms，就绪下界超5000，未计COMMIT。"
+      },
+      "impact": "有限等待硬保证不符合；未据此声称重复发送。",
+      "reproductionFromFrozenCases": {
+        "AGENT-028": {
+          "preconditions": [
+            "尚未对产品执行；执行前必须取得用户显式授权并冻结SUT/QA版本与配置",
+            "每用例独立真实PostgreSQL数据库、进程、网关/Agent桩，默认不重试",
+            "通过公开admin登录/连接/建群准备数据；测试所需种子不足记BLOCKED，不作为产品缺陷"
+          ],
+          "data": {},
+          "steps": [
+            "send504后查询503超过5秒；工具超时；恢复后同key重试",
+            "按automation中逐项断言读取公开REST/WS结果并对照独立外部事实账本"
+          ],
+          "faults": [
+            "504+503+同key重试"
+          ],
+          "timing": [
+            "5秒工具上限；网关恢复2秒内确认",
+            "使用业务时点的可观测上下界存证；区间越界为FAIL，跨验收门槛而不能确定为BLOCKED，不增加隐式容差",
+            "仅持续未决SEND_TIMEOUT支路保留5秒后判据；核实真实504接收、查询故障与事件控制且全等待段无明确结果，不能从故障开启/504抵达/下一turn重置或替代计时"
+          ],
+          "expected": [
+            "5秒得到SEND_TIMEOUT；恢复后同key返回现状，审计/send各一次"
+          ],
+          "cleanup": [
+            "fixture仅清理本用例创建的进程、数据库、代理和测试桩；恢复数据库代理并释放所有屏障",
+            "失败证据写入reports/<run-id>并保留，禁止删除其他运行资源"
+          ]
+        }
+      },
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/trace.zip"
+      ],
+      "independentReview": [
+        "reports/followup/20261001-2716abd-retest/full-backend-review/backend-review.md"
+      ],
+      "finalRawBinding": "reports/followup/20261001-2716abd-retest/full-backend-review/backend-facts.json",
+      "closureEvidenceRequired": "真实等待/物理返回在同标准下独立复测；不可把COMMIT或下一轮请求当物理返回。",
+      "limits": "就绪安全下界已超1.806125ms，没有授权毫秒容差。",
+      "retest": {
+        "samePinnedVersion": null,
+        "laterCandidateResultImported": false,
+        "appendix": null
+      }
+    },
+    {
+      "id": "QA2716-D03",
+      "title": "首次接收记录保存前崩溃使序列排期基准漂移",
+      "caseIds": [
+        "INT-MSG-007"
+      ],
+      "severity": "P2",
+      "classification": "CONFIRMED_RECOVERY_NONCONFORMITY",
+      "status": "OPEN_AT_PINNED_VERSION",
+      "requirements": [
+        "R-A2-01",
+        "R-A2-08",
+        "R-B1-07",
+        "R-B1-09"
+      ],
+      "firstObservedAt": "2026-10-01T14:49:24.214Z",
+      "lastObservedAt": "2026-10-01T14:49:28.979Z",
+      "rawStatuses": {
+        "INT-MSG-007": "FAIL"
+      },
+      "adjudicatedStatus": "FAIL",
+      "expected": "按原首次确认/实际发出基准排期；未逾原到期不能用重放时间替换。",
+      "actual": {
+        "INT-MSG-007": "首次receipt已观察但INSERT未发出即崩溃，后步比原允许上界晚2304ms；恢复/重放均未逾原到期。"
+      },
+      "impact": "原允许上界14:49:46.558UTC，实际14:49:48.862，至少晚2304ms。",
+      "reproductionFromFrozenCases": {
+        "INT-MSG-007": {
+          "preconditions": [
+            "后续授权、固定新QA和工程候选；独立数据库、网关、单个SUT实例，不启动竞争写入实例",
+            "receipt-before-commit必须证明receipt-insert-not-issued、receiptPresentAtProbe=false与实际观察时刻；已有receipt或window-unavailable时BLOCKED",
+            "能力仅bound-instance且allDatabaseWritersProven=false；不能据此声称多实例全局未提交或物理最早接收已证明"
+          ],
+          "data": {
+            "firstDelaySeconds": 0,
+            "secondDelaySeconds": 20,
+            "minimumReplayGapMs": 1500,
+            "mode": "receipt-before-commit"
+          },
+          "steps": [
+            "独立网关真实落地首步但暂不递送确认；登记含真实clientMsgId/msgId/eventId字符串的armed门，再开启事件递送",
+            "取得接收时间已捕获、INSERT尚未发出的held窗口，保存首次独立递送至读回区间以及公开业务尚未应用状态",
+            "保持窗口和真实时间间隔，SIGKILL本实例；保留PG/网关/控制器，定向释放旧实例租约，启动新guardian并重新核验绑定",
+            "在原后步最早到期之前重放原确认，观察首步和后步公开排期；记录是否使用了丢失后的重放时间",
+            "追加相同eventId和不同eventId的同消息确认，检查排期稳定、前步不重发、第二步真实发出且无重复消息"
+          ],
+          "faults": [
+            "首次接收记录INSERT尚未发出时SIGKILL；SSE受控重放保留原网关事实"
+          ],
+          "timing": [
+            "后步20秒为用例配置；1500ms拉开原接收与重放证据，不新增生产指标",
+            "采样10/30秒仅取证预算；毫秒边界交叠不能强判PASS/FAIL"
+          ],
+          "expected": [
+            "严格原B1排期必须仍以上次实际首次接收时间加20秒为基准；已证明排期偏离该区间记FAIL，已知保存前限制不自动视为通过",
+            "不把网关sentAt、重放时刻或一次SQL发出当成原始接收/已提交证明；不声称杀客户端会使自动提交语句回滚",
+            "若恢复跨过原到期区间、真实窗口未命中、时间上下界重叠或有限观察未完成则BLOCKED；已观测到的重复、提前或错误终态仍FAIL",
+            "本次仅单实例受控窗口；D041披露的限制保留到报告，不扩成多实例全局证明或数学上的任意时刻保证"
+          ],
+          "cleanup": [
+            "只终止本例持有进程并释放已知UUID；保留控制器与PG直至用例清理完成，清理失败不覆盖首次违约"
+          ]
+        }
+      },
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/trace.zip"
+      ],
+      "independentReview": [
+        "reports/followup/20261001-2716abd-retest/full-review/recovery-adjudication-six-cases.md"
+      ],
+      "finalRawBinding": "reports/followup/20261001-2716abd-retest/full-review/recovery-adjudication-final-binding.json",
+      "closureEvidenceRequired": "按原标准补证，或明确单独接受极端保存前窗口偏差；D041方向不是验收豁免。",
+      "limits": "仅单实例保存前窗口，不外推多实例全局首收；失败后未到达断言不补PASS。",
+      "retest": {
+        "samePinnedVersion": null,
+        "laterCandidateResultImported": false,
+        "appendix": null
+      }
+    },
+    {
+      "id": "QA2716-D04",
+      "title": "建群成功响应丢失后原任务明确暂停",
+      "caseIds": [
+        "BLK-EXT-002"
+      ],
+      "severity": "P1",
+      "classification": "PROTOCOL_LIMIT_WITH_CONFIRMED_DEVIATION",
+      "status": "OPEN_AT_PINNED_VERSION",
+      "requirements": [
+        "R-A2-01",
+        "R-A3-02"
+      ],
+      "firstObservedAt": "2026-10-01T14:52:44.970Z",
+      "lastObservedAt": "2026-10-01T14:53:06.288Z",
+      "rawStatuses": {
+        "BLK-EXT-002": "BLOCKED"
+      },
+      "adjudicatedStatus": "FAIL",
+      "expected": "任意中断后自动恢复原任务且不重复建群。",
+      "actual": {
+        "BLK-EXT-002": "一次create远端成功，响应未保存；同job公开说明明确不自动重新建群。强恢复不符合，非重复建群事实。"
+      },
+      "impact": "远端一次真实create，但故障后job不能自动完成。",
+      "reproductionFromFrozenCases": {
+        "BLK-EXT-002": {
+          "preconditions": [
+            "取得对应产品执行授权，冻结候选和独立环境",
+            "原协议Gateway/Agent桩；保留其状态跨SUT重启，不注入产品私有实现"
+          ],
+          "data": {
+            "gateway": "create无客户端操作标识/按操作查询"
+          },
+          "steps": [
+            "create效果已入外部账本但响应仍被屏障拦截时终止SUT",
+            "重启后仅开放原协议；不向SUT泄露QA私有远端groupId",
+            "逐次核对同一个job和原群完成角色及效果账本"
+          ],
+          "faults": [
+            "独立外部服务请求/效果屏障；只对本轮持有的SUT进程组SIGKILL"
+          ],
+          "timing": [
+            "观察窗口是有限取证预算，不替代或增加原业务deadline；收到504以外的在途请求没有2秒完成保证"
+          ],
+          "expected": [
+            "总则192及A3要求重启后建群行为仍成立，finished必须对应原远端群及真实creator/admin",
+            "同一建群意图产生额外远端群是依据A3单次创建语义的QA一致性推论，不谎称原文有create exactly-once明文；仅HTTP请求重发次数不独立判FAIL",
+            "20秒观察无终态为BLOCKED测量不足，有限等待不证明永久不恢复"
+          ],
+          "cleanup": [
+            "finally释放屏障；保留证据后清理本轮隔离资源"
+          ]
+        }
+      },
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/trace.zip"
+      ],
+      "independentReview": [
+        "reports/followup/20261001-2716abd-retest/full-review/recovery-adjudication-six-cases.md"
+      ],
+      "finalRawBinding": "reports/followup/20261001-2716abd-retest/full-review/recovery-adjudication-final-binding.json",
+      "closureEvidenceRequired": "维持D039工程方向；按限制交付需单独接受具体偏差，不给桩增加未承诺保证。",
+      "limits": "未观察重复建群；FAIL依据明确暂停，不是20秒诊断预算。",
+      "retest": {
+        "samePinnedVersion": null,
+        "laterCandidateResultImported": false,
+        "appendix": null
+      }
+    },
+    {
+      "id": "QA2716-D05",
+      "title": "首次提权生效响应丢失后原任务不自动完成",
+      "caseIds": [
+        "BLK-EXT-003"
+      ],
+      "severity": "P1",
+      "classification": "PROTOCOL_LIMIT_WITH_CONFIRMED_DEVIATION",
+      "status": "OPEN_AT_PINNED_VERSION",
+      "requirements": [
+        "R-A3-02",
+        "R-A3-04"
+      ],
+      "firstObservedAt": "2026-10-01T14:53:06.833Z",
+      "lastObservedAt": "2026-10-01T14:53:28.731Z",
+      "rawStatuses": {
+        "BLK-EXT-003": "BLOCKED"
+      },
+      "adjudicatedStatus": "FAIL",
+      "expected": "原提权流程自动恢复，保持调用上限并完成后续步骤。",
+      "actual": {
+        "BLK-EXT-003": "首次promote真实生效；同job公开说明明确不自动重试，未正常完成。未到达第二次promote。"
+      },
+      "impact": "首次成员已为admin，原job不再自动正常完成。",
+      "reproductionFromFrozenCases": {
+        "BLK-EXT-003": {
+          "preconditions": [
+            "取得对应产品执行授权，冻结候选和独立环境",
+            "原协议Gateway/Agent桩；保留其状态跨SUT重启，不注入产品私有实现"
+          ],
+          "data": {
+            "promoteCallLimit": 2
+          },
+          "steps": [
+            "create响应屏障处配置promote故障，待首个promote真实生效而响应未达时崩溃",
+            "恢复后若出现第二次promote，在相同生效未确认窗口再次崩溃；若无需重发即可结束，保留该实际分支",
+            "核对promote实际调用总数、远端admin真相、原job完成与本地成员角色"
+          ],
+          "faults": [
+            "独立外部服务请求/效果屏障；只对本轮持有的SUT进程组SIGKILL"
+          ],
+          "timing": [
+            "观察窗口是有限取证预算，不替代或增加原业务deadline；收到504以外的在途请求没有2秒完成保证"
+          ],
+          "expected": [
+            "promote总数不超过2，finished时首成员确为admin且本地对应",
+            "QA私有角色账本仅用于断言，不作为SUT可访问的新接口",
+            "第一阶段未出现第二次调用不虚报已触发第二窗口；无终态的观察超时为BLOCKED"
+          ],
+          "cleanup": [
+            "finally释放屏障；保留证据后清理本轮隔离资源"
+          ]
+        }
+      },
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/trace.zip"
+      ],
+      "independentReview": [
+        "reports/followup/20261001-2716abd-retest/full-review/recovery-adjudication-six-cases.md"
+      ],
+      "finalRawBinding": "reports/followup/20261001-2716abd-retest/full-review/recovery-adjudication-final-binding.json",
+      "closureEvidenceRequired": "D039边界维持；若保留限制交付需独立偏差接受。",
+      "limits": "未到第二次promote，不声称两次丢响应已覆盖或次数超限。",
+      "retest": {
+        "samePinnedVersion": null,
+        "laterCandidateResultImported": false,
+        "appendix": null
+      }
+    },
+    {
+      "id": "QA2716-D06",
+      "title": "kick结果未记录后run明确暂停自动恢复",
+      "caseIds": [
+        "BLK-EXT-004",
+        "REC-007"
+      ],
+      "severity": "P1",
+      "classification": "PROTOCOL_LIMIT_WITH_CONFIRMED_DEVIATION",
+      "status": "OPEN_AT_PINNED_VERSION",
+      "requirements": [
+        "R-A5-09",
+        "R-A5-11"
+      ],
+      "firstObservedAt": "2026-10-01T14:53:50.773Z",
+      "lastObservedAt": "2026-10-01T14:55:37.414Z",
+      "rawStatuses": {
+        "BLK-EXT-004": "BLOCKED",
+        "REC-007": "FAIL"
+      },
+      "adjudicatedStatus": "FAIL",
+      "expected": "原run自动恢复且不重复踢人；目标重入不应错误补踢。",
+      "actual": {
+        "BLK-EXT-004": "一次kick真实生效，目标后重入；同run明确安全暂停，不能自动恢复完成。未观察重复踢人。",
+        "REC-007": "kick已生效后原run公开recoveryNote明确暂停；FAIL依据暂停策略，不是30秒轮询预算。"
+      },
+      "impact": "目标退出和后来重入两样本均一次kick，原run暂停未自动结束。",
+      "reproductionFromFrozenCases": {
+        "BLK-EXT-004": {
+          "preconditions": [
+            "取得对应产品执行授权，冻结候选和独立环境",
+            "原协议Gateway/Agent桩；保留其状态跨SUT重启，不注入产品私有实现"
+          ],
+          "data": {
+            "target": "外部platformUserId"
+          },
+          "steps": [
+            "工具kick效果已生效而响应被屏障拦截时崩溃",
+            "SUT停机时放行旧操作，等待旧member_left事件记入历史后再注入目标重新加入",
+            "重启并持续核对原run、原工具结果、请求次数和重入后的真实成员"
+          ],
+          "faults": [
+            "独立外部服务请求/效果屏障；只对本轮持有的SUT进程组SIGKILL"
+          ],
+          "timing": [
+            "观察窗口是有限取证预算，不替代或增加原业务deadline；收到504以外的在途请求没有2秒完成保证"
+          ],
+          "expected": [
+            "A5.8已生效工具不能再次执行或记失败；原kick调用一次",
+            "同一run正常结束且原工具成功可查看；再次入群事实不得被恢复流程重踢",
+            "无原文硬恢复deadline的20秒取样不足为BLOCKED，不能虚报永久挂起"
+          ],
+          "cleanup": [
+            "finally释放屏障；保留证据后清理本轮隔离资源"
+          ]
+        },
+        "REC-007": {
+          "preconditions": [
+            "尚未对产品执行；执行前必须取得用户显式授权并冻结SUT/QA版本与配置",
+            "每用例独立真实PostgreSQL数据库、进程、网关/Agent桩，默认不重试",
+            "通过公开admin登录/连接/建群准备数据；测试所需种子不足记BLOCKED，不作为产品缺陷"
+          ],
+          "data": {},
+          "steps": [
+            "Agent kick实际移除后返回前SIGKILL并重启",
+            "按automation中逐项断言读取公开REST/WS结果并对照独立外部事实账本"
+          ],
+          "faults": [
+            "Agent kick after-effect崩溃窗口"
+          ],
+          "timing": [
+            "轮询仅用于等待已约定异步结果；默认15秒诊断上限不替代原文时间边界"
+          ],
+          "expected": [
+            "同run继续完成且kick步不失败；外部kick调用一次"
+          ],
+          "cleanup": [
+            "fixture仅清理本用例创建的进程、数据库、代理和测试桩；恢复数据库代理并释放所有屏障",
+            "失败证据写入reports/<run-id>并保留，禁止删除其他运行资源"
+          ]
+        }
+      },
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/trace.zip",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/trace.zip"
+      ],
+      "independentReview": [
+        "reports/followup/20261001-2716abd-retest/full-review/recovery-adjudication-six-cases.md"
+      ],
+      "finalRawBinding": "reports/followup/20261001-2716abd-retest/full-review/recovery-adjudication-final-binding.json",
+      "closureEvidenceRequired": "保持安全不盲重踢；D039内不能履行强恢复则按具体偏差接受或保持不符合。",
+      "limits": "同一kick未知结果两个变体合组，不伪称已发生重复踢人。",
+      "retest": {
+        "samePinnedVersion": null,
+        "laterCandidateResultImported": false,
+        "appendix": null
+      }
+    },
+    {
+      "id": "QA2716-D07",
+      "title": "模型轮次响应未记录即中断后run停止自动续跑",
+      "caseIds": [
+        "BLK-EXT-005"
+      ],
+      "severity": "P1",
+      "classification": "PROTOCOL_LIMIT_WITH_CONFIRMED_DEVIATION",
+      "status": "OPEN_AT_PINNED_VERSION",
+      "requirements": [
+        "R-A5-02",
+        "R-A5-11"
+      ],
+      "firstObservedAt": "2026-10-01T14:54:15.444Z",
+      "lastObservedAt": "2026-10-01T14:54:37.943Z",
+      "rawStatuses": {
+        "BLK-EXT-005": "BLOCKED"
+      },
+      "adjudicatedStatus": "FAIL",
+      "expected": "已持久历史可读，run自动恢复且不重复副作用。",
+      "actual": {
+        "BLK-EXT-005": "原send与历史已保存；下一模型轮响应未记录即崩溃后同run明确暂停。未要求模型响应逐字一致。"
+      },
+      "impact": "原send及历史仍在，第二轮响应未保存后run暂停，总turn仍两次。",
+      "reproductionFromFrozenCases": {
+        "BLK-EXT-005": {
+          "preconditions": [
+            "取得对应产品执行授权，冻结候选和独立环境",
+            "原协议Gateway/Agent桩；保留其状态跨SUT重启，不注入产品私有实现"
+          ],
+          "data": {
+            "runId": "same",
+            "turnIdentity": "原协议未规定"
+          },
+          "steps": [
+            "先执行一次send工具；下一turn请求含该工具结果时屏障拦截模型响应",
+            "确认首个外部效果已落地后崩溃，释放旧响应，仅由Agent桩保留旧会话推进",
+            "重启后模型对重试可返回不同合法end_turn；核对同runId、先前工具历史、预算、步骤和副作用"
+          ],
+          "faults": [
+            "独立外部服务请求/效果屏障；只对本轮持有的SUT进程组SIGKILL"
+          ],
+          "timing": [
+            "观察窗口是有限取证预算，不替代或增加原业务deadline；收到504以外的在途请求没有2秒完成保证"
+          ],
+          "expected": [
+            "原协议不要求丢失且未执行的模型响应逐字重放；不同合法响应或重POST本身不算失败",
+            "同runId恢复且已持久工具结果保留、已发生send不重复且不记失败，最终正常结束、步骤不超过12",
+            "20秒观察无终态为BLOCKED测量不足；有限成功样本不证明任意时刻强保证"
+          ],
+          "cleanup": [
+            "finally释放屏障；保留证据后清理本轮隔离资源"
+          ]
+        }
+      },
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/trace.zip"
+      ],
+      "independentReview": [
+        "reports/followup/20261001-2716abd-retest/full-review/recovery-adjudication-six-cases.md"
+      ],
+      "finalRawBinding": "reports/followup/20261001-2716abd-retest/full-review/recovery-adjudication-final-binding.json",
+      "closureEvidenceRequired": "D039方向维持；按限制交付需独立偏差接受，不制造确定性模型重放。",
+      "limits": "未要求未执行模型响应逐字一致；未观察旧send重发。",
+      "retest": {
+        "samePinnedVersion": null,
+        "laterCandidateResultImported": false,
+        "appendix": null
+      }
+    }
+  ]
+}

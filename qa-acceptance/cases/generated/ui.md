@@ -863,13 +863,15 @@
 
 1. 后续产品执行已授权；至少3服务账号；独立PG和候选进程
 2. 通过可见页面确认routes/selectors适配，adapterConfirmed=true；浏览器引擎已安装
+3. 真实scope水位/历史回放已见、完整首页成功且原5秒周期无相关事件或重连后才加载续页；缺前提BLOCKED，不与首次回放交错归因
 
 **执行步骤**
 
-1. 建23群
-2. 加载第二页
-3. 改变群资料
-4. 刷新503后再成功
+1. 登录前被动记录目录/WS；建立真实回放及完整首页稳定前提，记录公开cursor实际200续页、23唯一ID与卡片顺序，再注入目标改名与刷新故障
+2. 建23群
+3. 加载第二页
+4. 改变群资料
+5. 刷新503后再成功
 
 **预期结果**
 
@@ -889,6 +891,7 @@
 
 1. 浏览器trace/关键截图、请求时序和断言
 2. 公开API与Gateway/Agent事实账本、版本及清理manifest
+3. 首次稳定基线、实际首页/续页正文与cursor、全23身份、WS水位/事件完整账本；初始回放干扰不能算目标故障
 
 **清理**
 
@@ -1167,6 +1170,154 @@
   "fixtures": "tests/ui/console.spec.ts内显式数据",
   "projects": [
     "chromium"
+  ]
+}
+```
+
+<a id="UI-038"></a>
+
+## UI-038 · 审计阻塞说明不否认前序真实成功副作用
+
+- 需求：R-A5-07、R-A5-14、R-A6-03、R-B4-02
+- 优先级：P1；方法：automated
+- 自动化入口：tests/ui/console.spec.ts
+
+**准备状态：script-ready；责任方：QA**
+
+1. 现有公开API与独立Agent/Gateway可建立两工具事实链；尚未在新候选执行
+
+**前置条件**
+
+1. 产品执行须绑定已交付固定候选及新授权；独立PG、网关、Agent和浏览器上下文
+2. 公开UI routes/selectors适配已确认，至少3服务账号
+
+**执行步骤**
+
+1. 第一工具真实send_message；在第二模型响应屏障内确认公开sent、独立远端一条落地、第一步骤成功
+2. 释放第二工具响应，三次审计无结论后观察blocked/audit_blocked，第二工具零发送，前一条消息和成功步骤保留
+3. 登录群详情，按API实际runId选择唯一运行链接；核对该运行列表与详情的阻塞说明
+4. 页面说明须限定本次工具并提示前序步骤可能已执行；核对查看前后公开轨迹不变
+
+**预期结果**
+
+1. 同run第一工具真实成功一次，第二工具审计三次但无副作用，合计4次审计且无虚构重发
+2. 列表及详情不宣称整个run没有副作用或已经回滚；不要求固定文案逐字相等
+3. 前序工具/文本与被阻塞工具/文本可查看，活动run引用清空；纯查看不改变事实
+
+**时序要求**
+
+1. 所有准备/终态采样上限仅诊断，未形成前提判BLOCKED；不新增业务SLA或5秒/60秒容差
+
+**故障注入**
+
+1. 只使用独立Agent真实响应/屏障和公开API；不改写产品状态、浏览器响应或DOM
+
+**取证**
+
+1. 公开API实际runId/status/endReason/steps及独立网关请求和落地账本
+2. 浏览器trace、每个状态的实际可见文字及截图；缺失前提单独保留
+
+**清理**
+
+1. finally释放仅本例Agent屏障；独立fixture关闭浏览器与自有进程/数据库
+
+**数据**
+
+```json
+{
+  "projects": [
+    "chromium"
+  ],
+  "firstTool": "审计pass并真实sent",
+  "secondTool": "500、非法JSON、unknown三次无明确结论"
+}
+```
+
+<a id="UI-039"></a>
+
+## UI-039 · 真实零步骤failed与cancelled详情不再提示等待第一步
+
+- 需求：R-A5-06、R-A5-13、R-A5-14、R-B4-02
+- 优先级：P1；方法：automated
+- 自动化入口：tests/ui/console.spec.ts
+
+**准备状态：script-ready；责任方：QA**
+
+1. 此前缺少首派发前hook的判断不充分：本轮用现有公开工作负载尝试真实排队前提；原UI039首次BLOCKED及dependency-pending记录保持
+2. 四个首轮计划相同，后两轮按真实runId分别绑定；审计只按原协议groupId/text核验，不能要求不存在的runId字段
+3. 实际目标有派发/有步骤/未取得所需终态时对应子场景BLOCKED；两个角色独立检查，真实文案FAIL优先保留；尚未产品实跑
+
+**前置条件**
+
+1. 固定新候选与单独授权target：AGENT_TURN_TIMEOUT_MS=15000；独立PG、Gateway、Agent和浏览器
+2. 先真实创建6个active且agentEnabled=false的群，至少3个可复用在线服务账号；公开UI定位已确认
+3. 只有4个不同holder run首模型请求真实进入且响应尚未完成后才触发2目标；不以工程内部容量常量作oracle
+
+**执行步骤**
+
+1. 预建6群；4个holder依次真实触发，证明4个不同run首模型请求已进入且响应未结束，公开状态running/steps=[]
+2. 给各实际holder runId绑定第二轮send和第三轮finish；四个合法pass审计延迟4秒，各群发送落地与响应各延迟10秒
+3. 在此前提后公开触发failed和cancelled两个目标；保存目标running/steps=[]与独立Agent全账本零模型请求，再公开关闭cancelled目标agentEnabled
+4. 持续采样目标与holder真实状态，直到两个目标终态或有限诊断结束；不从约51秒推断已排队/已经终止
+5. 每个真实匹配的零步骤终态独立登录→群→精确runId详情，核对实际可见终态/无步骤说明且无等待第一步；重新核对公开状态和零目标派发/审计/发送
+6. 两状态分别留证：两个都验证才PASS，任一明确业务/文案违约FAIL，任一前提未命中BLOCKED且不能掩盖另一状态FAIL
+
+**预期结果**
+
+1. 终态无步骤页面不能提示仍在等待第一步；须实际显示无步骤，不把加载未完成/空白当通过
+2. 取消与失败各自状态/endReason/steps、活动引用、零外部发送和零审计由公开API/独立账本证明
+3. 不会为了得到零步骤去删除真实已完成步骤、提前终止当前合法步骤或篡改账本
+4. 没有真实零步骤前提不证明文案错误，但必须保留该状态未验收，不能合并成已通过
+
+**时序要求**
+
+1. 14000/4000/10000ms仅控制真实外部响应/副作用，用于造数；原5秒/60秒及15秒配置不修改、不钳制
+2. 70秒轮询与120秒测试预算仅诊断；约51秒只是估计，不是业务SLA或成功证据；独立活动预算验收仍由原专项负责
+
+**故障注入**
+
+1. 独立Agent延迟真实模型/审计响应，独立Gateway延迟真实发送落地与202响应；没有504分支，不增加幂等或否定查询保证
+2. 仅公开API创建/触发/关闭Agent；不写SQL账本、模拟成功API、操作内部DOM状态或使用新hook
+
+**取证**
+
+1. 四个真实holder请求的runId、trigger context groupId、接收/完成时间、按runId后续计划；原始审计groupId/text和Gateway落地账本
+2. 目标公开runId/status/endReason/steps采样与完整Agent请求账本；首次等待证明、disable操作和每角色ready/B原因
+3. 每个真实终态的浏览器trace、实际可见文字与截图；最终逐状态PASS/FAIL/BLOCKED，真实FAIL优先
+
+**清理**
+
+1. 没有新增控制器或锁；finally保存全部本例账本；普通独立fixture关闭自有pending tasks、浏览器、进程与数据库
+2. 不结束其他任务holder，不用删除或改写目标终态解除前提
+
+**数据**
+
+```json
+{
+  "projects": [
+    "chromium"
+  ],
+  "requiredStates": [
+    "failed/wall_clock/steps=[]且从未派发模型",
+    "cancelled/cancelled/steps=[]且从未派发模型"
+  ],
+  "holders": {
+    "count": 4,
+    "turns": [
+      "get_recent_messages",
+      "send_message",
+      "finish"
+    ],
+    "eachModelResponseDelayMs": 14000,
+    "auditResponseDelayMs": 4000,
+    "gatewayEffectDelayMs": 10000,
+    "gatewayResponseDelayMs": 10000
+  },
+  "notEvidence": [
+    "估算51秒",
+    "预存或篡改active_ms/终态/steps",
+    "已有步骤终态或被派发模型的目标",
+    "组件渲染或伪造API响应"
   ]
 }
 ```

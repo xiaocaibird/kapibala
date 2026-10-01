@@ -1,0 +1,34 @@
+{
+  "preparedAt": "2026-10-01T15:20:15.978573+00:00",
+  "phase": "QA-tool-preparation-only",
+  "productExecuted": false,
+  "databaseStartedOrConnected": false,
+  "checks": {
+    "typescript": "PASS: npm run typecheck",
+    "catalog": "PASS: 128 requirements;269 catalog cases at this check, concurrent independent additions included",
+    "focusedSelfTests": "PASS: 5 tests, no skipped or cancelled; tsx --test tests/self/delivery-read-observation.test.ts",
+    "diffWhitespace": "PASS: git diff --check"
+  },
+  "case": "INT-READ-001",
+  "remainingGap": "Actual PG reader/rollback needs reviewed same tool-attempt to PG backend/query/transaction correlation; no fabricated association",
+  "files": {
+    "tests/system/delivery-read-boundaries.spec.ts": {
+      "sha256": "3809d61b94be6e3c210d81f23c5c7cba89484947bfe25cb5258dacf56bc98694",
+      "bytes": 20325
+    },
+    "tests/support/delivery-read-observation.ts": {
+      "sha256": "f17fe2cea098c8b36b03343a59053be75cfd7f7a293eeafde6792f2ab33984b7",
+      "bytes": 4000
+    },
+    "tests/self/delivery-read-observation.test.ts": {
+      "sha256": "84759163c7d4c6f5db031b12823076a9a5634bd363c96dbff53868b8684d2623",
+      "bytes": 4624
+    },
+    "cases/delivery-read-boundaries.json": {
+      "sha256": "747fb9fe8ea80bb1a765745bdd93bae3f63e17164eea342dced70320a59a00a2",
+      "bytes": 5149
+    }
+  },
+  "sourceWritingStopped": true,
+  "additionalIndependentAgentReview": "Not claimed: requested reviewer is assigned to parent full-report work; root handles final review."
+}

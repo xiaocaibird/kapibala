@@ -1,0 +1,177 @@
+{
+  "version": 1,
+  "sut": {
+    "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+    "revision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+    "start": {
+      "command": "node",
+      "args": [
+        "--import",
+        "tsx",
+        "scripts/qa-observation-server.ts"
+      ]
+    },
+    "migrate": {
+      "command": "node",
+      "args": [
+        "--import",
+        "tsx",
+        "scripts/migrate.ts"
+      ]
+    },
+    "web": {
+      "command": "npm",
+      "args": [
+        "exec",
+        "--workspace",
+        "apps/web",
+        "--",
+        "vite",
+        "preview",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "{WEB_PORT}",
+        "--strictPort"
+      ]
+    },
+    "env": {
+      "AGENT_TURN_TIMEOUT_MS": "12000"
+    },
+    "startupTimeoutMs": 45000
+  },
+  "database": {
+    "image": "postgres:17-alpine"
+  },
+  "ui": {
+    "routes": {
+      "login": "/",
+      "accounts": "/#/accounts",
+      "groups": "/#/groups",
+      "group": "/#/groups/{id}",
+      "agentRun": "/#/agent-runs/{id}",
+      "sequences": "/#/sequences"
+    },
+    "selectors": {
+      "username": "input[autocomplete=\"username\"]",
+      "password": "input[autocomplete=\"current-password\"]",
+      "login": "button.login-submit",
+      "groupName": "input[aria-describedby=\"create-group-name-help\"],input[aria-describedby=\"edit-group-name-help\"]",
+      "groupDescription": "textarea[aria-describedby=\"create-group-description-help\"],textarea[aria-describedby=\"edit-group-description-help\"]",
+      "createGroup": ".page-header button:has-text(\"\u521b\u5efa\u7fa4\u7ec4\")",
+      "editProfile": "button:text-is(\"\u7f16\u8f91\u8d44\u6599\")",
+      "saveProfile": "dialog:has(> .modal-heading > h2:text-is(\"\u7f16\u8f91\u7fa4\u8d44\u6599\")) form button.primary",
+      "confirmConflict": "dialog:has(> .modal-heading > h2:text-is(\"\u7f16\u8f91\u7fa4\u8d44\u6599\")) form button.primary",
+      "profileDialog": "dialog:has(> .modal-heading > h2:text-is(\"\u7f16\u8f91\u7fa4\u8d44\u6599\"))",
+      "closeProfile": "dialog:has(> .modal-heading > h2:text-is(\"\u7f16\u8f91\u7fa4\u8d44\u6599\")) > .modal-heading > button[aria-label=\"\u5173\u95ed\u5f39\u7a97\"]",
+      "closeCreateGroup": "dialog:has(> .modal-heading > h2:text-is(\"\u521b\u5efa\u7fa4\u7ec4\")) > .modal-heading > button[aria-label=\"\u5173\u95ed\u5f39\u7a97\"]",
+      "continueEditing": "button:text-is(\"\u7ee7\u7eed\u7f16\u8f91\")",
+      "discardChanges": "button:text-is(\"\u653e\u5f03\u4fee\u6539\")",
+      "search": "input[type=\"search\"]",
+      "statusFilter": ".directory-tools label:has-text(\"\u7fa4\u72b6\u6001\") select",
+      "agentFilter": ".directory-tools label:has-text(\"Agent \u81ea\u52a8\u5e94\u7b54\") select",
+      "order": ".directory-tools label:has-text(\"\u521b\u5efa\u65f6\u95f4\") select",
+      "clearSearch": ".directory-tools button:text-is(\"\u6e05\u9664\u641c\u7d22\")",
+      "resetFilters": ".directory-tools button:text-is(\"\u91cd\u7f6e\u6761\u4ef6\")",
+      "refreshDirectory": ".directory-tools button:has-text(\"\u5237\u65b0\")",
+      "directoryItem": "a[data-directory-group-id]",
+      "directoryLink": "xpath=.",
+      "directorySummary": ".directory-description",
+      "directoryLoadedCount": ".section-heading > [aria-live=\"polite\"]",
+      "directoryEmpty": ".empty:has(> strong:text-is(\"\u6ca1\u6709\u5339\u914d\u7684\u7fa4\")),.empty:has(> strong:text-is(\"\u4ece\u7b2c\u4e00\u4e2a\u7fa4\u7ec4\u5f00\u59cb\"))",
+      "directoryError": ".directory-empty [role=\"alert\"],.directory-page-error [role=\"alert\"],div:has(> .warning-text:text-is(\"\u5237\u65b0\u5931\u8d25\uff0c\u5f53\u524d\u663e\u793a\u4e0a\u6b21\u53d6\u5f97\u7684\u7ed3\u679c\u3002\")) > [role=\"alert\"]",
+      "retryDirectory": ".directory-empty [role=\"alert\"] button,.directory-page-error [role=\"alert\"] button,div:has(> .warning-text:text-is(\"\u5237\u65b0\u5931\u8d25\uff0c\u5f53\u524d\u663e\u793a\u4e0a\u6b21\u53d6\u5f97\u7684\u7ed3\u679c\u3002\")) > [role=\"alert\"] button",
+      "directoryStale": ".section-heading > [aria-live=\"polite\"]:has-text(\"\u5217\u8868\u5f85\u5237\u65b0\")",
+      "loadMoreGroups": ".directory-load-more > button",
+      "groupCreatedAt": ".group-created > time,.group-profile > div:has(> dt:text-is(\"\u521b\u5efa\u65f6\u95f4\")) > dd",
+      "groupDescriptionView": ".group-profile > div:has(> dt:text-is(\"\u7fa4\u7b80\u4ecb\")) > dd",
+      "accountRow": "section:has(> .panel-header > h2:text-is(\"\u8d26\u53f7\u5217\u8868\")) tbody > tr",
+      "logout": "button[aria-label=\"\u9000\u51fa\u767b\u5f55\"]",
+      "navAccounts": "nav a[href=\"#/accounts\"]",
+      "navSequences": "nav a[href=\"#/sequences\"]",
+      "messageInput": "textarea[aria-label=\"\u6d88\u606f\u5185\u5bb9\"]",
+      "senderAccount": "select[aria-label=\"\u53d1\u9001\u8eab\u4efd\"]",
+      "sendMessage": "form.composer button.primary",
+      "messageRow": "article[data-message-id]",
+      "messageError": ".timeline [role=\"alert\"]",
+      "retryMessages": ".timeline > [role=\"alert\"] button",
+      "loadEarlier": ".timeline-load > button",
+      "runLink": "a.run-list-item",
+      "rawResponseToggle": ".raw-response > summary",
+      "sequenceGroup": ".sequence-form label:has-text(\"\u76ee\u6807\u7fa4\u7ec4\") > select",
+      "sequence": ".sequence-form label:has-text(\"\u6d88\u606f\u5e8f\u5217\") > select",
+      "sequenceVars": "textarea[aria-describedby=\"vars-help\"]",
+      "sequenceStepVars": "textarea[aria-describedby=\"step-vars-help\"]",
+      "previewSequence": "form.sequence-form > button.primary",
+      "startSequence": "dialog:has(> .modal-heading > h2:text-is(\"\u9884\u68c0\u901a\u8fc7 \u00b7 \u786e\u8ba4\u53d1\u9001\u5185\u5bb9\")) .modal-footer > button.primary",
+      "sequencePreview": "dialog:has(> .modal-heading > h2:text-is(\"\u9884\u68c0\u901a\u8fc7 \u00b7 \u786e\u8ba4\u53d1\u9001\u5185\u5bb9\"))",
+      "sequencePreviewError": "main > [role=\"alert\"]",
+      "sequenceErrorStepIndex": "span:has-text(\"\u6b65\u7f3a\u5c11\u53d8\u91cf\")",
+      "sequenceErrorKey": "code",
+      "createSequence": ".page-header button:text-is(\"\u65b0\u5efa\u5e8f\u5217\")",
+      "sequenceDefinitionInput": "dialog:has(> .modal-heading > h2:text-is(\"\u65b0\u5efa\u6d88\u606f\u5e8f\u5217\")) textarea",
+      "saveSequenceDefinition": "dialog:has(> .modal-heading > h2:text-is(\"\u65b0\u5efa\u6d88\u606f\u5e8f\u5217\")) form button.primary",
+      "sequenceDefinitionError": "dialog:has(> .modal-heading > h2:text-is(\"\u65b0\u5efa\u6d88\u606f\u5e8f\u5217\")) [role=\"alert\"]",
+      "sequenceInputError": "main > [role=\"alert\"]",
+      "sequenceResourceError": "main > [role=\"alert\"]",
+      "attentionConfirm": ".attention-summary button:text-is(\"\u786e\u8ba4\u8fd9\u6761\u66f4\u65b0\u6458\u8981\")",
+      "attentionRefresh": ".attention-notice > button",
+      "attentionScopeConfirm": ".attention-summary button:text-is(\"\u786e\u8ba4\u5f53\u524d\u8303\u56f4\u66f4\u65b0\")",
+      "attentionScopeSummary": ".attention-summary:has(button:text-is(\"\u786e\u8ba4\u5f53\u524d\u8303\u56f4\u66f4\u65b0\"))",
+      "sequenceResourceRefresh": "main > [role=\"alert\"] button:text-is(\"\u91cd\u8bd5\")"
+    },
+    "adapterConfirmed": true,
+    "headless": false
+  },
+  "release": {
+    "approvedProfile": null,
+    "concurrentUsers": null,
+    "durationSeconds": null,
+    "p95LatencyMs": null,
+    "maxErrorRate": null,
+    "soakSeconds": null,
+    "rpoSeconds": null,
+    "rtoSeconds": null,
+    "monitoringEvidence": null,
+    "backupRestoreEvidence": null,
+    "rollbackEvidence": null,
+    "productionSecurityEvidence": null
+  },
+  "adapters": {
+    "capacityControl": {
+      "url": "http://127.0.0.1:58225",
+      "registryDirectory": "/private/tmp/qa-cap-Py5nDr",
+      "contractReference": "docs/qa-final-boundaries-followup-20261001.md @ 2716abdd2d43a779b6a0972a6323f895cf2b5b9c"
+    },
+    "runtimeObservation": {
+      "url": "http://127.0.0.1:58221",
+      "registryDirectory": "/private/tmp/qa-rte-3k2NS1",
+      "contractReference": "docs/qa-final-boundaries-followup-20261001.md @ 2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+      "diagnostics": {
+        "module": "gateway",
+        "modulesPointer": "/modules",
+        "namePointer": "/name",
+        "statePointer": "/status",
+        "consecutiveFailuresPointer": "/consecutiveFailures",
+        "lastFailureAtPointer": "/lastFailedAt",
+        "lastSuccessAtPointer": "/lastSucceededAt",
+        "currentDurationMsPointer": "/runningForMs",
+        "tickCountPointer": "/ticks",
+        "states": {
+          "failed": "failed",
+          "running": "running",
+          "healthy": "idle"
+        }
+      }
+    },
+    "messageObservation": {
+      "url": "http://127.0.0.1:61968",
+      "registryDirectory": "/private/tmp/qa-mes-YA3fiw",
+      "contractReference": "docs/qa-final-boundaries-followup-20261001.md @ 2716abdd2d43a779b6a0972a6323f895cf2b5b9c"
+    },
+    "fixtureArtifacts": {
+      "configPath": "reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/fixtures.integration-2716abd.json",
+      "sha256": "c9af0e35fce1002bcf4fd212eaaa5b7af9e8b93f6a998eebe3d745f49d202a03"
+    }
+  }
+}

@@ -1,0 +1,222 @@
+{
+  "config": {
+    "argv": [
+      "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node",
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/node_modules/@playwright/test/cli.js",
+      "test",
+      "--grep",
+      "(?:^|\\s)\\[(?:INT-READ-001)\\](?=\\s|$)",
+      "--project=system"
+    ],
+    "configFile": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/playwright.config.ts",
+    "rootDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests",
+    "failOnFlakyTests": false,
+    "forbidOnly": true,
+    "fullyParallel": false,
+    "globalSetup": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/execution-gate.ts",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "system",
+        "name": "system",
+        "testDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests",
+        "testIgnore": [
+          "**/ui/**"
+        ],
+        "testMatch": [
+          "**/*.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/ui/*.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox-smoke",
+        "name": "firefox-smoke",
+        "testDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/ui/*.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit-smoke",
+        "name": "webkit-smoke",
+        "testDir": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/ui/*.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/reporter.ts",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/playwright.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/playwright.junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "system/delivery-read-boundaries.spec.ts",
+      "file": "system/delivery-read-boundaries.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "[INT-READ-001] actual database lock cannot be hidden by abandoned delivery reads or same-key resend",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "system",
+              "projectName": "system",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 5106,
+                  "error": {
+                    "message": "BlockedError: [BLOCKED] 真实locker身份或ACCESS EXCLUSIVE持锁未证实",
+                    "stack": "BlockedError: [BLOCKED] 真实locker身份或ACCESS EXCLUSIVE持锁未证实\n    at blockedMessageReaders (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/support/delivery-read-observation.ts:76:11)\n    at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-boundaries.spec.ts:282:5",
+                    "location": {
+                      "file": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/support/delivery-read-observation.ts",
+                      "column": 11,
+                      "line": 76
+                    },
+                    "snippet": "\u001b[90m   at \u001b[39msupport/delivery-read-observation.ts:76\n\n  74 |     )\n  75 |   )\n> 76 |     throw new BlockedError('真实locker身份或ACCESS EXCLUSIVE持锁未证实');\n     |           ^\n  77 |   return sample.activities.filter(\n  78 |     (row) =>\n  79 |       row.pid !== owner.lockerPid &&"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/support/delivery-read-observation.ts",
+                        "column": 11,
+                        "line": 76
+                      },
+                      "message": "BlockedError: [BLOCKED] 真实locker身份或ACCESS EXCLUSIVE持锁未证实\n\n   at support/delivery-read-observation.ts:76\n\n  74 |     )\n  75 |   )\n> 76 |     throw new BlockedError('真实locker身份或ACCESS EXCLUSIVE持锁未证实');\n     |           ^\n  77 |   return sample.activities.filter(\n  78 |     (row) =>\n  79 |       row.pid !== owner.lockerPid &&\n    at blockedMessageReaders (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/support/delivery-read-observation.ts:76:11)\n    at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-boundaries.spec.ts:282:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-01T15:29:58.807Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "qa-evidence-directory",
+                      "contentType": "text/plain",
+                      "body": "L1VzZXJzL3pjbS8uY29kZXgvd29ya3RyZWVzL2luZGVwZW5kZW50LXFhLWFjY2VwdGFuY2Uva2FwaWJhbGEvcWEtYWNjZXB0YW5jZS9yZXBvcnRzL3ByZWZsaWdodC8yMDI2LTEwLTAxVDE1LTI5LTU4LjIwOVotYTA2YWJlMmEvYXJ0aWZhY3RzL3N5c3RlbS1kZWxpdmVyeS1yZWFkLWJvdW5kLWYxODM2LXJ5LXJlYWRzLW9yLXNhbWUta2V5LXJlc2VuZC1zeXN0ZW0vZXZpZGVuY2U="
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/support/delivery-read-observation.ts",
+                    "column": 11,
+                    "line": 76
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "65effa520c15da8ab438-ae1376a1451bbcf48bd7",
+          "file": "system/delivery-read-boundaries.spec.ts",
+          "line": 45,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-01T15:29:58.457Z",
+    "duration": 6511.664000000001,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

@@ -1,0 +1,280 @@
+{
+  "formatVersion": 1,
+  "reviewedAt": "2026-10-01T16:18:57.457495+00:00",
+  "reviewer": {
+    "role": "Independent final report reviewer",
+    "identity": "AI QA intake_smoke_gate; no human impersonation"
+  },
+  "reviewStatus": "PASS_REPORT_INTEGRITY_REVIEW",
+  "productAcceptanceConclusion": "FAIL",
+  "unconditionalAcceptance": false,
+  "reviewScope": "Read-only final report, structured results, separate JUnit exports, version/source indexes and recorded evidence boundaries. This review does not execute product tests or independently re-inspect live infrastructure.",
+  "reviewedReportIssuedAt": "2026-10-01T16:16:06.262812+00:00",
+  "reviewedFiles": {
+    "report.md": {
+      "sha256": "aa119fea808ee72d38eb21ef7f0022f3d7c36c69014dd204bb6d3bd5449d17c2",
+      "bytes": 5685
+    },
+    "summary.json": {
+      "sha256": "3009c35eab12bc05ccc81595c7e11e7b41a37a63dcb3ef56a77667160744b6fe",
+      "bytes": 44079
+    },
+    "defects.json": {
+      "sha256": "57563baf88689f886b96dff8a4568f3e897f027054a60b738470d5e670f9a771",
+      "bytes": 35541
+    },
+    "pending-items.json": {
+      "sha256": "1e121eb8f68cd741626fee59b1a6621c9a92aa34431ea387fb36851f50ce7c89",
+      "bytes": 3393
+    },
+    "input-index.json": {
+      "sha256": "80c8ee34c8079eeb4786cfaac15edc79239da64cbb100f0ea1a4dd19365c27d4",
+      "bytes": 1369
+    },
+    "2716-full-reviewed.junit.xml": {
+      "sha256": "24b316cf6de2f807927736ecbcd78ba5e3317610580ab9148df54b42a4425964",
+      "bytes": 255324
+    },
+    "8e-delta-reviewed.junit.xml": {
+      "sha256": "27925c7067e30c5cc405b101895acc0232baf44106324e7b7cdf21149dd63a59",
+      "bytes": 29326
+    }
+  },
+  "generator": {
+    "sha256": "443ea00d980369dca627f606a1bc7f79f025a5f3bd10401c5d297f35b3a9e3dd",
+    "bytes": 12266
+  },
+  "checks": [
+    {
+      "id": "version-separation",
+      "status": "PASS",
+      "detail": "2716 full and 8e delta remain separate; no cross-version PASS denominator."
+    },
+    {
+      "id": "baseline-counts",
+      "status": "PASS",
+      "detail": "254 cases = 240 PASS / 9 FAIL / 5 BLOCKED; 116 requirements = 97 PASS / 12 FAIL / 7 BLOCKED."
+    },
+    {
+      "id": "baseline-raw-preserved",
+      "status": "PASS",
+      "detail": "Raw 240/5/9 remains explicit; exactly four recovery cases reviewed BLOCKED -> FAIL using documented independent review."
+    },
+    {
+      "id": "delta-counts",
+      "status": "PASS",
+      "detail": "51 latest cases = 46 PASS / 5 FAIL / 0 BLOCKED; 59 latest case/project obligations; six runs and 62 actual history rows retained."
+    },
+    {
+      "id": "delta-raw-reviewed-history",
+      "status": "PASS",
+      "detail": "Two recovery B -> F and prior UI-039 F -> B premise review are transparent; later explicit repeats do not erase first attempts."
+    },
+    {
+      "id": "latest-selection",
+      "status": "PASS",
+      "detail": "All 59 selected obligations bind the actual latest authorized run record for that case/project, with earlier records retained."
+    },
+    {
+      "id": "junit-exact-match",
+      "status": "PASS",
+      "detail": [
+        {
+          "file": "2716-full-reviewed.junit.xml",
+          "tests": 262,
+          "counts": {
+            "PASS": 248,
+            "FAIL": 9,
+            "BLOCKED": 5
+          },
+          "exactCaseProjectStatusMatch": true,
+          "sameBytesAsVersionedSource": true
+        },
+        {
+          "file": "8e-delta-reviewed.junit.xml",
+          "tests": 59,
+          "counts": {
+            "PASS": 54,
+            "FAIL": 5
+          },
+          "exactCaseProjectStatusMatch": true,
+          "sameBytesAsVersionedSource": true
+        }
+      ]
+    },
+    {
+      "id": "current-defects",
+      "status": "PASS",
+      "detail": "Exactly five current FAIL cases in three groups: timing, kick recovery, model-response recovery; severity counts agree."
+    },
+    {
+      "id": "historical-not-retested",
+      "status": "PASS",
+      "detail": "Three historical FAIL cases are explicitly NOT_RETESTED_ON_8E; not represented as current reproduced FAIL or fixed PASS."
+    },
+    {
+      "id": "pending-separation",
+      "status": "PASS",
+      "detail": "Two-factor kick budget, extra running second-instance competition, and exact PG/ROLLBACK causal gaps remain separately unexecuted/blocked; none overwrite actual timing FAIL or enter executed counts."
+    },
+    {
+      "id": "real-human-boundary",
+      "status": "PASS",
+      "detail": "Three AI QA delivery/document reviews remain distinctly attributed; three full real-human duties remain unfulfilled. H18 limited four-state acceptance is not reopened or enlarged."
+    },
+    {
+      "id": "cleanup-limits",
+      "status": "PASS",
+      "detail": "62 executor cleanups are not misrepresented as full independent volume inventory; only two exact mapped containers/volumes independently proven absent. Shared Docker retained; earlier unmapped-volume gap explicit."
+    },
+    {
+      "id": "final-conclusion",
+      "status": "PASS",
+      "detail": "Report finalization complete; product acceptance still FAIL, release readiness not assessed, no full 8e acceptance claim."
+    },
+    {
+      "id": "input-integrity",
+      "status": "PASS",
+      "detail": [
+        {
+          "index": "reports/acceptance/20261002-current-delivery/input-index.json",
+          "entries": 7,
+          "allByteCountsAndSha256Match": true
+        },
+        {
+          "index": "reports/acceptance/20261001-2716abd-business/adjudicated-results.json",
+          "entries": 11,
+          "allByteCountsAndSha256Match": true
+        },
+        {
+          "index": "reports/followup/20261001-8e047-retest/summary.json",
+          "entries": 42,
+          "allByteCountsAndSha256Match": true
+        }
+      ]
+    },
+    {
+      "id": "links-and-json-evidence",
+      "status": "PASS",
+      "detail": {
+        "markdownLinks": 10,
+        "allExist": true,
+        "defectEvidencePathsResolveRelativeToReport": true
+      }
+    }
+  ],
+  "junit": [
+    {
+      "file": "2716-full-reviewed.junit.xml",
+      "tests": 262,
+      "counts": {
+        "PASS": 248,
+        "FAIL": 9,
+        "BLOCKED": 5
+      },
+      "exactCaseProjectStatusMatch": true,
+      "sameBytesAsVersionedSource": true
+    },
+    {
+      "file": "8e-delta-reviewed.junit.xml",
+      "tests": 59,
+      "counts": {
+        "PASS": 54,
+        "FAIL": 5
+      },
+      "exactCaseProjectStatusMatch": true,
+      "sameBytesAsVersionedSource": true
+    }
+  ],
+  "inputIndexes": [
+    {
+      "index": "reports/acceptance/20261002-current-delivery/input-index.json",
+      "entries": 7,
+      "allByteCountsAndSha256Match": true
+    },
+    {
+      "index": "reports/acceptance/20261001-2716abd-business/adjudicated-results.json",
+      "entries": 11,
+      "allByteCountsAndSha256Match": true
+    },
+    {
+      "index": "reports/followup/20261001-8e047-retest/summary.json",
+      "entries": 42,
+      "allByteCountsAndSha256Match": true
+    }
+  ],
+  "markdownLinks": [
+    {
+      "label": "版本绑定",
+      "target": "../../followup/20261001-8e047-retest/main-product-version-binding.json",
+      "exists": true
+    },
+    {
+      "label": "完整业务报告、逐项结果、需求追踪和原始归档",
+      "target": "../20261001-2716abd-business/report.md",
+      "exists": true
+    },
+    {
+      "label": "修复候选差异报告与全部复测历史",
+      "target": "../../followup/20261001-8e047-retest/report.md",
+      "exists": true
+    },
+    {
+      "label": "本报告JSON",
+      "target": "summary.json",
+      "exists": true
+    },
+    {
+      "label": "缺陷详情",
+      "target": "defects.json",
+      "exists": true
+    },
+    {
+      "label": "剩余事项",
+      "target": "pending-items.json",
+      "exists": true
+    },
+    {
+      "label": "完整业务",
+      "target": "2716-full-reviewed.junit.xml",
+      "exists": true
+    },
+    {
+      "label": "修复候选差异",
+      "target": "8e-delta-reviewed.junit.xml",
+      "exists": true
+    },
+    {
+      "label": "持锁专项独立复核",
+      "target": "../../followup/20261001-8e047-retest/review/delivery-read-corrected-attempt-review.md",
+      "exists": true
+    },
+    {
+      "label": "清理审定",
+      "target": "../../followup/20261001-8e047-retest/resource-cleanup-review.json",
+      "exists": true
+    }
+  ],
+  "resolvedDuringReview": [
+    {
+      "issue": "Current defect evidence paths were relative to delta directory without explicit base.",
+      "resolution": "Root changed generated paths to ../../followup/20261001-8e047-retest/...; final output paths all resolve.",
+      "status": "RESOLVED"
+    }
+  ],
+  "blockingReportIssues": [],
+  "limitations": [
+    "8e evidence is a 51-case delta, not 254-case complete business acceptance.",
+    "Historical INT-MSG-007/BLK-EXT-002/BLK-EXT-003 remain NOT_RETESTED_ON_8E.",
+    "Exact tool-to-PG-query/transaction and serial SUT ROLLBACK attribution remains missing; actual >5000ms FAIL is not downgraded.",
+    "Human IME/focus/full UX obligations are not signed by this AI review.",
+    "Cleanup audit is the archived time-bounded evidence; earlier unmapped anonymous volumes remain unproven.",
+    "Seven release gates and five C1/C2 candidate cases remain out of this business result."
+  ],
+  "writes": [
+    "final-review.json",
+    "final-review.md"
+  ],
+  "originalSourcesOrReportsModified": false,
+  "productOrResourceOperationsPerformed": false
+}

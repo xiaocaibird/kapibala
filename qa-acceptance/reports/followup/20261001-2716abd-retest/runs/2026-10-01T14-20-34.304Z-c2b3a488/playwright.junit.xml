@@ -1,0 +1,136 @@
+<testsuites id="" name="" tests="3" failures="0" skipped="0" errors="3" time="197.445358">
+<testsuite name="system/agent.spec.ts" timestamp="2026-10-01T14:20:34.744Z" hostname="system" tests="1" failures="0" skipped="0" time="62.105" errors="1">
+<testcase name="[AGENT-025] run stays within sixty-second active wall-clock budget including slow turns" classname="system/agent.spec.ts" time="62.105">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/error-context.md]]
+
+[[ATTACHMENT|artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/trace.zip]]
+]]>
+</system-out>
+<error message="活动预算已证明超过原始60秒上限" type="AssertionError">
+<![CDATA[  [system] › system/agent.spec.ts:787:1 › [AGENT-025] run stays within sixty-second active wall-clock budget including slow turns 
+
+    AssertionError: 活动预算已证明超过原始60秒上限
+
+       at support/agent-activity-budget.ts:44
+
+      42 |     if (!event.includesUnsavedTail || !event.activeElapsedMs) continue;
+      43 |     assert.ok(event.activeElapsedMs[0] <= online[1], '活动下界超过独立在线上界，证据矛盾');
+    > 44 |     assert.ok(event.activeElapsedMs[0] <= 60_000, '活动预算已证明超过原始60秒上限');
+         |            ^
+      45 |   }
+      46 |   const terminal = events.findLast((event) => event.kind === 'activity-terminal');
+      47 |   if (!terminal) throw new BlockedError('缺少真实活动终止边界，REST轮询区间不替代活动见证');
+        at assertSingleEpochActivityBudget (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/support/agent-activity-budget.ts:44:12)
+        at read (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/agent.spec.ts:957:9)
+        at optionalActivityObservation (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/support/agent-activity-budget.ts:21:18)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/agent.spec.ts:954:11
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T14-20-34.304Z-c2b3a488/artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T14-20-34.304Z-c2b3a488/artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T14-20-34.304Z-c2b3a488/artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T14-20-34.304Z-c2b3a488/artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="system/capacity-control.spec.ts" timestamp="2026-10-01T14:20:34.744Z" hostname="system" tests="1" failures="0" skipped="0" time="63.723" errors="1">
+<testcase name="[CAP-003] persistent admission refusal consumes the original active budget without resetting the clock" classname="system/capacity-control.spec.ts" time="63.723">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/error-context.md]]
+
+[[ATTACHMENT|artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/trace.zip]]
+]]>
+</system-out>
+<error message="[BLOCKED] capacity actual activity budget: [BLOCKED] 活动真值区间跨越60秒上限；不能证明上限符合，不引入尾差容忍; capacity actual stop decision: [BLOCKED] 实际停止决定区间跨60000ms，不能用公开终态或提交时间补证" type="BlockedError">
+<![CDATA[  [system] › system/capacity-control.spec.ts:350:1 › [CAP-003] persistent admission refusal consumes the original active budget without resetting the clock 
+
+    BlockedError: [BLOCKED] capacity actual activity budget: [BLOCKED] 活动真值区间跨越60秒上限；不能证明上限符合，不引入尾差容忍; capacity actual stop decision: [BLOCKED] 实际停止决定区间跨60000ms，不能用公开终态或提交时间补证
+
+      471 |           missing,
+      472 |         );
+    > 473 |         if (missing.length) throw new BlockedError(missing.join('; '));
+          |                                   ^
+      474 |       },
+      475 |       {
+      476 |         clock: true,
+        at deferred.clock (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/capacity-control.spec.ts:473:35)
+        at deferred (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/capacity-control.spec.ts:299:5)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/capacity-control.spec.ts:360:5
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T14-20-34.304Z-c2b3a488/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T14-20-34.304Z-c2b3a488/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T14-20-34.304Z-c2b3a488/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T14-20-34.304Z-c2b3a488/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="system/integration-runtime.spec.ts" timestamp="2026-10-01T14:20:34.744Z" hostname="system" tests="1" failures="0" skipped="0" time="67.414" errors="1">
+<testcase name="[INT-ACT-001] activity budget accumulates across restart and excludes proven downtime without tail tolerance" classname="system/integration-runtime.spec.ts" time="67.414">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/error-context.md]]
+
+[[ATTACHMENT|artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/trace.zip]]
+]]>
+</system-out>
+<error message="两个真实活动段安全下界已超过原始60000ms上限" type="AssertionError">
+<![CDATA[  [system] › system/integration-runtime.spec.ts:141:1 › [INT-ACT-001] activity budget accumulates across restart and excludes proven downtime without tail tolerance 
+
+    AssertionError: 两个真实活动段安全下界已超过原始60000ms上限
+
+       at ../harness/cross-epoch-evidence.ts:234
+
+      232 |     );
+      233 |   }
+    > 234 |   assert.ok(oldLower + currentLower <= 60_000, '两个真实活动段安全下界已超过原始60000ms上限');
+          |          ^
+      235 | }
+      236 | /** Independent QA interval arithmetic, not the engineering aggregator.
+      237 |  * No latency symmetry, shared process clock origin, or fixed tail tolerance. */
+        at assertCrossEpochLiveLower (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/cross-epoch-evidence.ts:234:10)
+        at Object.read (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/integration-runtime.spec.ts:381:13)
+        at observe (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/observation.ts:15:18)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/integration-runtime.spec.ts:361:22
+        at withControl (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/integration-runtime.spec.ts:51:5)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/integration-runtime.spec.ts:147:3
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T14-20-34.304Z-c2b3a488/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T14-20-34.304Z-c2b3a488/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T14-20-34.304Z-c2b3a488/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T14-20-34.304Z-c2b3a488/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+</testsuites>

@@ -1,0 +1,69 @@
+{
+  "formatVersion": 1,
+  "reviewedAt": "2026-10-01T16:03:44.993108+00:00",
+  "snapshot": "reports/followup/20261001-8e047-retest/resource-audit/snapshot-20261001T160210.396514Z-post-cleanup.json",
+  "snapshotSha256": "099faa9a46df657e1b61f2927994ba55bc61a63710534663b570524f8b9490fd",
+  "sutRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+  "runs": 6,
+  "caseEnvironmentsWithCompletedCleanup": 62,
+  "reportedCleanupFailures": 0,
+  "independentlyMappedContainerAbsenceChecks": 2,
+  "exactMappedVolumesAbsent": 2,
+  "controllerRegistriesAbsent": 2,
+  "controllerPortsUnoccupied": [
+    60929,
+    60933
+  ],
+  "liveTrackedInfrastructure": [
+    {
+      "pid": "59212",
+      "role": "shared Docker Desktop backend, predates run, intentionally retained"
+    }
+  ],
+  "controllers": [
+    {
+      "directory": "reports/followup/20261001-8e047-retest/controllers/controller-d82ae025-3fb8-4e2d-aa62-d3cd188045ce",
+      "events": [
+        {
+          "at": "2026-10-01T16:01:57.578Z",
+          "kind": "owned-controller-stopped",
+          "guardianPid": 61848
+        },
+        {
+          "at": "2026-10-01T16:01:57.580Z",
+          "kind": "owned-registry-removed",
+          "registry": "/private/tmp/qa-cap-h1berq",
+          "registryIdentity": {
+            "dev": 16777231,
+            "ino": 38822008
+          }
+        }
+      ]
+    },
+    {
+      "directory": "reports/followup/20261001-8e047-retest/controllers/controller-3bdabbc7-11e5-45d0-b270-ff45112eb626",
+      "events": [
+        {
+          "at": "2026-10-01T16:01:57.492Z",
+          "kind": "owned-controller-stopped",
+          "guardianPid": 61605
+        },
+        {
+          "at": "2026-10-01T16:01:57.495Z",
+          "kind": "owned-registry-removed",
+          "registry": "/private/tmp/qa-rte-N0rSqz",
+          "registryIdentity": {
+            "dev": 16777231,
+            "ino": 38821998
+          }
+        }
+      ]
+    }
+  ],
+  "allAnonymousVolumesIndependentlyProvenRemoved": false,
+  "limits": [
+    "Early 8e containers had already disappeared before live Mounts capture; their anonymous-volume identities cannot be retroactively proven.",
+    "Case cleanup failures=[] is the executor cleanup record, not a complete independent historical-volume inventory.",
+    "No unknown resource was removed and no generic prune was used."
+  ]
+}

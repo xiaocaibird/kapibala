@@ -1,0 +1,520 @@
+[
+  {
+    "id": "ADD-SEQ-FAIL-01",
+    "title": "普通序列发送失败终止后续步骤",
+    "source": {
+      "path": "qa-acceptance/requirements/sequence-failure-policy.md",
+      "section": "QA-D6/已确认行为与原有分支边界",
+      "approval": "2026-10-01本会话：用户明确回复“按你的建议执行”，批准普通失败使整条序列failed且停止后续发送；补充原B1未规定之处。",
+      "references": [
+        {
+          "path": "docs/original-interview-question.md",
+          "section": "B1原有sent/skipped排期与重启约束；本条为后续用户补充",
+          "lines": [
+            288,
+            296
+          ]
+        }
+      ]
+    },
+    "expectation": "不属于原有跳过规则的普通发送失败使本步骤及本run为failed，后续步骤不再发送；保留此前成功和本次失败证据，重启不得恢复后续发送。适用ACCOUNT_OFFLINE/SENDER_NOT_IN_GROUP及按A2已确认failed的消息；不改变无匹配账号skipped继续、rate_limited等待、unknown确认流程或群不可写stopped。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-META-01",
+    "title": "可选群名称",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-001",
+      "lines": [
+        30,
+        38
+      ]
+    },
+    "expectation": "创建可选名称、已有群可改名；仅本地metadata；列表详情优先名称，无名称回退gatewayGroupId，不把名称作远端ID。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-META-02",
+    "title": "群简介编辑与清空",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-005",
+      "lines": [
+        68,
+        76
+      ]
+    },
+    "expectation": "创建简介可选，管理员可编辑/清空，详情完整显示；旧群无值不编造；不扩展gateway协议。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-META-03",
+    "title": "真实创建时间",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-002",
+      "lines": [
+        40,
+        48
+      ]
+    },
+    "expectation": "展示系统群记录真实创建时刻和浏览器本地日期时间；不使用加载/编辑/任务更新时间；编辑不改变排序时间。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-META-04",
+    "title": "资料旧数据和局部更新兼容",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-001/CR-005",
+      "lines": [
+        30,
+        76
+      ]
+    },
+    "expectation": "旧群字段为空保留；省略的资料字段不覆盖；新增字段不改变原创建角色/成员/投递契约；名称简介长度和清空表达先列澄清。",
+    "scope": "required",
+    "clarification": "CL-10"
+  },
+  {
+    "id": "ADD-DOC-01",
+    "title": "独立变更台账",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-004",
+      "lines": [
+        60,
+        66
+      ]
+    },
+    "expectation": "追加需求有独立日期/要求/影响/状态/关联版本/验收证据记录；用户决定与实现建议、开发验证与用户验收分开。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-DIR-01",
+    "title": "创建时间排序切换",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-007",
+      "lines": [
+        78,
+        84
+      ]
+    },
+    "expectation": "默认新到旧，可切旧到新；同时间平台ID始终升序；搜索及资料更新不改变创建时间依据。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-DIR-02",
+    "title": "四字段字面搜索",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-008",
+      "lines": [
+        86,
+        92
+      ]
+    },
+    "expectation": "名称/简介/gatewayGroupId/平台ID任一含整段关键词即可；trim首尾、忽略大小写、保留内部空格、不拆词；%/_/反斜线按字面。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-DIR-03",
+    "title": "两行纯文本简介摘要",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-008",
+      "lines": [
+        86,
+        92
+      ]
+    },
+    "expectation": "卡片简介最多两行纯文本，详情可看完整内容；无简介不编造、不保留空白占位；不解释HTML。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-DIR-04",
+    "title": "兼容独立目录接口",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-009",
+      "lines": [
+        94,
+        102
+      ]
+    },
+    "expectation": "GET /api/group-directory默认pageSize20且1..50、默认desc且asc/desc、q≤500拒NUL；items/nextCursor摘要字段约定；每页鉴权；原GET groups仍数组。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-DIR-05",
+    "title": "微秒游标及完整查询绑定",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-009/CR-012",
+      "lines": [
+        94,
+        126
+      ]
+    },
+    "expectation": "游标保留PG微秒和稳定ID边界；绑定trim后原大小写q/order/pageSize及状态/Agent筛选；严格校验，编码不代替鉴权。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-DIR-06",
+    "title": "目录静态遍历与加载计数",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-009",
+      "lines": [
+        94,
+        102
+      ]
+    },
+    "expectation": "无并发变化时两种顺序完整遍历无重无漏；稳定ID合并；只说已加载N项，不冒称总数；nextCursor=null结束。目录活数据非消息快照。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-DIR-07",
+    "title": "单页有界刷新",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-009",
+      "lines": [
+        94,
+        102
+      ]
+    },
+    "expectation": "单页每5秒及相关变化有界刷新并合并并发失效；无关消息不触发全目录遍历。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-DIR-08",
+    "title": "多页过期与整体刷新",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-009",
+      "lines": [
+        94,
+        102
+      ]
+    },
+    "expectation": "多页发生相关变化立即使整体过期且禁旧cursor；5秒至多首屏探测；刷新成功整体换第一页，失败保留旧列表/条件/过期提示，不能混新首页旧后页。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-DIR-09",
+    "title": "列表返回内存及身份隔离",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-009",
+      "lines": [
+        94,
+        102
+      ]
+    },
+    "expectation": "同标签本次登录保留条件/加载页/稳定ID位置；后退尽力恢复，找不到不无限加载；整页刷新/注销/换身份清空，无持久目录缓存。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-DIR-10",
+    "title": "加载失败和空结果区分",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-009",
+      "lines": [
+        94,
+        102
+      ]
+    },
+    "expectation": "首次加载/失败重试/成功空结果分别显示；有关键词空结果不声称全系统无群；错误刷新保留旧内容。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-DIR-11",
+    "title": "输入法与迟到响应",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-008/CR-009",
+      "lines": [
+        86,
+        102
+      ]
+    },
+    "expectation": "IME组合期间不发中间查询，确认后延迟；改条件回第一页并隔离旧响应；搜索/轮询不抢焦点。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-DIR-12",
+    "title": "群状态与Agent设置筛选",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-012",
+      "lines": [
+        120,
+        126
+      ]
+    },
+    "expectation": "支持active/unreachable/left及Agent全部/开启/关闭，先组合过滤再分页；开关不是running状态；clear仅q，reset全部并desc；旧无筛游标仅兼容无筛请求。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-FORM-01",
+    "title": "两处表单未保存关闭确认",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-010",
+      "lines": [
+        104,
+        110
+      ]
+    },
+    "expectation": "仅创建群/编辑群资料：无改动直接关，dirty需继续编辑/放弃选择；不扩全站导航保护。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-FORM-02",
+    "title": "提交关闭保护及迟到结果",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-010",
+      "lines": [
+        104,
+        110
+      ]
+    },
+    "expectation": "提交中限制关闭和重复提交；失败保留输入；卸载后迟到结果不影响新页面；不误称服务端操作已取消，不自动重放写请求。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-COPY-01",
+    "title": "账号与角色文案明确",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-011",
+      "lines": [
+        112,
+        118
+      ]
+    },
+    "expectation": "断开连接说明真实disconnect，释放说明回待连接并保留历史；群admin显示群管理员且区分控制台权限；不改变状态/API/CAS。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-CONFLICT-01",
+    "title": "资料原值条件请求",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-013",
+      "lines": [
+        128,
+        134
+      ]
+    },
+    "expectation": "expected可选；提供时非空且只对应实际修改name/description，原值string/null不归一；错误字段组合拒绝；无资料写入开关PATCH不要求expected。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-CONFLICT-02",
+    "title": "同字段原子冲突零副作用",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-013",
+      "lines": [
+        128,
+        134
+      ]
+    },
+    "expectation": "原值不匹配409 GROUP_PROFILE_CONFLICT，含current和conflictingFields；整请求不改资料/开关、不发变化、不取消Agent；同时竞争同原值至多一成功。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-CONFLICT-03",
+    "title": "异字段与旧请求兼容",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-013",
+      "lines": [
+        128,
+        134
+      ]
+    },
+    "expectation": "不同资料字段独立编辑可共存；无expected旧请求仍最后写入；当前值比较不保证识别A→B→A历史。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-CONFLICT-04",
+    "title": "冲突草稿与明确再确认",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-013",
+      "lines": [
+        128,
+        134
+      ]
+    },
+    "expectation": "冲突保留编辑草稿并展示服务器快照，未编辑字段跟随；明确确认后新条件重试而非自动覆盖；再次冲突仍保护；同值可无PATCH完成。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-ATT-01",
+    "title": "提醒限定当前页面上下文",
+    "source": {
+      "path": "docs/page-update-notification-implementation.md",
+      "section": "已批准范围；当前页scope与六类视图",
+      "lines": [
+        5,
+        9
+      ],
+      "approval": "docs/decisions.md D-ATT-01；后续批准不采用旧开发验证结果",
+      "references": [
+        {
+          "path": "docs/page-update-notification-proposal.md",
+          "section": "用户已选原则及对应语义；以之后明确批准范围为限",
+          "lines": [
+            28,
+            36
+          ]
+        }
+      ]
+    },
+    "expectation": "已批准当前六类动态视图及挂载创建/退出任务；绑定当前路由/实体/选择/完整目录查询条件；不扩全站中心/推送/声音。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-ATT-02",
+    "title": "前台安静失焦静态提醒",
+    "source": {
+      "path": "docs/page-update-notification-implementation.md",
+      "section": "已批准范围；已选择的前台/失焦策略",
+      "lines": [
+        5,
+        9
+      ],
+      "approval": "docs/decisions.md D-ATT-01；后续批准不采用旧开发验证结果",
+      "references": [
+        {
+          "path": "docs/page-update-notification-proposal.md",
+          "section": "用户已选原则及对应语义；以之后明确批准范围为限",
+          "lines": [
+            13,
+            16
+          ]
+        }
+      ]
+    },
+    "expectation": "已呈现前台内容安静更新；失焦用静态标题/favicon；仅恢复焦点不清除未确认变化。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-ATT-03",
+    "title": "成功呈现及真实操作才确认",
+    "source": {
+      "path": "docs/page-update-notification-implementation.md",
+      "section": "已批准范围；呈现后相关操作确认",
+      "lines": [
+        5,
+        9
+      ],
+      "approval": "docs/decisions.md D-ATT-01；后续批准不采用旧开发验证结果",
+      "references": [
+        {
+          "path": "docs/page-update-notification-proposal.md",
+          "section": "用户已选原则及对应语义；以之后明确批准范围为限",
+          "lines": [
+            135,
+            148
+          ]
+        }
+      ]
+    },
+    "expectation": "相关内容成功呈现且发生对应操作后才确认；失败加载/仅聚焦不能冒称已读。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-ATT-04",
+    "title": "范围变化确认与历史变化保留",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-006后续批准的范围确认及期间变化",
+      "lines": [
+        240,
+        244
+      ],
+      "approval": "docs/decisions.md D-ATT-01；后续批准不采用旧开发验证结果",
+      "references": [
+        {
+          "path": "docs/page-update-notification-proposal.md",
+          "section": "用户已选原则及对应语义；以之后明确批准范围为限",
+          "lines": [
+            116,
+            133
+          ]
+        }
+      ]
+    },
+    "expectation": "列表消失/未加载范围先成功刷新展示当前结果或空态摘要，再明确确认范围更新；状态发生后回原值仍保留期间变化候选。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-ATT-05",
+    "title": "目录过期与提醒独立",
+    "source": {
+      "path": "docs/page-update-notification-implementation.md",
+      "section": "已批准范围；目录过期与呈现职责",
+      "lines": [
+        5,
+        9
+      ],
+      "approval": "docs/decisions.md D-ATT-01；后续批准不采用旧开发验证结果",
+      "references": [
+        {
+          "path": "docs/page-update-notification-proposal.md",
+          "section": "用户已选原则及对应语义；以之后明确批准范围为限",
+          "lines": [
+            108,
+            125
+          ]
+        }
+      ]
+    },
+    "expectation": "清提示不能恢复过期旧游标；提醒复用目录成功快照与刷新状态，不形成矛盾第二份列表。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-ATT-06",
+    "title": "本地手动身份与自动消息提醒",
+    "source": {
+      "path": "docs/change-requests.md",
+      "section": "CR-006后续批准的本地手动身份与自动消息",
+      "lines": [
+        240,
+        244
+      ],
+      "approval": "docs/decisions.md D-ATT-01；后续批准不采用旧开发验证结果",
+      "references": [
+        {
+          "path": "docs/page-update-notification-proposal.md",
+          "section": "用户已选原则及对应语义；以之后明确批准范围为限",
+          "lines": [
+            147,
+            152
+          ]
+        }
+      ]
+    },
+    "expectation": "手动发送请求前登记clientMsgId以归属本地操作；Agent/序列发送仍纳入相关提醒；保留旧请求和核心业务持久/恢复语义。",
+    "scope": "required"
+  },
+  {
+    "id": "ADD-LEFT-MEMBERS-01",
+    "title": "退群完成后公开保留外部成员",
+    "source": {
+      "path": "qa-acceptance/requirements/left-members-decision.md",
+      "approval": "docs/decisions.md D042最终确认@993f758：仅退出托管成员，公开members保留外部成员；明确记录与原2.3差异"
+    },
+    "expectation": "leave-all完成后托管成员投影为空，外部成员继续存在于网关及公开群列表/详情；不恢复群可写性或自动化，群主最后和失败保护不变。原始文件不改。",
+    "scope": "required"
+  }
+]

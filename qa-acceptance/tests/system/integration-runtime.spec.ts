@@ -1,5 +1,17 @@
 import { randomUUID } from 'node:crypto';
 import WebSocket from 'ws';
+import { Client } from 'pg';
+import {
+  prepareCrossEpochKill,
+  collectCrossEpochEvidence,
+  assertCrossEpochBudget,
+  assertCrossEpochLiveLower,
+} from '../../harness/cross-epoch-evidence.js';
+import {
+  captureOwnedApplicationIdentity,
+  observeOwnedApplicationKill,
+} from '../../harness/application-exit-observation.js';
+import { assertNoDispatchAfterStop } from '../../harness/lifecycle-observation.js';
 import { test, expect } from '../fixtures.js';
 import type { QaEnvironment } from '../../harness/environment.js';
 import { eventually, type AgentRun, type ApiError } from '../../harness/platform-client.js';
@@ -11,11 +23,10 @@ import {
   RuntimeObservation,
   atPointer,
   diagnosticModule,
-  assertActivityBudget,
-  assertRecoveredActivity,
   assertNoRecoveryPause,
   type RuntimeEvent,
   type RuntimeLease,
+  type MeasuredRuntimeSnapshot,
 } from '../../harness/runtime-observation.js';
 const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 async function recordCleanupFailure(qa: QaEnvironment, name: string, error: unknown) {
@@ -131,6 +142,8 @@ test('[INT-ACT-001] activity budget accumulates across restart and excludes prov
   qa,
 }) => {
   test.setTimeout(150_000);
+  const parentClockDomain = `qa-parent:${process.pid}:${randomUUID()}`;
+  const record = (name: string, value: unknown) => qa.evidence(`${name}-${randomUUID()}`, value);
   await withControl(qa, ['activity-witness', 'activity-safe-boundary'], async (first) => {
     await qa.api.login();
     const { group } = await qa.api.createGroup();
@@ -163,6 +176,52 @@ test('[INT-ACT-001] activity budget accumulates across restart and excludes prov
     );
     const runId = runs[0]!.id,
       createAfter = performance.now();
+    // Narrow white-box diagnostics against this case's owned PostgreSQL only.
+    // No application imports, writes, or persisted-ms timing oracle.
+    const ledger = async (label: string) => {
+      const { cluster, database } = qa.ownedStorage();
+      if (!cluster.ownsDatabase(database)) throw new BlockedError('账本读没有本例数据库归属');
+      const client = new Client({
+        connectionString: cluster.url(database),
+        connectionTimeoutMillis: 2000,
+        query_timeout: 5000,
+      });
+      const before = performance.now();
+      try {
+        await client.connect();
+        await client.query('BEGIN READ ONLY');
+        const run = await client.query(
+          'SELECT id, group_id, status, end_reason, active_ms::text, step_count, inflight_turn, history FROM agent_runs WHERE id=$1 AND group_id=$2',
+          [runId, group.id],
+        );
+        const steps = await client.query(
+          'SELECT ordinal, kind, tool_use_id, name, state, result FROM agent_steps WHERE run_id=$1 ORDER BY ordinal',
+          [runId],
+        );
+        await client.query('ROLLBACK');
+        const value = {
+          parentClockDomain,
+          windowMs: [before, performance.now()],
+          database,
+          run: run.rows,
+          steps: steps.rows,
+          role: '窄白盒持久化诊断，不是活动计时或公开业务断言',
+        };
+        await record(`activity-ledger-${label}`, value);
+        if (run.rows.length !== 1) throw new BlockedError('本例持久账本没有唯一原run');
+        return value;
+      } catch (error) {
+        await record(`activity-ledger-${label}-error`, {
+          error: redact(String(error)),
+          parentClockDomain,
+          windowMs: [before, performance.now()],
+        });
+        if (error instanceof BlockedError) throw error;
+        throw new BlockedError(`自有库诊断未完成：${redact(String(error))}`);
+      } finally {
+        await client.end().catch(() => {});
+      }
+    };
     const correlation = {
       kind: 'activity' as const,
       groupId: group.id,
@@ -188,21 +247,90 @@ test('[INT-ACT-001] activity budget accumulates across restart and excludes prov
     await qa.evidence('activity-before-crash', { checkpoint, safeBoundary, agentBeforeCrash });
     // The lease remains held while this actual process is killed. No next
     // remote dispatch is permitted between this witness and the kill.
-    const safetyBeforeKill = await safeLease.snapshot();
-    const killBeforeUtc = Date.now();
+    const beforeKill: [MeasuredRuntimeSnapshot, MeasuredRuntimeSnapshot] = [
+      await safeLease.snapshotMeasured(parentClockDomain),
+      await safeLease.snapshotMeasured(parentClockDomain),
+    ];
+    await record('activity-live-calibration-before-kill', beforeKill);
+    prepareCrossEpochKill(beforeKill);
+    const beforeLedger = await ledger('held-before-kill');
+    if (!Array.isArray(beforeLedger.run[0].history))
+      throw new BlockedError('持久history没有公开协议消息数组');
+    const committedToolIds = new Set(
+      (beforeLedger.run[0].history as { content?: { type?: string; tool_use_id?: string }[] }[])
+        .flatMap((message) => (Array.isArray(message.content) ? message.content : []))
+        .filter((part) => part.type === 'tool_result')
+        .map((part) => part.tool_use_id),
+    );
     if (
-      safetyBeforeKill.state !== 'held' ||
-      Date.parse(safetyBeforeKill.expiresAt) <= killBeforeUtc
+      beforeLedger.run[0].inflight_turn !== false ||
+      !Array.isArray(beforeLedger.run[0].history) ||
+      !beforeLedger.steps.length ||
+      beforeLedger.steps.some(
+        (step) =>
+          step.name !== 'get_recent_messages' ||
+          step.state !== 'complete' ||
+          step.result == null ||
+          !committedToolIds.has(step.tool_use_id),
+      )
     )
-      throw new BlockedError('即将崩溃时安全屏障已释放或到期，不执行未经证明的安全阶段崩溃');
-    const stopBefore = performance.now();
-    await qa.kill();
-    const stopAfter = performance.now();
+      throw new BlockedError(
+        '持久账本未证明只读工具结果/续跑history已提交且无在途turn，不执行kill',
+      );
+    const identity = await captureOwnedApplicationIdentity({
+      target: first.target,
+      snapshot: beforeKill[1].snapshot,
+      parentClockDomain,
+      record,
+    });
+    const safetyBeforeKill = beforeKill[1].snapshot;
+    let killBeforeUtc = 0;
+    const exited = await observeOwnedApplicationKill({
+      identity,
+      record,
+      kill: async () => {
+        killBeforeUtc = Date.now();
+        if (
+          safetyBeforeKill.state !== 'held' ||
+          Date.parse(safetyBeforeKill.expiresAt) <= killBeforeUtc
+        )
+          throw new BlockedError('即将崩溃时安全屏障已释放或到期，不执行故障');
+        await qa.kill();
+      },
+    });
     const killAfterUtc = Date.now();
-    await qa.evidence('activity-kill-window', { safetyBeforeKill, killBeforeUtc, killAfterUtc });
+    await record('activity-kill-window', { safetyBeforeKill, killBeforeUtc, killAfterUtc, exited });
     if (killAfterUtc >= Date.parse(safetyBeforeKill.expiresAt))
-      throw new BlockedError('kill完成已跨过安全屏障TTL，不能声称此次发生于安全阶段');
+      throw new BlockedError('真实app退出确认跨过安全屏障TTL，安全阶段前提不足');
+    // Retained data may help explain history, but is never a new clock reading.
+    try {
+      await record(
+        'activity-after-exit-retained',
+        await safeLease.snapshotMeasured(parentClockDomain),
+      );
+    } catch (error) {
+      await record('activity-after-exit-retained-unavailable', { error: String(error) });
+    }
+    const afterExitLedger = await ledger('after-actual-exit');
+    const acknowledged =
+      beforeKill[1].snapshot.events.at(-1)?.lastSuccessfulSample?.persistedActiveMs;
+    const ledgerCoversAcknowledgedSample =
+      typeof acknowledged === 'number' &&
+      Number.isFinite(Number(afterExitLedger.run[0].active_ms)) &&
+      Number(afterExitLedger.run[0].active_ms) >= acknowledged;
+    await record('activity-ledger-acknowledged-comparison', {
+      acknowledged,
+      actualAfterExit: afterExitLedger.run[0].active_ms,
+      ledgerCoversAcknowledgedSample,
+    });
     await delay(5000);
+    const beforeRestartLedger = await ledger('before-restart');
+    const ledgerUnchanged =
+      afterExitLedger.run[0].active_ms === beforeRestartLedger.run[0].active_ms;
+    await record('activity-downtime-ledger-comparison', {
+      ledgerUnchanged,
+      claim: '差异须追查迟提交，不单凭账本值推断停机计时',
+    });
     const startBefore = performance.now();
     await qa.start();
     const startAfter = performance.now();
@@ -210,12 +338,24 @@ test('[INT-ACT-001] activity budget accumulates across restart and excludes prov
     const next = runtimeObservationFor(qa);
     let primary = false;
     try {
-      await next.verify(['activity-witness']);
+      await next.verify(['activity-witness', 'agent-lifecycle-witness']);
       expect(next.target.pid).not.toBe(first.target.pid);
       const lease = await next.arm('observe-activity', correlation);
+      const lifecycle = await next.arm('observe-agent-lifecycle', {
+        ...correlation,
+        kind: 'tool-wait',
+        toolUseId: 'all-run-steps',
+      });
       const resumed = await lease.waitFor('activity-checkpoint');
       assertNoRecoveryPause(resumed.events);
-      const offline: [number, number] = [startBefore - stopAfter, startAfter - stopBefore];
+      const resumedMeasured = await lease.snapshotMeasured(parentClockDomain);
+      const resumedIdentity = await captureOwnedApplicationIdentity({
+        target: next.target,
+        snapshot: resumedMeasured.snapshot,
+        parentClockDomain,
+        record,
+      });
+      await record('activity-live-recovery-identity', { resumedMeasured, resumedIdentity });
       let lastRunning: number | undefined, firstTerminal: number | undefined;
       const samples: { before: number; after: number; status: string }[] = [];
       const result = await observe({
@@ -223,13 +363,35 @@ test('[INT-ACT-001] activity budget accumulates across restart and excludes prov
           const before = performance.now();
           const run = await qa.api.agentRun(runId);
           const after = performance.now();
+          // Check already-returned public facts before a later observer can be unavailable.
+          expect(run.id).toBe(runId);
+          if (run.status !== 'running')
+            expect(run).toMatchObject({ status: 'failed', endReason: 'wall_clock' });
+          expect(
+            qa.gateway.snapshot().requests.filter((request) => request.path.endsWith('/send')),
+          ).toHaveLength(0);
           samples.push({ before, after, status: run.status });
           if (run.status === 'running') lastRunning = before;
           else firstTerminal ??= after;
-          const witness = await lease.snapshot();
-          return { run, witness };
+          const measured = await lease.snapshotMeasured(parentClockDomain);
+          assertNoRecoveryPause(measured.snapshot.events);
+          const lifecycleWitness = await lifecycle.snapshot();
+          await record('activity-recovery-measured', { measured, lifecycleWitness });
+          try {
+            assertCrossEpochLiveLower({
+              beforeKill,
+              exited,
+              current: measured,
+              lifecycle: lifecycleWitness,
+            });
+          } catch (error) {
+            if (!(error instanceof BlockedError)) throw error;
+            await record('activity-live-lower-incomplete', { error: String(error) });
+          }
+          return { run, witness: measured.snapshot, measured, lifecycleWitness };
         },
-        invariant: ({ run, witness }) => {
+        invariant: ({ run, witness, lifecycleWitness }) => {
+          assertNoDispatchAfterStop(lifecycleWitness.events);
           expect(run.id).toBe(runId);
           assertNoRecoveryPause(witness.events);
           // An incomplete tail/unknown state blocks a budget conclusion, not
@@ -265,43 +427,66 @@ test('[INT-ACT-001] activity budget accumulates across restart and excludes prov
       }
       // Public terminal cleanup is independent of activity interval availability.
       expect((await qa.api.group(group.id)).activeAgentRunId).toBeNull();
-      const witness = await lease.waitFor('activity-terminal');
-      assertNoRecoveryPause(witness.events);
-      const event = witness.events.find((entry) => entry.kind === 'activity-terminal')!;
-      const originalEpochs = safeBoundary.events.find(
-        (entry) => entry.kind === 'activity-safe-held',
-      )!.epochIds!;
-      const recoveredEpochs = new Set(event.epochIds);
+      await lease.waitFor('activity-terminal');
+      const afterRecovery = await lease.snapshotMeasured(parentClockDomain);
+      // Missing COMMIT is retained as incomplete evidence after independent
+      // public/side-effect observations; do not replace an already real failure.
+      let lifecycleEvents: RuntimeEvent[] = [];
+      try {
+        lifecycleEvents = (await lifecycle.waitFor('agent-terminal-committed', 5000)).events;
+      } catch (error) {
+        if (!(error instanceof BlockedError)) throw error;
+        lifecycleEvents = lifecycle.latest?.events ?? [];
+        await record('activity-lifecycle-incomplete', { error: String(error), lifecycleEvents });
+      }
+      assertNoDispatchAfterStop(lifecycleEvents);
       if (
-        !originalEpochs.every((epoch) => recoveredEpochs.has(epoch)) ||
-        ![...recoveredEpochs].some((epoch) => !originalEpochs.includes(epoch))
+        afterRecovery.snapshot.clockObservation?.applicationPid !==
+          resumedIdentity.applicationPid ||
+        afterRecovery.snapshot.snapshotProvenance?.applicationStarted !==
+          resumedIdentity.applicationStarted
       )
-        throw new BlockedError('活动终态缺少原有及接管epoch完整关联，不能证明重启累计');
-      if (lastRunning === undefined || firstTerminal === undefined)
-        throw new BlockedError('缺少重启后的running→terminal独立区间');
-      const processOnline: [number, number] = [
-        Math.max(0, lastRunning - createAfter - offline[1]),
-        firstTerminal - createBefore - offline[0],
-      ];
-      await qa.evidence('activity-restart-budget', {
+        throw new BlockedError('恢复到终态之间应用身份发生变化，无法用单个新epoch证明');
+      let finalLedger: unknown = null,
+        finalLedgerMissing: string | null = null;
+      try {
+        finalLedger = await ledger('terminal');
+      } catch (error) {
+        if (!(error instanceof BlockedError)) throw error;
+        finalLedgerMissing = String(error);
+      }
+      const raw = {
+        parentClockDomain,
+        beforeKill,
+        afterRecovery,
+        exited,
+        startupWindowMs: [startBefore, startAfter] as [number, number],
+        recoveredLifecycle: lifecycleEvents,
         checkpoint,
         safeBoundary,
-        safetyBeforeKill,
-        killBeforeUtc,
-        killAfterUtc,
         resumed,
-        witness,
+        beforeLedger,
+        afterExitLedger,
+        beforeRestartLedger,
+        finalLedger,
+        ledgerUnchanged,
+        ledgerCoversAcknowledgedSample,
+        finalLedgerMissing,
         create: [createBefore, createAfter],
-        stop: [stopBefore, stopAfter],
-        start: [startBefore, startAfter],
-        offline,
-        processOnline,
         samples,
-        claim:
-          '进程在线仅给出实际活动上界；真实恢复状态和完整epoch/崩溃尾段另由独立见证证明，不接受固定误差容忍',
-      });
-      for (const entry of witness.events) assertRecoveredActivity(entry);
-      assertActivityBudget(event, processOnline);
+        lastRunning,
+        firstTerminal,
+        claim: '同QA父时钟独立两epoch聚合。公开可见/COMMIT不是停止决定，初始化空档不自动扣除。',
+      };
+      await record('activity-restart-raw', raw);
+      const aggregate = collectCrossEpochEvidence(raw);
+      await record('activity-restart-budget', aggregate);
+      assertCrossEpochBudget(aggregate);
+      if (finalLedgerMissing) throw new BlockedError(finalLedgerMissing);
+      if (!ledgerCoversAcknowledgedSample)
+        throw new BlockedError('独立退出账本与已确认采样不一致或缺项，不倒算计时');
+      if (!ledgerUnchanged)
+        throw new BlockedError('退出后账本仍变动；需独立区分迟提交与计时，不能用差值冒认活动真值');
     } catch (error) {
       primary = true;
       throw error;
