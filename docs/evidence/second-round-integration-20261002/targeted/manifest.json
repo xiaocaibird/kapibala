@@ -1,0 +1,84 @@
+{
+  "purpose": "developer final integration targeted verification after reviewed fixes",
+  "source": "7a3ea5849618b2af77da66028637a8736ef85af1",
+  "owner": "second-round-final-delta-eac14f4f2c",
+  "startedAt": "2026-10-01T21:20:49.595421+00:00",
+  "realProviderUsed": false,
+  "results": [
+    {
+      "name": "regression",
+      "command": [
+        "node_modules/.bin/tsx",
+        "--test",
+        "--test-concurrency=1",
+        "tests/integration/agent-managed-target.test.ts",
+        "tests/integration/agent-capacity.test.ts",
+        "tests/integration/kick-managed-rejection-budget.test.ts",
+        "tests/integration/kick-dispatch-budget.test.ts",
+        "tests/integration/kick-settlement-budget.test.ts",
+        "tests/integration/gemini-agent-usage.test.ts",
+        "tests/integration/gemini-agent-main.test.ts",
+        "tests/integration/gemini-agent-provider.test.ts",
+        "tests/integration/gemini-agent-protocol.test.ts",
+        "tests/integration/qa-gemini-agent-process.test.ts"
+      ],
+      "exitCode": 0,
+      "durationMs": 128036,
+      "log": "regression.log"
+    },
+    {
+      "name": "build",
+      "command": [
+        "npm",
+        "run",
+        "build"
+      ],
+      "exitCode": 0,
+      "durationMs": 1354,
+      "log": "build.log"
+    },
+    {
+      "name": "original",
+      "command": [
+        "npm",
+        "run",
+        "verify:original"
+      ],
+      "exitCode": 0,
+      "durationMs": 144,
+      "log": "original.log"
+    },
+    {
+      "name": "boundaries",
+      "command": [
+        "npm",
+        "run",
+        "verify:boundaries"
+      ],
+      "exitCode": 0,
+      "durationMs": 179,
+      "log": "boundaries.log"
+    }
+  ],
+  "containerId": "be12960883ff6a73fc5778c69bb5dcba3a31144de742ec2c182112e8fa8b30c9",
+  "volumeNames": [
+    "e6df13be78f8d1e5638518ebc7569aee7994e2997f260d4b73cac65bcd967d03"
+  ],
+  "hostPort": 53881,
+  "databaseBeforeCleanup": {
+    "exitCode": 0,
+    "output": "0"
+  },
+  "cleanup": {
+    "exitCode": 0,
+    "containerAbsent": true,
+    "volumesAbsent": true
+  },
+  "endedAt": "2026-10-01T21:23:00.327610+00:00",
+  "logHashes": {
+    "boundaries.log": "0eea815afa4e61cf5d57be9b6a650f66693c6fd01396bca49d8c505a60e57994",
+    "build.log": "7f4b26f6ef2307a94aa0aee383afb5b38a56d50f3d533ac4cc420ce07a06e51f",
+    "original.log": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa",
+    "regression.log": "038c98bf8d45ecd8ae07f9b7b6ecb594d607326baacafc4dceef53b007b08878"
+  }
+}
