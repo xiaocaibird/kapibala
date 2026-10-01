@@ -1,0 +1,41 @@
+diff --git a/apps/server/src/modules/automation/agent.ts b/apps/server/src/modules/automation/agent.ts
+index 22e5873..a045f63 100644
+--- a/apps/server/src/modules/automation/agent.ts
++++ b/apps/server/src/modules/automation/agent.ts
+@@ -23,0 +24 @@ import { schedulingTransaction } from "./scheduling-transaction.js";
++import { referenceMedia } from "../media-files/index.js";
+@@ -258,0 +260,6 @@ export class AgentModule {
++      await referenceMedia(
++        tx,
++        id,
++        groupId,
++        messages.map((message) => message.msg_id),
++      );
+diff --git a/apps/server/src/modules/automation/tool-execution.ts b/apps/server/src/modules/automation/tool-execution.ts
+index a4fd15a..77a52b3 100644
+--- a/apps/server/src/modules/automation/tool-execution.ts
++++ b/apps/server/src/modules/automation/tool-execution.ts
+@@ -24,0 +25 @@ import type { GroupRow, RecentRow, RunRow, StepRow } from "./types.js";
++import { referenceMedia } from "../media-files/index.js";
+@@ -99,6 +100,15 @@ export class AgentTools {
+-    const rows = (
+-      await this.ctx.db.query<RecentRow>(
+-        "SELECT msg_id,sender_platform_user_id,is_own,text,sent_at FROM messages WHERE group_id=$1 ORDER BY sent_at DESC,id DESC LIMIT $2",
+-        [run.group_id, Math.min(input.limit, 50)],
+-      )
+-    ).rows.reverse();
++    const rows = await this.ctx.db.transaction(async (tx) => {
++      const rows = (
++        await tx.query<RecentRow>(
++          "SELECT msg_id,sender_platform_user_id,is_own,text,sent_at FROM messages WHERE group_id=$1 ORDER BY sent_at DESC,id DESC LIMIT $2",
++          [run.group_id, Math.min(input.limit, 50)],
++        )
++      ).rows.reverse();
++      await referenceMedia(
++        tx,
++        run.id,
++        run.group_id,
++        rows.map((row) => row.msg_id),
++      );
++      return rows;
++    });
