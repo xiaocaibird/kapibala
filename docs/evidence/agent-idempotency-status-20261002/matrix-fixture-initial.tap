@@ -1,0 +1,92 @@
+TAP version 13
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: same-key state read returns stored queued even after the original account becomes terminal
+ok 1 - same-key state read returns stored queued even after the original account becomes terminal
+  ---
+  duration_ms: 415.135833
+  type: 'test'
+  ...
+# Independent database: kapibala_test_a5630a7106a144f79239537c40de66b8
+# {"fixtureStoredStatus":"queued","result":{"clientMsgId":"b1240ef0-0966-43a6-a0a4-ccf30026a757","deliveryStatus":"queued"},"sends":1,"audits":1}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: same-key state read returns stored unknown even after the original account becomes terminal
+ok 2 - same-key state read returns stored unknown even after the original account becomes terminal
+  ---
+  duration_ms: 351.760125
+  type: 'test'
+  ...
+# Independent database: kapibala_test_85718d4ad08940b084e6da0e3535cac6
+# {"fixtureStoredStatus":"unknown","result":{"clientMsgId":"35f679b2-42cf-4cea-937b-6b0d3900c8f5","deliveryStatus":"unknown"},"sends":1,"audits":1}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: same-key state read returns stored accepted even after the original account becomes terminal
+ok 3 - same-key state read returns stored accepted even after the original account becomes terminal
+  ---
+  duration_ms: 353.443375
+  type: 'test'
+  ...
+# Independent database: kapibala_test_b215fea9cc544c828f95bc61de80f676
+# {"fixtureStoredStatus":"accepted","result":{"clientMsgId":"e30d8ec5-c672-4af0-9805-5789b2f31e41","deliveryStatus":"accepted"},"sends":1,"audits":1}
+# Subtest: same-key state read returns stored sent even after the original account becomes terminal
+ok 4 - same-key state read returns stored sent even after the original account becomes terminal
+  ---
+  duration_ms: 246.073416
+  type: 'test'
+  ...
+# Independent database: kapibala_test_d1fb17fc1ffa4346a157350e53fe207b
+# {"fixtureStoredStatus":"sent","result":{"clientMsgId":"331d2a41-cce8-4af7-98cd-7f13e02e2e50","deliveryStatus":"sent"},"sends":1,"audits":1}
+# Subtest: same-key state read returns stored failed even after the original account becomes terminal
+not ok 5 - same-key state read returns stored failed even after the original account becomes terminal
+  ---
+  duration_ms: 333.660459
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/agent-idempotency-state-matrix.test.ts:1:304'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'is_error')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/agent-idempotency-state-matrix.test.ts:89:30)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Independent database: kapibala_test_d4b34b5ea1d24859b255eec29d1433ed
+# Subtest: same-key state read returns stored cancelled even after the original account becomes terminal
+not ok 6 - same-key state read returns stored cancelled even after the original account becomes terminal
+  ---
+  duration_ms: 244.140208
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/agent-idempotency-state-matrix.test.ts:1:304'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'is_error')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/agent-idempotency-state-matrix.test.ts:89:30)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Independent database: kapibala_test_bff12ac383dc454298a0c23bd77db877
+# Subtest: same-key current state: actual 429 leaves queued and second HTTP tool use reads its identity without waiting or resending
+ok 7 - same-key current state: actual 429 leaves queued and second HTTP tool use reads its identity without waiting or resending
+  ---
+  duration_ms: 5210.708667
+  type: 'test'
+  ...
+# Independent database: kapibala_test_1f27b42f8a454d4fb445b1915e17d2cd
+# {"stateAtSecondResponseBarrier":"queued","originalClientMsgId":"f587f474-4459-44be-b134-10b37a638d76","results":[{"code":"SEND_TIMEOUT","hint":"Retrying this idempotency key reads the same outbound message.","message":"Delivery could not be confirmed within five seconds."},{"clientMsgId":"f587f474-4459-44be-b134-10b37a638d76","deliveryStatus":"queued"}],"secondCompletionMs":22.82104100000015,"sends":1,"audits":1,"keys":1,"storedMessages":1}
+1..7
+# tests 7
+# suites 0
+# pass 5
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7492.901584

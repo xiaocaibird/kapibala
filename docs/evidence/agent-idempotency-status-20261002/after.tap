@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: same-key state read returns stored queued even after the original account becomes terminal
+ok 1 - same-key state read returns stored queued even after the original account becomes terminal
+  ---
+  duration_ms: 324.188041
+  type: 'test'
+  ...
+# Independent database: kapibala_test_3064abeda88a46bd8e861a024a376d1c
+# {"fixtureStoredStatus":"queued","result":{"clientMsgId":"58be9ea4-4932-44ad-843b-e9cd4583ad36","deliveryStatus":"queued"},"sends":1,"audits":1}
+# Subtest: same-key state read returns stored unknown even after the original account becomes terminal
+ok 2 - same-key state read returns stored unknown even after the original account becomes terminal
+  ---
+  duration_ms: 238.312291
+  type: 'test'
+  ...
+# Independent database: kapibala_test_0b201fcc1d8a4dc5af7a939fd078c8ce
+# {"fixtureStoredStatus":"unknown","result":{"clientMsgId":"f0dc191e-8e7a-47e0-90f6-e258f8e44330","deliveryStatus":"unknown"},"sends":1,"audits":1}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: same-key state read returns stored accepted even after the original account becomes terminal
+ok 3 - same-key state read returns stored accepted even after the original account becomes terminal
+  ---
+  duration_ms: 317.5455
+  type: 'test'
+  ...
+# Independent database: kapibala_test_1b1576b27fca46089343d4684921efac
+# {"fixtureStoredStatus":"accepted","result":{"clientMsgId":"d925ca69-38cb-4e31-83a0-6b2224200b9f","deliveryStatus":"accepted"},"sends":1,"audits":1}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: same-key state read returns stored sent even after the original account becomes terminal
+ok 4 - same-key state read returns stored sent even after the original account becomes terminal
+  ---
+  duration_ms: 330.578083
+  type: 'test'
+  ...
+# Independent database: kapibala_test_7e17b2e6b87a4afe8a0f4bd364f446c0
+# {"fixtureStoredStatus":"sent","result":{"clientMsgId":"9beb037e-c296-47cb-a91e-265107ba5913","deliveryStatus":"sent"},"sends":1,"audits":1}
+# Subtest: same-key state read returns stored failed even after the original account becomes terminal
+ok 5 - same-key state read returns stored failed even after the original account becomes terminal
+  ---
+  duration_ms: 230.633333
+  type: 'test'
+  ...
+# Independent database: kapibala_test_6001720ea342469dbb859d6a7d10e4a5
+# {"fixtureStoredStatus":"failed","result":{"clientMsgId":"03eae978-f42f-4a09-abe4-96a0cd4b88b1","deliveryStatus":"failed"},"sends":1,"audits":1}
+# Subtest: same-key state read returns stored cancelled even after the original account becomes terminal
+ok 6 - same-key state read returns stored cancelled even after the original account becomes terminal
+  ---
+  duration_ms: 221.117708
+  type: 'test'
+  ...
+# Independent database: kapibala_test_233258bdd6a14ddba658b043aa8c75fb
+# {"fixtureStoredStatus":"cancelled","result":{"clientMsgId":"2d4fed9b-c4c3-4254-be92-d690209faa6b","deliveryStatus":"cancelled"},"sends":1,"audits":1}
+# Subtest: same-key current state: actual 429 leaves queued and second HTTP tool use reads its identity without waiting or resending
+ok 7 - same-key current state: actual 429 leaves queued and second HTTP tool use reads its identity without waiting or resending
+  ---
+  duration_ms: 5309.349916
+  type: 'test'
+  ...
+# Independent database: kapibala_test_67de16b02bc14a0aa29d73456e069b66
+# {"stateAtSecondResponseBarrier":"queued","originalClientMsgId":"0d03ce2c-51fb-47f2-a003-c5017fbd4a04","results":[{"code":"SEND_TIMEOUT","hint":"Retrying this idempotency key reads the same outbound message.","message":"Delivery could not be confirmed within five seconds."},{"clientMsgId":"0d03ce2c-51fb-47f2-a003-c5017fbd4a04","deliveryStatus":"queued"}],"secondCompletionMs":31.13958300000013,"sends":1,"audits":1,"keys":1,"storedMessages":1}
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 7284.849708

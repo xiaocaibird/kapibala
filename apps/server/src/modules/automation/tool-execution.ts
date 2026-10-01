@@ -286,7 +286,15 @@ export class AgentTools {
     };
     const deliver = async (clientMsgId: string, keyReused: boolean) => {
       observe("send-key-resolved", { clientMsgId, keyReused });
-      const result = await this.delivery(clientMsgId, run, fact);
+      // The original enqueue/key/step-executing commit is atomic. A fresh
+      // tool_use reusing that key reads its current status (A5.7); recovery of
+      // the original executing tool still observes its initial send outcome.
+      const result = await this.delivery(
+        clientMsgId,
+        run,
+        fact,
+        keyReused && step.state !== "executing",
+      );
       // delivery() has actually resolved to its caller. The history transaction
       // has not started, and no subsequent turn is used as this endpoint.
       observe("send-tool-result-returned", {
@@ -379,6 +387,7 @@ export class AgentTools {
     clientMsgId: string,
     run: RunRow,
     fact: Omit<LifecycleFact, "kind">,
+    currentStateOnly: boolean,
   ): Promise<ToolOutcome> {
     this.ctx.testLifecycleObserver?.record({
       ...fact,
@@ -387,7 +396,12 @@ export class AgentTools {
       attemptId: String(fact.attemptId),
       clientMsgId,
     });
-    const outcome = await this.waitForDelivery(clientMsgId, run, fact);
+    const outcome = await this.waitForDelivery(
+      clientMsgId,
+      run,
+      fact,
+      currentStateOnly,
+    );
     this.ctx.testLifecycleObserver?.record({
       ...fact,
       kind: "send-wait-result-ready",
@@ -402,6 +416,7 @@ export class AgentTools {
     clientMsgId: string,
     run: RunRow,
     fact: Omit<LifecycleFact, "kind">,
+    currentStateOnly: boolean,
   ): Promise<ToolOutcome> {
     const deadline =
       performance.now() + Math.min(5000, this.host.remaining(run));
@@ -411,6 +426,10 @@ export class AgentTools {
         deadline,
         async (reader) => {
           const message = await this.messaging.getMessage(clientMsgId, reader);
+          if (currentStateOnly && message?.deliveryStatus)
+            return {
+              value: { clientMsgId, deliveryStatus: message.deliveryStatus },
+            };
           // A timely confirmed send is final even if the account later becomes
           // terminal. Never make it wait for an unrelated account lock.
           if (message?.deliveryStatus === "sent")

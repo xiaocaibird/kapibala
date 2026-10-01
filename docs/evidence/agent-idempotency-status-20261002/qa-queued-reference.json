@@ -1,0 +1,60 @@
+{
+  "sourceFiles": {
+    "SR-BE-GRD-003-same-key-at-queued.json": "e60bda1c01ad13300a0d33f96314ab534e39ea82493493d6ae43c7d819c22935",
+    "api.ndjson": "2e9daf8509feb59a80fe3ae3cbaf758d4e1c2ef4b40e2e0380f1f17b61b31abf"
+  },
+  "caseId": "SR-BE-GRD-003",
+  "variant": "same-key-at-queued",
+  "qaStatus": "FAIL",
+  "qaReason": "reuse result preserves original message identity\n+ actual - expected\n\n+ undefined\n- 'd77c59ff-afcd-40a1-834b-ee9d7a0d3acc'\n",
+  "matchingGatewaySendCount": 1,
+  "gatewaySend": {
+    "id": 24,
+    "at": "2026-10-01T22:26:57.750Z",
+    "path": "/groups/gateway-group-2/send",
+    "responseStatus": 429,
+    "completedAt": "2026-10-01T22:26:57.751Z"
+  },
+  "clientMsgId": "d77c59ff-afcd-40a1-834b-ee9d7a0d3acc",
+  "matchingGatewayLandedCount": 0,
+  "matchingAuditCount": 1,
+  "finishedRuns": [
+    {
+      "runId": "e9e0f8e1-dc53-4a1c-b6ab-d93dbb326d3c",
+      "status": "finished",
+      "steps": [
+        {
+          "ordinal": 1,
+          "kind": "tool_use",
+          "toolUseId": "1a4b3fce-0796-412e-a8d1-85e9d0d0d0b9",
+          "name": "send_message",
+          "resultSummary": "{\"code\":\"SEND_TIMEOUT\",\"message\":\"Delivery could not be confirmed within five seconds.\",\"hint\":\"Retrying this idempotency key reads the same outbound message.\"}",
+          "isError": true,
+          "errorCode": "SEND_TIMEOUT",
+          "auditVerdict": "pass"
+        },
+        {
+          "ordinal": 2,
+          "kind": "tool_use",
+          "toolUseId": "183439f9-65c5-49c4-b169-b502e50187da",
+          "name": "send_message",
+          "resultSummary": "{\"code\":\"SEND_TIMEOUT\",\"message\":\"Delivery could not be confirmed within five seconds.\",\"hint\":\"Retrying this idempotency key reads the same outbound message.\"}",
+          "isError": true,
+          "errorCode": "SEND_TIMEOUT",
+          "auditVerdict": null
+        },
+        {
+          "ordinal": 3,
+          "kind": "final",
+          "toolUseId": null,
+          "name": null,
+          "resultSummary": "\"QA script complete\"",
+          "isError": false,
+          "errorCode": null,
+          "auditVerdict": null
+        }
+      ]
+    }
+  ],
+  "scope": "read-only extraction of queued variant only; accepted/unknown QA fetch-isolation failures excluded"
+}

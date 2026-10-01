@@ -30,8 +30,10 @@ async function prepared(
   await f.db.query(
     "INSERT INTO agent_runs(id,group_id,history) VALUES('deadline-run','g','[]')",
   );
+  // Recover the original already-enqueued tool. Production commits its key and
+  // executing state together; a fresh ready tool reusing the key only reads status.
   await f.db.query(
-    "INSERT INTO agent_steps(run_id,ordinal,kind,tool_use_id,name,input,state) VALUES('deadline-run',1,'tool_use','deadline-tool','send_message',$1,'ready')",
+    "INSERT INTO agent_steps(run_id,ordinal,kind,tool_use_id,name,input,state) VALUES('deadline-run',1,'tool_use','deadline-tool','send_message',$1,'executing')",
     [JSON.stringify({ text: "already enqueued", idempotency_key: "same-key" })],
   );
   await f.db.query(

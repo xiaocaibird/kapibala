@@ -1,0 +1,36 @@
+{
+  "phase": "after",
+  "baseRevision": "47423c165f74d8b8908297974f7df71bc53b470d",
+  "owner": "agent-key-status-1577e23232b228c7",
+  "startedAt": "2026-10-01T22:39:10.014386+00:00",
+  "realProviderUsed": false,
+  "sourceSha256": "311c151cc95f5ed77650e403ae01d8f6091a3f462f6bfcfc5e733a784c434137",
+  "containerId": "f3e23594f32428704ee3226bfd009159c0e4da2a6decf8ef9a0d7a87aa5888c6",
+  "volumeNames": [
+    "a9fc78567ddecda8dd7c98a40267c90ca3849c7e68c8ce5aae6f97045f6cb093"
+  ],
+  "hostPort": 59038,
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/integration/agent-idempotency-status.test.ts",
+    "tests/integration/agent-idempotency-state-matrix.test.ts"
+  ],
+  "exitCode": 1,
+  "logSha256": "b00944ac0f09cf90bdb41cb7293f24a1aade249a637a9095b3368ddd939a9694",
+  "databaseBeforeCleanup": {
+    "exitCode": 0,
+    "output": "0"
+  },
+  "cleanup": {
+    "exitCode": 0,
+    "containerAbsent": true,
+    "volumesAbsent": true
+  },
+  "endedAt": "2026-10-01T22:39:18.327447+00:00",
+  "classification": "fixture setup error: failed/cancelled states require fail_code under existing database CHECK; queued real-429 regression already passed"
+}

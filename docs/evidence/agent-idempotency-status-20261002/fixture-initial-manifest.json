@@ -1,0 +1,35 @@
+{
+  "phase": "before",
+  "baseRevision": "47423c165f74d8b8908297974f7df71bc53b470d",
+  "owner": "agent-key-status-6495b08699f9f8a7",
+  "startedAt": "2026-10-01T22:36:22.031542+00:00",
+  "realProviderUsed": false,
+  "sourceSha256": "4e3bfe27835c775e9a5cc486b791bb04c0b8f64b0270125f38787c8c3782fc01",
+  "containerId": "7fab665a43f31a2422776152fdd4662e9121a809c1dc26d76bc3a23c30d279ea",
+  "volumeNames": [
+    "4735cb2ad2387772a8286b3723b39eb9ad7a72083f6675798604c64d7406364d"
+  ],
+  "hostPort": 58172,
+  "command": [
+    "node",
+    "--import",
+    "tsx",
+    "--test",
+    "--test-reporter=tap",
+    "--test-concurrency=1",
+    "tests/integration/agent-idempotency-status.test.ts"
+  ],
+  "exitCode": 1,
+  "logSha256": "777a1c304324522c10daf3207521f49d0e6cab0b54fa92af720e03a2c61010c1",
+  "databaseBeforeCleanup": {
+    "exitCode": 0,
+    "output": "0"
+  },
+  "cleanup": {
+    "exitCode": 0,
+    "containerAbsent": true,
+    "volumesAbsent": true
+  },
+  "endedAt": "2026-10-01T22:36:28.245104+00:00",
+  "classification": "fixture assertion error: 429 deadline belongs to accounts.rate_limited_until, not message metadata; not product defect reproduction"
+}

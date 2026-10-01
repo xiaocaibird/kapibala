@@ -1,0 +1,47 @@
+TAP version 13
+# Subtest: same-key current state: actual 429 leaves queued and second HTTP tool use reads its identity without waiting or resending
+not ok 1 - same-key current state: actual 429 leaves queued and second HTTP tool use reads its identity without waiting or resending
+  ---
+  duration_ms: 10242.791375
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/.runtime/agent-key-status-427fef921aa43476/baseline-copy/tests/integration/agent-idempotency-status.test.ts:1:239'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      {
+    +   code: 'SEND_TIMEOUT',
+    +   hint: 'Retrying this idempotency key reads the same outbound message.',
+    +   message: 'Delivery could not be confirmed within five seconds.'
+    -   clientMsgId: 'f869e16a-8bfd-40e6-b332-c58193a76aaa',
+    -   deliveryStatus: 'queued'
+      }
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    clientMsgId: 'f869e16a-8bfd-40e6-b332-c58193a76aaa'
+    deliveryStatus: 'queued'
+  actual:
+    code: 'SEND_TIMEOUT'
+    hint: 'Retrying this idempotency key reads the same outbound message.'
+    message: 'Delivery could not be confirmed within five seconds.'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/.runtime/agent-key-status-427fef921aa43476/baseline-copy/tests/integration/agent-idempotency-status.test.ts:110:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Independent database: kapibala_test_c691cf3626d847a79ed7e28dbc4b3f3c
+# {"stateAtSecondResponseBarrier":"queued","originalClientMsgId":"f869e16a-8bfd-40e6-b332-c58193a76aaa","results":[{"code":"SEND_TIMEOUT","hint":"Retrying this idempotency key reads the same outbound message.","message":"Delivery could not be confirmed within five seconds."},{"code":"SEND_TIMEOUT","hint":"Retrying this idempotency key reads the same outbound message.","message":"Delivery could not be confirmed within five seconds."}],"secondCompletionMs":5026.070790999999,"sends":1,"audits":1,"keys":1,"storedMessages":1}
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 10449.013084
