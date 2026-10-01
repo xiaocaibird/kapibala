@@ -1,0 +1,154 @@
+✔ DC01 normal production main ignores test token and never opens a capacity bridge (373.597375ms)
+ℹ Developer-owned UUID database /kapibala_test_0f94c446fe994cc796d4fca0d7c35dd2; revision 2bd8b6f15595b7bd8fdf7b871b2cd81bb9337425; guardian 98253; API http://127.0.0.1:57708; controller http://127.0.0.1:57707
+✖ DC02 real SUT holders, ownership rejects, immutable lease identity and independent release (355.423292ms)
+✖ DC03 lost PUT response remains addressable; TTL and explicit release race preserve history (3334.130291ms)
+✖ DC04 exact before-ready crash retains old history and rebinds same API port to new guardian (368.220875ms)
+✖ DC05 pressure after dispatch holds remaining real slots without attributing a zero-effect refusal (3335.80375ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 1
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7973.639375
+
+✖ failing tests:
+
+test at tests/integration/qa-capacity-control.test.ts:1:669
+✖ DC02 real SUT holders, ownership rejects, immutable lease identity and independent release (355.423292ms)
+  Error: SUT failed to start: {"level":30,"time":1790831909233,"pid":98258,"hostname":"MacBook-Pro.local","msg":"Server listening at http://127.0.0.1:57739"}
+  node:net:2306
+        const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                      ^
+  
+  Error: listen EINVAL: invalid argument /var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kap-cap-poi9yf/385734ce-ee84-4219-90ae-7f85f1c500dc.sock
+      at Server.setupListenHandle [as _listen2] (node:net:2306:21)
+      at listenInCluster (node:net:2437:12)
+      at Server.listen (node:net:2579:5)
+      at /Users/zcm/Desktop/kapibala/node_modules/fastify/lib/server.js:303:12
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async CapacityRuntime.listen (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/runtime.ts:138:5)
+      at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity-server.ts:30:1) {
+    code: 'EINVAL',
+    errno: -22,
+    syscall: 'listen',
+    address: '/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kap-cap-poi9yf/385734ce-ee84-4219-90ae-7f85f1c500dc.sock',
+    port: -1
+  }
+  
+  Node.js v24.21.0
+  
+      at <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:149:13)
+      at async start (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:143:5)
+      ... 3 lines matching cause stack trace ...
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    [cause]: Error: SUT exited: {"level":30,"time":1790831909233,"pid":98258,"hostname":"MacBook-Pro.local","msg":"Server listening at http://127.0.0.1:57739"}
+    node:net:2306
+          const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                        ^
+    
+    Error: listen EINVAL: invalid argument /var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kap-cap-poi9yf/385734ce-ee84-4219-90ae-7f85f1c500dc.sock
+        at Server.setupListenHandle [as _listen2] (node:net:2306:21)
+        at listenInCluster (node:net:2437:12)
+        at Server.listen (node:net:2579:5)
+        at /Users/zcm/Desktop/kapibala/node_modules/fastify/lib/server.js:303:12
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async CapacityRuntime.listen (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/runtime.ts:138:5)
+        at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity-server.ts:30:1) {
+      code: 'EINVAL',
+      errno: -22,
+      syscall: 'listen',
+      address: '/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kap-cap-poi9yf/385734ce-ee84-4219-90ae-7f85f1c500dc.sock',
+      port: -1
+    }
+    
+    Node.js v24.21.0
+    
+        at <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:144:46)
+        at until (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/core-automation-fixture.ts:35:15)
+        at async start (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:143:5)
+        at async capacityFixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:176:3)
+        at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/qa-capacity-control.test.ts:21:13)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  }
+
+test at tests/integration/qa-capacity-control.test.ts:1:3128
+✖ DC03 lost PUT response remains addressable; TTL and explicit release race preserve history (3334.130291ms)
+  Error: Condition did not become true within 3000ms
+      at until (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/core-automation-fixture.ts:38:9)
+      at async start (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:152:7)
+      at async capacityFixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:176:3)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/qa-capacity-control.test.ts:115:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/qa-capacity-control.test.ts:1:4355
+✖ DC04 exact before-ready crash retains old history and rebinds same API port to new guardian (368.220875ms)
+  Error: SUT failed to start: {"level":30,"time":1790831912936,"pid":98323,"hostname":"MacBook-Pro.local","msg":"Server listening at http://127.0.0.1:57808"}
+  node:net:2306
+        const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                      ^
+  
+  Error: listen EINVAL: invalid argument /var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kap-cap-K4BYNI/c83282c5-1c86-4414-a0a4-19d3ac1a8084.sock
+      at Server.setupListenHandle [as _listen2] (node:net:2306:21)
+      at listenInCluster (node:net:2437:12)
+      at Server.listen (node:net:2579:5)
+      at /Users/zcm/Desktop/kapibala/node_modules/fastify/lib/server.js:303:12
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async CapacityRuntime.listen (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/runtime.ts:138:5)
+      at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity-server.ts:30:1) {
+    code: 'EINVAL',
+    errno: -22,
+    syscall: 'listen',
+    address: '/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kap-cap-K4BYNI/c83282c5-1c86-4414-a0a4-19d3ac1a8084.sock',
+    port: -1
+  }
+  
+  Node.js v24.21.0
+  
+      at <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:149:13)
+      at async start (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:143:5)
+      ... 3 lines matching cause stack trace ...
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    [cause]: Error: SUT exited: {"level":30,"time":1790831912936,"pid":98323,"hostname":"MacBook-Pro.local","msg":"Server listening at http://127.0.0.1:57808"}
+    node:net:2306
+          const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                        ^
+    
+    Error: listen EINVAL: invalid argument /var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kap-cap-K4BYNI/c83282c5-1c86-4414-a0a4-19d3ac1a8084.sock
+        at Server.setupListenHandle [as _listen2] (node:net:2306:21)
+        at listenInCluster (node:net:2437:12)
+        at Server.listen (node:net:2579:5)
+        at /Users/zcm/Desktop/kapibala/node_modules/fastify/lib/server.js:303:12
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async CapacityRuntime.listen (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity/runtime.ts:138:5)
+        at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/scripts/qa-capacity-server.ts:30:1) {
+      code: 'EINVAL',
+      errno: -22,
+      syscall: 'listen',
+      address: '/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kap-cap-K4BYNI/c83282c5-1c86-4414-a0a4-19d3ac1a8084.sock',
+      port: -1
+    }
+    
+    Node.js v24.21.0
+    
+        at <anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:144:46)
+        at until (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/core-automation-fixture.ts:35:15)
+        at async start (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:143:5)
+        at async capacityFixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:176:3)
+        at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/qa-capacity-control.test.ts:160:13)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  }
+
+test at tests/integration/qa-capacity-control.test.ts:1:6083
+✖ DC05 pressure after dispatch holds remaining real slots without attributing a zero-effect refusal (3335.80375ms)
+  Error: Condition did not become true within 3000ms
+      at until (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/core-automation-fixture.ts:38:9)
+      at async start (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:152:7)
+      at async capacityFixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:176:3)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/qa-capacity-control.test.ts:220:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)

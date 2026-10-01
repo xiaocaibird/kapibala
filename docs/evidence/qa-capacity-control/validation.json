@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-01T05:29:33.753834+00:00",
+  "base": "4c035b8c24e95f33182b4248ee676fcd184f74a5",
+  "sourceForEight": "c7d2c9bb92c8cfed7682753b99a9f02e8a7397cc",
+  "finalSource": "334c17b4b804cd53d941e7aa51cccb2562a80a9d",
+  "testCommit": "0559ea329c39c981f056c69216d16d3ac48be20f",
+  "databaseResource": "kapibala-dev-capacity-2cefa20d; 127.0.0.1:57084; UUID database per test",
+  "commands": [
+    {
+      "command": "DATABASE_URL=<owned PostgreSQL> node --import tsx --test --test-reporter=tap tests/integration/qa-capacity-control.test.ts",
+      "evidence": "development-eight.tap",
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "interpretation": "Engineering observation/control mechanisms; DC04 and DC06 preserve product gaps, not QA PASS"
+    },
+    {
+      "command": "DATABASE_URL=<owned PostgreSQL> node --import tsx --test --test-reporter=tap --test-name-pattern='DC0[1-578]' tests/integration/qa-capacity-control.test.ts",
+      "evidence": "final-control-targeted.tap",
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "scope": "60-second observation deliberately not repeated"
+    },
+    {
+      "command": "DATABASE_URL=<owned PostgreSQL> node --import tsx --test --test-reporter=tap tests/integration/agent-capacity.test.ts tests/integration/lock-admission.test.ts tests/integration/automation.test.ts tests/integration/core-activity-accounting.test.ts",
+      "evidence": "product-targeted.tap",
+      "passed": 61,
+      "failed": 0,
+      "skipped": 3,
+      "skipReason": "Existing AUTOMATION_TIMING_TESTS opt-in disabled for this focused product regression"
+    },
+    {
+      "command": "node_modules/.bin/tsc --noEmit",
+      "evidence": "typecheck.txt",
+      "exitCode": 0
+    }
+  ],
+  "qaAssetsModified": false,
+  "qaTestsExecuted": false,
+  "mainOrDemoTouched": false
+}

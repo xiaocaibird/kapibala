@@ -1,0 +1,108 @@
+TAP version 13
+# Subtest: DC01 normal production main ignores test token and never opens a capacity bridge
+ok 1 - DC01 normal production main ignores test token and never opens a capacity bridge
+  ---
+  duration_ms: 366.587625
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_8cd55b5dbe55494d99035d554aa44d3f; revision d136e5ec65b2ac5998fa75f56bf451a34a5d3cd3; guardian 99278; API http://127.0.0.1:57924; controller http://127.0.0.1:57923
+# Subtest: DC02 real SUT holders, ownership rejects, immutable lease identity and independent release
+not ok 2 - DC02 real SUT holders, ownership rejects, immutable lease identity and independent release
+  ---
+  duration_ms: 603.95575
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/qa-capacity-control.test.ts:1:669'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    503 !== 404
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 404
+  actual: 503
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/qa-capacity-control.test.ts:63:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Developer-owned UUID database /kapibala_test_6634d92c9cf547978ac76b1dd2001ca8; revision d136e5ec65b2ac5998fa75f56bf451a34a5d3cd3; guardian 99282; API http://127.0.0.1:57955; controller http://127.0.0.1:57954
+# Subtest: DC03 lost PUT response remains addressable; TTL and explicit release race preserve history
+not ok 3 - DC03 lost PUT response remains addressable; TTL and explicit release race preserve history
+  ---
+  duration_ms: 1307.936042
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/qa-capacity-control.test.ts:1:3128'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"error":"FastifyError [FST_ERR_CTP_EMPTY_JSON_BODY]: Body cannot be empty when content-type is set to 'application/json'"}
+    
+    503 !== 200
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 200
+  actual: 503
+  operator: 'strictEqual'
+  stack: |-
+    Object.snapshot (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:209:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async Promise.all (index 0)
+    async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/qa-capacity-control.test.ts:141:22)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Developer-owned UUID database /kapibala_test_1351169e8e66481abb0f5e334132a946; revision d136e5ec65b2ac5998fa75f56bf451a34a5d3cd3; guardian 99395; API http://127.0.0.1:57999; controller http://127.0.0.1:57998
+# Subtest: DC04 exact before-ready crash retains old history and rebinds same API port to new guardian
+not ok 4 - DC04 exact before-ready crash retains old history and rebinds same API port to new guardian
+  ---
+  duration_ms: 544.912375
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/qa-capacity-control.test.ts:1:4355'
+  failureType: 'testCodeFailure'
+  error: |-
+    {"error":"FastifyError [FST_ERR_CTP_EMPTY_JSON_BODY]: Body cannot be empty when content-type is set to 'application/json'"}
+    
+    503 !== 200
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 200
+  actual: 503
+  operator: 'strictEqual'
+  stack: |-
+    Object.snapshot (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/capacity-control-fixture.ts:209:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/qa-capacity-control.test.ts:191:20)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Developer-owned UUID database /kapibala_test_0e1c003d6c1945cba66d5fa4d978e5ad; revision d136e5ec65b2ac5998fa75f56bf451a34a5d3cd3; guardian 99449; API http://127.0.0.1:58046; controller http://127.0.0.1:58045
+# Subtest: DC05 pressure after dispatch holds remaining real slots without attributing a zero-effect refusal
+not ok 5 - DC05 pressure after dispatch holds remaining real slots without attributing a zero-effect refusal
+  ---
+  duration_ms: 6548.383625
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/qa-capacity-control.test.ts:1:6083'
+  failureType: 'testCodeFailure'
+  error: 'Condition did not become true within 6000ms'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    until (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/core-automation-fixture.ts:38:9)
+    async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/qa-capacity-control.test.ts:233:3)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Developer-owned UUID database /kapibala_test_ff59ebe4ebe345dbbc5bddbec834016e; revision d136e5ec65b2ac5998fa75f56bf451a34a5d3cd3; guardian 99508; API http://127.0.0.1:58090; controller http://127.0.0.1:58089
+1..5
+# tests 5
+# suites 0
+# pass 1
+# fail 4
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9544.877959

@@ -1,0 +1,39 @@
+{
+  "at": "2026-10-01T05:28:40.434130+00:00",
+  "result": "owned container and anonymous volume absent",
+  "steps": [
+    {
+      "argv": [
+        "docker",
+        "rm",
+        "-f",
+        "-v",
+        "69baa49bf5ed1efc0ace0a1b6ffa56ef3a969e709cdd75ea48aaa2d1c3de9fb4"
+      ],
+      "exitCode": 0,
+      "stdout": "69baa49bf5ed1efc0ace0a1b6ffa56ef3a969e709cdd75ea48aaa2d1c3de9fb4\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "docker",
+        "inspect",
+        "69baa49bf5ed1efc0ace0a1b6ffa56ef3a969e709cdd75ea48aaa2d1c3de9fb4"
+      ],
+      "exitCode": 1,
+      "stdout": "[]\n",
+      "stderr": "error: no such object: 69baa49bf5ed1efc0ace0a1b6ffa56ef3a969e709cdd75ea48aaa2d1c3de9fb4\n"
+    },
+    {
+      "argv": [
+        "docker",
+        "volume",
+        "inspect",
+        "defbdaa04a94595fd6d6374ec0ea5a4c0e17b212f9ca6726a152c6dcd463f325"
+      ],
+      "exitCode": 1,
+      "stdout": "[]\n",
+      "stderr": "Error response from daemon: get defbdaa04a94595fd6d6374ec0ea5a4c0e17b212f9ca6726a152c6dcd463f325: no such volume\n"
+    }
+  ]
+}
