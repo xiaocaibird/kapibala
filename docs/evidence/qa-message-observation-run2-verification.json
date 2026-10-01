@@ -1,0 +1,50 @@
+{
+  "kind": "DEVELOPER_REGRESSION_NOT_QA",
+  "revision": "c3e2f4bd7e2affd316018db6a7d466f07b69d4fe",
+  "owner": "kapibala-qa-message-observation-7d3bdf28-13b",
+  "startedAt": "2026-10-01T06:04:42.999Z",
+  "checks": [
+    {
+      "name": "focused",
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "--test",
+        "tests/integration/qa-message-observation.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-message-observation-run2-focused.log",
+      "bytes": 5039,
+      "sha256": "8b179764f8c52dee4681c65bbe8b6bd364200d32af1c435f2a41831c631f6c99"
+    },
+    {
+      "name": "original",
+      "command": [
+        "npm",
+        "run",
+        "verify:original"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-message-observation-run2-original.log",
+      "bytes": 196,
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa"
+    }
+  ],
+  "cleanup": {
+    "remainingDatabases": "",
+    "containerAbsent": true,
+    "remainingOwnedVolumes": []
+  },
+  "database": {
+    "container": "941a652c4c374e09ed7c9844c142eec35a49adca93ede108a557f07317b6a0e2",
+    "port": "53482",
+    "volumes": [
+      "da07b682a058dba684a0a1bf10af07d7e35921100e6576be8d052aa85a6484e7"
+    ]
+  },
+  "passed": true,
+  "finishedAt": "2026-10-01T06:04:52.799Z"
+}

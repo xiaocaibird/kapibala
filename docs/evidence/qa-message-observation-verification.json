@@ -1,0 +1,37 @@
+{
+  "kind": "DEVELOPER_REGRESSION_NOT_QA",
+  "revision": "589a66bbb62390f15c5b0d9557220b6768167423",
+  "owner": "kapibala-qa-message-observation-38a2baab-772",
+  "startedAt": "2026-10-01T06:04:08.997Z",
+  "checks": [
+    {
+      "name": "focused",
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "--test",
+        "tests/integration/qa-message-observation.test.ts"
+      ],
+      "code": 1,
+      "signal": null,
+      "path": "docs/evidence/qa-message-observation-focused.log",
+      "bytes": 5088,
+      "sha256": "011ce09a89fe006d484fc3df6f1d6b0f6322a3a46c12ad5b51f4fb19ed855b47"
+    }
+  ],
+  "cleanup": {
+    "containerAbsent": true,
+    "remainingOwnedVolumes": []
+  },
+  "database": {
+    "container": "524616d66da9a9d5916f43f89df837ce99e495cb2bb0af2fbe456771e493012c",
+    "port": "53106",
+    "volumes": [
+      "d6d897bfb839470e343c7c0eae95f1f7c0be4a961f6e93bb64d2df149a10c1fd"
+    ]
+  },
+  "passed": false,
+  "error": "Error: focused did not pass",
+  "finishedAt": "2026-10-01T06:04:27.945Z"
+}
