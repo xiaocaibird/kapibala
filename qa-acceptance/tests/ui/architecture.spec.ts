@@ -1,13 +1,18 @@
-import type { Page, Locator, Route } from '@playwright/test';
+import type { Page, Locator, Route, Request, Response } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { test, expect } from '../fixtures.js';
 import { BlockedError } from '../../harness/security.js';
 import type { QaEnvironment } from '../../harness/environment.js';
 import {
+  requireAvailablePublicAction,
+  type PublicActionPremise,
+} from './public-action-premise.js';
+import {
   observePageContinuity,
   withContinuityEvidence,
   type ContinuityOutcome,
+  type ResponseScopeSync,
 } from './page-continuity.js';
 
 /** Versioned regression profile, not original product requirements.
@@ -559,17 +564,37 @@ test('[ARC-UI-015] 耗尽后显式同页刷新可开始新一轮', async ({ qa, 
   const continuity = observePageContinuity(page);
   const reads: { at: number; url: string; attempt: number; phase: string }[] = [];
   let actionEvidence: unknown;
+  let refreshPremise: PublicActionPremise | undefined;
   let continuityOutcome: ContinuityOutcome | undefined;
   let primary: unknown;
+  let explicitRequest: Request | undefined;
+  let explicitRequestAt: number | undefined;
+  let responseScopeSync: ResponseScopeSync | undefined;
+  // Observe the exact routed request's real response before clicking. The
+  // click/Promise completion time is too late to order a marker against HTTP.
+  const successfulResponse = (response: Response) => {
+    if (
+      response.request() === explicitRequest &&
+      response.status() === 200 &&
+      explicitRequestAt !== undefined
+    )
+      responseScopeSync = { requestAt: explicitRequestAt, responseAt: performance.now() };
+  };
+  page.on('response', successfulResponse);
   await page.route('**/api/sequences', async (route) => {
     if (route.request().method() !== 'GET') return route.continue();
     attempts++;
+    const at = performance.now();
     reads.push({
-      at: performance.now(),
+      at,
       url: route.request().url(),
       attempt: attempts,
       phase: recovered ? 'explicit-refresh' : 'exhaustion',
     });
+    if (recovered && !explicitRequest) {
+      explicitRequest = route.request();
+      explicitRequestAt = at;
+    }
     if (!recovered) await errorResponse(route);
     else await route.continue();
   });
@@ -582,25 +607,32 @@ test('[ARC-UI-015] 耗尽后显式同页刷新可开始新一轮', async ({ qa, 
       expect(attempts).toBe(profile.maximumReadAttempts);
       noNewEvents(page, baseline);
     });
-    const refresh = element(page, qa, 'sequenceResourceRefresh');
-    if (!(await refresh.isVisible()))
-      throw new BlockedError(
-        '未找到公开可见的同页资源刷新操作；需适配真实入口，禁止直接调用业务reload或用整页重载冒充同控制器恢复',
-      );
+    // Only sequences GET was faulted. Its public error requestId binds the
+    // configured control to that error region, even if another resource fails.
+    const errorRegion = page.getByRole('alert').filter({ hasText: 'qa-architecture' });
+    const refresh = element(page, qa, 'sequenceResourceRefresh').and(
+      errorRegion.getByRole('button', { name: '重试', exact: true }),
+    );
+    await requireAvailablePublicAction(
+      refresh,
+      '未找到唯一可见且可用的序列错误区域同页重试入口；禁止内部reload或整页重载替代',
+      (sample) => {
+        refreshPremise = sample;
+      },
+    );
     const document = await continuity.capture();
     const beforeAttempts = attempts;
     recovered = true;
     await withContinuityEvidence(
       async () => {
-        await continuity.unchanged(document);
+        await continuity.unchanged(document, responseScopeSync);
         noNewEvents(page, baseline);
       },
       async (check) => {
         const [response] = await Promise.all([
           page.waitForResponse(
             (response) =>
-              response.request().method() === 'GET' &&
-              new URL(response.url()).pathname === '/api/sequences',
+              response.request() === explicitRequest && response.request().method() === 'GET',
           ),
           refresh.click(),
         ]);
@@ -624,6 +656,10 @@ test('[ARC-UI-015] 耗尽后显式同页刷新可开始新一轮', async ({ qa, 
             expect(attempts).toBe(profile.maximumReadAttempts + 1),
           );
         });
+        if (responseScopeSync) responseScopeSync = { ...responseScopeSync, requireReady: true };
+        await check('post-response-scope-settled', () =>
+          continuity.unchanged(document, responseScopeSync),
+        );
       },
       (outcome) => {
         continuityOutcome = outcome;
@@ -633,16 +669,22 @@ test('[ARC-UI-015] 耗尽后显式同页刷新可开始新一轮', async ({ qa, 
     primary = error;
     throw error;
   } finally {
+    page.off('response', successfulResponse);
     const outcomes = await Promise.allSettled([
       page.unrouteAll({ behavior: 'wait' }),
       continuity.dispose(),
       qa.evidence('architecture-explicit-refresh-continuity', {
         reads,
+        refreshPremise,
         actionEvidence,
         continuityOutcome,
         continuity: continuity.ledger.events,
         continuityChecks: continuity.ledger.checks,
-        limitation: '公开document、URL、导航和scope_ready见证；不读取产品内部控制器身份',
+        scopeMarkers: continuity.ledger.scopeMarkers,
+        scopeReplies: continuity.ledger.scopeReplies,
+        responseScopeSync,
+        limitation:
+          '仅本次真实200响应之后、同连接且同水位的匹配marker/ready可作为呈现后的同步；保留document/URL/导航/WS/认证与无业务事件要求，不读取产品内部控制器身份',
       }),
     ]);
     const errors = outcomes.filter((result) => result.status === 'rejected');

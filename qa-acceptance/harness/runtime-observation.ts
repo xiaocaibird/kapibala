@@ -2,6 +2,12 @@ import { randomUUID } from 'node:crypto';
 import assert from 'node:assert/strict';
 import { isDeepStrictEqual } from 'node:util';
 import type { RuntimeDiagnosticsProfile } from './types.js';
+import {
+  lifecycleKinds,
+  validateLifecycleEvents,
+  type LifecycleCorrelation,
+  type LifecycleKind,
+} from './lifecycle-observation.js';
 import { BlockedError, redact } from './security.js';
 import {
   controlLoopbackUrl,
@@ -12,11 +18,15 @@ import {
 export const RUNTIME_PROTOCOL = 'qa-runtime-observation/1';
 export type RuntimeMode =
   | 'observe-activity'
+  | 'observe-agent-lifecycle'
+  | 'observe-tool-wait'
+  | 'observe-message-recovery'
   | 'hold-safe-activity-boundary'
   | 'account-save-once'
   | 'account-save-persistent'
   | 'module-fail-then-hold';
 export type RuntimeCorrelation =
+  | LifecycleCorrelation
   | { kind: 'activity'; groupId: string; runId: string; toolUseId: string }
   | { kind: 'account'; accountId: string; operation: 'connect'; intentId: string }
   | { kind: 'module'; module: string; attemptLabel: string };
@@ -27,9 +37,12 @@ export interface RuntimeConfig {
   diagnostics?: DiagnosticProfile;
 }
 export interface RuntimeEvent {
+  /** Extra engineering fields are retained verbatim; lifecycle validators check used fields. */
+  [key: string]: unknown;
   seq: number;
   at: string;
   kind:
+    | LifecycleKind
     | 'activity-checkpoint'
     | 'activity-terminal'
     | 'activity-safe-held'
@@ -87,6 +100,7 @@ const record = (v: unknown): v is Record<string, unknown> =>
 const text = (v: unknown): v is string => typeof v === 'string' && !!v.trim();
 const equal = isDeepStrictEqual;
 const kinds = new Set([
+  ...lifecycleKinds,
   'activity-checkpoint',
   'activity-terminal',
   'activity-safe-held',
@@ -102,13 +116,19 @@ const kinds = new Set([
   'module-succeeded',
 ]);
 const capability = (mode: RuntimeMode) =>
-  mode === 'observe-activity'
-    ? 'activity-witness'
-    : mode === 'hold-safe-activity-boundary'
-      ? 'activity-safe-boundary'
-      : mode.startsWith('account-')
-        ? 'account-local-save'
-        : 'module-tick';
+  mode === 'observe-tool-wait'
+    ? 'tool-wait-witness'
+    : mode === 'observe-agent-lifecycle'
+      ? 'agent-lifecycle-witness'
+      : mode === 'observe-message-recovery'
+        ? 'message-recovery-witness'
+        : mode === 'observe-activity'
+          ? 'activity-witness'
+          : mode === 'hold-safe-activity-boundary'
+            ? 'activity-safe-boundary'
+            : mode.startsWith('account-')
+              ? 'account-local-save'
+              : 'module-tick';
 export function readRuntimeConfig(value: unknown): RuntimeConfig {
   const adapters = record(value) && record(value.adapters) ? value.adapters : {};
   const config = adapters.runtimeObservation;
@@ -218,6 +238,7 @@ export function validateRuntimeSnapshot(
     )
       throw new BlockedError('运行观测事件缺少实际尝试/进程关联或顺序无效');
     seq = Number(event.seq);
+    if (correlation.kind === 'tool-wait' || correlation.kind === 'message-recovery') continue;
     const category = String(event.kind).startsWith('activity-')
       ? 'activity'
       : String(event.kind).startsWith('module-')
@@ -285,6 +306,8 @@ export function validateRuntimeSnapshot(
         throw new BlockedError('活动终止事件没有实际终态见证');
     }
   }
+  if (correlation.kind === 'tool-wait' || correlation.kind === 'message-recovery')
+    validateLifecycleEvents(value.events as RuntimeEvent[], correlation);
   return value as unknown as RuntimeSnapshot;
 }
 /** recovery-paused means the real run cannot continue without operator/external
@@ -447,6 +470,9 @@ export class RuntimeObservation {
     if (
       (['observe-activity', 'hold-safe-activity-boundary'].includes(mode) &&
         correlation.kind !== 'activity') ||
+      (['observe-agent-lifecycle', 'observe-tool-wait'].includes(mode) &&
+        (correlation.kind !== 'tool-wait' || correlation.toolUseId !== 'all-run-steps')) ||
+      (mode === 'observe-message-recovery' && correlation.kind !== 'message-recovery') ||
       (mode.startsWith('account-') && correlation.kind !== 'account') ||
       (mode === 'module-fail-then-hold' && correlation.kind !== 'module') ||
       !Object.values(correlation).every(text)

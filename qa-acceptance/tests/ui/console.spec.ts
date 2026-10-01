@@ -13,6 +13,7 @@ import {
 } from './directory-observer.js';
 import { nativeBackgroundTab } from './native-focus.js';
 import { observePageContinuity, withContinuityEvidence } from './page-continuity.js';
+import { requireAvailablePublicAction } from './public-action-premise.js';
 
 const pageErrors = new WeakMap<Page, string[]>();
 test.beforeEach(async ({ page }) => {
@@ -1499,10 +1500,13 @@ test('[UI-032] 提醒确认不能恢复多页过期旧游标', async ({ qa, page
       await expect(page).not.toHaveTitle(quietTitle);
       await page.bringToFront();
       const confirm = element(page, qa, 'attentionConfirm');
-      if (!(await confirm.isVisible()))
-        throw new BlockedError(
-          '需要适配独立于整体刷新、且只确认已呈现相关变化的公开操作，不能伪造已读状态绕过目录过期',
-        );
+      await requireAvailablePublicAction(
+        confirm,
+        '需要唯一可见且可用、独立于整体刷新且只确认已呈现相关变化的公开操作；不可用入口不能伪造或强制点击',
+        (sample) => {
+          actionEvidence.confirmationPremise = sample;
+        },
+      );
       await continuity.unchanged(originalDocument);
       await expect(page).not.toHaveTitle(quietTitle);
       expect(await conditions()).toEqual(originalConditions);

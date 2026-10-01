@@ -12,8 +12,8 @@
 
 **准备状态：script-ready；责任方：QA**
 
-1. 公开接口/独立网关/真实客户端控制和断言已补强；本次仅QA自身验证，未运行产品，旧BLOCKED结果不变。
-2. 默认2048条不保证触发真实背压；peerClosePolicy=null，需工程交付候选绑定的公开关闭原因映射或另评审只读连接诊断接入，禁止编造策略原因或修改内部发送回调。
+1. 公开接口、独立网关、真实客户端和只读日志断言已准备；执行结果按新的独立run记录，旧BLOCKED不改写。
+2. 冻结8208条、128字节填充和2MiB文本预算仍不保证触发真实背压；peerClosePolicy=null，已按工程公开默认日志契约接入TCP及关闭链，最终固定候选e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb。禁止伪造策略原因或修改内部发送回调。
 
 **前置条件**
 
@@ -24,23 +24,23 @@
 
 1. 两个真实WS连接鉴权，均收到checkpoint后暂停其中一个实际读取器并记录已收seq、应用消息payload字节及接收时间
 2. 按已冻结有限profile分批注入，注入阶段与健康端排空分开；时间或消息上限停止新注入但保留所有已发身份，每个阶段先核对两端所有已收协议/身份违约，再处理QA资源上限
-3. 健康端在独立有限排空窗口收齐全部已注入身份；通过公开消息接口最多60页读取checkpoint和本次全部已注入历史，验证文本哈希；正文大小不代表WS应用payload字节
+3. 健康端在独立有限排空窗口收齐全部已注入身份；通过公开消息接口最多170页读取checkpoint和本次全部已注入历史，验证文本哈希；正文大小不代表WS应用payload字节
 4. 持续实际暂停并观察后恢复读取，记录local terminate/close/error；未关闭、由QA关闭或缓冲区排空后没有缺失事件时BLOCKED；未知断流原因不能冒称慢读策略命中
 5. 使用慢端断开前最后实际收到的seq鉴权，核对原连接前缀及回放尾部，最终旧记录+回放恰好等于全部注入集合；继续采样1000ms检查迟到重复
-6. 外部关闭与回放断言完成后，再用已公开的精确close code/reason映射核对慢读策略原因；映射尚未交付或不匹配则保留已完成证据并BLOCKED，不提前中断独立回放检查
+6. 外部关闭与回放断言完成后，按公开关闭帧映射或只读默认日志的真实TCP tuple、connectionId、applicationPid、配置及生命周期链关联慢读原因；1006本身不是原因。缺链或不匹配保留业务证据并BLOCKED，日志等待期间仍核对迟到业务违约。
 
 **预期结果**
 
 1. 健康连接不因另一个慢读断开；每次采样的已收消息身份唯一、seq合法递增，公开历史中的文本哈希对应独立注入样本；不对WS新增text必填要求
 2. 重连事件恰好覆盖实际未收到的区间，并核对旧记录与回放的完整集合；不能让max游标掩盖其之前已漏消息
-3. 不证明内部水位触发原因或内存上限，不冒充浏览器3秒恢复专项；有限注入不足必须显式BLOCKED
+3. 只确认实际命中的发送回调超时或缓冲水位关闭分支，不证明所有水位路径和进程内存上限，不冒充浏览器3秒恢复专项；有限注入不足必须显式BLOCKED。
 4. 已观察到重复、乱序、缺seq、未知身份或错误文本即时FAIL，不被后续未触发关闭/回放缺口的BLOCKED掩盖
-5. 实际接收payload字节仅为完整WS应用消息体，不是TCP/WS线速总字节；记录单调时钟和墙钟、暂停/恢复、本端terminate及真实关闭来源；没有公开慢读关闭原因映射不得将关闭恢复冒充策略命中。
+5. 实际接收payload字节仅为完整WS应用消息体，不是TCP/WS线速总字节；记录单调时钟和墙钟、暂停/恢复、本端terminate及真实关闭来源；无公开关闭帧映射或完整服务端日志因果关联不能把关闭恢复当作策略命中。
 6. 真实ws关闭时可能自动排空本地缓冲；完整记录closing时已收帧并推进实际游标，不将合法排空误判为产品违约；未关闭时暂停控制失效仅记QA前提BLOCKED。
 
 **时序要求**
 
-1. 45000ms注入、120000ms健康端排空、8000ms暂停观察及8000ms恢复读后关闭观察、15000ms回放、30000ms公开历史遍历、1000ms负向采样是独立QA预算；另保留45000ms准备/清理，总执行预算272000ms，不新增产品吞吐/延迟门槛。
+1. 120000ms注入、120000ms健康端排空、8000ms暂停观察及8000ms恢复读后关闭观察、30000ms回放、60000ms公开历史遍历、1000ms负向采样、3000ms日志收集是独立QA预算；另保留45000ms准备/清理，总执行预算395000ms，不新增产品吞吐/延迟门槛。
 
 **故障注入**
 
@@ -49,6 +49,7 @@
 **取证**
 
 1. HTTP/独立网关账本；实际接收帧身份、seq、完整应用payload字节、内容哈希、接收墙钟及单调时间；暂停/恢复/本端终止/真实关闭记录；分阶段观察与首次失败；清理前后快照。
+2. 双端真实TCP tuple、同一connectionId/applicationPid的配置→鉴权→关闭请求→终止/closed日志链、原始日志前缀字节与SHA256；服务端原因和客户端1006分别记录。
 
 **清理**
 
@@ -62,24 +63,26 @@
   "projects": [
     "system"
   ],
-  "maxInjectedMessages": 2048,
-  "textPaddingBytes": 8192,
-  "injectionBudgetMs": 45000,
+  "maxInjectedMessages": 8208,
+  "textPaddingBytes": 128,
+  "injectionBudgetMs": 120000,
   "closeObservationMs": 8000,
-  "replayObservationMs": 15000,
-  "historyMaxPages": 60,
-  "historyObservationMs": 30000,
+  "replayObservationMs": 30000,
+  "historyMaxPages": 170,
+  "historyObservationMs": 60000,
   "postReplayObservationMs": 1000,
   "profileSource": "config/slow-reader-profile.ts",
   "batchSize": 32,
   "batchIntervalMs": 50,
   "healthyDrainMs": 120000,
   "pausedObservationMs": 8000,
-  "maxInjectedTextBytes": 18874368,
-  "receiptMaxFrames": 8192,
+  "maxInjectedTextBytes": 2097152,
+  "receiptMaxFrames": 20000,
   "receiptMaxPayloadBytes": 67108864,
   "receiptMaxFramePayloadBytes": 16777216,
-  "peerClosePolicy": null
+  "peerClosePolicy": null,
+  "serverLogObservationMs": 3000,
+  "serverLogMaxBytes": 33554432
 }
 ```
 

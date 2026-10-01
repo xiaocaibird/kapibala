@@ -1,0 +1,17 @@
+{
+  "command": [
+    "docker",
+    "--host",
+    "unix:///var/run/docker.sock",
+    "ps",
+    "--all",
+    "--no-trunc",
+    "--filter",
+    "label=qa.owner",
+    "--format",
+    "{{json .}}"
+  ],
+  "startedAt": "2026-10-01T12:54:05.170017+00:00",
+  "completedAt": "2026-10-01T12:54:05.184881+00:00",
+  "exitCode": 0
+}

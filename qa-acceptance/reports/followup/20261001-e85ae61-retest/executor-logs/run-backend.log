@@ -1,0 +1,145 @@
+npm notice run kapibala-independent-qa@0.1.0 preflight
+npm notice run tsx harness/cli.ts preflight --suite evidence-followup-backend-20261001 --target .runtime/evidence-retest-20261001/prepared-runtime-428dccec/target.json --authorization .runtime/evidence-retest-20261001/authority/evidence-followup-backend-20261001-585b8765.json
+
+Running 4 tests using 1 worker
+
+(node:82239) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [system] › tests/system/agent.spec.ts:787:1 › [AGENT-025] run reaches sixty-second active wall-clock budget including slow turns (1.0m)
+(node:90466) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  2 [system] › tests/system/agent.spec.ts:1061:1 › [AGENT-028] unknown send times out in five seconds and same key still cannot resend (7.2s)
+(node:92693) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  3 [system] › tests/system/integration-runtime.spec.ts:130:1 › [INT-ACT-001] activity budget accumulates across restart and excludes proven downtime without tail tolerance (1.1m)
+(node:2869) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  4 [system] › tests/system/protocol-boundaries.spec.ts:207:1 › [BLK-EXT-001] unacknowledged send has paired pending prefixes without a fabricated two-second bound (19.5s)
+
+
+  1) [system] › tests/system/agent.spec.ts:787:1 › [AGENT-025] run reaches sixty-second active wall-clock budget including slow turns 
+
+    AssertionError: 活动预算已证明超过原始60秒上限
+
+       at support/agent-activity-budget.ts:40
+
+      38 |     if (!event.includesUnsavedTail || !event.activeElapsedMs) continue;
+      39 |     assert.ok(event.activeElapsedMs[0] <= online[1], '活动下界超过独立在线上界，证据矛盾');
+    > 40 |     assert.ok(event.activeElapsedMs[0] <= 60_000, '活动预算已证明超过原始60秒上限');
+         |            ^
+      41 |   }
+      42 |   if (endReason === 'wall_clock')
+      43 |     assert.ok(online[1] >= 60_000, '独立在线上界尚不足60秒却已提前宣告wall_clock');
+        at assertSingleEpochActivityBudget (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/support/agent-activity-budget.ts:40:12)
+        at read (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/agent.spec.ts:957:9)
+        at optionalActivityObservation (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/support/agent-activity-budget.ts:17:18)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/agent.spec.ts:954:11
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-agent--AGENT-025-ru-6b311-budget-including-slow-turns-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-agent--AGENT-025-ru-6b311-budget-including-slow-turns-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-agent--AGENT-025-ru-6b311-budget-including-slow-turns-system/trace.zip
+    Usage:
+
+        npx playwright show-trace reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-agent--AGENT-025-ru-6b311-budget-including-slow-turns-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [system] › tests/system/agent.spec.ts:1061:1 › [AGENT-028] unknown send times out in five seconds and same key still cannot resend 
+
+    AssertionError: 实际工具状态等待下界超过原始5000ms上限
+
+       at ../harness/lifecycle-observation.ts:326
+
+      324 |   assert.equal(window.errorCode, expectedCode, '实际工具交还结果错误');
+      325 |   assert.equal(window.readyErrorCode, expectedCode, '状态等待结果与交还结果不一致');
+    > 326 |   assert.ok(window.elapsed[0] <= 5000, '实际工具状态等待下界超过原始5000ms上限');
+          |          ^
+      327 |   if (expectedCode === 'SEND_TIMEOUT')
+      328 |     assert.ok(window.elapsed[1] >= 5000, '未满5秒且无结论却提前宣告SEND_TIMEOUT');
+      329 |   if (window.elapsed[1] > 5000)
+        at assertToolWaitBudget (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/lifecycle-observation.ts:326:10)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/agent.spec.ts:1169:9
+        at optionalActivityObservation (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/support/agent-activity-budget.ts:17:12)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/agent.spec.ts:1161:5
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/trace.zip
+    Usage:
+
+        npx playwright show-trace reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [system] › tests/system/integration-runtime.spec.ts:130:1 › [INT-ACT-001] activity budget accumulates across restart and excludes proven downtime without tail tolerance 
+
+    BlockedError: [BLOCKED] 活动终态缺少原有及接管epoch完整关联，不能证明重启累计
+
+      277 |         ![...recoveredEpochs].some((epoch) => !originalEpochs.includes(epoch))
+      278 |       )
+    > 279 |         throw new BlockedError('活动终态缺少原有及接管epoch完整关联，不能证明重启累计');
+          |               ^
+      280 |       if (lastRunning === undefined || firstTerminal === undefined)
+      281 |         throw new BlockedError('缺少重启后的running→terminal独立区间');
+      282 |       const processOnline: [number, number] = [
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/integration-runtime.spec.ts:279:15
+        at withControl (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/integration-runtime.spec.ts:40:5)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/integration-runtime.spec.ts:134:3
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/trace.zip
+    Usage:
+
+        npx playwright show-trace reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [system] › tests/system/protocol-boundaries.spec.ts:207:1 › [BLK-EXT-001] unacknowledged send has paired pending prefixes without a fabricated two-second bound 
+
+    BlockedError: [BLOCKED] No terminal evidence within observation budget for does-not-land. The 10s probe is not a product deadline or proof of permanent non-recovery; retain CL-01 protocol risk.
+
+      384 |   }
+      385 |   if (incomplete.length)
+    > 386 |     throw new BlockedError(
+          |           ^
+      387 |       `No terminal evidence within observation budget for ${incomplete.join(', ')}. ` +
+      388 |         'The 10s probe is not a product deadline or proof of permanent non-recovery; retain CL-01 protocol risk.',
+      389 |     );
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/protocol-boundaries.spec.ts:386:11
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/trace.zip
+    Usage:
+
+        npx playwright show-trace reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb/artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    [system] › tests/system/agent.spec.ts:787:1 › [AGENT-025] run reaches sixty-second active wall-clock budget including slow turns 
+    [system] › tests/system/agent.spec.ts:1061:1 › [AGENT-028] unknown send times out in five seconds and same key still cannot resend 
+    [system] › tests/system/integration-runtime.spec.ts:130:1 › [INT-ACT-001] activity budget accumulates across restart and excludes proven downtime without tail tolerance 
+    [system] › tests/system/protocol-boundaries.spec.ts:207:1 › [BLK-EXT-001] unacknowledged send has paired pending prefixes without a fabricated two-second bound 
+开发预跑（不构成正式验收）证据: /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T12-23-10.195Z-e84c34eb

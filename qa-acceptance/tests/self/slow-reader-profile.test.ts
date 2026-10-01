@@ -96,9 +96,13 @@ test('authored profile bounds payload, receipts, traversal and every observation
     { maxInjectedTextBytes: 100 },
     { historyMaxPages: 1 },
     { healthyDrainMs: Infinity },
+    { serverLogPolicy: { ...slowReaderProfile.serverLogPolicy!, maxLogBytes: 0 } },
+    { serverLogPolicy: { ...slowReaderProfile.serverLogPolicy!, contractReference: '' } },
     { peerClosePolicy: { contractReference: '', code: 1013, reason: 'unverified' } },
     { peerClosePolicy: { contractReference: 'SELF_TEST_ONLY', code: 1006, reason: 'unknown' } },
   ])
     assert.throws(() => validateSlowReaderProfile({ ...slowReaderProfile, ...override }));
-  assert.equal(slowReaderTimeoutMs, 272000);
+  assert.equal(slowReaderTimeoutMs, 395000);
+  assert.equal(slowReaderProfile.maxMessages, 8208);
+  assert.equal(slowReaderProfile.receipts.maxFrames, 20000);
 });

@@ -1,5 +1,6 @@
 import WebSocket from 'ws';
 import { createHash } from 'node:crypto';
+import { Socket } from 'node:net';
 import assert from 'node:assert/strict';
 import { BlockedError } from './security.js';
 import { observe } from './observation.js';
@@ -40,6 +41,12 @@ export interface ReceiptTransportEvent {
   receivedFrames: number;
   payloadBytes: number;
   detail?: unknown;
+}
+export interface ReceiptConnection {
+  localAddress: string;
+  localPort: number;
+  remoteAddress: string;
+  remotePort: number;
 }
 export interface PeerClosePolicy {
   /** Published engineering evidence identifying this exact close signature. */
@@ -184,6 +191,7 @@ export class ReceiptSocket {
   readonly resourceErrors: string[] = [];
   readonly limits: Readonly<ReceiptLimits>;
   readonly totals = { messages: 0, payloadBytes: 0, largestPayloadBytes: 0 };
+  connection?: Readonly<ReceiptConnection>;
   closed?: {
     code: number;
     reason: string;
@@ -220,7 +228,23 @@ export class ReceiptSocket {
     });
     this.opening = new Promise<void>((resolve, reject) => {
       this.ws.once('open', () => {
-        this.record('open');
+        // This is the QA-owned ws transport, not a product hook. Capture while
+        // open: Node clears endpoint properties after destruction.
+        const socket = (this.ws as unknown as { _socket?: Socket })._socket;
+        if (
+          socket instanceof Socket &&
+          socket.localAddress &&
+          socket.localPort &&
+          socket.remoteAddress &&
+          socket.remotePort
+        )
+          this.connection = Object.freeze({
+            localAddress: socket.localAddress,
+            localPort: socket.localPort,
+            remoteAddress: socket.remoteAddress,
+            remotePort: socket.remotePort,
+          });
+        this.record('open', { connection: this.connection ?? null });
         resolve();
       });
       this.ws.once('error', reject);
@@ -345,6 +369,7 @@ export class ReceiptSocket {
   snapshot() {
     return {
       frames: this.frames,
+      connection: this.connection ?? null,
       closed: this.closed,
       errors: this.errors,
       overBudgetFrame: this.overBudgetFrame,

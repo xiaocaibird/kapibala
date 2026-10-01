@@ -54,6 +54,18 @@ async function until(complete: () => boolean) {
 
 test('real receipt metadata counts UTF-8 application bytes and records pause/resume without credentials', async (t) => {
   const { client, socket, auth } = await peer(t);
+  const peerTcp = (socket as unknown as { _socket: Socket })._socket;
+  assert.deepEqual(
+    client.connection,
+    {
+      localAddress: peerTcp.remoteAddress,
+      localPort: peerTcp.remotePort,
+      remoteAddress: peerTcp.localAddress,
+      remotePort: peerTcp.localPort,
+    },
+    'Observed QA and real peer TCP endpoints must be reciprocal',
+  );
+  assert.deepEqual(client.transport[0]!.detail, { connection: client.connection });
   const content = JSON.stringify({
     type: 'message',
     seq: 11,

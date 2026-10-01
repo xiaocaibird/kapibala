@@ -1,0 +1,289 @@
+{
+  "kind": "postmortem-read-only-stored-evidence",
+  "originalStatusUnchanged": "BLOCKED",
+  "qaRevision": "105ed289e0fbed6306025cd3dc1889730b17a423",
+  "sutRevision": "e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb",
+  "classification": "QA continuity premise conflated a post-success control handshake with a cause of recovery",
+  "traceClock": {
+    "domain": "Playwright trace monotonic milliseconds; not subtracted from worker timestamps",
+    "successfulRead": {
+      "traceLine": 17,
+      "resourceType": "fetch",
+      "url": "http://127.0.0.1:52370/api/sequences",
+      "method": "GET",
+      "status": 200,
+      "at": 9362.935,
+      "durationMs": 4.423
+    },
+    "estimatedReadCompleteAt": 9367.358,
+    "marker": {
+      "traceLine": 197,
+      "at": 9380.928,
+      "direction": "sendToServer",
+      "frame": {
+        "type": "scope_marker",
+        "requestId": "1e692cff-f5d2-4cdf-a926-46c1028e666b"
+      }
+    },
+    "ready": {
+      "traceLine": 208,
+      "at": 9390.089,
+      "direction": "sendToPage",
+      "frame": {
+        "type": "scope_ready",
+        "requestId": "1e692cff-f5d2-4cdf-a926-46c1028e666b",
+        "startSeq": 1
+      }
+    },
+    "allScopeFrames": [
+      {
+        "traceLine": 93,
+        "at": 3744.162,
+        "direction": "sendToServer",
+        "frame": {
+          "type": "scope_marker",
+          "requestId": "7c0e101c-a35c-45bc-a2e4-25dbc829e9d7"
+        }
+      },
+      {
+        "traceLine": 97,
+        "at": 3748.126,
+        "direction": "sendToPage",
+        "frame": {
+          "type": "scope_ready",
+          "requestId": "7c0e101c-a35c-45bc-a2e4-25dbc829e9d7",
+          "startSeq": 1
+        }
+      },
+      {
+        "traceLine": 123,
+        "at": 4417.014,
+        "direction": "sendToServer",
+        "frame": {
+          "type": "scope_marker",
+          "requestId": "5d3b29e3-3aca-418e-aa2b-39d2e6fcefb7"
+        }
+      },
+      {
+        "traceLine": 139,
+        "at": 4428.453,
+        "direction": "sendToPage",
+        "frame": {
+          "type": "scope_ready",
+          "requestId": "5d3b29e3-3aca-418e-aa2b-39d2e6fcefb7",
+          "startSeq": 1
+        }
+      },
+      {
+        "traceLine": 197,
+        "at": 9380.928,
+        "direction": "sendToServer",
+        "frame": {
+          "type": "scope_marker",
+          "requestId": "1e692cff-f5d2-4cdf-a926-46c1028e666b"
+        }
+      },
+      {
+        "traceLine": 208,
+        "at": 9390.089,
+        "direction": "sendToPage",
+        "frame": {
+          "type": "scope_ready",
+          "requestId": "1e692cff-f5d2-4cdf-a926-46c1028e666b",
+          "startSeq": 1
+        }
+      }
+    ]
+  },
+  "workerClock": {
+    "domain": "QA worker performance.now; within artifact only",
+    "explicitGetAt": 9028.573667,
+    "responseObservedAt": 9042.457667,
+    "scopeReadyObservedAt": 9054.941667
+  },
+  "publicContinuity": {
+    "checks": [
+      {
+        "at": 8994.079875,
+        "before": {
+          "url": "http://127.0.0.1:52370/#/sequences",
+          "navigations": 2,
+          "socketChanges": 1,
+          "scopeReady": 2,
+          "scopeEstablished": true
+        },
+        "after": {
+          "url": "http://127.0.0.1:52370/#/sequences",
+          "navigations": 2,
+          "socketChanges": 1,
+          "scopeReady": 2,
+          "scopeEstablished": true
+        },
+        "sameDocument": true
+      },
+      {
+        "at": 9050.083667,
+        "before": {
+          "url": "http://127.0.0.1:52370/#/sequences",
+          "navigations": 2,
+          "socketChanges": 1,
+          "scopeReady": 2,
+          "scopeEstablished": true
+        },
+        "after": {
+          "url": "http://127.0.0.1:52370/#/sequences",
+          "navigations": 2,
+          "socketChanges": 1,
+          "scopeReady": 2,
+          "scopeEstablished": true
+        },
+        "sameDocument": true
+      },
+      {
+        "at": 9055.890709,
+        "before": {
+          "url": "http://127.0.0.1:52370/#/sequences",
+          "navigations": 2,
+          "socketChanges": 1,
+          "scopeReady": 2,
+          "scopeEstablished": true
+        },
+        "after": {
+          "url": "http://127.0.0.1:52370/#/sequences",
+          "navigations": 2,
+          "socketChanges": 1,
+          "scopeReady": 3,
+          "scopeEstablished": true
+        },
+        "sameDocument": true
+      },
+      {
+        "at": 9057.371167,
+        "before": {
+          "url": "http://127.0.0.1:52370/#/sequences",
+          "navigations": 2,
+          "socketChanges": 1,
+          "scopeReady": 2,
+          "scopeEstablished": true
+        },
+        "after": {
+          "url": "http://127.0.0.1:52370/#/sequences",
+          "navigations": 2,
+          "socketChanges": 1,
+          "scopeReady": 3,
+          "scopeEstablished": true
+        },
+        "sameDocument": true
+      }
+    ],
+    "authentications": 1,
+    "socketChanges": 1,
+    "documentNetworkRequests": 1,
+    "scopeReadyCountBefore": 2,
+    "scopeReadyCountAfter": 3,
+    "businessEventsAfterExplicitGet": []
+  },
+  "partialObservedBehavior": {
+    "reads": [
+      {
+        "at": 4087.849125,
+        "url": "http://127.0.0.1:52370/api/sequences",
+        "attempt": 1,
+        "phase": "exhaustion"
+      },
+      {
+        "at": 4342.148875,
+        "url": "http://127.0.0.1:52370/api/sequences",
+        "attempt": 2,
+        "phase": "exhaustion"
+      },
+      {
+        "at": 4846.684584,
+        "url": "http://127.0.0.1:52370/api/sequences",
+        "attempt": 3,
+        "phase": "exhaustion"
+      },
+      {
+        "at": 5852.253584,
+        "url": "http://127.0.0.1:52370/api/sequences",
+        "attempt": 4,
+        "phase": "exhaustion"
+      },
+      {
+        "at": 9028.573667,
+        "url": "http://127.0.0.1:52370/api/sequences",
+        "attempt": 5,
+        "phase": "explicit-refresh"
+      }
+    ],
+    "response": {
+      "url": "http://127.0.0.1:52370/api/sequences",
+      "status": 200,
+      "body": [
+        {
+          "id": "409edaff-67c6-476c-91d3-b2e96733924d",
+          "name": "QA恢复目标",
+          "steps": [
+            {
+              "text": "{event_1}",
+              "index": 1,
+              "accountRole": "admin",
+              "delaySeconds": 0
+            }
+          ]
+        }
+      ]
+    },
+    "expectedSequenceId": "409edaff-67c6-476c-91d3-b2e96733924d",
+    "finalUrl": "http://127.0.0.1:52370/#/sequences",
+    "finalTitle": "定时序列 · Kapibala",
+    "visibleErrors": []
+  },
+  "notExecutedInOriginalCase": [
+    "sequence-presented assertion",
+    "post-success 3000ms stable-request-count window"
+  ],
+  "limits": [
+    "No observation of product-internal controller identity is claimed.",
+    "Scope frames bind requestId and watermark, not the selected business resource ID.",
+    "Final screenshot/text corroborate display but do not retroactively execute the stopped assertions.",
+    "Original BLOCKED and all raw evidence remain unchanged; corrected source needs a new frozen run."
+  ],
+  "inputHashes": [
+    {
+      "path": "reports/preflight/2026-10-01T12-31-30.250Z-1384f257/manifest.json",
+      "sha256": "75c4f43a9ae68afe16306cbed25d4526b5b873b1c0717f3f2e9327ef7bb9bbab",
+      "bytes": 68960
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-31-30.250Z-1384f257/results.json",
+      "sha256": "f5bb338e72b21cfc564092de9d78d73cc072d0c2bf58776888eb397f57b57432",
+      "bytes": 216042
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/evidence/architecture-explicit-refresh-continuity.json",
+      "sha256": "30f488fd9b8d597c8e49af8882c16a5f98bca30821f6bec1ad1bfc7015a35a3d",
+      "bytes": 4986
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/evidence/architecture-browser.json",
+      "sha256": "c9eaadb6c12a46e1d7623976d4934cca0c0e909a4a4beaaa0144268ca40c70ff",
+      "bytes": 1688
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/evidence/architecture-final.json",
+      "sha256": "d47c5f009a6b2c6ee0dce1d4d6714775800ed02779f47a07d20d0036c6a5b6d7",
+      "bytes": 1274
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/evidence/architecture-final.png",
+      "sha256": "90ad69d85c0ac4e553b0f6a7546781adcd9b18ce7c105242712b738927ddc79f",
+      "bytes": 108604
+    },
+    {
+      "path": "reports/preflight/2026-10-01T12-31-30.250Z-1384f257/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/trace.zip",
+      "sha256": "17a2c25f155367f6a6efefa1213db02087ea8ce97debb68845fe2d0d3843925e",
+      "bytes": 673574
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "capturedAt": "2026-10-01T12:35:47.794633+00:00",
+  "cause": "create",
+  "container": "27720b9ddf038421e559e64da381dac50bb248ea9e37d670db9e7ceff73ec88f",
+  "attribution": "Unassigned until matched to exact suite CLI, run time and environment. qa.owner alone is insufficient.",
+  "records": [
+    {
+      "argv": [
+        "docker",
+        "--host",
+        "unix:///var/run/docker.sock",
+        "inspect",
+        "--format",
+        "{\"id\":{{json .Id}},\"name\":{{json .Name}},\"created\":{{json .Created}},\"owner\":{{json (index .Config.Labels \"qa.owner\")}},\"status\":{{json .State.Status}},\"ports\":{{json .NetworkSettings.Ports}},\"mounts\":{{json .Mounts}}}",
+        "27720b9ddf038421e559e64da381dac50bb248ea9e37d670db9e7ceff73ec88f"
+      ],
+      "exitCode": 0,
+      "stdout": "{\"id\":\"27720b9ddf038421e559e64da381dac50bb248ea9e37d670db9e7ceff73ec88f\",\"name\":\"/qa-acceptance-3f2542fe-2527-49f3-ad30-41e73ee3ff9c\",\"created\":\"2026-10-01T12:35:47.757586138Z\",\"owner\":\"3f2542fe-2527-49f3-ad30-41e73ee3ff9c\",\"status\":\"created\",\"ports\":{},\"mounts\":[{\"Destination\":\"/var/lib/postgresql/data\",\"Driver\":\"local\",\"Mode\":\"\",\"Name\":\"4a0ab3a00f51115df63b15e63f4301a7850dfcc664ae0f0047d8e3f66072c647\",\"Propagation\":\"\",\"RW\":true,\"Source\":\"/var/lib/docker/volumes/4a0ab3a00f51115df63b15e63f4301a7850dfcc664ae0f0047d8e3f66072c647/_data\",\"Type\":\"volume\"}]}\n",
+      "stderr": "",
+      "at": "2026-10-01T12:35:47.794549+00:00"
+    }
+  ]
+}

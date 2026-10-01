@@ -3,6 +3,14 @@ import { observe } from '../../harness/observation.js';
 import { eventually, type Group, type Job } from '../../harness/platform-client.js';
 import type { QaEnvironment } from '../../harness/environment.js';
 import { BlockedError } from '../../harness/security.js';
+import {
+  runtimeObservationFor,
+  type RuntimeLease,
+  type RuntimeObservation,
+  type RuntimeSnapshot,
+} from '../../harness/runtime-observation.js';
+import { assertMessageRecoveryAssociation } from '../../harness/lifecycle-observation.js';
+import { optionalActivityObservation } from '../support/agent-activity-budget.js';
 
 const tool = (id: string, name: string, input: Record<string, unknown>) => ({
   body: { stop_reason: 'tool_use', content: [{ type: 'tool_use', id, name, input }] },
@@ -213,7 +221,23 @@ test('[BLK-EXT-001] unacknowledged send has paired pending prefixes without a fa
       effectDelayMs: 0,
       neverRespond: true,
     });
+    const missing: string[] = [];
+    const controls: RuntimeObservation[] = [];
+    let beforeLease: RuntimeLease | undefined;
+    let afterLease: RuntimeLease | undefined;
+    let beforeSnapshot: RuntimeSnapshot | undefined;
+    let primaryFailure = false;
     try {
+      const before = await optionalActivityObservation(
+        `${outcome} verify original process`,
+        async () => {
+          const control = runtimeObservationFor(qa);
+          controls.push(control);
+          await control.verify(['message-recovery-witness']);
+          return control;
+        },
+        missing,
+      );
       const { clientMsgId } = await qa.api.send(group.id, accounts[0]!.id, text);
       await qa.gateway.barriers.waitFor(barrier);
       const request = qa.gateway.snapshot().requests.find((entry) => entry.path === path)!;
@@ -221,10 +245,35 @@ test('[BLK-EXT-001] unacknowledged send has paired pending prefixes without a fa
       expect(
         qa.gateway.snapshot().messages.filter((entry) => entry.clientMsgId === clientMsgId),
       ).toHaveLength(0);
+      const correlation = { kind: 'message-recovery' as const, groupId: group.id, clientMsgId };
+      if (before)
+        beforeLease = await optionalActivityObservation(
+          `${outcome} attach original dispatch`,
+          () => before.arm('observe-message-recovery', correlation),
+          missing,
+        );
+      if (beforeLease)
+        beforeSnapshot = await optionalActivityObservation(
+          `${outcome} before kill history`,
+          () => beforeLease!.snapshot(),
+          missing,
+        );
+      await qa.evidence(`${outcome}-original-recovery-stream`, beforeSnapshot ?? { missing });
       await qa.kill();
       await evidence(qa, `${outcome}-pending-at-crash`, { clientMsgId });
       await qa.start();
       await qa.api.login();
+      afterLease = await optionalActivityObservation(
+        `${outcome} attach recovered process`,
+        async () => {
+          const next = runtimeObservationFor(qa);
+          controls.push(next);
+          await next.verify(['message-recovery-witness']);
+          if (before) expect(next.target.pid).not.toBe(before.target.pid);
+          return next.arm('observe-message-recovery', correlation);
+        },
+        missing,
+      );
       // The original is still in flight. A negative lookup (including after two
       // seconds) cannot prove it will not land: no 504 was received.
       const prefix = await observe({
@@ -279,9 +328,58 @@ test('[BLK-EXT-001] unacknowledged send has paired pending prefixes without a fa
       });
       await evidence(qa, `${outcome}-outcome`, observation);
       if (!observation.complete) incomplete.push(outcome);
+      const afterSnapshot =
+        afterLease &&
+        (await optionalActivityObservation(
+          `${outcome} final recovered history`,
+          () => afterLease!.snapshot(),
+          missing,
+        ));
+      await qa.evidence(`${outcome}-recovery-lifecycle`, {
+        before: beforeSnapshot ?? null,
+        after: afterSnapshot ?? afterLease?.latest ?? null,
+        missing,
+      });
+      await optionalActivityObservation(
+        `${outcome} original/recovery association`,
+        async () => {
+          const association = assertMessageRecoveryAssociation(
+            beforeSnapshot?.events ?? [],
+            (afterSnapshot ?? afterLease?.latest)?.events ?? [],
+          );
+          await qa.evidence(`${outcome}-recovery-diagnosis`, association);
+        },
+        missing,
+      );
+      incomplete.push(...missing.map((message) => `${outcome}: ${message}`));
+    } catch (error) {
+      primaryFailure = true;
+      throw error;
     } finally {
       qa.gateway.barriers.release(barrier);
-      await evidence(qa, `${outcome}-final-ledger`);
+      try {
+        await evidence(qa, `${outcome}-final-ledger`);
+      } catch (error) {
+        if (!primaryFailure) {
+          primaryFailure = true;
+          throw error;
+        }
+      } finally {
+        const cleanup = await Promise.allSettled(controls.map((control) => control.close()));
+        const errors = cleanup.filter((result) => result.status === 'rejected');
+        if (errors.length) {
+          try {
+            await qa.evidence(
+              `${outcome}-recovery-cleanup-failure`,
+              errors.map((entry) => String(entry.reason)),
+            );
+          } catch {
+            /* Keep first failure. */
+          }
+          if (!primaryFailure)
+            throw new BlockedError('本消息观测租约未全部确认释放，旧PID不可跟随新实例');
+        }
+      }
     }
   }
   if (incomplete.length)

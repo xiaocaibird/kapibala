@@ -1,0 +1,263 @@
+npm notice run kapibala-independent-qa@0.1.0 list
+npm notice run playwright test --list
+Listing tests:
+  [system] › api/accounts.spec.ts:59:3 › [STATE-11] state transition idle to idle
+  [system] › api/accounts.spec.ts:59:3 › [STATE-12] state transition idle to online
+  [system] › api/accounts.spec.ts:59:3 › [STATE-13] state transition idle to rate_limited
+  [system] › api/accounts.spec.ts:59:3 › [STATE-14] state transition idle to disconnected
+  [system] › api/accounts.spec.ts:59:3 › [STATE-15] state transition idle to suspended
+  [system] › api/accounts.spec.ts:59:3 › [STATE-16] state transition idle to session_expired
+  [system] › api/accounts.spec.ts:59:3 › [STATE-21] state transition online to idle
+  [system] › api/accounts.spec.ts:59:3 › [STATE-22] state transition online to online
+  [system] › api/accounts.spec.ts:59:3 › [STATE-23] state transition online to rate_limited
+  [system] › api/accounts.spec.ts:59:3 › [STATE-24] state transition online to disconnected
+  [system] › api/accounts.spec.ts:59:3 › [STATE-25] state transition online to suspended
+  [system] › api/accounts.spec.ts:59:3 › [STATE-26] state transition online to session_expired
+  [system] › api/accounts.spec.ts:59:3 › [STATE-31] state transition rate_limited to idle
+  [system] › api/accounts.spec.ts:59:3 › [STATE-32] state transition rate_limited to online
+  [system] › api/accounts.spec.ts:59:3 › [STATE-33] state transition rate_limited to rate_limited
+  [system] › api/accounts.spec.ts:59:3 › [STATE-34] state transition rate_limited to disconnected
+  [system] › api/accounts.spec.ts:59:3 › [STATE-35] state transition rate_limited to suspended
+  [system] › api/accounts.spec.ts:59:3 › [STATE-36] state transition rate_limited to session_expired
+  [system] › api/accounts.spec.ts:59:3 › [STATE-41] state transition disconnected to idle
+  [system] › api/accounts.spec.ts:59:3 › [STATE-42] state transition disconnected to online
+  [system] › api/accounts.spec.ts:59:3 › [STATE-43] state transition disconnected to rate_limited
+  [system] › api/accounts.spec.ts:59:3 › [STATE-44] state transition disconnected to disconnected
+  [system] › api/accounts.spec.ts:59:3 › [STATE-45] state transition disconnected to suspended
+  [system] › api/accounts.spec.ts:59:3 › [STATE-46] state transition disconnected to session_expired
+  [system] › api/accounts.spec.ts:59:3 › [STATE-51] state transition suspended to idle
+  [system] › api/accounts.spec.ts:59:3 › [STATE-52] state transition suspended to online
+  [system] › api/accounts.spec.ts:59:3 › [STATE-53] state transition suspended to rate_limited
+  [system] › api/accounts.spec.ts:59:3 › [STATE-54] state transition suspended to disconnected
+  [system] › api/accounts.spec.ts:59:3 › [STATE-55] state transition suspended to suspended
+  [system] › api/accounts.spec.ts:59:3 › [STATE-56] state transition suspended to session_expired
+  [system] › api/accounts.spec.ts:59:3 › [STATE-61] state transition session_expired to idle
+  [system] › api/accounts.spec.ts:59:3 › [STATE-62] state transition session_expired to online
+  [system] › api/accounts.spec.ts:59:3 › [STATE-63] state transition session_expired to rate_limited
+  [system] › api/accounts.spec.ts:59:3 › [STATE-64] state transition session_expired to disconnected
+  [system] › api/accounts.spec.ts:59:3 › [STATE-65] state transition session_expired to suspended
+  [system] › api/accounts.spec.ts:59:3 › [STATE-66] state transition session_expired to session_expired
+  [system] › api/accounts.spec.ts:95:1 › [STATE-041] validation precedence and stale expectedFrom are explicit
+  [system] › api/accounts.spec.ts:123:1 › [STATE-042] concurrent compare-and-swap has one winner
+  [system] › api/accounts.spec.ts:141:1 › [STATE-043] reconnect retains stable gateway identity
+  [system] › api/accounts.spec.ts:161:3 › [STATE-044] repeated suspended events preserve processing and cannot reconnect
+  [system] › api/accounts.spec.ts:161:3 › [STATE-045] repeated session_expired events preserve processing and cannot reconnect
+  [system] › api/auth.spec.ts:4:1 › [AUTH-001] health, login and UTC account contract
+  [system] › api/auth.spec.ts:23:1 › [AUTH-002] protected reads reject missing and invalid credentials
+  [system] › api/auth.spec.ts:40:1 › [AUTH-003] viewer cannot execute any original business write endpoint
+  [system] › api/auth.spec.ts:86:1 › [AUTH-004] refresh token is cookie-only, HttpOnly and rotates
+  [system] › api/auth.spec.ts:151:1 › [AUTH-005] refresh replay revokes both new credentials immediately
+  [system] › api/auth.spec.ts:177:1 › [AUTH-006] logout invalidates the existing access token immediately
+  [system] › api/auth.spec.ts:187:1 › [AUTH-007] access token expires at fifteen minutes (real clock)
+  [system] › api/diagnostics.spec.ts:6:1 › [DIAG-001] background diagnostics are admin-only and exclude tested secret and business data
+  [system] › api/groups.spec.ts:19:1 › [GROUP-001] creation validates members and online status before external effects
+  [system] › api/groups.spec.ts:45:1 › [GROUP-002] asynchronous creation materializes creator and event-confirmed roles
+  [system] › api/groups.spec.ts:76:1 › [GROUP-003] accepted join without member_joined fails after ten seconds
+  [system] › api/groups.spec.ts:103:1 › [GROUP-004] invite readiness is respected without retry resetting the wait
+  [system] › api/groups.spec.ts:121:1 › [GROUP-005] expired invitation is refreshed once and joining succeeds
+  [system] › api/groups.spec.ts:149:1 › [GROUP-006] leave-all removes service accounts with creator strictly last
+  [system] › api/groups.spec.ts:178:1 › [GROUP-007] failed noncreator leave preserves owner and continues remaining accounts
+  [system] › api/groups.spec.ts:280:1 › [GROUP-008] member rows wait for actual joined event before promotion
+  [system] › api/groups.spec.ts:304:1 › [GROUP-009] ALREADY_MEMBER confirms existing membership without waiting for another event
+  [system] › api/groups.spec.ts:373:1 › [GROUP-010] leave-all preserves public external members and keeps left groups inactive
+  [system] › api/messages.spec.ts:31:1 › [MSG-001] accepted is observable until message_sent and own echo stays one row
+  [system] › api/messages.spec.ts:59:1 › [MSG-002] rate limiting blocks all account sends until deadline and preserves FIFO
+  [system] › api/messages.spec.ts:113:1 › [MSG-003] terminal marking cancels queued sends and removes member atomically
+  [system] › api/messages.spec.ts:151:1 › [MSG-004] 504 that lands within two seconds is reconciled without resending
+  [system] › api/messages.spec.ts:199:1 › [MSG-005] absent 504 permits at most one retry after the two-second uncertainty window
+  [system] › api/messages.spec.ts:273:1 › [MSG-006] unavailable confirmation preserves unknown until recovery
+  [system] › api/messages.spec.ts:327:3 › [MSG-007] synchronous ACCOUNT_SUSPENDED applies terminal consequences without relying on events
+  [system] › api/messages.spec.ts:327:3 › [MSG-008] synchronous SESSION_EXPIRED applies terminal consequences without relying on events
+  [system] › api/messages.spec.ts:356:3 › [MSG-009] SENDER_NOT_IN_GROUP only fails that message
+  [system] › api/messages.spec.ts:356:3 › [MSG-010] ACCOUNT_OFFLINE only fails that message
+  [system] › api/messages.spec.ts:374:1 › [MSG-011] incoming duplicate and out-of-order historical messages are merged and sorted
+  [system] › api/messages.spec.ts:413:1 › [MSG-012] snapshot cursor traversal has no omission or duplicates under concurrent writes
+  [system] › api/messages.spec.ts:475:1 › [MSG-013] manual send validates unavailable account and nonmember before enqueue
+  [system] › api/messages.spec.ts:507:1 › [MSG-014] leaving rate_limited manually prevents stale timer resurrection
+  [system] › api/messages.spec.ts:547:3 › [MSG-015] asynchronous message_failed applies ACCOUNT_SUSPENDED consequences
+  [system] › api/messages.spec.ts:547:3 › [MSG-016] asynchronous message_failed applies GROUP_WRITE_FORBIDDEN consequences
+  [system] › api/messages.spec.ts:583:1 › [MSG-017] message echo arriving before confirmation still merges one own row
+  [system] › api/messages.spec.ts:599:1 › [MSG-018] terminal event removes account and cancels its queue across every group
+  [system] › api/realtime.spec.ts:19:1 › [WS-001] business events start after auth and have strictly increasing global seq
+  [system] › api/realtime.spec.ts:75:1 › [WS-002] unauthenticated and invalid-token sockets receive no business events
+  [system] › api/realtime.spec.ts:105:1 › [WS-003] account_terminal is published only after terminal state and cleanup
+  [system] › api/sequence-contracts.spec.ts:17:1 › [ARC-API-001] 序列定义拒绝额外字段、非法类型和不连续步号
+  [system] › api/sequence-contracts.spec.ts:64:1 › [ARC-API-002] 启动参数拒绝类型与键错误且失败后合法请求可执行
+  [system] › api/sequence-contracts.spec.ts:104:1 › [ARC-API-003] 缺省变量对象与显式空对象兼容
+  [system] › extensions/api.spec.ts:23:1 › [EXT-001] 群资料可选、名称回退基础数据、局部编辑与简介清空
+  [system] › extensions/api.spec.ts:51:1 › [EXT-002] viewer不能修改群资料与原值条件
+  [system] › extensions/api.spec.ts:63:1 › [EXT-003] 名称简介及两个ID可搜索，特殊字符按字面匹配
+  [system] › extensions/api.spec.ts:74:1 › [EXT-004] 原群列表数组兼容，目录默认分页与全部页面遍历
+  [system] › extensions/api.spec.ts:106:1 › [EXT-005] 目录边界、非法查询和未经授权访问
+  [system] › extensions/api.spec.ts:130:1 › [EXT-006] 游标绑定查询且不能跨身份绕过权限
+  [system] › extensions/api.spec.ts:158:1 › [EXT-007] 群状态和Agent开关组合先过滤再分页
+  [system] › extensions/api.spec.ts:184:1 › [EXT-008] 同字段竞争只一成功，冲突返回当前快照
+  [system] › extensions/api.spec.ts:200:1 › [EXT-009] 冲突整请求无资料和开关副作用
+  [system] › extensions/api.spec.ts:255:1 › [EXT-010] 不同字段编辑共存，旧调用继续兼容
+  [system] › extensions/api.spec.ts:268:1 › [EXT-011] null原值可比较，原值不trim，错误条件组合拒绝
+  [system] › extensions/api.spec.ts:281:1 › [EXT-012] 资料创建时间与条件更新跨重启保留
+  [system] › foundation/contracts.spec.ts:5:1 › [API-001] 原始主要读取接口必需字段和类型符合独立契约
+  [system] › foundation/startup.spec.ts:13:1 › [BASE-001] 全新未迁移数据库拒绝正常启动
+  [system] › foundation/startup.spec.ts:76:1 › [BASE-002] 交付说明和技术依赖声明可定位
+  [system] › release/operations.spec.ts:45:1 › [OPS-001] 指定并发与混合公开接口负载满足批准指标
+  [system] › release/operations.spec.ts:164:1 › [OPS-002] 指定持续运行窗口内消息不丢不重且服务持续可用
+  [system] › release/operations.spec.ts:244:1 › [OPS-003] 真实PostgreSQL备份恢复及公开数据核对
+  [system] › system/agent.spec.ts:126:1 › [AGENT-001] four schema-complete tools and correct trigger context keep one run identity
+  [system] › system/agent.spec.ts:175:1 › [AGENT-002] duplicate inbound and own echo never duplicate triggers
+  [system] › system/agent.spec.ts:209:1 › [AGENT-003] multi-instance active run excludes competitors and batches all pending messages
+  [system] › system/agent.spec.ts:314:3 › [AGENT-004] non-JSON produces BAD_JSON history without assistant block
+  [system] › system/agent.spec.ts:314:3 › [AGENT-005] fenced JSON produces BAD_JSON history without assistant block
+  [system] › system/agent.spec.ts:314:3 › [AGENT-006] multiple blocks produces BAD_JSON history without assistant block
+  [system] › system/agent.spec.ts:314:3 › [AGENT-007] stop reason mismatch produces BAD_JSON history without assistant block
+  [system] › system/agent.spec.ts:314:3 › [AGENT-008] non-2xx produces BAD_JSON history without assistant block
+  [system] › system/agent.spec.ts:314:3 › [AGENT-034] missing stop reason produces BAD_JSON history without assistant block
+  [system] › system/agent.spec.ts:314:3 › [AGENT-035] zero content blocks produces BAD_JSON history without assistant block
+  [system] › system/agent.spec.ts:314:3 › [AGENT-036] text surrounding JSON produces BAD_JSON history without assistant block
+  [system] › system/agent.spec.ts:349:3 › [AGENT-009] UNKNOWN_TOOL appends assistant tool use and error result
+  [system] › system/agent.spec.ts:349:3 › [AGENT-010] INVALID_INPUT appends assistant tool use and error result
+  [system] › system/agent.spec.ts:374:1 › [AGENT-011] duplicate tool_use id is protocol error and has no repeated effect
+  [system] › system/agent.spec.ts:403:1 › [AGENT-012] three consecutive protocol errors fail and a legal response resets the count
+  [system] › system/agent.spec.ts:425:1 › [AGENT-013] repeated read loop cannot exceed twelve turns
+  [system] › system/agent.spec.ts:464:1 › [AGENT-014] audit rejection blocks side effect and rejected key remains reusable
+  [system] › system/agent.spec.ts:500:1 › [AGENT-015] three inconclusive audit attempts block run without execution
+  [system] › system/agent.spec.ts:525:1 › [AGENT-016] idempotency retry returns current sent state without another audit or send
+  [system] › system/agent.spec.ts:564:1 › [AGENT-017] kick denied by policy never calls external kick
+  [system] › system/agent.spec.ts:584:1 › [AGENT-018] permitted kick audits exact action and uses owner or promoted member
+  [system] › system/agent.spec.ts:621:3 › [AGENT-019] OWNER_LEFT is returned as tool error without changing group or accounts
+  [system] › system/agent.spec.ts:621:3 › [AGENT-020] NO_PERMISSION is returned as tool error without changing group or accounts
+  [system] › system/agent.spec.ts:639:1 › [AGENT-021] recent messages include new arrivals and obey text, count, byte and summary limits
+  [system] › system/agent.spec.ts:703:1 › [AGENT-022] disabling agent lets current step complete then cancels
+  [system] › system/agent.spec.ts:724:1 › [AGENT-023] finish tool stores summary and does not ask another turn
+  [system] › system/agent.spec.ts:742:1 › [AGENT-024] turn timeout records error and late response never sends a message
+  [system] › system/agent.spec.ts:787:1 › [AGENT-025] run reaches sixty-second active wall-clock budget including slow turns
+  [system] › system/agent.spec.ts:1020:1 › [AGENT-026] no online member returns NO_AVAILABLE_ACCOUNT as ordinary tool error
+  [system] › system/agent.spec.ts:1048:1 › [AGENT-027] raw protocol response truncates to two KiB and remains inspectable
+  [system] › system/agent.spec.ts:1061:1 › [AGENT-028] unknown send times out in five seconds and same key still cannot resend
+  [system] › system/agent.spec.ts:1208:1 › [AGENT-029] kick timeout reconciles membership and never executes twice
+  [system] › system/agent.spec.ts:1240:1 › [AGENT-030] account becoming terminal during send returns SEND_FAILED and run continues
+  [system] › system/agent.spec.ts:1276:1 › [AGENT-031] group write error cancels current run after its step and stops future triggers
+  [system] › system/agent.spec.ts:1311:1 › [AGENT-032] twelve distinct turns exhaust budget without a thirteenth request
+  [system] › system/agent.spec.ts:1328:1 › [AGENT-033] audit retries resolve before informing agent and do not consume turn budget
+  [system] › system/capacity-control.spec.ts:318:1 › [CAP-001] confirmed capacity refusal makes no request and release resumes the original audited step once
+  [system] › system/capacity-control.spec.ts:329:1 › [CAP-002] cancellation after admission refusal lets only the current step finish and prevents later work
+  [system] › system/capacity-control.spec.ts:340:1 › [CAP-003] persistent admission refusal consumes the original active budget without resetting the clock
+  [system] › system/capacity-control.spec.ts:446:1 › [CAP-004] policy is rechecked after confirmed zero-effect admission deferral
+  [system] › system/capacity-control.spec.ts:460:1 › [CAP-005] group unreachability during admission wait cancels without a late kick
+  [system] › system/capacity-control.spec.ts:611:1 › [CAP-006] deferred execution rechecks online membership and administrator qualification
+  [system] › system/capacity-control.spec.ts:641:1 › [CAP-007] departure or rejoin before deferred dispatch preserves one tool identity and the specified removed-member result
+  [system] › system/capacity-control.spec.ts:679:1 › [CAP-008] capacity deferral does not replace a later explicit gateway ownership or permission error
+  [system] › system/capacity-control.spec.ts:708:1 › [CAP-009] crash after proven zero-effect refusal before durable readiness resumes the original run without replaying audit
+  [system] › system/capacity-control.spec.ts:757:1 › [CAP-010] admission pressure after a dispatched convergent 504 does not reset and replay the unknown kick
+  [system] › system/capacity.spec.ts:70:1 › [CAP-REG-001] independent groups preserve one audit and one kick per run during overlapping requests
+  [system] › system/capacity.spec.ts:157:1 › [CAP-REG-002] disabling kick policy while audit is pending prevents dispatch after audit passes
+  [system] › system/capacity.spec.ts:173:1 › [CAP-REG-003] offline actors are rechecked after a pending audit instead of dispatching a stale choice
+  [system] › system/capacity.spec.ts:190:1 › [CAP-REG-004] an online removed administrator and an online ordinary member cannot substitute for an eligible actor
+  [system] › system/fixture-boundaries.spec.ts:58:1 › [BLK-MIG-001] 历史schema明确拒启且结构与数据保持不变
+  [system] › system/fixture-boundaries.spec.ts:95:1 › [UI-037] 确定性微秒与同时间ID夹具双向跨页无遗漏重复
+  [system] › system/integration-message-boundaries.spec.ts:50:1 › [INT-MSG-006] the five-second timeout decision retains the actual 504 receipt origin across local delay
+  [system] › system/integration-message-boundaries.spec.ts:269:1 › [INT-MSG-007] a single-instance crash before receipt INSERT exposes loss of the original scheduling origin
+  [system] › system/integration-message-boundaries.spec.ts:273:1 › [INT-MSG-008] a committed receipt survives pre-business crash and duplicate event identities without rescheduling
+  [system] › system/integration-message-timing.spec.ts:236:1 › [INT-MSG-001] an old 404 crossing the two-second window cannot negate a landed send
+  [system] › system/integration-message-timing.spec.ts:293:1 › [INT-MSG-002] queries withheld past five seconds retain unknown and recover on real responses
+  [system] › system/integration-message-timing.spec.ts:342:1 › [INT-MSG-003] a slow successful confirmation is timed from the original 504
+  [system] › system/integration-message-timing.spec.ts:385:1 › [INT-MSG-004] recovery to slow successful queries retains the original two-second bound
+  [system] › system/integration-message-timing.spec.ts:449:1 › [INT-MSG-005] repeated confirmation identities preserve committed sequence timing across restart
+  [system] › system/integration-runtime.spec.ts:130:1 › [INT-ACT-001] activity budget accumulates across restart and excludes proven downtime without tail tolerance
+  [system] › system/integration-runtime.spec.ts:319:1 › [INT-ACCOUNT-001] remote success local transient save retries in the original transaction before a newer disconnect
+  [system] › system/integration-runtime.spec.ts:429:1 › [INT-ACCOUNT-002] persistent local save failure rolls back without false status events or automatic remote replay
+  [system] › system/integration-runtime.spec.ts:503:1 › [INT-DIAG-002] actual tick failure running hold and recovery have truthful restricted diagnostics
+  [system] › system/integration-streams.spec.ts:79:1 › [INT-STREAM-001] real paused reader leaves healthy consumer working and received-cursor replay complete
+  [system] › system/integration-streams.spec.ts:383:1 › [INT-STREAM-002] changing continuation page size preserves frozen identity order and contents across confirmations and backfill
+  [system] › system/protocol-boundaries.spec.ts:87:1 › [BLK-EXT-002] a created group whose response was lost is reconciled without another create
+  [system] › system/protocol-boundaries.spec.ts:129:1 › [BLK-EXT-003] promotion response loss preserves administrator facts and the two-call limit
+  [system] › system/protocol-boundaries.spec.ts:207:1 › [BLK-EXT-001] unacknowledged send has paired pending prefixes without a fabricated two-second bound
+  [system] › system/protocol-boundaries.spec.ts:392:1 › [BLK-EXT-004] an already effective kick is not repeated against a rejoined target after restart
+  [system] › system/protocol-boundaries.spec.ts:482:1 › [BLK-EXT-005] a lost unexecuted model response may change while persisted history and effects survive
+  [system] › system/recovery.spec.ts:7:1 › [REC-001] SSE reconnect recovers all retained events once including out-of-order delivery
+  [system] › system/recovery.spec.ts:55:1 › [REC-002] hard process restart recovers events produced while stopped
+  [system] › system/recovery.spec.ts:80:1 › [REC-003] database write outage loses no event and produces inconsistency notice
+  [system] › system/recovery.spec.ts:254:1 › [REC-004] crash after send effect before response never duplicates gateway delivery
+  [system] › system/recovery.spec.ts:297:1 › [REC-005] sequence restart reschedules only earliest overdue step and spaces subsequent sends
+  [system] › system/recovery.spec.ts:348:1 › [REC-006] agent restarts with same run id and reconciles already-sent tool effect
+  [system] › system/recovery.spec.ts:407:1 › [REC-007] agent restart after kick effect uses membership reconciliation without repeating kick
+  [system] › system/recovery.spec.ts:465:1 › [REC-008] repeated migration preserves data and schema version
+  [system] › system/sequence-failure-policy.spec.ts:10:1 › [BLK-SPEC-002] ordinary send failure fails the sequence and never advances later steps
+  [system] › system/sequence.spec.ts:12:1 › [SEQ-001] variables inherit latest nonempty override with original source
+  [system] › system/sequence.spec.ts:59:1 › [SEQ-002] all-step preflight rejects step three and leaves no running record or send
+  [system] › system/sequence.spec.ts:102:1 › [SEQ-003] simultaneous starts admit exactly one sequence run
+  [system] › system/sequence.spec.ts:133:1 › [SEQ-004] admin preferred and member selected lexicographically
+  [system] › system/sequence.spec.ts:164:1 › [SEQ-005] next delay begins at actual sent event, not acceptance
+  [system] › system/sequence.spec.ts:308:1 › [SEQ-006] unavailable member step is skipped with timestamp and progress continues
+  [system] › system/sequence.spec.ts:340:1 › [SEQ-007] rate-limited role waits rather than skips and preserves later delays
+  [system] › system/sequence.spec.ts:382:1 › [SEQ-008] group write prohibition stops sequence while account remains online
+  [system] › system/sequence.spec.ts:422:1 › [SEQ-009] placeholder grammar includes letters digits underscore and leaves other braces literal
+  [system] › system/sequence.spec.ts:452:1 › [SEQ-010] terminal account skips its queued sequence step and advances progress
+  [system] › system/spec-boundaries.spec.ts:135:1 › [BLK-SPEC-001] selection filters online candidates while an already queued 429 keeps its actor and order
+  [system] › system/spec-boundaries.spec.ts:242:1 › [BLK-SPEC-003] manual states follow CAS and committed events with explicit disconnect effects
+  [system] › system/spec-boundaries.spec.ts:352:1 › [BLK-SPEC-004] mixed protocol errors accumulate while a legal business error resets the streak
+  [system] › system/spec-boundaries.spec.ts:417:1 › [BLK-SPEC-005] cancellation overlapping inconclusive audit ends stably without side effects or a new turn
+  [system] › system/spec-boundaries.spec.ts:532:1 › [BLK-SPEC-006] versioned profile rules and explicit tool limits have independent boundary oracles
+  [chromium] › ui/architecture.spec.ts:258:1 › [ARC-UI-001] 序列定义额外字段明确拒绝而非静默剥离
+  [chromium] › ui/architecture.spec.ts:264:1 › [ARC-UI-002] 非连续或重复步号在浏览器阻止提交
+  [chromium] › ui/architecture.spec.ts:274:1 › [ARC-UI-003] 已登记序列尺寸边界在浏览器明确拒绝
+  [chromium] › ui/architecture.spec.ts:288:1 › [ARC-UI-004] vars和stepVars非法键值不发预检或启动请求
+  [chromium] › ui/architecture.spec.ts:326:1 › [ARC-UI-005] 合法序列一次保存并保留公开输入行为
+  [chromium] › ui/architecture.spec.ts:352:1 › [ARC-UI-006] 序列写请求503失败不自动重放
+  [chromium] › ui/architecture.spec.ts:373:1 › [ARC-UI-007] 无后续事件或轮询时两次503后自动呈现
+  [chromium] › ui/architecture.spec.ts:409:3 › [ARC-UI-008] 权限403不形成资源请求风暴
+  [chromium] › ui/architecture.spec.ts:409:3 › [ARC-UI-009] 429不无视限流进行通用重试
+  [chromium] › ui/architecture.spec.ts:409:3 › [ARC-UI-010] 请求校验400不自动重试
+  [chromium] › ui/architecture.spec.ts:409:3 › [ARC-UI-011] 成功HTTP的非法响应格式不按502临时错误重试
+  [chromium] › ui/architecture.spec.ts:437:1 › [ARC-UI-012] 持续暂时失败耗尽后停止自动读取
+  [chromium] › ui/architecture.spec.ts:459:1 › [ARC-UI-013] 切页取消旧读取及后续退避
+  [chromium] › ui/architecture.spec.ts:491:1 › [ARC-UI-014] 换身份期间旧读取迟到不能覆盖新会话
+  [chromium] › ui/architecture.spec.ts:559:1 › [ARC-UI-015] 耗尽后显式同页刷新可开始新一轮
+  [chromium] › ui/architecture.spec.ts:672:1 › [ARC-UI-016] 错误后离页取消退避期间的后续读取
+  [chromium] › ui/architecture.spec.ts:698:1 › [ARC-UI-017] 在途读取期间多个实时失效合并且不能延长失败预算
+  [chromium] › ui/architecture.spec.ts:771:1 › [ARC-UI-018] 网络失败及其他已登记暂时HTTP错误均可自动恢复
+  [chromium] › ui/console.spec.ts:187:1 › [UI-001] viewer通过浏览器登录且各页无写入口 @compat
+  [chromium] › ui/console.spec.ts:203:1 › [UI-002] 账号状态实时显示且操作符合当前状态
+  [chromium] › ui/console.spec.ts:216:1 › [UI-003] 群详情显示角色和实时消息，回流不重复 @compat
+  [chromium] › ui/console.spec.ts:236:1 › [UI-004] 自发消息展示accepted到sent且保持一行
+  [chromium] › ui/console.spec.ts:248:1 › [UI-005] 加载更早与实时新增按消息身份合并
+  [chromium] › ui/console.spec.ts:269:1 › [UI-006] 浏览器断线恢复后3秒内补齐 @compat
+  [chromium] › ui/console.spec.ts:285:1 › [UI-007] 审计阻断在群运行列表醒目可见
+  [chromium] › ui/console.spec.ts:310:1 › [UI-008] 登录到群再到Agent步骤，错误原文和审计结果可读 @compat
+  [chromium] › ui/console.spec.ts:345:1 › [UI-009] 序列预检展示继承与来源，确认后才启动
+  [chromium] › ui/console.spec.ts:379:1 › [UI-010] 序列预检缺值显示步骤与key且零发送
+  [chromium] › ui/console.spec.ts:407:1 › [UI-011] 多个页面请求同时401只续期一次并恢复加载
+  [chromium] › ui/console.spec.ts:533:1 › [UI-012] 群名称简介按纯文本显示且日期不随编辑变化
+  [chromium] › ui/console.spec.ts:573:1 › [UI-013] 编辑表单未改直接关闭，dirty可继续或放弃
+  [chromium] › ui/console.spec.ts:593:1 › [UI-014] 提交中关闭受限，失败保留输入且不重放写入
+  [chromium] › ui/console.spec.ts:632:1 › [UI-015] 同字段冲突保留草稿，明确再确认才提交
+  [chromium] › ui/console.spec.ts:657:1 › [UI-016] 搜索旧响应不能覆盖新条件且不抢焦点
+  [chromium] › ui/console.spec.ts:694:1 › [UI-017] 多页过期禁止旧游标，失败保留列表，成功整体换首页
+  [chromium] › ui/console.spec.ts:735:1 › [UI-018] 目录组合筛选、清关键词与重置含义不同
+  [chromium] › ui/console.spec.ts:756:1 › [UI-019] 初次失败可重试，成功空搜索不冒充加载错误
+  [chromium] › ui/console.spec.ts:784:1 › [UI-020] 当前群失焦只提示相关更新，聚焦本身不确认
+  [chromium] › ui/console.spec.ts:805:1 › [UI-021] 离开群详情销毁提醒范围，旧群变化不污染新页
+  [chromium] › ui/console.spec.ts:823:1 › [UI-022] 创建群表单同样执行未保存关闭保护
+  [chromium] › ui/console.spec.ts:838:1 › [UI-023] 简介摘要最多两行纯文本、详情完整且空简介无占位
+  [chromium] › ui/console.spec.ts:900:1 › [UI-024] 单页五秒刷新、并发失效合并且无关消息不遍历目录
+  [chromium] › ui/console.spec.ts:995:1 › [UI-025] 同标签返回保留条件与已加载页，整页刷新清空目录内存
+  [chromium] › ui/console.spec.ts:1111:1 › [UI-026] 注销后更换身份不复用上一会话目录条件
+  [chromium] › ui/console.spec.ts:1137:1 › [UI-027] composition期间不查询中间文本，确认后只查完成词且不抢焦点
+  [chromium] › ui/console.spec.ts:1201:1 › [UI-028] 前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除
+  [chromium] › ui/console.spec.ts:1252:1 › [UI-029] 内容加载失败不能确认，成功呈现后相关操作才清提醒
+  [chromium] › ui/console.spec.ts:1303:1 › [UI-030] 搜索范围记录消失先展示成功结果，再明确确认范围变化
+  [chromium] › ui/console.spec.ts:1374:1 › [UI-031] 状态先改变后还原仍保留期间变化候选
+  [chromium] › ui/console.spec.ts:1402:1 › [UI-032] 提醒确认不能恢复多页过期旧游标
+  [chromium] › ui/console.spec.ts:1608:1 › [UI-033] 本地手动发送先带clientMsgId，回流早于响应不误标远端未读
+  [chromium] › ui/console.spec.ts:1664:1 › [UI-034] Agent自己的自动消息仍参与失焦提醒
+  [chromium] › ui/console.spec.ts:1710:1 › [UI-035] 序列自动发送不因isOwn被排除提醒
+  [chromium] › ui/console.spec.ts:1756:1 › [UI-036] 编辑卸载后迟到成功不能污染新页面或重放提交
+  [chromium] › ui/observation-boundaries.spec.ts:53:1 › [ARC-UI-BLK-001] 通用账号资源读取失败不能提前确认未呈现的新状态
+  [firefox-smoke] › ui/console.spec.ts:187:1 › [UI-001] viewer通过浏览器登录且各页无写入口 @compat
+  [firefox-smoke] › ui/console.spec.ts:216:1 › [UI-003] 群详情显示角色和实时消息，回流不重复 @compat
+  [firefox-smoke] › ui/console.spec.ts:269:1 › [UI-006] 浏览器断线恢复后3秒内补齐 @compat
+  [firefox-smoke] › ui/console.spec.ts:310:1 › [UI-008] 登录到群再到Agent步骤，错误原文和审计结果可读 @compat
+  [webkit-smoke] › ui/console.spec.ts:187:1 › [UI-001] viewer通过浏览器登录且各页无写入口 @compat
+  [webkit-smoke] › ui/console.spec.ts:216:1 › [UI-003] 群详情显示角色和实时消息，回流不重复 @compat
+  [webkit-smoke] › ui/console.spec.ts:269:1 › [UI-006] 浏览器断线恢复后3秒内补齐 @compat
+  [webkit-smoke] › ui/console.spec.ts:310:1 › [UI-008] 登录到群再到Agent步骤，错误原文和审计结果可读 @compat
+Total: 259 tests in 27 files

@@ -1,0 +1,40 @@
+{
+  "recordedAt": "2026-10-01T12:30:50.198582+00:00",
+  "phase": "mid-execution",
+  "noResourcesMutated": true,
+  "qaRevision": "105ed289e0fbed6306025cd3dc1889730b17a423",
+  "sutRevision": "e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb",
+  "confirmedResources": [
+    {
+      "runId": "2026-10-01T12-26-30.110Z-c5165321",
+      "containerId": "4ad1f895d25ce9fe62a7a70de901441fa3d6cb2462701e8183b840427bcf8dc2",
+      "owner": "22bf21d7-81f3-46d9-98e9-08d73a09d96a",
+      "pgPort": 50944,
+      "volume": "c77ee5045a58d324b674a500ac43cd585aa98cccd9417bd347a6434e66fd4779",
+      "applicationPid": 7143,
+      "guardianPid": 7131,
+      "workerPid": 6862,
+      "runnerPid": 6793,
+      "suiteCliPid": 6703,
+      "evidence": [
+        "capture-20261001T122701.755712Z/snapshot.json",
+        "capture-20261001T122701.755712Z/events.stdout",
+        "stream-port-binding-20261001T122805.json"
+      ],
+      "basis": "Exact run environment API/Gateway/Agent ports link the same Playwright worker; that worker owns PG 50944 connections and is parent of the application guardian. Ancestor CLI names only INT-STREAM-001 and its authorized suite/target. Container port and owner match the inspect record; Mounts gives this precise anonymous volume.",
+      "cleanupStatus": "awaiting runner completion and final read-only absence check"
+    }
+  ],
+  "limitations": [
+    "The first events capture requested since 12:21:58Z but returned only events from 12:25:30Z onward; earlier container history is unavailable in this capture. Do not infer why or invent earlier create/destroy records.",
+    "Smoke containers had already been removed before the first Mounts snapshot. Their exact anonymous volumes are not recoverable from these records; per-case cleanup success and empty application/Gateway/Agent ports are available separately.",
+    "qa.owner tags alone do not assign other task resources to this batch. Two earlier backend-window owners in events are retained without claiming exact database or volume binding.",
+    "The first snapshot observedRuns metadata omitted the smoke run because a lexical subsecond timestamp comparison excluded the matching start second. capture.py now parses UTC datetimes; original snapshot/events remain byte-identical. This affects only the listed run metadata, not the Docker capture window or recorded resource evidence."
+  ],
+  "finalCheckRequirements": [
+    "After root confirms all runs/controllers ended, capture new read-only container snapshot and events.",
+    "For every confirmed container and exact volume above, inspect that ID/name; record no-such-object outcome or any surviving ownership/usage. Do not delete resources.",
+    "Check recorded API/Gateway/Agent/PG listener ports and known process start identities; PID reuse is not an orphan inference.",
+    "Preserve live-capture indexes and final absence evidence separately; do not rewrite source snapshots."
+  ]
+}

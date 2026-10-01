@@ -1,0 +1,60 @@
+{
+  "recordedAt": "2026-10-01T12:32:42.444467+00:00",
+  "runId": "2026-10-01T12-26-30.110Z-c5165321",
+  "knownOwnershipEvidence": [
+    "capture-20261001T122701.755712Z/snapshot.json",
+    "stream-port-binding-20261001T122805.json"
+  ],
+  "records": [
+    {
+      "command": [
+        "docker",
+        "--host",
+        "unix:///var/run/docker.sock",
+        "inspect",
+        "--type",
+        "container",
+        "--format",
+        "{{json .Id}}",
+        "4ad1f895d25ce9fe62a7a70de901441fa3d6cb2462701e8183b840427bcf8dc2"
+      ],
+      "exitCode": 1,
+      "stdout": "\n",
+      "stderr": "Error response from daemon: No such container: 4ad1f895d25ce9fe62a7a70de901441fa3d6cb2462701e8183b840427bcf8dc2\n",
+      "completedAt": "2026-10-01T12:32:42.458568+00:00"
+    },
+    {
+      "command": [
+        "docker",
+        "--host",
+        "unix:///var/run/docker.sock",
+        "volume",
+        "inspect",
+        "--format",
+        "{{json .Name}}",
+        "c77ee5045a58d324b674a500ac43cd585aa98cccd9417bd347a6434e66fd4779"
+      ],
+      "exitCode": 1,
+      "stdout": "\n",
+      "stderr": "Error response from daemon: get c77ee5045a58d324b674a500ac43cd585aa98cccd9417bd347a6434e66fd4779: no such volume\n",
+      "completedAt": "2026-10-01T12:32:42.472704+00:00"
+    },
+    {
+      "command": [
+        "lsof",
+        "-nP",
+        "-iTCP:50944",
+        "-iTCP:50955",
+        "-iTCP:50951",
+        "-iTCP:50953",
+        "-sTCP:LISTEN"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "",
+      "completedAt": "2026-10-01T12:32:42.532495+00:00"
+    }
+  ],
+  "noMutation": true,
+  "noProductConnection": true
+}

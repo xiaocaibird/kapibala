@@ -1,6 +1,10 @@
 # 七项工程补证与三项真人体验交接
 
-2026-10-01。负责人已授权研发与 QA 协作解决七项工程／证据阻塞；三项真人体验另行准备。当前是新候选接入阶段，**不是七项通过记录**。原 [业务验收报告](../../reports/acceptance/20261001-business/report.md)、86ad/a6b 冻结版本和原始运行证据保持不变。本轮接收记录见 [intake.json](../../reports/followup/20261001-seven-blockers/intake.json)。
+2026-10-01。负责人已授权研发与 QA 协作解决七项工程／证据阻塞；三项真人体验另行准备。本目录最初记录候选接入，原 [业务验收报告](../../reports/acceptance/20261001-business/report.md)、86ad/a6b 冻结版本和原始运行证据保持不变。本轮接收记录见 [intake.json](../../reports/followup/20261001-seven-blockers/intake.json)。
+
+**后续固定e85候选补充复测已完成**，见[报告](../../reports/followup/20261001-e85ae61-retest/report.md)：七项补证中2 PASS、2 FAIL、3 BLOCKED；加入基础冒烟、相关回归后的30个用例项目最新为24 PASS / 3 FAIL / 3 BLOCKED。不代表全量业务验收或三项真人体验已通过；所有首次及复测证据分别留存。下方仍是接入设计和交接要求。
+
+2026-10-01 先收到预交接 `68d28d8`，随后接收固定候选 `e85ae61`。阶段、分段复测及开发证据边界见[预接收记录](preintake-68d28d8-20261001.md)及[最终候选接收](final-intake-e85ae61-20261001.md)。原报告及本目录上一轮准备/体验收尾记录保持各自时间和版本，不回填新结果。
 
 ## 接入清单
 

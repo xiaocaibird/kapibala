@@ -1,0 +1,40 @@
+npm notice run kapibala-independent-qa@0.1.0 preflight
+npm notice run tsx harness/cli.ts preflight --suite evidence-followup-stream-20261001 --target .runtime/evidence-retest-20261001/target.normal.json --authorization .runtime/evidence-retest-20261001/authority/evidence-followup-stream-20261001-b6496813.json
+
+Running 1 test using 1 worker
+
+(node:6862) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [system] › tests/system/integration-streams.spec.ts:79:1 › [INT-STREAM-001] real paused reader leaves healthy consumer working and received-cursor replay complete (4.4m)
+
+
+  1) [system] › tests/system/integration-streams.spec.ts:79:1 › [INT-STREAM-001] real paused reader leaves healthy consumer working and received-cursor replay complete 
+
+    BlockedError: [BLOCKED] Bounded healthy drain did not establish the complete injected set; no throughput SLA inferred
+
+      205 |     });
+      206 |     if (!drained.complete || expected.size === 0)
+    > 207 |       throw new BlockedError(
+          |             ^
+      208 |         'Bounded healthy drain did not establish the complete injected set; no throughput SLA inferred',
+      209 |       );
+      210 |     assertCompleteReceipts(drained.last, new Set(expected.keys()));
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/integration-streams.spec.ts:207:13
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T12-26-30.110Z-c5165321/artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: reports/preflight/2026-10-01T12-26-30.110Z-c5165321/artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    reports/preflight/2026-10-01T12-26-30.110Z-c5165321/artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/trace.zip
+    Usage:
+
+        npx playwright show-trace reports/preflight/2026-10-01T12-26-30.110Z-c5165321/artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [system] › tests/system/integration-streams.spec.ts:79:1 › [INT-STREAM-001] real paused reader leaves healthy consumer working and received-cursor replay complete 
+开发预跑（不构成正式验收）证据: /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T12-26-30.110Z-c5165321
