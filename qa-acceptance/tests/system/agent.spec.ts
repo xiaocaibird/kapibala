@@ -12,6 +12,12 @@ import {
   assertSingleEpochActivityBudget,
   optionalActivityObservation,
 } from '../support/agent-activity-budget.js';
+import {
+  assertAgentLifecycle,
+  assertToolWaitBudget,
+  assertToolWaitCompletion,
+  toolWaitWindow,
+} from '../../harness/lifecycle-observation.js';
 
 type Block = {
   type: string;
@@ -794,6 +800,7 @@ test('[AGENT-025] run reaches sixty-second active wall-clock budget including sl
   const gatewayBefore = qa.gateway.snapshot();
   let control: RuntimeObservation | undefined;
   let lease: RuntimeLease | undefined;
+  let lifecycle: RuntimeLease | undefined;
   let failed = false;
   try {
     const verified = await optionalActivityObservation(
@@ -823,6 +830,20 @@ test('[AGENT-025] run reaches sixty-second active wall-clock budget including sl
             runId: id,
             toolUseId: 'all-run-steps',
           }),
+        missing,
+      );
+    if (verified)
+      lifecycle = await optionalActivityObservation(
+        'attach same-run lifecycle',
+        async () => {
+          await verified.verify(['agent-lifecycle-witness']);
+          return verified.arm('observe-agent-lifecycle', {
+            kind: 'tool-wait',
+            groupId: group.id,
+            runId: id,
+            toolUseId: 'all-run-steps',
+          });
+        },
         missing,
       );
     let lastRunningLower = creationLower;
@@ -892,6 +913,16 @@ test('[AGENT-025] run reaches sixty-second active wall-clock budget including sl
         missing,
       ));
     const witnessReadAfterMono = performance.now();
+    const lifecycleWitness =
+      lifecycle &&
+      (await optionalActivityObservation(
+        'final same-run lifecycle',
+        () =>
+          observed.complete
+            ? lifecycle!.waitFor('agent-terminal-committed', 5000)
+            : lifecycle!.snapshot(),
+        missing,
+      ));
     assertExternalFacts();
     const online: [number, number] = [
       Math.max(0, lastRunningLowerMono - creationUpperMono),
@@ -911,6 +942,7 @@ test('[AGENT-025] run reaches sixty-second active wall-clock budget including sl
       endReason: run.endReason,
       observationMode: 'module-start-retention; subscribed after actual runId creation',
       witness: witness ?? lease?.latest ?? null,
+      lifecycle: lifecycleWitness ?? lifecycle?.latest ?? null,
       gatewayMutationBaseline: gatewayBefore.effects,
       gatewayMutationRequestBaseline: gatewayBefore.requests
         .filter((request) => request.method !== 'GET')
@@ -918,10 +950,52 @@ test('[AGENT-025] run reaches sixty-second active wall-clock budget including sl
       missing,
       diagnosticBudgetMs: 65_000,
     });
-    assertSingleEpochActivityBudget(
-      (witness ?? lease?.latest)?.events ?? [],
-      online,
-      run.endReason ?? '',
+    // A missing/ambiguous stream must not hide a hard violation in the other.
+    await optionalActivityObservation(
+      'activity budget decision',
+      async () =>
+        assertSingleEpochActivityBudget(
+          (witness ?? lease?.latest)?.events ?? [],
+          online,
+          run.endReason ?? '',
+        ),
+      missing,
+    );
+    await optionalActivityObservation(
+      'lifecycle decision and dispatch',
+      async () => {
+        const events = (lifecycleWitness ?? lifecycle?.latest)?.events ?? [];
+        const created = events.find((event) => event.kind === 'agent-run-created');
+        const actualActivity =
+          (witness ?? lease?.latest)?.events.filter((event) => event.clockDomain !== undefined) ??
+          [];
+        const terminalActivity = actualActivity.findLast(
+          (event) => event.kind === 'activity-terminal',
+        );
+        if (
+          !created ||
+          !terminalActivity?.includesUnsavedTail ||
+          terminalActivity.epochIds?.length !== 1
+        )
+          throw new BlockedError('缺少完整单epoch活动来源，不能将生命周期在线差值当实际活动');
+        if (
+          !actualActivity.every(
+            (event) =>
+              event.clockDomain === created.clockDomain &&
+              event.applicationPid === created.applicationPid &&
+              event.runId === id &&
+              event.groupId === group.id &&
+              event.includesUnsavedTail &&
+              event.epochIds?.length === 1 &&
+              event.epochIds[0] === terminalActivity.epochIds![0] &&
+              ['active', 'terminal'].includes(String(event.activityState)),
+          )
+        )
+          throw new BlockedError('activity与lifecycle实际run/时钟域矛盾，不能拼接');
+        const decision = assertAgentLifecycle(events);
+        await qa.evidence('agent-lifecycle-budget', decision);
+      },
+      missing,
     );
     if (!observed.complete)
       throw new BlockedError('65秒诊断窗口内未观察到公开终态；未另设产品终态SLA');
@@ -1005,43 +1079,130 @@ test('[AGENT-028] unknown send times out in five seconds and same key still cann
     },
     finish(),
   );
-  const id = await trigger(qa, group);
-  await qa.gateway.barriers.waitFor('query-down');
-  qa.gateway.configure({ unavailable: true });
-  const sendRequestAt = Date.parse(
-    qa.gateway.snapshot().requests.find((request) => request.path.endsWith('/send'))!.at,
-  );
-  qa.gateway.barriers.release('query-down');
-  await qa.agent.barriers.waitFor('retry-same-key', 8_000);
-  const timeoutObservedAt = Date.parse(qa.agent.snapshot().turns[1]!.at);
-  const toolResponseAt = Date.parse(qa.agent.snapshot().turns[0]!.completedAt!);
-  const timeoutResult = results(qa).find((block) => block.tool_use_id === 'send-timeout')!;
-  expect(timeoutResult.is_error).toBe(true);
-  expect(JSON.parse(timeoutResult.content!).code).toBe('SEND_TIMEOUT');
-  qa.gateway.configure({ unavailable: false });
-  await eventually(
-    () => qa.api.messages(group.id),
-    (value) =>
-      value.items.some(
-        (message) => message.text === 'timeout key' && message.deliveryStatus === 'sent',
-      ),
-    { timeoutMs: 2_000 },
-  );
-  qa.agent.barriers.release('retry-same-key');
-  expect((await finished(qa, id)).status).toBe('finished');
-  expect(qa.agent.snapshot().audits).toHaveLength(1);
-  expect(
-    qa.gateway.snapshot().requests.filter((request) => request.path.endsWith('/send')),
-  ).toHaveLength(1);
-  await qa.evidence('send-timeout-window', {
-    startBounds: [toolResponseAt, sendRequestAt],
-    latestCompletionObservation: timeoutObservedAt,
-    requiredMaximumMs: 5_000,
-  });
-  if (timeoutObservedAt - toolResponseAt > 5_000)
-    throw new BlockedError(
-      'SEND_TIMEOUT was observed but public endpoints cannot locate tool-result creation precisely enough to certify the five-second limit; no tolerance was applied',
+  const missing: string[] = [];
+  let control: RuntimeObservation | undefined;
+  let lease: RuntimeLease | undefined;
+  let failed = false;
+  try {
+    const verified = await optionalActivityObservation(
+      'verify tool-wait observer',
+      async () => {
+        control = runtimeObservationFor(qa);
+        await control.verify(['tool-wait-witness']);
+        return control;
+      },
+      missing,
     );
+    const id = await trigger(qa, group);
+    if (verified)
+      lease = await optionalActivityObservation(
+        'attach original run tool stream',
+        () =>
+          verified.arm('observe-tool-wait', {
+            kind: 'tool-wait',
+            groupId: group.id,
+            runId: id,
+            toolUseId: 'all-run-steps',
+          }),
+        missing,
+      );
+    await qa.gateway.barriers.waitFor('query-down');
+    qa.gateway.configure({ unavailable: true });
+    const originalSend = qa.gateway
+      .snapshot()
+      .requests.find((request) => request.path.endsWith('/send'))!;
+    const sendRequestAt = Date.parse(originalSend.at);
+    const clientMsgId = (originalSend.body as { clientMsgId: string }).clientMsgId;
+    qa.gateway.barriers.release('query-down');
+    await qa.agent.barriers.waitFor('retry-same-key', 8_000);
+    const timeoutObservedAt = Date.parse(qa.agent.snapshot().turns[1]!.at);
+    const toolResponseAt = Date.parse(qa.agent.snapshot().turns[0]!.completedAt!);
+    const timeoutResult = results(qa).find((block) => block.tool_use_id === 'send-timeout')!;
+    expect(timeoutResult.is_error).toBe(true);
+    expect(JSON.parse(timeoutResult.content!).code).toBe('SEND_TIMEOUT');
+    qa.gateway.configure({ unavailable: false });
+    await eventually(
+      () => qa.api.messages(group.id),
+      (value) =>
+        value.items.some(
+          (message) => message.clientMsgId === clientMsgId && message.deliveryStatus === 'sent',
+        ),
+      { timeoutMs: 2_000 },
+    );
+    qa.agent.barriers.release('retry-same-key');
+    expect((await finished(qa, id)).status).toBe('finished');
+    expect(qa.agent.snapshot().audits).toHaveLength(1);
+    expect(
+      qa.gateway.snapshot().requests.filter((request) => request.path.endsWith('/send')),
+    ).toHaveLength(1);
+    expect(
+      qa.gateway.snapshot().messages.filter((message) => message.clientMsgId === clientMsgId),
+    ).toHaveLength(1);
+    const repeated = results(qa).find((block) => block.tool_use_id === 'same-timeout')!;
+    expect(repeated.is_error ?? false).toBe(false);
+    expect(JSON.parse(repeated.content!)).toMatchObject({ clientMsgId, deliveryStatus: 'sent' });
+    const snapshot =
+      lease &&
+      (await optionalActivityObservation(
+        'final tool lifecycle snapshot',
+        () => lease!.snapshot(),
+        missing,
+      ));
+    await qa.evidence('send-timeout-window', {
+      startBounds: [toolResponseAt, sendRequestAt],
+      latestCompletionObservation: timeoutObservedAt,
+      requiredMaximumMs: 5_000,
+      runId: id,
+      clientMsgId,
+      publicClockBoundary: 'next turn is only an upper observation, never tool return time',
+      lifecycle: snapshot ?? lease?.latest ?? null,
+      missing,
+    });
+    await optionalActivityObservation(
+      'actual tool wait decision',
+      async () => {
+        const events = (snapshot ?? lease?.latest)?.events ?? [];
+        const window = toolWaitWindow(events, 'send-timeout', 'timeout');
+        await qa.evidence('send-timeout-actual-interval', window);
+        expect(window.clientMsgId).toBe(clientMsgId);
+        expect(window.keyReused).toBe(false);
+        assertToolWaitBudget(window, 'SEND_TIMEOUT');
+        assertToolWaitCompletion(window);
+      },
+      missing,
+    );
+    // Missing first-attempt timing/history cannot hide a separate reuse failure.
+    await optionalActivityObservation(
+      'same-key actual tool wait decision',
+      async () => {
+        const events = (snapshot ?? lease?.latest)?.events ?? [];
+        const reuse = toolWaitWindow(events, 'same-timeout', 'timeout');
+        expect(reuse.clientMsgId).toBe(clientMsgId);
+        expect(reuse.keyReused).toBe(true);
+        assertToolWaitBudget(reuse, null);
+        assertToolWaitCompletion(reuse);
+      },
+      missing,
+    );
+    if (missing.length) throw new BlockedError(missing.join('; '));
+  } catch (error) {
+    failed = true;
+    throw error;
+  } finally {
+    qa.gateway.configure({ unavailable: false });
+    qa.gateway.barriers.release('query-down');
+    qa.agent.barriers.release('retry-same-key');
+    try {
+      await control?.close();
+    } catch (error) {
+      try {
+        await qa.evidence('tool-lifecycle-cleanup-failure', { error: String(error) });
+      } catch {
+        /* Preserve primary failure. */
+      }
+      if (!failed) throw error;
+    }
+  }
 });
 
 test('[AGENT-029] kick timeout reconciles membership and never executes twice', async ({ qa }) => {

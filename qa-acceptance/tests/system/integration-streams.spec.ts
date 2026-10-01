@@ -1,4 +1,5 @@
 import { createHash } from 'node:crypto';
+import { resolve } from 'node:path';
 import { test, expect } from '../fixtures.js';
 import {
   ReceiptSocket,
@@ -16,6 +17,10 @@ import {
 import { observe } from '../../harness/observation.js';
 import { BlockedError, redact } from '../../harness/security.js';
 import type { Message, PlatformClient } from '../../harness/platform-client.js';
+import {
+  reviewStreamCloseLog,
+  type StreamCloseAttribution,
+} from '../../harness/stream-close-observation.js';
 
 const hash = (text: string) => createHash('sha256').update(text).digest('hex');
 const identity = (message: Message) =>
@@ -89,6 +94,8 @@ test('[INT-STREAM-001] real paused reader leaves healthy consumer working and re
     phases.push({ name, at: new Date().toISOString(), monotonicMs: performance.now(), detail });
   let closureAndReplayVerified = false;
   let slowPolicyVerified = false;
+  let peerFramePolicyVerified = false;
+  let connectionAttribution: StreamCloseAttribution | null = null;
   const ancillary = new Set(['pause-checkpoint']);
   const projectFrame = (frame: ReceivedFrame) => ({
     seq: frame.seq,
@@ -127,6 +134,8 @@ test('[INT-STREAM-001] real paused reader leaves healthy consumer working and re
     replay: replay?.snapshot() ?? null,
     closureAndReplayVerified,
     slowPolicyVerified,
+    peerFramePolicyVerified,
+    connectionAttribution,
     limit:
       'payloadBytes measures complete received WS application-message bytes, not TCP/WS wire bytes. Close/replay alone does not identify server buffer or timeout policy, memory bound, throughput SLA or browser three-second recovery.',
   });
@@ -318,11 +327,37 @@ test('[INT-STREAM-001] real paused reader leaves healthy consumer working and re
       durationMs: profile.postReplayObservationMs,
     });
     closureAndReplayVerified = true;
-    slowPolicyVerified = matchesPeerClosePolicy(slow, profile.peerClosePolicy);
+    peerFramePolicyVerified = matchesPeerClosePolicy(slow, profile.peerClosePolicy);
+    // Only after healthy/history/actual-cursor replay assertions. Missing logs
+    // must not bypass or replace a business violation already observed.
+    if (profile.serverLogPolicy) {
+      const policy = profile.serverLogPolicy;
+      const attributed = await observe({
+        read: async () =>
+          (connectionAttribution = await reviewStreamCloseLog(
+            resolve(qa.outputDir, 'server.log'),
+            slow.snapshot(),
+            policy,
+          )),
+        invariant: () => {
+          invariant();
+          const later = assertReceiptSubset(
+            replayClient.frames,
+            new Set(missing.map((frame) => frame.msgId!)),
+          );
+          expect(later.map(projectFrame)).toEqual(missing.map(projectFrame));
+          assertCompleteReceipts([...receivedSlow, ...later], new Set(expected.keys()));
+        },
+        complete: (value) => value.verified,
+        durationMs: policy.observationMs,
+      });
+      connectionAttribution = attributed.last;
+    }
+    slowPolicyVerified = peerFramePolicyVerified || connectionAttribution?.verified === true;
     phase('external-replay-assertions-complete', { closureAndReplayVerified, slowPolicyVerified });
     if (!slowPolicyVerified)
       throw new BlockedError(
-        'External closure and full replay verified, but no published exact peer close signature establishes the slow-reader policy cause; a separate engineering connection-observation adapter would require review; do not infer policy from close alone',
+        `External closure and full replay verified; slow-reader cause is unproven: ${connectionAttribution?.reason ?? 'no published peer-frame or owned connection-log mapping'}`,
       );
   } catch (error) {
     primaryFailed = true;

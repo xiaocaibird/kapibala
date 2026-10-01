@@ -16,13 +16,36 @@ QA 使用既有 `capacityControlTarget()` 的 `{apiUrl,revision,pid,ownerToken}`
 
 ## `qa-runtime-observation/1` 协议
 
-- `GET /qa/runtime/v1/capabilities?apiUrl=...&revision=...&pid=...`：返回 `{protocol,binding,capabilities}`。能力为 `activity-witness / activity-safe-boundary / account-local-save / account-intent-wait / module-tick`。声明能力不等于故障发生。
+- `GET /qa/runtime/v1/capabilities?apiUrl=...&revision=...&pid=...`：返回 `{protocol,binding,capabilities}`。既有能力为 `activity-witness / activity-safe-boundary / account-local-save / account-intent-wait / module-tick`；本次预交接扩展 `agent-lifecycle-witness / tool-wait-witness / message-recovery-witness`，见下节。声明能力不等于故障发生。
 - `PUT /qa/runtime/v1/leases/<UUID>`：`{protocol,target:{apiUrl,revision,pid},mode,correlation,ttlMs,faultMarker?}`。初始state可为armed，必须通过后续真实事件确认触发后才能断言。
 - `GET /qa/runtime/v1/leases/<UUID>`：完整快照。事件必须追加、全局租约seq严格递增、已观察历史不可改写或删除；字段对象键顺序不影响相同证据的判定。
 - `POST /qa/runtime/v1/leases/<UUID>/advance`：只放行模式中当前已命中的屏障，不能制造业务成功。重复调用不得跨越未命中的阶段；不接受任何请求体中的结果或时间值。
 - `DELETE /qa/runtime/v1/leases/<UUID>`：释放本租约注入／屏障，返回state=released。后续真实提交／回滚事件仍可追加，租约不得复活或延长期限。
 
 快照：`{protocol,leaseId,state:armed|held|released,expiresAt,binding,correlation,events}`。事件公共字段：`{seq,at,kind,correlation,attemptId,instancePid}`。`attemptId` 来自真实执行尝试，`at` 来自实际观测，`instancePid` 沿用协议的历史字段名，指本次绑定的guardian/进程组拥有者PID，**不是要求实际应用子PID等于guardian**。控制器仍须确认API监听应用实际属于此进程组并从其进程读取token；实际子PID可作为额外只读诊断。correlation只选择目标，不能成为实际发生证据；工程记录必须能够从公开run/账号/模块追溯到实际尝试。接口失败必须用非2xx，无重定向；QA不执行服务返回的任何指令。
+
+## 生命周期只读扩展：AGENT-025／028、BLK-EXT-001
+
+2026-10-01 基于研发预交接 `68d28d80acb059387af14dcb41a2be62f1d14e12` 的 `docs/qa-backend-evidence-followup-20261001.md`、真实挂点及样例准备客户端；已收到正式文档提交 `e85ae61496e38bf59e1b7a5cad0146dbfeaf42fb`，产品源 `7a38ae2979b187a74757dfe4456f947e26ee27b7`，见 `docs/qa-followup-integration-20261001.md`。旧文档中的开发计量版本 `22d770bafcf7b2e2f64e42deb1c4189da81baaf6` 不改写为最终候选的独立 QA 运行；本次仅完成客户端和自身验证，新的独立环境/执行冻结由后续流程记录。这些新入口没有改变原 5000/60000ms 规则，不关闭旧报告的 BLOCKED。
+
+| 能力                     | 模式                     | 关联                                                         |
+| ------------------------ | ------------------------ | ------------------------------------------------------------ |
+| agent-lifecycle-witness  | observe-agent-lifecycle  | `{kind:'tool-wait',groupId,runId,toolUseId:'all-run-steps'}` |
+| tool-wait-witness        | observe-tool-wait        | 同上，包含该 run 的真实工具阶段                              |
+| message-recovery-witness | observe-message-recovery | `{kind:'message-recovery',groupId,clientMsgId:<UUID>}`       |
+
+复用上述 owner/token/revision/API、UUID 租约、TTL、不可变前缀及清理规则。不改变注册目录或注入任意 `QA_*`。三个模式都是只读：state 通常为 armed，DELETE/TTL 停止追加并保留已记录历史；不调用 advance，不用租约暂停产品计时。agent 生命周期可以和同 run 的 activity 观察并存。必须先通过公开接口取得真实 run/message 身份再订阅，不声称创建前已 arm；observer 必须在模块恢复前安装，并诚实回放实际历史。
+
+每条流首项是 `lifecycle-observation-attached`：`resourceId` 由真实 run/group 或 message/group 查询确认，`databaseIdentity` 是实际数据库/模式/启动身份摘要；`historyScope:'this-process-only'`、`includesPriorProcessHistory:false`、非负整数 `droppedThroughSourceSeq` 必须存在。该项 attemptId 是观察接入身份，绝不能当成业务执行尝试。截断不抹去已经观察到的硬违约，但不能据不完整历史声称全链通过。
+
+后续事件除公共 lease seq/attempt/guardian 字段外，必须含实际业务身份、正整数 `sourceSeq`、实际 `applicationPid`、`clockDomain=process-performance:<applicationPid>:<UUID>`、`clockUnit:'ms'`、有限非负有序的 `monotonicMs`。业务 sourceSeq 严格递增但允许过滤造成的 gaps；业务单调读数须在同一实际进程域内递增。**attached 发生于晚订阅时，回放的 UTC/单调时间早于 attached 是合法的**，不能把首条接入元信息当计时起点。已返回的事件不能改写、删除或换进程。SUT 重启后重新核对新 PID，旧租约仅可读/释放原历史；只按真实消息/run/attempt 身份关联新旧文件，禁止相减不同 clockDomain。
+
+- **AGENT-025**：原 `observe-activity` 完整单 epoch 一侧裁判保留。追加创建事务与 INSERT 包围、BEGIN 确认读数、turn 派发、实际终止决定及同 attempt 的终态 COMMIT。创建、BEGIN、INSERT、决定、提交不能互相替换；不能挑最晚起点来缩短预算。完整活动下界，或经完整连续单 epoch 活动见证关联的同域实际决定/新派发下界，大于 60000ms 即 FAIL；缺流、缺决定/提交配对、缺同域活动来源则 BLOCKED，继续公开终态/指针/步骤/零副作用断言。生命周期区间仅追加诊断，不能把缺 activity 完整性的情况升级为 PASS。
+- **AGENT-028**：按同真实 `runId/stepId/toolUseId/execution attemptId/clientMsgId/idempotencyKey` 配对 `send-key-resolved → send-wait-started → send-wait-result-ready → send-tool-result-returned`。原始包围为 `S=[key.lower,waitStarted.upper]`、`E=[ready.lower,returned.upper]`，耗时 `[E.lower-S.upper,E.upper-S.lower]`，保留小数、不扣日志或调度成本。prepared/entered/审计阶段也保存，用于复核早期阶段，不能将下一 turn 或 history COMMIT 当交还时点。真实等待下界>5000ms 为 FAIL；区间跨界为 BLOCKED；尚未到5秒却返回 SEND_TIMEOUT 同样 FAIL。结果/history 必须按**同 execution attemptId** 与原值配对；正式候选已修复旧 host adapter 漏传该 ID 的接线；QA 仍不能按 toolUseId 猜配，缺链 BLOCKED；但已证明超时先 FAIL。第二次同 key 的公开 sent、只有一次审计/发送/落地继续独立验证。
+- **BLK-EXT-001**：kill 前保存原 `message-send-dispatch` 流和外部未返回事实，重启后以新 PID 建立同 clientMsgId 的观察。`attemptId=<真实消息行id>:<持久dispatch次数>`、`messageId` 及 databaseIdentity 关联同一原请求；每个真实查询有独立 queryAttemptId，headers/body 的 responseStatus 只在真实接收后出现。`not-durably-recorded` 不是未生效保证，automatic-query-pending 不是人工暂停。记录真实查询和提交原因；普通404、私有 effect:none 或长等待都不能造出否定完成保证。SSE/echo 终态可能不在此流，仍由现有公开状态/receipt/独立网关取证，不能因缺 query-result-committed 误判产品。两分支原安全断言始终执行，静默无终结信号仍保留 BLOCKED。
+- **INT-ACT-001**：本次不改既有重启场景或裁判。新增同进程时钟字段不能填补旧 epoch 的 SIGKILL 尾段；`includesUnsavedTail=false` 合法并继续恢复断言，不能把 persistedActiveMs 或多个不完整域机械相加成完整证据。
+
+QA 工具自测覆盖上述映射、晚订阅、实际身份/时钟/前缀、history attempt 缺失，以及 `60005..60017ms`、`5000.74675..5000.849417ms` 这类已明确超限必须 FAIL 的边界。工具自测不运行 SUT，也不替代新的独立验收。开发样例中部分条目是直接 helper 与真实 PG/HTTP 测量而非控制器验证的归属，不能直接冒充正式 QA 证据。
 
 ## 活动预算：INT-ACT-001
 
