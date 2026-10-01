@@ -1,0 +1,161 @@
+{
+  "sourceHead": "f83b5d8c7ff4d875e76a011798ab1dd70e5bbf69",
+  "sourceStatus": "",
+  "buildSourceHead": "f83b5d8c7ff4d875e76a011798ab1dd70e5bbf69",
+  "sourceFiles": {
+    "apps/web/src/components/Timeline.tsx": "383fd2c9469f33cd3867bdcb1472474d20d5b74b9db667d4a2c27e8014462fec",
+    "apps/web/src/pages/Sequences.tsx": "f38bd1efb259b2fc2789e8ee2e055e6f3e2489674f90c261be82560bed9e9895",
+    "apps/web/src/hooks/useRoute.ts": "3711e3d1f17fb31bdeee2b612afe7ac58e71c86162e5fe7c6fde4b9cbcfa1e32",
+    "apps/web/src/pages/AgentRuns.tsx": "1134f6014df7ba51e165ed93c1c5e28218ce0c84cac37cd1c09574e09a74c48f",
+    "apps/web/src/components/AgentRunList.tsx": "16652f9e9b0ad26d2acb02a64838a489d7c577dc6730cfdea3843116d0d06c55",
+    "apps/web/src/App.tsx": "f13913955f8af1502b45d5123d242a49c39de5b4262e5f7a3c9025348731ecb9",
+    "apps/web/src/state/auth.tsx": "84f517cd6ff65b98d71e3d34d50a96b4113bb2775679c3475fa5a62295522c9c",
+    "apps/web/src/state/agentNavigationSession.ts": "c41e1c187874675a002b6f2a4491f9f7f21f1b446f78d356027413774b10530e"
+  },
+  "build": "/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/apps/web/dist",
+  "buildAssets": {
+    "index-D_PTbvD6.css": "e0d8ab745f0d8f2bd3d26d1095156e3d39fc1feb4f8a286025871d1e141a8556",
+    "index-DjXAag7K.js": "4e24055a46d80f53c2994dbd476c7d39b6b4cbeee4e22dc2f930487be0b1645e"
+  },
+  "scriptSha256": "40268df6415b74ccac705dad30494d13dbaf1714b75ba69b98ccb54b191fd022",
+  "startedAt": "2026-10-01T17:07:19.541Z",
+  "mode": "production React; real REST/PG; background false; real responses held at browser transport",
+  "exclusions": [
+    "real remote message delivery/model",
+    "human OS IME/focus acceptance",
+    "QA acceptance"
+  ],
+  "results": [
+    {
+      "name": "navigation-group-origin",
+      "status": "PASS",
+      "observed": {
+        "returned": "ui-group-a",
+        "workspace": "groups",
+        "refreshRetained": true
+      }
+    },
+    {
+      "name": "navigation-list-origin",
+      "status": "PASS",
+      "observed": {
+        "selected": "ui-group-a",
+        "backForwardAndRefresh": true
+      }
+    },
+    {
+      "name": "navigation-deep-link-fallbacks",
+      "status": "PASS",
+      "observed": {
+        "externalSourceIgnored": true,
+        "malformedIdSafe": true,
+        "failureReturn": true
+      }
+    },
+    {
+      "name": "navigation-loading-failure-retains-group",
+      "status": "PASS",
+      "observed": {
+        "loadingAndFailureRetained": "ui-group-a",
+        "tamperedHintOverridden": true
+      }
+    },
+    {
+      "name": "navigation-identity-clears-context",
+      "status": "PASS",
+      "observed": {
+        "oldOriginCleared": true,
+        "identity": "viewer"
+      }
+    },
+    {
+      "name": "navigation-old-history-groups",
+      "status": "PASS",
+      "observed": {
+        "realLogoutAndViewerLogin": true,
+        "oldHistoryRevisited": true,
+        "oldOriginIgnored": true,
+        "origin": "groups"
+      }
+    },
+    {
+      "name": "navigation-old-history-agent-runs",
+      "status": "PASS",
+      "observed": {
+        "realLogoutAndViewerLogin": true,
+        "oldHistoryRevisited": true,
+        "oldOriginIgnored": true,
+        "origin": "agent-runs"
+      }
+    },
+    {
+      "name": "navigation-expired-refresh-before-workspace",
+      "status": "PASS",
+      "observed": {
+        "actualRefreshStatus": 401,
+        "viewerFallback": true,
+        "priorWorkspaceNeverMountedInReloadedDocument": true
+      }
+    },
+    {
+      "name": "navigation-same-user-relogin-and-tampered-context",
+      "status": "PASS",
+      "observed": {
+        "sameUserNewLoginIsSeparate": true,
+        "backForward": true,
+        "tamperedContextIgnored": true
+      }
+    },
+    {
+      "name": "navigation-login-success-me-failure-refresh",
+      "status": "PASS",
+      "observed": {
+        "actualLoginStatus": 200,
+        "meTransportFailure": true,
+        "refreshedNewLoginDoesNotRestoreOldOrigin": true
+      }
+    },
+    {
+      "name": "navigation-storage-blocked-list-selection",
+      "status": "PASS",
+      "observed": {
+        "original": "ui-group-b",
+        "selected": "ui-group-a",
+        "navigationStorageWriteDenied": true,
+        "listRemainsUsable": true,
+        "detailFallsBack": true
+      }
+    }
+  ],
+  "pageErrors": [],
+  "cleanup": [
+    {
+      "name": "browser",
+      "success": true
+    },
+    {
+      "name": "web",
+      "success": true
+    },
+    {
+      "name": "api",
+      "success": true
+    },
+    {
+      "name": "database",
+      "success": true
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "group-origin-detail",
+      "path": ".runtime/final-ui-session-20261002/final.json.group-origin-detail.png",
+      "sha256": "042aa65f7a69e62eba089941104093883cd3ef656fcd286d47150d51f5bbd0f3"
+    }
+  ],
+  "database": "kapibala_test_8e4206aa65f5402aa22570777e7cd4c0",
+  "databasePort": "64602",
+  "api": "http://127.0.0.1:58952",
+  "web": "http://127.0.0.1:58953/",
+  "finishedAt": "2026-10-01T17:07:24.363Z"
+}

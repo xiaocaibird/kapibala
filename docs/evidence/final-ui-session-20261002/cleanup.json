@@ -1,0 +1,71 @@
+{
+  "time": "2026-10-01T17:08:12.279633+00:00",
+  "owner": "final-ui-session-20261002",
+  "container": "kapibala-final-ui-session-20261002",
+  "containerId": "c4152c4ef471579b627e8ee48f96365cf0493e4db44011c23c67aaa83224e7ce",
+  "image": "postgres:16-alpine",
+  "ports": {
+    "5432/tcp": [
+      {
+        "HostIp": "127.0.0.1",
+        "HostPort": "64602"
+      }
+    ]
+  },
+  "volumes": [
+    "7fb4e601e2207508fe4873ddc3bb420f24cfd48e189bbe7950ef5a7635e3851d"
+  ],
+  "steps": [
+    {
+      "command": [
+        "docker",
+        "exec",
+        "kapibala-final-ui-session-20261002",
+        "psql",
+        "-U",
+        "ui_verify",
+        "-d",
+        "postgres",
+        "-Atc",
+        "SELECT datname FROM pg_database WHERE datname LIKE 'kapibala_test_%';"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "rm",
+        "-f",
+        "-v",
+        "kapibala-final-ui-session-20261002"
+      ],
+      "exitCode": 0,
+      "stdout": "kapibala-final-ui-session-20261002\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "kapibala-final-ui-session-20261002"
+      ],
+      "exitCode": 1,
+      "stdout": "[]\n",
+      "stderr": "error: no such object: kapibala-final-ui-session-20261002\n"
+    },
+    {
+      "command": [
+        "docker",
+        "volume",
+        "inspect",
+        "7fb4e601e2207508fe4873ddc3bb420f24cfd48e189bbe7950ef5a7635e3851d"
+      ],
+      "exitCode": 1,
+      "stdout": "[]\n",
+      "stderr": "Error response from daemon: get 7fb4e601e2207508fe4873ddc3bb420f24cfd48e189bbe7950ef5a7635e3851d: no such volume\n"
+    }
+  ],
+  "success": true
+}
