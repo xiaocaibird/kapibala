@@ -1,0 +1,27 @@
+✔ slow socket: an in-flight oversized frame cannot authorize further buffers, and stalled close is terminated (453.51175ms)
+✔ slow socket: callback starvation closes even below the buffer watermark; ordinary close cancels the fallback (162.358916ms)
+✔ slow socket: a drained frame larger than the watermark still reaches an able consumer (0.319958ms)
+✔ slow socket: control replies wait for a permitted oversized frame instead of disconnecting it (0.13025ms)
+✔ slow socket: pending frame admission is bounded and all waiters finish when closed (11.79175ms)
+✔ realtime: a stopped TCP reader is disconnected without blocking a healthy peer; client cursor replays all remaining durable events (1796.724083ms)
+ℹ Independent database: kapibala_test_af6cceeaef414784b3d27ef33a654335
+ℹ Paused TCP reader removed; 80 durable events reached healthy peer and reconnect in exact order
+✔ realtime: marker bursts batch one database request at a time without dropping admitted scope replies or skipping durable replay (287.051042ms)
+ℹ Independent database: kapibala_test_6a9f48d51e24425d9c0db3368993a8a2
+✔ realtime: overflowing pending marker capacity closes without launching unbounded database work (258.350375ms)
+ℹ Independent database: kapibala_test_d48a34c7786f4637b2205053356b4840
+✔ timeline: continuation transfers only its slice and preserves old frozen cursors across writes, page sizes and large offsets (323.204375ms)
+ℹ Independent database: kapibala_test_3cf5c018a5ce44febb40e85128ee408e
+ℹ Frozen snapshot 1252279 bytes; continuation database transfer maximum 91661 bytes for at most 9 items
+✔ diagnostics: only admin sees disabled process-local scheduler data; public health stays unchanged (77.449375ms)
+ℹ Independent database: kapibala_test_d266ed00a1c94cb985b693150bb07f89
+✔ diagnostics: failures, hung ticks and later recovery are distinguishable without leaking error bodies or claiming business completion (405.371ms)
+ℹ Independent database: kapibala_test_603a5ed5021e4a76ac1317cfbcae71bd
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3944.952583

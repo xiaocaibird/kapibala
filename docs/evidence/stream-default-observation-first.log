@@ -1,0 +1,28 @@
+✖ STREAM default configuration: public HTTP/WS auth and bounded real-reader experiment (measurement-only) (440.35475ms)
+ℹ {"expectedCount":0,"failure":"AssertionError [ERR_ASSERTION]: /api/groups: 400 {\"error\":{\"code\":\"VALIDATION_ERROR\",\"message\":\"请求参数不符合约定\",\"requestId\":\"2ac9ef90-362c-40b1-8dc1-94d520861a07\",\"issues\":[{\"origin\":\"array\",\"code\":\"too_small\",\"minimum\":1,\"inclusive\":true,\"path\":[\"memberAccountIds\"],\"message\":\"Too small: expected array to have >=1 items\"}]}}","databaseName":"/kapibala_test_e5dea437719146eaa6ea684308a5b42f","childPid":70951,"stateDirectory":"/var/folders/j9/y00351wx0f717s6xgxrw8jgh0000gn/T/kapibala-stream-nRixQ6"}
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 675.827666
+
+✖ failing tests:
+
+test at tests/integration/stream-default-observation.test.ts:1:3548
+✖ STREAM default configuration: public HTTP/WS auth and bounded real-reader experiment (measurement-only) (440.35475ms)
+  AssertionError [ERR_ASSERTION]: /api/groups: 400 {"error":{"code":"VALIDATION_ERROR","message":"请求参数不符合约定","requestId":"2ac9ef90-362c-40b1-8dc1-94d520861a07","issues":[{"origin":"array","code":"too_small","minimum":1,"inclusive":true,"path":["memberAccountIds"],"message":"Too small: expected array to have >=1 items"}]}}
+      at http (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/stream-default-observation.test.ts:299:16)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/stream-default-observation.test.ts:311:19)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
