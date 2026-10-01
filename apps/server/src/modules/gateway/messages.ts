@@ -321,6 +321,18 @@ export class Messages implements MessagingService {
       // The gateway's convergence window starts when its 504 is received, not
       // after local row-lock waits or a retry of result persistence completes.
       const receivedTimeoutAt = knownTimeout ? new Date() : null;
+      if (
+        receivedTimeoutAt &&
+        error instanceof RemoteError &&
+        error.status === 504
+      )
+        await this.ctx.testMessageObserver?.boundary({
+          phase: "timeout-observed-before-local-save",
+          attemptId: randomUUID(),
+          groupId: row.group_id,
+          clientMsgId: row.client_msg_id!,
+          observedAt: receivedTimeoutAt.toISOString(),
+        });
       await this.persistRemoteResult(async (tx) => {
         await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
           row.group_id,

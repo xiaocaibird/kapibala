@@ -190,6 +190,18 @@ export class GatewayEvents {
         event.type === "message" ? await this.findEcho(event) : null;
       // Save the receipt independently before any dedup/business transaction.
       // Replay after a failed transaction or process death reuses this clock.
+      const observationAttemptId = this.ctx.testMessageObserver
+        ? randomUUID()
+        : undefined;
+      if (event.type === "message_sent")
+        await this.ctx.testMessageObserver?.boundary({
+          phase: "receipt-before-commit",
+          attemptId: observationAttemptId!,
+          clientMsgId: event.clientMsgId,
+          msgId: event.msgId,
+          eventId: ref,
+          observedAt: observedAt!.toISOString(),
+        });
       const reliableObservedAt =
         event.type === "message_sent"
           ? await recordConfirmationReceipt(
@@ -200,6 +212,16 @@ export class GatewayEvents {
               observedAt!,
             )
           : undefined;
+      if (event.type === "message_sent")
+        await this.ctx.testMessageObserver?.boundary({
+          phase: "receipt-committed-before-business",
+          attemptId: observationAttemptId!,
+          clientMsgId: event.clientMsgId,
+          msgId: event.msgId,
+          eventId: ref,
+          observedAt: observedAt!.toISOString(),
+          receiptObservedAt: reliableObservedAt?.toISOString() ?? null,
+        });
       await this.ctx.db.transaction(async (tx) => {
         // Membership reads current remote facts under the group lock. Defer a
         // busy transaction through the existing retry path instead of holding

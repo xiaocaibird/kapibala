@@ -17,7 +17,16 @@ import { migrate } from "../../scripts/migrate.js";
 import { temporaryDatabase } from "./temporary-database.js";
 import { deferred, until, tool, end } from "./core-automation-fixture.js";
 
-export async function capacityFixture(t: TestContext, normal = false) {
+export async function capacityFixture(
+  t: TestContext,
+  normal = false,
+  options: {
+    entry?: string;
+    registryVariable?: string;
+    controllerFactory?: typeof createCapacityController;
+    configureRemote?: (remote: ReturnType<typeof Fastify>) => void;
+  } = {},
+) {
   assert.ok(
     process.env.DATABASE_URL,
     "An explicitly owned disposable PostgreSQL URL is required",
@@ -80,13 +89,16 @@ export async function capacityFixture(t: TestContext, normal = false) {
       (platformUserId) => ({ platformUserId }),
     ),
   );
+  options.configureRemote?.(remote);
   remote.get("/events", (_request, reply) => {
     reply.hijack();
     reply.raw.writeHead(200, { "content-type": "text/event-stream" });
     reply.raw.write(": engineering fixture\n\n");
   });
   await remote.listen({ host: "127.0.0.1", port: 0 });
-  const controller = await createCapacityController(directory);
+  const controller = await (
+    options.controllerFactory ?? createCapacityController
+  )(directory);
   await controller.listen({ host: "127.0.0.1", port: 0 });
   temporary.onCleanup(() => controller.close());
   const server = createServer();
@@ -114,7 +126,10 @@ export async function capacityFixture(t: TestContext, normal = false) {
       [
         "-e",
         guardianCode,
-        normal ? "apps/server/src/main.ts" : "scripts/qa-capacity-server.ts",
+        options.entry ??
+          (normal
+            ? "apps/server/src/main.ts"
+            : "scripts/qa-capacity-server.ts"),
       ],
       {
         cwd: process.cwd(),
@@ -127,7 +142,7 @@ export async function capacityFixture(t: TestContext, normal = false) {
           GATEWAY_URL: remote.listeningOrigin,
           AGENT_URL: remote.listeningOrigin,
           QA_ACCEPTANCE_RESOURCE_TOKEN: token,
-          QA_CAPACITY_REGISTRY_DIR: directory,
+          [options.registryVariable ?? "QA_CAPACITY_REGISTRY_DIR"]: directory,
         },
       },
     );
@@ -254,6 +269,11 @@ export async function capacityFixture(t: TestContext, normal = false) {
   );
   return {
     db,
+    api: (path: string, init: RequestInit = {}) =>
+      fetch(`${apiUrl}${path}`, {
+        ...init,
+        headers: { authorization: `Bearer ${accessToken}`, ...init.headers },
+      }),
     directory,
     controller,
     target,

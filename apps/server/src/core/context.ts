@@ -2,10 +2,12 @@ import type { FastifyBaseLogger } from "fastify";
 import type { Database } from "./db.js";
 import type { RemoteClient } from "./remote.js";
 import type { TestExecutionObserver } from "./test-execution-observer.js";
+import type { TestMessageObserver } from "./test-message-observer.js";
 export interface AppContext {
   db: Database;
   gateway: RemoteClient;
   agent: RemoteClient;
   log: FastifyBaseLogger;
   testExecutionObserver?: TestExecutionObserver;
+  testMessageObserver?: TestMessageObserver;
 }
