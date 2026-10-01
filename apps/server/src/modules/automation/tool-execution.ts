@@ -375,10 +375,7 @@ export class AgentTools {
         )
       ).rows[0];
       if (Date.now() >= deadline) break;
-      if (
-        account &&
-        ["suspended", "session_expired"].includes(account.status)
-      )
+      if (account && ["suspended", "session_expired"].includes(account.status))
         return toolError(
           "SEND_FAILED",
           "The sending account entered a terminal state before delivery completed.",
