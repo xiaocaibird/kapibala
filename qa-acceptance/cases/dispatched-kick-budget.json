@@ -34,7 +34,8 @@
       "先固定测试期全部证据与判定；清理时若响应仍pending或run仍在运行，先停止本例自有SUT再释放屏障，清理产生的记录不得倒填产品结果"
     ],
     "expected": [
-      "严格最大60000ms，无最低60秒要求；完整实际活动下界或实际停止决定下界超限为FAIL，上界满足且完整关联方可证明上限，跨界或缺完整性为BLOCKED，不用REST终态/COMMIT时间替代决定",
+      "严格最大60000ms，无最低60秒要求；任何可信实际活动下界超限先记FAIL；只有完整连续active/terminal单epoch才把创建至实际停止决定区间用于预算判定，不能把含暂停的在线段当活动时间；跨界或缺完整性为BLOCKED，不用REST终态/COMMIT时间替代决定",
+      "含recovery-paused或continuous=false时，先保留已证实际活动下界/迟派发等独立FAIL，再将本专项预算完整性记BLOCKED；knownStrongRecoveryObservation原样保留暂停。共享A5.8强恢复检查及历史FAIL不改，本例没有执行重启恢复，不能把该观察误标新预算FAIL或豁免原强恢复义务",
       "必须真实命中已派发POST504、已落地一次效果、同一次确认GET未返回跨越真实决定；未派发、成员读取归属不清、错过活动窗口或确认提前普通超时均不能充当组合覆盖",
       "不能因结果未获确认而虚构kick失败，也不能重审计或重复派发；真实效果由QA外账本确认，不把QA知道的效果作为新增远端结果保证传给SUT",
       "responseClosedBeforeFinish只证明对端在QA释放前关闭；缺取消来源事件作为细项BLOCKED记录，不无根据声明abort原因，也不抹已得到的活动/无重放结论",
@@ -54,7 +55,7 @@
       "控制器真实进程/版本/token归属、真实拒绝attempt、原run创建/连续epoch/全部raw活动与生命周期、实际decision与同attemptCOMMIT",
       "各阶段QA观察包围时间、公开run完整采样、首次POST与精确确认GET ID/实际504发送/响应准备及close/finish、独立网关真实效果与成员状态；2秒内效果观察上界证明未破坏远端收敛前提",
       "Gateway真实父单调时钟接收/关闭/完成账本及clockDomain、两份原样snapshotMeasured、实际app PID/start/clock来源、offset交集与decision映射区间；这些字段仅QA账本，不发wire、不改变桩行为",
-      "原Agent/audit请求、未知说明、有限后观察与清理前后分离快照；已得FAIL、场景BLOCKED、取消原因细项与二实例NOT_RUN分别记录"
+      "原Agent/audit请求、未知说明、有限后观察与清理前后分离快照；已得FAIL、场景BLOCKED、knownStrongRecoveryObservation、取消原因细项与二实例NOT_RUN分别记录"
     ],
     "cleanup": [
       "仅停止本例QaEnvironment拥有的SUT；必要时在放行仍pending响应前停止，避免清理创造确认成功",
@@ -64,7 +65,7 @@
       "state": "script-ready",
       "owner": "QA",
       "details": [
-        "仅独立脚本建设与工具静态校验，尚未对产品执行；真实请求/活动交叉是否命中由后续授权运行决定",
+        "QA源60cd3dda117b9b38906902458175cd81bd42212a已单次执行，run2026-10-01T16-42-20.128Z-67fb4dd4原始FAIL/证据不改；本次仅纠正预算专项与强恢复的判定范围，工具校验后尚未对产品复跑",
         "本例通过也仅支持已实际发生的单实例交叉窗口；原已签报告及未执行快照保留，不继承开发自测或历史PASS"
       ]
     }

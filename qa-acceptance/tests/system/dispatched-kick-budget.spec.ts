@@ -59,6 +59,7 @@ test('[INT-KICK-BUDGET-001] original active budget bounds an already dispatched 
   let windowClosedBeforeTerminal = false,
     decisionObservedWithPendingConfirmation = false;
   let lifecycleVerdict: unknown;
+  let knownStrongRecoveryObservation: Record<string, unknown> | undefined;
   let mappedConfirmationBoundary: Record<string, unknown> | undefined;
   const add = (list: string[], value: string) => {
     if (!list.includes(value)) list.push(value);
@@ -142,6 +143,18 @@ test('[INT-KICK-BUDGET-001] original active budget bounds an already dispatched 
   const budgetChecks = (complete: boolean): void => {
     const actual = activity?.latest?.events ?? [];
     const life = lifecycle?.latest?.events ?? [];
+    const paused = actual.filter((event) => event.activityState === 'recovery-paused');
+    if (paused.length) {
+      knownStrongRecoveryObservation = {
+        requirement: 'R-A5-11 / original A5.8',
+        observation: 'recovery-paused',
+        events: paused,
+        historicalDisposition: 'UNCHANGED',
+        thisScenarioRecoveryExecution: 'NOT_RUN',
+        scope:
+          '本例无重启；原强恢复FAIL不豁免、不重新签通过。已观察的暂停单独保留，不能借共享强恢复断言冒称本专项预算超限。',
+      };
+    }
     check('dispatch after actual stop', () => assertNoDispatchAfterStop(life));
     for (const event of actual) {
       if (!event.includesUnsavedTail || !event.activeElapsedMs) continue;
@@ -154,6 +167,35 @@ test('[INT-KICK-BUDGET-001] original active budget bounds an already dispatched 
       });
     }
     if (complete) {
+      // Check any proved actual-activity lower-bound violation above FIRST.
+      // The shared helpers also enforce A5.8 and assume uninterrupted activity
+      // before translating creation-to-decision elapsed time into this budget.
+      // Do not suppress their assertions or edit away the pause. Gate that
+      // assumption locally and retain the original recovery evidence separately.
+      const measured = actual.filter((event) =>
+        ['activity-checkpoint', 'activity-terminal'].includes(event.kind),
+      );
+      const epochs = new Set(measured.flatMap((event) => event.epochIds ?? []));
+      if (
+        !measured.length ||
+        paused.length ||
+        epochs.size !== 1 ||
+        !measured.some((event) => event.kind === 'activity-terminal') ||
+        !measured.every(
+          (event) =>
+            event.includesUnsavedTail === true &&
+            event.epochObservation?.continuous === true &&
+            event.epochObservation.startSource === 'run-creation' &&
+            event.epochIds?.length === 1 &&
+            ['active', 'terminal'].includes(String(event.activityState)),
+        )
+      ) {
+        add(
+          missing,
+          '预算完整性：缺从真实创建至终止的完整连续active/terminal单epoch，或包含recovery-paused/continuous=false；不得把创建至决定的在线段当活动时间，已证实际活动下界超限仍优先FAIL',
+        );
+        return;
+      }
       check('whole original activity', () =>
         assertSingleEpochActivityBudget(
           actual,
@@ -685,6 +727,7 @@ test('[INT-KICK-BUDGET-001] original active budget bounds an already dispatched 
       decisionObservedWithPendingConfirmation,
       calibrations,
       mappedConfirmationBoundary,
+      knownStrongRecoveryObservation,
       failures,
       missing,
       primary: primary ? String(primary) : null,
