@@ -212,6 +212,7 @@ export async function createObservationController<R extends LeaseRequest>({
       });
       const registered = await locate(target);
       return {
+        protocol,
         binding: registered.binding,
         capabilities: await bridgeRequest<string[]>(
           registered,

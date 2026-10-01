@@ -135,6 +135,19 @@ test("MO01 production entry has no message bridge even with explicit QA variable
 });
 test("MO02 committed receipt survives exact pre-business SIGKILL; old lease cannot control reused API", async (t) => {
   const f = await fixture(t);
+  const target = f.target();
+  const caps = await f.request(
+    "GET",
+    "/qa/message/v1/capabilities?" +
+      new URLSearchParams({ ...target, pid: String(target.pid) }),
+  );
+  assert.equal(caps.status, 200);
+  assert.equal((caps.value as { protocol: string }).protocol, protocol);
+  assert.equal(
+    (caps.value as { binding: { observedOwnerToken: string } }).binding
+      .observedOwnerToken,
+    f.token,
+  );
   await f.seed();
   const lease = await f.arm("receipt-committed-before-business");
   await f.emit();
