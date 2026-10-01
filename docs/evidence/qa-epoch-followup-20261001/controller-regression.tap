@@ -1,0 +1,93 @@
+TAP version 13
+# Subtest: MO01 production entry has no message bridge even with explicit QA variables
+ok 1 - MO01 production entry has no message bridge even with explicit QA variables
+  ---
+  duration_ms: 498.58
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_a456546dfb2f4135ad8685d49dd61b76; revision e6a90b416bb8854b51f727ea35d1768af480810c; guardian 43117; API http://127.0.0.1:49573; controller http://127.0.0.1:49572
+# Subtest: MO02 committed receipt survives exact pre-business SIGKILL; old lease cannot control reused API
+ok 2 - MO02 committed receipt survives exact pre-business SIGKILL; old lease cannot control reused API
+  ---
+  duration_ms: 1047.89175
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_563cda10aa8443708ddc7351d1211944; revision e6a90b416bb8854b51f727ea35d1768af480810c; guardian 43124; API http://127.0.0.1:49613; controller http://127.0.0.1:49612
+# {"case":"MO02","held":{"protocol":"qa-message-observation/1","leaseId":"39934346-f930-4906-95b7-3a44cd57e5ac","state":"held","expiresAt":"2026-10-01T13:30:07.808Z","binding":{"apiUrl":"http://127.0.0.1:49613","revision":"e6a90b416bb8854b51f727ea35d1768af480810c","pid":43124,"observedOwnerToken":"<redacted>"},"correlation":{"clientMsgId":"client-a","msgId":"remote-a","eventId":"701"},"events":[{"seq":1,"at":"2026-10-01T13:29:57.814Z","kind":"window-held","phase":"receipt-committed-before-business","attemptId":"575e5c22-c198-44fe-a7f0-41a8dbf0cf1e","clientMsgId":"client-a","msgId":"remote-a","eventId":"701","observedAt":"2026-10-01T13:29:57.812Z","receiptObservedAt":"2026-10-01T13:29:57.812Z","instancePid":43124,"databaseIdentity":"23edebdd74a047e8539fb98bf2caea07a937820427a596ad28c4d14b99894908","localBoundary":"receipt-autocommit-confirmed-business-not-started","receiptPresentAtProbe":true,"coverage":{"scope":"bound-instance","allDatabaseWritersProven":false}}],"snapshotProvenance":{"source":"live-bridge","applicationPid":43125,"applicationStarted":"Thu Oct  1 21:29:57 2026"}},"firstPersisted":"2026-10-01T13:29:57.812Z","after":{"delivery_status":"sent","message_sent_observed_at":"2026-10-01T13:29:57.812Z","timeout_at":null},"interpretation":"Developer exact-window check, not a QA product result."}
+# Subtest: MO03 pre-INSERT window has no receipt; after SIGKILL replay cannot prove original physical timestamp
+ok 3 - MO03 pre-INSERT window has no receipt; after SIGKILL replay cannot prove original physical timestamp
+  ---
+  duration_ms: 865.096792
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_e4ffd38026c24805aeb967556121586e; revision e6a90b416bb8854b51f727ea35d1768af480810c; guardian 43443; API http://127.0.0.1:49683; controller http://127.0.0.1:49682
+# {"case":"MO03-known-pre-save-limit","held":{"protocol":"qa-message-observation/1","leaseId":"b1acd6dd-0ead-4981-8902-51fa3ffa5723","state":"held","expiresAt":"2026-10-01T13:30:08.769Z","binding":{"apiUrl":"http://127.0.0.1:49683","revision":"e6a90b416bb8854b51f727ea35d1768af480810c","pid":43443,"observedOwnerToken":"<redacted>"},"correlation":{"clientMsgId":"client-a","msgId":"remote-a","eventId":"701"},"events":[{"seq":1,"at":"2026-10-01T13:29:58.774Z","kind":"window-held","phase":"receipt-before-commit","attemptId":"42de90c0-2a2a-429a-9c52-f806c75daf8d","clientMsgId":"client-a","msgId":"remote-a","eventId":"701","observedAt":"2026-10-01T13:29:58.772Z","instancePid":43443,"databaseIdentity":"ec3e7499a4e2b37ea4b7feadcf81c15c548c1b2b7f015b94d4fdfa4b8a1ac8d3","localBoundary":"receipt-insert-not-issued","receiptPresentAtProbe":false,"receiptObservedAt":null,"coverage":{"scope":"bound-instance","allDatabaseWritersProven":false}}],"snapshotProvenance":{"source":"live-bridge","applicationPid":43444,"applicationStarted":"Thu Oct  1 21:29:58 2026"}},"replayedReceipt":"2026-10-01T13:29:59.128Z","interpretation":"Original physical observation was not durable; this controller exposes the limit, not a strict recovery pass. Scope is this bound instance, no all-writers claim."}
+# Subtest: MO04 real 504 is captured before local save; delay does not reset timeout timestamp
+ok 4 - MO04 real 504 is captured before local save; delay does not reset timeout timestamp
+  ---
+  duration_ms: 892.9885
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_34b888bb8fea4413ae9c66e1d60a5974; revision e6a90b416bb8854b51f727ea35d1768af480810c; guardian 43517; API http://127.0.0.1:49742; controller http://127.0.0.1:49741
+# {"case":"MO04","held":{"protocol":"qa-message-observation/1","leaseId":"dc967b88-a08a-4eca-b4c8-bcb673321584","state":"held","expiresAt":"2026-10-01T13:30:09.631Z","binding":{"apiUrl":"http://127.0.0.1:49742","revision":"e6a90b416bb8854b51f727ea35d1768af480810c","pid":43517,"observedOwnerToken":"<redacted>"},"correlation":{"clientMsgId":"client-a"},"events":[{"seq":1,"at":"2026-10-01T13:29:59.650Z","kind":"window-held","phase":"timeout-observed-before-local-save","attemptId":"9f74ce13-2124-414c-a03f-18774999643d","groupId":"g","clientMsgId":"client-a","observedAt":"2026-10-01T13:29:59.649Z","instancePid":43517,"databaseIdentity":"c8fb90ddc38ced253bf2b17af37cdea14f78d43a923c6caaa73a5d7b9b7143a6","localBoundary":"504-recognized-local-result-save-not-started","receiptPresentAtProbe":false,"receiptObservedAt":null,"coverage":{"scope":"bound-instance","allDatabaseWritersProven":false}}],"snapshotProvenance":{"source":"live-bridge","applicationPid":43518,"applicationStarted":"Thu Oct  1 21:29:59 2026"}},"storedTimeout":"2026-10-01T13:29:59.649Z"}
+# Subtest: MO05 TTL releases real held receipt; bad target and duplicate UUID cannot retarget or extend gate
+ok 5 - MO05 TTL releases real held receipt; bad target and duplicate UUID cannot retarget or extend gate
+  ---
+  duration_ms: 5423.558584
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_5fe8c8413adf46c8bcf96cca0ffd6e16; revision e6a90b416bb8854b51f727ea35d1768af480810c; guardian 43569; API http://127.0.0.1:49780; controller http://127.0.0.1:49779
+# Subtest: RT01 default main exposes no runtime controller and binding requires real guardian/port/revision
+ok 6 - RT01 default main exposes no runtime controller and binding requires real guardian/port/revision
+  ---
+  duration_ms: 340.928333
+  type: 'test'
+  ...
+# Developer UUID DB /kapibala_test_ebba2ca60e6549e7990537cd01bc5bfc; revision e6a90b416bb8854b51f727ea35d1768af480810c; guardian 43645; API http://127.0.0.1:49849
+# Subtest: RT02 real savepoint fault preserves original transaction and observes newer HTTP waiting
+ok 7 - RT02 real savepoint fault preserves original transaction and observes newer HTTP waiting
+  ---
+  duration_ms: 594.775042
+  type: 'test'
+  ...
+# Developer UUID DB /kapibala_test_95abce9b18f34f20bbebcbf80b03833a; revision e6a90b416bb8854b51f727ea35d1768af480810c; guardian 43649; API http://127.0.0.1:49881
+# {"protocol":"qa-runtime-observation/1","leaseId":"97ac922f-5d50-4450-87e8-3fac5ca08b38","state":"armed","expiresAt":"2026-10-01T13:30:26.563Z","binding":{"apiUrl":"http://127.0.0.1:49881","revision":"e6a90b416bb8854b51f727ea35d1768af480810c","pid":43649,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"8f2ed07c-87de-4817-8251-c217a9622dec"},"events":[{"seq":1,"at":"2026-10-01T13:30:06.592Z","kind":"remote-success","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"8f2ed07c-87de-4817-8251-c217a9622dec"},"attemptId":"cdfc162e-4485-416a-8359-4c130c603270","instancePid":43649,"requestId":"f9bd1a57-ff6d-4a83-ae59-9eddf2f3e85e","transactionId":"491bd0ba-5f7a-4dbd-814a-06117518e341"},{"seq":2,"at":"2026-10-01T13:30:06.595Z","kind":"local-save-failed","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"8f2ed07c-87de-4817-8251-c217a9622dec"},"attemptId":"cdfc162e-4485-416a-8359-4c130c603270","instancePid":43649,"requestId":"f9bd1a57-ff6d-4a83-ae59-9eddf2f3e85e","transactionId":"491bd0ba-5f7a-4dbd-814a-06117518e341","recoverableInOriginalTransaction":true},{"seq":3,"at":"2026-10-01T13:30:06.595Z","kind":"local-retry-held","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"8f2ed07c-87de-4817-8251-c217a9622dec"},"attemptId":"cdfc162e-4485-416a-8359-4c130c603270","instancePid":43649,"requestId":"f9bd1a57-ff6d-4a83-ae59-9eddf2f3e85e","transactionId":"491bd0ba-5f7a-4dbd-814a-06117518e341"},{"seq":4,"at":"2026-10-01T13:30:06.631Z","kind":"newer-account-intent-waiting","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"8f2ed07c-87de-4817-8251-c217a9622dec"},"attemptId":"cdfc162e-4485-416a-8359-4c130c603270","instancePid":43649,"requestId":"f9bd1a57-ff6d-4a83-ae59-9eddf2f3e85e","transactionId":"491bd0ba-5f7a-4dbd-814a-06117518e341","waitingIntent":{"requestId":"e856d169-c5d9-4db2-8c92-714da38cba2d","accountId":"account-1","expectedFrom":"online","to":"disconnected","waitingForTransactionId":"491bd0ba-5f7a-4dbd-814a-06117518e341"}},{"seq":5,"at":"2026-10-01T13:30:06.667Z","kind":"local-save-committed","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"8f2ed07c-87de-4817-8251-c217a9622dec"},"attemptId":"cdfc162e-4485-416a-8359-4c130c603270","instancePid":43649,"requestId":"f9bd1a57-ff6d-4a83-ae59-9eddf2f3e85e","transactionId":"491bd0ba-5f7a-4dbd-814a-06117518e341","commitBoundary":"outer-commit-confirmed"}],"snapshotProvenance":{"source":"live-bridge","applicationPid":43650,"applicationStarted":"Thu Oct  1 21:30:06 2026"}}
+# Subtest: RT03 persistent SQL failure exhausts native retries, real rollback, no automatic remote replay
+ok 8 - RT03 persistent SQL failure exhausts native retries, real rollback, no automatic remote replay
+  ---
+  duration_ms: 743.450292
+  type: 'test'
+  ...
+# Developer UUID DB /kapibala_test_2f133e72999e43f5b04db936e0fb201b; revision e6a90b416bb8854b51f727ea35d1768af480810c; guardian 43732; API http://127.0.0.1:49927
+# {"protocol":"qa-runtime-observation/1","leaseId":"836faa0b-bcc1-4d08-bca9-9d85d90d0ff4","state":"armed","expiresAt":"2026-10-01T13:30:27.066Z","binding":{"apiUrl":"http://127.0.0.1:49927","revision":"e6a90b416bb8854b51f727ea35d1768af480810c","pid":43732,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"c378c7d3-eb7a-448e-bd7f-3146d9292bde"},"events":[{"seq":1,"at":"2026-10-01T13:30:07.100Z","kind":"remote-success","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"c378c7d3-eb7a-448e-bd7f-3146d9292bde"},"attemptId":"12bbaf56-efb1-4f97-ba4d-ec010fada10c","instancePid":43732,"requestId":"0affb921-794e-4dd4-b0a7-c991bd23e499","transactionId":"4e7004df-5bfc-4479-ba96-96ef28f25663"},{"seq":2,"at":"2026-10-01T13:30:07.103Z","kind":"local-save-failed","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"c378c7d3-eb7a-448e-bd7f-3146d9292bde"},"attemptId":"12bbaf56-efb1-4f97-ba4d-ec010fada10c","instancePid":43732,"requestId":"0affb921-794e-4dd4-b0a7-c991bd23e499","transactionId":"4e7004df-5bfc-4479-ba96-96ef28f25663","recoverableInOriginalTransaction":true},{"seq":3,"at":"2026-10-01T13:30:07.133Z","kind":"local-save-failed","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"c378c7d3-eb7a-448e-bd7f-3146d9292bde"},"attemptId":"12bbaf56-efb1-4f97-ba4d-ec010fada10c","instancePid":43732,"requestId":"0affb921-794e-4dd4-b0a7-c991bd23e499","transactionId":"4e7004df-5bfc-4479-ba96-96ef28f25663","recoverableInOriginalTransaction":true},{"seq":4,"at":"2026-10-01T13:30:07.186Z","kind":"local-save-failed","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"c378c7d3-eb7a-448e-bd7f-3146d9292bde"},"attemptId":"12bbaf56-efb1-4f97-ba4d-ec010fada10c","instancePid":43732,"requestId":"0affb921-794e-4dd4-b0a7-c991bd23e499","transactionId":"4e7004df-5bfc-4479-ba96-96ef28f25663","recoverableInOriginalTransaction":true},{"seq":5,"at":"2026-10-01T13:30:07.186Z","kind":"transaction-rolled-back","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"c378c7d3-eb7a-448e-bd7f-3146d9292bde"},"attemptId":"12bbaf56-efb1-4f97-ba4d-ec010fada10c","instancePid":43732,"requestId":"0affb921-794e-4dd4-b0a7-c991bd23e499","transactionId":"4e7004df-5bfc-4479-ba96-96ef28f25663","rollbackBoundary":"outer-rollback-confirmed"}],"snapshotProvenance":{"source":"live-bridge","applicationPid":43733,"applicationStarted":"Thu Oct  1 21:30:06 2026"}}
+# Subtest: RT04 module diagnostics follow real fail, before-start gate, running, success and release
+ok 9 - RT04 module diagnostics follow real fail, before-start gate, running, success and release
+  ---
+  duration_ms: 818.387
+  type: 'test'
+  ...
+# Developer UUID DB /kapibala_test_d5d268ae640c4c17942ad8a8ad33fb9f; revision e6a90b416bb8854b51f727ea35d1768af480810c; guardian 43791; API http://127.0.0.1:49965
+# {"events":[{"seq":1,"at":"2026-10-01T13:30:07.924Z","kind":"module-failed","correlation":{"kind":"module","module":"gateway","attemptLabel":"f56bc1dc-a704-49c6-812a-20f9f2ac2612"},"attemptId":"30ddc218-3e24-41d7-a52a-4d72f5b28afe","instancePid":43791,"faultMarker":"qa-runtime-developer-check"},{"seq":2,"at":"2026-10-01T13:30:08.024Z","kind":"module-before-next-held","correlation":{"kind":"module","module":"gateway","attemptLabel":"f56bc1dc-a704-49c6-812a-20f9f2ac2612"},"attemptId":"85476917-a61f-4e35-94d6-17c881f19cc6","instancePid":43791,"tickBoundary":"before-activity-and-diagnostics-start"},{"seq":3,"at":"2026-10-01T13:30:08.039Z","kind":"module-running-held","correlation":{"kind":"module","module":"gateway","attemptLabel":"f56bc1dc-a704-49c6-812a-20f9f2ac2612"},"attemptId":"85476917-a61f-4e35-94d6-17c881f19cc6","instancePid":43791},{"seq":4,"at":"2026-10-01T13:30:08.073Z","kind":"module-succeeded","correlation":{"kind":"module","module":"gateway","attemptLabel":"f56bc1dc-a704-49c6-812a-20f9f2ac2612"},"attemptId":"85476917-a61f-4e35-94d6-17c881f19cc6","instancePid":43791}],"failed":{"name":"gateway","status":"failed","recovery":"succeeded","ticks":2,"successfulTicks":1,"consecutiveFailures":1,"lastStartedAt":"2026-10-01T13:30:07.924Z","lastCompletedAt":"2026-10-01T13:30:07.924Z","lastSucceededAt":"2026-10-01T13:30:07.827Z","lastFailedAt":"2026-10-01T13:30:07.924Z","lastDurationMs":0.09737499999999955,"runningForMs":null},"running":{"name":"gateway","status":"running","recovery":"succeeded","ticks":3,"successfulTicks":1,"consecutiveFailures":1,"lastStartedAt":"2026-10-01T13:30:08.039Z","lastCompletedAt":"2026-10-01T13:30:07.924Z","lastSucceededAt":"2026-10-01T13:30:07.827Z","lastFailedAt":"2026-10-01T13:30:07.924Z","lastDurationMs":0.09737499999999955,"runningForMs":1.4983330000000024},"done":{"name":"gateway","status":"idle","recovery":"succeeded","ticks":3,"successfulTicks":2,"consecutiveFailures":0,"lastStartedAt":"2026-10-01T13:30:08.039Z","lastCompletedAt":"2026-10-01T13:30:08.073Z","lastSucceededAt":"2026-10-01T13:30:08.073Z","lastFailedAt":"2026-10-01T13:30:07.924Z","lastDurationMs":34.31654100000003,"runningForMs":null}}
+# Subtest: RT05 UUID replay, lease conflicts, independent TTL release, body validation and old instance history
+ok 10 - RT05 UUID replay, lease conflicts, independent TTL release, body validation and old instance history
+  ---
+  duration_ms: 5872.504042
+  type: 'test'
+  ...
+# Developer UUID DB /kapibala_test_3aa2f338dd7e4bb39a6c457a2a5b0a61; revision e6a90b416bb8854b51f727ea35d1768af480810c; guardian 44061; API http://127.0.0.1:50005
+# {"old":{"protocol":"qa-runtime-observation/1","leaseId":"efcdb2cb-6adb-48f4-b9b0-621375e94306","state":"released","expiresAt":"2026-10-01T13:30:33.747Z","binding":{"apiUrl":"http://127.0.0.1:50005","revision":"e6a90b416bb8854b51f727ea35d1768af480810c","pid":44061,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"account","accountId":"account-2","operation":"connect","intentId":"c37873e1-6c27-4ad5-83de-86cf858dc270"},"events":[],"snapshotProvenance":{"source":"retained-after-process-exit","applicationPid":44062,"applicationStarted":"Thu Oct  1 21:30:08 2026"}},"current":{"protocol":"qa-runtime-observation/1","leaseId":"9eb556ae-1bf2-4c70-9509-6678315ca535","state":"armed","expiresAt":"2026-10-01T13:30:34.116Z","binding":{"apiUrl":"http://127.0.0.1:50005","revision":"e6a90b416bb8854b51f727ea35d1768af480810c","pid":44916,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"account","accountId":"account-2","operation":"connect","intentId":"2e045e23-8c05-4f3d-8cb9-5d8a16950c5e"},"events":[],"snapshotProvenance":{"source":"live-bridge","applicationPid":44917,"applicationStarted":"Thu Oct  1 21:30:13 2026"}}}
+# Subtest: RT06 actual module operation failure after advance is never reported as success
+ok 11 - RT06 actual module operation failure after advance is never reported as success
+  ---
+  duration_ms: 1.010292
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 17448.520709
