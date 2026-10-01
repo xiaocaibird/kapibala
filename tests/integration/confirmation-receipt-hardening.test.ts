@@ -249,7 +249,10 @@ test("CR01 migration 008 is atomic and repeatable, preserving actual old clocks 
     )
   ).rows;
   await migrate(f.db);
-  assert.equal(await assertSchemaCurrent(f.db), 8);
+  assert.equal(
+    await assertSchemaCurrent(f.db),
+    (await loadMigrations()).at(-1)!.version,
+  );
   assert.deepEqual(
     (
       await f.db.query(

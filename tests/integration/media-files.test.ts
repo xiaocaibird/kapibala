@@ -165,6 +165,35 @@ async function fixture(
   };
 }
 
+test("C1 idle ticks leave execution capacity free, while due downloads and cleanup still acquire the real lock", async (t) => {
+  const f = await fixture(t);
+  const keys: string[] = [];
+  const acquire = f.db.withLock.bind(f.db);
+  f.db.withLock = async (key, work) => {
+    keys.push(key);
+    return acquire(key, work);
+  };
+  await f.worker.tick();
+  assert.deepEqual(keys, []);
+  await f.inbound("later", "/media/ok");
+  await f.db.query(
+    "UPDATE media_files SET next_attempt_at=now()+interval '1 hour'",
+  );
+  await f.worker.tick();
+  assert.deepEqual(keys, []);
+  await f.db.query("UPDATE media_files SET next_attempt_at=now()");
+  await f.worker.tick();
+  assert.deepEqual(keys, ["media:files"]);
+  assert.equal((await f.row("later")).state, "ready");
+  await f.worker.tick();
+  assert.deepEqual(keys, ["media:files"]);
+  await f.expire();
+  await new MediaFiles(f.ctx, f.settings).tick();
+  assert.deepEqual(keys, ["media:files", "media:files"]);
+  assert.equal((await f.row("later")).state, "deleted");
+  assert.deepEqual(await readdir(f.directory), []);
+});
+
 test("C1 validates gateway media URLs and the default retention", () => {
   assert.equal(mediaOptions().retentionDays, 30);
   assert.equal(

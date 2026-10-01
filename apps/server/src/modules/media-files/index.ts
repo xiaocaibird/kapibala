@@ -189,6 +189,13 @@ export class MediaFiles {
       );
   }
   async tick(): Promise<void> {
+    // Empty polling must not briefly consume a shared execution slot. This is
+    // only a hint: the lock holder below re-reads all work before changing it.
+    const due = await this.ctx.db.query(
+      "SELECT 1 FROM media_files WHERE (state IN ('pending','downloading') AND next_attempt_at<=now()) OR ($1::boolean AND ((state='deleting' AND next_attempt_at<=now()) OR (state='ready' AND downloaded_at < now()-$2*interval '1 day'))) LIMIT 1",
+      [Date.now() >= this.nextCleanup, this.options.retentionDays],
+    );
+    if (!due.rowCount) return;
     await this.ctx.db.withLock("media:files", async () => {
       const files = await this.ctx.db.query<MediaRow>(
         "SELECT * FROM media_files WHERE state IN ('pending','downloading') AND next_attempt_at<=now() ORDER BY next_attempt_at,id LIMIT 2",
