@@ -1,0 +1,4239 @@
+[
+  {
+    "id": "SR-C1-01",
+    "title": "媒体真实下载与路径",
+    "source": "requirements/sources/original-interview-question.md",
+    "expectation": "真实 message.mediaUrl 对应字节下载至本地，消息 localFilePath 指向该真实文件；状态字符串不替代字节证据。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MEDIA"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c-组（选做）",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c1-media-files.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 34,
+        "endLine": 41,
+        "section": "### C1：媒体下载、保留与清理"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c1-media-files.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical interface; final candidate binding still pending; implementation mechanism is not a new business guarantee."
+      }
+    ]
+  },
+  {
+    "id": "SR-C1-02",
+    "title": "可配保留期",
+    "source": "requirements/sources/original-interview-question.md",
+    "expectation": "保留天数可配置且默认30天；计时起点按冻结公开接入说明，不自行发明参数边界或调度SLA。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MEDIA"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c-组（选做）",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c1-media-files.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 34,
+        "endLine": 41,
+        "section": "### C1：媒体下载、保留与清理"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c1-media-files.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical interface; final candidate binding still pending; implementation mechanism is not a new business guarantee."
+      }
+    ]
+  },
+  {
+    "id": "SR-C1-03",
+    "title": "删除与记录一致",
+    "source": "requirements/sources/original-interview-question.md",
+    "expectation": "删除文件后不能留下指向已删文件的消息路径；并发读取/删除采用可观察一致性断言，不自造数据库字段。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MEDIA"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c-组（选做）",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c1-media-files.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 34,
+        "endLine": 41,
+        "section": "### C1：媒体下载、保留与清理"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c1-media-files.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical interface; final candidate binding still pending; implementation mechanism is not a new business guarantee."
+      }
+    ]
+  },
+  {
+    "id": "SR-C1-04",
+    "title": "运行中引用保护",
+    "source": "requirements/sources/original-interview-question.md",
+    "expectation": "仍被运行中的 Agent run 使用的文件不删；保护成立和解除须有真实引用/运行状态证据。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MEDIA"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c-组（选做）",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c1-media-files.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 34,
+        "endLine": 41,
+        "section": "### C1：媒体下载、保留与清理"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c1-media-files.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical interface; final candidate binding still pending; implementation mechanism is not a new business guarantee."
+      }
+    ]
+  },
+  {
+    "id": "SR-C1-05",
+    "title": "失败与恢复",
+    "source": "requirements/sources/original-interview-question.md",
+    "expectation": "缺源/过期/传输失败及重启下按原下载与恢复义务检查实际字节和记录，不把永久失败或未知伪造成功。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MEDIA"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c-组（选做）",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c1-media-files.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 34,
+        "endLine": 41,
+        "section": "### C1：媒体下载、保留与清理"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c1-media-files.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical interface; final candidate binding still pending; implementation mechanism is not a new business guarantee."
+      }
+    ]
+  },
+  {
+    "id": "SR-C1-06",
+    "title": "重复并发一致性",
+    "source": "requirements/sources/original-interview-question.md",
+    "expectation": "重复媒体事件及并发处理不导致错误消息身份、错误字节或悬空路径；不额外要求下载网络请求恰好一次。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MEDIA"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c-组（选做）",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c1-media-files.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 34,
+        "endLine": 41,
+        "section": "### C1：媒体下载、保留与清理"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c1-media-files.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical interface; final candidate binding still pending; implementation mechanism is not a new business guarantee."
+      }
+    ]
+  },
+  {
+    "id": "SR-C1-07",
+    "title": "媒体目录接入",
+    "source": "requirements/sources/original-interview-question.md",
+    "expectation": "显式私有持久绝对 MEDIA_DIR；同DB重启保留目录，同DB多实例必须共享同一物理目录。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MEDIA"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c-组（选做）",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c1-media-files.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 34,
+        "endLine": 41,
+        "section": "### C1：媒体下载、保留与清理"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c1-media-files.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical interface; final candidate binding still pending; implementation mechanism is not a new business guarantee."
+      }
+    ]
+  },
+  {
+    "id": "SR-C1-08",
+    "title": "媒体迁移兼容",
+    "source": "requirements/sources/original-interview-question.md",
+    "expectation": "最终候选迁移、schema与历史消息兼容；历史009/schema9只是待核对接入基线，不固定未来最大schema。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MEDIA"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c-组（选做）",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c1-media-files.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 34,
+        "endLine": 41,
+        "section": "### C1：媒体下载、保留与清理"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c1-media-files.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical interface; final candidate binding still pending; implementation mechanism is not a new business guarantee."
+      }
+    ]
+  },
+  {
+    "id": "SR-C2-01",
+    "title": "独立模型协议",
+    "source": "requirements/sources/second-round-qa-intake-20261002.md",
+    "expectation": "独立服务保持原2.2 turn/audit协议，合法/非法输入输出按公开协议处理；独立替身不可偷偷增强协议保证。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MODEL"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c2：独立真实模型适配服务",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c2-gemini-agent.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 79,
+        "endLine": 143,
+        "section": "### 2.2 Agent 服务"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 255,
+        "endLine": 271,
+        "section": "#### A5 Agent 接入"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 42,
+        "endLine": 51,
+        "section": "### C2：独立真实模型适配服务"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c2-gemini-agent.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical service contract; original recovery/time requirements unchanged."
+      }
+    ]
+  },
+  {
+    "id": "SR-C2-02",
+    "title": "显式切换和默认隔离",
+    "source": "requirements/sources/second-round-qa-intake-20261002.md",
+    "expectation": "后端仅显式AGENT_URL切换；默认隔离流程保持模拟服务，不因本机key存在自动读取或调用。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MODEL"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c2：独立真实模型适配服务",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c2-gemini-agent.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 79,
+        "endLine": 143,
+        "section": "### 2.2 Agent 服务"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 255,
+        "endLine": 271,
+        "section": "#### A5 Agent 接入"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 42,
+        "endLine": 51,
+        "section": "### C2：独立真实模型适配服务"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c2-gemini-agent.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical service contract; original recovery/time requirements unchanged."
+      }
+    ]
+  },
+  {
+    "id": "SR-C2-03",
+    "title": "会话历史与工具续接",
+    "source": "requirements/sources/second-round-qa-intake-20261002.md",
+    "expectation": "同runId会话延续，真实tool_result续接和触发历史不丢失/错配；工具语义来自原2.2/A5。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MODEL"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c2：独立真实模型适配服务",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c2-gemini-agent.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 79,
+        "endLine": 143,
+        "section": "### 2.2 Agent 服务"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 255,
+        "endLine": 271,
+        "section": "#### A5 Agent 接入"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 42,
+        "endLine": 51,
+        "section": "### C2：独立真实模型适配服务"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c2-gemini-agent.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical service contract; original recovery/time requirements unchanged."
+      }
+    ]
+  },
+  {
+    "id": "SR-C2-04",
+    "title": "完成响应复用",
+    "source": "requirements/sources/second-round-qa-intake-20261002.md",
+    "expectation": "重放已完成响应不能多推进一轮或产生新的模型推理；按可靠请求身份验证，不假设未公开的重放键。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MODEL"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c2：独立真实模型适配服务",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c2-gemini-agent.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 79,
+        "endLine": 143,
+        "section": "### 2.2 Agent 服务"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 255,
+        "endLine": 271,
+        "section": "#### A5 Agent 接入"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 42,
+        "endLine": 51,
+        "section": "### C2：独立真实模型适配服务"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c2-gemini-agent.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical service contract; original recovery/time requirements unchanged."
+      }
+    ]
+  },
+  {
+    "id": "SR-C2-05",
+    "title": "错误与未决恢复",
+    "source": "requirements/sources/second-round-qa-intake-20261002.md",
+    "expectation": "模型错误、未决轮、重启/硬崩溃维持原恢复判据；死owner.lock需核验原进程及目录归属，不盲重发不确定远端请求，也不把暂停当全面恢复PASS。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MODEL"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c2：独立真实模型适配服务",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c2-gemini-agent.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 79,
+        "endLine": 143,
+        "section": "### 2.2 Agent 服务"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 255,
+        "endLine": 271,
+        "section": "#### A5 Agent 接入"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 42,
+        "endLine": 51,
+        "section": "### C2：独立真实模型适配服务"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c2-gemini-agent.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical service contract; original recovery/time requirements unchanged."
+      }
+    ]
+  },
+  {
+    "id": "SR-C2-06",
+    "title": "后端安全边界",
+    "source": "requirements/sources/second-round-qa-intake-20261002.md",
+    "expectation": "实际工具、审计、权限、幂等、12步及真实活动预算仍由后端保证；适配器不得绕过，P1-04新保护同样适用。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MODEL"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c2：独立真实模型适配服务",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c2-gemini-agent.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 79,
+        "endLine": 143,
+        "section": "### 2.2 Agent 服务"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 255,
+        "endLine": 271,
+        "section": "#### A5 Agent 接入"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 42,
+        "endLine": 51,
+        "section": "### C2：独立真实模型适配服务"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c2-gemini-agent.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical service contract; original recovery/time requirements unchanged."
+      }
+    ]
+  },
+  {
+    "id": "SR-C2-07",
+    "title": "会话目录与秘密",
+    "source": "requirements/sources/second-round-qa-intake-20261002.md",
+    "expectation": "独占私有GEMINI_SESSION_DIR，凭据不进入源码/证据/公开响应；不读取用户密钥配置。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MODEL"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c2：独立真实模型适配服务",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c2-gemini-agent.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 79,
+        "endLine": 143,
+        "section": "### 2.2 Agent 服务"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 255,
+        "endLine": 271,
+        "section": "#### A5 Agent 接入"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 42,
+        "endLine": 51,
+        "section": "### C2：独立真实模型适配服务"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c2-gemini-agent.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical service contract; original recovery/time requirements unchanged."
+      }
+    ]
+  },
+  {
+    "id": "SR-C2-08",
+    "title": "真实提供方证据分层",
+    "source": "requirements/sources/second-round-qa-intake-20261002.md",
+    "expectation": "历史provider证据、当前离线协议结果、当前候选真实调用分列；替身通过不等于真实模型接入通过，新付费调用另需授权。",
+    "nature": "selected-original",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-MODEL"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "c2：独立真实模型适配服务",
+    "sources": [
+      "requirements/sources/original-interview-question.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/c2-gemini-agent.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 315,
+        "endLine": 322,
+        "section": "### C 组（选做）"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 79,
+        "endLine": 143,
+        "section": "### 2.2 Agent 服务"
+      },
+      {
+        "path": "requirements/sources/original-interview-question.md",
+        "startLine": 255,
+        "endLine": 271,
+        "section": "#### A5 Agent 接入"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 42,
+        "endLine": 51,
+        "section": "### C2：独立真实模型适配服务"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/c2-gemini-agent.md",
+        "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+        "role": "Public historical service contract; original recovery/time requirements unchanged."
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-01-01",
+    "title": "首轮事实链",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "原要求及批准修改各有版本、开发自测、QA原始结果、残余、责任与去向；不把开发通过替换QA。",
+    "nature": "existing-regression",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-FIRST-ROUND"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "core-closeout",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 48,
+        "endLine": 59,
+        "section": "## P0-01：先结清首轮遗留，保持单一交付事实"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-01-02",
+    "title": "原结果和已决定限制",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "保留原时限/故障证据、FAIL/BLOCKED/未执行和已决定限制，第二轮启动不自动关闭第一轮缺陷或改统计。",
+    "nature": "existing-regression",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-FIRST-ROUND"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "core-closeout",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 48,
+        "endLine": 59,
+        "section": "## P0-01：先结清首轮遗留，保持单一交付事实"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-01-03",
+    "title": "回归与真人边界",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "首轮结果作第二轮变更影响输入；明确待真人体验和上线评估，不重复算新增功能、不代签真人。",
+    "nature": "existing-regression",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-FIRST-ROUND"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "core-closeout",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 48,
+        "endLine": 59,
+        "section": "## P0-01：先结清首轮遗留，保持单一交付事实"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-02-01",
+    "title": "C1C2固定源独立验收",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "C1/C2各有最终组合源、独立用例、实际结果及限制；503项历史开发结果不替代当前执行。",
+    "nature": "delivery-integration",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-DELIVERY"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "optional-acceptance",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 60,
+        "endLine": 71,
+        "section": "## P0-02：验收已实现的 C1/C2，复用 C3"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-02-02",
+    "title": "C3复用完整流程",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "复用既有QA登录→打开群→查看run步骤资产，验证固定候选真实呈现，不另造同名框架或借框架存在判PASS。",
+    "nature": "delivery-integration",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-DELIVERY"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "optional-acceptance",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 60,
+        "endLine": 71,
+        "section": "## P0-02：验收已实现的 C1/C2，复用 C3"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-02-03",
+    "title": "隔离交付可复现",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "独立干净副本安装/配置/迁移/启动/health/核心入口及精确资源清理可复现；包含媒体/session目录、schema与显式Agent地址。",
+    "nature": "delivery-integration",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-DELIVERY"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "optional-acceptance",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 60,
+        "endLine": 71,
+        "section": "## P0-02：验收已实现的 C1/C2，复用 C3"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-02-04",
+    "title": "凭据与评估分层",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "默认无真实付费调用，凭据不进报告；演示升级、业务验收和上线评估分别记录。",
+    "nature": "delivery-integration",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-CANDIDATE",
+      "SR-DEP-DELIVERY"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "optional-acceptance",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 60,
+        "endLine": 71,
+        "section": "## P0-02：验收已实现的 C1/C2，复用 C3"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-03-01",
+    "title": "提交身份绑定",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "提交快照绑定群、账号/会话、文本和草稿修订，旧成功仅清理仍对应本次提交的草稿。",
+    "nature": "approved-enhancement",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "input-protection",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 72,
+        "endLine": 82,
+        "section": "## P0-03：旧回执不能清掉新输入"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-03-02",
+    "title": "编辑ABA保护",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "A等待成功时新B保留；A→B→A仍是新修订，不能只按字符串相等清空。",
+    "nature": "approved-enhancement",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "input-protection",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 72,
+        "endLine": 82,
+        "section": "## P0-03：旧回执不能清掉新输入"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-03-03",
+    "title": "失败未知保留",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "失败保留可编辑输入；受理未知不能假作成功或新增自动重发保证。",
+    "nature": "approved-enhancement",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "input-protection",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 72,
+        "endLine": 82,
+        "section": "## P0-03：旧回执不能清掉新输入"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-03-04",
+    "title": "跨群跨身份隔离",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "切群或身份变化后，旧请求回执不清新上下文草稿。",
+    "nature": "approved-enhancement",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "input-protection",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 72,
+        "endLine": 82,
+        "section": "## P0-03：旧回执不能清掉新输入"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-03-05",
+    "title": "实际关闭入口一致",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "新建序列的×/Escape/取消/实际支持遮罩使用统一未保存保护；不要求原本不存在的关闭入口。",
+    "nature": "approved-enhancement",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "input-protection",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 72,
+        "endLine": 82,
+        "section": "## P0-03：旧回执不能清掉新输入"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-03-06",
+    "title": "保存快照保护",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "保存中关闭和编辑保护不令内容与已提交快照分叉。",
+    "nature": "approved-enhancement",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "input-protection",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 72,
+        "endLine": 82,
+        "section": "## P0-03：旧回执不能清掉新输入"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-03-07",
+    "title": "已有表单回归",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "已有建群/编辑群未保存与保存中保护保持。",
+    "nature": "approved-enhancement",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "input-protection",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 72,
+        "endLine": 82,
+        "section": "## P0-03：旧回执不能清掉新输入"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-04-01",
+    "title": "预检修订失效",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "群/模板/变量等相关修改使旧预检失效，含A→B→A。",
+    "nature": "approved-enhancement",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "target-preview",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 83,
+        "endLine": 91,
+        "section": "## P0-04：确认的目标必须可见且仍然有效"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-04-02",
+    "title": "晚预检不能确认",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "旧请求晚返回不得恢复可确认状态或覆盖当前修订结果。",
+    "nature": "approved-enhancement",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "target-preview",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 83,
+        "endLine": 91,
+        "section": "## P0-04：确认的目标必须可见且仍然有效"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-04-03",
+    "title": "冻结目标摘要",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "确认页展示冻结群名和稳定ID、模板、最终文本、账号角色与相对等待规则，对应实际冻结载荷。",
+    "nature": "approved-enhancement",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "target-preview",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 83,
+        "endLine": 91,
+        "section": "## P0-04：确认的目标必须可见且仍然有效"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-04-04",
+    "title": "显式目标失效",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "已有选择/URL指定群失效时要求重新选择，不静默落到首群。",
+    "nature": "approved-enhancement",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "target-preview",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 83,
+        "endLine": 91,
+        "section": "## P0-04：确认的目标必须可见且仍然有效"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-04-05",
+    "title": "初次默认独立",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "首次默认选择与显式选择失效是不同情形；默认便利不覆盖失效保护。",
+    "nature": "approved-enhancement",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "target-preview",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 83,
+        "endLine": 91,
+        "section": "## P0-04：确认的目标必须可见且仍然有效"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-04-06",
+    "title": "运行时原规则",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "服务端全量预检、冻结提交、角色缺失skipped、限流顺延、排期及运行时校验不变，预览不保证未来账号可用。",
+    "nature": "approved-enhancement",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "target-preview",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 83,
+        "endLine": 91,
+        "section": "## P0-04：确认的目标必须可见且仍然有效"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-05-01",
+    "title": "审计守卫回归",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "仅合法JSON且verdict恰为pass可产生send/kick副作用；fail/无明确结论沿用A5，审计重试不是新step。",
+    "nature": "engineering-deliverable-and-regression",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-GUARDS"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "quality-gates",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 92,
+        "endLine": 102,
+        "section": "## P0-05：少量关键规则有明确入口，也能检出错误实现"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 87,
+        "endLine": 92,
+        "section": "### 托管目标政策及事务职责"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-05-02",
+    "title": "同key幂等回归",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "同run相同send key返回原消息当前状态，后续不再审计/发送；被AUDIT_REJECTED/POLICY_DENIED拒绝不占key。",
+    "nature": "engineering-deliverable-and-regression",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-GUARDS"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "quality-gates",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 92,
+        "endLine": 102,
+        "section": "## P0-05：少量关键规则有明确入口，也能检出错误实现"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 87,
+        "endLine": 92,
+        "section": "### 托管目标政策及事务职责"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-05-03",
+    "title": "两个有效检错实验",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "原实现业务断言PASS，两个指定错误副本各于对应真实业务断言FAIL；编译/DB/夹具/挂死不算检出，保留补丁源命令原件清理。",
+    "nature": "engineering-deliverable-and-regression",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-GUARDS"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "quality-gates",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 92,
+        "endLine": 102,
+        "section": "## P0-05：少量关键规则有明确入口，也能检出错误实现"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 87,
+        "endLine": 92,
+        "section": "### 托管目标政策及事务职责"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-05-04",
+    "title": "取消协作单入口",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "复用既有事务协作入口，保持调用方事务、CAS成功后取消、锁及事件顺序；不改成提交后异步。",
+    "nature": "engineering-deliverable-and-regression",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-GUARDS"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "quality-gates",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 92,
+        "endLine": 102,
+        "section": "## P0-05：少量关键规则有明确入口，也能检出错误实现"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 87,
+        "endLine": 92,
+        "section": "### 托管目标政策及事务职责"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-05-05",
+    "title": "取消原子性与当前步",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "关闭Agent的群变更与取消后果同事务回滚；当前step结束后取消，守卫/旧执行者竞态不放宽。",
+    "nature": "engineering-deliverable-and-regression",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-GUARDS"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "quality-gates",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 92,
+        "endLine": 102,
+        "section": "## P0-05：少量关键规则有明确入口，也能检出错误实现"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 87,
+        "endLine": 92,
+        "section": "### 托管目标政策及事务职责"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P0-05-06",
+    "title": "有限静态门禁",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "列出涉及表/规则归属和跨模块写入，区分允许事务协作与重复直接写；受控违规会失败，纳入开发验证，声明非完整SQL所有权证明。",
+    "nature": "engineering-deliverable-and-regression",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-GUARDS"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "quality-gates",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 92,
+        "endLine": 102,
+        "section": "## P0-05：少量关键规则有明确入口，也能检出错误实现"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 87,
+        "endLine": 92,
+        "section": "### 托管目标政策及事务职责"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-01-01",
+    "title": "真实两档数据",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "独立PG以1000/10000条代表消息测量并记录同毫秒/迟到分布、版本、索引及统计；规模是输入不是容量承诺。",
+    "nature": "engineering-measurement-and-regression",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-DB-MEASUREMENT"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "database-measurement",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-measurement-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 103,
+        "endLine": 111,
+        "section": "## P1-01：一个真实数据库成本案例"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 112,
+        "endLine": 117,
+        "section": "### 时间线成本与导航范围"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-01-02",
+    "title": "计划与API实测",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "真实SQL EXPLAIN ANALYZE BUFFERS/扫描返回行/buffers/DB耗时及实际首屏续页API响应量和时延；可得时记录进程内存，不伪称p95或页面速度。",
+    "nature": "engineering-measurement-and-regression",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-DB-MEASUREMENT"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "database-measurement",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-measurement-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 103,
+        "endLine": 111,
+        "section": "## P1-01：一个真实数据库成本案例"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 112,
+        "endLine": 117,
+        "section": "### 时间线成本与导航范围"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-01-03",
+    "title": "证据驱动局部优化",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "只有真实瓶颈证据支持才尝试一个可回滚索引/局部查询；保留不优化有效结论，不扩快照重写/大回填。",
+    "nature": "engineering-measurement-and-regression",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-DB-MEASUREMENT"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "database-measurement",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-measurement-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 103,
+        "endLine": 111,
+        "section": "## P1-01：一个真实数据库成本案例"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 112,
+        "endLine": 117,
+        "section": "### 时间线成本与导航范围"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-01-04",
+    "title": "时间线语义保留",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "局部改变仍保留既有游标、首次固定集合/快照、同毫秒排序、迟到消息、出站确认改时间、去重不漏和实时合并。",
+    "nature": "engineering-measurement-and-regression",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-DB-MEASUREMENT"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "database-measurement",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-measurement-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 103,
+        "endLine": 111,
+        "section": "## P1-01：一个真实数据库成本案例"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 112,
+        "endLine": 117,
+        "section": "### 时间线成本与导航范围"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-02-01",
+    "title": "群来源返回",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "从群详情进入run详情可返回原群。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "navigation",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 112,
+        "endLine": 118,
+        "section": "## P1-02：修正已发现的来源返回链路"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 112,
+        "endLine": 117,
+        "section": "### 时间线成本与导航范围"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-02-02",
+    "title": "列表来源返回",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "从run列表进入详情返回原列表并保留所选群。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "navigation",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 112,
+        "endLine": 118,
+        "section": "## P1-02：修正已发现的来源返回链路"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 112,
+        "endLine": 117,
+        "section": "### 时间线成本与导航范围"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-02-03",
+    "title": "所属群与上下文",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "查看所属群是独立明确链接，标题及导航高亮表达同一来源上下文。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "navigation",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 112,
+        "endLine": 118,
+        "section": "## P1-02：修正已发现的来源返回链路"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 112,
+        "endLine": 117,
+        "section": "### 时间线成本与导航范围"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-02-04",
+    "title": "站内兜底和历史",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "刷新/直达/无效来源使用站内兜底，前进后退符合两入口链路。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "navigation",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 112,
+        "endLine": 118,
+        "section": "## P1-02：修正已发现的来源返回链路"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 112,
+        "endLine": 117,
+        "section": "### 时间线成本与导航范围"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-02-05",
+    "title": "失败与身份变化",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "加载/失败页面可离开，身份变化和篡改来源安全；不机械history.back跳站外。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "navigation",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 112,
+        "endLine": 118,
+        "section": "## P1-02：修正已发现的来源返回链路"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 112,
+        "endLine": 117,
+        "section": "### 时间线成本与导航范围"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-02-06",
+    "title": "提醒实体范围",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "来源变化和返回不能错误清除另一个群/run提醒，清除按实际实体范围。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-UI"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "navigation",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 112,
+        "endLine": 118,
+        "section": "## P1-02：修正已发现的来源返回链路"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 112,
+        "endLine": 117,
+        "section": "### 时间线成本与导航范围"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-03-01",
+    "title": "稳定原因与下一步",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "现有管理员background诊断API说明最后真实后台失败的稳定原因类别、发生时间和安全下一步。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-DIAGNOSTICS"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "effect-status",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 119,
+        "endLine": 127,
+        "section": "## P1-03：补已有诊断的解释能力"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 71,
+        "endLine": 86,
+        "section": "### 管理员后台诊断"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-03-02",
+    "title": "真实关联",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "仅使用已有可靠实体关联；无可靠实体时说明模块，不编造群/消息归因。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-DIAGNOSTICS"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "effect-status",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 119,
+        "endLine": 127,
+        "section": "## P1-03：补已有诊断的解释能力"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 71,
+        "endLine": 86,
+        "section": "### 管理员后台诊断"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-03-03",
+    "title": "恢复和有限历史",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "真实恢复后更新当前状态，保留如实有限历史；不是新增任务中心。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-DIAGNOSTICS"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "effect-status",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 119,
+        "endLine": 127,
+        "section": "## P1-03：补已有诊断的解释能力"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 71,
+        "endLine": 86,
+        "section": "### 管理员后台诊断"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-03-04",
+    "title": "权限与脱敏",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "admin可读、viewer不得获敏感信息；原始异常/连接串/凭据/消息正文不直接公开。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-DIAGNOSTICS"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "effect-status",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 119,
+        "endLine": 127,
+        "section": "## P1-03：补已有诊断的解释能力"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 71,
+        "endLine": 86,
+        "section": "### 管理员后台诊断"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-03-05",
+    "title": "未知效果安全",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "未知远端效果仅建议核对已有事实，不建议未经证明的盲重发或虚构恢复成功。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-DIAGNOSTICS"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "effect-status",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 119,
+        "endLine": 127,
+        "section": "## P1-03：补已有诊断的解释能力"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 71,
+        "endLine": 86,
+        "section": "### 管理员后台诊断"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-04-01",
+    "title": "保护当前托管目标",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "派发前当前群已确认平台托管目标不得被自动kick，即使开关/审计pass/执行者权限满足。",
+    "nature": "approved-new-business-policy",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-MANAGED-POLICY"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "agent-policy",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 128,
+        "endLine": 136,
+        "section": "## P1-04：明确选择后，再加托管目标保护"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 87,
+        "endLine": 92,
+        "section": "### 托管目标政策及事务职责"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-04-02",
+    "title": "使用最新目标事实",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "等待审计或容量后按实际派发前事实保护目标；保护依据目标身份而非执行账号在线状态。",
+    "nature": "approved-new-business-policy",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-MANAGED-POLICY"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "agent-policy",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 128,
+        "endLine": 136,
+        "section": "## P1-04：明确选择后，再加托管目标保护"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 87,
+        "endLine": 92,
+        "section": "### 托管目标政策及事务职责"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-04-03",
+    "title": "保留外部目标原规则",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "普通外部目标继续原开关/审计/权限/预算/未知结果保护；不添加额外白名单或新工具。",
+    "nature": "approved-new-business-policy",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-MANAGED-POLICY"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "agent-policy",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 128,
+        "endLine": 136,
+        "section": "## P1-04：明确选择后，再加托管目标保护"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 87,
+        "endLine": 92,
+        "section": "### 托管目标政策及事务职责"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-04-04",
+    "title": "独立退群清理不变",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "独立leave-all清理托管成员职责不因自动kick限制受阻，群主最后及失败保留原规则。",
+    "nature": "approved-new-business-policy",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-MANAGED-POLICY"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "agent-policy",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 128,
+        "endLine": 136,
+        "section": "## P1-04：明确选择后，再加托管目标保护"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 87,
+        "endLine": 92,
+        "section": "### 托管目标政策及事务职责"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-04-05",
+    "title": "既有错误协议",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "拒绝按既有工具错误契约；当前公开交接指定POLICY_DENIED，不能新增对外错误码；策略同样适用于模拟及真实Agent。",
+    "nature": "approved-new-business-policy",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-MANAGED-POLICY"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "agent-policy",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 128,
+        "endLine": 136,
+        "section": "## P1-04：明确选择后，再加托管目标保护"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 87,
+        "endLine": 92,
+        "section": "### 托管目标政策及事务职责"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-05-01",
+    "title": "真实调用记录",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "留存真实可得或明确生成服务内request/attemptID、turn/audit用途、模型、耗时及结果，不伪造后端run/tool关联。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-USAGE"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "model-usage",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-measurement-20261002.aa41fc8.md",
+      "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+      "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 137,
+        "endLine": 143,
+        "section": "## P1-05：有界记录真实提供的模型用量"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 93,
+        "endLine": 111,
+        "section": "### 模型用量文件与配置"
+      },
+      {
+        "path": "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+        "startLine": 139,
+        "endLine": 145,
+        "section": "## P1-05及准备期澄清"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md",
+        "startLine": 108,
+        "endLine": 123,
+        "section": "#### 用量结果与已知性"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-05-02",
+    "title": "真实用量与未知",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "只记录provider实际usage，缺失为未知，不推算未报告token；失败状态单列且不能虚构零消耗。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-USAGE"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "model-usage",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-measurement-20261002.aa41fc8.md",
+      "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+      "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 137,
+        "endLine": 143,
+        "section": "## P1-05：有界记录真实提供的模型用量"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 93,
+        "endLine": 111,
+        "section": "### 模型用量文件与配置"
+      },
+      {
+        "path": "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+        "startLine": 139,
+        "endLine": 145,
+        "section": "## P1-05及准备期澄清"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md",
+        "startLine": 108,
+        "endLine": 123,
+        "section": "#### 用量结果与已知性"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ],
+    "unresolvedInterpretations": [],
+    "clarifiedInterpretations": [
+      {
+        "conflictId": "CONFLICT-USAGE-001",
+        "state": "RESOLVED_BY_DOCUMENTED_CLARIFICATION",
+        "revision": "5a53cc83c998284b2ce7a641e894a21c1c47bffe",
+        "basis": "原同节的真实usage留存目的与结果失败是独立事实；采用文档窄澄清而非实现结果。",
+        "expected": "成功HTTP中合法字段保留；输出失败仍标失败；非成功HTTP不解析body用量；缺失/非法null、合法0保留、不推算总量。"
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-05-03",
+    "title": "缓存不重复推理",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "复用已完成响应不记录为新的模型推理；可区分缓存读取和实际调用。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-USAGE"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "model-usage",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-measurement-20261002.aa41fc8.md",
+      "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+      "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 137,
+        "endLine": 143,
+        "section": "## P1-05：有界记录真实提供的模型用量"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 93,
+        "endLine": 111,
+        "section": "### 模型用量文件与配置"
+      },
+      {
+        "path": "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+        "startLine": 139,
+        "endLine": 145,
+        "section": "## P1-05及准备期澄清"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md",
+        "startLine": 108,
+        "endLine": 123,
+        "section": "#### 用量结果与已知性"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-05-04",
+    "title": "有界存储与配置",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "配置关闭、有界队列/文件/保留、权限和关闭清理边界明确；具体参数按aa41冻结公开契约验证，不能由实现猜测。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-USAGE"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "model-usage",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-measurement-20261002.aa41fc8.md",
+      "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+      "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 137,
+        "endLine": 143,
+        "section": "## P1-05：有界记录真实提供的模型用量"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 93,
+        "endLine": 111,
+        "section": "### 模型用量文件与配置"
+      },
+      {
+        "path": "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+        "startLine": 139,
+        "endLine": 145,
+        "section": "## P1-05及准备期澄清"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md",
+        "startLine": 108,
+        "endLine": 123,
+        "section": "#### 用量结果与已知性"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-05-05",
+    "title": "记录失败隔离",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "记录写入失败不阻塞主业务且可诊断；并发/积压/存储故障须有真实响应与诊断证据。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-USAGE"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "model-usage",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-measurement-20261002.aa41fc8.md",
+      "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+      "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 137,
+        "endLine": 143,
+        "section": "## P1-05：有界记录真实提供的模型用量"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 93,
+        "endLine": 111,
+        "section": "### 模型用量文件与配置"
+      },
+      {
+        "path": "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+        "startLine": 139,
+        "endLine": 145,
+        "section": "## P1-05及准备期澄清"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md",
+        "startLine": 108,
+        "endLine": 123,
+        "section": "#### 用量结果与已知性"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-05-06",
+    "title": "允许字段与秘密",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "仅允许字段留存，不写正文、prompt、工具内容或凭据，不做计费/成本承诺/仪表盘。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-USAGE"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "model-usage",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-measurement-20261002.aa41fc8.md",
+      "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+      "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 137,
+        "endLine": 143,
+        "section": "## P1-05：有界记录真实提供的模型用量"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 93,
+        "endLine": 111,
+        "section": "### 模型用量文件与配置"
+      },
+      {
+        "path": "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+        "startLine": 139,
+        "endLine": 145,
+        "section": "## P1-05及准备期澄清"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md",
+        "startLine": 108,
+        "endLine": 123,
+        "section": "#### 用量结果与已知性"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-P1-05-07",
+    "title": "调用结果分层",
+    "source": "requirements/sources/product-enhancement-proposal.md",
+    "expectation": "成功失败是模型服务调用和输出校验结果，不等于工具执行/审计授权成功；优先离线注入且不新增付费调用。",
+    "nature": "approved-enhancement",
+    "priority": "P1",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [
+      "SR-DEP-USAGE"
+    ],
+    "state": "NOT_RUN",
+    "sourceLocator": "model-usage",
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md",
+      "requirements/sources/second-round-qa-intake-20261002.md",
+      "requirements/sources/decisions.md",
+      "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-delivery-20261002.aa41fc8.md",
+      "requirements/sources/final-enhancement-measurement-20261002.aa41fc8.md",
+      "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+      "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/product-enhancement-proposal.md",
+        "startLine": 137,
+        "endLine": 143,
+        "section": "## P1-05：有界记录真实提供的模型用量"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.md",
+        "startLine": 17,
+        "endLine": 33,
+        "section": "## 需求来源与范围"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "startLine": 93,
+        "endLine": 111,
+        "section": "### 模型用量文件与配置"
+      },
+      {
+        "path": "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+        "startLine": 139,
+        "endLine": 145,
+        "section": "## P1-05及准备期澄清"
+      },
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md",
+        "startLine": 108,
+        "endLine": 123,
+        "section": "#### 用量结果与已知性"
+      }
+    ],
+    "contractSources": [
+      {
+        "path": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+        "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+        "role": "Current public engineering handoff, not final SUT or replacement business oracle."
+      }
+    ]
+  },
+  {
+    "id": "SR-AUTH-01",
+    "title": "仅准备授权",
+    "source": "requirements/sources/decisions.md",
+    "expectation": "本轮只准备资产/静态/QA工具自身测试；产品执行、真实模型、合main均未授权。",
+    "nature": "preparation-boundary",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [],
+    "state": "NOT_RUN",
+    "sourceLocator": "d051",
+    "sources": [
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "mode": "preparation-boundary",
+    "productState": "NOT_RUN",
+    "coverageBasis": "准备期工具检查、授权范围和无产品/合main行为；不是产品执行用例或产品通过率分母。"
+  },
+  {
+    "id": "SR-AUTH-02",
+    "title": "冻结与历史分离",
+    "source": "requirements/sources/decisions.md",
+    "expectation": "最终SUT尚未冻结；新的QA资产独立overlay，第一轮scope/signature/候选计数/原始报告不重解释。",
+    "nature": "preparation-boundary",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [],
+    "state": "NOT_RUN",
+    "sourceLocator": "d051",
+    "sources": [
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "mode": "preparation-boundary",
+    "productState": "NOT_RUN",
+    "coverageBasis": "准备期工具检查、授权范围和无产品/合main行为；不是产品执行用例或产品通过率分母。"
+  },
+  {
+    "id": "SR-AUTH-03",
+    "title": "QA独立维护",
+    "source": "requirements/sources/decisions.md",
+    "expectation": "研发不修改QA目录或代填结果；公开需求与批准差异是oracle，工程实现仅解释接入。",
+    "nature": "preparation-boundary",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [],
+    "state": "NOT_RUN",
+    "sourceLocator": "d051",
+    "sources": [
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "mode": "preparation-boundary",
+    "productState": "NOT_RUN",
+    "coverageBasis": "准备期工具检查、授权范围和无产品/合main行为；不是产品执行用例或产品通过率分母。"
+  },
+  {
+    "id": "SR-AUTH-04",
+    "title": "人工与上线分离",
+    "source": "requirements/sources/decisions.md",
+    "expectation": "真实IME/跨窗口及最终集中人工体验不由自动化签字；业务结论与上线准备度分开。",
+    "nature": "preparation-boundary",
+    "priority": "P0",
+    "approvalSources": [
+      "requirements/sources/decisions.md"
+    ],
+    "dependencies": [],
+    "state": "NOT_RUN",
+    "sourceLocator": "d051",
+    "sources": [
+      "requirements/sources/decisions.md"
+    ],
+    "sourceLocations": [
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 159,
+        "endLine": 174,
+        "section": "## D050 — 批准全部 P0 / P1，开发自测后停在负责人审阅"
+      },
+      {
+        "path": "requirements/sources/decisions.md",
+        "startLine": 175,
+        "endLine": 188,
+        "section": "## D051 — 第二轮 QA 独立准备与四条工作线的推进终点"
+      }
+    ],
+    "mode": "preparation-boundary",
+    "productState": "NOT_RUN",
+    "coverageBasis": "准备期工具检查、授权范围和无产品/合main行为；不是产品执行用例或产品通过率分母。"
+  }
+]

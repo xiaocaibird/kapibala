@@ -1,0 +1,145 @@
+[
+  {
+    "id": "SR-CONTRACT-DIAGNOSTICS",
+    "requirements": [
+      "SR-P1-03-01",
+      "SR-P1-03-02",
+      "SR-P1-03-03",
+      "SR-P1-03-04",
+      "SR-P1-03-05"
+    ],
+    "source": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+    "sourceRevision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+    "state": "CONTRACT_AVAILABLE_DRIVER_PENDING",
+    "assertions": [
+      "GET /api/diagnostics/background：admin可读、匿名401、viewer403。",
+      "modules[].tickId 是最近真实轮次UUID，无轮次null。lastFailure为最近失败或null，仅进程内一份，重启不保留。",
+      "reason白名单：DATABASE_UNAVAILABLE/DATABASE_CONTENTION/DATABASE_QUERY_CANCELLED/REMOTE_UNAVAILABLE/REMOTE_REJECTED/INVALID_RESPONSE/UNEXPECTED_FAILURE。",
+      "occurredAt为捕获tick失败ISO时刻；correlation只{module,tickId}，不虚构实体。",
+      "recoveredAt为该失败后首个成功tick时刻或null；失败时nextStep与当前模块nextStep分别保存安全建议。"
+    ],
+    "limitations": [
+      "成功tick不证明旧业务/未知远端效果恢复。",
+      "未启动/禁用/无本进程失败记录不等于全部依赖健康。",
+      "一份进程内最近失败是本次有界历史契约，不新增跨重启持久历史要求。"
+    ]
+  },
+  {
+    "id": "SR-CONTRACT-POLICY",
+    "requirements": [
+      "SR-P1-04-01",
+      "SR-P1-04-02",
+      "SR-P1-04-03",
+      "SR-P1-04-04",
+      "SR-P1-04-05"
+    ],
+    "source": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+    "sourceRevision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+    "state": "CONTRACT_AVAILABLE_DRIVER_PENDING",
+    "assertions": [
+      "目标匹配accounts.platform_user_id或本群非空members.account_id托管关联时返回既有POLICY_DENIED，不发kick。",
+      "离线或普通角色不解除目标保护；普通外部目标与独立leave-all沿原规则。",
+      "审计后的群事务与容量准入/派发意图后真实远端调用前检查最新DB事实。"
+    ],
+    "limitations": [
+      "最后DB检查与远端请求之间没有跨系统原子保证；窗口只在能够证明发生于检查前时判过期事实违规。",
+      "独立QA通过公开事实/真实请求验证；不导入产品模块或直写DB造托管身份。"
+    ]
+  },
+  {
+    "id": "SR-CONTRACT-USAGE",
+    "requirements": [
+      "SR-P1-05-01",
+      "SR-P1-05-02",
+      "SR-P1-05-03",
+      "SR-P1-05-04",
+      "SR-P1-05-05",
+      "SR-P1-05-06",
+      "SR-P1-05-07"
+    ],
+    "source": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+    "sourceRevision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+    "state": "CONTRACT_AVAILABLE_DRIVER_PENDING",
+    "assertions": [
+      "文件${GEMINI_SESSION_DIR}/usage/usage.jsonl；会话目录归属独占；没有新查询API或页面。",
+      "main读取进程env默认启用，Key文件不导入usage配置；createGeminiAgent需显式usage:{}启用，不传不建日志。",
+      "GEMINI_USAGE_ENABLED仅字符串false关闭，关闭不删除旧记录。",
+      "GEMINI_USAGE_MAX_RECORDS默认1000范围整数1..10000；MAX_BYTES默认2097152范围4096..16777216按UTF-8JSONL；MAX_AGE_DAYS默认30范围整数1..365。",
+      "保留清理只在启动/写入触发，无空闲定时；目录0700文件0600。",
+      "字段白名单requestId/attemptId/runId/observedAt/stage/purpose/model/elapsedMs/outcome/errorCode/inputTokens/outputTokens/totalTokens；服务ID为UUID，turn关联协议真实runId，audit为null。",
+      "缺失/非法token null，真实0保留0；缓存无实际推理新记录；elapsedMs仅provider调用返回/抛错本地耗时。",
+      "正常stage=validated-generation；success仅输出协议校验成功，audit fail亦可success，不等于工具/存储/业务成功。",
+      "等待队列最多64条且活动批次至多64；模型响应不等待日志落盘；USAGE_STORE_UNAVAILABLE/USAGE_WRITE_FAILED/USAGE_QUEUE_FULL/USAGE_RECORD_INVALID固定诊断。",
+      "非法配置或不安全既有日志：USAGE_STORE_UNAVAILABLE并停用本次可选记录，不阻模型。",
+      "每类固定诊断在同实例只报一次；诊断不含路径/原始异常/记录内容，从C2进程公开日志取证，不要求后端background API。",
+      "既有日志须普通单链接文件/本uid/0600，最多读取16MiB；单记录最大4096B。",
+      "启动只清归属/权限安全且精确usage-<UUID>.tmp的崩溃临时文件；正常关闭等待已入队有限写入，不保证物理IO时限。",
+      "请求/输出结果与usage已知性分开：成功HTTP已实际取得合法usage，后续输出阻断/格式/协议失败仍failure，合法非负安全整数保留。",
+      "网络/取消/超时及非成功HTTP未取得校验usage为null；当前不解析非成功HTTP body中的usage或异常文字。",
+      "三个token字段逐项校验，缺失/非法null、明确0保留；不由其他字段补算缺项。"
+    ],
+    "limitations": [
+      "尽力记录，硬退出/队列满/磁盘失败可丢观察，不是完整计费账本。",
+      "只在进程停止且归属确认后清理usage文件，不删除session目录或活跃owner.lock。",
+      "所有errorCode白名单成员尚未在本两份交接列全；只可检验实际有依据的枚举，不自造完整清单。",
+      "澄清仅形成预期，不是对当前产品行为的验证；实际响应/校验阶段/记录身份不全仍需BLOCKED。"
+    ],
+    "additionalSources": [
+      "requirements/sources/final-enhancement-measurement-20261002.aa41fc8.md",
+      "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+      "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md"
+    ],
+    "clarificationRevision": "5a53cc83c998284b2ce7a641e894a21c1c47bffe",
+    "clarificationResolution": "CONFLICT-USAGE-001 RESOLVED_BY_DOCUMENTED_CLARIFICATION; original discrepancy remains in contract-conflicts.json history."
+  },
+  {
+    "id": "SR-CONTRACT-MEDIA-HISTORICAL",
+    "requirements": [
+      "SR-C1-01",
+      "SR-C1-02",
+      "SR-C1-03",
+      "SR-C1-04",
+      "SR-C1-05",
+      "SR-C1-06",
+      "SR-C1-07",
+      "SR-C1-08"
+    ],
+    "source": "requirements/sources/c1-media-files.md",
+    "sourceRevision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+    "state": "CONTRACT_INPUT_AVAILABLE_FINAL_BINDING_PENDING",
+    "assertions": [
+      "localFilePath当前不可用/已清理时null；旧无媒体消息保持原形。",
+      "保留期从完整文件时间起算，重试发布不延寿；旧cursor路径随当前附件状态反映清理。",
+      "公开说明同源/media/:id URL限制、文件0600/目录0700、不跟随重定向、有限重试和实际大小边界。",
+      "真实活动引用包括创建触发及get_recent_messages读取、尚未下载媒体；running暂停仍保护；历史running引用保守保护说明已提供。"
+    ],
+    "limitations": [
+      "这些是公开历史接入契约，最终候选须重新绑定；不因机制说明宣称QA已经打中真实事务/文件故障窗口。"
+    ]
+  },
+  {
+    "id": "SR-CONTRACT-MODEL-HISTORICAL",
+    "requirements": [
+      "SR-C2-01",
+      "SR-C2-02",
+      "SR-C2-03",
+      "SR-C2-04",
+      "SR-C2-05",
+      "SR-C2-06",
+      "SR-C2-07",
+      "SR-C2-08"
+    ],
+    "source": "requirements/sources/c2-gemini-agent.md",
+    "sourceRevision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+    "state": "CONTRACT_INPUT_AVAILABLE_FINAL_BINDING_PENDING",
+    "assertions": [
+      "TOOLS_INVALID、RUN_BUSY、RUN_HISTORY_CONFLICT与TURN_OUTCOME_UNCERTAIN等公开接入错误已有来源；最终适配按对应条款而非猜码。",
+      "私有session目录0700、记录0600、非symlink/本uid和独占owner.lock；完成持久缓存、硬崩溃未决不盲重发。",
+      "已有模型协议/容量/取消/原始历史传递与默认隔离说明可用于独立driver设计。"
+    ],
+    "limitations": [
+      "真实provider调用费用与最终SUT仍未授权。",
+      "历史实际模型名/价格不被本轮重新推荐或验证，不当作当下报价。"
+    ]
+  }
+]

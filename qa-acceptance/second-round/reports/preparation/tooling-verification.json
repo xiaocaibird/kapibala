@@ -1,0 +1,83 @@
+{
+  "phase": "QA_PREPARATION_TOOLS_ONLY",
+  "generatedAt": "2026-10-01T17:46:39.682073+00:00",
+  "node": "v24.21.0",
+  "npm": "12.1.0",
+  "qaPackageLockSha256": "7462a4670d1e4036156d1639ebfeaa0cd4276bc918d1b805b3677d862c2cb883",
+  "scope": "Static checks and QA-owned synthetic assertion tests only; no SUT, application database, browser, provider, or real-model operation.",
+  "productTestsExecuted": 0,
+  "realProviderCalls": 0,
+  "selfTestsPassed": 21,
+  "stages": [
+    {
+      "name": "parent-typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "startedAt": "2026-10-01T17:46:38.960247+00:00",
+      "finishedAt": "2026-10-01T17:46:39.246001+00:00",
+      "exitCode": 0,
+      "result": "PASS",
+      "log": "reports/preparation/tooling/parent-typecheck.log.txt",
+      "sha256": "25ba3cfef4275a2bf7a86b13c7fc2d0598bd192c06c26f8826f2b4b019939897"
+    },
+    {
+      "name": "second-round-typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck",
+        "--",
+        "--project",
+        "second-round/tsconfig.json"
+      ],
+      "startedAt": "2026-10-01T17:46:39.246165+00:00",
+      "finishedAt": "2026-10-01T17:46:39.395485+00:00",
+      "exitCode": 0,
+      "result": "PASS",
+      "log": "reports/preparation/tooling/second-round-typecheck.log.txt",
+      "sha256": "aec1509c41bef7d6b9b27a82d34292309075ff43ac01c387eac3bfe8ee7e9652"
+    },
+    {
+      "name": "second-round-self-tests",
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "--test",
+        "second-round/tests/self/media-provider.test.ts",
+        "second-round/tests/self/ui-oracles.test.ts"
+      ],
+      "startedAt": "2026-10-01T17:46:39.395596+00:00",
+      "finishedAt": "2026-10-01T17:46:39.494181+00:00",
+      "exitCode": 0,
+      "result": "PASS",
+      "log": "reports/preparation/tooling/second-round-self-tests.log.txt",
+      "sha256": "abba2106e9d632a869c63fe6f4dbb4d953932140118fd32ae6cec00cc3b1042a"
+    },
+    {
+      "name": "offline-preparation-audit",
+      "command": [
+        "python3",
+        "second-round/harness/prepare.py"
+      ],
+      "startedAt": "2026-10-01T17:46:39.494276+00:00",
+      "finishedAt": "2026-10-01T17:46:39.681973+00:00",
+      "exitCode": 0,
+      "result": "PASS",
+      "log": "reports/preparation/tooling/offline-preparation-audit.log.txt",
+      "sha256": "1f2e8041e865e07427f789e313325dfd8419182804b2ec84c9f16abc551e0b05"
+    }
+  ],
+  "allPassed": true,
+  "selfTestCounts": {
+    "tests": 21,
+    "pass": 21,
+    "fail": 0,
+    "skipped": 0,
+    "cancelled": 0,
+    "todo": 0
+  }
+}

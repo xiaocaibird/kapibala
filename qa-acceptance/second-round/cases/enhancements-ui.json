@@ -1,0 +1,1719 @@
+[
+  {
+    "id": "SR-UI-001",
+    "title": "原提交未改动的成功可清理原草稿",
+    "requirements": [
+      "SR-P0-03-01"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#input-protection"
+    ],
+    "priority": "P0",
+    "mode": "automated-driver",
+    "state": "NOT_RUN",
+    "readiness": "driver-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": "unchanged",
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "发送A；保持原群/会话/修订；返回成功",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "原草稿清空；仅一次实际发送",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ],
+    "automation": "tests/ui-flows.ts#protectLateDraft",
+    "automationCoverage": [
+      "独立workflow所列实际动作和断言；需真实公开UI adapter/fixture/profile后才能产品执行"
+    ]
+  },
+  {
+    "id": "SR-UI-002",
+    "title": "A提交后编辑B，旧成功保留B",
+    "requirements": [
+      "SR-P0-03-01",
+      "SR-P0-03-02"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#input-protection"
+    ],
+    "priority": "P0",
+    "mode": "automated-driver",
+    "state": "NOT_RUN",
+    "readiness": "driver-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": "edited",
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "保持发送A的实际响应；编辑B；释放原成功",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "B仍可见可编辑，实际发送仍一次",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ],
+    "automation": "tests/ui-flows.ts#protectLateDraft",
+    "automationCoverage": [
+      "独立workflow所列实际动作和断言；需真实公开UI adapter/fixture/profile后才能产品执行"
+    ]
+  },
+  {
+    "id": "SR-UI-003",
+    "title": "A提交后B再A，旧成功仍保留新A",
+    "requirements": [
+      "SR-P0-03-01",
+      "SR-P0-03-02"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#input-protection"
+    ],
+    "priority": "P0",
+    "mode": "automated-driver",
+    "state": "NOT_RUN",
+    "readiness": "driver-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": "aba",
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "保持A响应；实际编辑B再A；释放旧成功",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "新修订A不因字符串相等被清空",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ],
+    "automation": "tests/ui-flows.ts#protectLateDraft",
+    "automationCoverage": [
+      "独立workflow所列实际动作和断言；需真实公开UI adapter/fixture/profile后才能产品执行"
+    ]
+  },
+  {
+    "id": "SR-UI-004",
+    "title": "换群后旧发送响应不清另一群输入",
+    "requirements": [
+      "SR-P0-03-04"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#input-protection"
+    ],
+    "priority": "P0",
+    "mode": "automated-driver",
+    "state": "NOT_RUN",
+    "readiness": "driver-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": "group",
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "发送群A；保持回执；换群B编辑新稿；放行旧成功",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "群B新稿保留，原发送归属仍群A",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ],
+    "automation": "tests/ui-flows.ts#protectLateDraft",
+    "automationCoverage": [
+      "独立workflow所列实际动作和断言；需真实公开UI adapter/fixture/profile后才能产品执行"
+    ]
+  },
+  {
+    "id": "SR-UI-005",
+    "title": "换账号或会话后旧发送响应隔离",
+    "requirements": [
+      "SR-P0-03-04"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#input-protection"
+    ],
+    "priority": "P0",
+    "mode": "automated-driver",
+    "state": "NOT_RUN",
+    "readiness": "driver-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": "session",
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "保持旧会话发送；切换会话/另一个管理员账号编辑B；放行",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "当前身份新稿保留，不显示旧会话假成功",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ],
+    "automation": "tests/ui-flows.ts#protectLateDraft",
+    "automationCoverage": [
+      "独立workflow所列实际动作和断言；需真实公开UI adapter/fixture/profile后才能产品执行"
+    ],
+    "manualCoverage": [
+      "跨会话旧反馈不能显示为当前会话假成功；自动化当前只断言草稿和请求次数"
+    ]
+  },
+  {
+    "id": "SR-UI-006",
+    "title": "失败回执保留等待期间编辑输入",
+    "requirements": [
+      "SR-P0-03-03"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#input-protection"
+    ],
+    "priority": "P0",
+    "mode": "automated-driver",
+    "state": "NOT_RUN",
+    "readiness": "driver-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": "failure",
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "发送A并编辑B；让真实响应失败；待页面处理",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "保留B、失败可见；没有新增发送请求",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ],
+    "automation": "tests/ui-flows.ts#protectLateDraft",
+    "automationCoverage": [
+      "独立workflow所列实际动作和断言；需真实公开UI adapter/fixture/profile后才能产品执行"
+    ],
+    "manualCoverage": [
+      "错误反馈可见及可编辑真实键入；自动化当前只断言原输入与请求次数"
+    ]
+  },
+  {
+    "id": "SR-UI-007",
+    "title": "未知发送结果不清稿或盲重发",
+    "requirements": [
+      "SR-P0-03-03"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#input-protection"
+    ],
+    "priority": "P0",
+    "mode": "automated-driver",
+    "state": "NOT_RUN",
+    "readiness": "driver-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": "unknown",
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "发送后保持远端结果未知；编辑B；解除真实断连观察",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "B保留；未知与成功区分；没有自动重发",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ],
+    "automation": "tests/ui-flows.ts#protectLateDraft",
+    "automationCoverage": [
+      "独立workflow所列实际动作和断言；需真实公开UI adapter/fixture/profile后才能产品执行"
+    ],
+    "manualCoverage": [
+      "未知状态与成功区分、后台实际状态如实；不因draft保留代表已验证发送结果"
+    ]
+  },
+  {
+    "id": "SR-UI-008",
+    "title": "新序列表单脏状态及保存中全部关闭入口",
+    "requirements": [
+      "SR-P0-03-05",
+      "SR-P0-03-06"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#input-protection"
+    ],
+    "priority": "P0",
+    "mode": "automated-driver",
+    "state": "NOT_RUN",
+    "readiness": "driver-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": null,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "逐个实际支持入口测试脏表单放弃/继续编辑；真实保存响应在途时重复入口",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "关闭保护一致；取消放弃保留数据；保存中不丢上下文",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ],
+    "automation": "tests/ui-flows.ts#protectSequenceClose",
+    "automationCoverage": [
+      "独立workflow所列实际动作和断言；需真实公开UI adapter/fixture/profile后才能产品执行"
+    ],
+    "manualCoverage": [
+      "对照页面全部实际支持入口清单；保存实际记录快照的逐字段一致性另SR-UI-009"
+    ]
+  },
+  {
+    "id": "SR-UI-009",
+    "title": "保存快照与保存中编辑的实际记录一致",
+    "requirements": [
+      "SR-P0-03-06"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#input-protection"
+    ],
+    "priority": "P0",
+    "mode": "manual",
+    "state": "NOT_RUN",
+    "readiness": "contract-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": null,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "填A提交保存；保持响应；尝试编辑B；按真实支持规则完成保存并重开读取",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "服务端保存与实际提交A一致；若允许新稿B不得被旧保存覆盖；若禁编辑禁用可见",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ]
+  },
+  {
+    "id": "SR-UI-010",
+    "title": "建群和编辑群现有关闭保护回归",
+    "requirements": [
+      "SR-P0-03-07"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#input-protection"
+    ],
+    "priority": "P0",
+    "mode": "manual",
+    "state": "NOT_RUN",
+    "readiness": "contract-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": null,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "建群/编辑群分别测试未改、已改、保存中支持的关闭入口",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "保留原关闭保护和字段冲突行为；不把新序列保护改成旧表单退化",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ]
+  },
+  {
+    "id": "SR-UI-011",
+    "title": "群变化后旧预检晚到失效",
+    "requirements": [
+      "SR-P0-04-01",
+      "SR-P0-04-02"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#target-preview"
+    ],
+    "priority": "P0",
+    "mode": "automated-driver",
+    "state": "NOT_RUN",
+    "readiness": "driver-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": false,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "群A预检在途；改群B；释放A成功",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "确认仍禁用，不用A结果启动B",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ],
+    "automation": "tests/ui-flows.ts#invalidateLatePrecheck",
+    "automationCoverage": [
+      "独立workflow所列实际动作和断言；需真实公开UI adapter/fixture/profile后才能产品执行"
+    ]
+  },
+  {
+    "id": "SR-UI-012",
+    "title": "模板变化后旧预检晚到失效",
+    "requirements": [
+      "SR-P0-04-01",
+      "SR-P0-04-02"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#target-preview"
+    ],
+    "priority": "P0",
+    "mode": "automated-driver",
+    "state": "NOT_RUN",
+    "readiness": "driver-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": false,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "模板A预检在途；改模板B；释放原成功",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "旧内容不得恢复确认",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ],
+    "automation": "tests/ui-flows.ts#invalidateLatePrecheck",
+    "automationCoverage": [
+      "独立workflow所列实际动作和断言；需真实公开UI adapter/fixture/profile后才能产品执行"
+    ]
+  },
+  {
+    "id": "SR-UI-013",
+    "title": "变量变化后旧预检晚到失效",
+    "requirements": [
+      "SR-P0-04-01",
+      "SR-P0-04-02"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#target-preview"
+    ],
+    "priority": "P0",
+    "mode": "automated-driver",
+    "state": "NOT_RUN",
+    "readiness": "driver-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": false,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "变量A预检在途；编辑B；释放原成功",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "确认仍失效、须对新变量重检",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ],
+    "automation": "tests/ui-flows.ts#invalidateLatePrecheck",
+    "automationCoverage": [
+      "独立workflow所列实际动作和断言；需真实公开UI adapter/fixture/profile后才能产品执行"
+    ]
+  },
+  {
+    "id": "SR-UI-014",
+    "title": "群模板变量ABA及响应乱序不能复活旧预检",
+    "requirements": [
+      "SR-P0-04-01",
+      "SR-P0-04-02"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#target-preview"
+    ],
+    "priority": "P0",
+    "mode": "automated-driver",
+    "state": "NOT_RUN",
+    "readiness": "driver-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": true,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "每个维度独立A预检后B再A；原响应晚到；另做新旧预检乱序",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "修订身份仍区分；只有当前有效上下文结果可确认",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ],
+    "automation": "tests/ui-flows.ts#invalidateLatePrecheck",
+    "automationCoverage": [
+      "独立workflow所列实际动作和断言；需真实公开UI adapter/fixture/profile后才能产品执行"
+    ],
+    "manualCoverage": [
+      "两次不同预检请求的逆序返回；当前workflow只实现单请求等待期间的ABA变更"
+    ]
+  },
+  {
+    "id": "SR-UI-015",
+    "title": "确认摘要绑定冻结目标与最终渲染内容",
+    "requirements": [
+      "SR-P0-04-03"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#target-preview"
+    ],
+    "priority": "P0",
+    "mode": "manual",
+    "state": "NOT_RUN",
+    "readiness": "contract-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": null,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "独立算出变量继承最终文本；预检并读摘要；确认后尝试改输入；读启动载荷/运行步骤",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "群名ID、模板、最终文本、角色、相对等待全部匹配冻结提交；不使用晚到当前编辑结果",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ]
+  },
+  {
+    "id": "SR-UI-016",
+    "title": "显式选择和URL目标失效必须重选",
+    "requirements": [
+      "SR-P0-04-04"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#target-preview"
+    ],
+    "priority": "P0",
+    "mode": "manual",
+    "state": "NOT_RUN",
+    "readiness": "contract-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": null,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "显式选择群A或URL指向A；目录刷新中A删除/失效，B仍存在；尝试预检启动",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "不能静默换B；明确选择失效并阻止旧确认",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ]
+  },
+  {
+    "id": "SR-UI-017",
+    "title": "首次默认选择与显式目标失效区分",
+    "requirements": [
+      "SR-P0-04-05"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#target-preview"
+    ],
+    "priority": "P0",
+    "mode": "manual",
+    "state": "NOT_RUN",
+    "readiness": "contract-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": null,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "无选择初次进入；记录允许默认值；再显式选择后使其失效；刷新返回",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "首次默认规则可用，但后续不得将显式失效当首次进入",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ]
+  },
+  {
+    "id": "SR-UI-018",
+    "title": "运行时角色预检、限流顺延和排期回归",
+    "requirements": [
+      "SR-P0-04-06"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#target-preview"
+    ],
+    "priority": "P0",
+    "mode": "manual",
+    "state": "NOT_RUN",
+    "readiness": "contract-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": null,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "预检有效后移除角色/触发限流/延迟实际发送；读取真实副作用与序列时间",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "原角色校验、skipped、实际发出后排期与限流顺延仍成立，摘要不替代运行时检查",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ]
+  },
+  {
+    "id": "SR-UI-019",
+    "title": "群详情进入运行详情返回原群",
+    "requirements": [
+      "SR-P1-02-01"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#navigation"
+    ],
+    "priority": "P1",
+    "mode": "automated-driver",
+    "state": "NOT_RUN",
+    "readiness": "driver-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": "group",
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "从群A进入指定run；使用返回动作",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "回原群A；标题和导航有明确来源",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ],
+    "automation": "tests/ui-flows.ts#returnToOrigin",
+    "automationCoverage": [
+      "独立workflow所列实际动作和断言；需真实公开UI adapter/fixture/profile后才能产品执行"
+    ]
+  },
+  {
+    "id": "SR-UI-020",
+    "title": "运行列表进入详情返回保留群筛选",
+    "requirements": [
+      "SR-P1-02-02"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#navigation"
+    ],
+    "priority": "P1",
+    "mode": "automated-driver",
+    "state": "NOT_RUN",
+    "readiness": "driver-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": "run-list",
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "列表选群A进入run；返回来源",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "返回列表且保留群A条件",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ],
+    "automation": "tests/ui-flows.ts#returnToOrigin",
+    "automationCoverage": [
+      "独立workflow所列实际动作和断言；需真实公开UI adapter/fixture/profile后才能产品执行"
+    ]
+  },
+  {
+    "id": "SR-UI-021",
+    "title": "查看所属群及来源标题高亮一致",
+    "requirements": [
+      "SR-P1-02-03"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#navigation"
+    ],
+    "priority": "P1",
+    "mode": "manual",
+    "state": "NOT_RUN",
+    "readiness": "contract-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": null,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "从两种来源进入详情；分别执行查看所属群、返回；查看标题及导航",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "查看群是独立动作，返回仍按来源；标题高亮一致",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ]
+  },
+  {
+    "id": "SR-UI-022",
+    "title": "直接入口和非法来源安全站内兜底",
+    "requirements": [
+      "SR-P1-02-04",
+      "SR-P1-02-05"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#navigation"
+    ],
+    "priority": "P1",
+    "mode": "manual",
+    "state": "NOT_RUN",
+    "readiness": "contract-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": null,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "直接run URL；空来源、失效实体、站外URL、伪造来源分别进入再返回",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "只使用允许站内来源或安全兜底；不得向站外导航",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ]
+  },
+  {
+    "id": "SR-UI-023",
+    "title": "刷新与历史前后退保留合法来源",
+    "requirements": [
+      "SR-P1-02-04"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#navigation"
+    ],
+    "priority": "P1",
+    "mode": "manual",
+    "state": "NOT_RUN",
+    "readiness": "contract-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": null,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "两来源各进入、刷新、后退/前进；失效实体再次读取",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "来源能保留则正确返回，否则安全站内兜底；不伪造来源",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ]
+  },
+  {
+    "id": "SR-UI-024",
+    "title": "加载失败和身份变化仍可离开详情",
+    "requirements": [
+      "SR-P1-02-05"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#navigation"
+    ],
+    "priority": "P1",
+    "mode": "manual",
+    "state": "NOT_RUN",
+    "readiness": "contract-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": null,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "保持详情读取/令其失败；当前登录到期或切viewer；点击返回",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "可离开错误或加载页；遵守当前权限且不返回站外",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ]
+  },
+  {
+    "id": "SR-UI-025",
+    "title": "来源导航和提醒确认不串实体",
+    "requirements": [
+      "SR-P1-02-06"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md#navigation"
+    ],
+    "priority": "P1",
+    "mode": "manual",
+    "state": "NOT_RUN",
+    "readiness": "contract-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variant": null,
+      "profile": "私有QA groupA/groupB/runId；真实观察所得控件和响应对应",
+      "partitions": "管理员主流程；viewer/会话变化按用例独立执行"
+    },
+    "steps": [
+      "冻结版本、profile、初始公开输入/目录/权限状态",
+      "对群A/runA和群B/runB制造相关变化；在A来源导航/确认提醒；查看B状态",
+      "读取页面实际值、真实请求/副作用及公开状态；按独立预期逐项比较",
+      "固定失败和首次证据后清理本例资源，重试另立记录"
+    ],
+    "faults": [
+      "在原请求实际收到后、响应可见前持有/重排；导航/身份/修订变化按此时点插入",
+      "无法唯一关联原请求或支持控件缺失为BLOCKED，不当产品失败或跳过"
+    ],
+    "expected": [
+      "只清对应已确认实体提醒；B无关提醒保留，返回行为不挪用确认",
+      "失败/未知不能伪装成功；不修改原后台强恢复、权限或时限要求"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ]
+  },
+  {
+    "id": "SR-UI-026",
+    "title": "退出换账号或同账号重登不接受旧history",
+    "requirements": [
+      "SR-P1-02-04",
+      "SR-P1-02-05"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md"
+    ],
+    "priority": "P1",
+    "mode": "manual",
+    "state": "NOT_RUN",
+    "readiness": "contract-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variants": [
+        "群来源",
+        "列表来源",
+        "直接入口"
+      ],
+      "profile": "当前授权会话和私有导航存储故障context"
+    },
+    "steps": [
+      "另获第二轮执行许可并冻结实际候选/profile",
+      "在两来源run详情保持history返回；logout/login另一账号与同账号分别执行；放行旧记录",
+      "保存公开请求响应/当前页面与URL/会话变化时间线",
+      "保留原失败并回收本例context"
+    ],
+    "faults": [
+      "精确发生于退出/refresh/login200后的me请求或本例导航存储写入",
+      "不破坏共享用户浏览器或别的登录上下文"
+    ],
+    "expected": [
+      "旧history不能成为当前会话来源或导航回退依据；权限和返回归属当前会话",
+      "既有权限和站内来源边界保留"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ]
+  },
+  {
+    "id": "SR-UI-027",
+    "title": "refresh401且Workspace未挂载仍可安全离开",
+    "requirements": [
+      "SR-P1-02-05"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md"
+    ],
+    "priority": "P1",
+    "mode": "manual",
+    "state": "NOT_RUN",
+    "readiness": "contract-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variants": [
+        "群来源",
+        "列表来源",
+        "直接入口"
+      ],
+      "profile": "当前授权会话和私有导航存储故障context"
+    },
+    "steps": [
+      "另获第二轮执行许可并冻结实际候选/profile",
+      "独立标签冷启动/保持Workspace未挂；令真实refresh返回401；直达run后离开或登录",
+      "保存公开请求响应/当前页面与URL/会话变化时间线",
+      "保留原失败并回收本例context"
+    ],
+    "faults": [
+      "精确发生于退出/refresh/login200后的me请求或本例导航存储写入",
+      "不破坏共享用户浏览器或别的登录上下文"
+    ],
+    "expected": [
+      "安全站内兜底/登录恢复；不依赖未挂载Workspace内部回调，不卡死或跳站外",
+      "既有权限和站内来源边界保留"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ]
+  },
+  {
+    "id": "SR-UI-028",
+    "title": "login成功后me失败恢复",
+    "requirements": [
+      "SR-P1-02-05"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md"
+    ],
+    "priority": "P1",
+    "mode": "manual",
+    "state": "NOT_RUN",
+    "readiness": "contract-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variants": [
+        "群来源",
+        "列表来源",
+        "直接入口"
+      ],
+      "profile": "当前授权会话和私有导航存储故障context"
+    },
+    "steps": [
+      "另获第二轮执行许可并冻结实际候选/profile",
+      "真实login200后保持/me并令其失败或断连；随后恢复当前会话查询；尝试来源返回",
+      "保存公开请求响应/当前页面与URL/会话变化时间线",
+      "保留原失败并回收本例context"
+    ],
+    "faults": [
+      "精确发生于退出/refresh/login200后的me请求或本例导航存储写入",
+      "不破坏共享用户浏览器或别的登录上下文"
+    ],
+    "expected": [
+      "不把会话身份未完成当已认证导航；错误可恢复，恢复使用当前身份和安全站内来源",
+      "既有权限和站内来源边界保留"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ]
+  },
+  {
+    "id": "SR-UI-029",
+    "title": "导航存储写失败有界降级",
+    "requirements": [
+      "SR-P1-02-04",
+      "SR-P1-02-05"
+    ],
+    "sources": [
+      "requirements/sources/product-enhancement-proposal.md"
+    ],
+    "priority": "P1",
+    "mode": "manual",
+    "state": "NOT_RUN",
+    "readiness": "contract-pending",
+    "preconditions": [
+      "负责人另行授权第二轮执行且最终产品/QA/配置版本冻结",
+      "专属数据库/浏览器上下文及真实公开操作adapter；不读取UI私有状态",
+      "请求屏障仅绑定本例真实请求，副作用不被桩替换成PASS"
+    ],
+    "data": {
+      "variants": [
+        "群来源",
+        "列表来源",
+        "直接入口"
+      ],
+      "profile": "当前授权会话和私有导航存储故障context"
+    },
+    "steps": [
+      "另获第二轮执行许可并冻结实际候选/profile",
+      "只在自有context令导航相关sessionStorage写失败；两来源进入/刷新/返回",
+      "保存公开请求响应/当前页面与URL/会话变化时间线",
+      "保留原失败并回收本例context"
+    ],
+    "faults": [
+      "精确发生于退出/refresh/login200后的me请求或本例导航存储写入",
+      "不破坏共享用户浏览器或别的登录上下文"
+    ],
+    "expected": [
+      "仍可返回合法来源或站内兜底；不崩溃、不保存错误跨会话来源或站外URL",
+      "既有权限和站内来源边界保留"
+    ],
+    "timing": [
+      "QA响应持有、轮询与诊断超时仅构造前提，不新增业务SLA",
+      "实际发送/预检/保存请求分别计时；保留首次，无静默重试"
+    ],
+    "evidence": [
+      "视频/截图与操作时间线、当前URL/标题/导航和实际输入",
+      "原请求ID及精确响应门、完整脱敏请求/响应、公开后端状态",
+      "实物消息/运行/步骤与提醒关联及cleanup归属"
+    ],
+    "cleanup": [
+      "释放本例响应屏障，关闭自有浏览器上下文",
+      "仅回收本例账号/群/DB，保留原始FAIL/BLOCKED及清理次级错误"
+    ],
+    "dependencies": [
+      "FINAL-CANDIDATE",
+      "UI-PUBLIC-ADAPTER",
+      "UI-RESPONSE-CORRELATION"
+    ]
+  }
+]

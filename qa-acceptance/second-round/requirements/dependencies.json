@@ -1,0 +1,213 @@
+[
+  {
+    "id": "SR-DEP-CANDIDATE",
+    "title": "最终组合候选与授权",
+    "owner": "engineering-owner",
+    "needed": "最终SUT SHA/diff、QA SHA、负责人审阅及独立执行许可、原文hash、配置和资源manifest；当前5e82是需求冻结而非SUT。",
+    "impact": "全部产品场景；当前仅静态准备，不据其他条件齐备自动运行。",
+    "state": "PENDING",
+    "resolution": null
+  },
+  {
+    "id": "SR-DEP-FIRST-ROUND",
+    "title": "第一轮签发与差异输入",
+    "owner": "qa-owner",
+    "needed": "第一轮签发报告及原始结果/源/限制/责任/真人反馈索引；引用不可修改，不从当前分支反算历史。",
+    "impact": "首轮材料已可得；仅版本化引用，不在本轮改旧结果。最终第二轮diff仍由SR-DEP-CANDIDATE待交，不把该依赖重复记为材料未交。",
+    "state": "AVAILABLE_INPUT",
+    "resolution": {
+      "revision": "3f08a2faf39142752065302e107fb25630748e26",
+      "verifiedBy": "Read-only git show plus SHA-256; no report copied into or reinterpreted by second-round catalog.",
+      "sources": [
+        {
+          "repositoryPath": "qa-acceptance/reports/acceptance/20261002-current-delivery/report.md",
+          "sha256": "aa119fea808ee72d38eb21ef7f0022f3d7c36c69014dd204bb6d3bd5449d17c2",
+          "conclusion": "FAIL; original versioned full/delta counts unchanged"
+        },
+        {
+          "repositoryPath": "qa-acceptance/reports/followup/20261002-dispatched-kick-budget/report.md",
+          "sha256": "acfecfffa8e05140f6198aa4bb23f50a0090874fb09909908e359af53e444e9f",
+          "rawResult": "FAIL",
+          "reviewedResult": "BLOCKED",
+          "conclusion": "Supplement only; overall business remains FAIL"
+        }
+      ],
+      "residualsUnchanged": [
+        "Second instance not executed in dispatched-kick supplement",
+        "Real human obligations not automatically signed",
+        "Production-readiness not assessed"
+      ],
+      "candidateImpact": "Final second-round diff still depends on SR-DEP-CANDIDATE."
+    }
+  },
+  {
+    "id": "SR-DEP-DELIVERY",
+    "title": "可复现隔离生命周期",
+    "owner": "engineering-owner",
+    "needed": "最终README命令、支持runtime/lockfile、配置/迁移schema、health、媒体/session/usage资源归属、启动/关闭/清理与最小权限；QA需独立owned driver。",
+    "impact": "安装复跑/故障/清理；无现成驱动不算自动化已接入。",
+    "state": "PENDING",
+    "resolution": null
+  },
+  {
+    "id": "SR-DEP-MEDIA",
+    "title": "媒体保留与引用公开契约",
+    "owner": "engineering-owner",
+    "needed": "历史公开配置/时钟/协议已接收；补最终候选差异、实际独立driver和可信故障窗口，不再把已明确参数说成未知。",
+    "impact": "缺时钟或引用窗口不能用随机sleep/直接改库伪造；已明确的默认30天不等待重新决定。",
+    "state": "CONTRACT_INPUT_AVAILABLE_FINAL_BINDING_PENDING",
+    "resolution": {
+      "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+      "source": "requirements/sources/c1-media-files.md",
+      "mapping": "requirements/contract-mappings.json",
+      "scope": "Known clocks/permissions/protocol are available; true observation windows and final candidate remain to bind."
+    },
+    "contractState": "HISTORICAL_PUBLIC_INPUT_AVAILABLE",
+    "driverState": "PENDING"
+  },
+  {
+    "id": "SR-DEP-MODEL",
+    "title": "独立模型可控离线上游",
+    "owner": "engineering-owner",
+    "needed": "历史公开配置/时钟/协议已接收；补最终候选差异、实际独立driver和可信故障窗口，不再把已明确参数说成未知。",
+    "impact": "离线协议/历史/恢复；不能补不存在的幂等/远端查询保证。",
+    "state": "CONTRACT_INPUT_AVAILABLE_FINAL_BINDING_PENDING",
+    "resolution": {
+      "revision": "5e82f22b8eb26b4158ffaf06a137b62398470b25",
+      "source": "requirements/sources/c2-gemini-agent.md",
+      "mapping": "requirements/contract-mappings.json",
+      "scope": "Known clocks/permissions/protocol are available; true observation windows and final candidate remain to bind."
+    },
+    "contractState": "HISTORICAL_PUBLIC_INPUT_AVAILABLE",
+    "driverState": "PENDING"
+  },
+  {
+    "id": "SR-DEP-REAL-PROVIDER",
+    "title": "当前源真实提供方验证",
+    "owner": "owner-authorization",
+    "needed": "若真实证据不可替代：最小调用目的/次数和费用边界、凭据隔离方式、最终候选及明确执行许可；不提供真实key给报告。",
+    "impact": "real-provider场景当前不执行；历史调用和替身通过不能替代当前真实结果。",
+    "state": "PENDING",
+    "resolution": null
+  },
+  {
+    "id": "SR-DEP-UI",
+    "title": "公开页面与操作定位",
+    "owner": "engineering-owner",
+    "needed": "最终公开控件/路由来源和站内兜底/支持关闭入口/预检摘要和载荷、身份切换与实际响应控制；不得要求内置测试按钮或隐藏状态。",
+    "impact": "P0-03/04/P1-02；不存在的动作或真实前提不足记依赖，不编造按钮。",
+    "state": "PENDING",
+    "resolution": null
+  },
+  {
+    "id": "SR-DEP-GUARDS",
+    "title": "事务协作及检错交付证据",
+    "owner": "engineering-owner",
+    "needed": "两个最小mutation源/patch/命令/业务FAIL原件/清理；静态归属名单/允许协作与受控违规；关闭与资料/CAS事务真实故障屏障及外部行为取证。",
+    "impact": "缺事务失败注入时只能观察实际可见路径，不假称原子性故障窗口已覆盖。",
+    "state": "PENDING",
+    "resolution": null
+  },
+  {
+    "id": "SR-DEP-DB-MEASUREMENT",
+    "title": "PG规模与真实计划",
+    "owner": "engineering-owner",
+    "needed": "1000/10000数据生成及同毫秒/迟到分布、SQL映射、PG/index/statistics、EXPLAIN ANALYZE BUFFERS与API命令/结果、前后版本和回滚；QA独立受控库。",
+    "impact": "测量无新SLA；无法独立复现时相应证据项待补，不将旧开发样本伪成QA实测。",
+    "state": "PENDING",
+    "resolution": null
+  },
+  {
+    "id": "SR-DEP-DIAGNOSTICS",
+    "title": "新增诊断公开DTO",
+    "owner": "engineering-owner",
+    "needed": "按已冻结公开契约实现独立driver和真实故障/身份/资源取证；最终候选绑定及缺失细节仍待补。",
+    "impact": "尚缺字段/枚举不写成强制错误码；不要求新增页面。",
+    "state": "CONTRACT_AVAILABLE_DRIVER_PENDING",
+    "resolution": {
+      "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+      "source": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "mapping": "requirements/contract-mappings.json",
+      "scope": "Public declared DTO/identity/configuration is received; no live adapter/product execution verified."
+    },
+    "contractState": "AVAILABLE",
+    "driverState": "PENDING"
+  },
+  {
+    "id": "SR-DEP-MANAGED-POLICY",
+    "title": "托管目标身份与拒绝契约",
+    "owner": "engineering-owner",
+    "needed": "按已冻结公开契约实现独立driver和真实故障/身份/资源取证；最终候选绑定及缺失细节仍待补。",
+    "impact": "保护本身已批准；缺身份窗口/拒绝映射是接入待办，不需要重问是否保护，也不从当前实现反推。",
+    "state": "CONTRACT_AVAILABLE_DRIVER_PENDING",
+    "resolution": {
+      "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+      "source": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "mapping": "requirements/contract-mappings.json",
+      "scope": "Public declared DTO/identity/configuration is received; no live adapter/product execution verified."
+    },
+    "contractState": "AVAILABLE",
+    "driverState": "PENDING"
+  },
+  {
+    "id": "SR-DEP-USAGE",
+    "title": "usage最终有界存储契约",
+    "owner": "engineering-owner",
+    "needed": "按已冻结公开契约实现独立driver和真实故障/身份/资源取证；最终候选绑定及缺失细节仍待补。",
+    "impact": "不得猜配置名、token默认0、保留数或成功响应deadline。",
+    "state": "CONTRACT_AVAILABLE_DRIVER_PENDING",
+    "resolution": {
+      "revision": "aa41fc8fe8c52df228a68a5e2af03a529a6f6ce8",
+      "source": "requirements/sources/second-round-qa-intake-20261002.aa41fc8.md",
+      "mapping": "requirements/contract-mappings.json",
+      "scope": "Public declared DTO/identity/configuration is received; no live adapter/product execution verified."
+    },
+    "contractState": "AVAILABLE",
+    "driverState": "PENDING"
+  },
+  {
+    "id": "SR-DEP-OWNED-FAULTS",
+    "title": "独立故障与证据驱动",
+    "owner": "qa-owner-with-engineering-interface",
+    "needed": "owned DB/Gateway/Agent/provider实际请求和副作用账本、真实屏障/断连/进程退出/容量或事务边界、单调时钟和精确owner。",
+    "impact": "未接driver时用例保留完整手工步骤，readiness=driver-pending；不得以空脚本或skip声称覆盖。",
+    "state": "PENDING",
+    "resolution": null
+  },
+  {
+    "id": "FINAL-CANDIDATE",
+    "title": "最终冻结候选与独立执行许可",
+    "aliasOf": "SR-DEP-CANDIDATE",
+    "owner": "qa-owner-with-engineering-interface",
+    "needed": "最终冻结候选与独立执行许可",
+    "impact": "UI用例沿用自身依赖ID；此alias引用主依赖，不独立计成新增工程或产品条款。",
+    "state": "PENDING",
+    "resolution": null,
+    "source": "cases/enhancements-ui.json",
+    "introducedBy": "Root UI preparation coordination; canonical dependency defined in requirements/dependencies.json."
+  },
+  {
+    "id": "UI-PUBLIC-ADAPTER",
+    "title": "真实公开页面/控件/路由及隔离浏览器适配",
+    "aliasOf": "SR-DEP-UI",
+    "owner": "qa-owner-with-engineering-interface",
+    "needed": "真实公开页面/控件/路由及隔离浏览器适配",
+    "impact": "UI用例沿用自身依赖ID；此alias引用主依赖，不独立计成新增工程或产品条款。",
+    "state": "PENDING",
+    "resolution": null,
+    "source": "cases/enhancements-ui.json",
+    "introducedBy": "Root UI preparation coordination; canonical dependency defined in requirements/dependencies.json."
+  },
+  {
+    "id": "UI-RESPONSE-CORRELATION",
+    "title": "真实UI请求/响应身份、屏障及因果时序",
+    "aliasOf": "SR-DEP-OWNED-FAULTS",
+    "owner": "qa-owner-with-engineering-interface",
+    "needed": "真实UI请求/响应身份、屏障及因果时序",
+    "impact": "UI用例沿用自身依赖ID；此alias引用主依赖，不独立计成新增工程或产品条款。",
+    "state": "PENDING",
+    "resolution": null,
+    "source": "cases/enhancements-ui.json",
+    "introducedBy": "Root UI preparation coordination; canonical dependency defined in requirements/dependencies.json."
+  }
+]

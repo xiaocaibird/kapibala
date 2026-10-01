@@ -1,0 +1,90 @@
+[
+  {
+    "id": "CONFLICT-USAGE-001",
+    "state": "RESOLVED_BY_DOCUMENTED_CLARIFICATION",
+    "requirements": [
+      "SR-P1-05-02",
+      "SR-P1-05-07"
+    ],
+    "approvedSource": {
+      "path": "requirements/sources/product-enhancement-proposal.md",
+      "section": "P1-05",
+      "text": "失败状态需单独记录，usage 仍为未知"
+    },
+    "engineeringSource": {
+      "path": "requirements/sources/final-enhancement-measurement-20261002.aa41fc8.md",
+      "section": "P1-05",
+      "text": "局部输出校验失败仍可保留已经收到的真实用量"
+    },
+    "question": "provider调用成功但适配输出校验失败，是否属于批准提案所称失败usage未知？须明确该分层，不把provider请求失败与输出校验失败混为同一事实。",
+    "effect": "该语义分支已可形成独立预期；旧分歧与原句保留在history。驱动、最终候选和执行授权仍待接，所有产品结果NOT_RUN。",
+    "decisionNeeded": "本项窄记录语义无需新增业务选择；后续若改变授权/费用/保证仍另行确认。",
+    "executionRule": "执行时按实际HTTP与校验阶段分层，失败仍失败；来源证据不能证明已取得字段时不得臆测，缺前提BLOCKED。",
+    "history": [
+      {
+        "state": "OPEN_SEMANTIC_ALIGNMENT",
+        "record": {
+          "id": "CONFLICT-USAGE-001",
+          "state": "OPEN_SEMANTIC_ALIGNMENT",
+          "requirements": [
+            "SR-P1-05-02",
+            "SR-P1-05-07"
+          ],
+          "approvedSource": {
+            "path": "requirements/sources/product-enhancement-proposal.md",
+            "section": "P1-05",
+            "text": "失败状态需单独记录，usage 仍为未知"
+          },
+          "engineeringSource": {
+            "path": "requirements/sources/final-enhancement-measurement-20261002.aa41fc8.md",
+            "section": "P1-05",
+            "text": "局部输出校验失败仍可保留已经收到的真实用量"
+          },
+          "question": "provider调用成功但适配输出校验失败，是否属于批准提案所称失败usage未知？须明确该分层，不把provider请求失败与输出校验失败混为同一事实。",
+          "effect": "仅该有实际usage但输出校验失败子变体预期未裁定；其他明确正常/缺失/非法/真实0用量继续准备。全部产品state仍NOT_RUN。",
+          "decisionNeeded": "需求/工程语义对齐；如确实改变批准保证则由负责人决定。不是重新选择P1范围。",
+          "executionRule": "未对齐即运行时对此子断言BLOCKED，不能按实现选PASS；原始响应和失败阶段保留。"
+        },
+        "note": "Original ambiguity retained verbatim; no historical source bytes or results changed."
+      }
+    ],
+    "resolution": {
+      "at": "2026-10-01T17:35:24.272237+00:00",
+      "revision": "5a53cc83c998284b2ce7a641e894a21c1c47bffe",
+      "sources": [
+        "requirements/sources/product-enhancement-proposal.5a53cc8.md",
+        "requirements/sources/second-round-qa-intake-20261002.5a53cc8.md"
+      ],
+      "reviewBasis": "Independent reading of original approved P1-05 purpose and documented clarification; no product source mechanism or observed behavior used as oracle.",
+      "reasoning": [
+        "原同节已要求记录供应方实际usage、缺失未知、失败不能虚构零；该目标包含已取得真实数字。",
+        "旧句没有区分provider请求失败与收到成功HTTP后输出校验失败；新文明确两个事实轴，没有把失败改成成功。",
+        "保留有效已知字段与不推算缺失字段同时满足；非成功HTTP按当前明确接入边界不解析响应body，不能从异常文字提取数字。",
+        "因此只消除该记录语义歧义，不改变原工具授权/恢复/5秒/60秒要求，不新增成本/执行许可。"
+      ],
+      "acceptedPartitions": [
+        {
+          "providerResponse": "network/cancel/timeout/non-success HTTP; no validated usage",
+          "outcome": "failure",
+          "usage": "unobtained fields null; non-success HTTP body not parsed"
+        },
+        {
+          "providerResponse": "successful HTTP with validated nonnegative safe-integer token fields; output/blocking/protocol failure afterward",
+          "outcome": "failure",
+          "usage": "actual valid fields retained; missing/illegal fields null"
+        },
+        {
+          "providerResponse": "successful valid output with partial/invalid/zero usage",
+          "outcome": "according to actual output",
+          "usage": "each field independent; explicit zero remains 0; never infer missing totals or fields"
+        }
+      ],
+      "productResult": "NOT_RUN",
+      "excludedConclusions": [
+        "No current candidate actual usage behavior verified",
+        "No fee/real-provider/second-round product execution/main-merge permission",
+        "No change to first-round signed results"
+      ]
+    }
+  }
+]
