@@ -8,7 +8,7 @@
 
 普通 `apps/server/src/main.ts` 不导入这些脚本，仅提供环境变量不会打开控制器。工程 SUT 显式使用 `scripts/qa-runtime-observation-server.ts`，独立控制器使用 `scripts/qa-runtime-observation-controller.ts`。两者只能监听回环地址。不得将本入口用于演示数据或正式服务。
 
-SUT 必需环境：`DATABASE_URL`（隔离数据库）、`PORT`、`GATEWAY_URL`、`AGENT_URL`、`QA_ACCEPTANCE_RESOURCE_TOKEN`、`QA_RUNTIME_OBSERVATION_REGISTRY_DIR`。控制器必需 `QA_RUNTIME_OBSERVATION_REGISTRY_DIR`、`QA_RUNTIME_OBSERVATION_PORT`。Node 版本沿用项目要求，在工程仓库工作目录执行：
+SUT 必需环境：`DATABASE_URL`（隔离数据库）、`PORT`、`GATEWAY_URL`、`AGENT_URL`、`QA_ACCEPTANCE_RESOURCE_TOKEN`、`QA_RUNTIME_REGISTRY_DIR`。控制器必需 `QA_RUNTIME_REGISTRY_DIR`、`QA_RUNTIME_PORT`。Node 版本沿用项目要求，在工程仓库工作目录执行：
 
 ```sh
 node --import tsx scripts/qa-runtime-observation-server.ts
@@ -83,3 +83,5 @@ node --import tsx --test tests/integration/qa-runtime-observation.test.ts tests/
 执行前必须显式提供专用隔离 `DATABASE_URL`。证据在 [开发执行日志](evidence/qa-runtime-observation-development.txt)，包含实测提交、随机数据库名、事件身份与生命周期；资源 token 已脱敏。`npx tsc --noEmit` 通过；原始需求 hash 校验通过。本批未运行、修改 QA 用例，也没有把开发结果填入 QA 验收结论。
 
 初次尝试的旧端口 64550 已停用，连接被拒绝，未进入产品验证；随后改用独占容器和随机回环端口。测试整理时发现并修正了 WS 认证字段和事件名引用，最终断言核对真实 `account_status_changed`，不使用不存在的事件名证明“没有通知”。开发负向检查另覆盖真实 tick 放行后仍失败，不把这种失败报告为成功。
+
+测试后核实专用服务上剩余随机测试库为 0，并精确删除本批容器及匿名卷，二者均复查不存在。之后仅统一显式入口配置名称为 `QA_RUNTIME_REGISTRY_DIR` / `QA_RUNTIME_PORT`；重新类型检查，并实际启动独立控制器验证新变量和请求校验后关闭。该配置核对不重复计算为产品自测或 QA 验收。

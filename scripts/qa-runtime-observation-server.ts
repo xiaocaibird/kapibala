@@ -9,7 +9,7 @@ import {
   ObservedRuntimeDatabase,
   RuntimeObservation,
 } from "./qa-runtime-observation/runtime.js";
-const directory = process.env.QA_RUNTIME_OBSERVATION_REGISTRY_DIR;
+const directory = process.env.QA_RUNTIME_REGISTRY_DIR;
 const port = Number(process.env.PORT);
 if (
   !directory ||

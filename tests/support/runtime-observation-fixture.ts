@@ -89,7 +89,7 @@ export async function runtimeFixture(t: TestContext, normal = false) {
           GATEWAY_URL: remote.listeningOrigin,
           AGENT_URL: remote.listeningOrigin,
           QA_ACCEPTANCE_RESOURCE_TOKEN: token,
-          QA_RUNTIME_OBSERVATION_REGISTRY_DIR: directory,
+          QA_RUNTIME_REGISTRY_DIR: directory,
         },
       },
     );

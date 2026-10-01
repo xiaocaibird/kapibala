@@ -51,3 +51,6 @@
 ℹ skipped 0
 ℹ todo 0
 ℹ duration_ms 8532.284208
+
+Resource cleanup (2026-10-01): dedicated PostgreSQL 17 container f82d8682c688ffe5e028ea8950ecfbc8883f241e2292044b8668ce467e74d333 / loopback 58784; remaining kapibala_test_* databases before cleanup: 0. docker rm -f -v completed; exact container and anonymous volume 1dc25c37ed9a93bd4aa95d268afc0307d0114f735c6e1eaf49d901d8c90f26e4 both absent on post-check.
+Environment follow-up: renamed only explicit-entry env/documentation/developer fixture to QA_RUNTIME_REGISTRY_DIR and QA_RUNTIME_PORT; npx tsc --noEmit passed. New controller entry actually started on a selected loopback port with new names; malformed/missing target capabilities returned 400; process and temporary registry cleaned. This checks configuration wiring, not another product/QA run.
