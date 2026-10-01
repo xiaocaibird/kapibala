@@ -65,6 +65,8 @@ export class LifecycleWitness
   implements TestLifecycleObserver, ObservationRuntime<LifecycleRequest>
 {
   readonly protocol = "qa-runtime-observation/1";
+  // Witness lifetime identity, distinct from the bridge registry instance ID.
+  private readonly instanceId = randomUUID();
   private events: ObservationEvent[] = [];
   private nextSeq = 0;
   private droppedThrough = 0;
@@ -76,6 +78,7 @@ export class LifecycleWitness
       "tool-wait-witness",
       "message-recovery-witness",
       "agent-lifecycle-witness",
+      "agent-run-lock-witness",
     ];
   }
   record(fact: LifecycleFact): void {
@@ -84,6 +87,7 @@ export class LifecycleWitness
     const event: ObservationEvent = {
       ...structuredClone(fact),
       ...clock,
+      instanceId: this.instanceId,
       at: new Date().toISOString(),
       seq: ++this.nextSeq,
     };
@@ -189,6 +193,7 @@ export class LifecycleWitness
       kind: "lifecycle-observation-attached",
       attemptId: randomUUID(),
       ...clockFields(),
+      instanceId: this.instanceId,
       instancePid: binding.pid,
       databaseIdentity: createHash("sha256")
         .update(JSON.stringify(facts.rows[0]))

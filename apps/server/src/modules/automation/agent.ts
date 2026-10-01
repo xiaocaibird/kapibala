@@ -148,7 +148,7 @@ export class AgentModule {
       )
     ).rows;
     for (const run of pausedCancellations)
-      await this.ctx.db.withLock(`agent:${run.id}`, async () => {
+      await this.withRunLock(run, "paused-cancellation", async () => {
         // Cancellation ends orchestration without declaring the uncertain external
         // effect failed or clearing its recovery evidence.
         await this.finish(run, "cancelled", "cancelled", null, {
@@ -156,8 +156,8 @@ export class AgentModule {
         });
       });
     const runs = (
-      await this.ctx.db.query<{ id: string }>(
-        "SELECT id FROM agent_runs WHERE status='running' AND recovery_note IS NULL",
+      await this.ctx.db.query<{ id: string; group_id: string }>(
+        "SELECT id,group_id FROM agent_runs WHERE status='running' AND recovery_note IS NULL",
       )
     ).rows;
     for (const run of runs) {
@@ -165,8 +165,7 @@ export class AgentModule {
       // Leave pool capacity for heartbeats, API transactions, gateway workers and
       // other runs' final commits instead of consuming every connection with locks.
       if (this.running.size >= 4) break;
-      const task = this.ctx.db
-        .withLock(`agent:${run.id}`, async () => this.run(run.id))
+      const task = this.withRunLock(run, "run", async () => this.run(run.id))
         .then(() => undefined)
         .catch((error) => {
           this.ctx.log.error(
@@ -178,6 +177,51 @@ export class AgentModule {
           this.running.delete(run.id);
         });
       this.running.set(run.id, task);
+    }
+  }
+  private async withRunLock(
+    run: { id: string; group_id: string },
+    purpose: "run" | "paused-cancellation",
+    fn: () => Promise<void>,
+  ): Promise<void> {
+    const key = `agent:${run.id}`;
+    const observer = this.ctx.testLifecycleObserver;
+    if (!observer) {
+      await this.ctx.db.withLock(key, fn);
+      return;
+    }
+    const identity = {
+      groupId: run.group_id,
+      runId: run.id,
+      attemptId: randomUUID(),
+      lockKey: key,
+      purpose,
+    };
+    let callbackEntered = false;
+    const record = (kind: string, lockStatus?: string) => {
+      // Observation must not change lock admission, callback execution or errors.
+      try {
+        observer.record({
+          ...identity,
+          kind,
+          callbackEntered,
+          ...(lockStatus ? { lockStatus } : {}),
+        });
+      } catch {}
+    };
+    record("agent-run-lock-attempted");
+    try {
+      const result = await this.ctx.db.tryWithLock(key, async () => {
+        callbackEntered = true;
+        record("agent-run-lock-acquired");
+        await fn();
+      });
+      // This is the actual lock API outcome, after its finally/unlock completes;
+      // executed is not a claim that orchestration or an external effect finished.
+      record("agent-run-lock-result", result.status);
+    } catch (error) {
+      record("agent-run-lock-result", "error");
+      throw error;
     }
   }
   async close(): Promise<void> {
