@@ -79,6 +79,22 @@ interface Record {
 export async function createCapacityController(directory: string) {
   const folder = await registryDirectory(directory);
   const app = Fastify({ logger: false, bodyLimit: 16_384 });
+  // The versioned QA client sends Content-Type on bodyless DELETE too.
+  // Accept that exact empty form; PUT still requires parsed, validated JSON.
+  app.removeContentTypeParser("application/json");
+  app.addContentTypeParser(
+    "application/json",
+    { parseAs: "string" },
+    (request, body, done) => {
+      if (request.method === "DELETE" && body === "")
+        return done(null, undefined);
+      try {
+        done(null, JSON.parse(String(body)));
+      } catch {
+        done(new ControlError(400, "Expected a JSON request body"));
+      }
+    },
+  );
   const leases = new Map<string, Record>();
   let creation: Promise<unknown> = Promise.resolve();
   let refreshing = false;
@@ -290,7 +306,21 @@ export async function createCapacityController(directory: string) {
               );
             return retain(record, snapshot);
           } catch (error) {
-            await refresh(id, "DELETE").catch(() => undefined);
+            try {
+              await refresh(id, "DELETE");
+            } catch (cleanup) {
+              // An explicit failed PUT response followed by a bridge 404 proves
+              // establishment finished without registering holders. A transport
+              // timeout does NOT prove that: retain that reservation until TTL.
+              if (
+                error instanceof ControlError &&
+                cleanup instanceof ControlError &&
+                cleanup.status === 404
+              ) {
+                clearTimeout(record.timer);
+                leases.delete(id);
+              }
+            }
             throw error;
           }
         });
