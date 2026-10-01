@@ -175,7 +175,9 @@ export class OwnedDatabaseCluster {
     }
     if (info.Config.Labels['qa.owner'] !== this.owner || (this.id && info.Id !== this.id))
       throw new Error('拒绝清理owner或ID不匹配的容器');
-    await this.docker(['rm', '--force', info.Id]);
+    // PostgreSQL images may create an anonymous data volume. Remove only volumes
+    // attached to this verified owned container; Docker retains named volumes.
+    await this.docker(['rm', '--force', '--volumes', info.Id]);
     this.attempted = false;
     this.ready = false;
     this.databases.clear();

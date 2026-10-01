@@ -1,0 +1,49 @@
+{
+  "revision": "993f7588c1105894e0543554209a8c085423589f",
+  "cwd": "/Users/zcm/.codex/worktrees/qa-sut-integration/kapibala",
+  "apiPort": 52029,
+  "database": "qa_f2bc1b3493724bc9bebeaefd",
+  "databaseImage": "postgres:17-alpine",
+  "gateway": "http://127.0.0.1:52025",
+  "agent": "http://127.0.0.1:52027",
+  "startedAt": "2026-10-01T04:48:33.547Z",
+  "commands": {
+    "cwd": "/Users/zcm/.codex/worktrees/qa-sut-integration/kapibala",
+    "revision": "993f7588c1105894e0543554209a8c085423589f",
+    "start": {
+      "command": "node",
+      "args": [
+        "--import",
+        "tsx",
+        "apps/server/src/main.ts"
+      ]
+    },
+    "migrate": {
+      "command": "node",
+      "args": [
+        "--import",
+        "tsx",
+        "scripts/migrate.ts"
+      ]
+    },
+    "web": {
+      "command": "npm",
+      "args": [
+        "exec",
+        "--workspace",
+        "apps/web",
+        "--",
+        "vite",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "{WEB_PORT}",
+        "--strictPort"
+      ]
+    },
+    "env": {
+      "AGENT_TURN_TIMEOUT_MS": "12000"
+    },
+    "startupTimeoutMs": 45000
+  }
+}

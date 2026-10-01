@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-10-01T04:49:36.931Z",
+  "containerInventory": {
+    "id": "f6b63fd85d95f5e2996301c12b32e126954d023a0b73481120318f6288f43d8e",
+    "name": "/qa-acceptance-b37e5bdf-cef4-4055-85f5-2f3449897b43",
+    "created": "2026-10-01T04:48:31.543768508Z",
+    "owner": "b37e5bdf-cef4-4055-85f5-2f3449897b43",
+    "mounts": [
+      {
+        "Type": "volume",
+        "Name": "1b6dd43bf52b9d3e7c9950cadb2e2ec34c599af42003e1c4d1d3f788dfde6eed",
+        "Source": "/var/lib/docker/volumes/1b6dd43bf52b9d3e7c9950cadb2e2ec34c599af42003e1c4d1d3f788dfde6eed/_data",
+        "Destination": "/var/lib/postgresql/data",
+        "Driver": "local",
+        "Mode": "",
+        "RW": true,
+        "Propagation": ""
+      }
+    ],
+    "ports": {
+      "5432/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "52017"
+        }
+      ]
+    }
+  },
+  "containerAbsent": true,
+  "removedAnonymousVolumes": [
+    "1b6dd43bf52b9d3e7c9950cadb2e2ec34c599af42003e1c4d1d3f788dfde6eed"
+  ],
+  "volumeAbsenceVerified": true,
+  "method": "Snapshot of exact created container, owner label and mount; verified anonymous volume creation time, absence of all container references; removed only this explicit volume without force/prune.",
+  "qaIssue": "QA-TOOL-001: database container teardown omitted anonymous volume removal; explicit owned cleanup completed after run; product assertions unaffected."
+}

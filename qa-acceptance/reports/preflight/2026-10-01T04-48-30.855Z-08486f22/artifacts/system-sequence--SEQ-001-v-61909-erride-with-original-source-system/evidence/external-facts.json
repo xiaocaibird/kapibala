@@ -1,0 +1,520 @@
+{
+  "gateway": {
+    "accounts": [
+      {
+        "id": "account-1",
+        "platformUserId": "platform-account-1",
+        "connected": true,
+        "status": "available",
+        "rateLimitedUntil": null
+      },
+      {
+        "id": "account-2",
+        "platformUserId": "platform-account-2",
+        "connected": true,
+        "status": "available",
+        "rateLimitedUntil": null
+      },
+      {
+        "id": "account-3",
+        "platformUserId": "platform-account-3",
+        "connected": true,
+        "status": "available",
+        "rateLimitedUntil": null
+      },
+      {
+        "id": "account-4",
+        "platformUserId": "platform-account-4",
+        "connected": true,
+        "status": "available",
+        "rateLimitedUntil": null
+      },
+      {
+        "id": "account-5",
+        "platformUserId": "platform-account-5",
+        "connected": true,
+        "status": "available",
+        "rateLimitedUntil": null
+      },
+      {
+        "id": "account-6",
+        "platformUserId": "platform-account-6",
+        "connected": true,
+        "status": "available",
+        "rateLimitedUntil": null
+      }
+    ],
+    "groups": [
+      {
+        "groupId": "gateway-group-1",
+        "creatorAccountId": "account-1",
+        "writable": true,
+        "members": [
+          {
+            "platformUserId": "platform-account-1",
+            "role": "creator"
+          },
+          {
+            "platformUserId": "platform-account-2",
+            "role": "admin"
+          },
+          {
+            "platformUserId": "platform-account-3",
+            "role": "member"
+          }
+        ]
+      }
+    ],
+    "messages": [
+      {
+        "groupId": "gateway-group-1",
+        "accountId": "account-2",
+        "clientMsgId": "0afd6d5b-f37c-4508-9f3b-ce1abdb1e217",
+        "msgId": "gateway-message-1",
+        "senderPlatformUserId": "platform-account-2",
+        "text": "A/room-1",
+        "sentAt": "2026-10-01T04:48:42.186Z"
+      },
+      {
+        "groupId": "gateway-group-1",
+        "accountId": "account-2",
+        "clientMsgId": "77f7c47b-b097-49ec-bee4-b7cffdb24c3a",
+        "msgId": "gateway-message-2",
+        "senderPlatformUserId": "platform-account-2",
+        "text": "B/room-1",
+        "sentAt": "2026-10-01T04:48:42.589Z"
+      },
+      {
+        "groupId": "gateway-group-1",
+        "accountId": "account-2",
+        "clientMsgId": "7ea7bc57-d3d4-494c-b4cb-8c5ddd6097ea",
+        "msgId": "gateway-message-3",
+        "senderPlatformUserId": "platform-account-2",
+        "text": "B/room-3",
+        "sentAt": "2026-10-01T04:48:42.985Z"
+      },
+      {
+        "groupId": "gateway-group-1",
+        "accountId": "account-2",
+        "clientMsgId": "7d4bd7df-f1f6-4bfe-bf7f-bb5a19704689",
+        "msgId": "gateway-message-4",
+        "senderPlatformUserId": "platform-account-2",
+        "text": "C/room-3",
+        "sentAt": "2026-10-01T04:48:43.385Z"
+      }
+    ],
+    "requests": [
+      {
+        "id": 1,
+        "at": "2026-10-01T04:48:40.613Z",
+        "method": "GET",
+        "path": "/events",
+        "body": null,
+        "responseStatus": 200
+      },
+      {
+        "id": 2,
+        "at": "2026-10-01T04:48:40.849Z",
+        "method": "POST",
+        "path": "/accounts/account-1/connect",
+        "body": {},
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T04:48:40.849Z"
+      },
+      {
+        "id": 3,
+        "at": "2026-10-01T04:48:40.857Z",
+        "method": "POST",
+        "path": "/accounts/account-2/connect",
+        "body": {},
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T04:48:40.857Z"
+      },
+      {
+        "id": 4,
+        "at": "2026-10-01T04:48:40.864Z",
+        "method": "POST",
+        "path": "/accounts/account-3/connect",
+        "body": {},
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T04:48:40.864Z"
+      },
+      {
+        "id": 5,
+        "at": "2026-10-01T04:48:40.870Z",
+        "method": "POST",
+        "path": "/accounts/account-4/connect",
+        "body": {},
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T04:48:40.870Z"
+      },
+      {
+        "id": 6,
+        "at": "2026-10-01T04:48:40.875Z",
+        "method": "POST",
+        "path": "/accounts/account-5/connect",
+        "body": {},
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T04:48:40.875Z"
+      },
+      {
+        "id": 7,
+        "at": "2026-10-01T04:48:40.881Z",
+        "method": "POST",
+        "path": "/accounts/account-6/connect",
+        "body": {},
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T04:48:40.881Z"
+      },
+      {
+        "id": 8,
+        "at": "2026-10-01T04:48:40.919Z",
+        "method": "POST",
+        "path": "/groups",
+        "body": {
+          "creatorAccountId": "account-1"
+        },
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T04:48:40.919Z"
+      },
+      {
+        "id": 9,
+        "at": "2026-10-01T04:48:41.018Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-1/invite",
+        "body": {},
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T04:48:41.018Z"
+      },
+      {
+        "id": 10,
+        "at": "2026-10-01T04:48:41.122Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-1/join",
+        "body": {
+          "accountId": "account-2",
+          "inviteLink": "http://127.0.0.1:52233/invitations/1"
+        },
+        "responseStatus": 202,
+        "completedAt": "2026-10-01T04:48:41.122Z"
+      },
+      {
+        "id": 11,
+        "at": "2026-10-01T04:48:41.230Z",
+        "method": "GET",
+        "path": "/groups/gateway-group-1/members",
+        "body": null,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T04:48:41.230Z"
+      },
+      {
+        "id": 12,
+        "at": "2026-10-01T04:48:41.428Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-1/join",
+        "body": {
+          "accountId": "account-3",
+          "inviteLink": "http://127.0.0.1:52233/invitations/1"
+        },
+        "responseStatus": 202,
+        "completedAt": "2026-10-01T04:48:41.428Z"
+      },
+      {
+        "id": 13,
+        "at": "2026-10-01T04:48:41.535Z",
+        "method": "GET",
+        "path": "/groups/gateway-group-1/members",
+        "body": null,
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T04:48:41.535Z"
+      },
+      {
+        "id": 14,
+        "at": "2026-10-01T04:48:41.732Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-1/promote",
+        "body": {
+          "byAccountId": "account-1",
+          "accountId": "account-2"
+        },
+        "responseStatus": 200,
+        "completedAt": "2026-10-01T04:48:41.732Z"
+      },
+      {
+        "id": 15,
+        "at": "2026-10-01T04:48:42.134Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-1/send",
+        "body": {
+          "accountId": "account-2",
+          "clientMsgId": "0afd6d5b-f37c-4508-9f3b-ce1abdb1e217",
+          "text": "A/room-1"
+        },
+        "responseStatus": 202,
+        "completedAt": "2026-10-01T04:48:42.134Z"
+      },
+      {
+        "id": 16,
+        "at": "2026-10-01T04:48:42.538Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-1/send",
+        "body": {
+          "accountId": "account-2",
+          "clientMsgId": "77f7c47b-b097-49ec-bee4-b7cffdb24c3a",
+          "text": "B/room-1"
+        },
+        "responseStatus": 202,
+        "completedAt": "2026-10-01T04:48:42.538Z"
+      },
+      {
+        "id": 17,
+        "at": "2026-10-01T04:48:42.935Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-1/send",
+        "body": {
+          "accountId": "account-2",
+          "clientMsgId": "7ea7bc57-d3d4-494c-b4cb-8c5ddd6097ea",
+          "text": "B/room-3"
+        },
+        "responseStatus": 202,
+        "completedAt": "2026-10-01T04:48:42.935Z"
+      },
+      {
+        "id": 18,
+        "at": "2026-10-01T04:48:43.334Z",
+        "method": "POST",
+        "path": "/groups/gateway-group-1/send",
+        "body": {
+          "accountId": "account-2",
+          "clientMsgId": "7d4bd7df-f1f6-4bfe-bf7f-bb5a19704689",
+          "text": "C/room-3"
+        },
+        "responseStatus": 202,
+        "completedAt": "2026-10-01T04:48:43.334Z"
+      }
+    ],
+    "events": [
+      {
+        "eventId": 1,
+        "type": "member_joined",
+        "data": {
+          "groupId": "gateway-group-1",
+          "platformUserId": "platform-account-2",
+          "eventId": 1,
+          "type": "member_joined"
+        }
+      },
+      {
+        "eventId": 2,
+        "type": "member_joined",
+        "data": {
+          "groupId": "gateway-group-1",
+          "platformUserId": "platform-account-3",
+          "eventId": 2,
+          "type": "member_joined"
+        }
+      },
+      {
+        "eventId": 3,
+        "type": "message_sent",
+        "data": {
+          "clientMsgId": "0afd6d5b-f37c-4508-9f3b-ce1abdb1e217",
+          "msgId": "gateway-message-1",
+          "sentAt": "2026-10-01T04:48:42.186Z",
+          "eventId": 3,
+          "type": "message_sent"
+        }
+      },
+      {
+        "eventId": 4,
+        "type": "message",
+        "data": {
+          "groupId": "gateway-group-1",
+          "msgId": "gateway-message-1",
+          "senderPlatformUserId": "platform-account-2",
+          "text": "A/room-1",
+          "sentAt": "2026-10-01T04:48:42.186Z",
+          "eventId": 4,
+          "type": "message"
+        }
+      },
+      {
+        "eventId": 5,
+        "type": "message_sent",
+        "data": {
+          "clientMsgId": "77f7c47b-b097-49ec-bee4-b7cffdb24c3a",
+          "msgId": "gateway-message-2",
+          "sentAt": "2026-10-01T04:48:42.589Z",
+          "eventId": 5,
+          "type": "message_sent"
+        }
+      },
+      {
+        "eventId": 6,
+        "type": "message",
+        "data": {
+          "groupId": "gateway-group-1",
+          "msgId": "gateway-message-2",
+          "senderPlatformUserId": "platform-account-2",
+          "text": "B/room-1",
+          "sentAt": "2026-10-01T04:48:42.589Z",
+          "eventId": 6,
+          "type": "message"
+        }
+      },
+      {
+        "eventId": 7,
+        "type": "message_sent",
+        "data": {
+          "clientMsgId": "7ea7bc57-d3d4-494c-b4cb-8c5ddd6097ea",
+          "msgId": "gateway-message-3",
+          "sentAt": "2026-10-01T04:48:42.985Z",
+          "eventId": 7,
+          "type": "message_sent"
+        }
+      },
+      {
+        "eventId": 8,
+        "type": "message",
+        "data": {
+          "groupId": "gateway-group-1",
+          "msgId": "gateway-message-3",
+          "senderPlatformUserId": "platform-account-2",
+          "text": "B/room-3",
+          "sentAt": "2026-10-01T04:48:42.985Z",
+          "eventId": 8,
+          "type": "message"
+        }
+      },
+      {
+        "eventId": 9,
+        "type": "message_sent",
+        "data": {
+          "clientMsgId": "7d4bd7df-f1f6-4bfe-bf7f-bb5a19704689",
+          "msgId": "gateway-message-4",
+          "sentAt": "2026-10-01T04:48:43.385Z",
+          "eventId": 9,
+          "type": "message_sent"
+        }
+      },
+      {
+        "eventId": 10,
+        "type": "message",
+        "data": {
+          "groupId": "gateway-group-1",
+          "msgId": "gateway-message-4",
+          "senderPlatformUserId": "platform-account-2",
+          "text": "C/room-3",
+          "sentAt": "2026-10-01T04:48:43.385Z",
+          "eventId": 10,
+          "type": "message"
+        }
+      }
+    ],
+    "effects": [
+      {
+        "at": "2026-10-01T04:48:40.849Z",
+        "kind": "connect",
+        "accountId": "account-1"
+      },
+      {
+        "at": "2026-10-01T04:48:40.857Z",
+        "kind": "connect",
+        "accountId": "account-2"
+      },
+      {
+        "at": "2026-10-01T04:48:40.864Z",
+        "kind": "connect",
+        "accountId": "account-3"
+      },
+      {
+        "at": "2026-10-01T04:48:40.870Z",
+        "kind": "connect",
+        "accountId": "account-4"
+      },
+      {
+        "at": "2026-10-01T04:48:40.875Z",
+        "kind": "connect",
+        "accountId": "account-5"
+      },
+      {
+        "at": "2026-10-01T04:48:40.881Z",
+        "kind": "connect",
+        "accountId": "account-6"
+      },
+      {
+        "at": "2026-10-01T04:48:40.919Z",
+        "kind": "create",
+        "groupId": "gateway-group-1",
+        "accountId": "account-1"
+      },
+      {
+        "at": "2026-10-01T04:48:41.018Z",
+        "kind": "invite",
+        "groupId": "gateway-group-1"
+      },
+      {
+        "at": "2026-10-01T04:48:41.224Z",
+        "kind": "join",
+        "accountId": "account-2",
+        "groupId": "gateway-group-1",
+        "platformUserId": "platform-account-2"
+      },
+      {
+        "at": "2026-10-01T04:48:41.530Z",
+        "kind": "join",
+        "accountId": "account-3",
+        "groupId": "gateway-group-1",
+        "platformUserId": "platform-account-3"
+      },
+      {
+        "at": "2026-10-01T04:48:41.732Z",
+        "kind": "promote",
+        "groupId": "gateway-group-1",
+        "accountId": "account-2"
+      },
+      {
+        "at": "2026-10-01T04:48:42.186Z",
+        "kind": "send",
+        "accountId": "account-2",
+        "groupId": "gateway-group-1",
+        "clientMsgId": "0afd6d5b-f37c-4508-9f3b-ce1abdb1e217",
+        "msgId": "gateway-message-1"
+      },
+      {
+        "at": "2026-10-01T04:48:42.589Z",
+        "kind": "send",
+        "accountId": "account-2",
+        "groupId": "gateway-group-1",
+        "clientMsgId": "77f7c47b-b097-49ec-bee4-b7cffdb24c3a",
+        "msgId": "gateway-message-2"
+      },
+      {
+        "at": "2026-10-01T04:48:42.985Z",
+        "kind": "send",
+        "accountId": "account-2",
+        "groupId": "gateway-group-1",
+        "clientMsgId": "7ea7bc57-d3d4-494c-b4cb-8c5ddd6097ea",
+        "msgId": "gateway-message-3"
+      },
+      {
+        "at": "2026-10-01T04:48:43.385Z",
+        "kind": "send",
+        "accountId": "account-2",
+        "groupId": "gateway-group-1",
+        "clientMsgId": "7d4bd7df-f1f6-4bfe-bf7f-bb5a19704689",
+        "msgId": "gateway-message-4"
+      }
+    ],
+    "barriers": [],
+    "backgroundErrors": [],
+    "connectedStreams": 1
+  },
+  "agent": {
+    "turns": [],
+    "audits": [],
+    "sessions": [],
+    "barriers": [],
+    "backgroundErrors": []
+  }
+}

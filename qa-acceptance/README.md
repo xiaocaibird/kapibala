@@ -1,10 +1,12 @@
 # 独立 QA 验收体系
 
-本目录维护需求追踪、用例、独立协议桩、自动化脚本和报告工具。**当前为准备阶段，没有启动、连接或测试被测工程。** 脚本已实现与环境已接入分开统计；产品结果统一从 `NOT_RUN` 开始，开发自测和旧报告不计入本轮证据。
+本目录维护需求追踪、用例、独立协议桩、自动化脚本和报告工具。**2026-10-01 已获授权完成首轮六条隔离联调，6/6 首轮通过；正式业务验收与上线评估未执行。** 脚本已实现与环境已接入分开统计；产品结果统一从 `NOT_RUN` 开始，开发自测和旧报告不计入本轮证据。
 
 ## 阅读入口
 
-- [开发交接接收与首轮联调](requirements/integration-intake-20261001.md)、[候选风险与剩余覆盖准备](requirements/integration-risk-review-20261001.md)：固定993f758；只准备六条system冒烟，原13项接入与新评审专项仍待完成，尚未执行产品。
+- [首轮隔离联调报告](reports/integration/20261001-smoke.md)、[证据索引](reports/integration/20261001-smoke-evidence.json)：六条首轮通过、完整证据及资源清理；不构成正式验收。
+
+- [开发交接接收与首轮联调](requirements/integration-intake-20261001.md)、[候选风险与剩余覆盖准备](requirements/integration-risk-review-20261001.md)：固定993f758；六条 system 冒烟已执行通过，原13项接入与新评审专项仍待完成。
 
 - [原24条设计阻塞复核](requirements/blocker-reassessment.md)：24条均有脚本，13条工程/夹具依赖未接入，11条script-ready，0条业务决策待定；不以 automated 数量冒充就绪度。
 - [普通序列失败裁定](requirements/sequence-failure-policy.md)：用户已批准普通发送失败使整条运行failed、后续不发送；保留原跳过、限流等待、结果确认及群不可写停止规则。
@@ -67,7 +69,7 @@ npm run hash:target -- --target config/target.local.json
 
 `developer-smoke` 只用system，不要求安装浏览器、确认UI定位或填写上线profile。经登记确认仅含system的预跑无需browser-automation授权；它仍需独立启动、专属数据库、QA桩延迟/重复故障和自有进程清理权限。项目选择与摘要由入口复核，不能靠环境变量声明来缩小授权。
 
-开发先完成自己的单元/集成测试，再按变更选择 QA 的短冒烟或相关回归。预跑需另行获得产品执行授权，不能以本次资产建设授权代替。当前未执行任何预跑。标准由 QA 维护，开发按入口读取；问题反馈与交接见 [共享说明](sharing/README.md) 和 [协作流程](requirements/collaboration.md)。
+开发先完成自己的单元/集成测试，再按变更选择 QA 的短冒烟或相关回归。预跑需另行获得产品执行授权，不能以本次资产建设授权代替。已由 QA 执行一次授权的 developer-smoke 联调，结果见首轮报告；开发自己的预跑不由此代为完成。标准由 QA 维护，开发按入口读取；问题反馈与交接见 [共享说明](sharing/README.md) 和 [协作流程](requirements/collaboration.md)。
 
 以下两步只读 QA 资产，不启动产品，可在准备期使用：
 
