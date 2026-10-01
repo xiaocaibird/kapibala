@@ -1,0 +1,17 @@
+TAP version 13
+# Subtest: platform: Agent kick deadline cancels real HTTP confirmation without replaying an uncertain effect
+ok 1 - platform: Agent kick deadline cancels real HTTP confirmation without replaying an uncertain effect
+  ---
+  duration_ms: 20263.155208
+  type: 'test'
+  ...
+# {"case":"platform-real-kick-confirmation-deadline","priorActiveMs":43000,"kickReceivedElapsedMs":61.597999999999956,"confirmationReceivedElapsedMs":2165.6332089999996,"confirmationClosedElapsedMs":17002.876834000002,"terminalObservedElapsedMs":17050.811,"persistedActiveMs":59980,"kickRequests":1,"confirmationRequests":1,"status":"failed","endReason":"wall_clock","recoveryNote":"The activity budget expired during a kick. Its external result remains unknown and the saved intent will not be replayed.","historyUnchanged":true,"secondInstanceStatus":"failed","database":"kapibala_test_fb3f80229a454a959d663138d100899e","evidenceRole":"real HTTP confirmation cancellation and non-replay; not a strict 60000ms PASS"}
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 20521.924
