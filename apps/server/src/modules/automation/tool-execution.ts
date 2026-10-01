@@ -142,14 +142,24 @@ export class AgentTools {
         "UPDATE agent_steps SET state='auditing',audit_attempts=$3 WHERE run_id=$1 AND ordinal=$2",
         [run.id, step.ordinal, attempts],
       );
+      const body = JSON.stringify({ text, groupId: run.group_id });
+      // The durable attempt write and serialization may exhaust the original
+      // deadline. Their time cannot be granted again to the HTTP request.
+      const dispatchRemaining = this.host.remaining(current);
+      if (dispatchRemaining <= 0) {
+        await this.host.finish(current, "failed", "wall_clock");
+        return "expired";
+      }
       let verdict: "pass" | "fail" | undefined;
       const operation = currentOperationSignal();
-      const timeout = AbortSignal.timeout(Math.min(5000, Math.max(1, left)));
+      const timeout = AbortSignal.timeout(
+        Math.min(5000, Math.max(1, dispatchRemaining)),
+      );
       try {
         const response = await fetch(`${this.ctx.agent.baseUrl}/agent/audit`, {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ text, groupId: run.group_id }),
+          body,
           signal: operation ? AbortSignal.any([timeout, operation]) : timeout,
         });
         const raw = await response.text();
