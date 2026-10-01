@@ -1315,9 +1315,9 @@ test("platform: Agent kick deadline cancels real HTTP confirmation without repla
         "UPDATE groups SET agent_enabled=true,auto_kick_enabled=true WHERE id=$1",
         [g.id],
       );
-      // Enough real remaining time for the first configured 15s POST window.
+      // Allow the 15s POST window, 2s settlement reserve, and real preparation.
       await tx.query(
-        "INSERT INTO agent_runs(id,group_id,active_ms,step_count,history) VALUES($1,$2,43000,1,$3)",
+        "INSERT INTO agent_runs(id,group_id,active_ms,step_count,history) VALUES($1,$2,41000,1,$3)",
         [id, g.id, JSON.stringify(history)],
       );
       await tx.query(
@@ -1413,7 +1413,7 @@ test("platform: Agent kick deadline cancels real HTTP confirmation without repla
     t.diagnostic(
       JSON.stringify({
         case: "platform-real-kick-confirmation-deadline",
-        priorActiveMs: 43000,
+        priorActiveMs: 41000,
         kickReceivedElapsedMs: kickReceivedAt - started,
         confirmationReceivedElapsedMs: confirmationReceivedAt! - started,
         confirmationClosedElapsedMs: confirmationClosedAt! - started,

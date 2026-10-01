@@ -1,0 +1,59 @@
+TAP version 13
+# Subtest: delivery engineering observer does no identity SQL when absent and recorder failure cannot change a real result
+ok 1 - delivery engineering observer does no identity SQL when absent and recorder failure cannot change a real result
+  ---
+  duration_ms: 46.319041
+  type: 'test'
+  ...
+# Subtest: delivery SELECT server timeout is acknowledged and its transaction/settings are cleared before reuse
+ok 2 - delivery SELECT server timeout is acknowledged and its transaction/settings are cleared before reuse
+  ---
+  duration_ms: 140.008333
+  type: 'test'
+  ...
+# {"elapsedMs":111.74420800000001,"statementTimeoutMs":100,"originalSleepMs":1000,"sameConnectionReused":true}
+# Subtest: delivery does not swallow a real database cancel as an observation timeout
+ok 3 - delivery does not swallow a real database cancel as an observation timeout
+  ---
+  duration_ms: 48.712
+  type: 'test'
+  ...
+# Subtest: delivery does not swallow a real database terminate as an observation timeout
+ok 4 - delivery does not swallow a real database terminate as an observation timeout
+  ---
+  duration_ms: 47.185625
+  type: 'test'
+  ...
+# Subtest: delivery propagates non-timeout SQL errors rather than converting them to SEND_TIMEOUT
+ok 5 - delivery propagates non-timeout SQL errors rather than converting them to SEND_TIMEOUT
+  ---
+  duration_ms: 31.489875
+  type: 'test'
+  ...
+# Subtest: delivery rollback failure cannot turn an acknowledged statement timeout into retry
+ok 6 - delivery rollback failure cannot turn an acknowledged statement timeout into retry
+  ---
+  duration_ms: 141.765
+  type: 'test'
+  ...
+# Subtest: delivery preserves ownership loss during rollback after a server timeout
+ok 7 - delivery preserves ownership loss during rollback after a server timeout
+  ---
+  duration_ms: 134.401917
+  type: 'test'
+  ...
+# Subtest: delivery does not accept a SELECT result delivered after its observation deadline
+ok 8 - delivery does not accept a SELECT result delivered after its observation deadline
+  ---
+  duration_ms: 185.78325
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 950.107625

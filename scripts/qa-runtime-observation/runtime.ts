@@ -47,15 +47,19 @@ export class ObservedRuntimeDatabase extends ControlledDatabase {
       const release = tx.release;
       // Database and domain code use the Promise query overload. Restore before
       // returning this pooled client, including broken-connection cleanup.
-      tx.query = (async (...args: unknown[]) => {
+      const observedQuery = (async (...args: unknown[]) => {
         const result = await Reflect.apply(query, tx, args);
         const sql = args[0];
         if (sql === "COMMIT" || sql === "ROLLBACK")
           this.observer?.transactionSettled(tx, sql === "COMMIT");
         return result;
       }) as PoolClient["query"];
+      tx.query = observedQuery;
       tx.release = (...args) => {
-        tx.query = query;
+        // A scoped database connection may already have restored native query.
+        // Do not reinstall its old deadline wrapper as this client reenters the
+        // pool, where pg uses the callback overload for ordinary queries.
+        if (tx.query === observedQuery) tx.query = query;
         tx.release = release;
         this.observer?.transactionReleased(tx);
         return release.apply(tx, args);
