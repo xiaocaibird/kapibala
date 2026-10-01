@@ -1,0 +1,93 @@
+{
+  "at": "2026-10-01T10:43:29.237049+00:00",
+  "sourceRevision": "07717d1ee8774a0950b2fd64bfe9341172d57bc0",
+  "container": {
+    "id": "ad4839ab4811a9ca3e5ff5524e4d5df7da05373b4c543ce1c7d66b7af2e8d906",
+    "name": "kapibala-budget-followup-20261001",
+    "labels": {
+      "kapibala.owner": "agent-qa-budget-dispatch-followup",
+      "kapibala.task": "cap003-budget-followup"
+    },
+    "port": "127.0.0.1:53073",
+    "volumes": [
+      "34f7f1fc9d840af2ba4fe52aff3149ee4da6b50756027fe26379a6f4dab51626"
+    ]
+  },
+  "databaseCheck": {
+    "args": [
+      "docker",
+      "exec",
+      "kapibala-budget-followup-20261001",
+      "psql",
+      "-U",
+      "budget_followup",
+      "-d",
+      "postgres",
+      "-Atc",
+      "SELECT json_build_object('temporaryDatabases',(SELECT count(*) FROM pg_database WHERE datname LIKE 'kapibala_test_%'),'temporaryConnections',(SELECT count(*) FROM pg_stat_activity WHERE datname LIKE 'kapibala_test_%'))"
+    ],
+    "exitCode": 0,
+    "stdout": "{\"temporaryDatabases\" : 0, \"temporaryConnections\" : 0}",
+    "stderr": ""
+  },
+  "observedGuardianPids": [
+    14399, 14400, 14501, 14502, 14788, 14853, 14875, 15871, 17401
+  ],
+  "processCheck": {
+    "args": [
+      "ps",
+      "-p",
+      "14399,14400,14501,14502,14788,14853,14875,15871,17401",
+      "-o",
+      "pid=,command="
+    ],
+    "exitCode": 1,
+    "stdout": "",
+    "stderr": ""
+  },
+  "remove": {
+    "args": [
+      "docker",
+      "rm",
+      "-fv",
+      "ad4839ab4811a9ca3e5ff5524e4d5df7da05373b4c543ce1c7d66b7af2e8d906"
+    ],
+    "exitCode": 0,
+    "stdout": "ad4839ab4811a9ca3e5ff5524e4d5df7da05373b4c543ce1c7d66b7af2e8d906",
+    "stderr": ""
+  },
+  "containerAfter": {
+    "args": [
+      "docker",
+      "inspect",
+      "ad4839ab4811a9ca3e5ff5524e4d5df7da05373b4c543ce1c7d66b7af2e8d906"
+    ],
+    "exitCode": 1,
+    "stdout": "[]",
+    "stderr": "error: no such object: ad4839ab4811a9ca3e5ff5524e4d5df7da05373b4c543ce1c7d66b7af2e8d906"
+  },
+  "volumesAfter": [
+    {
+      "args": [
+        "docker",
+        "volume",
+        "inspect",
+        "34f7f1fc9d840af2ba4fe52aff3149ee4da6b50756027fe26379a6f4dab51626"
+      ],
+      "exitCode": 1,
+      "stdout": "[]",
+      "stderr": "Error response from daemon: get 34f7f1fc9d840af2ba4fe52aff3149ee4da6b50756027fe26379a6f4dab51626: no such volume"
+    }
+  ],
+  "dependencyLinkRemoved": {
+    "path": "/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/node_modules",
+    "target": "/Users/zcm/.codex/worktrees/core-acceptance-plan/kapibala/node_modules"
+  },
+  "qaStagingPreserved": "/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/.runtime/qa-fixtures/5d1885e76871460bb0c146fd4cc90032",
+  "remainingContainers": {
+    "args": ["docker", "ps", "--format", "{{.ID}} {{.Names}} {{.Ports}}"],
+    "exitCode": 0,
+    "stdout": "e8163c665f34 kapibala-postgres-1 127.0.0.1:55432->5432/tcp",
+    "stderr": ""
+  }
+}

@@ -1,0 +1,85 @@
+✖ kick does not enter admission when its real preparation transaction consumes the remaining budget (593.75425ms)
+ℹ Independent database: kapibala_test_6ca1525dfa964e47a908ba111f0f9893
+ℹ {"admissions":1,"persistedActiveMs":59841,"recoveryNote":"The activity budget expired during a kick. Its external result remains unknown and the saved intent will not be replayed.","intent":{"accountId":"account-2","dispatchState":"awaiting_admission","targetPlatformUserId":"external-target"}}
+✖ kick blocked across its deadline before fetch ends without inventing an unknown external effect (1658.949709ms)
+ℹ Independent database: kapibala_test_02f97bbdf4894fe0b859710e8486e56b
+ℹ {"blocked":true,"signalAbortedAfterBlock":false,"kickFetchCalls":1,"persistedActiveMs":60542,"recoveryNote":"The activity budget expired during a kick. Its external result remains unknown and the saved intent will not be replayed.","intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}}
+✖ RemoteClient checks the synchronous dispatch guard after real request serialization (151.279541ms)
+ℹ Independent database: kapibala_test_b6b1a030bf144f13a8229fbc2c430c60
+ℹ {"serialized":true,"elapsedBeyondDeadlineMs":36.85237500000039,"remoteRequests":1}
+✔ kick with sufficient budget still dispatches once and preserves the one audit (173.409875ms)
+ℹ Independent database: kapibala_test_a347306ac9464ba5b32822fe9a954fd6
+ℹ tests 4
+ℹ suites 0
+ℹ pass 1
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2859.69425
+
+✖ failing tests:
+
+test at tests/integration/kick-dispatch-budget.test.ts:1:669
+✖ kick does not enter admission when its real preparation transaction consumes the remaining budget (593.75425ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/kick-dispatch-budget.test.ts:35:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/kick-dispatch-budget.test.ts:1:2163
+✖ kick blocked across its deadline before fetch ends without inventing an unknown external effect (1658.949709ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/kick-dispatch-budget.test.ts:79:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at tests/integration/kick-dispatch-budget.test.ts:1:3950
+✖ RemoteClient checks the synchronous dispatch guard after real request serialization (151.279541ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - Error: serialization exhausted the deadline
+  -     at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/kick-dispatch-budget.test.ts:96:19)
+  -     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+  -     at async Test.run (node:internal/test_runner/test:1409:7)
+  -     at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/kick-dispatch-budget.test.ts:106:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: Error: serialization exhausted the deadline
+        at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/kick-dispatch-budget.test.ts:96:19)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7),
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

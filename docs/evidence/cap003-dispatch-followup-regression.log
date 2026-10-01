@@ -1,0 +1,42 @@
+✔ Agent kick waits for local capacity without failing, repeating audit, or dispatching twice (388.3545ms)
+ℹ Independent database: kapibala_test_586669d28bd24912b8bbdc1fd9f9fbde
+✔ Agent capacity wait keeps the original activity budget and does not invent an unknown kick (1416.4515ms)
+ℹ Independent database: kapibala_test_8af161e3b15d4d8db3c41e4b349ee8d8
+✔ Agent rechecks kick policy after capacity refusal and preserves the recorded audit (231.574125ms)
+ℹ Independent database: kapibala_test_577a3796d1eb43df9c7bc0f2957f6173
+✔ Agent cancellation while waiting for capacity ends after the current step without another turn (207.896333ms)
+ℹ Independent database: kapibala_test_0808378c25da48d4b546a1b2a6664da1
+✔ Agent does not dispatch a model request after its intent write consumes the remaining budget (572.782833ms)
+ℹ Independent database: kapibala_test_25a10596df4c4fbeb83ebb9753fcf162
+ℹ {"runId":"expired-intent","elapsedMs":388.322416,"persistedActiveMs":60172,"modelRequests":0}
+✔ Agent does not dispatch an audit request after its intent write consumes the remaining budget (535.966166ms)
+ℹ Independent database: kapibala_test_820e6c1f451c485c8e768771db9b0cb7
+ℹ {"runId":"expired-audit-intent","elapsedMs":418.12912500000004,"persistedActiveMs":60201,"auditRequests":0}
+✔ kick does not enter admission when its real preparation transaction consumes the remaining budget (565.759667ms)
+ℹ Independent database: kapibala_test_6398848381364e3380b4ca29038c343b
+ℹ {"admissions":0,"persistedActiveMs":60207,"recoveryNote":null,"intent":{"accountId":"account-2","dispatchState":"awaiting_admission","targetPlatformUserId":"external-target"}}
+✔ kick blocked across its deadline before fetch ends without inventing an unknown external effect (1654.711209ms)
+ℹ Independent database: kapibala_test_815ed779f7134c0faa3122e5b90838d6
+ℹ {"blocked":true,"signalAbortedAfterBlock":false,"kickFetchCalls":0,"persistedActiveMs":60543,"recoveryNote":null,"intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}}
+✔ RemoteClient checks the synchronous dispatch guard after real request serialization (143.083959ms)
+ℹ Independent database: kapibala_test_9f6bf5adf5404491a316b28c7cbf91fb
+ℹ {"serialized":true,"elapsedBeyondDeadlineMs":35.29341599999998,"remoteRequests":0}
+✔ a deadline timer already fired before kick fetch is still a known non-dispatch (840.613333ms)
+ℹ Independent database: kapibala_test_ce5fe332e34b47128a6b98da52b62dfc
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ failed terminal persistence after a local dispatch rejection keeps the saved intent non-replayable (980.822083ms)
+ℹ Independent database: kapibala_test_9519fd0451e342c1b02e7874f55d64f3
+ℹ {"attempts":1,"persistedActiveMs":60268,"stateAfterReplacement":"failed","intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}}
+✔ a real kick sent before its deadline remains an unknown effect if its response times out (718.886792ms)
+ℹ Independent database: kapibala_test_c4cfabe70b134ab2b8efdc8af2b7d737
+✔ kick with sufficient budget still dispatches once and preserves the one audit (156.575916ms)
+ℹ Independent database: kapibala_test_022d90d8747e45bfaf6aacb1d7d6a9f6
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6476.153875

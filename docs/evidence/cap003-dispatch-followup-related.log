@@ -1,0 +1,104 @@
+✔ kick policy and persisted uncertain kick cannot produce a second side effect (367.213541ms)
+✔ kick permission errors remain tool errors and a confirmed kick succeeds (221.747291ms)
+✔ loss of the advisory-lock connection aborts a turn without saving a false protocol error (183.842792ms)
+✔ loss of a run lock during audit prevents old-worker effects and permits safe audit recovery (219.080833ms)
+✔ kick budget exhaustion ends the run while retaining an uncertain non-replayable effect (138.495708ms)
+✔ closing and recreating modules preserves activity while excluding actual downtime (993.932167ms)
+✔ queued runs persist online activity across a real shutdown without counting downtime or a second clock (2781.533333ms)
+✔ a follower cannot execute against a stale activity base while the new clock owner initializes (1432.355333ms)
+✔ an initialization follower takes over after the blocked clock owner connection is terminated (2075.913209ms)
+✔ activity clock survives loss of its own PostgreSQL session and only bills once after takeover (1534.176375ms)
+✖ DC04 exact before-ready crash resumes the saved step and rebinds same API port to new guardian (365.393834ms)
+✖ DC05 pressure after dispatch holds remaining real slots without attributing a zero-effect refusal (268.218625ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 10
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10146.173458
+
+✖ failing tests:
+
+test at tests/integration/qa-capacity-control.test.ts:1:5177
+✖ DC04 exact before-ready crash resumes the saved step and rebinds same API port to new guardian (365.393834ms)
+  Error: SUT failed to start: /Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/scripts/qa-capacity/ownership.ts:61
+      throw new ControlError(
+            ^
+  
+  ControlError: Commit engineering and product sources before starting the controlled SUT
+      at sourceRevision (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/scripts/qa-capacity-server.ts:20:18) {
+    status: 409
+  }
+  
+  Node.js v24.21.0
+  
+      at <anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/support/capacity-control-fixture.ts:163:13)
+      at async start (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+      ... 3 lines matching cause stack trace ...
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    [cause]: Error: SUT exited: /Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/scripts/qa-capacity/ownership.ts:61
+        throw new ControlError(
+              ^
+    
+    ControlError: Commit engineering and product sources before starting the controlled SUT
+        at sourceRevision (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/scripts/qa-capacity-server.ts:20:18) {
+      status: 409
+    }
+    
+    Node.js v24.21.0
+    
+        at <anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/support/capacity-control-fixture.ts:158:46)
+        at until (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/support/core-automation-fixture.ts:35:15)
+        at async start (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+        at async capacityFixture (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/support/capacity-control-fixture.ts:195:3)
+        at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/qa-capacity-control.test.ts:200:13)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  }
+
+test at tests/integration/qa-capacity-control.test.ts:1:7128
+✖ DC05 pressure after dispatch holds remaining real slots without attributing a zero-effect refusal (268.218625ms)
+  Error: SUT failed to start: /Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/scripts/qa-capacity/ownership.ts:61
+      throw new ControlError(
+            ^
+  
+  ControlError: Commit engineering and product sources before starting the controlled SUT
+      at sourceRevision (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/scripts/qa-capacity-server.ts:20:18) {
+    status: 409
+  }
+  
+  Node.js v24.21.0
+  
+      at <anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/support/capacity-control-fixture.ts:163:13)
+      at async start (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+      ... 3 lines matching cause stack trace ...
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    [cause]: Error: SUT exited: /Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/scripts/qa-capacity/ownership.ts:61
+        throw new ControlError(
+              ^
+    
+    ControlError: Commit engineering and product sources before starting the controlled SUT
+        at sourceRevision (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/scripts/qa-capacity-server.ts:20:18) {
+      status: 409
+    }
+    
+    Node.js v24.21.0
+    
+        at <anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/support/capacity-control-fixture.ts:158:46)
+        at until (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/support/core-automation-fixture.ts:35:15)
+        at async start (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+        at async capacityFixture (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/support/capacity-control-fixture.ts:195:3)
+        at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/tests/integration/qa-capacity-control.test.ts:268:13)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  }

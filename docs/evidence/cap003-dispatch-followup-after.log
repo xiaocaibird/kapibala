@@ -1,0 +1,20 @@
+✔ kick does not enter admission when its real preparation transaction consumes the remaining budget (558.851375ms)
+ℹ Independent database: kapibala_test_19d7aed842214270bdce1fa385c52969
+ℹ {"admissions":0,"persistedActiveMs":60209,"recoveryNote":null,"intent":{"accountId":"account-2","dispatchState":"awaiting_admission","targetPlatformUserId":"external-target"}}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ kick blocked across its deadline before fetch ends without inventing an unknown external effect (1739.761292ms)
+ℹ Independent database: kapibala_test_db1ab4373ba141afb2c42d42bda8968f
+ℹ {"blocked":true,"signalAbortedAfterBlock":false,"kickFetchCalls":0,"persistedActiveMs":60542,"recoveryNote":null,"intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}}
+✔ RemoteClient checks the synchronous dispatch guard after real request serialization (148.666958ms)
+ℹ Independent database: kapibala_test_abcd5d552a7942128dc3434a4627bfd0
+ℹ {"serialized":true,"elapsedBeyondDeadlineMs":33.39649999999983,"remoteRequests":0}
+✔ kick with sufficient budget still dispatches once and preserves the one audit (151.865584ms)
+ℹ Independent database: kapibala_test_8c78d44d99634cb494fe8f2dbbfe62b3
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2771.612167
