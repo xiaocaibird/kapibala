@@ -357,14 +357,20 @@ export class AgentTools {
   ): Promise<ToolOutcome> {
     const deadline = Date.now() + Math.min(5000, this.host.remaining(run));
     let message: Message | null = null;
-    do {
+    while (Date.now() < deadline) {
       message = await this.messaging.getMessage(clientMsgId);
+      // A read may wait behind database locks beyond the original deadline.
+      // Do not authorize another read or use a late observation as this tool's
+      // result. The durable message is unchanged and the same key can read it
+      // again on a later invocation. Reads stay serial; no abandoned query races.
+      if (Date.now() >= deadline) break;
       const account = (
         await this.ctx.db.query<{ status: string }>(
           "SELECT a.status FROM messages m JOIN accounts a ON a.id=m.account_id WHERE m.client_msg_id=$1",
           [clientMsgId],
         )
       ).rows[0];
+      if (Date.now() >= deadline) break;
       if (
         message?.deliveryStatus !== "sent" &&
         account &&
@@ -397,7 +403,7 @@ export class AgentTools {
       // database scheduling still determine the actual return boundary.
       const left = deadline - Date.now();
       if (left > 0) await sleep(Math.min(100, left));
-    } while (Date.now() < deadline);
+    }
     return toolError(
       "SEND_TIMEOUT",
       "Delivery could not be confirmed within five seconds.",
