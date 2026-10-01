@@ -62,4 +62,10 @@
 
 未知结果跨重启沿用真实 Agent 工具与 Gateway 错误路径：先由真实触发或 history 引用完成提交，真实派发 kick 后由独立 Gateway 返回无法证明结果的错误，观察 run 仍 running 且 recoveryNote 非空，以及执行 intent。老化后仍应受 running 引用保护；记录旧进程退出并在同库同 MEDIA_DIR 重启，核对同 run/引用/文件、未新增派发账本。只读 SQL 与公开 run/message API 交叉核对，不插入 running/pin 行冒充真实路径。最后若经公开取消结束运行，再观察正常清理。现有 unknown effect 语义和外部协议均不扩大。
 
-开发固定候选、自测原始记录与资源清理将在真实进程验证完成后附录，不预填通过。
+## 开发验证记录
+
+最终定向验证候选 `f90d39240c784064cbe412adcca903f97a2e1d8c`，真实进程 MR01–MR03 **3 PASS / 0 FAIL / 0 SKIP**。包括两种锁顺序、cleanup TTL 不释放 reference、reference DELETE 不释放 cleanup、未提交引用不可见、真实提交后引用/run 可见而下一业务动作仍被门挡住、真实 Gateway 503 账本及 executing/dispatching intent 跨 SIGKILL 重启不变，公开取消后的原清理删除。未知业务结果始终保留为未知。
+
+同一实现的 `7695fc2933f15498468b596b544adffd93caa3eb` 运行原媒体/consumer、runtime、多模块和 combined 测试 **31 PASS / 0 FAIL / 0 SKIP**；后续两个提交只强化新测试的账本/intent/提交后停等断言，不改被测实现。最终 typecheck 通过；原题 SHA 校验通过。开发接缝初测失败及 fixture 修复经过保留，不归类为产品回归修复。
+
+原始输出、每轮固定源、命令及限制见[独立证据目录](evidence/qa-media-reference-observation-20261002/README.md)。本次只使用自有 `postgres:17` tmpfs 容器 `127.0.0.1:62403`，实际 PostgreSQL 17.11；删除前确认 UUID 测试数据库零遗留，容器已删除，无命名卷，记录中的媒体目录均已清理。未改 QA 目录或资产，未使用演示库、真实模型或外部网关。这些是研发接线证据，不能填写为 QA C1-008/014/015 已通过。
