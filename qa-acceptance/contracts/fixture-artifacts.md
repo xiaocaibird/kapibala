@@ -2,6 +2,8 @@
 
 当前三条用例已有实际脚本和断言：`BLK-MIG-001`、`UI-037`、`ARC-UI-BLK-001`。这些专项尚未启动产品、数据库或浏览器。2026-10-01已收到真实历史库和微秒数据归档，完成[哈希、来源和台账静态核验](../reports/integration/20261001-fixture-intake/qa-readonly-review.json)；最终候选绑定、独立内容审核/恢复和可见页面定位仍未完成。`automated` 表示存在执行入口，不代表夹具已经就绪或验收通过。
 
+后续适用候选已固定为 `0af644334b00eb13e2e56df33c70f22358a6a0f7`，详见[工程接收记录](../requirements/engineering-candidate-intake-20261001.md)。候选已确定；待完成内容审核后才写入最终manifest并计算绑定摘要，历史preparation继续保持原来的null字段。
+
 依据分别为原需求 R-A0-02、已批准目录变更 ADD-DIR-05，以及 ENG-READ-02 / ADD-ATT-03。数据与页面接入是工程测试准备事项，不是新增业务要求。缺接入时报告运行时 BLOCKED，不能用随机创建数据、导入业务 helper 或任意进程退出补成 PASS。
 
 ## 制品格式与独立预期

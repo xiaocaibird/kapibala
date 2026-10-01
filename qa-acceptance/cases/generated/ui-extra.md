@@ -714,8 +714,9 @@
 
 **准备状态：dependency-pending；责任方：QA与候选交付方**
 
-1. 解析、恢复与断言已实现；真实版本化dump及独立manifest尚未提供
-2. 制品双哈希和对应版本/出处需按contracts/fixture-artifacts.md准备；授权后仅导入本轮新建专属库
+1. 真实版本化dump和独立台账已收到，候选0af6443已固定；QA哈希/来源静态核验完成
+2. 仍需独立恢复、内容与无待执行工作审核，之后才生成真实review和双哈希manifest；UI另需实际页面适配
+3. 当前保持dependency-pending，开发恢复结果不能代替QA实测；见requirements/engineering-candidate-intake-20261001.md
 
 **前置条件**
 

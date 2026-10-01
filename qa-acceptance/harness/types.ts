@@ -78,7 +78,12 @@ export interface TargetConfig {
     startupTimeoutMs: number;
   };
   adapters?: {
-    capacityControl?: { url: string; contractReference: string };
+    capacityControl?: {
+      url: string;
+      contractReference: string;
+      /** Optional engineering bridge directory; injected only after filesystem validation. */
+      registryDirectory?: string;
+    };
     fixtureArtifacts?: { configPath: string; sha256: string };
     runtimeObservation?: {
       url: string;

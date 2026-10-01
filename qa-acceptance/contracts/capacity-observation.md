@@ -17,11 +17,15 @@
 - **仅 CAP-009 需要的精确窗口**：已发生零远端拒绝、但恢复 ready 状态尚未提交时可停住；这是工程故障控制依赖，不是用户业务语义待裁定。普通审计/网关屏障不能命中它。
 - **CAP-003 活动计时**：原 run 活动预算决定的权威时间区间，排除停机；不将控制请求起点或每次重试起点当预算起点。采样区间跨 60 秒时保留 BLOCKED，不擅加容差。
 
-工程尚未提供以上能力，现有 QA 仓库不能诚实声称已从外部实现确定性饱和。下面的 HTTP 协议是可接入的客户端契约，不是一个已存在控制器的声明。
+工程已在固定候选0af6443交付容量控制器，详见[接收评审](../requirements/engineering-candidate-intake-20261001.md)。QA尚未实际联通或验证真实饱和；下面的客户端契约和工程交物均不能替代QA执行证据。
 
 ## 配置、归属与清理
 
 目标配置可选 `adapters.capacityControl = { "url": "http://127.0.0.1:<port>", "contractReference": "已确认的工程接入文档/版本" }`。只允许显式 loopback origin，无用户名、密码、额外路径、query 或 fragment；配置纳入目标授权指纹。
+
+0af6443工程入口还需要可选适配字段 `registryDirectory`。它须为本轮独占、已存在、当前uid拥有、权限精确0700的规范绝对目录，无符号链接别名；拼接 `<UUID>.sock` 后不超过100字节。macOS应先取realpath，使用 `/private/tmp/...` 而非 `/tmp/...`。这是临时IPC资源，接收/执行记录仍保存在QA目录。
+
+QA在读取目标配置以及每次迁移、SUT/第二实例/页面服务启动前重新检查目录，再受控注入 `QA_CAPACITY_REGISTRY_DIR`；路径纳入目标指纹。仍禁止在 `sut.env` 直接设置任意 `QA_*`，不继承宿主同名变量。通用容量协议不强制其他工程实现也采用这个目录。QA启动器不创建或递归删除配置目录；后续资源准备须自行创建独占目录、记录归属，并只清理本轮资源。目录访问权限不能代替实际SUT的owner/PID/API/SHA核验。常驻控制器的启动、保活和退出仍须单独管理，不随某例SUT重启。
 
 每用例 `QaEnvironment.capacityControlTarget()` 提供 `{apiUrl, revision, pid, ownerToken}`，token 由 QA 随机生成，并通过受控 `QA_ACCEPTANCE_RESOURCE_TOKEN` 传给当前专属 SUT。客户端不把 ownerToken 发送给控制器。控制器必须从绑定的实际进程观察 token，并在 `binding.observedOwnerToken` 返回；QA 核对 apiUrl、完整 revision、pid、token 一致后才允许创建故障。token 在证据中脱敏。
 

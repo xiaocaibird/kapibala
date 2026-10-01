@@ -214,9 +214,9 @@
 
 **准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
 
-1. 操作与断言脚本已实现，尚无真实工程容量控制器
-2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
-3. fake-controller自测不证明工程接入或容量场景已触发
+1. 工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行
+2. 仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md
+3. 控制器自测与开发回归不能关闭QA依赖或产品结果
 
 **前置条件**
 
@@ -286,9 +286,9 @@
 
 **准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
 
-1. 操作与断言脚本已实现，尚无真实工程容量控制器
-2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
-3. fake-controller自测不证明工程接入或容量场景已触发
+1. 工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行
+2. 仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md
+3. 控制器自测与开发回归不能关闭QA依赖或产品结果
 
 **前置条件**
 
@@ -358,9 +358,9 @@
 
 **准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
 
-1. 操作与断言脚本已实现，尚无真实工程容量控制器
-2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
-3. fake-controller自测不证明工程接入或容量场景已触发
+1. 工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行
+2. 仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md
+3. 控制器自测与开发回归不能关闭QA依赖或产品结果
 
 **前置条件**
 
@@ -433,9 +433,9 @@
 
 **准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
 
-1. 操作与断言脚本已实现，尚无真实工程容量控制器
-2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
-3. fake-controller自测不证明工程接入或容量场景已触发
+1. 工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行
+2. 仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md
+3. 控制器自测与开发回归不能关闭QA依赖或产品结果
 
 **前置条件**
 
@@ -504,9 +504,9 @@
 
 **准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
 
-1. 操作与断言脚本已实现，尚无真实工程容量控制器
-2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
-3. fake-controller自测不证明工程接入或容量场景已触发
+1. 工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行
+2. 仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md
+3. 控制器自测与开发回归不能关闭QA依赖或产品结果
 
 **前置条件**
 
@@ -576,9 +576,9 @@
 
 **准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
 
-1. 操作与断言脚本已实现，尚无真实工程容量控制器
-2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
-3. fake-controller自测不证明工程接入或容量场景已触发
+1. 工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行
+2. 仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md
+3. 控制器自测与开发回归不能关闭QA依赖或产品结果
 
 **前置条件**
 
@@ -647,9 +647,9 @@
 
 **准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
 
-1. 操作与断言脚本已实现，尚无真实工程容量控制器
-2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
-3. fake-controller自测不证明工程接入或容量场景已触发
+1. 工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行
+2. 仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md
+3. 控制器自测与开发回归不能关闭QA依赖或产品结果
 
 **前置条件**
 
@@ -720,9 +720,9 @@
 
 **准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
 
-1. 操作与断言脚本已实现，尚无真实工程容量控制器
-2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
-3. fake-controller自测不证明工程接入或容量场景已触发
+1. 工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行
+2. 仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md
+3. 控制器自测与开发回归不能关闭QA依赖或产品结果
 
 **前置条件**
 
@@ -793,9 +793,9 @@
 
 **准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
 
-1. 操作与断言脚本已实现，尚无真实工程容量控制器
-2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
-3. fake-controller自测不证明工程接入或容量场景已触发
+1. 工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行
+2. 仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md
+3. 控制器自测与开发回归不能关闭QA依赖或产品结果
 
 **前置条件**
 
@@ -867,9 +867,9 @@
 
 **准备状态：dependency-pending；责任方：工程提供观测/控制接入，QA绑定与验收**
 
-1. 操作与断言脚本已实现，尚无真实工程容量控制器
-2. 需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md
-3. fake-controller自测不证明工程接入或容量场景已触发
+1. 工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行
+2. 仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md
+3. 控制器自测与开发回归不能关闭QA依赖或产品结果
 
 **前置条件**
 

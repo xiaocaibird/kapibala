@@ -89,6 +89,37 @@ export function validateFixtureArtifactBinding(
   )
     throw new BlockedError('夹具配置必须绑定QA根内相对路径与完整SHA256');
 }
+/** Read-only validation; the caller owns creation and cleanup of its registry directory. */
+export async function capacityRegistryEnvironment(
+  target: Pick<TargetConfig, 'adapters'>,
+): Promise<Record<string, string>> {
+  const directory = target.adapters?.capacityControl?.registryDirectory;
+  if (directory === undefined) return {};
+  if (
+    typeof directory !== 'string' ||
+    !isAbsolute(directory) ||
+    resolve(directory) !== directory ||
+    /[\r\n\0]/.test(directory) ||
+    // Engineering runtime creates <UUID>.sock, with a 100-byte Unix socket limit.
+    Buffer.byteLength(resolve(directory, '00000000-0000-0000-0000-000000000000.sock')) > 100
+  )
+    throw new BlockedError('容量注册目录必须是短规范绝对路径，UUID.sock完整路径不得超过100字节');
+  try {
+    const info = await lstat(directory);
+    if (
+      !info.isDirectory() ||
+      info.isSymbolicLink() ||
+      typeof process.getuid !== 'function' ||
+      info.uid !== process.getuid() ||
+      (info.mode & 0o7777) !== 0o700 ||
+      (await realpath(directory)) !== directory
+    )
+      throw new Error('directory ownership, permissions or canonical path mismatch');
+  } catch {
+    throw new BlockedError('容量注册目录必须已存在、非符号链接、路径无符号链接别名、归当前uid且权限为0700');
+  }
+  return { QA_CAPACITY_REGISTRY_DIR: directory };
+}
 export async function loadTarget(path: string, qaRoot: string): Promise<TargetConfig> {
   const c = JSON.parse(await readFile(path, 'utf8')) as TargetConfig;
   if (c.version !== 1 || !c.sut || !/^[a-f0-9]{40}$/.test(c.sut.revision))
@@ -156,6 +187,7 @@ export async function loadTarget(path: string, qaRoot: string): Promise<TargetCo
       /REQUIRED/.test(control.contractReference)
     )
       throw new BlockedError('容量控制器需显式loopback origin及已确认契约引用');
+    await capacityRegistryEnvironment(c);
   }
   if (c.adapters?.fixtureArtifacts !== undefined)
     validateFixtureArtifactBinding(c.adapters.fixtureArtifacts);

@@ -18,7 +18,7 @@
   "sutExecutionAuthorized": false,
   "productTestsExecuted": 0,
   "qaTree": {
-    "sha256": "69f1c49f561f70db62f22af7c832559ef23949857f267ff65e3465641f5f5dd5",
+    "sha256": "0b361bc03d5d25f98c4a06ddc276ce60ea081d8503ddefb750f67419230c5437",
     "files": [
       {
         "path": ".gitignore",
@@ -30,7 +30,7 @@
       },
       {
         "path": "cases/architecture-capacity.json",
-        "sha256": "1478b40b7974ccebd0da697a3a38d72423108b4ae740373815318d4667d57442"
+        "sha256": "6007e9ec921e132c8a72b3e598073dbb1b99c242dff7b563307b34c2163b01b5"
       },
       {
         "path": "cases/architecture-contract.json",
@@ -58,7 +58,7 @@
       },
       {
         "path": "cases/fixture-boundaries.json",
-        "sha256": "8e757f798887e88d9bbe87629f506321872384c1f4f59f7e020a421d4a0eb32a"
+        "sha256": "a1c9961d2152aa9f4cd73aacaf29f6a3e06eb00d37fbc1a85f9fd90c70887434"
       },
       {
         "path": "cases/foundation.json",
@@ -66,7 +66,7 @@
       },
       {
         "path": "cases/generated/architecture-capacity.md",
-        "sha256": "ed52781697bccbb040157031fa3595e45a15b792871a3b95ffaba0a2f1c31d74"
+        "sha256": "afc835900a55c8123d11bc805e55e6bfe1b3a6af01c0bfafa951361bff9e8a49"
       },
       {
         "path": "cases/generated/architecture-contract.md",
@@ -94,7 +94,7 @@
       },
       {
         "path": "cases/generated/fixture-boundaries.md",
-        "sha256": "8219fbba27b0de6fcfc46c009cf9cc2651018cecd033923029f4e434aca9a077"
+        "sha256": "b744d74442b9f5105834e2a67c919c8a3a80e2918ad36df45292ec321fa944a6"
       },
       {
         "path": "cases/generated/foundation.md",
@@ -138,7 +138,7 @@
       },
       {
         "path": "cases/generated/ui-extra.md",
-        "sha256": "d5a5213158c4e5d6084e5f57fd14cc09eb5e7961d1190f57879dbb505067de75"
+        "sha256": "65b5d5059067f227e914990d89be9ca63e43346bdc8e3b2b680183f6b75cecf1"
       },
       {
         "path": "cases/generated/ui.md",
@@ -186,7 +186,7 @@
       },
       {
         "path": "cases/ui-extra.json",
-        "sha256": "c4d0ec4dd3d14c1041b0e023abbed867a24d8e78203ff5a8e530a257e2a0b1f8"
+        "sha256": "bee352cebfe1df23f6cb54e18611f86a07f9683fadc88c123304f425f2b75631"
       },
       {
         "path": "cases/ui.json",
@@ -230,11 +230,11 @@
       },
       {
         "path": "contracts/capacity-observation.md",
-        "sha256": "0f8cc16469aaf2e0b761f6965d612a5ccb4a314e696defa15f5b05aa7d4290c9"
+        "sha256": "558b585c571f77e304b507ead0e062cbeeb95b041165db0d4defe0f50c5b922c"
       },
       {
         "path": "contracts/fixture-artifacts.md",
-        "sha256": "d5da45a634f027b15258567eb673a9ac4845e3e810d74990f628b75f8fde558b"
+        "sha256": "349fdc88e2d30ae0149a59b137195111fadb05144cecf526ecc3480c4fd4278c"
       },
       {
         "path": "contracts/message-receipt-observation.md",
@@ -298,7 +298,7 @@
       },
       {
         "path": "harness/environment.ts",
-        "sha256": "375879485199a34b78aa376a5eb8aa7cf83e0b1e2a99e8649a30e9a053cd9458"
+        "sha256": "87534047040837cf6455c415500704b24f38d01803fe0d2f969165f960cfa728"
       },
       {
         "path": "harness/execution-gate.ts",
@@ -370,7 +370,7 @@
       },
       {
         "path": "harness/security.ts",
-        "sha256": "30a5c509e906efa245e06cfbda539242efa2a3a9e04d008133a1e8c73bbc4698"
+        "sha256": "f8fb488547038aac70dbba268f6cccb37f39d636cf3489a67e00385106e14d42"
       },
       {
         "path": "harness/suites-check.ts",
@@ -382,7 +382,7 @@
       },
       {
         "path": "harness/types.ts",
-        "sha256": "b35b436a19c13a448f9fd4115732b5722d8954bc0f440e55fc1dfed453638005"
+        "sha256": "057c52bca5f0abe008faf022128466baef41f378f1ddd859abf76467f54d9615"
       },
       {
         "path": "harness/verify-tools.ts",
@@ -402,7 +402,7 @@
       },
       {
         "path": "README.md",
-        "sha256": "dff4147d4712337b2984ad9ed5e915e0e1dda61c87a40679542a83a29143ae81"
+        "sha256": "d2a502876545e9cf4ae2e73c533721c5bc6830888f06deb27ff6fef1c406be52"
       },
       {
         "path": "requirements/architecture-impact.md",
@@ -422,7 +422,7 @@
       },
       {
         "path": "requirements/change-reviews.json",
-        "sha256": "53b9df114e98c5ac2356c33d883f38a5a6101245a359d53fe38f44bc70f21bde"
+        "sha256": "d01520205fa84ae76a4288d4564dab58266655d42b9d05b3b81bb98ab0c62932"
       },
       {
         "path": "requirements/clarifications.md",
@@ -435,6 +435,10 @@
       {
         "path": "requirements/coverage.md",
         "sha256": "202ce9cb58785950a909189c9ddd5d37df323b189c972b38fc19228f70d2b363"
+      },
+      {
+        "path": "requirements/engineering-candidate-intake-20261001.md",
+        "sha256": "89a4056f807ff750a847c5ea9bed9cc365de9f982cf6f28e4f02a7cd5e992e47"
       },
       {
         "path": "requirements/integration-intake-20261001.md",
@@ -450,7 +454,7 @@
       },
       {
         "path": "requirements/next-integration-preparation-20261001.md",
-        "sha256": "713cd172ac0d53bc27f4691342b31fa28d163dd886e2e2b4eb24ebe6718217a6"
+        "sha256": "40eeb2640d7f16e0d1ee4967fb9d07e8cf6e95b71d026296f8208b8c3a036b8a"
       },
       {
         "path": "requirements/release-gates.md",
@@ -543,6 +547,10 @@
       {
         "path": "tests/self/capacity-control.test.ts",
         "sha256": "11d5e0c6cf9836d25ffa348bd12ece0f3cb693bef7e5cf67f8cb18ca1a7076aa"
+      },
+      {
+        "path": "tests/self/capacity-registry.test.ts",
+        "sha256": "36013d1d75dbd4ade6f9347c9a1683578a6a37670c8d962be8b173fb4b560cbc"
       },
       {
         "path": "tests/self/change-review.test.ts",
@@ -1255,18 +1263,18 @@
 
 |用例|准备状态|责任方|待办与边界|
 |---|---|---|---|
-|CAP-001|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
-|CAP-002|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
-|CAP-003|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
-|CAP-004|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
-|CAP-005|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
-|CAP-006|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
-|CAP-007|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
-|CAP-008|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
-|CAP-009|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
-|CAP-010|dependency-pending|工程提供观测/控制接入，QA绑定与验收|操作与断言脚本已实现，尚无真实工程容量控制器；需真实占用/释放、实例归属、run/step拒绝关联证据；CAP-003活动时间和CAP-009精确窗口见contracts/capacity-observation.md；fake-controller自测不证明工程接入或容量场景已触发|
+|CAP-001|dependency-pending|工程提供观测/控制接入，QA绑定与验收|工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行；仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md；控制器自测与开发回归不能关闭QA依赖或产品结果|
+|CAP-002|dependency-pending|工程提供观测/控制接入，QA绑定与验收|工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行；仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md；控制器自测与开发回归不能关闭QA依赖或产品结果|
+|CAP-003|dependency-pending|工程提供观测/控制接入，QA绑定与验收|工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行；仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md；控制器自测与开发回归不能关闭QA依赖或产品结果|
+|CAP-004|dependency-pending|工程提供观测/控制接入，QA绑定与验收|工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行；仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md；控制器自测与开发回归不能关闭QA依赖或产品结果|
+|CAP-005|dependency-pending|工程提供观测/控制接入，QA绑定与验收|工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行；仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md；控制器自测与开发回归不能关闭QA依赖或产品结果|
+|CAP-006|dependency-pending|工程提供观测/控制接入，QA绑定与验收|工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行；仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md；控制器自测与开发回归不能关闭QA依赖或产品结果|
+|CAP-007|dependency-pending|工程提供观测/控制接入，QA绑定与验收|工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行；仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md；控制器自测与开发回归不能关闭QA依赖或产品结果|
+|CAP-008|dependency-pending|工程提供观测/控制接入，QA绑定与验收|工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行；仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md；控制器自测与开发回归不能关闭QA依赖或产品结果|
+|CAP-009|dependency-pending|工程提供观测/控制接入，QA绑定与验收|工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行；仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md；控制器自测与开发回归不能关闭QA依赖或产品结果|
+|CAP-010|dependency-pending|工程提供观测/控制接入，QA绑定与验收|工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行；仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md；控制器自测与开发回归不能关闭QA依赖或产品结果|
 |ARC-UI-BLK-001|dependency-pending|QA|账号通用读取失败与提醒确认脚本已实现；尚需授权后确认候选真实页面定位及消费者关联，adapterConfirmed当前不代表已确认|
-|BLK-MIG-001|dependency-pending|QA与候选交付方|解析、恢复与断言已实现；真实版本化dump及独立manifest尚未提供；制品双哈希和对应版本/出处需按contracts/fixture-artifacts.md准备；授权后仅导入本轮新建专属库|
+|BLK-MIG-001|dependency-pending|QA与候选交付方|真实版本化dump和独立台账已收到，候选0af6443已固定；QA哈希/来源静态核验完成；仍需独立恢复、内容与无待执行工作审核，之后才生成真实review和双哈希manifest；UI另需实际页面适配；当前保持dependency-pending，开发恢复结果不能代替QA实测；见requirements/engineering-candidate-intake-20261001.md|
 |INT-MSG-001|script-ready|QA|独立公开协议操作与断言已实现；仅静态及协议桩自测，尚未对SUT执行；不包含504已收到后本地保存暂停、接收记录保存前后或多实例物理首次窗口，见contracts/message-receipt-observation.md|
 |INT-MSG-002|script-ready|QA|独立公开协议操作与断言已实现；仅静态及协议桩自测，尚未对SUT执行；不包含504已收到后本地保存暂停、接收记录保存前后或多实例物理首次窗口，见contracts/message-receipt-observation.md|
 |INT-MSG-003|script-ready|QA|独立公开协议操作与断言已实现；仅静态及协议桩自测，尚未对SUT执行；不包含504已收到后本地保存暂停、接收记录保存前后或多实例物理首次窗口，见contracts/message-receipt-observation.md|
@@ -1289,7 +1297,7 @@
 |BLK-SPEC-004|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过|
 |BLK-SPEC-005|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过|
 |BLK-SPEC-006|script-ready|QA|已有公开操作、故障屏障与独立断言，可在后续明确授权后进行接入试跑；尚未启动或测试SUT；scripts存在不等于实际通过|
-|UI-037|dependency-pending|QA与候选交付方|解析、恢复与断言已实现；真实版本化dump及独立manifest尚未提供；制品双哈希和对应版本/出处需按contracts/fixture-artifacts.md准备；授权后仅导入本轮新建专属库|
+|UI-037|dependency-pending|QA与候选交付方|真实版本化dump和独立台账已收到，候选0af6443已固定；QA哈希/来源静态核验完成；仍需独立恢复、内容与无待执行工作审核，之后才生成真实review和双哈希manifest；UI另需实际页面适配；当前保持dependency-pending，开发恢复结果不能代替QA实测；见requirements/engineering-candidate-intake-20261001.md|
 
 ## 缺陷与复测
 

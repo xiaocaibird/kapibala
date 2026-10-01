@@ -7,7 +7,7 @@ import { PlatformClient } from './platform-client.js';
 import { OwnedDatabaseCluster } from './database.js';
 import { availablePort, DatabaseProxy, BrowserProxy } from './network.js';
 import { OwnedProcess, isolatedEnv, waitHttp } from './process.js';
-import { redact, requireAuthorization } from './security.js';
+import { capacityRegistryEnvironment, redact, requireAuthorization } from './security.js';
 import type { TargetConfig, Command } from './types.js';
 
 export class QaEnvironment {
@@ -41,9 +41,10 @@ export class QaEnvironment {
       ),
     };
   }
-  private env(port = this.apiPort): NodeJS.ProcessEnv {
+  private async env(port = this.apiPort): Promise<NodeJS.ProcessEnv> {
     return isolatedEnv({
       ...this.config.sut.env,
+      ...(await capacityRegistryEnvironment(this.config)),
       QA_ACCEPTANCE_RESOURCE_TOKEN: this.resourceToken,
       PORT: String(port),
       DATABASE_URL: this.cluster.url(this.database, this.proxy!.port),
@@ -131,7 +132,7 @@ export class QaEnvironment {
     await new OwnedProcess(
       this.command(this.config.sut.migrate),
       this.config.sut.cwd,
-      this.env(),
+      await this.env(),
       resolve(this.outputDir, 'migration.log'),
     ).runOnce();
   }
@@ -141,7 +142,7 @@ export class QaEnvironment {
     this.server = new OwnedProcess(
       this.command(this.config.sut.start),
       this.config.sut.cwd,
-      this.env(),
+      await this.env(),
       resolve(this.outputDir, 'server.log'),
     );
     await this.server.start();
@@ -170,7 +171,7 @@ export class QaEnvironment {
     this.second = new OwnedProcess(
       this.command(this.config.sut.start, port),
       this.config.sut.cwd,
-      this.env(port),
+      await this.env(port),
       resolve(this.outputDir, 'server-2.log'),
     );
     await this.second.start();
@@ -199,7 +200,7 @@ export class QaEnvironment {
     this.web = new OwnedProcess(
       this.command(this.config.sut.web),
       this.config.sut.cwd,
-      this.env(),
+      await this.env(),
       resolve(this.outputDir, 'web.log'),
     );
     await this.web.start();

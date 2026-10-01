@@ -4,6 +4,8 @@
 
 ## 阅读入口
 
+- [工程接入候选接收记录](requirements/engineering-candidate-intake-20261001.md)：新候选0af6443的版本和证据核对；工程已交付与QA实际接入分别记录，两条开发复现仍未修复。
+
 - [下一轮专项准备与交接](requirements/next-integration-preparation-20261001.md)、[完整业务验收入口](sharing/business-acceptance.md)：风险组合补强及仍需真实工程接入的边界；上线评估继续单列。
 
 - [首轮隔离联调报告](reports/integration/20261001-smoke.md)、[证据索引](reports/integration/20261001-smoke-evidence.json)：六条首轮通过、完整证据及资源清理；不构成正式验收。
