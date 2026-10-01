@@ -120,3 +120,60 @@ test('raw provider usage preserves JSON types and HTTP500 carries the same untru
     assert.equal(stub.calls().length, 2);
   } finally { await stub.close(); }
 });
+
+test('real-service driver cleanup verifies synthetic authentication and retains booleans after redaction', async () => {
+  const { createProviderHttpDriver } = await import('../../harness/provider-driver.js');
+  const { redact } = await import('../../../harness/security.js');
+  for (const header of ['qa-offline-synthetic-key', 'qa-self-invalid-value']) {
+    let upstream = '', cleaned = false;
+    const evidence = new Map<string, Record<string, unknown>>();
+    const driver = createProviderHttpDriver({
+      contractReference: 'self-test:offline-source',
+      open: async (_options, url) => { upstream = url; return { agentUrl: url, sessionDirectory: process.cwd(), ownership: {
+        sessionId: 'qa-self', sutRevision: 'a'.repeat(40), contractReference: 'qa-self', reviewedSourceContracts: ['c2-gemini-agent'],
+        resourceRoot: process.cwd(), applicationPids: [process.pid], endpoints: [url], evidence: { reference: 'qa-self-owner', raw: {} },
+      } }; },
+      restart: async () => { throw new Error('No product process in QA self-test'); },
+      verifyExited: async () => { throw new Error('No product process in QA self-test'); },
+      cleanup: async () => { cleaned = true; return { failures: [], evidence: { reference: 'qa-self-cleanup', raw: {} } }; },
+      evidence: async (name, value) => { evidence.set(name, JSON.parse(redact(value))); }, logs: async () => [],
+    });
+    await driver.open(); await driver.enqueue({ purpose: 'turn', proposal: { kind: 'text', text: 'self-only' } });
+    const response = await fetch(`${upstream}${path}`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-goog-api-key': header }, body: JSON.stringify(wire(turn)) });
+    assert.equal(response.status, 200); await response.arrayBuffer();
+    if (header === 'qa-offline-synthetic-key') await driver.cleanup();
+    else await assert.rejects(driver.cleanup(), /Every actual offline service request/);
+    assert.equal(cleaned, true);
+    const validation = evidence.get('provider-offline-auth-validation')!;
+    assert.equal(validation.status, header === 'qa-offline-synthetic-key' ? 'PASS' : 'FAIL');
+    assert.deepEqual((validation.observations as { offlineAuthMatched: unknown }[]).map((r) => r.offlineAuthMatched), [header === 'qa-offline-synthetic-key']);
+    assert.ok(!JSON.stringify([...evidence.values()]).includes(header));
+    await assert.rejects(fetch(`${upstream}${path}`));
+  }
+});
+
+test('authentication failure evidence survives an earlier business assertion', async () => {
+  const { createProviderHttpDriver } = await import('../../harness/provider-driver.js');
+  const { withOwnedDriver } = await import('../../tests/media-provider.js');
+  const { redact } = await import('../../../harness/security.js');
+  let upstream = '';
+  const evidence = new Map<string, Record<string, unknown>>();
+  const driver = createProviderHttpDriver({
+    contractReference: 'self-test:offline-source',
+    open: async (_options, url) => { upstream = url; return { agentUrl: url, sessionDirectory: process.cwd(), ownership: {
+      sessionId: 'qa-self', sutRevision: 'a'.repeat(40), contractReference: 'qa-self', reviewedSourceContracts: ['c2-gemini-agent'],
+      resourceRoot: process.cwd(), applicationPids: [process.pid], endpoints: [url], evidence: { reference: 'qa-self-owner', raw: {} },
+    } }; },
+    restart: async () => { throw new Error('No product process in QA self-test'); },
+    verifyExited: async () => { throw new Error('No product process in QA self-test'); },
+    cleanup: async () => ({ failures: [], evidence: { reference: 'qa-self-cleanup', raw: {} } }),
+    evidence: async (name, value) => { evidence.set(name, JSON.parse(redact(value))); }, logs: async () => [],
+  });
+  await assert.rejects(withOwnedDriver(driver, [], 'provider-self-secondary', async (d) => {
+    await d.enqueue({ purpose: 'turn', proposal: { kind: 'text', text: 'self-only' } });
+    const response = await post(upstream, wire(turn)); await response.arrayBuffer();
+    assert.fail('original business assertion retained');
+  }), /original business assertion retained/);
+  assert.equal(evidence.get('provider-offline-auth-validation')!.status, 'FAIL');
+  assert.equal(evidence.get('provider-self-secondary-secondary-cleanup-error')!.primaryPresent, true);
+});
