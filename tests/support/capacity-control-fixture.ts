@@ -25,6 +25,7 @@ export async function capacityFixture(
     registryVariable?: string;
     controllerFactory?: typeof createCapacityController;
     configureRemote?: (remote: FastifyInstance) => void;
+    extraEnv?: Record<string, string>;
   } = {},
 ) {
   assert.ok(
@@ -137,6 +138,7 @@ export async function capacityFixture(
         stdio: ["ignore", "pipe", "pipe", "ipc"],
         env: {
           ...process.env,
+          ...options.extraEnv,
           DATABASE_URL: temporary.url,
           PORT: String(port),
           GATEWAY_URL: remote.listeningOrigin,

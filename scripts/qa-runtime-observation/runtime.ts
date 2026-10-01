@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { isDeepStrictEqual } from "node:util";
 import type { PoolClient } from "pg";
-import { Database, type Queryable } from "../../apps/server/src/core/db.js";
+import type { Queryable } from "../../apps/server/src/core/db.js";
+import { ControlledDatabase } from "../qa-capacity/runtime.js";
 import type {
   TestAccountObservation,
   TestAccountRequest,
@@ -36,7 +37,7 @@ const delay = (ms: number) =>
 
 /** Only this explicit test entry observes raw COMMIT/ROLLBACK acknowledgements.
  * Business transaction/savepoint/event buffering remain Database's implementation. */
-export class ObservedRuntimeDatabase extends Database {
+export class ObservedRuntimeDatabase extends ControlledDatabase {
   observer?: RuntimeObservation;
   override async transaction<T>(
     fn: (tx: PoolClient) => Promise<T>,
