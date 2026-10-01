@@ -1,0 +1,2459 @@
+{
+  "formatVersion": 1,
+  "reportKind": "INDEPENDENT_FIRST_ROUND_FINITE_RETEST",
+  "signedAt": "2026-10-01T20:24:47.979913+00:00",
+  "signedAtBeijing": "2026-10-02T04:24:47.979913+08:00",
+  "sutRevision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+  "productSourceRevision": "aea111aa5438db1773e2990dc2fd0d26ea52c5b9",
+  "executionQaRevision": "4f1af77add3b4ae32161b0581e2a913058c60909",
+  "qaDirtyStateAtExecution": "?? qa-acceptance/reports/followup/20261002-kick-work-retest/executor-logs/20261001T200552-qa-first-round-kick-work-start.json\n",
+  "qaTreeSha256": "8180ad4e40ab5264a39a118dc412a7fa42c4e4fa7328b326858dc20a7bb25b84",
+  "targetSha256": "b33a78d766ec8b34b98ba1c0f731c9cd7d8973f1c5ce091cef276f59fd9e0451",
+  "suiteSha256": "19e34491f9d77f7384b0294672537cd65672b4638bab2f4137b78c087dda3575",
+  "originalSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+  "dependencyLockSha256": "7462a4670d1e4036156d1639ebfeaa0cd4276bc918d1b805b3677d862c2cb883",
+  "node": "v24.21.0",
+  "runId": "2026-10-01T20-05-52.805Z-2f02f728",
+  "startedAt": "2026-10-01T20:05:52.858Z",
+  "completedAt": "2026-10-01T20:07:11.910Z",
+  "nativePhase": "developer-preflight",
+  "nativePhaseNote": "QA-controlled bounded independent retest uses existing developer-preflight subset runner; no native output upgraded to full formal acceptance.",
+  "productRuns": 1,
+  "productCaseInvocations": 5,
+  "explicitScenarios": 6,
+  "automaticRetries": 0,
+  "driverCorrectionProductReruns": 0,
+  "rawCounts": {
+    "PASS": 5,
+    "FAIL": 0,
+    "BLOCKED": 0
+  },
+  "independentCounts": {
+    "PASS": 5,
+    "FAIL": 0,
+    "BLOCKED": 0
+  },
+  "boundedConclusion": "PASS",
+  "businessConformity": "NOT_ACCEPTED_WITH_UNRESOLVED_FIRST_ROUND_ITEMS",
+  "unconditionalAcceptance": false,
+  "fullCandidateSuiteRerun": false,
+  "releaseReadiness": "NOT_ASSESSED",
+  "continuation": "PAUSED_AWAITING_HUMAN_DECISION_NO_AUTOMATIC_REPAIR_OR_RETEST",
+  "cases": [
+    {
+      "caseId": "AGENT-017",
+      "rawStatus": "PASS",
+      "independentStatus": "PASS",
+      "evidenceDirectory": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-agent--AGENT-017-ki-1fc49-y-never-calls-external-kick-system/evidence",
+      "runIds": [
+        "9fa376ea-c2be-44d1-b3a6-139821dac1c3"
+      ],
+      "observedCounts": {
+        "kickRequests": 0,
+        "kickEffects": 0,
+        "audits": 0,
+        "turns": 2
+      },
+      "cleanupFailures": [],
+      "gatewayBackgroundErrors": [],
+      "agentBackgroundErrors": [],
+      "actualAssertions": [
+        "POLICY_DENIED actual public step",
+        "zero external kick requests/effects; target remains",
+        "actual run finished/final, two model turns"
+      ],
+      "limits": [
+        "No work cutoff or PG projection fault window"
+      ],
+      "durationMs": 1961,
+      "attempt": 0,
+      "project": "system",
+      "startedAt": "2026-10-01T20:05:53.506Z",
+      "completedAt": "2026-10-01T20:05:55.467Z"
+    },
+    {
+      "caseId": "AGENT-018",
+      "rawStatus": "PASS",
+      "independentStatus": "PASS",
+      "evidenceDirectory": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-agent--AGENT-018-pe-7c6cb-es-owner-or-promoted-member-system/evidence",
+      "runIds": [
+        "964c5a86-d1f8-47f5-aa7e-c2460a51bb4e"
+      ],
+      "observedCounts": {
+        "kickRequests": 1,
+        "kickEffects": 1,
+        "audits": 1,
+        "turns": 2
+      },
+      "cleanupFailures": [],
+      "gatewayBackgroundErrors": [],
+      "agentBackgroundErrors": [],
+      "actualAssertions": [
+        "Normal HTTP 200 kick and successful public tool; finished/final",
+        "exact action audit JSON; byAccountId account-2 (prepared admin)",
+        "target removed; observed request/audit/effect each one"
+      ],
+      "limits": [
+        "Existing script does not explicitly assert each exact count; this reviewer verified finite final ledger",
+        "No transaction projection fault or cross-work cutoff"
+      ],
+      "durationMs": 3008,
+      "attempt": 0,
+      "project": "system",
+      "startedAt": "2026-10-01T20:05:56.337Z",
+      "completedAt": "2026-10-01T20:05:59.345Z"
+    },
+    {
+      "caseId": "CAP-008",
+      "rawStatus": "PASS",
+      "independentStatus": "PASS",
+      "evidenceDirectory": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence",
+      "runIds": [
+        "44d64230-e1c8-48be-87e3-87847b6f9764",
+        "681f4f4b-4b19-4f2a-801f-9b4fc5a3ec10"
+      ],
+      "observedCounts": {
+        "kickRequests": 2,
+        "kickEffects": 0,
+        "audits": 2,
+        "turns": 4
+      },
+      "cleanupFailures": [],
+      "gatewayBackgroundErrors": [],
+      "agentBackgroundErrors": [],
+      "actualAssertions": [
+        "Both explicit error codes preserved on original step; finished/final",
+        "Real zero-effect capacity refusals precede dispatch",
+        "Each variant: one request/audit, zero effect, target retained and group/accounts unchanged"
+      ],
+      "limits": [
+        "No history/step projection-failure injection; no cross-work projection deadline proof"
+      ],
+      "variants": [
+        {
+          "code": "OWNER_LEFT",
+          "httpStatus": 409,
+          "runId": "44d64230-e1c8-48be-87e3-87847b6f9764",
+          "requests": 1,
+          "audits": 1,
+          "effects": 0,
+          "targetPresent": true,
+          "groupStatusMembersAndAccountsUnchanged": true,
+          "actualZeroEffectRefusalAttempts": 2
+        },
+        {
+          "code": "NO_PERMISSION",
+          "httpStatus": 403,
+          "runId": "681f4f4b-4b19-4f2a-801f-9b4fc5a3ec10",
+          "requests": 1,
+          "audits": 1,
+          "effects": 0,
+          "targetPresent": true,
+          "groupStatusMembersAndAccountsUnchanged": true,
+          "actualZeroEffectRefusalAttempts": 2
+        }
+      ],
+      "durationMs": 5729,
+      "attempt": 0,
+      "project": "system",
+      "startedAt": "2026-10-01T20:05:59.372Z",
+      "completedAt": "2026-10-01T20:06:05.101Z"
+    },
+    {
+      "caseId": "CAP-010",
+      "rawStatus": "PASS",
+      "independentStatus": "PASS",
+      "evidenceDirectory": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence",
+      "runIds": [
+        "e9546249-fb2d-4a92-853e-2e5f2a373da6"
+      ],
+      "observedCounts": {
+        "kickRequests": 1,
+        "kickEffects": 1,
+        "audits": 1,
+        "turns": 2
+      },
+      "cleanupFailures": [],
+      "gatewayBackgroundErrors": [],
+      "agentBackgroundErrors": [],
+      "actualAssertions": [
+        "Already dispatched HTTP 504 converges to successful original tool and finished/final",
+        "Original held capacity lease remains held at dispatch release and terminal proof",
+        "One audit/request/effect; target removed"
+      ],
+      "limits": [
+        "Convergent finite 504 case, not arbitrary unknown recovery or work projection fault"
+      ],
+      "capacityLeaseId": "3f9a3d3f-4732-4840-8302-aa1e2e78d657",
+      "durationMs": 4342,
+      "attempt": 0,
+      "project": "system",
+      "startedAt": "2026-10-01T20:06:05.105Z",
+      "completedAt": "2026-10-01T20:06:09.447Z"
+    },
+    {
+      "caseId": "INT-KICK-WORK-001",
+      "rawStatus": "PASS",
+      "independentStatus": "PASS",
+      "evidenceDirectory": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-dispatched-kick-obs-7fe62-original-budget-upper-bound-system/evidence",
+      "runIds": [
+        "438bbd6f-f826-49d9-a116-e6b4666ab4a6"
+      ],
+      "observedCounts": {
+        "kickRequests": 1,
+        "kickEffects": 1,
+        "audits": 1,
+        "turns": 1
+      },
+      "cleanupFailures": [],
+      "gatewayBackgroundErrors": [],
+      "agentBackgroundErrors": [],
+      "actualAssertions": [
+        "Original live process/run/step/attempt/request identity",
+        "Original confirmation GET fetch pending at actual kick-work-budget source listener",
+        "Same request source/combined signal reason chain and settlement",
+        "Actual pause transaction and terminal transaction COMMIT",
+        "Creation-to-real-COMMIT conservative upper bound below 60000ms; actual lower-bound violations checked first",
+        "Finite original audit/post/effect once, one turn; unknown saved honestly; no late dispatch observed"
+      ],
+      "limits": [
+        "No hard budget listener observed; original hard case not re-signed",
+        "Later terminal cross-GET diagnostic remains inconclusive",
+        "No restart, second instance, arbitrary unknown recovery, internal observer connection-reuse or cross-work projection-fault test"
+      ],
+      "durationMs": 62148,
+      "attempt": 0,
+      "project": "system",
+      "startedAt": "2026-10-01T20:06:09.461Z",
+      "completedAt": "2026-10-01T20:07:11.609Z"
+    }
+  ],
+  "workEvidence": {
+    "rawEvidence": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-dispatched-kick-obs-7fe62-original-budget-upper-bound-system/evidence/dispatched-kick-work-budget-final.json",
+    "identity": {
+      "groupId": "ce280efd-826a-4c7c-bad3-94f0bdec765a",
+      "runId": "438bbd6f-f826-49d9-a116-e6b4666ab4a6",
+      "applicationPid": 54727,
+      "applicationStarted": "Fri Oct  2 04:06:09 2026",
+      "clockDomain": "process-performance:54727:a7b85a78-a767-4238-bfb5-d0111dc55b8a",
+      "validatedProvenance": {
+        "source": "live-bridge",
+        "applicationPid": 54727,
+        "applicationStarted": "Fri Oct  2 04:06:09 2026"
+      },
+      "toolUseId": "qa-kick-dispatched-original-budget",
+      "stepId": "438bbd6f-f826-49d9-a116-e6b4666ab4a6:1",
+      "attemptId": "549e9624-192a-4706-b21b-206b079b0af3",
+      "postRequestId": "089dbb6a-49d9-4559-9cba-77cc3442831c",
+      "confirmationRequestId": "5e8ecdea-de19-4dad-85b7-811215b782f4"
+    },
+    "originalPostGatewayId": 16,
+    "originalConfirmationGatewayId": 17,
+    "originalConfirmationClientRequestId": "5e8ecdea-de19-4dad-85b7-811215b782f4",
+    "budgetMs": 21681,
+    "workBudgetMs": 19681,
+    "settlementBudgetMs": 2000,
+    "actualSource": "kick-work-budget",
+    "actualSignalSource": "kick-work-budget",
+    "budgetSignalWindowMs": [
+      59537.349083,
+      59537.35275
+    ],
+    "requestSourcePendingWindowMs": [
+      59537.427458,
+      59537.429958
+    ],
+    "fetchPendingAtSource": true,
+    "hardBudgetListenerCount": 0,
+    "hardBudgetOriginalCaseStatus": "NOT_RETESTED",
+    "sourceConfigured": [
+      "request-deadline",
+      "operation",
+      "caller",
+      "kick-lock",
+      "activity-budget",
+      "kick-work-budget"
+    ],
+    "sourceAborted": [
+      "caller",
+      "kick-work-budget"
+    ],
+    "sourceReasonMatched": [
+      "caller",
+      "kick-work-budget"
+    ],
+    "exclusiveFetchFailureCause": "NOT_ASSERTED",
+    "pause": {
+      "sourceSeq": 17,
+      "pauseCause": "kick-work-budget-exhausted",
+      "transactionBoundaries": [
+        {
+          "transactionAttemptId": "151ec8ed-5bf0-45d8-ba2f-0ccb5fbbaeb1",
+          "backendPid": 133,
+          "phase": "begin",
+          "edge": "called",
+          "windowMs": [
+            59548.022875,
+            59548.022875
+          ]
+        },
+        {
+          "transactionAttemptId": "151ec8ed-5bf0-45d8-ba2f-0ccb5fbbaeb1",
+          "backendPid": 133,
+          "phase": "begin",
+          "edge": "returned",
+          "windowMs": [
+            59548.022875,
+            59548.698125
+          ]
+        },
+        {
+          "transactionAttemptId": "151ec8ed-5bf0-45d8-ba2f-0ccb5fbbaeb1",
+          "backendPid": 133,
+          "phase": "run-pause-update",
+          "edge": "called",
+          "windowMs": [
+            59548.736292,
+            59548.736292
+          ]
+        },
+        {
+          "transactionAttemptId": "151ec8ed-5bf0-45d8-ba2f-0ccb5fbbaeb1",
+          "backendPid": 133,
+          "phase": "run-pause-update",
+          "edge": "returned",
+          "windowMs": [
+            59548.736292,
+            59549.604708
+          ]
+        },
+        {
+          "transactionAttemptId": "151ec8ed-5bf0-45d8-ba2f-0ccb5fbbaeb1",
+          "backendPid": 133,
+          "phase": "commit",
+          "edge": "called",
+          "windowMs": [
+            59551.909083,
+            59551.909083
+          ]
+        },
+        {
+          "transactionAttemptId": "151ec8ed-5bf0-45d8-ba2f-0ccb5fbbaeb1",
+          "backendPid": 133,
+          "phase": "commit",
+          "edge": "returned",
+          "windowMs": [
+            59551.909083,
+            59552.765417
+          ]
+        }
+      ]
+    },
+    "terminal": {
+      "sourceSeq": 19,
+      "status": "failed",
+      "reason": "wall_clock",
+      "transactionBoundaries": [
+        {
+          "transactionAttemptId": "696673b6-9ea0-4b8b-8fa6-8e52931279f8",
+          "backendPid": 133,
+          "phase": "begin",
+          "edge": "called",
+          "windowMs": [
+            59555.754125,
+            59555.754125
+          ]
+        },
+        {
+          "transactionAttemptId": "696673b6-9ea0-4b8b-8fa6-8e52931279f8",
+          "backendPid": 133,
+          "phase": "begin",
+          "edge": "returned",
+          "windowMs": [
+            59555.754125,
+            59556.360833
+          ]
+        },
+        {
+          "transactionAttemptId": "696673b6-9ea0-4b8b-8fa6-8e52931279f8",
+          "backendPid": 133,
+          "phase": "run-terminal-update",
+          "edge": "called",
+          "windowMs": [
+            59556.997875,
+            59556.997875
+          ]
+        },
+        {
+          "transactionAttemptId": "696673b6-9ea0-4b8b-8fa6-8e52931279f8",
+          "backendPid": 133,
+          "phase": "run-terminal-update",
+          "edge": "returned",
+          "windowMs": [
+            59556.997875,
+            59557.745792
+          ]
+        },
+        {
+          "transactionAttemptId": "696673b6-9ea0-4b8b-8fa6-8e52931279f8",
+          "backendPid": 133,
+          "phase": "commit",
+          "edge": "called",
+          "windowMs": [
+            59559.195167,
+            59559.195167
+          ]
+        },
+        {
+          "transactionAttemptId": "696673b6-9ea0-4b8b-8fa6-8e52931279f8",
+          "backendPid": 133,
+          "phase": "commit",
+          "edge": "returned",
+          "windowMs": [
+            59559.195167,
+            59560.059917
+          ]
+        }
+      ],
+      "actualCommitReturned": {
+        "transactionAttemptId": "696673b6-9ea0-4b8b-8fa6-8e52931279f8",
+        "backendPid": 133,
+        "phase": "commit",
+        "edge": "returned",
+        "windowMs": [
+          59559.195167,
+          59560.059917
+        ]
+      }
+    },
+    "originalMaximumMs": 60000,
+    "creationToCommitElapsedMs": [
+      58014.728959,
+      58023.478584
+    ],
+    "maximumObservedActualActivityLowerMs": 58002,
+    "actualLowerBoundViolation": false,
+    "laterTerminalCrossDiagnostic": {
+      "status": "BLOCKED_DIAGNOSTIC",
+      "reason": "BlockedError: [BLOCKED] 实际GET与budget决定区间未严格跨越或边界重叠；不靠墙钟/采样点猜先后",
+      "mappedTerminalCrossProof": false,
+      "changesActualWorkPendingConclusion": false
+    },
+    "finitePostTerminalObservationMs": 1500,
+    "historicalStrongRecoveryDisposition": "UNCHANGED",
+    "thisScenarioRecoveryExecution": "NOT_RUN"
+  },
+  "closure": {
+    "QA-01F-ACTIVITY-001": "CLOSED_BOUNDED_NORMAL_WORK_TRAJECTORY_ON_7D53; original01fFAIL immutable, not universal lock/crash guarantee",
+    "originalHardBudgetCase": "NOT_RETESTED; no untriggered hard PASS",
+    "actualGETCancellation": "PROVEN_DISTINCT_WORK_SOURCE",
+    "READ-CAUSAL-PG-CHAIN": "previous01f real query/rollback/release evidence retained, no new observer blocker fabricated;5000msFAIL unchanged"
+  },
+  "remainingRequiredFirstRound": [
+    {
+      "id": "QA-01F-READ-001",
+      "severity": "P1",
+      "kind": "EXISTING_CONFIRMED_FAILURE_NOT_CLOSED",
+      "cases": [
+        "INT-READ-CAUSAL-001",
+        "AGENT-028",
+        "INT-READ-001"
+      ],
+      "lastActualFailureSource": "01f (ordinary variants also8e)",
+      "facts": "Original actual tool/PG wait [5005.463667,5005.526083]ms >5000; genuine query/rollback/release facts present. No new 7d53 reproduction or PASS claimed.",
+      "currentDisposition": "NOT_RETESTED_ON_7D53; NO_CLOSURE",
+      "required": true
+    },
+    {
+      "id": "QA8E-D02",
+      "severity": "P1",
+      "kind": "EXISTING_STRONG_RECOVERY_FAILURE",
+      "cases": [
+        "BLK-EXT-004",
+        "REC-007"
+      ],
+      "lastActualFailureSource": "8e",
+      "facts": "Kick effect before durable result, including target rejoin: actual public recovery pause, no automatic original-run completion; no duplicate effect invented. Engineering direction decided; original guarantee unchanged.",
+      "currentDisposition": "NOT_RETESTED_ON_7D53; NO_CLOSURE",
+      "required": true
+    },
+    {
+      "id": "QA8E-D03",
+      "severity": "P1",
+      "kind": "EXISTING_STRONG_RECOVERY_FAILURE",
+      "cases": [
+        "BLK-EXT-005"
+      ],
+      "lastActualFailureSource": "8e",
+      "facts": "Unrecorded model response interruption leaves actual recovery-paused run; legal different response allowed, exact replay not required.",
+      "currentDisposition": "NOT_RETESTED_ON_7D53; NO_CLOSURE",
+      "required": true
+    },
+    {
+      "id": "INT-MSG-007",
+      "kind": "EXISTING_HISTORICAL_FAILURE",
+      "lastActualFailureSource": "2716",
+      "facts": "Crash after first confirmation observed but before INSERT: original actual dispatch-time scheduling not preserved.",
+      "currentDisposition": "NOT_RETESTED_ON_7D53; NO_CLOSURE",
+      "required": true
+    },
+    {
+      "id": "BLK-EXT-002",
+      "kind": "EXISTING_PROTOCOL_FAILURE",
+      "lastActualFailureSource": "2716",
+      "facts": "Create-group success reply lost: original group identity / extra remote group not guaranteed by current operation protocol.",
+      "currentDisposition": "NOT_RETESTED_ON_7D53; NO_CLOSURE",
+      "required": true
+    },
+    {
+      "id": "BLK-EXT-003",
+      "kind": "EXISTING_PROTOCOL_FAILURE",
+      "lastActualFailureSource": "2716",
+      "facts": "Promote reply lost: role truth and maximum two original calls have historical failure; ordinary kick does not retest it.",
+      "currentDisposition": "NOT_RETESTED_ON_7D53; NO_CLOSURE",
+      "required": true
+    },
+    {
+      "id": "BLK-EXT-001",
+      "kind": "EXISTING_REQUIRED_PROTOCOL_BLOCKER",
+      "lastActualFailureSource": "2716 BLOCKED",
+      "facts": "Silent no-response/no-effect send prefix lacks authoritative negative outcome. Finite waiting cannot manufacture negative terminal/liveness proof. Do not repeat D039 direction decision.",
+      "currentDisposition": "NOT_RETESTED_ON_7D53; BLOCKER_UNCLOSED",
+      "required": true
+    },
+    {
+      "id": "MANUAL-FIRST-ROUND",
+      "kind": "EXISTING_REAL_HUMAN_EVIDENCE",
+      "cases": [
+        "MAN-IME-001",
+        "MAN-FOCUS-001",
+        "MAN-UX-001"
+      ],
+      "facts": "Real IME, OS focus and missing operator evidence are still separate. H18 four-state wording acceptance stays closed-by-user; no reopening of its finite accepted examples.",
+      "currentDisposition": "NOT_RUN_IN_THIS_RETEST; HUMAN_SCOPE_REMAINS",
+      "required": true
+    }
+  ],
+  "extraUnexecutedBoundaries": [
+    {
+      "id": "GAP-RUNNING-SECOND-INSTANCE-COMPETITION",
+      "state": "NOT_RUN",
+      "kind": "EXISTING_EXTRA_CROSS_COVERAGE_NOT_NEW_DEFECT_OR_EXIT_GATE",
+      "facts": "Budget × dispatched kick × running second instance; generic AGENT003 on2716 remains priorPASS, not this three-factor PASS."
+    },
+    {
+      "id": "KICK-WORK-PROJECTION-FAULTS",
+      "state": "NOT_RUN",
+      "kind": "FINITE_IMPACT_BOUNDARY_NOT_NEW_PRODUCT_FAILURE",
+      "facts": "Known-success/explicit-refusal cross-work PG projection or repair; actual save failure/cancel-priority/pool-late/unknownCOMMIT combinations not automatically covered by ordinary success/refusal."
+    },
+    {
+      "id": "CO01-NATIVE-PG-REUSE",
+      "state": "NOT_RUN",
+      "kind": "FINITE_IMPACT_BOUNDARY_NOT_NEW_PRODUCT_FAILURE",
+      "facts": "Deterministic same PG connection deadline-wrapper release then native callback reuse: development before/after evidence exists; this QA sample does not force that trajectory."
+    }
+  ],
+  "secondRound": "PREPARATION_ONLY_NOT_EXECUTED_NOT_MERGED",
+  "C1C2": "development in main, independentQA not executed here",
+  "paidModelCalls": 0,
+  "historicalReportsImmutable": [
+    {
+      "path": "reports/acceptance/20261002-current-delivery/report.md",
+      "sha256": "aa119fea808ee72d38eb21ef7f0022f3d7c36c69014dd204bb6d3bd5449d17c2",
+      "scope": "2716 full254:240P/9F/5B;8e delta51:46P/5F/0B",
+      "immutable": true
+    },
+    {
+      "path": "reports/followup/20261002-dispatched-kick-budget/report.md",
+      "sha256": "acfecfffa8e05140f6198aa4bb23f50a0090874fb09909908e359af53e444e9f",
+      "scope": "8e finite kick:BLOCKED",
+      "immutable": true
+    },
+    {
+      "path": "reports/followup/20261002-first-round-observation-retest/report.md",
+      "sha256": "abea5db2561b7bac53ab12c16967893321d739580c9ea5aa669555a71eb6a07d",
+      "scope": "01f latest3:1P/2F/0B",
+      "immutable": true
+    }
+  ],
+  "qaTooling": {
+    "selfTests": 361,
+    "passed": 361,
+    "failed": 0,
+    "skipped": 0,
+    "catalogCases": 274,
+    "catalogRequirements": 128,
+    "finalFiveStaticChecks": "PASS",
+    "initialImpactRegistrationCheck": "FAIL because parallel review Markdown was not yet written; original retained; later impact/suites passed before product freeze",
+    "productStatusDerivedFromSelfChecks": false
+  },
+  "provenanceExceptions": {
+    "dirty": "one own executor-start.json under reports; original manifest unchanged",
+    "sourceFiles": "277 frozen Git blobs match; one ignored unused smoke authority metadata byte-bound to original manifest and archived",
+    "ignoredInput": "input-provenance-review.json"
+  },
+  "coverage": {
+    "selectedCaseDefinitions": 5,
+    "executedSelectedCases": 5,
+    "executionRate": 1,
+    "selectedPassRate": 1,
+    "entireCatalogTraceabilityOnly": {
+      "requirements": 128,
+      "cases": 274
+    },
+    "scope": "No whole-business execution/coverage/pass ratio from these five; no old-version PASS imports"
+  },
+  "newProductDefects": [],
+  "cleanupReview": {
+    "schemaVersion": 1,
+    "type": "independent-resource-evidence-review",
+    "reviewedAt": "2026-10-01T20:23:57.768725+00:00",
+    "disposition": "KNOWN_RESOURCES_CLOSED_WITH_OBSERVATION_LIMITS",
+    "run": {
+      "runId": "2026-10-01T20-05-52.805Z-2f02f728",
+      "sutRevision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+      "qaRevision": "4f1af77add3b4ae32161b0581e2a913058c60909",
+      "suite": "qa-first-round-kick-work",
+      "phase": "developer-preflight",
+      "actualProductRunCount": 1,
+      "rawCaseResults": [
+        {
+          "title": "[AGENT-017] kick denied by policy never calls external kick",
+          "rawStatus": "passed",
+          "retry": 0,
+          "startTime": "2026-10-01T20:05:53.506Z",
+          "durationMs": 1961
+        },
+        {
+          "title": "[AGENT-018] permitted kick audits exact action and uses owner or promoted member",
+          "rawStatus": "passed",
+          "retry": 0,
+          "startTime": "2026-10-01T20:05:56.337Z",
+          "durationMs": 3008
+        },
+        {
+          "title": "[CAP-008] capacity deferral does not replace a later explicit gateway ownership or permission error",
+          "rawStatus": "passed",
+          "retry": 0,
+          "startTime": "2026-10-01T20:05:59.372Z",
+          "durationMs": 5729
+        },
+        {
+          "title": "[CAP-010] admission pressure after a dispatched convergent 504 does not reset and replay the unknown kick",
+          "rawStatus": "passed",
+          "retry": 0,
+          "startTime": "2026-10-01T20:06:05.105Z",
+          "durationMs": 4342
+        },
+        {
+          "title": "[INT-KICK-WORK-001] distinct work cutoff cancels the original pending confirmation and settles within a conservative original budget upper bound",
+          "rawStatus": "passed",
+          "retry": 0,
+          "startTime": "2026-10-01T20:06:09.461Z",
+          "durationMs": 62148
+        }
+      ],
+      "retries": 0,
+      "manifestEvidence": {
+        "path": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/manifest.json",
+        "bytes": 72087,
+        "sha256": "a5a3ac1fae0fade0e95e1b6e7e55e259f4cd01b311c3cc40ef5366cdafff8669"
+      },
+      "playwrightEvidence": {
+        "path": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/playwright.json",
+        "bytes": 12966,
+        "sha256": "0994dc08ef8798561389a1e74808403c3989c4ab2e25bfdc1508cb2e5ec992fd"
+      },
+      "runnerSummaryEvidence": {
+        "path": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/runner-summary.json",
+        "bytes": 97,
+        "sha256": "22cb6c368836afbf7c72a7ec655a196e739e564fb38e457e18eef31273613aa3"
+      },
+      "runnerSummary": {
+        "runnerStatus": "passed",
+        "runnerErrors": [],
+        "completedAt": "2026-10-01T20:07:11.910Z"
+      }
+    },
+    "reviewBoundary": {
+      "reviewProductExecutions": 0,
+      "reviewSutRequests": 0,
+      "reviewDatabaseConnections": 0,
+      "reviewNetworkRequests": 0,
+      "reviewDockerOrProcessProbes": 0,
+      "reviewSignalsOrCleanup": 0,
+      "method": "只读复核已归档原件；仅写本 independent-review.json。",
+      "scope": "资源复核不提供业务/上线验收结论。"
+    },
+    "snapshots": [
+      {
+        "path": "reports/followup/20261002-kick-work-retest/resource-audit/snapshot-20261001T200423.799921Z-preflight.json",
+        "bytes": 313302,
+        "sha256": "39730f3a475a1a1568a0f65db0cb06b396b852d55ad4f6426250291a181d7bbd",
+        "sha256IndependentlyVerified": true,
+        "phase": "preflight",
+        "observedAt": "2026-10-01T20:04:23.799921+00:00",
+        "requestedRunIds": [],
+        "actualRecordedRunIds": [],
+        "scriptSha256": "9213fc57288ba0bb8d7ca1b154942c763ac29705c9f8b132697c3578e27422ba",
+        "productExecutionCreatedBySnapshot": false
+      },
+      {
+        "path": "reports/followup/20261002-kick-work-retest/resource-audit/snapshot-20261001T200601.906306Z-during-run.json",
+        "bytes": 395950,
+        "sha256": "a76ead9c0a7462a8f57a4c6eda4893a4754b876ff6e79379cab6c59963144cee",
+        "sha256IndependentlyVerified": true,
+        "phase": "during-run",
+        "observedAt": "2026-10-01T20:06:01.906306+00:00",
+        "requestedRunIds": [],
+        "actualRecordedRunIds": [
+          "2026-10-01T20-05-52.805Z-2f02f728"
+        ],
+        "scriptSha256": "a2645032d1a4b946e18b297cf0ad6c082691f1a85b08fb62cff1e372e82fba6a",
+        "productExecutionCreatedBySnapshot": false
+      },
+      {
+        "path": "reports/followup/20261002-kick-work-retest/resource-audit/snapshot-20261001T200631.797992Z-during-run.json",
+        "bytes": 386976,
+        "sha256": "a1525c5589f8c42aa8cbe7fa1a6beedd59aa3f1a6856cb6de62e287bb8913b37",
+        "sha256IndependentlyVerified": true,
+        "phase": "during-run",
+        "observedAt": "2026-10-01T20:06:31.797992+00:00",
+        "requestedRunIds": [
+          "2026-10-01T20-05-52.666Z-16b098bf"
+        ],
+        "actualRecordedRunIds": [],
+        "scriptSha256": "a2645032d1a4b946e18b297cf0ad6c082691f1a85b08fb62cff1e372e82fba6a",
+        "productExecutionCreatedBySnapshot": false
+      },
+      {
+        "path": "reports/followup/20261002-kick-work-retest/resource-audit/snapshot-20261001T200659.210031Z-during-run.json",
+        "bytes": 734096148,
+        "sha256": "25c489a94d561e73500f0b898c26ee99611d59ba9d18f44edb51237e09cf1f97",
+        "sha256IndependentlyVerified": true,
+        "phase": "during-run",
+        "observedAt": "2026-10-01T20:06:59.210031+00:00",
+        "requestedRunIds": [
+          "2026-10-01T20-05-52.805Z-2f02f728"
+        ],
+        "actualRecordedRunIds": [
+          "2026-10-01T20-05-52.805Z-2f02f728"
+        ],
+        "scriptSha256": "a2645032d1a4b946e18b297cf0ad6c082691f1a85b08fb62cff1e372e82fba6a",
+        "productExecutionCreatedBySnapshot": false
+      },
+      {
+        "path": "reports/followup/20261002-kick-work-retest/resource-audit/snapshot-20261001T200809.448719Z-during-run.json",
+        "bytes": 1109986161,
+        "sha256": "a798bb7281c9bd6f07d7238fa566907646d9e7efa9599e969d91e35926fd4f9d",
+        "sha256IndependentlyVerified": true,
+        "phase": "during-run",
+        "observedAt": "2026-10-01T20:08:09.448719+00:00",
+        "requestedRunIds": [
+          "2026-10-01T20-05-52.805Z-2f02f728"
+        ],
+        "actualRecordedRunIds": [
+          "2026-10-01T20-05-52.805Z-2f02f728"
+        ],
+        "scriptSha256": "a2645032d1a4b946e18b297cf0ad6c082691f1a85b08fb62cff1e372e82fba6a",
+        "productExecutionCreatedBySnapshot": false
+      },
+      {
+        "path": "reports/followup/20261002-kick-work-retest/resource-audit/snapshot-20261001T200849.994611Z-post-cleanup.json",
+        "bytes": 1109986082,
+        "sha256": "7bcf8813464d3972ef1794f7ec2a3f4746396d6d7b6a27e1e9bd901ba6af7fba",
+        "sha256IndependentlyVerified": true,
+        "phase": "post-cleanup",
+        "observedAt": "2026-10-01T20:08:49.994611+00:00",
+        "requestedRunIds": [
+          "2026-10-01T20-05-52.805Z-2f02f728"
+        ],
+        "actualRecordedRunIds": [
+          "2026-10-01T20-05-52.805Z-2f02f728"
+        ],
+        "scriptSha256": "a2645032d1a4b946e18b297cf0ad6c082691f1a85b08fb62cff1e372e82fba6a",
+        "productExecutionCreatedBySnapshot": false
+      }
+    ],
+    "archive": {
+      "fileIndexEvidence": {
+        "path": "reports/followup/20261002-kick-work-retest/resource-observation-file-index.json",
+        "bytes": 1988,
+        "sha256": "b871ec066668834a8ec31f8207064fe64bc292b400dab6fab3c9a407f6d9b4ff"
+      },
+      "archiveEvidence": {
+        "path": "reports/followup/20261002-kick-work-retest/resource-observation-originals.tar.gz",
+        "bytes": 32633529,
+        "sha256": "78422929e2f7bfdfa5bb95e6c748c7d52987c022e2da9f569a6215b969793573"
+      },
+      "originalFileCount": 6,
+      "originalBytes": 2955164619,
+      "rawSnapshotHashesIndependentlyVerifiedAgainstIndex": true,
+      "archiveSha256IndependentlyVerified": true,
+      "archiveMembersByteIdentityVerifiedByParent": true,
+      "futureRawCopyRelocationPermittedByParent": "五份巨大/未 tracked raw 可迁到 QA .runtime，交付 archive 与原名/bytes/SHA index；本 review 不移动原件。"
+    },
+    "preparation": {
+      "actualPreparedTarget": {
+        "targetFile": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/.runtime/kick-work-20261002/prepared-combined-bfc75683/target.json",
+        "targetFileSha256": "9f649f845bc11da1f361df49f720615f23662f39c0bb03c2d5bc6238597765f8",
+        "targetIdentity": {
+          "sut": {
+            "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+            "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+            "start": {
+              "command": "node",
+              "args": [
+                "--import",
+                "tsx",
+                "scripts/qa-observation-server.ts"
+              ]
+            },
+            "migrate": {
+              "command": "node",
+              "args": [
+                "--import",
+                "tsx",
+                "scripts/migrate.ts"
+              ]
+            },
+            "web": {
+              "command": "npm",
+              "args": [
+                "exec",
+                "--workspace",
+                "apps/web",
+                "--",
+                "vite",
+                "preview",
+                "--host",
+                "127.0.0.1",
+                "--port",
+                "{WEB_PORT}",
+                "--strictPort"
+              ]
+            }
+          },
+          "adapters": {
+            "capacityControl": {
+              "url": "http://127.0.0.1:59585",
+              "registryDirectory": "/private/tmp/qa-cap-FpVogs",
+              "contractReference": "docs/kick-settlement-budget-20261002.md @ 7d53ee1f054961c9c997ff79dcb30e5a7e89ac46"
+            },
+            "runtimeObservation": {
+              "url": "http://127.0.0.1:59549",
+              "registryDirectory": "/private/tmp/qa-rte-FG93uS",
+              "contractReference": "docs/kick-settlement-budget-20261002.md @ 7d53ee1f054961c9c997ff79dcb30e5a7e89ac46"
+            }
+          },
+          "authorization": null
+        },
+        "preparationFile": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/.runtime/kick-work-20261002/prepared-combined-bfc75683/preparation.json",
+        "preparationSha256": "29a76b8e4e0fbfec1aff79d303bcb88a2c68efbfcb805cb1a27478dd96b2a928",
+        "preparationIdentity": {
+          "kind": "inactive-combined-bindings",
+          "preparedAt": "2026-10-01T20:03:49.722Z",
+          "productStarted": false,
+          "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+          "sut": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+          "targetSha256": "b33a78d766ec8b34b98ba1c0f731c9cd7d8973f1c5ce091cef276f59fd9e0451"
+        }
+      },
+      "manifestTargetSha256Matched": true,
+      "controllerOwnerMarkersMatched": true,
+      "placeholderPortOneExcluded": true
+    },
+    "incorrectRunSelectorSnapshot": {
+      "path": "reports/followup/20261002-kick-work-retest/resource-audit/snapshot-20261001T200631.797992Z-during-run.json",
+      "requestedRunIds": [
+        "2026-10-01T20-05-52.666Z-16b098bf"
+      ],
+      "actualRecordedRunCount": 0,
+      "productExecution": false,
+      "usedToSupplyMissingProductEvidence": false,
+      "interpretation": "runs=0 原件保留，仅资源候选；不当成额外测试，不填补产品证据。"
+    },
+    "docker": {
+      "engineId": "1fbf2675-d415-458c-866c-28fd59cd7267",
+      "engineIdentityStableAcrossSnapshots": true,
+      "identifiedContainerCount": 1,
+      "identifiedVolumeCount": 1,
+      "containerId": "f02143c27fdf855a501fe9b293a0513bcc59257d9e76c27ddf5c6840723f2591",
+      "owner": "b6143a81-dd1b-4d72-bdf7-0115f354e377",
+      "liveInspectEvidence": "reports/followup/20261002-kick-work-retest/resource-audit/snapshot-20261001T200601.906306Z-during-run.json",
+      "liveInspect": {
+        "Id": "f02143c27fdf855a501fe9b293a0513bcc59257d9e76c27ddf5c6840723f2591",
+        "Name": "/qa-acceptance-b6143a81-dd1b-4d72-bdf7-0115f354e377",
+        "Created": "2026-10-01T20:05:53.597554792Z",
+        "Mounts": [
+          {
+            "Type": "volume",
+            "Name": "2f2cd3ced1f5e2b9472eb63f6fa392587a93d1ec2db43e2efadd20e906cf29ee",
+            "Source": "/var/lib/docker/volumes/2f2cd3ced1f5e2b9472eb63f6fa392587a93d1ec2db43e2efadd20e906cf29ee/_data",
+            "Destination": "/var/lib/postgresql/data",
+            "Driver": "local",
+            "Mode": "",
+            "RW": true,
+            "Propagation": ""
+          }
+        ],
+        "owner": "b6143a81-dd1b-4d72-bdf7-0115f354e377",
+        "image": "postgres:17-alpine",
+        "State": {
+          "Running": true,
+          "Status": "running",
+          "Pid": 84688,
+          "StartedAt": "2026-10-01T20:05:53.642098917Z",
+          "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Ports": {
+          "5432/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "61887"
+            }
+          ]
+        },
+        "observedAt": "2026-10-01T20:06:02.057960+00:00",
+        "inspectRequest": {
+          "argv": [
+            "docker",
+            "--host",
+            "unix:///var/run/docker.sock",
+            "inspect",
+            "f02143c27fdf855a501fe9b293a0513bcc59257d9e76c27ddf5c6840723f2591"
+          ],
+          "startedAt": "2026-10-01T20:06:02.043230+00:00",
+          "endedAt": "2026-10-01T20:06:02.057960+00:00",
+          "exitCode": 0,
+          "stderr": ""
+        },
+        "attribution": "qa.owner+creation-window candidate; exact run requires case ID/owner/ports/provenance chain"
+      },
+      "actualPGHostPort": 61887,
+      "runAssociation": {
+        "basis": "真实 suite CLI→Playwright→worker 父子链，实际 worker 到 Docker live HostPort 的 ESTABLISHED；再绑定实际 ID/owner/Mounts。不是标签或时间单独认领。",
+        "processChain": [
+          {
+            "pid": 53507,
+            "ppid": 44813,
+            "pgid": 53507,
+            "uid": 501,
+            "start": "Fri Oct  2 04:05:52 2026",
+            "comm": "/opt/homebrew/Ce",
+            "args": "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python .runtime/kick-work-20261002/run-suite.py qa-first-round-kick-work .runtime/kick-work-20261002/prepared-combined-bfc75683/target.json .runtime/kick-work-20261002/authority/qa-first-round-kick-work-b33a78d7-1790885063758.json"
+          },
+          {
+            "pid": 53714,
+            "ppid": 53507,
+            "pgid": 53507,
+            "uid": 501,
+            "start": "Fri Oct  2 04:05:52 2026",
+            "comm": "node",
+            "args": "node --import tsx harness/cli.ts preflight --suite qa-first-round-kick-work --target .runtime/kick-work-20261002/prepared-combined-bfc75683/target.json --authorization .runtime/kick-work-20261002/authority/qa-first-round-kick-work-b33a78d7-1790885063758.json"
+          },
+          {
+            "pid": 53734,
+            "ppid": 53714,
+            "pgid": 53507,
+            "uid": 501,
+            "start": "Fri Oct  2 04:05:52 2026",
+            "comm": "/Users/zcm/.nvm/",
+            "args": "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/node_modules/@playwright/test/cli.js test --grep (?:^|\\s)\\[(?:AGENT-017|AGENT-018|CAP-008|CAP-010|INT-KICK-WORK-001)\\](?=\\s|$) --project=system"
+          },
+          {
+            "pid": 53749,
+            "ppid": 53734,
+            "pgid": 53507,
+            "uid": 501,
+            "start": "Fri Oct  2 04:05:53 2026",
+            "comm": "/Users/zcm/.nvm/",
+            "args": "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/node_modules/playwright/lib/worker/workerProcessEntry.js"
+          }
+        ],
+        "postgresPortObservation": {
+          "port": 61887,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:61887"
+            ],
+            "startedAt": "2026-10-01T20:06:02.280771+00:00",
+            "exitCode": 0,
+            "stdout": "COMMAND     PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\nnode      53749  zcm   25u  IPv4 0x729d9c17c5e8c3ff      0t0  TCP 127.0.0.1:62013->127.0.0.1:61887 (ESTABLISHED)\nnode      53749  zcm   26u  IPv4 0xcfa129f2baeeb74b      0t0  TCP 127.0.0.1:62004->127.0.0.1:61887 (ESTABLISHED)\nnode      53749  zcm   30u  IPv4 0x2b06ae731159d3c2      0t0  TCP 127.0.0.1:62007->127.0.0.1:61887 (ESTABLISHED)\nnode      53749  zcm   32u  IPv4 0xb016afa929143935      0t0  TCP 127.0.0.1:62009->127.0.0.1:61887 (ESTABLISHED)\nnode      53749  zcm   33u  IPv4 0x505809fb553d3876      0t0  TCP 127.0.0.1:62014->127.0.0.1:61887 (ESTABLISHED)\nnode      53749  zcm   35u  IPv4 0xca6b5dda2f323123      0t0  TCP 127.0.0.1:62015->127.0.0.1:61887 (ESTABLISHED)\nnode      53749  zcm   38u  IPv4 0x409f1a0b988851a3      0t0  TCP 127.0.0.1:62018->127.0.0.1:61887 (ESTABLISHED)\nnode      53749  zcm   43u  IPv4 0x2381d2b9d09fdcc5      0t0  TCP 127.0.0.1:62030->127.0.0.1:61887 (ESTABLISHED)\nnode      53749  zcm   45u  IPv4 0xfa0b856d0881c283      0t0  TCP 127.0.0.1:62032->127.0.0.1:61887 (ESTABLISHED)\nnode      53749  zcm   47u  IPv4 0x2d95d94d4456b71c      0t0  TCP 127.0.0.1:62034->127.0.0.1:61887 (ESTABLISHED)\nnode      53749  zcm   49u  IPv4 0xc8b1bb15045779c3      0t0  TCP 127.0.0.1:62036->127.0.0.1:61887 (ESTABLISHED)\nnode      53749  zcm   51u  IPv4 0x3551bd1ae71fcd5f      0t0  TCP 127.0.0.1:62038->127.0.0.1:61887 (ESTABLISHED)\nnode      53749  zcm   53u  IPv4 0xd25f10f280d6c69a      0t0  TCP 127.0.0.1:62041->127.0.0.1:61887 (ESTABLISHED)\nnode      53749  zcm   55u  IPv4 0x70a95eacf4bde8f7      0t0  TCP 127.0.0.1:62042->127.0.0.1:61887 (ESTABLISHED)\ncom.docke 59212  zcm   16u  IPv4 0x310f57859346b41d      0t0  TCP 127.0.0.1:61887->127.0.0.1:62004 (ESTABLISHED)\ncom.docke 59212  zcm   19u  IPv4 0x3e471db8e7dac163      0t0  TCP 127.0.0.1:61887->127.0.0.1:62007 (ESTABLISHED)\ncom.docke 59212  zcm   53u  IPv4 0x3e945c7d281c55df      0t0  TCP 127.0.0.1:61887->127.0.0.1:62009 (ESTABLISHED)\ncom.docke 59212  zcm   88u  IPv4 0x584091f7b3633761      0t0  TCP 127.0.0.1:61887->127.0.0.1:62013 (ESTABLISHED)\ncom.docke 59212  zcm  124u  IPv4 0xb9da5bebe2af3be5      0t0  TCP 127.0.0.1:61887->127.0.0.1:62014 (ESTABLISHED)\ncom.docke 59212  zcm  125u  IPv4 0x9e780b9cbb7fba9c      0t0  TCP 127.0.0.1:61887 (LISTEN)\ncom.docke 59212  zcm  126u  IPv4 0x6d4748fb0a39a3a0      0t0  TCP 127.0.0.1:61887->127.0.0.1:62015 (ESTABLISHED)\ncom.docke 59212  zcm  128u  IPv4 0x18e722161c5de826      0t0  TCP 127.0.0.1:61887->127.0.0.1:62018 (ESTABLISHED)\ncom.docke 59212  zcm  131u  IPv4 0x65cae052cb1b12b2      0t0  TCP 127.0.0.1:61887->127.0.0.1:62030 (ESTABLISHED)\ncom.docke 59212  zcm  133u  IPv4 0xd4416069ac034e98      0t0  TCP 127.0.0.1:61887->127.0.0.1:62032 (ESTABLISHED)\ncom.docke 59212  zcm  134u  IPv4 0x1e5ddd38ea5617b1      0t0  TCP 127.0.0.1:61887->127.0.0.1:62034 (ESTABLISHED)\ncom.docke 59212  zcm  135u  IPv4 0x876c5cfb7cfe7e3d      0t0  TCP 127.0.0.1:61887->127.0.0.1:62036 (ESTABLISHED)\ncom.docke 59212  zcm  136u  IPv4 0x83052c45d53b4375      0t0  TCP 127.0.0.1:61887->127.0.0.1:62038 (ESTABLISHED)\ncom.docke 59212  zcm  137u  IPv4 0x8c3e4d2b500606ba      0t0  TCP 127.0.0.1:61887->127.0.0.1:62041 (ESTABLISHED)\ncom.docke 59212  zcm  138u  IPv4 0x12cc2ecac43c2352      0t0  TCP 127.0.0.1:61887->127.0.0.1:62042 (ESTABLISHED)\n",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:06:02.344477+00:00"
+          }
+        },
+        "reportedExactCaseContainerOwnerRecord": false
+      },
+      "liveVolumeMount": {
+        "Type": "volume",
+        "Name": "2f2cd3ced1f5e2b9472eb63f6fa392587a93d1ec2db43e2efadd20e906cf29ee",
+        "Source": "/var/lib/docker/volumes/2f2cd3ced1f5e2b9472eb63f6fa392587a93d1ec2db43e2efadd20e906cf29ee/_data",
+        "Destination": "/var/lib/postgresql/data",
+        "Driver": "local",
+        "Mode": "",
+        "RW": true,
+        "Propagation": ""
+      },
+      "containerEvents": [
+        {
+          "Type": "container",
+          "Action": "create",
+          "Actor": {
+            "ID": "f02143c27fdf855a501fe9b293a0513bcc59257d9e76c27ddf5c6840723f2591",
+            "Attributes": {
+              "desktop.docker.io/ports.scheme": "v2",
+              "desktop.docker.io/ports/5432/tcp": "127.0.0.1:",
+              "image": "postgres:17-alpine",
+              "name": "qa-acceptance-b6143a81-dd1b-4d72-bdf7-0115f354e377",
+              "qa.owner": "b6143a81-dd1b-4d72-bdf7-0115f354e377"
+            }
+          },
+          "scope": "local",
+          "time": 1790885153,
+          "timeNano": 1790885153615766083
+        },
+        {
+          "Type": "container",
+          "Action": "start",
+          "Actor": {
+            "ID": "f02143c27fdf855a501fe9b293a0513bcc59257d9e76c27ddf5c6840723f2591",
+            "Attributes": {
+              "desktop.docker.io/ports.scheme": "v2",
+              "desktop.docker.io/ports/5432/tcp": "127.0.0.1:",
+              "image": "postgres:17-alpine",
+              "name": "qa-acceptance-b6143a81-dd1b-4d72-bdf7-0115f354e377",
+              "qa.owner": "b6143a81-dd1b-4d72-bdf7-0115f354e377"
+            }
+          },
+          "scope": "local",
+          "time": 1790885153,
+          "timeNano": 1790885153707488500
+        },
+        {
+          "Type": "container",
+          "Action": "kill",
+          "Actor": {
+            "ID": "f02143c27fdf855a501fe9b293a0513bcc59257d9e76c27ddf5c6840723f2591",
+            "Attributes": {
+              "desktop.docker.io/ports.scheme": "v2",
+              "desktop.docker.io/ports/5432/tcp": "127.0.0.1:",
+              "image": "postgres:17-alpine",
+              "name": "qa-acceptance-b6143a81-dd1b-4d72-bdf7-0115f354e377",
+              "qa.owner": "b6143a81-dd1b-4d72-bdf7-0115f354e377",
+              "signal": "9"
+            }
+          },
+          "scope": "local",
+          "time": 1790885231,
+          "timeNano": 1790885231647527634
+        },
+        {
+          "Type": "container",
+          "Action": "die",
+          "Actor": {
+            "ID": "f02143c27fdf855a501fe9b293a0513bcc59257d9e76c27ddf5c6840723f2591",
+            "Attributes": {
+              "desktop.docker.io/ports.scheme": "v2",
+              "desktop.docker.io/ports/5432/tcp": "127.0.0.1:",
+              "execDuration": "78",
+              "exitCode": "137",
+              "image": "postgres:17-alpine",
+              "name": "qa-acceptance-b6143a81-dd1b-4d72-bdf7-0115f354e377",
+              "qa.owner": "b6143a81-dd1b-4d72-bdf7-0115f354e377"
+            }
+          },
+          "scope": "local",
+          "time": 1790885231,
+          "timeNano": 1790885231795529759
+        },
+        {
+          "Type": "container",
+          "Action": "destroy",
+          "Actor": {
+            "ID": "f02143c27fdf855a501fe9b293a0513bcc59257d9e76c27ddf5c6840723f2591",
+            "Attributes": {
+              "desktop.docker.io/ports.scheme": "v2",
+              "desktop.docker.io/ports/5432/tcp": "127.0.0.1:",
+              "image": "postgres:17-alpine",
+              "name": "qa-acceptance-b6143a81-dd1b-4d72-bdf7-0115f354e377",
+              "qa.owner": "b6143a81-dd1b-4d72-bdf7-0115f354e377"
+            }
+          },
+          "scope": "local",
+          "time": 1790885231,
+          "timeNano": 1790885231829492175
+        }
+      ],
+      "exactVolumeEvents": [
+        {
+          "Type": "volume",
+          "Action": "create",
+          "Actor": {
+            "ID": "2f2cd3ced1f5e2b9472eb63f6fa392587a93d1ec2db43e2efadd20e906cf29ee",
+            "Attributes": {
+              "driver": "local"
+            }
+          },
+          "scope": "local",
+          "time": 1790885153,
+          "timeNano": 1790885153611535500
+        },
+        {
+          "Type": "volume",
+          "Action": "mount",
+          "Actor": {
+            "ID": "2f2cd3ced1f5e2b9472eb63f6fa392587a93d1ec2db43e2efadd20e906cf29ee",
+            "Attributes": {
+              "container": "f02143c27fdf855a501fe9b293a0513bcc59257d9e76c27ddf5c6840723f2591",
+              "destination": "/var/lib/postgresql/data",
+              "driver": "local",
+              "propagation": "",
+              "read/write": "true"
+            }
+          },
+          "scope": "local",
+          "time": 1790885153,
+          "timeNano": 1790885153639580167
+        },
+        {
+          "Type": "volume",
+          "Action": "unmount",
+          "Actor": {
+            "ID": "2f2cd3ced1f5e2b9472eb63f6fa392587a93d1ec2db43e2efadd20e906cf29ee",
+            "Attributes": {
+              "container": "f02143c27fdf855a501fe9b293a0513bcc59257d9e76c27ddf5c6840723f2591",
+              "driver": "local"
+            }
+          },
+          "scope": "local",
+          "time": 1790885231,
+          "timeNano": 1790885231793688217
+        },
+        {
+          "Type": "volume",
+          "Action": "destroy",
+          "Actor": {
+            "ID": "2f2cd3ced1f5e2b9472eb63f6fa392587a93d1ec2db43e2efadd20e906cf29ee",
+            "Attributes": {
+              "driver": "local"
+            }
+          },
+          "scope": "local",
+          "time": 1790885231,
+          "timeNano": 1790885231829420509
+        }
+      ],
+      "postContainerAbsence": {
+        "argv": [
+          "docker",
+          "--host",
+          "unix:///var/run/docker.sock",
+          "inspect",
+          "f02143c27fdf855a501fe9b293a0513bcc59257d9e76c27ddf5c6840723f2591"
+        ],
+        "startedAt": "2026-10-01T20:09:04.633787+00:00",
+        "exitCode": 1,
+        "stdout": "[]\n",
+        "stderr": "error: no such object: f02143c27fdf855a501fe9b293a0513bcc59257d9e76c27ddf5c6840723f2591\n",
+        "endedAt": "2026-10-01T20:09:04.662065+00:00"
+      },
+      "postVolumeAbsence": {
+        "name": "2f2cd3ced1f5e2b9472eb63f6fa392587a93d1ec2db43e2efadd20e906cf29ee",
+        "present": false,
+        "probe": {
+          "argv": [
+            "docker",
+            "--host",
+            "unix:///var/run/docker.sock",
+            "volume",
+            "inspect",
+            "2f2cd3ced1f5e2b9472eb63f6fa392587a93d1ec2db43e2efadd20e906cf29ee"
+          ],
+          "startedAt": "2026-10-01T20:09:04.678516+00:00",
+          "exitCode": 1,
+          "stdout": "[]\n",
+          "stderr": "Error response from daemon: get 2f2cd3ced1f5e2b9472eb63f6fa392587a93d1ec2db43e2efadd20e906cf29ee: no such volume\n",
+          "endedAt": "2026-10-01T20:09:04.694167+00:00"
+        }
+      },
+      "disposition": "IDENTIFIED_CONTAINER_AND_VOLUME_REMOVED",
+      "otherQaOwnerCandidatesAttributedByTimeAlone": false,
+      "dockerDesktopVmPid": 84688,
+      "vmPidNotTreatedAsHostPid": true
+    },
+    "controllers": [
+      {
+        "component": "qa-owned-runtime-controller-ready",
+        "readyEvidence": {
+          "path": "reports/followup/20261002-kick-work-retest/controllers/controller-b097f5fe-852a-4374-b3d4-bf310a01bcf0/ready.json",
+          "bytes": 600,
+          "sha256": "b7c9c4e160a1897a0a5314144c09e9de638051afba63a05e2af040142e3e2229"
+        },
+        "ready": {
+          "component": "qa-owned-runtime-controller-ready",
+          "url": "http://127.0.0.1:59549",
+          "port": 59549,
+          "registryDirectory": "/private/tmp/qa-rte-FG93uS",
+          "runnerPid": 40757,
+          "guardianPid": 40974,
+          "sut": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+          "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+          "evidenceDirectory": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/followup/20261002-kick-work-retest/controllers/controller-b097f5fe-852a-4374-b3d4-bf310a01bcf0",
+          "stopRequestedNoLaterThan": "2026-10-01T21:58:25.030Z"
+        },
+        "marker": {
+          "file": "/private/tmp/qa-rte-FG93uS/.qa-lifecycle-owner.json",
+          "sha256": "73937a93969c9cac154d1dabf5c542435dca6e9b0f9400cc7b8925a1ee986c21",
+          "identity": {
+            "runnerPid": 40757,
+            "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+            "sut": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+            "qaRoot": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance"
+          },
+          "error": null
+        },
+        "registryStat": {
+          "uid": 501,
+          "mode": "0o700",
+          "dev": 16777231,
+          "ino": 38927879,
+          "symlink": false
+        },
+        "actualProcessIdentities": [
+          {
+            "pid": 40757,
+            "ppid": 44813,
+            "pgid": 40757,
+            "uid": 501,
+            "start": "Fri Oct  2 03:58:24 2026",
+            "comm": "node",
+            "args": "node --import tsx .runtime/kick-work-20261002/owned-runtime-controller.ts --sut /Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala --revision 7d53ee1f054961c9c997ff79dcb30e5a7e89ac46 --evidence reports/followup/20261002-kick-work-retest/controllers --approval-reference human-continuing-authority-with-one-current-retest-stop-rule"
+          },
+          {
+            "pid": 40965,
+            "ppid": 40757,
+            "pgid": 40757,
+            "uid": 501,
+            "start": "Fri Oct  2 03:58:24 2026",
+            "comm": "/Users/zcm/.code",
+            "args": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/node_modules/@esbuild/darwin-arm64/bin/esbuild --service=0.28.2 --ping"
+          },
+          {
+            "pid": 40974,
+            "ppid": 40757,
+            "pgid": 40974,
+            "uid": 501,
+            "start": "Fri Oct  2 03:58:25 2026",
+            "comm": "/Users/zcm/.nvm/",
+            "args": "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node -e const {spawn}=require('node:child_process');\\012const c=JSON.parse(process.argv[1]); const hold=setInterval(()=>{},1000);\\012process.on('SIGTERM',()=>{}); process.on('disconnect',()=>{try{process.kill(-process.pid,'SIGKILL')}catch{process.exit(1)}});\\012const p=spawn(c.command,c.args,{stdio:['ignore','inherit','inherit'],env:process.env});\\012p.once('spawn',()=>process.send?.({type:'ready'}));\\012p.once('error',e=>process.send?.({type:'error',message:e.message}));\\012p.once('exit',(code,signal)=>process.send?.({type:'exit',code,signal})); {\"command\":\"/Users/zcm/.nvm/versions/node/v24.21.0/bin/node\",\"args\":[\"--import\",\"tsx\",\"/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala/scripts/qa-runtime-observation-controller.ts\"]}"
+          },
+          {
+            "pid": 40975,
+            "ppid": 40974,
+            "pgid": 40974,
+            "uid": 501,
+            "start": "Fri Oct  2 03:58:25 2026",
+            "comm": "/Users/zcm/.nvm/",
+            "args": "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node --import tsx /Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala/scripts/qa-runtime-observation-controller.ts"
+          },
+          {
+            "pid": 40985,
+            "ppid": 40975,
+            "pgid": 40974,
+            "uid": 501,
+            "start": "Fri Oct  2 03:58:25 2026",
+            "comm": "/Users/zcm/.code",
+            "args": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala/node_modules/@esbuild/darwin-arm64/bin/esbuild --service=0.28.2 --ping"
+          }
+        ],
+        "stopRequestEvidence": "reports/followup/20261002-kick-work-retest/controllers/stop-request.json",
+        "stopRequest": {
+          "readyFile": "reports/followup/20261002-kick-work-retest/controllers/controller-b097f5fe-852a-4374-b3d4-bf310a01bcf0/ready.json",
+          "runnerPid": 40757,
+          "ps": "40757 44813 40757   501 Fri Oct  2 03:58:24 2026     node node --import tsx .runtime/kick-work-20261002/owned-runtime-controller.ts --sut /Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala --revision 7d53ee1f054961c9c997ff79dcb30e5a7e89ac46 --evidence reports/followup/20261002-kick-work-retest/controllers --approval-reference human-continuing-authority-with-one-current-retest-stop-rule\n",
+          "args": "node --import tsx .runtime/kick-work-20261002/owned-runtime-controller.ts --sut /Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala --revision 7d53ee1f054961c9c997ff79dcb30e5a7e89ac46 --evidence reports/followup/20261002-kick-work-retest/controllers --approval-reference human-continuing-authority-with-one-current-retest-stop-rule\n",
+          "sameHistoricalProcessIdentity": true,
+          "ownershipValidated": true,
+          "at": "2026-10-01T20:08:40.013536+00:00",
+          "signal": "SIGTERM"
+        },
+        "lifecycleEvidence": {
+          "path": "reports/followup/20261002-kick-work-retest/controllers/controller-b097f5fe-852a-4374-b3d4-bf310a01bcf0/lifecycle.ndjson",
+          "bytes": 1575,
+          "sha256": "b204fc4df56f6eb9a0e8279b51d1837e146913611e01c63469ba2648155c37ff"
+        },
+        "lifecycle": [
+          {
+            "at": "2026-10-01T19:58:25.029Z",
+            "kind": "authorized-start",
+            "sut": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+            "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+            "runnerPid": 40757,
+            "approvalReference": "human-continuing-authority-with-one-current-retest-stop-rule",
+            "node": "v24.21.0",
+            "scriptSha256": "87c0a99ea8adf362e2c58064b00d4ef990841b4788b2ae57f125185f0a27da18"
+          },
+          {
+            "at": "2026-10-01T19:58:25.033Z",
+            "kind": "registry-created",
+            "registry": "/private/tmp/qa-rte-FG93uS",
+            "registryIdentity": {
+              "dev": 16777231,
+              "ino": 38927879
+            },
+            "port": 59549
+          },
+          {
+            "at": "2026-10-01T19:58:25.055Z",
+            "kind": "guardian-started",
+            "guardianPid": 40974
+          },
+          {
+            "at": "2026-10-01T19:58:25.448Z",
+            "kind": "ready",
+            "component": "qa-owned-runtime-controller-ready",
+            "url": "http://127.0.0.1:59549",
+            "port": 59549,
+            "registryDirectory": "/private/tmp/qa-rte-FG93uS",
+            "runnerPid": 40757,
+            "guardianPid": 40974,
+            "sut": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+            "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+            "evidenceDirectory": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/followup/20261002-kick-work-retest/controllers/controller-b097f5fe-852a-4374-b3d4-bf310a01bcf0",
+            "stopRequestedNoLaterThan": "2026-10-01T21:58:25.030Z"
+          },
+          {
+            "at": "2026-10-01T20:08:40.211Z",
+            "kind": "stop-requested",
+            "signal": "SIGTERM",
+            "guardianPid": 40974
+          },
+          {
+            "at": "2026-10-01T20:08:40.257Z",
+            "kind": "owned-controller-stopped",
+            "guardianPid": 40974
+          },
+          {
+            "at": "2026-10-01T20:08:40.258Z",
+            "kind": "owned-registry-removed",
+            "registry": "/private/tmp/qa-rte-FG93uS",
+            "registryIdentity": {
+              "dev": 16777231,
+              "ino": 38927879
+            }
+          }
+        ],
+        "postProcessProbes": [
+          {
+            "argv": [
+              "ps",
+              "-p",
+              "40757",
+              "-ww",
+              "-o",
+              "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+            ],
+            "startedAt": "2026-10-01T20:09:05.930710+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.935748+00:00"
+          },
+          {
+            "argv": [
+              "ps",
+              "-p",
+              "40965",
+              "-ww",
+              "-o",
+              "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+            ],
+            "startedAt": "2026-10-01T20:09:05.935800+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.940274+00:00"
+          },
+          {
+            "argv": [
+              "ps",
+              "-p",
+              "40974",
+              "-ww",
+              "-o",
+              "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+            ],
+            "startedAt": "2026-10-01T20:09:05.940294+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.943808+00:00"
+          },
+          {
+            "argv": [
+              "ps",
+              "-p",
+              "40975",
+              "-ww",
+              "-o",
+              "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+            ],
+            "startedAt": "2026-10-01T20:09:05.943848+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.949092+00:00"
+          },
+          {
+            "argv": [
+              "ps",
+              "-p",
+              "40985",
+              "-ww",
+              "-o",
+              "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+            ],
+            "startedAt": "2026-10-01T20:09:05.949132+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.953293+00:00"
+          }
+        ],
+        "postRegistryAbsent": true,
+        "disposition": "IDENTIFIED_CONTROLLER_TREE_REMOVED",
+        "parentReportedWrapperExitCode": 0,
+        "archivedSeparateWrapperWaitExitCode": null
+      },
+      {
+        "component": "qa-owned-capacity-controller-ready",
+        "readyEvidence": {
+          "path": "reports/followup/20261002-kick-work-retest/controllers/controller-ff4e78ff-55e0-4b5e-b308-57f102cfc645/ready.json",
+          "bytes": 601,
+          "sha256": "6cad0030ed4d1c59bcf37d17cd4e27419b18a37d9744129cea7ce0ba0372bb5f"
+        },
+        "ready": {
+          "component": "qa-owned-capacity-controller-ready",
+          "url": "http://127.0.0.1:59585",
+          "port": 59585,
+          "registryDirectory": "/private/tmp/qa-cap-FpVogs",
+          "runnerPid": 41045,
+          "guardianPid": 41263,
+          "sut": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+          "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+          "evidenceDirectory": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/followup/20261002-kick-work-retest/controllers/controller-ff4e78ff-55e0-4b5e-b308-57f102cfc645",
+          "stopRequestedNoLaterThan": "2026-10-01T21:58:33.382Z"
+        },
+        "marker": {
+          "file": "/private/tmp/qa-cap-FpVogs/.qa-lifecycle-owner.json",
+          "sha256": "c51cce60786af0ee1b8154d21bd6b915a489f71f65f1da7e63332b6992ddabee",
+          "identity": {
+            "runnerPid": 41045,
+            "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+            "sut": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+            "qaRoot": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance"
+          },
+          "error": null
+        },
+        "registryStat": {
+          "uid": 501,
+          "mode": "0o700",
+          "dev": 16777231,
+          "ino": 38927910,
+          "symlink": false
+        },
+        "actualProcessIdentities": [
+          {
+            "pid": 41045,
+            "ppid": 44813,
+            "pgid": 41045,
+            "uid": 501,
+            "start": "Fri Oct  2 03:58:32 2026",
+            "comm": "node",
+            "args": "node --import tsx .runtime/kick-work-20261002/owned-capacity-controller.ts --sut /Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala --revision 7d53ee1f054961c9c997ff79dcb30e5a7e89ac46 --evidence reports/followup/20261002-kick-work-retest/controllers --approval-reference human-continuing-authority-with-one-current-retest-stop-rule"
+          },
+          {
+            "pid": 41254,
+            "ppid": 41045,
+            "pgid": 41045,
+            "uid": 501,
+            "start": "Fri Oct  2 03:58:33 2026",
+            "comm": "/Users/zcm/.code",
+            "args": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/node_modules/@esbuild/darwin-arm64/bin/esbuild --service=0.28.2 --ping"
+          },
+          {
+            "pid": 41263,
+            "ppid": 41045,
+            "pgid": 41263,
+            "uid": 501,
+            "start": "Fri Oct  2 03:58:33 2026",
+            "comm": "/Users/zcm/.nvm/",
+            "args": "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node -e const {spawn}=require('node:child_process');\\012const c=JSON.parse(process.argv[1]); const hold=setInterval(()=>{},1000);\\012process.on('SIGTERM',()=>{}); process.on('disconnect',()=>{try{process.kill(-process.pid,'SIGKILL')}catch{process.exit(1)}});\\012const p=spawn(c.command,c.args,{stdio:['ignore','inherit','inherit'],env:process.env});\\012p.once('spawn',()=>process.send?.({type:'ready'}));\\012p.once('error',e=>process.send?.({type:'error',message:e.message}));\\012p.once('exit',(code,signal)=>process.send?.({type:'exit',code,signal})); {\"command\":\"/Users/zcm/.nvm/versions/node/v24.21.0/bin/node\",\"args\":[\"--import\",\"tsx\",\"/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala/scripts/qa-capacity-controller.ts\"]}"
+          },
+          {
+            "pid": 41264,
+            "ppid": 41263,
+            "pgid": 41263,
+            "uid": 501,
+            "start": "Fri Oct  2 03:58:33 2026",
+            "comm": "/Users/zcm/.nvm/",
+            "args": "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node --import tsx /Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala/scripts/qa-capacity-controller.ts"
+          }
+        ],
+        "stopRequestEvidence": "reports/followup/20261002-kick-work-retest/controllers/stop-request.json",
+        "stopRequest": {
+          "readyFile": "reports/followup/20261002-kick-work-retest/controllers/controller-ff4e78ff-55e0-4b5e-b308-57f102cfc645/ready.json",
+          "runnerPid": 41045,
+          "ps": "41045 44813 41045   501 Fri Oct  2 03:58:32 2026     node node --import tsx .runtime/kick-work-20261002/owned-capacity-controller.ts --sut /Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala --revision 7d53ee1f054961c9c997ff79dcb30e5a7e89ac46 --evidence reports/followup/20261002-kick-work-retest/controllers --approval-reference human-continuing-authority-with-one-current-retest-stop-rule\n",
+          "args": "node --import tsx .runtime/kick-work-20261002/owned-capacity-controller.ts --sut /Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala --revision 7d53ee1f054961c9c997ff79dcb30e5a7e89ac46 --evidence reports/followup/20261002-kick-work-retest/controllers --approval-reference human-continuing-authority-with-one-current-retest-stop-rule\n",
+          "sameHistoricalProcessIdentity": true,
+          "ownershipValidated": true,
+          "at": "2026-10-01T20:08:42.985296+00:00",
+          "signal": "SIGTERM"
+        },
+        "lifecycleEvidence": {
+          "path": "reports/followup/20261002-kick-work-retest/controllers/controller-ff4e78ff-55e0-4b5e-b308-57f102cfc645/lifecycle.ndjson",
+          "bytes": 1576,
+          "sha256": "4219dba3c7926705956ca69bded0fc0d9c8ca685c68486b9e73e481eeef53c4b"
+        },
+        "lifecycle": [
+          {
+            "at": "2026-10-01T19:58:33.381Z",
+            "kind": "authorized-start",
+            "sut": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+            "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+            "runnerPid": 41045,
+            "approvalReference": "human-continuing-authority-with-one-current-retest-stop-rule",
+            "node": "v24.21.0",
+            "scriptSha256": "c5635b9b456daaefbb7f3bf5191dfba4859c81cd5608762d34222d97751d5910"
+          },
+          {
+            "at": "2026-10-01T19:58:33.384Z",
+            "kind": "registry-created",
+            "registry": "/private/tmp/qa-cap-FpVogs",
+            "registryIdentity": {
+              "dev": 16777231,
+              "ino": 38927910
+            },
+            "port": 59585
+          },
+          {
+            "at": "2026-10-01T19:58:33.407Z",
+            "kind": "guardian-started",
+            "guardianPid": 41263
+          },
+          {
+            "at": "2026-10-01T19:58:33.632Z",
+            "kind": "ready",
+            "component": "qa-owned-capacity-controller-ready",
+            "url": "http://127.0.0.1:59585",
+            "port": 59585,
+            "registryDirectory": "/private/tmp/qa-cap-FpVogs",
+            "runnerPid": 41045,
+            "guardianPid": 41263,
+            "sut": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+            "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+            "evidenceDirectory": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/followup/20261002-kick-work-retest/controllers/controller-ff4e78ff-55e0-4b5e-b308-57f102cfc645",
+            "stopRequestedNoLaterThan": "2026-10-01T21:58:33.382Z"
+          },
+          {
+            "at": "2026-10-01T20:08:43.114Z",
+            "kind": "stop-requested",
+            "signal": "SIGTERM",
+            "guardianPid": 41263
+          },
+          {
+            "at": "2026-10-01T20:08:43.139Z",
+            "kind": "owned-controller-stopped",
+            "guardianPid": 41263
+          },
+          {
+            "at": "2026-10-01T20:08:43.140Z",
+            "kind": "owned-registry-removed",
+            "registry": "/private/tmp/qa-cap-FpVogs",
+            "registryIdentity": {
+              "dev": 16777231,
+              "ino": 38927910
+            }
+          }
+        ],
+        "postProcessProbes": [
+          {
+            "argv": [
+              "ps",
+              "-p",
+              "41045",
+              "-ww",
+              "-o",
+              "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+            ],
+            "startedAt": "2026-10-01T20:09:05.953327+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.956835+00:00"
+          },
+          {
+            "argv": [
+              "ps",
+              "-p",
+              "41254",
+              "-ww",
+              "-o",
+              "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+            ],
+            "startedAt": "2026-10-01T20:09:05.956857+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.960112+00:00"
+          },
+          {
+            "argv": [
+              "ps",
+              "-p",
+              "41263",
+              "-ww",
+              "-o",
+              "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+            ],
+            "startedAt": "2026-10-01T20:09:05.960152+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.964191+00:00"
+          },
+          {
+            "argv": [
+              "ps",
+              "-p",
+              "41264",
+              "-ww",
+              "-o",
+              "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+            ],
+            "startedAt": "2026-10-01T20:09:05.964223+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.967530+00:00"
+          }
+        ],
+        "postRegistryAbsent": true,
+        "disposition": "IDENTIFIED_CONTROLLER_TREE_REMOVED",
+        "parentReportedWrapperExitCode": 0,
+        "archivedSeparateWrapperWaitExitCode": null
+      }
+    ],
+    "applicationsAndRunner": {
+      "cap008CapturedGuardianAndApplication": [
+        {
+          "pid": 54014,
+          "ppid": 53749,
+          "pgid": 54014,
+          "uid": 501,
+          "start": "Fri Oct  2 04:05:59 2026",
+          "comm": "/Users/zcm/.nvm/",
+          "args": "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node -e const {spawn}=require('node:child_process');\\012const c=JSON.parse(process.argv[1]); const hold=setInterval(()=>{},1000);\\012process.on('SIGTERM',()=>{}); process.on('disconnect',()=>{try{process.kill(-process.pid,'SIGKILL')}catch{process.exit(1)}});\\012const p=spawn(c.command,c.args,{stdio:['ignore','inherit','inherit'],env:process.env});\\012p.once('spawn',()=>process.send?.({type:'ready'}));\\012p.once('error',e=>process.send?.({type:'error',message:e.message}));\\012p.once('exit',(code,signal)=>process.send?.({type:'exit',code,signal})); {\"command\":\"node\",\"args\":[\"--import\",\"tsx\",\"scripts/qa-observation-server.ts\"]}"
+        },
+        {
+          "pid": 54015,
+          "ppid": 54014,
+          "pgid": 54014,
+          "uid": 501,
+          "start": "Fri Oct  2 04:05:59 2026",
+          "comm": "node",
+          "args": "node --import tsx scripts/qa-observation-server.ts"
+        }
+      ],
+      "kickWorkCapturedGuardianAndApplication": [
+        {
+          "pid": 54726,
+          "ppid": 53749,
+          "pgid": 54726,
+          "uid": 501,
+          "start": "Fri Oct  2 04:06:09 2026",
+          "comm": "/Users/zcm/.nvm/",
+          "args": "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node -e const {spawn}=require('node:child_process');\\012const c=JSON.parse(process.argv[1]); const hold=setInterval(()=>{},1000);\\012process.on('SIGTERM',()=>{}); process.on('disconnect',()=>{try{process.kill(-process.pid,'SIGKILL')}catch{process.exit(1)}});\\012const p=spawn(c.command,c.args,{stdio:['ignore','inherit','inherit'],env:process.env});\\012p.once('spawn',()=>process.send?.({type:'ready'}));\\012p.once('error',e=>process.send?.({type:'error',message:e.message}));\\012p.once('exit',(code,signal)=>process.send?.({type:'exit',code,signal})); {\"command\":\"node\",\"args\":[\"--import\",\"tsx\",\"scripts/qa-observation-server.ts\"]}"
+        },
+        {
+          "pid": 54727,
+          "ppid": 54726,
+          "pgid": 54726,
+          "uid": 501,
+          "start": "Fri Oct  2 04:06:09 2026",
+          "comm": "node",
+          "args": "node --import tsx scripts/qa-observation-server.ts"
+        }
+      ],
+      "kickWorkActualLiveProvenance": {
+        "evidence": {
+          "path": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-dispatched-kick-obs-7fe62-original-budget-upper-bound-system/evidence/runtime-control-0074ee10-2f84-49ac-b242-24c98ae089dd.json",
+          "bytes": 17953,
+          "sha256": "0cf51919495f219d9d3e822577ae03c465ee5832641c2803744602d86fc39a51"
+        },
+        "snapshotProvenance": {
+          "source": "live-bridge",
+          "applicationPid": 54727,
+          "applicationStarted": "Fri Oct  2 04:06:09 2026"
+        },
+        "binding": {
+          "pid": 54726,
+          "apiUrl": "http://127.0.0.1:62132",
+          "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46"
+        }
+      },
+      "cap010ActualGuardianBinding": {
+        "evidence": {
+          "path": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/capacity-http-0437b361-4e1f-4c51-8019-47d53708e8ec.json",
+          "bytes": 1626,
+          "sha256": "6d4d1143a75a9654c93bc6c2f699d51ea7c23587289e6e836e279bc5ed86e47c"
+        },
+        "binding": {
+          "pid": 54534,
+          "apiUrl": "http://127.0.0.1:62067",
+          "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46"
+        }
+      },
+      "cap010GuardianLiveStartCaptured": false,
+      "runnerProcessChain": [
+        {
+          "pid": 53507,
+          "ppid": 44813,
+          "pgid": 53507,
+          "uid": 501,
+          "start": "Fri Oct  2 04:05:52 2026",
+          "comm": "/opt/homebrew/Ce",
+          "args": "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python .runtime/kick-work-20261002/run-suite.py qa-first-round-kick-work .runtime/kick-work-20261002/prepared-combined-bfc75683/target.json .runtime/kick-work-20261002/authority/qa-first-round-kick-work-b33a78d7-1790885063758.json"
+        },
+        {
+          "pid": 53714,
+          "ppid": 53507,
+          "pgid": 53507,
+          "uid": 501,
+          "start": "Fri Oct  2 04:05:52 2026",
+          "comm": "node",
+          "args": "node --import tsx harness/cli.ts preflight --suite qa-first-round-kick-work --target .runtime/kick-work-20261002/prepared-combined-bfc75683/target.json --authorization .runtime/kick-work-20261002/authority/qa-first-round-kick-work-b33a78d7-1790885063758.json"
+        },
+        {
+          "pid": 53734,
+          "ppid": 53714,
+          "pgid": 53507,
+          "uid": 501,
+          "start": "Fri Oct  2 04:05:52 2026",
+          "comm": "/Users/zcm/.nvm/",
+          "args": "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/node_modules/@playwright/test/cli.js test --grep (?:^|\\s)\\[(?:AGENT-017|AGENT-018|CAP-008|CAP-010|INT-KICK-WORK-001)\\](?=\\s|$) --project=system"
+        },
+        {
+          "pid": 53749,
+          "ppid": 53734,
+          "pgid": 53507,
+          "uid": 501,
+          "start": "Fri Oct  2 04:05:53 2026",
+          "comm": "/Users/zcm/.nvm/",
+          "args": "/Users/zcm/.nvm/versions/node/v24.21.0/bin/node /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/node_modules/playwright/lib/worker/workerProcessEntry.js"
+        }
+      ],
+      "identifiedPostProcessProbes": [
+        {
+          "argv": [
+            "ps",
+            "-p",
+            "53507",
+            "-ww",
+            "-o",
+            "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+          ],
+          "startedAt": "2026-10-01T20:09:05.967575+00:00",
+          "exitCode": 1,
+          "stdout": "",
+          "stderr": "",
+          "endedAt": "2026-10-01T20:09:05.971781+00:00"
+        },
+        {
+          "argv": [
+            "ps",
+            "-p",
+            "53714",
+            "-ww",
+            "-o",
+            "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+          ],
+          "startedAt": "2026-10-01T20:09:05.971820+00:00",
+          "exitCode": 1,
+          "stdout": "",
+          "stderr": "",
+          "endedAt": "2026-10-01T20:09:05.975068+00:00"
+        },
+        {
+          "argv": [
+            "ps",
+            "-p",
+            "53734",
+            "-ww",
+            "-o",
+            "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+          ],
+          "startedAt": "2026-10-01T20:09:05.975093+00:00",
+          "exitCode": 1,
+          "stdout": "",
+          "stderr": "",
+          "endedAt": "2026-10-01T20:09:05.978673+00:00"
+        },
+        {
+          "argv": [
+            "ps",
+            "-p",
+            "53749",
+            "-ww",
+            "-o",
+            "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+          ],
+          "startedAt": "2026-10-01T20:09:05.978706+00:00",
+          "exitCode": 1,
+          "stdout": "",
+          "stderr": "",
+          "endedAt": "2026-10-01T20:09:05.982426+00:00"
+        },
+        {
+          "argv": [
+            "ps",
+            "-p",
+            "54014",
+            "-ww",
+            "-o",
+            "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+          ],
+          "startedAt": "2026-10-01T20:09:05.982445+00:00",
+          "exitCode": 1,
+          "stdout": "",
+          "stderr": "",
+          "endedAt": "2026-10-01T20:09:05.985966+00:00"
+        },
+        {
+          "argv": [
+            "ps",
+            "-p",
+            "54015",
+            "-ww",
+            "-o",
+            "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+          ],
+          "startedAt": "2026-10-01T20:09:05.986000+00:00",
+          "exitCode": 1,
+          "stdout": "",
+          "stderr": "",
+          "endedAt": "2026-10-01T20:09:05.989983+00:00"
+        },
+        {
+          "argv": [
+            "ps",
+            "-p",
+            "54534",
+            "-ww",
+            "-o",
+            "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+          ],
+          "startedAt": "2026-10-01T20:09:05.990020+00:00",
+          "exitCode": 1,
+          "stdout": "",
+          "stderr": "",
+          "endedAt": "2026-10-01T20:09:05.993562+00:00"
+        },
+        {
+          "argv": [
+            "ps",
+            "-p",
+            "54726",
+            "-ww",
+            "-o",
+            "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+          ],
+          "startedAt": "2026-10-01T20:09:05.993581+00:00",
+          "exitCode": 1,
+          "stdout": "",
+          "stderr": "",
+          "endedAt": "2026-10-01T20:09:05.997467+00:00"
+        },
+        {
+          "argv": [
+            "ps",
+            "-p",
+            "54727",
+            "-ww",
+            "-o",
+            "pid=,ppid=,pgid=,uid=,lstart=,comm=,args="
+          ],
+          "startedAt": "2026-10-01T20:09:05.997490+00:00",
+          "exitCode": 1,
+          "stdout": "",
+          "stderr": "",
+          "endedAt": "2026-10-01T20:09:06.000462+00:00"
+        }
+      ],
+      "disposition": "IDENTIFIED_PROCESSES_NOT_PRESENT_AT_POST_CHECK",
+      "allHistoricalShortProcessIdentitiesCaptured": false
+    },
+    "environments": [
+      {
+        "caseDirectory": "system-agent--AGENT-017-ki-1fc49-y-never-calls-external-kick-system",
+        "environmentEvidence": {
+          "path": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-agent--AGENT-017-ki-1fc49-y-never-calls-external-kick-system/evidence/environment.json",
+          "bytes": 1165,
+          "sha256": "4fbde0f72498d739894c9dce5bf9b3af4012008983bb9e8c4b095ea77ed59d4d"
+        },
+        "cleanupEvidence": {
+          "path": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-agent--AGENT-017-ki-1fc49-y-never-calls-external-kick-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "d1a811cd902bdad3515b926e4bd8df9a31dadf5eee100bd5997dc847092aa511"
+        },
+        "environment": {
+          "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+          "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+          "apiPort": 61901,
+          "database": "qa_54431545642147aaa652c802",
+          "gateway": "http://127.0.0.1:61897",
+          "agent": "http://127.0.0.1:61899",
+          "startedAt": "2026-10-01T20:05:55.148Z"
+        },
+        "cleanup": {
+          "completedAt": "2026-10-01T20:05:56.334Z",
+          "failures": []
+        },
+        "servicePorts": [
+          61901,
+          61897,
+          61899
+        ]
+      },
+      {
+        "caseDirectory": "system-agent--AGENT-018-pe-7c6cb-es-owner-or-promoted-member-system",
+        "environmentEvidence": {
+          "path": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-agent--AGENT-018-pe-7c6cb-es-owner-or-promoted-member-system/evidence/environment.json",
+          "bytes": 1165,
+          "sha256": "034ac64cca72284a968dfe3a12e76d2bb097806457db215b5c6a95b4799fc93f"
+        },
+        "cleanupEvidence": {
+          "path": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-agent--AGENT-018-pe-7c6cb-es-owner-or-promoted-member-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "c6a0af888b6ae7fded66e2ce24e2dcc100b3fdc5cc2fac023be0b80dde569080"
+        },
+        "environment": {
+          "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+          "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+          "apiPort": 61938,
+          "database": "qa_1528ecdb5b5a406abbc3b887",
+          "gateway": "http://127.0.0.1:61934",
+          "agent": "http://127.0.0.1:61936",
+          "startedAt": "2026-10-01T20:05:57.066Z"
+        },
+        "cleanup": {
+          "completedAt": "2026-10-01T20:05:59.347Z",
+          "failures": []
+        },
+        "servicePorts": [
+          61938,
+          61934,
+          61936
+        ]
+      },
+      {
+        "caseDirectory": "system-capacity-control--C-2769f-and-replay-the-unknown-kick-system",
+        "environmentEvidence": {
+          "path": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/environment.json",
+          "bytes": 1165,
+          "sha256": "4fc51c4105ea7db805d124411437c03c45ebcb1beb35e7bc9a4ce9b3dcd6bcef"
+        },
+        "cleanupEvidence": {
+          "path": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "824315354a0d36adfcc02d5b62eea3d19c92eaeaf5356c21a07f8608463ae5e2"
+        },
+        "environment": {
+          "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+          "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+          "apiPort": 62067,
+          "database": "qa_d2c90af3cb3c43b691e6bc66",
+          "gateway": "http://127.0.0.1:62063",
+          "agent": "http://127.0.0.1:62065",
+          "startedAt": "2026-10-01T20:06:05.854Z"
+        },
+        "cleanup": {
+          "completedAt": "2026-10-01T20:06:09.449Z",
+          "failures": []
+        },
+        "servicePorts": [
+          62067,
+          62063,
+          62065
+        ]
+      },
+      {
+        "caseDirectory": "system-capacity-control--C-45f2f-nership-or-permission-error-system",
+        "environmentEvidence": {
+          "path": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/environment.json",
+          "bytes": 1165,
+          "sha256": "3178aa8218289df8bca5d7d82a28ac0e6ac22c967d42e316794183f286ebbc79"
+        },
+        "cleanupEvidence": {
+          "path": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "e9a3668dde305a209c04cfb5b44088433c4ca25ddaef340e23e06a7906dc83cc"
+        },
+        "environment": {
+          "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+          "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+          "apiPort": 61999,
+          "database": "qa_db6ec5fa80af41c897f73438",
+          "gateway": "http://127.0.0.1:61995",
+          "agent": "http://127.0.0.1:61997",
+          "startedAt": "2026-10-01T20:06:00.110Z"
+        },
+        "cleanup": {
+          "completedAt": "2026-10-01T20:06:05.103Z",
+          "failures": []
+        },
+        "servicePorts": [
+          61999,
+          61995,
+          61997
+        ]
+      },
+      {
+        "caseDirectory": "system-dispatched-kick-obs-7fe62-original-budget-upper-bound-system",
+        "environmentEvidence": {
+          "path": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-dispatched-kick-obs-7fe62-original-budget-upper-bound-system/evidence/environment.json",
+          "bytes": 1165,
+          "sha256": "5667f34c945ce66a591150aa93e20a7a9dabe8679742b278d67de975697e209f"
+        },
+        "cleanupEvidence": {
+          "path": "reports/preflight/2026-10-01T20-05-52.805Z-2f02f728/artifacts/system-dispatched-kick-obs-7fe62-original-budget-upper-bound-system/evidence/cleanup.json",
+          "bytes": 65,
+          "sha256": "e497da2c6ba14a8660b8ac25e1ebc50f8b87876334b71a376dc4cfc87a44855b"
+        },
+        "environment": {
+          "revision": "7d53ee1f054961c9c997ff79dcb30e5a7e89ac46",
+          "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+          "apiPort": 62132,
+          "database": "qa_a294d5e96e8441859acccdc9",
+          "gateway": "http://127.0.0.1:62128",
+          "agent": "http://127.0.0.1:62130",
+          "startedAt": "2026-10-01T20:06:10.185Z"
+        },
+        "cleanup": {
+          "completedAt": "2026-10-01T20:07:11.611Z",
+          "failures": []
+        },
+        "servicePorts": [
+          62132,
+          62128,
+          62130
+        ]
+      }
+    ],
+    "ports": {
+      "actualServicePortCount": 18,
+      "actualServicePorts": [
+        59549,
+        59585,
+        61887,
+        61897,
+        61899,
+        61901,
+        61934,
+        61936,
+        61938,
+        61995,
+        61997,
+        61999,
+        62063,
+        62065,
+        62067,
+        62128,
+        62130,
+        62132
+      ],
+      "postChecks": [
+        {
+          "port": 59549,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:59549"
+            ],
+            "startedAt": "2026-10-01T20:09:04.761531+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:04.824534+00:00"
+          }
+        },
+        {
+          "port": 59585,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:59585"
+            ],
+            "startedAt": "2026-10-01T20:09:04.824576+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:04.888066+00:00"
+          }
+        },
+        {
+          "port": 61887,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:61887"
+            ],
+            "startedAt": "2026-10-01T20:09:04.888119+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:04.950535+00:00"
+          }
+        },
+        {
+          "port": 61897,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:61897"
+            ],
+            "startedAt": "2026-10-01T20:09:04.950584+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.013636+00:00"
+          }
+        },
+        {
+          "port": 61899,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:61899"
+            ],
+            "startedAt": "2026-10-01T20:09:05.013682+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.076855+00:00"
+          }
+        },
+        {
+          "port": 61901,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:61901"
+            ],
+            "startedAt": "2026-10-01T20:09:05.076906+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.139266+00:00"
+          }
+        },
+        {
+          "port": 61934,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:61934"
+            ],
+            "startedAt": "2026-10-01T20:09:05.139320+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.202127+00:00"
+          }
+        },
+        {
+          "port": 61936,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:61936"
+            ],
+            "startedAt": "2026-10-01T20:09:05.202165+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.264889+00:00"
+          }
+        },
+        {
+          "port": 61938,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:61938"
+            ],
+            "startedAt": "2026-10-01T20:09:05.264927+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.328347+00:00"
+          }
+        },
+        {
+          "port": 61995,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:61995"
+            ],
+            "startedAt": "2026-10-01T20:09:05.328392+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.392167+00:00"
+          }
+        },
+        {
+          "port": 61997,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:61997"
+            ],
+            "startedAt": "2026-10-01T20:09:05.392240+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.454676+00:00"
+          }
+        },
+        {
+          "port": 61999,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:61999"
+            ],
+            "startedAt": "2026-10-01T20:09:05.454736+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.518430+00:00"
+          }
+        },
+        {
+          "port": 62063,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:62063"
+            ],
+            "startedAt": "2026-10-01T20:09:05.518493+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.580813+00:00"
+          }
+        },
+        {
+          "port": 62065,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:62065"
+            ],
+            "startedAt": "2026-10-01T20:09:05.580875+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.643190+00:00"
+          }
+        },
+        {
+          "port": 62067,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:62067"
+            ],
+            "startedAt": "2026-10-01T20:09:05.643266+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.707015+00:00"
+          }
+        },
+        {
+          "port": 62128,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:62128"
+            ],
+            "startedAt": "2026-10-01T20:09:05.707072+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.769797+00:00"
+          }
+        },
+        {
+          "port": 62130,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:62130"
+            ],
+            "startedAt": "2026-10-01T20:09:05.769851+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.832010+00:00"
+          }
+        },
+        {
+          "port": 62132,
+          "probe": {
+            "argv": [
+              "lsof",
+              "-n",
+              "-P",
+              "-iTCP:62132"
+            ],
+            "startedAt": "2026-10-01T20:09:05.832058+00:00",
+            "exitCode": 1,
+            "stdout": "",
+            "stderr": "",
+            "endedAt": "2026-10-01T20:09:05.895794+00:00"
+          }
+        }
+      ],
+      "disposition": "ALL_IDENTIFIED_SERVICE_PORTS_HAVE_NO_POST_TCP_SOCKETS",
+      "placeholderPortOneExcluded": true
+    },
+    "sharedInfrastructure": {
+      "dockerBackendProcess": {
+        "pid": 59212,
+        "ppid": 59211,
+        "pgid": 59212,
+        "uid": 501,
+        "start": "Wed Sep 30 18:32:30 2026",
+        "comm": "/Applications/Do",
+        "args": "/Applications/Docker.app/Contents/MacOS/com.docker.backend services"
+      },
+      "stillPresentAtPost": true,
+      "disposition": "SHARED_INFRASTRUCTURE_NOT_A_LEAK",
+      "otherSharedDockerDescendantsNotAttributedToTest": true
+    },
+    "postgresBackendNamespace": {
+      "actualBackendPidsInKickOriginalFacts": [
+        125,
+        133
+      ],
+      "hostProcessOwnershipClaim": false,
+      "statement": "真实 PostgreSQL backend PID 与 macOS host PID 不混用，容器/卷移除和宿主映射端口关闭有证。"
+    },
+    "observationQuality": {
+      "samplingToolDefect": "逐条抽取大量完整 runtime-control 快照中重复生命周期/事务事实，并再次复制 backend facts，导致巨大 JSON。",
+      "duringRepeatedFactCounts": {
+        "identityFacts": 674330,
+        "postgresBackendIdentityFacts": 574812
+      },
+      "postRepeatedFactCounts": {
+        "identityFacts": 1019557,
+        "postgresBackendIdentityFacts": 869672
+      },
+      "distinctResourceCountDerivedFromFactCounts": false,
+      "productOrResourceFailFromSamplingInflation": false,
+      "originalsModifiedByReviewer": false,
+      "allSixSnapshotsHashVerified": true,
+      "pointInTimeNotAtomic": true,
+      "actualProbeTimesAuthoritative": true
+    },
+    "limits": [
+      "AGENT-017/018 在首份 during 探针前完成：environment/cleanup 与真实服务端口 post 不在有证，但未独立捕获其 app/guardian PID、start、argv，不能声称全部历时短进程逐个核验。",
+      "CAP-010 原 capacity binding 为 guardian PID 54534，post ps 不在；live start 与实际 backend app PID 未捕获。",
+      "容器 ID/owner/Mounts/PG HostPort 和真实本 run worker 连接有证，缺逐 case 直接 containerId/owner 原件；不凭 qa.owner 标签/时间单独认领。",
+      "主代理报告两 wrapper exit 0；当前文件未保存单独 wait exitCode，关闭依据真实 stop 请求、完成链与已识别 wrapper/helper/listener PID、registry、端口 post 不在。",
+      "observedAt 为采样开始时间；各 Docker/ps/lsof 探针的真实时间分别记录，不是原子快照。",
+      "18 个实际服务端口已复查；瞬时客户端/数据库代理端口未逐个完整枚举，已识别所属 worker/app/guardian post 不在。",
+      "巨量重复采样是 QA 工具的存储缺点，不是产品/资源 FAIL，不扩大资源数量、测试次数或覆盖。",
+      "仅本轮有限资源结论，不改历史 FAIL/BLOCKED，不升级第二轮、强恢复或上线结论。"
+    ]
+  },
+  "originalEvidence": {
+    "index": "original-file-index.json",
+    "files": 1311,
+    "bytes": 598357642,
+    "archive": "original-evidence.tar.gz",
+    "archiveBytes": 13056541,
+    "sha256": "0ee1251bc86071e0d04a74b88d2f1fe021825322f18a2e5965be569a9f33d656"
+  },
+  "resourceOriginalEvidence": {
+    "index": "resource-observation-file-index.json",
+    "files": 6,
+    "bytes": 2955164619,
+    "archive": "resource-observation-originals.tar.gz",
+    "archiveBytes": 32633529,
+    "sha256": "78422929e2f7bfdfa5bb95e6c748c7d52987c022e2da9f569a6215b969793573"
+  },
+  "qaToolingLimits": [
+    "Readonly resource snapshots repeatedly extracted the same lifecycle/transaction facts; 2,955,164,619 original bytes compressed and fully byte-checked. Fact count is not resource count.",
+    "One readonly snapshot used incorrect run-id filter, reports runs=0; retained as non-run candidate observation, not another product invocation."
+  ],
+  "independentReviews": [
+    {
+      "file": "engineering-intake-review.json",
+      "sha256": "6e4b111e209e4be17e8b3d559f25a4adf8b71f8bd620100867142b60a01c363d"
+    },
+    {
+      "file": "run-independent-review.json",
+      "sha256": "669e74f6e5a803bf07179955321aa474c79d9f6c5116f5e541613cf1d37ab8be"
+    },
+    {
+      "file": "resource-audit/independent-review.json",
+      "sha256": "e1338376d14d31a9098c767ed0469c26d6f2fe2a024aa5afaf0d00ecab859ab6"
+    }
+  ]
+}
