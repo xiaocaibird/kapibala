@@ -9,6 +9,7 @@ import {
   lstat,
   realpath,
   rm,
+  rename,
 } from "node:fs/promises";
 import { dirname, join, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -63,9 +64,13 @@ async function started(pid: number): Promise<string> {
 }
 async function persist(m: Manifest): Promise<void> {
   await writeFile(
-    join(m.directory, "manifest.json"),
+    join(m.directory, "manifest.json.tmp"),
     JSON.stringify(m, null, 2) + "\n",
     { mode: 0o600 },
+  );
+  await rename(
+    join(m.directory, "manifest.json.tmp"),
+    join(m.directory, "manifest.json"),
   );
 }
 async function inspect(
@@ -424,10 +429,14 @@ async function start(smoke: boolean): Promise<void> {
     };
     await persist(m);
     check();
-    const health = await fetch(m.urls.web + "/api/health");
+    const health = await fetch(m.urls.web + "/api/health", {
+      signal: AbortSignal.timeout(10000),
+    });
     assert.equal(health.status, 200);
     const healthBody = await health.json();
-    const page = await fetch(m.urls.web);
+    const page = await fetch(m.urls.web, {
+      signal: AbortSignal.timeout(10000),
+    });
     assert.equal(page.status, 200);
     assert.match(await page.text(), /<div id="root">/);
     console.log(
@@ -454,6 +463,7 @@ async function start(smoke: boolean): Promise<void> {
           checks: [
             "web-entry",
             "random-api-proxy",
+            "random-ws-proxy",
             "both-roles",
             "viewer-write-denied",
             "admin-connect-disconnect",
@@ -479,6 +489,7 @@ async function smokeCheck(m: Manifest): Promise<void> {
     token?: string,
   ) => {
     const response = await fetch(url + path, {
+      signal: AbortSignal.timeout(10000),
       method,
       headers: {
         "content-type": "application/json",
@@ -515,32 +526,74 @@ async function smokeCheck(m: Manifest): Promise<void> {
       200,
     );
   }
-  assert.equal(
-    (await request("/api/accounts/account-1/connect", "POST", {}, viewerToken))
-      .status,
-    403,
-  );
-  assert.equal(
-    (await request("/api/accounts/account-1/connect", "POST", {}, adminToken))
-      .status,
-    200,
-  );
-  assert.equal(
-    (
-      await request(
-        "/api/accounts/account-1/transition",
-        "POST",
-        { expectedFrom: "online", to: "disconnected" },
-        adminToken,
-      )
-    ).status,
-    200,
-  );
+  const { WebSocket } = await import("ws");
+  const socket = new WebSocket(url.replace("http:", "ws:") + "/ws");
+  const frames: {
+    type?: string;
+    success?: boolean;
+    payload?: { accountId?: string; to?: string };
+  }[] = [];
+  socket.on("error", () => undefined);
+  socket.on("message", (raw) => {
+    frames.push(JSON.parse(raw.toString()));
+  });
+  async function waitFor(predicate: () => boolean) {
+    const end = Date.now() + 5000;
+    while (!predicate()) {
+      assert.ok(Date.now() < end, "WebSocket proxy check timed out");
+      await sleep(10);
+    }
+  }
+  try {
+    await waitFor(() => socket.readyState === WebSocket.OPEN);
+    socket.send(
+      JSON.stringify({ type: "auth", accessToken: adminToken, sinceSeq: 0 }),
+    );
+    await waitFor(() => frames.some((f) => f.type === "auth" && f.success));
+    assert.equal(
+      (
+        await request(
+          "/api/accounts/account-1/connect",
+          "POST",
+          {},
+          viewerToken,
+        )
+      ).status,
+      403,
+    );
+    assert.equal(
+      (await request("/api/accounts/account-1/connect", "POST", {}, adminToken))
+        .status,
+      200,
+    );
+    assert.equal(
+      (
+        await request(
+          "/api/accounts/account-1/transition",
+          "POST",
+          { expectedFrom: "online", to: "disconnected" },
+          adminToken,
+        )
+      ).status,
+      200,
+    );
+    await waitFor(() =>
+      frames.some(
+        (f) =>
+          f.type === "account_status_changed" &&
+          f.payload?.accountId === "account-1" &&
+          f.payload.to === "disconnected",
+      ),
+    );
+  } finally {
+    socket.terminate();
+  }
   const gateway = JSON.parse(await readFile(m.gatewayState, "utf8")) as {
     accounts: Record<string, { online: boolean }>;
   };
   assert.equal(gateway.accounts["account-1"]?.online, false);
   const audit = await fetch(m.urls!.agent + "/agent/audit", {
+    signal: AbortSignal.timeout(10000),
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ text: "isolated smoke", groupId: "isolated-smoke" }),

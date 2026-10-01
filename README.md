@@ -34,7 +34,7 @@ npm run dev:isolated -- cleanup /absolute/path/from-startup/manifest.json
 npm run dev:isolated -- --smoke
 ```
 
-该命令在新环境验证页面入口、随机 API 代理、双角色登录与权限、管理员连接/断开，以及两份独立模拟状态文件，结束后执行同样的精确清理。它是交付环境检查，不代表全部业务验收通过。复现记录见[隔离启动验证](docs/isolated-local-reproduction.md)。
+该命令在新环境验证页面入口、随机 API/WS 代理、双角色登录与权限、管理员连接/断开，以及两份独立模拟状态文件，结束后执行同样的精确清理。它是交付环境检查，不代表全部业务验收通过。复现记录见[隔离启动验证](docs/isolated-local-reproduction.md)。
 
 原有 `npm run dev` 和 Docker Compose 仍供主动配置固定本地环境使用，可能访问 `.env` 或默认端口，**不作为全新隔离复现步骤**。迁移命令不会自动升级运行中的已有数据库；已有数据升级仍须按下节处理。
 
