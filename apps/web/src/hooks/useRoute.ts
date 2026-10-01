@@ -26,15 +26,21 @@ export function parseRoute(hash: string): Route {
         ? origin
         : null,
     agentGroup:
-      page === "agent-runs" && !id ? params.get("group") || null : null,
+      page === "agent-runs" &&
+      (!id || origin === "groups" || origin === "agent-runs")
+        ? params.get("group") || null
+        : null,
   };
 }
 const readRoute = (): Route => parseRoute(location.hash);
 export function agentDetailHref(
   id: string,
   origin: "groups" | "agent-runs",
+  groupId?: string,
 ): string {
-  return `#/agent-runs/${encodeURIComponent(id)}?from=${origin}`;
+  const params = new URLSearchParams({ from: origin });
+  if (groupId) params.set("group", groupId);
+  return `#/agent-runs/${encodeURIComponent(id)}?${params}`;
 }
 export function agentListHref(groupId?: string | null): string {
   return `#/agent-runs${groupId ? `?${new URLSearchParams({ group: groupId })}` : ""}`;

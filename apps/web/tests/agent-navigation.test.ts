@@ -30,6 +30,12 @@ test("Agent list selection survives internal return with reserved characters", (
   assert.equal(parseRoute(back.href).agentGroup, "group/含?&#");
   assert.equal(parseRoute(back.href).id, null);
   assert.equal(back.href, agentListHref("group/含?&#"));
+  const pending = parseRoute(agentDetailHref("r", "agent-runs", "group/含?&#"));
+  assert.equal(pending.agentGroup, "group/含?&#");
+  assert.equal(
+    agentReturnLink(pending.agentOrigin, pending.agentGroup!).href,
+    back.href,
+  );
 });
 
 test("group-origin return and direct links have internal loading/failure fallbacks", () => {

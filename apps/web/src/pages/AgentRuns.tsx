@@ -104,9 +104,11 @@ export function AgentRuns({
 export function AgentRunDetail({
   id,
   origin = null,
+  sourceGroup = null,
 }: {
   id: string;
   origin?: Route["agentOrigin"];
+  sourceGroup?: string | null;
 }) {
   const {
     data: run,
@@ -141,7 +143,12 @@ export function AgentRunDetail({
     ready: run !== null && !error,
     refresh: reload,
   });
-  const back = agentReturnLink(origin, run?.groupId);
+  // Preserve the actual entry context while loading or failing. Once the run is
+  // known, its authoritative group wins over any edited URL hint.
+  const back = agentReturnLink(
+    origin,
+    run?.groupId ?? sourceGroup ?? undefined,
+  );
   const returnLink = (
     <a className="back-link" href={back.href}>
       ← {back.label}

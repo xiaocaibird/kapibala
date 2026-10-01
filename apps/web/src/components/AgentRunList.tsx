@@ -75,7 +75,7 @@ export function AgentRunList({
           {data.map((run) => (
             <a
               className={`run-list-item ${run.status === "blocked" ? "run-blocked" : ""}`}
-              href={agentDetailHref(run.id, origin)}
+              href={agentDetailHref(run.id, origin, groupId)}
               key={run.id}
               {...attention.itemProps(run.id)}
             >

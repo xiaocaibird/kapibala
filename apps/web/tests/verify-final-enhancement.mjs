@@ -666,6 +666,43 @@ try {
       failureReturn: true,
     };
   });
+  await run("navigation-loading-failure-retains-group", async () => {
+    await open("#/agent-runs");
+    const held = hold("/api/agent-runs/missing", "GET");
+    await held.ready;
+    await page.evaluate(() => {
+      location.hash = "/agent-runs/missing?from=agent-runs&group=ui-group-a";
+    });
+    assert.equal(await held.received, 404);
+    const back = page.getByRole("link", {
+      name: "← 返回 Agent 运行列表",
+      exact: true,
+    });
+    await back.waitFor();
+    assert.equal(
+      await back.getAttribute("href"),
+      "#/agent-runs?group=ui-group-a",
+    );
+    held.release();
+    await page.getByText("未能读取运行记录", { exact: true }).waitFor();
+    await back.click();
+    await page.getByRole("combobox", { name: "查看群组" }).waitFor();
+    assert.equal(
+      await page.getByRole("combobox", { name: "查看群组" }).inputValue(),
+      "ui-group-a",
+    );
+    await open("#/agent-runs/ui-run-a?from=groups&group=ui-group-b");
+    const groupBack = page.getByRole("link", {
+      name: "← 返回原群组",
+      exact: true,
+    });
+    await page.getByRole("link", { name: "查看所属群", exact: true }).waitFor();
+    assert.equal(await groupBack.getAttribute("href"), "#/groups/ui-group-a");
+    return {
+      loadingAndFailureRetained: "ui-group-a",
+      tamperedHintOverridden: true,
+    };
+  });
   await run("navigation-identity-clears-context", async () => {
     await open("#/agent-runs/ui-run-a?from=groups");
     await page

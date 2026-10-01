@@ -235,7 +235,11 @@ function Workspace() {
                     : "Agent 运行详情 · Kapibala"
                 }
               >
-                <AgentRunDetail id={route.id} origin={route.agentOrigin} />
+                <AgentRunDetail
+                  id={route.id}
+                  origin={route.agentOrigin}
+                  sourceGroup={route.agentGroup}
+                />
               </PageAttentionScope>
             ) : (
               <AgentRuns selectedGroup={route.agentGroup} />
