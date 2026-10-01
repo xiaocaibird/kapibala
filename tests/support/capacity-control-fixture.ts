@@ -6,7 +6,7 @@ import { join } from "node:path";
 import { createServer } from "node:net";
 import { randomUUID } from "node:crypto";
 import type { TestContext } from "node:test";
-import Fastify from "fastify";
+import Fastify, { type FastifyInstance } from "fastify";
 import { createCapacityController } from "../../scripts/qa-capacity/controller.js";
 import type {
   LeaseRequest,
@@ -24,7 +24,7 @@ export async function capacityFixture(
     entry?: string;
     registryVariable?: string;
     controllerFactory?: typeof createCapacityController;
-    configureRemote?: (remote: ReturnType<typeof Fastify>) => void;
+    configureRemote?: (remote: FastifyInstance) => void;
   } = {},
 ) {
   assert.ok(
