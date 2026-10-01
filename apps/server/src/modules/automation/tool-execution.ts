@@ -440,25 +440,37 @@ export class AgentTools {
       return;
     }
     const deadline = AbortSignal.timeout(Math.max(1, this.host.remaining(run)));
+    const correlation = {
+      groupId: run.group_id,
+      runId: run.id,
+      toolUseId: step.tool_use_id!,
+      targetPlatformUserId: input.platform_user_id,
+    };
     try {
-      await this.messaging.kick(
-        {
-          groupId: run.group_id,
-          accountId: accountId!,
-          targetPlatformUserId: input.platform_user_id,
-        },
-        { signal: deadline },
-      );
+      const kick = () =>
+        this.messaging.kick(
+          {
+            groupId: run.group_id,
+            accountId: accountId!,
+            targetPlatformUserId: input.platform_user_id,
+          },
+          { signal: deadline },
+        );
+      if (this.ctx.testExecutionObserver)
+        await this.ctx.testExecutionObserver.kick(correlation, kick);
+      else await kick();
     } catch (error) {
       currentOperationSignal()?.throwIfAborted();
       if (error instanceof LockCapacityUnavailableError) {
         // Admission failed before the gateway callback ran. Keep the same audited
         // step pending; only this proven no-effect path can discard an executing
         // intent. Unknown remote outcomes below must remain non-replayable.
+        await this.ctx.testExecutionObserver?.ready(correlation, "before");
         await this.ctx.db.query(
           "UPDATE agent_steps SET state='ready',intent=null WHERE run_id=$1 AND ordinal=$2 AND state='executing'",
           [run.id, step.ordinal],
         );
+        await this.ctx.testExecutionObserver?.ready(correlation, "after");
         await delay(Math.min(50, this.host.remaining(run)), undefined, {
           signal: currentOperationSignal(),
         });
