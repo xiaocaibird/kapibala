@@ -1,0 +1,59 @@
+✔ Agent kick waits for local capacity without failing, repeating audit, or dispatching twice (357.282625ms)
+ℹ Independent database: kapibala_test_d356f29379754f5997f9c2b702481414
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ Agent capacity wait keeps the original activity budget and does not invent an unknown kick (1311.260625ms)
+ℹ Independent database: kapibala_test_32deecb0aebd42f7bef27fcee44d8fd0
+✔ Agent rechecks kick policy after capacity refusal and preserves the recorded audit (247.8935ms)
+ℹ Independent database: kapibala_test_111bcbeb59a045089c8d8864320cda16
+✔ Agent cancellation while waiting for capacity ends after the current step without another turn (192.855ms)
+ℹ Independent database: kapibala_test_f10cf9d7ce224add9eafcc796845aab0
+✔ Agent does not dispatch a model request after its intent write consumes the remaining budget (558.851459ms)
+ℹ Independent database: kapibala_test_6b52de3934044edda18be25f23af98f7
+ℹ {"runId":"expired-intent","elapsedMs":383.46808300000004,"persistedActiveMs":60173,"modelRequests":0}
+✔ Agent does not dispatch an audit request after its intent write consumes the remaining budget (488.72025ms)
+ℹ Independent database: kapibala_test_acea5f14443a4f1a845b399282d1f625
+ℹ {"runId":"expired-audit-intent","elapsedMs":404.96900000000005,"persistedActiveMs":60194,"auditRequests":0}
+✔ checkpoint connection-pool exhaustion rejects and late checkout returns without reviving the stage (1667.556667ms)
+ℹ Independent database: kapibala_test_0384c1c0fadb4d5fb2ed2b0faf4a9d61
+ℹ {"poolWaitMs":1500.7613749999998}
+✔ blocked checkpoint query destroys its owning lease before another owner resumes (1329.784041ms)
+ℹ Independent database: kapibala_test_c043abe6bf91437488b6802f66a9165d
+ℹ {"blockedQueryWaitMs":1206.293208,"remainingOwners":0}
+✔ continuous targeted wakes leave periodic accounting available for queued runs (1421.421833ms)
+ℹ Independent database: kapibala_test_f36ef158f2cd4eb9bfe60d450f73539c
+ℹ {"notifications":194,"elapsedMs":1201.8165839999997,"queuedActiveMs":1001}
+✔ an unresponsive owner cannot acknowledge a follower checkpoint, then takeover excludes the outage (1878.01925ms)
+ℹ Independent database: kapibala_test_7dfacf8059f94a00874fe77378385602
+ℹ {"unresponsiveOwnerWaitMs":1502.4072080000005,"beforeActiveMs":1,"afterActiveMs":16,"caveat":"hard termination still loses the unpersisted online tail"}
+✔ activity checkpoints persist a completed model wait shorter than the sampling interval (313.803083ms)
+ℹ Independent database: kapibala_test_fb1e1ab428394d25b310a4a29c09881f
+ℹ {"activeMs":189,"modelWaitMs":140.11716700000034}
+✔ activity checkpoints persist audit waiting and a follower wakes only the shared owner (466.470292ms)
+ℹ Independent database: kapibala_test_399fcddb893b4ee1bd162de02d647ad8
+ℹ {"auditWaitMs":139.67816700000003,"elapsedMs":371.3156250000002,"activeMs":332,"writers":[392],"ownerPid":392}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ activity checkpoint failure at model:before blocks the next remote or durable stage (211.806917ms)
+ℹ Independent database: kapibala_test_7798caad1e794bc8b7a1425769485b78
+ℹ {"phase":"model:before","turns":0,"audits":0,"inflightTurn":false,"steps":0,"activeMs":0,"elapsedMs":1.1420420000004015}
+✔ activity checkpoint failure at model:after blocks the next remote or durable stage (122.3825ms)
+ℹ Independent database: kapibala_test_a9d6d2c95b314ae7ab13d4c93a580823
+ℹ {"phase":"model:after","turns":1,"audits":0,"inflightTurn":true,"steps":0,"activeMs":13,"elapsedMs":0.7680000000000291}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ activity checkpoint failure at audit:before blocks the next remote or durable stage (224.132833ms)
+ℹ Independent database: kapibala_test_e368ad60141849498f5baf4739fb0e5b
+ℹ {"phase":"audit:before","turns":1,"audits":0,"inflightTurn":false,"steps":1,"activeMs":19,"elapsedMs":0.7706250000001091}
+✔ activity checkpoint failure at audit:after blocks the next remote or durable stage (129.781666ms)
+ℹ Independent database: kapibala_test_5f3b55aa9d27401eb09a097baada1e10
+ℹ {"phase":"audit:after","turns":1,"audits":1,"inflightTurn":false,"steps":1,"activeMs":21,"elapsedMs":0.9404580000000351}
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7938.897208
