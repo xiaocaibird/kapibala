@@ -15,7 +15,8 @@
     "typecheck": "tsc --noEmit && npm run typecheck -w apps/web",
     "build": "npm run typecheck && npm run build -w apps/web",
     "test": "tsx --test tests/integration/*.test.ts apps/web/tests/*.test.ts",
-    "verify:original": "tsx scripts/verify-original.ts"
+    "verify:original": "tsx scripts/verify-original.ts",
+    "dev:isolated": "tsx scripts/isolated-dev.ts"
   },
   "dependencies": {
     "@fastify/cookie": "11.1.2",
