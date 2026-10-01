@@ -157,10 +157,10 @@ export async function createApp(options: AppOptions = {}) {
               observer?.tickFinished(activity.name, true);
             })
             .catch((err) => {
-              activity.finish(false);
+              activity.finish(false, err);
               observer?.tickFinished(activity.name, false);
               app.log.error(
-                { err, module: activity.name },
+                { err, module: activity.name, tickId: activity.tickId },
                 "Module tick failed",
               );
             })

@@ -234,3 +234,16 @@ test("pending kick cancellation retains current-step budget precedence while cap
   assert.equal(f.kicks(), 0);
   await f.release();
 });
+
+test("Agent kick rechecks managed target after real admission capacity wait", async (t) => {
+  const f = await saturatedKick(t);
+  assert.ok(f.refusals.length > 0);
+  await f.db.query(
+    "UPDATE accounts SET platform_user_id='external-target' WHERE id='account-4'",
+  );
+  await f.release();
+  assert.equal((await f.complete(f.id)).status, "finished");
+  assert.equal((await f.steps(f.id))[0]!.error_code, "POLICY_DENIED");
+  assert.equal(f.kicks(), 0);
+  assert.equal(f.audits.length, 1);
+});

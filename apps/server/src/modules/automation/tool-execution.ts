@@ -503,6 +503,15 @@ export class AgentTools {
         );
         return;
       }
+      if (
+        await this.isManagedTarget(run.group_id, input.platform_user_id, tx)
+      ) {
+        denied = toolError(
+          "POLICY_DENIED",
+          "Platform-managed members cannot be removed automatically.",
+        );
+        return;
+      }
       accountId = await this.account(run.group_id, true, tx);
       if (!accountId) {
         denied = toolError(
@@ -573,6 +582,17 @@ export class AgentTools {
               );
               if (persisted.rowCount !== 1)
                 throw new Error("Kick dispatch intent was not persisted");
+              // Re-read after audit, capacity admission and the durable intent
+              // write. Neither a model snapshot nor an earlier permission read
+              // can authorize removing an identity that is now managed.
+              if (
+                await this.isManagedTarget(run.group_id, input.platform_user_id)
+              )
+                throw new AppError(
+                  409,
+                  "POLICY_DENIED",
+                  "Platform-managed members cannot be removed automatically.",
+                );
               assertDispatchAllowed();
             },
           },
@@ -651,6 +671,7 @@ export class AgentTools {
         return;
       }
       const mapped = [
+        "POLICY_DENIED",
         "OWNER_LEFT",
         "NO_PERMISSION",
         "GROUP_UNREACHABLE",
@@ -661,5 +682,20 @@ export class AgentTools {
       return;
     }
     await this.host.completeStep(run, step, { value: { kicked: true } });
+  }
+
+  private async isManagedTarget(
+    groupId: string,
+    platformUserId: string,
+    reader: Queryable = this.ctx.db,
+  ): Promise<boolean> {
+    // Account status and group role do not revoke platform ownership. The
+    // member link also protects an older projected identity during reconnect;
+    // the current account mapping covers delayed membership projection.
+    const result = await reader.query(
+      "SELECT 1 FROM accounts WHERE platform_user_id=$2 UNION ALL SELECT 1 FROM members WHERE group_id=$1 AND platform_user_id=$2 AND account_id IS NOT NULL LIMIT 1",
+      [groupId, platformUserId],
+    );
+    return result.rows.length > 0;
   }
 }

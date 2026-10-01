@@ -26,6 +26,7 @@ import { registerGroupDirectory } from "./group-directory.js";
 import { Messages } from "./messages.js";
 import { type GroupRow, type MessageRow, messageDto } from "./models.js";
 import { MediaFiles, withCurrentFiles } from "../media-files/index.js";
+import { requestGroupAgentCancellation } from "../automation/lifecycle.js";
 
 function parse<T>(schema: z.ZodType<T>, input: unknown): T {
   const result = schema.safeParse(input);
@@ -218,10 +219,7 @@ export function createGatewayModule(
             },
           );
         if (input.agentEnabled === false)
-          await tx.query(
-            "UPDATE agent_runs SET cancel_requested=true WHERE group_id=$1 AND status='running'",
-            [id],
-          );
+          await requestGroupAgentCancellation(tx, id);
         if (changedFields.length)
           await emit(tx, "group_changed", { groupId: id, changedFields });
       });
