@@ -81,7 +81,11 @@ function one(events: readonly RuntimeEvent[], kind: string): RuntimeEvent {
   need(found.length === 1, `${kind}必须恰有一次，当前${found.length}`);
   return found[0]!;
 }
-function processBound(event: RuntimeEvent, binding: ProcessObservationBinding): void {
+function processBound(
+  event: RuntimeEvent,
+  binding: ProcessObservationBinding,
+  channel: 'lifecycle' | 'activity' = 'lifecycle',
+): void {
   need(
     binding.validatedProvenance.source === 'live-bridge' &&
       Number.isSafeInteger(binding.applicationPid) &&
@@ -97,7 +101,21 @@ function processBound(event: RuntimeEvent, binding: ProcessObservationBinding): 
     '事件与实际live进程PID/start/唯一时钟域未绑定',
   );
   // Start is bridge provenance, not an invented field on the original event.
-  window(event.monotonicMs, 'witness投递采样');
+  if (channel === 'lifecycle') window(event.monotonicMs, 'witness投递采样');
+  else if (event.includesUnsavedTail === true && event.activeElapsedMs != null) {
+    // The real activity channel has its own windows; never manufacture the
+    // lifecycle channel's monotonicMs field on an original activity event.
+    window(event.creationOrEpochStartWindowMs, '实际活动起点');
+    // An active checkpoint has no stopped end yet. Its measured original
+    // activeElapsedMs remains admissible lower-bound evidence. A stopped
+    // checkpoint or terminal must carry its real end window.
+    if (
+      name(event) !== 'activity-checkpoint' ||
+      event.activityState !== 'active' ||
+      event.activityEndWindowMs != null
+    )
+      window(event.activityEndWindowMs, '实际活动终点');
+  }
   if (name(event) !== 'lifecycle-observation-attached')
     need(
       event.groupId === binding.groupId && event.runId === binding.runId,
@@ -371,7 +389,7 @@ export function assertUnrefinedActivityBudget(
     ['activity-checkpoint', 'activity-terminal'].includes(name(event)),
   );
   for (const event of activity) {
-    processBound(event, binding);
+    processBound(event, binding, 'activity');
     if (event.includesUnsavedTail !== true || event.activeElapsedMs == null) continue;
     const actual = window(event.activeElapsedMs, '原活动区间');
     assert.ok(actual[0] <= 60_000, '活动预算已证明超过原始60000ms上限');

@@ -14,6 +14,8 @@ import {
 import {
   assertReadCausalEvidence,
   assertAgentSaveBoundary,
+  assertRecoveredSendProof,
+  assertPendingSendCounts,
   type ReadIdentity,
   type CausalPgSample,
 } from '../support/delivery-read-causal-followup.js';
@@ -304,6 +306,37 @@ test('[INT-READ-SAVE-ROLLBACK-001] publicly initiated send survives a real origi
       );
       assert.equal(qa.agent.snapshot().audits.length, 1, '同key重复审计');
     };
+    // before-response controls HTTP only. This gateway protocol permits an
+    // asynchronously applied message; zero while it is pending is not a
+    // product violation. Establish actual remote application before releasing
+    // the original HTTP response to the local save fault.
+    const remoteApply = await observe({
+      read: async () => qa.gateway.snapshot(),
+      invariant: (gateway) =>
+        check('pending remote apply has no duplicates', () =>
+          assertPendingSendCounts({
+            sends: gateway.requests.filter(
+              (request) => request.path === `/groups/${group.gatewayGroupId}/send`,
+            ).length,
+            landed: gateway.messages.filter((message) => message.clientMsgId === clientMsgId)
+              .length,
+            audits: qa.agent.snapshot().audits.length,
+          }),
+        ),
+      complete: (gateway) =>
+        gateway.messages.filter((message) => message.clientMsgId === clientMsgId).length === 1,
+      durationMs: 2000,
+      intervalMs: 10,
+    });
+    evidence.remoteApplyGate = {
+      ...remoteApply,
+      observationBudgetMs: 2000,
+      note: '独立网关实际账本确认；before-response不是after-effect，不给产品增加即时落地要求',
+    };
+    if (!remoteApply.complete)
+      throw new BlockedError(
+        '独立网关桩未在协议2秒观察预算内实际落地；保存故障前提缺失，不记产品FAIL',
+      );
     check('original send and audit really happened once before local failure', effects);
     qa.gateway.barriers.release(sendBarrier);
     const failed = await observe({
@@ -382,24 +415,17 @@ test('[INT-READ-SAVE-ROLLBACK-001] publicly initiated send survives a real origi
     if (!resumed.complete)
       missing.push('12秒QA恢复观察未取得原step真实COMMIT；不以新固定期限替代需求');
     check('same original key is reused in a distinct actual process attempt', () => {
-      const window = toolWaitWindow(resumed.last.events, tool, key);
-      assert.equal(window.clientMsgId, clientMsgId, '恢复同key变成另一消息身份');
-      assert.equal(window.keyReused, true, '恢复未复用原持久key');
-      assert.equal((window.result as { deliveryStatus?: unknown }).deliveryStatus, 'sent');
-      assert.notEqual(window.attemptId, origin.attemptId, '重启执行被误当原保存事务');
-      assert.notEqual(window.clockDomain, origin.clockDomain, '跨进程使用旧时钟域');
-      assertToolWaitBudget(window, null);
-      assertToolWaitCompletion(window);
-      evidence.recoveryCommit = assertAgentSaveBoundary(
-        resumed.last.events,
-        {
-          ...origin,
-          stepId: window.stepId!,
-          attemptId: window.attemptId,
-          clockDomain: window.clockDomain as string,
-        },
-        'commit',
-      );
+      const recovery = assertRecoveredSendProof({
+        originalEvents: failed.last.events,
+        originalIdentity: origin,
+        baseline,
+        rolledBack,
+        publicBefore,
+        recoveredEvents: resumed.last.events,
+        key,
+      });
+      evidence.restoredSourceProof = recovery;
+      evidence.recoveryCommit = recovery.recovery.commit;
     });
     const recoveredRows = await projection();
     check('real recovered original step and tool_result are durable', () => {

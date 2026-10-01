@@ -125,7 +125,7 @@ for path in (REPORT / 'manual-review').glob('readme-*-resources.json'):
         pids.add(value['ownerPid'])
 prior_process_observations = {}
 prior_volume_events = []
-for prior in HERE.glob('*.json'):
+for prior in HERE.glob('snapshot-*.json'):
     old, _ = read_json(prior)
     if not old: continue
     # Keep exact earlier ps records for final PID+start comparison. A surviving

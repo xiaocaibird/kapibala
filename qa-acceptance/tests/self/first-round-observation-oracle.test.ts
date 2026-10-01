@@ -245,7 +245,9 @@ test('already settled fetch, received headers, and clock-envelope contradiction 
 });
 
 function activity(patch: Record<string, unknown> = {}): RuntimeEvent {
-  return fact('activity-terminal', 1, 70_000, {
+  const event = fact('activity-terminal', 1, 70_000, {
+    creationOrEpochStartWindowMs: [1, 2],
+    activityEndWindowMs: [60_001, 60_001],
     activeElapsedMs: [59_999, 60_000],
     includesUnsavedTail: true,
     epochIds: ['actual-epoch'],
@@ -253,6 +255,8 @@ function activity(patch: Record<string, unknown> = {}): RuntimeEvent {
     epochObservation: { continuous: true, startSource: 'run-creation' },
     ...patch,
   });
+  delete event.monotonicMs;
+  return event;
 }
 test('SQL BEGIN/COMMIT, projection, persisted values and online bounds do not narrow paused truth', () => {
   const events = [
@@ -316,5 +320,37 @@ test('proved lower overrun fails before missing continuity; complete upper bound
         binding,
       ),
     BlockedError,
+  );
+});
+
+test('real activity windows have no lifecycle monotonicMs; wrong process or missing own boundary blocks', () => {
+  const actual = activity();
+  assert.equal('monotonicMs' in actual, false);
+  assert.doesNotThrow(() => assertUnrefinedActivityBudget([actual], binding));
+  assert.throws(
+    () => assertUnrefinedActivityBudget([activity({ applicationPid: 102 })], binding),
+    BlockedError,
+  );
+  const missing = activity();
+  delete missing.activityEndWindowMs;
+  assert.throws(() => assertUnrefinedActivityBudget([missing], binding), BlockedError);
+});
+
+test('unmeasured early activity checkpoints cannot hide a later trusted lower-bound violation', () => {
+  const earlier = activity({
+    kind: 'activity-checkpoint',
+    includesUnsavedTail: false,
+    activeElapsedMs: null,
+    activityEndWindowMs: null,
+  });
+  const later = activity({
+    kind: 'activity-checkpoint',
+    activityState: 'active',
+    activityEndWindowMs: null,
+    activeElapsedMs: [60007, 60016],
+  });
+  assert.throws(
+    () => assertUnrefinedActivityBudget([earlier, later], binding),
+    (e) => e instanceof assert.AssertionError && /60000/.test(e.message),
   );
 });

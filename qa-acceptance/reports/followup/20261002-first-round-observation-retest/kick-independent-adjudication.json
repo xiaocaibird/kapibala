@@ -1,0 +1,218 @@
+{
+  "analysisOnly": true,
+  "newProductExecution": false,
+  "rawFile": "reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/artifacts/system-dispatched-kick-obs-0e309-unresolved-504-confirmation-system/evidence/dispatched-kick-observation-final.json",
+  "rawSha256": "4b36c903ccee59d4a54c7871a5dcd273eabe365919989bc48ced97e8d4c4ffc1",
+  "originalRunId": "2026-10-01T18-39-27.933Z-15f16ec6",
+  "binding": {
+    "groupId": "fabf92f0-d558-4809-b15f-01b7cc335eb6",
+    "runId": "f88558dd-56a1-4db2-a7fd-7d099b22d499",
+    "applicationPid": 73173,
+    "applicationStarted": "Fri Oct  2 02:39:43 2026",
+    "clockDomain": "process-performance:73173:034815e8-41d0-4b4a-9021-67c6f2680c34",
+    "validatedProvenance": {
+      "source": "live-bridge",
+      "applicationPid": 73173,
+      "applicationStarted": "Fri Oct  2 02:39:43 2026"
+    },
+    "toolUseId": "qa-kick-dispatched-original-budget",
+    "stepId": "f88558dd-56a1-4db2-a7fd-7d099b22d499:1",
+    "attemptId": "9c0f4dfd-fd35-4bfc-b4ab-9d2a0c7105c7",
+    "postRequestId": "a129cd5e-3e60-40ee-9c65-950941397ba4",
+    "confirmationRequestId": "26cd0a91-0fa9-4023-9e53-ee1e6e445d87"
+  },
+  "claims": {
+    "KB-CROSS": {
+      "status": "PASS",
+      "value": {
+        "proof": "original-confirmation-fetch-pending-at-actual-budget-source-abort",
+        "budgetSignalWindowMs": [
+          61545.9125,
+          61545.918792
+        ],
+        "requestBudgetSourceWindowMs": [
+          61546.068209,
+          61546.071709
+        ],
+        "requestId": "26cd0a91-0fa9-4023-9e53-ee1e6e445d87",
+        "sourceSequence": 12
+      }
+    },
+    "KB-CANCEL": {
+      "status": "PASS",
+      "value": {
+        "proof": "actual-request-combined-signal-reason-matches-original-budget-source",
+        "requestId": "26cd0a91-0fa9-4023-9e53-ee1e6e445d87",
+        "budgetSourceWindowMs": [
+          61546.068209,
+          61546.071709
+        ],
+        "combinedAbortWindowMs": [
+          61546.238042,
+          61546.2385
+        ],
+        "fetchSettledWindowMs": [
+          61546.603875,
+          61546.604542
+        ],
+        "requestSettledWindowMs": [
+          61546.6315,
+          61546.631792
+        ],
+        "configuredSources": [
+          "request-deadline",
+          "operation",
+          "caller",
+          "kick-lock",
+          "activity-budget"
+        ],
+        "abortedSources": [
+          "caller",
+          "activity-budget"
+        ],
+        "reasonMatchedSources": [
+          "caller",
+          "activity-budget"
+        ],
+        "requestDeadlineTriggered": false,
+        "operationScopeTriggered": false,
+        "kickLockScopeTriggered": false,
+        "sourceAbortFacts": [
+          {
+            "kind": "kick-confirmation-source-aborted",
+            "groupId": "fabf92f0-d558-4809-b15f-01b7cc335eb6",
+            "accountId": "account-2",
+            "runId": "f88558dd-56a1-4db2-a7fd-7d099b22d499",
+            "toolUseId": "qa-kick-dispatched-original-budget",
+            "stepId": "f88558dd-56a1-4db2-a7fd-7d099b22d499:1",
+            "attemptId": "9c0f4dfd-fd35-4bfc-b4ab-9d2a0c7105c7",
+            "requestPurpose": "confirmation",
+            "requestId": "26cd0a91-0fa9-4023-9e53-ee1e6e445d87",
+            "observedAtMonoNs": "121253778344125",
+            "observedWindowMs": [
+              61546.068209,
+              61546.071709
+            ],
+            "method": "GET",
+            "timeoutMs": 15000,
+            "fetchPending": true,
+            "bodyPending": false,
+            "configuredSources": [
+              "request-deadline",
+              "operation",
+              "caller",
+              "kick-lock",
+              "activity-budget"
+            ],
+            "abortedSources": [
+              "caller",
+              "activity-budget"
+            ],
+            "reasonMatchedSources": [
+              "caller",
+              "activity-budget"
+            ],
+            "stage": "source-aborted",
+            "source": "activity-budget",
+            "clockDomain": "process-performance:73173:034815e8-41d0-4b4a-9021-67c6f2680c34",
+            "clockUnit": "ms",
+            "monotonicMs": [
+              61546.116,
+              61546.116
+            ],
+            "applicationPid": 73173,
+            "at": "2026-10-01T18:40:45.378Z",
+            "seq": 13,
+            "sourceSeq": 12,
+            "instancePid": 73172,
+            "correlation": {
+              "kind": "tool-wait",
+              "groupId": "fabf92f0-d558-4809-b15f-01b7cc335eb6",
+              "runId": "f88558dd-56a1-4db2-a7fd-7d099b22d499",
+              "toolUseId": "all-run-steps"
+            }
+          },
+          {
+            "kind": "kick-confirmation-source-aborted",
+            "groupId": "fabf92f0-d558-4809-b15f-01b7cc335eb6",
+            "accountId": "account-2",
+            "runId": "f88558dd-56a1-4db2-a7fd-7d099b22d499",
+            "toolUseId": "qa-kick-dispatched-original-budget",
+            "stepId": "f88558dd-56a1-4db2-a7fd-7d099b22d499:1",
+            "attemptId": "9c0f4dfd-fd35-4bfc-b4ab-9d2a0c7105c7",
+            "requestPurpose": "confirmation",
+            "requestId": "26cd0a91-0fa9-4023-9e53-ee1e6e445d87",
+            "observedAtMonoNs": "121253778461000",
+            "observedWindowMs": [
+              61546.186125,
+              61546.187292
+            ],
+            "method": "GET",
+            "timeoutMs": 15000,
+            "fetchPending": true,
+            "bodyPending": false,
+            "configuredSources": [
+              "request-deadline",
+              "operation",
+              "caller",
+              "kick-lock",
+              "activity-budget"
+            ],
+            "abortedSources": [
+              "caller",
+              "activity-budget"
+            ],
+            "reasonMatchedSources": [
+              "caller",
+              "activity-budget"
+            ],
+            "stage": "source-aborted",
+            "source": "caller",
+            "clockDomain": "process-performance:73173:034815e8-41d0-4b4a-9021-67c6f2680c34",
+            "clockUnit": "ms",
+            "monotonicMs": [
+              61546.200625,
+              61546.200625
+            ],
+            "applicationPid": 73173,
+            "at": "2026-10-01T18:40:45.379Z",
+            "seq": 14,
+            "sourceSeq": 13,
+            "instancePid": 73172,
+            "correlation": {
+              "kind": "tool-wait",
+              "groupId": "fabf92f0-d558-4809-b15f-01b7cc335eb6",
+              "runId": "f88558dd-56a1-4db2-a7fd-7d099b22d499",
+              "toolUseId": "all-run-steps"
+            }
+          }
+        ],
+        "exclusiveFetchFailureCause": "NOT_ASSERTED"
+      }
+    },
+    "KB-ACTIVITY": {
+      "status": "BLOCKED",
+      "reason": "BlockedError: [BLOCKED] 首轮观测：实际活动终点缺少真实有限有序毫秒包络"
+    }
+  },
+  "rawObservationClaimsUnchanged": {
+    "raw original kick observation": {
+      "status": "BLOCKED",
+      "reason": "BlockedError: [BLOCKED] 缺实际live PID/start/clock来源"
+    },
+    "KB-CROSS actual source pending": {
+      "status": "BLOCKED",
+      "reason": "BlockedError: [BLOCKED] 原请求绑定未形成"
+    },
+    "KB-CANCEL actual source identity": {
+      "status": "BLOCKED",
+      "reason": "BlockedError: [BLOCKED] 原请求绑定未形成"
+    },
+    "KB-ACTIVITY original strict interval": {
+      "status": "BLOCKED",
+      "reason": "BlockedError: [BLOCKED] 真实应用时钟未绑定"
+    }
+  },
+  "analysisHelperSha256": "beadf9262983053210df4003563b54eb75395027d6bd62a5358eba03ec8a3df8",
+  "note": "Derived only from original saved live provenance, real activity calibration and unchanged lifecycle/activity events; raw B/overall F remain immutable."
+}

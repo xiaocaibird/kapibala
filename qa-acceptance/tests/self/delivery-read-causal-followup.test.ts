@@ -6,6 +6,8 @@ import type { RuntimeEvent } from '../../harness/runtime-observation.js';
 import {
   assertReadCausalEvidence,
   assertAgentSaveBoundary,
+  assertRecoveredSendProof,
+  assertPendingSendCounts,
   type ReadIdentity,
   type CausalPgSample,
 } from '../support/delivery-read-causal-followup.js';
@@ -242,4 +244,206 @@ test('failed save publishing history committed remains an assertion failure', ()
   const all = events('rollback');
   all.push({ ...all[all.length - 1]!, kind: 'send-tool-history-committed' });
   assert.throws(() => assertAgentSaveBoundary(all, identity, 'rollback'), assert.AssertionError);
+});
+
+function restoredFixture() {
+  const key = 'original-key';
+  const content = { text: 'original public tool', idempotency_key: key };
+  const originalIdentity = { ...identity };
+  const make = (isRestored: boolean): RuntimeEvent[] => {
+    let seq = 0;
+    const base = {
+      ...identity,
+      attemptId: isRestored ? 'restored-execution' : identity.attemptId,
+      clockDomain: isRestored ? 'restored-process' : identity.clockDomain,
+    };
+    const emit = (kind: string, fields: Record<string, unknown> = {}) =>
+      ({
+        ...base,
+        kind,
+        seq: ++seq,
+        sourceSeq: seq,
+        applicationPid: isRestored ? 200 : 100,
+        instancePid: isRestored ? 200 : 100,
+        monotonicMs: [seq * 100, seq * 100],
+        clockUnit: 'ms',
+        at: '2026-10-02T00:00:00Z',
+        correlation: {
+          kind: 'tool-wait',
+          groupId: base.groupId,
+          runId: base.runId,
+          toolUseId: 'all-run-steps',
+        },
+        ...fields,
+      }) as RuntimeEvent;
+    const attached = emit('lifecycle-observation-attached', { droppedThroughSourceSeq: 0 });
+    const prepared = isRestored
+      ? []
+      : [
+          emit('send-tool-prepared', {
+            attemptId: 'original-creation',
+            commitBoundary: 'outer-commit-confirmed',
+          }),
+        ];
+    const result = {
+      clientMsgId: identity.clientMsgId,
+      deliveryStatus: isRestored ? 'sent' : 'accepted',
+    };
+    const prefix = [
+      attached,
+      ...prepared,
+      emit('send-tool-entered'),
+      emit('send-key-resolved', {
+        idempotencyKey: key,
+        keyReused: isRestored,
+      }),
+      emit('send-wait-started', { idempotencyKey: key }),
+      emit('send-wait-result-ready', { idempotencyKey: key, errorCode: null }),
+      emit('send-tool-result-returned', { idempotencyKey: key, errorCode: null, result }),
+      emit('send-tool-history-save-started'),
+    ];
+    const tx = (phase: string, outcome: string) => {
+      const before = (seq + 1) * 100;
+      return [
+        emit('agent-step-save-transaction', {
+          transactionAttemptId: isRestored ? 'restored-tx' : 'original-tx',
+          backendPid: isRestored ? 74 : 64,
+          phase,
+          edge: 'called',
+          windowMs: [before, before],
+        }),
+        emit('agent-step-save-transaction', {
+          transactionAttemptId: isRestored ? 'restored-tx' : 'original-tx',
+          backendPid: isRestored ? 74 : 64,
+          phase,
+          edge: outcome,
+          windowMs: [before, (seq + 1) * 100],
+          ...(outcome === 'rejected' ? { sqlState: 'P0001' } : {}),
+        }),
+      ];
+    };
+    return [
+      ...prefix,
+      ...tx('begin', 'returned'),
+      ...tx('step-result-update', 'returned'),
+      ...tx('run-history-update', isRestored ? 'returned' : 'rejected'),
+      ...tx(isRestored ? 'commit' : 'rollback', 'returned'),
+      ...(isRestored
+        ? [
+            emit('send-tool-history-committed', {
+              result,
+              errorCode: null,
+              commitBoundary: 'outer-commit-confirmed',
+            }),
+            emit('send-tool-history-save-returned'),
+          ]
+        : [emit('send-tool-history-save-failed')]),
+    ];
+  };
+  const baseline = {
+    run: [
+      {
+        id: identity.runId,
+        history: [
+          {
+            role: 'assistant',
+            content: [
+              { type: 'tool_use', id: identity.toolUseId, name: 'send_message', input: content },
+            ],
+          },
+        ],
+      },
+    ],
+    step: [
+      {
+        run_id: identity.runId,
+        tool_use_id: identity.toolUseId,
+        ordinal: 1,
+        state: 'executing',
+        result: null,
+      },
+    ],
+  };
+  return {
+    originalEvents: make(false),
+    recoveredEvents: make(true),
+    originalIdentity,
+    key,
+    baseline,
+    rolledBack: structuredClone(baseline),
+    publicBefore: {
+      id: identity.runId,
+      groupId: identity.groupId,
+      steps: [
+        {
+          kind: 'tool_use',
+          toolUseId: identity.toolUseId,
+          name: 'send_message',
+          input: structuredClone(content),
+        },
+      ],
+    },
+  };
+}
+test('pending asynchronous apply allows zero while still rejecting duplicate effects or sends', () => {
+  assertPendingSendCounts({ sends: 1, landed: 0, audits: 1 });
+  assertPendingSendCounts({ sends: 1, landed: 1, audits: 1 });
+  for (const wrong of [
+    { sends: 2, landed: 0, audits: 1 },
+    { sends: 1, landed: 2, audits: 1 },
+    { sends: 1, landed: 0, audits: 2 },
+  ])
+    assert.throws(() => assertPendingSendCounts(wrong), assert.AssertionError);
+});
+test('restored send joins actual old committed source to a distinct process without requiring re-creation', () => {
+  const value = assertRecoveredSendProof(restoredFixture());
+  assert.equal(value.source.applicationPid, 100);
+  assert.equal(value.recovery.applicationPid, 200);
+  assert.equal(value.originalRollback.outcome, 'rollback');
+  assert.equal(value.recovery.commit.outcome, 'commit');
+});
+test('restoration refuses another original persisted step or run even when the tool name matches', () => {
+  const input = restoredFixture();
+  input.baseline.step[0]!.ordinal = 2;
+  input.rolledBack = structuredClone(input.baseline);
+  assert.throws(() => assertRecoveredSendProof(input), BlockedError);
+});
+test('restoration refuses an old public tool or history with a different key', () => {
+  const input = restoredFixture();
+  input.publicBefore.steps[0]!.input.idempotency_key = 'other-key';
+  assert.throws(() => assertRecoveredSendProof(input));
+});
+test('restoration refuses a missing original source COMMIT and a missing actual recovery COMMIT', () => {
+  for (const missing of ['original-source', 'recovery-commit']) {
+    const input = restoredFixture();
+    if (missing === 'original-source')
+      delete input.originalEvents.find((event) => event.kind === 'send-tool-prepared')!
+        .commitBoundary;
+    else
+      input.recoveredEvents = input.recoveredEvents.filter(
+        (event) => event.phase !== 'commit' || event.edge !== 'returned',
+      );
+    assert.throws(() => assertRecoveredSendProof(input), BlockedError);
+  }
+});
+test('restoration refuses to merge the original process or attempt with the resumed execution', () => {
+  for (const field of ['applicationPid', 'clockDomain', 'attemptId']) {
+    const input = restoredFixture();
+    for (const event of input.recoveredEvents)
+      event[field] =
+        field === 'applicationPid'
+          ? 100
+          : field === 'clockDomain'
+            ? identity.clockDomain
+            : identity.attemptId;
+    assert.throws(() => assertRecoveredSendProof(input), BlockedError);
+  }
+});
+test('restoration keeps the strict original five-second assertion before provenance gaps', () => {
+  const input = restoredFixture();
+  for (const event of input.recoveredEvents)
+    if (['send-wait-result-ready', 'send-tool-result-returned'].includes(String(event.kind)))
+      event.monotonicMs = [10_000, 10_000];
+  input.recoveredEvents = input.recoveredEvents.filter((event) => event.phase !== 'commit');
+  assert.throws(() => assertRecoveredSendProof(input), assert.AssertionError);
 });

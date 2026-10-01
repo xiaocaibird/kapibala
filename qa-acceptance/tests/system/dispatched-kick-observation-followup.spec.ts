@@ -694,8 +694,15 @@ test('[INT-KICK-OBSERVATION-001] original active budget bounds an already dispat
     };
     claim('raw original kick observation', () => {
       const snapshot = lifecycle!.latest!;
-      const clock = snapshot.clockObservation,
+      const measured = calibrations.at(-1)?.snapshot;
+      const clock = measured?.clockObservation,
         provenance = snapshot.snapshotProvenance;
+      need(
+        measured?.snapshotProvenance?.source === 'live-bridge' &&
+          measured.snapshotProvenance.applicationPid === provenance?.applicationPid &&
+          measured.snapshotProvenance.applicationStarted === provenance?.applicationStarted,
+        '生命周期与真实活动校准未属于同一实际live进程',
+      );
       if (!clock || !provenance) throw new BlockedError('缺实际live PID/start/clock来源');
       processBinding = {
         groupId: kick!.group.id,

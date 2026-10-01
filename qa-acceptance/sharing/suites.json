@@ -674,6 +674,21 @@
         "真实读取事务与保存事务分列；不把开发样例/单项通过拼成组合PASS",
         "仅首轮单实例有限证据；第二轮、真人、强恢复与上线结论不升级"
       ]
+    },
+    {
+      "id": "qa-01f-save-driver-correction",
+      "title": "01f原保存回滚QA适配修正单例补测",
+      "purpose": "只修正异步桩落地与跨进程prepared取证；原3ed首次raw保持，两条时限FAIL不重跑",
+      "caseIds": [
+        "INT-READ-SAVE-ROLLBACK-001"
+      ],
+      "projects": [
+        "system"
+      ],
+      "riskBoundaries": [
+        "新QA源另冻；一次限定补测，零自动重试，原样保留首次QA驱动阻塞",
+        "不改产品/原要求，不涉及第二轮/真实provider/上线门禁"
+      ]
     }
   ]
 }

@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { BlockedError } from '../../harness/security.js';
 import type { RuntimeEvent } from '../../harness/runtime-observation.js';
 import { blockedMessageReaders, type PgLockSample } from './delivery-read-observation.js';
+import { assertToolWaitBudget, toolWaitWindow } from '../../harness/lifecycle-observation.js';
 
 export interface ReadIdentity {
   groupId: string;
@@ -49,6 +50,13 @@ function exactly(events: readonly Event[], name: string, label: string) {
   const matches = events.filter((event) => kind(event) === name);
   need(matches.length === 1, `${label} ${name} 不唯一或缺失`);
   return matches[0]!;
+}
+export function assertPendingSendCounts(counts: { sends: number; landed: number; audits: number }) {
+  for (const [name, value] of Object.entries(counts))
+    assert.ok(
+      Number.isSafeInteger(value) && value >= 0 && value <= 1,
+      `原消息pending阶段${name}出现额外副作用/请求`,
+    );
 }
 export function sameExecution(events: readonly Event[], identity: ReadIdentity) {
   const matches = events.filter((event) => event.attemptId === identity.attemptId);
@@ -266,5 +274,177 @@ export function assertAgentSaveBoundary(
     stepSourceSeq: step.sourceSeq,
     historySourceSeq: history.sourceSeq,
     acknowledgementSourceSeq: end.sourceSeq,
+  };
+}
+
+/** Restoration uses an already committed tool, so the new process need not
+ * emit a second creation event. Join the actual old source and read-only row
+ * to the new execution, while preserving both processes and transactions. */
+export function assertRecoveredSendProof(input: {
+  originalEvents: readonly RuntimeEvent[];
+  originalIdentity: ReadIdentity;
+  baseline: unknown;
+  rolledBack: unknown;
+  publicBefore: unknown;
+  recoveredEvents: readonly RuntimeEvent[];
+  key: string;
+}) {
+  const identity = input.originalIdentity;
+  const window = toolWaitWindow(input.recoveredEvents, identity.toolUseId, input.key);
+  const recovered = exactly(
+    input.recoveredEvents.filter((event) => event.attemptId === window.attemptId),
+    'send-tool-entered',
+    '恢复执行',
+  );
+  need(
+    recovered.groupId === identity.groupId &&
+      window.runId === identity.runId &&
+      window.stepId === identity.stepId &&
+      recovered.toolUseId === identity.toolUseId,
+    '恢复执行指向另一group/run/step/tool',
+  );
+  // Evaluate this actual process's hard timing violation before later missing
+  // provenance or COMMIT evidence. Never combine clocks or add a tolerance.
+  assertToolWaitBudget(window, null);
+  need(
+    [input.originalEvents, input.recoveredEvents].every(
+      (events) =>
+        events.length > 0 &&
+        kind(events[0]!) === 'lifecycle-observation-attached' &&
+        events[0]!.droppedThroughSourceSeq === 0,
+    ),
+    '原/恢复实际生命周期历史缺失或截断',
+  );
+  const original = sameExecution(input.originalEvents, identity);
+  const entered = exactly(original, 'send-tool-entered', '原工具执行');
+  const prepared = input.originalEvents.filter(
+    (event) =>
+      kind(event) === 'send-tool-prepared' &&
+      event.groupId === identity.groupId &&
+      event.runId === identity.runId &&
+      event.stepId === identity.stepId &&
+      event.toolUseId === identity.toolUseId,
+  );
+  need(prepared.length === 1, '原进程缺唯一真实工具创建COMMIT');
+  need(prepared[0]!.commitBoundary === 'outer-commit-confirmed', '原工具来源缺真实外层COMMIT确认');
+  ordered(prepared[0]!, entered, '原工具创建COMMIT→原执行');
+  need(
+    prepared[0]!.clockDomain === identity.clockDomain,
+    '原工具创建不属于原进程时钟，不能拼跨进程来源',
+  );
+  const sourceKey = exactly(original, 'send-key-resolved', '原工具key');
+  assert.equal(sourceKey.idempotencyKey, input.key, '原实际key不同于恢复目标');
+  assert.equal(sourceKey.clientMsgId, identity.clientMsgId, '原实际消息来源不同');
+  const object = (value: unknown): value is Record<string, unknown> =>
+    !!value && typeof value === 'object' && !Array.isArray(value);
+  need(
+    object(input.baseline) &&
+      Array.isArray(input.baseline.run) &&
+      Array.isArray(input.baseline.step),
+    '原持久工具只读基线缺真实run/step投影',
+  );
+  const run = input.baseline.run,
+    step = input.baseline.step;
+  need(
+    run.length === 1 && object(run[0]) && run[0].id === identity.runId,
+    '原只读run来源不唯一或不同',
+  );
+  need(
+    step.length === 1 &&
+      object(step[0]) &&
+      step[0].run_id === identity.runId &&
+      step[0].tool_use_id === identity.toolUseId &&
+      Number.isSafeInteger(step[0].ordinal) &&
+      Number(step[0].ordinal) > 0 &&
+      identity.stepId === `${identity.runId}:${step[0].ordinal}`,
+    '原持久step identity不唯一或不同',
+  );
+  assert.equal(step[0].result, null, '原step基线已经完成，未命中原保存失败');
+  assert.deepEqual(input.rolledBack, input.baseline, '真实ROLLBACK后原step/history出现半提交');
+  need(
+    object(input.publicBefore) &&
+      input.publicBefore.id === identity.runId &&
+      input.publicBefore.groupId === identity.groupId &&
+      Array.isArray(input.publicBefore.steps),
+    '原公开工具来源缺相同group/run',
+  );
+  const publicSteps = input.publicBefore.steps.filter(
+    (value) => object(value) && value.toolUseId === identity.toolUseId,
+  );
+  need(
+    publicSteps.length === 1 &&
+      object(publicSteps[0]) &&
+      publicSteps[0].kind === 'tool_use' &&
+      publicSteps[0].name === 'send_message' &&
+      object(publicSteps[0].input),
+    '原公开工具来源不唯一或非法',
+  );
+  assert.equal(publicSteps[0].input.idempotency_key, input.key, '原公开持久工具key不匹配');
+  need(Array.isArray(run[0].history), '原只读history来源缺失');
+  const tools = run[0].history
+    .filter(object)
+    .filter((message) => message.role === 'assistant')
+    .flatMap((message) => (Array.isArray(message.content) ? message.content : []))
+    .filter(object)
+    .filter(
+      (block) =>
+        block.type === 'tool_use' &&
+        block.id === identity.toolUseId &&
+        block.name === 'send_message',
+    );
+  need(tools.length === 1, '原history缺唯一真实模型工具来源');
+  assert.deepEqual(tools[0]!.input, publicSteps[0].input, '原history与公开持久工具输入不同');
+  const originalRollback = assertAgentSaveBoundary(input.originalEvents, identity, 'rollback');
+  need(
+    Number.isSafeInteger(recovered.applicationPid) &&
+      Number(recovered.applicationPid) > 0 &&
+      recovered.applicationPid !== entered.applicationPid &&
+      window.clockDomain !== identity.clockDomain &&
+      window.attemptId !== identity.attemptId,
+    '原执行与重启进程/时钟/attempt没有分列',
+  );
+  assert.equal(window.keyReused, true, '恢复未复用原持久key');
+  assert.equal(window.clientMsgId, identity.clientMsgId, '恢复同key指向另一实际消息');
+  need(object(window.result), '恢复缺实际工具结果');
+  assert.equal(window.result.clientMsgId, identity.clientMsgId);
+  assert.equal(window.result.deliveryStatus, 'sent');
+  need(
+    typeof window.clockDomain === 'string' && typeof window.stepId === 'string',
+    '恢复缺实际时钟/步骤',
+  );
+  const recoveryCommit = assertAgentSaveBoundary(
+    input.recoveredEvents,
+    {
+      ...identity,
+      stepId: window.stepId,
+      attemptId: window.attemptId,
+      clockDomain: window.clockDomain,
+    },
+    'commit',
+  );
+  need(
+    recoveryCommit.transactionAttemptId !== originalRollback.transactionAttemptId,
+    '原失败事务与恢复提交事务被误拼为同一笔',
+  );
+  return {
+    source: {
+      applicationPid: entered.applicationPid,
+      clockDomain: identity.clockDomain,
+      creationAttemptId: prepared[0]!.attemptId,
+      preparedSourceSeq: prepared[0]!.sourceSeq,
+      executionAttemptId: identity.attemptId,
+      runId: identity.runId,
+      stepId: identity.stepId,
+    },
+    originalRollback,
+    recovery: {
+      applicationPid: recovered.applicationPid,
+      clockDomain: window.clockDomain,
+      executionAttemptId: window.attemptId,
+      clientMsgId: window.clientMsgId,
+      keyReused: window.keyReused,
+      waitWindowMs: window.elapsed,
+      commit: recoveryCommit,
+    },
   };
 }
