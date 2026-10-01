@@ -1,0 +1,69 @@
+TAP version 13
+# Subtest: Agent send save observer isolation: only started recorder throws
+not ok 1 - Agent send save observer isolation: only started recorder throws
+  ---
+  duration_ms: 123.136959
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/integration/agent-delivery-deadline.test.ts:68:3'
+  failureType: 'testCodeFailure'
+  error: 'engineering recorder unavailable'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/integration/agent-delivery-deadline.test.ts:70:27)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.start (node:internal/test_runner/test:1262:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17)
+  ...
+# Independent database: kapibala_test_e701b099470146f793b7d48a9ecaba91
+# Subtest: Agent send save observer isolation: only returned recorder throws
+not ok 2 - Agent send save observer isolation: only returned recorder throws
+  ---
+  duration_ms: 69.633083
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/integration/agent-delivery-deadline.test.ts:68:3'
+  failureType: 'testCodeFailure'
+  error: 'engineering recorder unavailable'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/integration/agent-delivery-deadline.test.ts:70:27)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1402:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+    Test.postRun (node:internal/test_runner/test:1542:19)
+    Test.run (node:internal/test_runner/test:1467:12)
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  ...
+# Independent database: kapibala_test_9485057163d344a181ef2b71f46795d9
+# Subtest: Agent send save observer isolation: only failed recorder throws
+not ok 3 - Agent send save observer isolation: only failed recorder throws
+  ---
+  duration_ms: 74.689584
+  type: 'test'
+  location: '/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/integration/agent-delivery-deadline.test.ts:68:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    The validation function is expected to return "true". Received false
+    
+    Caught error:
+    
+    Error: engineering recorder unavailable
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  stack: |-
+    process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/integration/agent-delivery-deadline.test.ts:85:7)
+    async Test.run (node:internal/test_runner/test:1409:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  ...
+# Independent database: kapibala_test_5e11d4cada2b4463bd0c637e1488fde7
+1..3
+# tests 3
+# suites 0
+# pass 0
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 449.0045
