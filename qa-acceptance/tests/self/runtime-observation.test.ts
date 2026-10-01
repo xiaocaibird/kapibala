@@ -315,9 +315,8 @@ test('runtime activity checks never turn a lost crash tail or uncertain interval
     () => assertActivityBudget({ ...event, activeElapsedMs: [59950, 60050] }, [59900, 60100]),
     /BLOCKED/,
   );
-  assert.throws(
-    () => assertActivityBudget({ ...event, activeElapsedMs: [59000, 59500] }, [59000, 59500]),
-    /提前宣告/,
+  assert.doesNotThrow(() =>
+    assertActivityBudget({ ...event, activeElapsedMs: [59000, 59500] }, [59000, 59500]),
   );
   // Online time may include a paused run; its lower bound is not activity truth.
   assert.doesNotThrow(() => assertActivityBudget(event, [61000, 61500]));

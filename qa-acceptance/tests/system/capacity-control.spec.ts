@@ -5,6 +5,16 @@ import { eventually, type AgentRun } from '../../harness/platform-client.js';
 import { BlockedError } from '../../harness/security.js';
 import { observe } from '../../harness/observation.js';
 import {
+  runtimeObservationFor,
+  type RuntimeLease,
+  type RuntimeObservation,
+} from '../../harness/runtime-observation.js';
+import {
+  assertSingleEpochActivityBudget,
+  assertSingleEpochLifecycleBudget,
+  optionalActivityObservation,
+} from '../support/agent-activity-budget.js';
+import {
   CapacityControl,
   type CapacityLease,
   capacityControlFor,
@@ -341,106 +351,186 @@ test('[CAP-003] persistent admission refusal consumes the original active budget
   qa,
 }) => {
   test.setTimeout(120_000);
-  await deferred(
-    qa,
-    'capacity-budget',
-    async (kick, lease, _control, creationBounds) => {
-      let lastRunningRequestBefore: number | undefined;
-      let firstTerminalResponseAfter: number | undefined;
-      const publicSamples: {
-        requestBefore: number;
-        responseAfter: number;
-        status: string;
-        endReason: string | null;
-      }[] = [];
-      const samplePublicRun = async (): Promise<AgentRun> => {
-        const requestBefore = performance.now();
-        const current = await qa.api.agentRun(kick.runId);
-        const responseAfter = performance.now();
-        publicSamples.push({
-          requestBefore,
-          responseAfter,
-          status: current.status,
-          endReason: current.endReason,
-        });
-        if (current.status === 'running') {
-          expect(firstTerminalResponseAfter, '已公开的终态不能重新变为running').toBeUndefined();
-          lastRunningRequestBefore = requestBefore;
-        } else firstTerminalResponseAfter ??= responseAfter;
-        return current;
-      };
-      await samplePublicRun();
-      const snapshot = await lease.waitFor(
-        (value) => value.events.some((event) => event.kind === 'run-terminal'),
-        {
-          timeoutMs: 65_000,
-          inspect: async () => {
-            noKick(qa, kick);
-            onceAudited(qa, kick);
-            await samplePublicRun();
+  const missing: string[] = [];
+  let runtime: RuntimeObservation | undefined;
+  let activity: RuntimeLease | undefined;
+  let lifecycle: RuntimeLease | undefined;
+  let primaryFailure: unknown;
+  try {
+    await deferred(
+      qa,
+      'capacity-budget',
+      async (kick, lease, _control, creationBounds) => {
+        let lastRunningRequestBefore: number | undefined;
+        let firstTerminalResponseAfter: number | undefined;
+        const publicSamples: {
+          requestBefore: number;
+          responseAfter: number;
+          status: string;
+          endReason: string | null;
+        }[] = [];
+        const samplePublicRun = async (): Promise<AgentRun> => {
+          const requestBefore = performance.now();
+          const current = await qa.api.agentRun(kick.runId);
+          const responseAfter = performance.now();
+          publicSamples.push({
+            requestBefore,
+            responseAfter,
+            status: current.status,
+            endReason: current.endReason,
+          });
+          if (current.status === 'running') {
+            expect(firstTerminalResponseAfter, '已公开的终态不能重新变为running').toBeUndefined();
+            lastRunningRequestBefore = requestBefore;
+          } else firstTerminalResponseAfter ??= responseAfter;
+          return current;
+        };
+        await samplePublicRun();
+        const snapshot = await lease.waitFor(
+          (value) => value.events.some((event) => event.kind === 'run-terminal'),
+          {
+            timeoutMs: 65_000,
+            inspect: async () => {
+              noKick(qa, kick);
+              onceAudited(qa, kick);
+              await samplePublicRun();
+            },
           },
-        },
-      );
-      const end = snapshot.events.find((event) => event.kind === 'run-terminal')!;
-      expect(end.status).toBe('failed');
-      expect(end.endReason).toBe('wall_clock');
-      const run = await eventually(samplePublicRun, (current) => current.status !== 'running', {
-        timeoutMs: 30_000,
-      });
-      expect(run).toMatchObject({ status: 'failed', endReason: 'wall_clock' });
-      const bounds = end.activeElapsedMs;
-      const independentElapsedBounds =
-        lastRunningRequestBefore === undefined || firstTerminalResponseAfter === undefined
-          ? undefined
-          : ([
-              Math.max(0, lastRunningRequestBefore - creationBounds[1]),
-              firstTerminalResponseAfter - creationBounds[0],
-            ] as const);
-      await qa.evidence('capacity-active-budget', {
-        bounds,
-        requiredMs: 60_000,
-        diagnostic: end,
-        creationBounds,
-        publicSamples,
-        independentElapsedBounds,
-        independentClock:
-          'QA performance.now；终态下界取最后running请求开始，上界取首次terminal响应完成，均减去保守创建区间',
-        limit: '相交仅说明独立观察未证伪控制器；不将轮询或预设deadline宣称为精确60秒实测',
-      });
-      if (!bounds) throw new BlockedError('控制器未提供原 run 活动预算决定的权威时间区间');
-      if (
-        !independentElapsedBounds ||
-        !independentElapsedBounds.every(Number.isFinite) ||
-        independentElapsedBounds[0] > independentElapsedBounds[1]
-      )
-        throw new BlockedError(
-          '缺少有效独立running→terminal时间上下界，不能采信控制器自报精确60000',
         );
-      expect(
-        independentElapsedBounds[0],
-        '独立单调时钟已确认晚于60秒，控制器精确值不能掩盖',
-      ).toBeLessThanOrEqual(60_000);
-      expect(
-        independentElapsedBounds[1],
-        '独立单调时钟已确认早于60秒，控制器精确值不能掩盖',
-      ).toBeGreaterThanOrEqual(60_000);
-      expect(
-        Math.max(independentElapsedBounds[0], bounds[0]),
-        '控制器实际活动区间与独立公开观察区间不相交',
-      ).toBeLessThanOrEqual(Math.min(independentElapsedBounds[1], bounds[1]));
-      expect(bounds[0], '已确定超过活动预算才停止').toBeLessThanOrEqual(60_000);
-      expect(bounds[1], '已确定提前冒充预算耗尽').toBeGreaterThanOrEqual(60_000);
-      if (bounds[1] > 60_000)
-        throw new BlockedError('预算决定测量区间跨60秒边界；保留证据，不擅加计时容差');
-      expect(
-        run.steps.filter((step) => step.toolUseId === kick.toolUseId).length,
-      ).toBeLessThanOrEqual(1);
-      await lease.release();
-      await observeNoLateKick(qa, kick, { status: run.status, endReason: run.endReason });
-      await captureKickEvidence(qa, 'capacity-budget-final', [kick]);
-    },
-    { clock: true },
-  );
+        const end = snapshot.events.find((event) => event.kind === 'run-terminal')!;
+        expect(end.status).toBe('failed');
+        expect(end.endReason).toBe('wall_clock');
+        const run = await eventually(samplePublicRun, (current) => current.status !== 'running', {
+          timeoutMs: 30_000,
+        });
+        expect(run).toMatchObject({ id: kick.runId, status: 'failed', endReason: 'wall_clock' });
+        expect((await qa.api.group(kick.group.id)).activeAgentRunId).toBeNull();
+        expect(
+          run.steps.filter((step) => step.toolUseId === kick.toolUseId).length,
+        ).toBeLessThanOrEqual(1);
+        const activitySnapshot =
+          activity &&
+          (await optionalActivityObservation(
+            'capacity complete activity witness',
+            () => activity!.waitFor('activity-terminal', 5_000),
+            missing,
+          ));
+        const lifecycleSnapshot =
+          lifecycle &&
+          (await optionalActivityObservation(
+            'capacity actual decision and COMMIT',
+            () => lifecycle!.waitFor('agent-terminal-committed', 5_000),
+            missing,
+          ));
+        // Public visibility includes COMMIT, polling and network delay. Its lower
+        // bound cannot establish activity duration or constrain the stop decision.
+        const independentOnline: [number, number] = [
+          0,
+          firstTerminalResponseAfter! - creationBounds[0],
+        ];
+        await qa.evidence('capacity-active-budget', {
+          capacitySampleOnly: end.activeElapsedMs,
+          diagnostic: end,
+          requiredMaximumMs: 60_000,
+          creationBounds,
+          publicSamples,
+          lastRunningRequestBefore,
+          independentOnline,
+          activity: activitySnapshot ?? activity?.latest ?? null,
+          lifecycle: lifecycleSnapshot ?? lifecycle?.latest ?? null,
+          missing,
+          limit:
+            'capacity持久采样/公开终态仅诊断；真实完整活动和同attempt决定/COMMIT分别裁判。公开下界不作为决定下界，不强制区间相交，也不增设60秒下限。',
+        });
+        // Missing runtime evidence cannot skip already observable business facts.
+        await lease.release();
+        await observeNoLateKick(
+          qa,
+          kick,
+          { status: run.status, endReason: run.endReason },
+          { requests: 0, effects: 0, turns: 1 },
+        );
+        await captureKickEvidence(qa, 'capacity-budget-final', [kick]);
+        const actualActivity = (activitySnapshot ?? activity?.latest)?.events ?? [];
+        const actualLifecycle = (lifecycleSnapshot ?? lifecycle?.latest)?.events ?? [];
+        // Defer only BLOCKED; a hard violation in either complete stream survives
+        // missing evidence in the other stream.
+        await optionalActivityObservation(
+          'capacity actual activity budget',
+          async () => {
+            assertSingleEpochActivityBudget(actualActivity, independentOnline, run.endReason!);
+          },
+          missing,
+        );
+        await optionalActivityObservation(
+          'capacity actual stop decision',
+          async () => {
+            const decision = assertSingleEpochLifecycleBudget(actualActivity, actualLifecycle);
+            await qa.evidence('capacity-lifecycle-budget', decision);
+          },
+          missing,
+        );
+        if (missing.length) throw new BlockedError(missing.join('; '));
+      },
+      {
+        clock: true,
+        beforeAdmissionHold: async (kick) => {
+          const verified = await optionalActivityObservation(
+            'verify capacity activity observer',
+            async () => {
+              runtime = runtimeObservationFor(qa);
+              await runtime.verify(['activity-witness']);
+              return runtime;
+            },
+            missing,
+          );
+          if (verified)
+            activity = await optionalActivityObservation(
+              'observe original capacity run activity',
+              () =>
+                verified.arm('observe-activity', {
+                  kind: 'activity',
+                  groupId: kick.group.id,
+                  runId: kick.runId,
+                  toolUseId: 'all-run-steps',
+                }),
+              missing,
+            );
+          if (verified)
+            lifecycle = await optionalActivityObservation(
+              'observe original capacity run lifecycle',
+              async () => {
+                await verified.verify(['agent-lifecycle-witness']);
+                return verified.arm('observe-agent-lifecycle', {
+                  kind: 'tool-wait',
+                  groupId: kick.group.id,
+                  runId: kick.runId,
+                  toolUseId: 'all-run-steps',
+                });
+              },
+              missing,
+            );
+        },
+      },
+    );
+  } catch (error) {
+    primaryFailure = error;
+    throw error;
+  } finally {
+    try {
+      await runtime?.close();
+    } catch (cleanup) {
+      try {
+        await qa.evidence('capacity-runtime-cleanup-failure', {
+          error: String(cleanup),
+          primaryFailure: String(primaryFailure),
+        });
+      } catch {
+        /* Preserve the first failure. */
+      }
+      if (!primaryFailure) throw cleanup;
+    }
+  }
 });
 
 test('[CAP-004] policy is rechecked after confirmed zero-effect admission deferral', async ({

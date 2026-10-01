@@ -361,7 +361,26 @@ export function assertToolWaitCompletion(window: ReturnType<typeof toolWaitWindo
   assert.deepEqual(window.history[0]!.result, window.result, '保存history的结果与交还值不同');
 }
 
+/** RuntimeLease has already validated real run/process/clock identities. This
+ * order violation needs neither elapsed-time truth nor a later successful COMMIT. */
+export function assertNoDispatchAfterStop(events: readonly RuntimeEvent[]): void {
+  for (const decision of events.filter((event) => event.kind === 'agent-termination-decided'))
+    assert.ok(
+      !events.some(
+        (event) =>
+          event.kind === 'agent-turn-dispatched' &&
+          event.runId === decision.runId &&
+          event.groupId === decision.groupId &&
+          event.applicationPid === decision.applicationPid &&
+          event.clockDomain === decision.clockDomain &&
+          event.seq > decision.seq,
+      ),
+      '实际终止决定之后不得派发新turn',
+    );
+}
+
 export function assertAgentLifecycle(events: readonly RuntimeEvent[]) {
+  assertNoDispatchAfterStop(events);
   const created = one(events, 'agent-run-created');
   const start = observationInterval(created.creationWindowMs);
   const decisions = events.filter((e) => e.kind === 'agent-termination-decided');
@@ -387,7 +406,10 @@ export function assertAgentLifecycle(events: readonly RuntimeEvent[]) {
   assert.equal(terminal.status, 'failed');
   assert.equal(terminal.reason, 'wall_clock');
   const elapsed = span(start, observationInterval(decision.decisionWindowMs));
-  assert.ok(elapsed[1] >= 60_000, '尚未耗尽60秒却已实际决定wall_clock');
+  // The paired COMMIT proves durability but is not the stop-decision timestamp.
+  // A5.2 imposes only the maximum; it does not require running until 60000ms.
+  if (elapsed[1] > 60_000)
+    throw new BlockedError('实际停止决定区间跨60000ms，不能用公开终态或提交时间补证');
   return {
     elapsed,
     created,

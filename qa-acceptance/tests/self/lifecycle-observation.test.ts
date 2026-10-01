@@ -311,7 +311,7 @@ test('60005ms decision lower bound fails even if later commit/history is absent'
 });
 
 test('agent lifecycle requires actual paired commit, creation bracket and retained history', () => {
-  assert.doesNotThrow(() => assertAgentLifecycle(valid(agentFacts([60000, 60001]))));
+  assert.doesNotThrow(() => assertAgentLifecycle(valid(agentFacts([59990, 60000]))));
   const wrong = agentFacts([60000, 60001]);
   wrong.at(-1)!.attemptId = 'other-terminal';
   assert.throws(() => assertAgentLifecycle(valid(wrong)), BlockedError);
@@ -321,6 +321,27 @@ test('agent lifecycle requires actual paired commit, creation bracket and retain
   const badWindow = agentFacts([60000, 60001]);
   badWindow[1]!.creationInsertWindowMs = [5, 20];
   assert.throws(() => valid(badWindow), BlockedError);
+});
+
+test('decision maximum permits early stop; COMMIT delay is separate and crossing stays BLOCKED', () => {
+  const early = agentFacts([59_000, 59_010]);
+  early.at(-1)!.monotonicMs = [90_000, 90_000];
+  assert.deepEqual(assertAgentLifecycle(valid(early)).elapsed, [58_990, 59_010]);
+  assert.throws(() => assertAgentLifecycle(valid(agentFacts([59_999, 60_001]))), BlockedError);
+  const dispatchedAfterStop = agentFacts([59_000, 59_010]);
+  dispatchedAfterStop.splice(
+    -1,
+    0,
+    event('agent-turn-dispatched', 59_011, {
+      attemptId: 'illegal-after-stop',
+      ordinal: 2,
+      stepId: 'run:2',
+    }),
+  );
+  const ordered = dispatchedAfterStop.map((e, i) =>
+    i ? { ...e, seq: i + 1, sourceSeq: i * 2 } : e,
+  );
+  assert.throws(() => assertAgentLifecycle(valid(ordered)), /终止决定之后不得/);
 });
 
 function recovery() {

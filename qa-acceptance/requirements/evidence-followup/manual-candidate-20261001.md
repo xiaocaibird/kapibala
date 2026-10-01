@@ -1,9 +1,22 @@
 # 真人样例环境的候选核对
 
-2026-10-01：真人辅助准备固定当前 main `fb1589df08f00c10e9e62801007b1698d4d0155a`，新独占 SUT 在 `/Users/zcm/.codex/worktrees/qa-manual-session/kapibala`。
+2026-10-01 原准备记录：当时真人辅助准备固定 main `fb1589df08f00c10e9e62801007b1698d4d0155a`，独占 SUT 位于 `/Users/zcm/.codex/worktrees/qa-manual-session/kapibala`。该体验环境已收尾，路径仅作历史来源，不是当前可复用环境。
 
 从已评审的 `a6b14e73ec738b979b05510fdfac8c6fcbb09df7` 至此候选，非 QA 差异只有 docs/README、CAP003 边界、时间边界和恢复边界工程复核及其证据索引；产品源码、迁移、依赖锁、启动清单没有变化。已核对工程文档仍保留 CAP003 严格预算失败、首次接收记录保存前的排期缺陷和外部副作用恢复限制；未将工程处理方向当新业务豁免。新样例不重复宣称这些边界通过。
 
-本轮首先通过真实公开 API 和独立 Agent/Gateway 桩准备正常、审计三次无结论 blocked、三次协议错误 failed、当前步骤后取消 cancelled、查询服务暂不可用的消息 unknown；不修改数据库或 DOM 造状态，不影响用户 5173 演示。网页使用该候选正常生产构建和 preview，端口/数据库随机独占。
+当时通过真实公开 API 和独立 Agent/Gateway 桩准备正常、审计三次无结论 blocked、三次协议错误 failed、当前步骤后取消 cancelled、查询服务暂不可用的消息 unknown；不修改数据库或 DOM 造状态，不影响用户 5173 演示。网页使用该候选正常生产构建和 preview，端口/数据库随机独占。样例准备不等于用户逐项实际体验。
 
-`manual-environment.ts` 只创建原始采集环境，输出 kind=manual-environment-preparation，三项仍 NOT_RUN、formalRunId=null；不得作为已成立的人工 PASS。正式人工入口另建真实开始时间和 ready 绑定；此前体验不倒填正式记录。用户已获解释的 UX 只留体验反馈，原独立理解条件不满足时仍阻塞。七项工程补证的新候选另行冻结，不以此样例环境关闭。
+`manual-environment.ts` 只创建原始采集环境，输出 kind=manual-environment-preparation，三项初始 NOT_RUN、formalRunId=null；不得作为已成立的人工 PASS。正式人工入口另建真实开始时间和 ready 绑定；此前体验不倒填正式记录。七项工程补证不以此样例环境关闭，其后续接收与运行另存独立记录。
+
+## 用户收尾决定与后续安排
+
+基于 main `92ddc1db983e8454ee363a4b75998df8998b904a` 的 [H18](../../../docs/human-review-record.md) 与[原话转达](../../reports/followup/20261001-seven-blockers/manual-experience-close-relay.json)，用户实际查看审计阻塞、已完成、失败、已取消四态并反馈可理解，后来决定剩余文案交工程复核后结束、无需继续准备样例。该文案体验阶段记 **closed-by-user**，四态有限接受；不再让用户重复四态，也不另造 unknown 样例延续本次体验。unknown 当时未实际体验，不能补写已看过或据此关闭功能恢复、严格时限及协议缺口。
+
+MAN-UX-001 的历史正式结果保持。已讲解后的有限认可、缺少精确操作时刻/QA截图以及尚未充分证明的角色和操作说明，不能形成独立首次理解的完整 PASS。以后只有需要签发本项完整正式结论时，才另建合适证据、合格操作者及真实新会话；不据此重开已经结束的用户文案体验。具体依据见[收尾契约第 2 节](static-closeout-contract-20261001.md#2-人工体验决定阶段收尾与正式证据分别记录)。
+
+后续两类工作分别登记：
+
+- **工程文案复核材料：**实际固定版本、复核清单、负责人和结果记录。H18 证明用户的委托与收尾选择，不能单凭该条写成工程已逐条完成；缺记录时等待工程材料，不重新索取用户四态体验。
+- **H16/H17 修复候选体验：**MAN-IME-001 的真实系统输入法和 MAN-FOCUS-001 的跨窗口标签红点仍须实际复验。提供固定修复候选、独占 URL、实际 OS/浏览器/输入法及资源归属；辅助人负责真实请求和原生标签栏取证，用户做输入及窗口动作。合成 composition、DOM 与开发 Chrome 截图不能替代该复验。步骤沿用[真人指引](../../sharing/manual-execution-20261001.md)，不以重建四态/unknown 为前置；缺实际动作时保留原结果。
+
+本次仅修正后续安排与记录边界，没有产品执行，没有改变用例预期、正式 PASS 判据或旧报告。

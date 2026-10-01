@@ -5053,7 +5053,7 @@
 
 <a id="AGENT-025"></a>
 
-## AGENT-025 · run reaches sixty-second active wall-clock budget including slow turns
+## AGENT-025 · run stays within sixty-second active wall-clock budget including slow turns
 
 - 需求：R-A5-06
 - 优先级：P0；方法：automated
@@ -5072,13 +5072,14 @@
 
 **预期结果**
 
-1. 从创建累计60秒后failed/wall_clock，未到12步预算
+1. 合法慢read推进后以failed/wall_clock结束且未超过原run创建起60秒活动上限；未到12步，不要求必须跑满60秒；终止后不再派发
 
 **时序要求**
 
 1. 记录run创建与最后running/首次terminal的独立单调时钟区间；触发前verify观测能力，取得真实runId后arm；只有工程从模块启动保留真实创建至终止且完整单epoch的activity-witness可判活动预算，不把订阅起点当创建
-2. 完整活动下界>60000为FAIL，上界<=60000证明最大预算；wall_clock而活动或独立在线上界<60000为提前耗尽FAIL；活动区间跨60000或缺完整见证为BLOCKED，不引入容差、不要求精确单点；预算后发起新turn仍为FAIL
+2. 完整活动/实际停止决定下界>60000为FAIL，上界<=60000证明最大预算；活动或决定区间跨60000、缺完整见证为BLOCKED；wall_clock但早于60秒本身不自动FAIL，不引入最低时长、容差或精确单点；预算后或真实终止决定后新turn仍为FAIL
 3. 观测缺失仍检查公开终态、steps、active引用与网关/Agent副作用；65秒为诊断观察预算，无独立违约的未终态不能凭此判产品超时
+4. 真实创建、连续同epoch活动、停止决定、同attempt终态COMMIT和公开终态分开取证；公开轮询下界及COMMIT延迟不冒充活动决定时间
 
 **故障注入**
 
@@ -5225,6 +5226,7 @@
 
 1. 5秒工具上限；网关恢复2秒内确认
 2. 使用业务时点的可观测上下界存证；区间越界为FAIL，跨验收门槛而不能确定为BLOCKED，不增加隐式容差
+3. 仅持续未决SEND_TIMEOUT支路保留5秒后判据；核实真实504接收、查询故障与事件控制且全等待段无明确结果，不能从故障开启/504抵达/下一turn重置或替代计时
 
 **故障注入**
 
@@ -5404,6 +5406,7 @@
 1. 尚未对产品执行；执行前必须取得用户显式授权并冻结SUT/QA版本与配置
 2. 每用例独立真实PostgreSQL数据库、进程、网关/Agent桩，默认不重试
 3. 通过公开admin登录/连接/建群准备数据；测试所需种子不足记BLOCKED，不作为产品缺陷
+4. 本例使用不同read参数且无其他合法结束原因的特定推进夹具；恰12步不泛化为所有run的最低步数要求
 
 **执行步骤**
 

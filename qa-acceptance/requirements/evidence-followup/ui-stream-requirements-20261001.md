@@ -39,6 +39,8 @@ QA 适配 `sequenceResourceRefresh` 的真实定位/操作，补充以下外部�
 
 ## UI-032：确认提醒不得恢复过期 cursor
 
+**2026-10-01 后续判据更正：** 下方保存原补证阶段的来源与设计。原23条数据虽形成两页，但第二页没有剩余cursor；要求只显示旧内容且仍stale时独立确认也不是批准规则保证的前提。本轮后续自动化改为至少`2P+1`条、两整页及非空剩余cursor，先验证失效/503失败刷新保护，再以真实成功整体刷新和新结果/范围摘要建立合法确认资格；确认本身不得改变新分页资格或恢复旧链，随后真实续页来源必须是新响应。当前步骤与阶段边界以[收尾契约U1–U6](static-closeout-contract-20261001.md#下一候选公开流程)为准；原stale且新目标已呈现的联合构造仅作可选增强，不能再作为本项必需前提。旧结果与原始证据不改，修订未运行产品。
+
 ### 依据与旧事实
 
 - [用例](../../cases/generated/ui-extra.md#UI-032)、[现有自动化](../../tests/ui/console.spec.ts)对应 `ADD-ATT-05`、`ADD-DIR-08`。[目录方案](../../../docs/group-directory-profile-proposal.md)要求相关变化使多页整体过期、禁旧 cursor；[提醒实施说明](../../../docs/page-update-notification-implementation.md)和 [呈现规则](../../../docs/page-update-notification-proposal.md)要求真实成功呈现与相关操作，提醒确认不得改目录 stale、游标或缓存。

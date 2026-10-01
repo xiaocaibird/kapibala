@@ -267,7 +267,8 @@
     "preconditions": [
       "本阶段仅建设测试资产；未来用户明确授权并冻结 SUT/QA 版本后才可执行",
       "每用例专用 PostgreSQL、进程、网关与 Agent 桩；至少三个可连接的服务账号作为夹具前提",
-      "目标配置冻结 adapters.capacityControl.url/contractReference，工程控制器已按contracts/capacity-observation.md接入；先验证当前QA进程ownerToken归属，再建立真实容量占用和零远端拒绝证据；缺能力运行时BLOCKED"
+      "目标配置冻结 adapters.capacityControl.url/contractReference，工程控制器已按contracts/capacity-observation.md接入；先验证当前QA进程ownerToken归属，再建立真实容量占用和零远端拒绝证据；缺能力运行时BLOCKED",
+      "预算裁判另接既有runtimeObservation的activity-witness与agent-lifecycle-witness；同run/进程时钟域完整连续单epoch及真实停止决定/同attempt COMMIT必须齐全，旧capacity持久采样仅诊断"
     ],
     "timing": [
       "屏障仅控制故障顺序；辅助轮询/等待上限不是产品 SLA，未建立所需时序则 BLOCKED",
@@ -282,7 +283,8 @@
       "网关请求、实际效果、成员、事件及屏障完整账本",
       "控制器协议、归属校验、租约/期限、单调诊断事件及逐次请求；敏感ownerToken脱敏",
       "脚本可执行登记与工程控制器接入状态分别记录；没有接入不意味着产品验收通过",
-      "QA独立performance.now创建/公开终态区间与控制器活动时间交叉证据；不能用自报60000冒充精确实测"
+      "QA独立performance.now创建/公开终态区间与控制器活动时间交叉证据；不能用自报60000冒充精确实测",
+      "capacity-active-budget保留capacitySampleOnly、公开样本、完整activity/lifecycle及缺项；capacity-lifecycle-budget保存原创建至实际停止决定和同attempt COMMIT配对"
     ],
     "cleanup": [
       "finally先释放本例Agent/网关屏障，再DELETE本adapter创建的随机leaseId；创建响应丢失也按已知leaseId清理，失败保存证据，工程控制器TTL兜底释放",
@@ -308,15 +310,15 @@
       "controlProtocol": "qa-capacity-control/1"
     },
     "steps": [
-      "冻结权威活动计时起点；保持目标 kick 一直被容量拒绝而非 Agent 网络超时",
-      "记录每次拒绝、活动耗时、最后 running 与首次终态时间区间，持续到原活动预算耗尽",
+      "记录原run创建区间；真实run/audit门建立后订阅已从模块启动保留的活动/lifecycle历史，保持kick持续容量拒绝",
+      "分别记录真实连续活动、停止决定、终态COMMIT和公开终态；缺runtime仍完成公开状态与独立零效果检查后BLOCKED",
       "到期后释放容量并确认不会迟发 kick 或继续请求 turn"
     ],
     "expected": [
       "waiting 消耗原 run 的 60 秒活动预算，不随重试或 ready 恢复而归零；终态 failed/wall_clock",
       "预算耗尽前后均无远端 kick；没有审计/工具步骤膨胀",
-      "活动下界>60000明确FAIL；上界<60000而声称wall_clock明确FAIL；有效区间上界>60000且下界未超记BLOCKED，不加容差",
-      "允许[59999,60000]这类含阈值且上界不超限的完整见证，不自造必须精确[60000,60000]的仪器要求"
+      "完整活动或真实停止决定下界>60000明确FAIL；完整上界<=60000证明上限；跨界/缺完整段BLOCKED，不加容差；不因wall_clock活动上界<60000自动FAIL",
+      "公开终态/COMMIT延迟和capacity持久采样不能代替决定，不要求公开轮询与活动区间相交；同attempt终态持久化、原run/原因/活动引用及释放后无迟发须独立验证"
     ],
     "automation": "tests/system/capacity-control.spec.ts",
     "preparation": {
@@ -325,7 +327,8 @@
       "details": [
         "工程固定候选0af6443已交付真实容量控制；QA尚未实际接入或执行",
         "仍需专属控制器生命周期、实际归属、run/step拒绝关联与释放证据；CAP-003与CAP-009已有未修复开发复现，见requirements/engineering-candidate-intake-20261001.md",
-        "控制器自测与开发回归不能关闭QA依赖或产品结果"
+        "控制器自测与开发回归不能关闭QA依赖或产品结果",
+        "本次QA修订接入既有runtime活动与lifecycle双证据；旧capacity-only target仍缺决定证明，不因persistedActiveMs或run-terminal自报变为PASS；未运行产品"
       ]
     }
   },

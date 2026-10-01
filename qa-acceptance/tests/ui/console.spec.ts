@@ -13,6 +13,7 @@ import {
 } from './directory-observer.js';
 import { nativeBackgroundTab } from './native-focus.js';
 import { observePageContinuity, withContinuityEvidence } from './page-continuity.js';
+import { assertDirectoryRefreshBoundary } from './directory-refresh-boundary.js';
 import { requireAvailablePublicAction } from './public-action-premise.js';
 
 const pageErrors = new WeakMap<Page, string[]>();
@@ -1399,208 +1400,527 @@ test('[UI-031] 状态先改变后还原仍保留期间变化候选', async ({ qa
   }
 });
 
-test('[UI-032] 提醒确认不能恢复多页过期旧游标', async ({ qa, page }) => {
+test('[UI-032] 提醒确认不改变刷新后的分页资格或恢复旧分页链', async ({ qa, page }) => {
   await qa.api.login();
-  let changed: Group | undefined;
-  const createdIds: string[] = [];
-  for (let i = 0; i < 23; i++) {
+  const pageSize = 20;
+  type Row = { id: string; name: string; createdAt: string };
+  type DirectoryPage = { items: Row[]; nextCursor: string | null };
+  const seeded: Row[] = [];
+  for (let i = 0; i < 2 * pageSize + 1; i++) {
     const { group } = await qa.api.createGroup();
-    changed ??= group;
-    createdIds.push(group.id);
-    await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { name: `游标提醒-${i}` }));
+    const name = `游标提醒-${i}`;
+    await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { name }));
+    const detail = await qa.api.require(qa.api.get<Row>(`/api/groups/${group.id}`));
+    if (typeof detail.createdAt !== 'string' || !Number.isFinite(Date.parse(detail.createdAt)))
+      throw new BlockedError('公开群创建时间未取得，不能建立独立排序预期');
+    seeded.push({ id: group.id, name, createdAt: detail.createdAt });
   }
+  // Public timestamps may lose database microseconds. Do not invent a tie order
+  // from rounded values; this fixture deliberately requires distinct public ms.
+  if (new Set(seeded.map((row) => Date.parse(row.createdAt))).size !== seeded.length)
+    throw new BlockedError('公开创建时间存在毫秒重合；本例不能凭显示精度推断数据库微秒顺序');
+  const ordered = [...seeded].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+  const firstIds = ordered.slice(0, pageSize).map((row) => row.id);
+  const secondIds = ordered.slice(pageSize, 2 * pageSize).map((row) => row.id);
+  const loadedIds = [...firstIds, ...secondIds];
   const observer = observeDirectory(page);
   const continuity = observePageContinuity(page);
-  const actionEvidence: Record<string, unknown> = {};
+  type Read = (typeof observer.ledger.reads)[number];
+  const evidence: Record<string, unknown> = {
+    seeded,
+    independentlyOrderedIds: ordered.map((r) => r.id),
+  };
+  type DirectoryRequest = {
+    at: number;
+    url: string;
+    phase: string;
+    responseAt?: number;
+    status?: number;
+  };
+  const requests: DirectoryRequest[] = [];
+  const requestIdentities = new Map<Request, DirectoryRequest>();
+  const faults: { at: number; url: string; requestId: string }[] = [];
+  let phase = 'initial-two-pages';
+  let failDirectory = false;
+  let background: Page | undefined;
   let primary: unknown;
-  try {
-    await login(page, qa);
-    await expect(element(page, qa, 'directoryItem')).toHaveCount(20);
-    await observer.settle();
-    const first = observer.ledger.reads.findLast(
-      (read) => !new URL(read.url).searchParams.has('cursor'),
-    )!;
-    expect(first.status).toBe(200);
-    expect(first.error).toBeUndefined();
-    const firstBody = first.body as { items: { id: string }[]; nextCursor: string | null };
-    expect(firstBody.items).toHaveLength(20);
-    expect(typeof firstBody.nextCursor).toBe('string');
-    expect(firstBody.nextCursor).not.toBe('');
-    const beforeMore = observer.ledger.reads.length;
-    const version = observer.ledger.boundaryVersion;
-    await element(page, qa, 'loadMoreGroups').click();
-    try {
-      await expect(element(page, qa, 'directoryItem')).toHaveCount(23);
-    } finally {
-      observer.unchanged(version);
+  const onRequest = (request: Request) => {
+    if (!directoryRequest(request)) return;
+    const entry = { at: performance.now(), url: request.url(), phase };
+    requests.push(entry);
+    requestIdentities.set(request, entry);
+  };
+  const onResponse = (response: import('@playwright/test').Response) => {
+    const entry = requestIdentities.get(response.request());
+    if (entry) {
+      entry.responseAt = performance.now();
+      entry.status = response.status();
     }
+  };
+  const injectFailure = async (route: import('@playwright/test').Route) => {
+    if (!failDirectory || !directoryRequest(route.request())) return route.continue();
+    const requestId = `qa-ui032-refresh-${faults.length + 1}`;
+    faults.push({ at: performance.now(), url: route.request().url(), requestId });
+    await route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        error: {
+          code: 'SERVICE_UNAVAILABLE',
+          message: 'QA directory refresh unavailable',
+          requestId,
+        },
+      }),
+    });
+  };
+  const query = (url: string) => {
+    const params = new URL(url).searchParams;
+    return {
+      q: (params.get('q') ?? '').trim(),
+      order: params.get('order') ?? 'desc',
+      status: params.get('status') ?? '',
+      agentEnabled: params.get('agentEnabled') ?? '',
+      pageSize: Number(params.get('pageSize') ?? 20),
+    };
+  };
+  const conditions = async () =>
+    Object.fromEntries(
+      await Promise.all(
+        ['search', 'order', 'statusFilter', 'agentFilter'].map(async (key) => [
+          key,
+          await element(page, qa, key).inputValue(),
+        ]),
+      ),
+    );
+  const renderedIds = async () =>
+    directoryGroupIds(
+      await Promise.all(
+        (await element(page, qa, 'directoryItem').all()).map((item) =>
+          child(item, qa, 'directoryLink').getAttribute('href'),
+        ),
+      ),
+      page.url(),
+    );
+  const cursor = (read: { url: string }) => new URL(read.url).searchParams.get('cursor');
+  const body = (read: Read): DirectoryPage => {
+    expect(read.status, '实际目录响应必须成功').toBe(200);
+    if (read.error || read.body === undefined)
+      throw new BlockedError(`目录真实响应正文未取得：${read.error ?? 'missing body'}`);
+    const value = read.body as DirectoryPage;
+    expect(Array.isArray(value.items)).toBe(true);
+    expect(
+      value.nextCursor === null ||
+        (typeof value.nextCursor === 'string' && value.nextCursor.length > 0),
+    ).toBe(true);
+    return value;
+  };
+  const publicAction = async (key: string, label: string) => {
+    const action = element(page, qa, key);
+    await requireAvailablePublicAction(action, label, (sample) => {
+      evidence[`${phase}:${key}`] = sample;
+    });
+    return action;
+  };
+  page.on('request', onRequest);
+  page.on('response', onResponse);
+  try {
+    await page.route('**/api/group-directory**', injectFailure);
+    await login(page, qa);
+    await expect(element(page, qa, 'directoryItem')).toHaveCount(pageSize);
+    await observer.settle();
+    const first = observer.ledger.reads.findLast((read) => cursor(read) === null)!;
+    const firstPage = body(first);
+    expect(firstPage.items.map((row) => row.id)).toEqual(firstIds);
+    expect(await renderedIds()).toEqual(firstIds);
+    const originalQuery = query(first.url);
+    expect(originalQuery).toEqual({ q: '', order: 'desc', status: '', agentEnabled: '', pageSize });
+    if (!firstPage.nextCursor) throw new BlockedError('41条匹配数据未形成可继续加载的首页前提');
+    const beforeMore = observer.ledger.reads.length;
+    const initialVersion = observer.ledger.boundaryVersion;
+    await (await publicAction('loadMoreGroups', '需要真实首页加载更多入口')).click();
+    await expect(element(page, qa, 'directoryItem')).toHaveCount(2 * pageSize);
+    observer.unchanged(initialVersion);
+    await directoryPremise(
+      () =>
+        observer.ledger.reads
+          .slice(beforeMore)
+          .some((read) => cursor(read) === firstPage.nextCursor && read.endedAt !== undefined),
+      '首页公开cursor的第二页完整响应',
+    );
     const second = observer.ledger.reads
       .slice(beforeMore)
-      .find((read) => new URL(read.url).searchParams.get('cursor') === firstBody.nextCursor);
-    expect(second, '多页前提必须使用当前首页公开cursor').toBeDefined();
-    await directoryPremise(() => second!.endedAt !== undefined, '提醒用例第二页真实响应正文已完成');
-    expect(second!.status).toBe(200);
-    if (second!.error || second!.body === undefined)
-      throw new BlockedError(
-        `第二页正文未取得，不能建立多页游标前提：${second!.error ?? 'missing body'}`,
-      );
-    const secondBody = second!.body as typeof firstBody;
-    expect(secondBody.items).toHaveLength(3);
-    expect(secondBody.nextCursor).toBeNull();
-    const expectedIds = [...firstBody.items, ...secondBody.items].map((item) => item.id);
-    expect(new Set(expectedIds).size).toBe(23);
-    expect([...expectedIds].sort()).toEqual([...createdIds].sort());
-    const cards = await element(page, qa, 'directoryItem').all();
-    const hrefs = await Promise.all(
-      cards.map((item) => child(item, qa, 'directoryLink').getAttribute('href')),
-    );
-    const actualIds = directoryGroupIds(hrefs, page.url());
-    await qa.evidence('ui-directory-stale-initial-identities', { expectedIds, actualIds, hrefs });
-    expect(actualIds).toEqual(expectedIds);
-    observer.unchanged(version);
+      .find((read) => cursor(read) === firstPage.nextCursor && read.endedAt !== undefined)!;
+    const secondPage = body(second);
+    expect(query(second.url)).toEqual(originalQuery);
+    expect(secondPage.items.map((row) => row.id)).toEqual(secondIds);
+    if (!secondPage.nextCursor)
+      throw new BlockedError('已加载40条，但第二页无剩余游标；不能证明原可续页资格被禁止');
+    expect(await renderedIds()).toEqual(loadedIds);
+    expect(new Set(loadedIds).size).toBe(2 * pageSize);
+    await expect(
+      await publicAction('loadMoreGroups', '变更前第二页必须仍有真实可用续页入口'),
+    ).toBeEnabled();
+    await observer.settle();
     const originalDocument = await continuity.capture();
-    const conditions = async () =>
-      Object.fromEntries(
-        await Promise.all(
-          ['search', 'order', 'statusFilter', 'agentFilter'].map(async (key) => [
-            key,
-            await element(page, qa, key).inputValue(),
-          ]),
-        ),
-      );
-    const renderedIds = async () =>
-      directoryGroupIds(
-        await Promise.all(
-          (await element(page, qa, 'directoryItem').all()).map((item) =>
-            child(item, qa, 'directoryLink').getAttribute('href'),
-          ),
-        ),
-        page.url(),
-      );
     const originalConditions = await conditions();
-    actionEvidence.original = {
-      page: originalDocument.point,
-      conditions: originalConditions,
-      renderedIds: actualIds,
-      firstPageCursor: firstBody.nextCursor,
-      secondPageCursor: secondBody.nextCursor,
-    };
     const quietTitle = await page.title();
-    const background = await backgroundTab(page);
-    const cursorRequests: string[] = [];
-    const onCursor = (request: Request) => {
-      if (directoryRequest(request) && new URL(request.url()).searchParams.has('cursor'))
-        cursorRequests.push(request.url());
+    const changed = secondPage.items[0]!;
+    const oldName = seeded.find((row) => row.id === changed.id)!.name;
+    const newName = `${oldName}-已变化`;
+    evidence.original = {
+      first,
+      second,
+      conditions: originalConditions,
+      query: originalQuery,
+      loadedIds,
+      remainingCursor: secondPage.nextCursor,
+      changedId: changed.id,
+      originalDocument: originalDocument.point,
     };
-    page.on('request', onCursor);
-    let windowPrimary: unknown;
-    try {
-      await qa.api.require(qa.api.patch(`/api/groups/${changed!.id}`, { name: '游标提醒已变化' }));
-      await expect(element(page, qa, 'directoryStale')).toBeVisible();
-      await expect(page).not.toHaveTitle(quietTitle);
-      await page.bringToFront();
-      const confirm = element(page, qa, 'attentionConfirm');
-      await requireAvailablePublicAction(
-        confirm,
-        '需要唯一可见且可用、独立于整体刷新且只确认已呈现相关变化的公开操作；不可用入口不能伪造或强制点击',
-        (sample) => {
-          actionEvidence.confirmationPremise = sample;
-        },
-      );
-      await continuity.unchanged(originalDocument);
-      await expect(page).not.toHaveTitle(quietTitle);
-      expect(await conditions()).toEqual(originalConditions);
-      expect(await renderedIds()).toEqual(expectedIds);
-      const beforeConfirmReads = observer.ledger.reads.length;
-      actionEvidence.beforeConfirm = {
-        at: performance.now(),
-        conditions: await conditions(),
-        renderedIds: await renderedIds(),
-        stale: await element(page, qa, 'directoryStale').isVisible(),
-        readIndex: beforeConfirmReads,
-        cursorRequests: [...cursorRequests],
-      };
+    background = await backgroundTab(page);
+    phase = 'stale-old-chain-forbidden';
+    const forbiddenFrom = requests.length;
+    // This client session is independent of the browser session. The target is
+    // chosen from the actual second page, not from creation-order assumptions.
+    await qa.api.require(qa.api.patch(`/api/groups/${changed.id}`, { name: newName }));
+    await expect(element(page, qa, 'directoryStale')).toBeVisible();
+    await expect(page).not.toHaveTitle(quietTitle);
+    await observer.settle();
+    await page.bringToFront();
+    let stableVersion = observer.ledger.boundaryVersion;
+    let activeDocument = originalDocument;
+    let refreshWindow: { startedAt: number; requestIndex: number; frameIndex: number } | undefined;
+    const refreshChecks: unknown[] = [];
+    const checkRefreshBoundary = async (requireReady: boolean) => {
+      const window = refreshWindow!;
+      let sameDocument = false;
       try {
-        await withContinuityEvidence(
-          () => continuity.unchanged(originalDocument),
-          async (check) => {
-            await confirm.click();
-            await check('confirmation-title', () => expect(page).toHaveTitle(quietTitle));
-            await remains(async () =>
-              check('stale-cursor-and-rendered-identities', async () => {
-                await expect(element(page, qa, 'directoryStale')).toBeVisible();
-                const currentConditions = await conditions();
-                const currentIds = await renderedIds();
-                actionEvidence.lastConfirmationSample = {
-                  at: performance.now(),
-                  conditions: currentConditions,
-                  renderedIds: currentIds,
-                  stale: true,
-                  originalPublicCursor: firstBody.nextCursor,
-                  cursorRequests: [...cursorRequests],
-                };
-                expect(currentConditions).toEqual(originalConditions);
-                expect(currentIds).toEqual(expectedIds);
-                const more = element(page, qa, 'loadMoreGroups');
-                expect((await more.count()) === 0 || (await more.isDisabled())).toBe(true);
-                expect(cursorRequests).toEqual([]);
-              }),
+        sameDocument = await page.evaluate((old) => old === document, originalDocument.document);
+      } catch {
+        /* evidence below blocks */
+      }
+      const baseline = continuity.ledger.scopeReplies[originalDocument.point.scopeReady - 1];
+      if (!baseline || baseline.startSeq === undefined)
+        throw new BlockedError('原目录scope缺少真实连接/水位身份');
+      const activeSockets = observer.ledger.sockets.filter((socket) => !socket.closed);
+      if (activeSockets.length !== 1) throw new BlockedError('整体刷新未保留唯一真实WS连接');
+      const sample = {
+        before: originalDocument.point,
+        after: continuity.ledger.snapshot(page.url()),
+        sameDocument,
+        baselineSocketId: baseline.socketId,
+        baselineStartSeq: baseline.startSeq,
+        refreshStartedAt: window.startedAt,
+        reads: requests.slice(window.requestIndex).map((read) => ({ ...read })),
+        markers: continuity.ledger.scopeMarkers.slice(originalDocument.point.scopeMarkers),
+        replies: continuity.ledger.scopeReplies.slice(originalDocument.point.scopeReady),
+        previousMarkerIds: continuity.ledger.scopeMarkers
+          .slice(0, originalDocument.point.scopeMarkers)
+          .flatMap((marker) => (marker.requestId ? [marker.requestId] : [])),
+        receivedSequences: [...activeSockets[0]!.sequences],
+        frames: observer.ledger.frames.slice(window.frameIndex),
+        requireReady,
+      };
+      refreshChecks.push({ at: performance.now(), ...sample });
+      observer.assertProtocol();
+      assertDirectoryRefreshBoundary(sample);
+    };
+    evidence.refreshBoundaryChecks = refreshChecks;
+    const unchanged = async () => {
+      if (refreshWindow) await checkRefreshBoundary(false);
+      else {
+        await continuity.unchanged(activeDocument);
+        observer.unchanged(stableVersion);
+      }
+    };
+    const oldState = async () => {
+      await expect(element(page, qa, 'directoryStale')).toBeVisible();
+      expect(await renderedIds()).toEqual(loadedIds);
+      expect(await conditions()).toEqual(originalConditions);
+      await expect(page).not.toHaveTitle(quietTitle);
+      const more = element(page, qa, 'loadMoreGroups');
+      expect(
+        (await more.count()) === 0 || (await more.isDisabled()),
+        'stale时旧续页必须不可操作',
+      ).toBe(true);
+      expect(
+        requests.slice(forbiddenFrom).filter((read) => cursor(read) !== null),
+        'stale/失败刷新期间不得续接任何旧分页链',
+      ).toEqual([]);
+      await expect(card(page, qa, oldName)).toHaveCount(1);
+      await expect(card(page, qa, newName)).toHaveCount(0);
+    };
+    await withContinuityEvidence(
+      unchanged,
+      async (check) => {
+        await remains(() => check('focus-does-not-confirm-unpresented-version', oldState));
+        // The public cards are navigation anchors. Use an approved real wheel
+        // interaction over the old card instead of cancelling a link's default action.
+        const oldCard = card(page, qa, oldName);
+        await oldCard.scrollIntoViewIfNeeded();
+        await oldCard.hover();
+        await page.mouse.wheel(0, 120);
+        await remains(() => check('old-card-wheel-does-not-confirm-new-version', oldState));
+        phase = 'failed-full-refresh';
+        failDirectory = true;
+        const failedReadIndex = observer.ledger.reads.length;
+        await (
+          await publicAction('refreshDirectory', '需要现有公开整体刷新入口，不能调用内部控制器')
+        ).click();
+        await directoryPremise(
+          () =>
+            observer.ledger.reads
+              .slice(failedReadIndex)
+              .some((read) => read.endedAt !== undefined && read.status === 503),
+          '实际点击后真实目录503响应',
+        );
+        await check('failed-refresh-keeps-old-list-attention-and-stale', async () => {
+          await expect(element(page, qa, 'directoryError')).toBeVisible();
+          await oldState();
+        });
+        await remains(() => check('failed-refresh-remains-unconfirmed', oldState), 2000);
+        evidence.failedRefresh = {
+          at: performance.now(),
+          readIndex: failedReadIndex,
+          reads: observer.ledger.reads.slice(failedReadIndex),
+          faults: [...faults],
+          renderedIds: await renderedIds(),
+          conditions: await conditions(),
+          title: await page.title(),
+        };
+        // Keep the fault active until the existing action is really available.
+        // No retry count or diagnostic wait becomes a new product SLA.
+        await directoryPremise(
+          () => observer.ledger.reads.every((read) => read.endedAt !== undefined),
+          '故障阶段已发出的真实读取都已结束',
+        );
+        await check('old-chain-disabled-immediately-before-recovery', oldState);
+        const refresh = await publicAction(
+          'attentionRefresh',
+          '失败读取结束且旧状态已核对后，需重新取得已有“刷新并查看更新”入口以呈现当前范围摘要',
+        );
+        phase = 'successful-fresh-first-page';
+        failDirectory = false;
+        const freshIndex = observer.ledger.reads.length;
+        const refreshClickedAt = performance.now();
+        refreshWindow = {
+          startedAt: refreshClickedAt,
+          requestIndex: requests.length,
+          frameIndex: observer.ledger.frames.length,
+        };
+        await refresh.click();
+        await check('successful-full-refresh-replaces-old-two-pages', async () => {
+          await expect(element(page, qa, 'directoryItem')).toHaveCount(pageSize);
+          await expect(element(page, qa, 'directoryStale')).not.toBeVisible();
+          await expect(element(page, qa, 'directoryError')).not.toBeVisible();
+          expect(await renderedIds()).toEqual(firstIds);
+          expect(await conditions()).toEqual(originalConditions);
+        });
+        await directoryPremise(
+          () =>
+            observer.ledger.reads
+              .slice(freshIndex)
+              .some(
+                (read) =>
+                  cursor(read) === null && read.status === 200 && read.endedAt !== undefined,
+              ),
+          '恢复操作之后真实成功的新首页正文',
+        );
+        const freshCandidates = observer.ledger.reads
+          .slice(freshIndex)
+          .filter(
+            (read) => cursor(read) === null && read.status === 200 && read.endedAt !== undefined,
+          );
+        const fresh = freshCandidates.at(-1)!;
+        const freshPage = body(fresh);
+        await check('fresh-response-has-independent-first-page-and-cursor', async () => {
+          for (const read of freshCandidates) {
+            expect(query(read.url)).toEqual(originalQuery);
+            expect(body(read).items.map((row) => row.id)).toEqual(firstIds);
+          }
+          expect(firstIds).not.toContain(changed.id);
+          expect(typeof freshPage.nextCursor).toBe('string');
+          expect(freshPage.nextCursor).not.toBe('');
+        });
+        if (freshCandidates.some((read) => body(read).nextCursor !== freshPage.nextCursor))
+          throw new BlockedError(
+            '刷新与合法首屏探测返回不同cursor，公开证据不足以确定已应用响应来源',
+          );
+        // An old second-page target need not be injected into the new first-page
+        // DOM. Its existing current-result/range summary is the legitimate evidence.
+        const summary = element(page, qa, 'attentionScopeSummary');
+        const confirm = await publicAction(
+          'attentionScopeConfirm',
+          '刷新成功且范围摘要真实呈现后，需已有公开范围确认入口；不可用则BLOCKED',
+        );
+        if (!(await summary.isVisible()))
+          throw new BlockedError('尚未真实呈现当前查询范围摘要，不能确认新版本');
+        await check('fresh-result-summary-presents-current-range', async () => {
+          await expect(summary).toContainText(`当前显示 ${pageSize} 个群`);
+          await expect(summary).toContainText('后续结果可继续加载');
+          await expect(page).not.toHaveTitle(quietTitle);
+        });
+        // Capture a later baseline only after the old stale/failure assertions
+        // are preserved and a real successful refresh has a complete matched ack.
+        await directoryPremise(
+          () =>
+            continuity.ledger.scopeMarkers.length - originalDocument.point.scopeMarkers ===
+            continuity.ledger.scopeReplies.length - originalDocument.point.scopeReady,
+          '真实成功刷新后的scope marker均有实际ack',
+        );
+        await checkRefreshBoundary(true);
+        const refreshedDocument = await continuity.capture();
+        // capture awaits the browser: recheck the original document and full
+        // prior ledger before accepting anything observed during that await.
+        await checkRefreshBoundary(true);
+        activeDocument = refreshedDocument;
+        stableVersion = observer.ledger.boundaryVersion;
+        evidence.confirmationBaseline = {
+          original: originalDocument.point,
+          refreshed: activeDocument.point,
+          afterResponseChecks: refreshChecks.length,
+        };
+        refreshWindow = undefined;
+        const more = await publicAction(
+          'loadMoreGroups',
+          '新首页响应存在nextCursor时，需真实加载更多入口',
+        );
+        const beforeConfirm = {
+          at: performance.now(),
+          ids: await renderedIds(),
+          conditions: await conditions(),
+          moreEnabled: await more.isEnabled(),
+          stale: await element(page, qa, 'directoryStale').isVisible(),
+          readIndex: observer.ledger.reads.length,
+          requestIndex: requests.length,
+        };
+        evidence.newGeneration = {
+          refreshClickedAt,
+          freshIndex,
+          fresh,
+          freshCandidates,
+          firstPageIds: firstIds,
+          nextCursorSource: {
+            readIndex: observer.ledger.reads.indexOf(fresh),
+            nextCursor: freshPage.nextCursor,
+          },
+          summary: await summary.innerText(),
+          beforeConfirm,
+        };
+        phase = 'confirm-presented-fresh-range';
+        await confirm.click();
+        await check('confirmation-clears-only-presented-batch', () =>
+          expect(page).toHaveTitle(quietTitle),
+        );
+        await remains(() =>
+          check('confirmation-does-not-change-fresh-pagination', async () => {
+            expect(await renderedIds()).toEqual(beforeConfirm.ids);
+            expect(await conditions()).toEqual(beforeConfirm.conditions);
+            await expect(element(page, qa, 'directoryStale')).not.toBeVisible();
+            await expect(element(page, qa, 'loadMoreGroups')).toBeEnabled();
+            expect(
+              requests.slice(beforeConfirm.requestIndex).filter((read) => cursor(read) !== null),
+            ).toEqual([]);
+          }),
+        );
+        evidence.afterConfirm = {
+          at: performance.now(),
+          ids: await renderedIds(),
+          conditions: await conditions(),
+          moreEnabled: await element(page, qa, 'loadMoreGroups').isEnabled(),
+          title: await page.title(),
+          reads: observer.ledger.reads.slice(beforeConfirm.readIndex),
+        };
+        phase = 'load-more-from-fresh-response';
+        const newMoreIndex = observer.ledger.reads.length;
+        await check(
+          'no-unsolicited-continuation-across-stale-refresh-and-confirmation',
+          async () => {
+            expect(requests.slice(forbiddenFrom).filter((read) => cursor(read) !== null)).toEqual(
+              [],
             );
           },
-          (outcome) => {
-            actionEvidence.continuityOutcome = outcome;
-          },
         );
-      } finally {
-        actionEvidence.afterConfirm = {
-          at: performance.now(),
-          url: page.url(),
-          directoryReads: observer.ledger.reads.slice(beforeConfirmReads),
-          cursorRequests: [...cursorRequests],
+        await element(page, qa, 'loadMoreGroups').click();
+        await check('new-pagination-chain-renders-independent-second-page', async () => {
+          await expect(element(page, qa, 'directoryItem')).toHaveCount(2 * pageSize);
+          expect(await renderedIds()).toEqual(loadedIds);
+          expect(await conditions()).toEqual(originalConditions);
+          await expect(card(page, qa, newName)).toHaveCount(1);
+        });
+        await directoryPremise(
+          () =>
+            observer.ledger.reads.slice(newMoreIndex).filter((read) => cursor(read) !== null)
+              .length > 0 &&
+            observer.ledger.reads
+              .slice(newMoreIndex)
+              .filter((read) => cursor(read) !== null)
+              .every((read) => read.endedAt !== undefined),
+          '确认后实际续页的完整响应',
+        );
+        const followups = observer.ledger.reads
+          .slice(newMoreIndex)
+          .filter((read) => cursor(read) !== null);
+        await check('actual-continuation-uses-new-response-source', async () => {
+          expect(followups.length).toBeGreaterThan(0);
+          for (const read of followups) {
+            expect(
+              cursor(read),
+              '续页来源必须是恢复成功的新首页响应；不要求新旧cursor字符串不同',
+            ).toBe(freshPage.nextCursor);
+            expect(query(read.url)).toEqual(originalQuery);
+            const response = body(read);
+            expect(response.items.map((row) => row.id)).toEqual(secondIds);
+            expect(response.items.find((row) => row.id === changed.id)?.name).toBe(newName);
+          }
+        });
+        evidence.newContinuation = {
+          freshResponseIndex: observer.ledger.reads.indexOf(fresh),
+          freshCursor: freshPage.nextCursor,
+          followups,
+          renderedIds: await renderedIds(),
           limitation:
-            '允许不替换旧多页的合法首屏探测；公开旧cursor与23项身份留证，不读取内部cursor/scope',
+            '按请求阶段与实际响应来源证明新分页资格；不要求游标字节变化或服务端撤销旧字符串。',
         };
-      }
-    } catch (error) {
-      windowPrimary = error;
-      throw error;
-    } finally {
-      page.off('request', onCursor);
-      const results = await Promise.allSettled([
-        background.close(),
-        qa.evidence('ui-directory-stale-cursor-requests', cursorRequests),
-      ]);
-      const errors = results.filter((result) => result.status === 'rejected');
-      if (errors.length) {
-        if (!windowPrimary)
-          throw new Error(
-            `UI-032窗口清理/取证失败：${errors.map((result) => String(result.reason)).join('; ')}`,
-          );
-        console.error('UI-032 secondary window cleanup/evidence errors', errors);
-      }
-    }
+      },
+      (outcome) => {
+        evidence.continuityOutcome = outcome;
+      },
+    );
   } catch (error) {
     primary = error;
     throw error;
   } finally {
-    observer.dispose();
+    failDirectory = false;
+    page.off('request', onRequest);
+    page.off('response', onResponse);
     const outcomes = await Promise.allSettled([
-      continuity.dispose(),
-      qa.evidence('ui-directory-stale-premises', observer.ledger),
-      qa.evidence('ui-directory-confirmation-continuity', {
-        ...actionEvidence,
+      page.unroute('**/api/group-directory**', injectFailure),
+      background?.close(),
+      qa.evidence('ui-directory-confirmation-flow', {
+        ...evidence,
+        phase,
+        requests,
+        faults,
+        directory: observer.ledger,
         continuity: continuity.ledger.events,
         continuityChecks: continuity.ledger.checks,
       }),
     ]);
-    observer.assertProtocol();
+    observer.dispose();
+    outcomes.push(...(await Promise.allSettled([continuity.dispose()])));
     const errors = outcomes.filter((result) => result.status === 'rejected');
+    try {
+      observer.assertProtocol();
+    } catch (error) {
+      errors.push({ status: 'rejected', reason: error });
+    }
     if (errors.length) {
       if (!primary)
         throw new Error(
-          `UI-032取证/清理失败：${errors.map((result) => String(result.reason)).join('; ')}`,
+          `UI-032取证/清理或协议检查失败：${errors.map((result) => String(result.reason)).join('; ')}`,
         );
-      console.error('UI-032 secondary evidence/cleanup errors', errors);
+      console.error('UI-032 secondary evidence/cleanup errors; primary retained', errors);
     }
   }
 });
