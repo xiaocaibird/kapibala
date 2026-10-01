@@ -30,7 +30,7 @@ async function fixture(t: TestContext, normal = false) {
       }),
     configureRemote: (remote) => {
       remote.addHook("onRequest", (req, reply, done) => {
-        if (req.url === "/events") {
+        if (req.url.split("?")[0] === "/events") {
           streams.add(reply.raw);
           reply.raw.once("close", () => streams.delete(reply.raw));
         }
@@ -38,11 +38,9 @@ async function fixture(t: TestContext, normal = false) {
       });
       remote.post("/groups/remote-g/send", (_req, reply) => {
         sends++;
-        return reply
-          .code(504)
-          .send({
-            error: { code: "NETWORK_TIMEOUT", message: "real remote 504" },
-          });
+        return reply.code(504).send({
+          error: { code: "NETWORK_TIMEOUT", message: "real remote 504" },
+        });
       });
       remote.get("/messages/:id", (_req, reply) =>
         reply
