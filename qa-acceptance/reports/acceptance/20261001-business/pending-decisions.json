@@ -1,6 +1,5 @@
 {
   "notBlockingOtherTestExecution": true,
-  "acceptedByUser": false,
   "items": [
     {
       "id": "DEC-01",
@@ -16,25 +15,36 @@
         "保持现标准并补足可证明的执行和终态时限能力",
         "正式变更为到期禁止新派发而允许随后提交终态，并重新定义时钟/暂停语义"
       ],
-      "qaRecommendation": "先保持FAIL/BLOCKED，评审可提供的硬边界；没有批准不能加容差或裁剪指标。"
+      "qaRecommendation": "先保持FAIL/BLOCKED，评审可提供的硬边界；没有批准不能加容差或裁剪指标。",
+      "engineeringDirectionStatus": "OUTSIDE_THIS_CONFIRMATION",
+      "note": "此次5项同步不覆盖无崩溃CAP-003；不套用D040硬崩溃计量边界，相关BLOCKED也未关闭。"
     },
     {
       "id": "DEC-02",
-      "type": "requirement-or-protocol-decision",
+      "type": "owner-confirmed-engineering-treatment-with-retained-nonconformity",
       "cases": [
         "INT-MSG-007"
       ],
       "currentRequirement": "按首次实际收到message_sent后的时间排后步且任意崩溃恢复",
       "observed": "持久化前崩溃后原点后移，公开后步scheduledAt偏晚2305ms",
-      "options": [
-        "协议/入口提供可恢复的持久接收原点",
-        "明确批准以持久接收或恢复确认作为排期锚点并重新验收"
+      "qaRecommendation": "工程按已确认D041继续处理和记录，本轮无需负责人重新选择；不把重放或网关sentAt当原接收时间，不把普通断线、数据库失败或一般重启划入豁免。原排期偏移FAIL与技术风险保留。",
+      "engineeringDirectionStatus": "CONFIRMED_BY_OWNER",
+      "reconfirmEngineeringDirectionRequired": false,
+      "technicalConformity": "FAIL_RETAINED_RELATIVE_TO_ORIGINAL_REQUIREMENT",
+      "acceptanceStandardChanged": false,
+      "acceptanceDeviationApprovedByThisSync": false,
+      "defectIds": [
+        "QA-DEF-003"
       ],
-      "qaRecommendation": "优先评审可恢复锚点能力；不得把重放时刻说成原物理接收时刻。"
+      "sourceDecision": "D041",
+      "confirmedTreatment": "常规流程按原需求，采用最小可靠接收记录保存事件和首次本地观察时间并恢复复用；记录保存前硬崩溃丢失原始时刻的窗口如实保留，由工程在已确认范围合理处理。",
+      "futureOptionsNotRequiredThisRound": [
+        "后续若评估更强持久接收或外部可恢复锚点，另行论证范围及验收标准，当前不要求实施。"
+      ]
     },
     {
       "id": "DEC-03",
-      "type": "requirement-or-protocol-decision",
+      "type": "owner-confirmed-engineering-treatment-with-retained-nonconformity",
       "cases": [
         "BLK-EXT-002",
         "BLK-EXT-003",
@@ -44,11 +54,23 @@
       ],
       "currentRequirement": "未知外部结果后仍正常恢复且不重复副作用",
       "observed": "公开recoveryNote明确保守暂停，原自动完成要求不满足",
-      "options": [
-        "增加外部幂等键、操作结果查询或可持久恢复协议",
-        "批准未知结果保守暂停及人工处理为产品行为，补公开处置流程"
+      "qaRecommendation": "工程方向已由负责人确定，不再把“本轮增加外部能力还是暂停”列为待选。继续记录原自动完成要求未满足，具体实现由工程选择；新增人工处置功能不在本次确认范围。",
+      "engineeringDirectionStatus": "CONFIRMED_BY_OWNER",
+      "reconfirmEngineeringDirectionRequired": false,
+      "technicalConformity": "FAIL_RETAINED_RELATIVE_TO_ORIGINAL_REQUIREMENT",
+      "acceptanceStandardChanged": false,
+      "acceptanceDeviationApprovedByThisSync": false,
+      "defectIds": [
+        "QA-DEF-004",
+        "QA-DEF-005",
+        "QA-DEF-006",
+        "QA-DEF-007"
       ],
-      "qaRecommendation": "先评审协议能力；维持不盲重试，保守暂停不能冒充自动完成。"
+      "sourceDecision": "D039",
+      "confirmedTreatment": "本轮不新增网关/Agent外部能力；不盲目重复不确定副作用，保留现有协议内可证明的恢复，无法消除的未知结果窗口保守暂停并作为正式风险/后续建议记录。",
+      "futureOptionsNotRequiredThisRound": [
+        "外部幂等键、操作结果查询、持久轮次等能力仅作为后续建议，当前不要求新增。"
+      ]
     }
   ],
   "engineeringAndEvidenceFollowup": [
@@ -58,5 +80,39 @@
     "ARCUI015同页显式恢复和UI032独立确认公开操作映射",
     "真实输入法、跨应用/标签栏焦点呈现、未预读说明用户理解3项人工证据"
   ],
-  "releaseAssessment": "另行准备生产指标、部署、容量、持续运行及备份恢复证据；不纳入本轮业务通过计数。"
+  "releaseAssessment": "另行准备生产指标、部署、容量、持续运行及备份恢复证据；不纳入本轮业务通过计数。",
+  "schemaVersion": 2,
+  "updatedAt": "2026-10-01T10:20:05.042530+00:00",
+  "decisionSource": {
+    "decisionFile": "docs/decisions.md",
+    "atCommit": "bdd576c7be4cba3f24bacaca4fd240da88ce4fcf",
+    "sha256": "e4189c2af1c3933346ac5d296d7ac6dd954f8c4785cc29cae9faef870c5cfa6f",
+    "decisions": [
+      "D039",
+      "D041"
+    ],
+    "ownerReconfirmation": {
+      "threadId": "01a0f194-5588-7353-9a80-5ef7da3d0702",
+      "threadTitle": "主任务窗口",
+      "turnId": "01a0f6f6-f145-79b1-99eb-0d6d6887ee30",
+      "userMessageId": "01a0f6f6-f17b-7c93-9bda-a3ce75b8a934",
+      "quote": "嗯,那首先,我们先把那几个同同步遗漏的事情跟 QA 同步,你就跟他说是我这边确认过的",
+      "verifiedBy": "QA通过read_thread直接核对用户消息及其当轮上下文，非仅依赖研发自行声称已获批准。"
+    }
+  },
+  "acceptanceDeviationApproval": {
+    "status": "NOT_ESTABLISHED_BY_THIS_ENGINEERING_CONFIRMATION",
+    "meaning": "D039/D041及本次同步确认工程处理方向，不直接改写原文、代填偏差接受或转为技术PASS。仅在要改变验收标准或主张按偏差通过时明确该独立结论，不要求重选已决定的工程方案。"
+  },
+  "summary": {
+    "ownerConfirmedEngineeringDefects": 5,
+    "reconfirmEngineeringDirectionRequired": false,
+    "outsideThisConfirmation": [
+      "QA-DEF-002无崩溃严格60秒超限",
+      "10项BLOCKED证据缺口",
+      "新增外部能力",
+      "新增人工处置功能",
+      "全部强保证偏差接受"
+    ]
+  }
 }

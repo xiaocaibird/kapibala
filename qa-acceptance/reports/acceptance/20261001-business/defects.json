@@ -41,7 +41,19 @@
       "observed": "重启和重放早于原到期；公开scheduledAt较首次接收区间最晚上界+20秒晚2305ms。未等第二步实际发送，不能夸大成已实测晚发或重复副作用。",
       "state": "OPEN_REQUIREMENT_NOT_MET",
       "fixRevision": null,
-      "evidenceReview": "triage-final-recovery.md"
+      "evidenceReview": "triage-final-recovery.md",
+      "engineeringTreatment": {
+        "status": "CONFIRMED_BY_OWNER",
+        "decision": "D041",
+        "reconfirmDirectionRequired": false,
+        "scope": "本轮既定范围内合理处理并保留残余风险；不新增外部能力或未经批准的人工处置功能",
+        "evidence": "decision-provenance-correction.json"
+      },
+      "acceptanceDisposition": {
+        "technicalStateUnchanged": true,
+        "originalRequirementFailRetained": true,
+        "standardChangeOrDeviationAcceptanceGrantedByThisSync": false
+      }
     },
     {
       "id": "QA-DEF-004",
@@ -53,7 +65,19 @@
       "observed": "公开job recoveryNote明确不自动重建/恢复，未满足原重启续跑；本次不是仅20秒等待失败。",
       "state": "OPEN_PROTOCOL_BOUNDARY",
       "fixRevision": null,
-      "evidenceReview": "triage-final-recovery.md"
+      "evidenceReview": "triage-final-recovery.md",
+      "engineeringTreatment": {
+        "status": "CONFIRMED_BY_OWNER",
+        "decision": "D039",
+        "reconfirmDirectionRequired": false,
+        "scope": "本轮既定范围内合理处理并保留残余风险；不新增外部能力或未经批准的人工处置功能",
+        "evidence": "decision-provenance-correction.json"
+      },
+      "acceptanceDisposition": {
+        "technicalStateUnchanged": true,
+        "originalRequirementFailRetained": true,
+        "standardChangeOrDeviationAcceptanceGrantedByThisSync": false
+      }
     },
     {
       "id": "QA-DEF-005",
@@ -65,7 +89,19 @@
       "observed": "公开job recoveryNote明确不自动重试，未正常完成原任务；不要求研发盲重放越过次数边界。",
       "state": "OPEN_PROTOCOL_BOUNDARY",
       "fixRevision": null,
-      "evidenceReview": "triage-final-recovery.md"
+      "evidenceReview": "triage-final-recovery.md",
+      "engineeringTreatment": {
+        "status": "CONFIRMED_BY_OWNER",
+        "decision": "D039",
+        "reconfirmDirectionRequired": false,
+        "scope": "本轮既定范围内合理处理并保留残余风险；不新增外部能力或未经批准的人工处置功能",
+        "evidence": "decision-provenance-correction.json"
+      },
+      "acceptanceDisposition": {
+        "technicalStateUnchanged": true,
+        "originalRequirementFailRetained": true,
+        "standardChangeOrDeviationAcceptanceGrantedByThisSync": false
+      }
     },
     {
       "id": "QA-DEF-006",
@@ -78,7 +114,19 @@
       "observed": "同run公开recoveryNote停止自动恢复；违背原正常续跑保证。没有把有限测试写成任意重入窗口或重复效果已实证。",
       "state": "OPEN_PROTOCOL_BOUNDARY",
       "fixRevision": null,
-      "evidenceReview": "triage-final-recovery.md"
+      "evidenceReview": "triage-final-recovery.md",
+      "engineeringTreatment": {
+        "status": "CONFIRMED_BY_OWNER",
+        "decision": "D039",
+        "reconfirmDirectionRequired": false,
+        "scope": "本轮既定范围内合理处理并保留残余风险；不新增外部能力或未经批准的人工处置功能",
+        "evidence": "decision-provenance-correction.json"
+      },
+      "acceptanceDisposition": {
+        "technicalStateUnchanged": true,
+        "originalRequirementFailRetained": true,
+        "standardChangeOrDeviationAcceptanceGrantedByThisSync": false
+      }
     },
     {
       "id": "QA-DEF-007",
@@ -90,13 +138,27 @@
       "observed": "失败依据为未正常续跑，非要求从未执行的模型响应必须逐字一致。",
       "state": "OPEN_PROTOCOL_BOUNDARY",
       "fixRevision": null,
-      "evidenceReview": "triage-final-recovery.md"
+      "evidenceReview": "triage-final-recovery.md",
+      "engineeringTreatment": {
+        "status": "CONFIRMED_BY_OWNER",
+        "decision": "D039",
+        "reconfirmDirectionRequired": false,
+        "scope": "本轮既定范围内合理处理并保留残余风险；不新增外部能力或未经批准的人工处置功能",
+        "evidence": "decision-provenance-correction.json"
+      },
+      "acceptanceDisposition": {
+        "technicalStateUnchanged": true,
+        "originalRequirementFailRetained": true,
+        "standardChangeOrDeviationAcceptanceGrantedByThisSync": false
+      }
     }
   ],
   "notes": [
     "原始8条FAIL不是8个已确认产品缺陷；QA场景错误单列复测。",
     "4项原始BLOCKED经公开明确暂停事实审定FAIL，原始文件不修改。",
-    "缺陷根因去重只用于本清单，不改变按用例/项目统计。"
+    "缺陷根因去重只用于本清单，不改变按用例/项目统计。",
+    "QA-DEF-003..007工程处理方向已有负责人确认；OPEN表示原文不符合仍在，不表示工程方向未决定。QA-DEF-002及10项证据阻塞未被本次确认覆盖。"
   ],
-  "reportState": "ISSUED"
+  "reportState": "ISSUED",
+  "decisionProvenanceUpdatedAt": "2026-10-01T10:20:05.042530+00:00"
 }
