@@ -99,6 +99,25 @@ export async function recordSent(
 
 export class Messages implements MessagingService {
   constructor(private readonly ctx: AppContext) {}
+  private observe(
+    row: MessageRow,
+    kind: string,
+    fields: Record<string, unknown> = {},
+    attempt = row.attempts,
+  ): void {
+    this.ctx.testLifecycleObserver?.record({
+      kind,
+      groupId: row.group_id,
+      clientMsgId: row.client_msg_id!,
+      messageId: row.id,
+      accountId: row.account_id,
+      attemptId: `${row.id}:${attempt}`,
+      dispatchAttempt: attempt,
+      source: row.metadata.source,
+      sourceRef: row.metadata.sourceRef,
+      ...fields,
+    });
+  }
   async enqueueSend(input: SendInput, tx?: Queryable): Promise<Message> {
     if (!tx)
       return this.ctx.db.transaction((connection) =>
@@ -297,6 +316,18 @@ export class Messages implements MessagingService {
             clientMsgId: row.client_msg_id,
             text: row.text,
           },
+          15000,
+          undefined,
+          undefined,
+          this.ctx.testLifecycleObserver
+            ? (fact) =>
+                this.observe(
+                  row,
+                  `message-send-${fact.stage}`,
+                  { ...fact },
+                  row.attempts + 1,
+                )
+            : undefined,
         ),
       );
       await this.persistRemoteResult(async (tx) => {
@@ -318,8 +349,30 @@ export class Messages implements MessagingService {
             isOwn: true,
           });
       });
+      this.observe(
+        row,
+        "message-send-result-committed",
+        {
+          receivedResult: "accepted",
+          commitBoundary: "outer-commit-confirmed",
+        },
+        row.attempts + 1,
+      );
       return true;
     } catch (error) {
+      this.observe(
+        row,
+        "message-send-request-failed",
+        {
+          errorCode:
+            error instanceof RemoteError
+              ? error.code
+              : error instanceof Error
+                ? error.name
+                : "unknown",
+        },
+        row.attempts + 1,
+      );
       const knownTimeout =
         error instanceof RemoteError && error.code === "NETWORK_TIMEOUT";
       // The gateway's convergence window starts when its 504 is received, not
@@ -444,18 +497,53 @@ export class Messages implements MessagingService {
     const queryStartedAt = Date.now();
     const timeoutAt = row.timeout_at?.getTime();
     const legacyPendingRetry = isConfirmedAbsentPendingRetry(row);
+    const queryAttemptId = this.ctx.testLifecycleObserver ? randomUUID() : "";
+    this.observe(row, "message-recovery-query-started", {
+      queryAttemptId,
+      recoveryState: "automatic-querying",
+      timeoutReceivedAt: row.timeout_at?.toISOString() ?? null,
+      recordedTimeoutAvailable: timeoutAt !== undefined || legacyPendingRetry,
+    });
     try {
       const result = landedSchema.parse(
         await this.ctx.gateway.request(
           `/groups/${encodeURIComponent(group.gateway_group_id)}/messages/by-client-id/${encodeURIComponent(row.client_msg_id!)}`,
           undefined,
           2000,
+          undefined,
+          undefined,
+          this.ctx.testLifecycleObserver
+            ? (fact) =>
+                this.observe(row, `message-query-${fact.stage}`, {
+                  ...fact,
+                  queryAttemptId,
+                })
+            : undefined,
         ),
       );
       await this.ctx.db.transaction((tx) =>
         recordSent(tx, row.client_msg_id!, result.msgId, result.sentAt),
       );
+      this.observe(row, "message-recovery-result-committed", {
+        queryAttemptId,
+        recoveryState: "terminal",
+        deliveryStatus: "sent",
+        msgId: result.msgId,
+        decisionEvidence: "positive-query-result",
+        commitBoundary: "outer-commit-confirmed",
+      });
     } catch (error) {
+      this.observe(row, "message-recovery-query-inconclusive", {
+        queryAttemptId,
+        recoveryState: "automatic-query-pending",
+        errorCode:
+          error instanceof RemoteError
+            ? error.code
+            : error instanceof Error
+              ? error.name
+              : "unknown",
+        recordedTimeoutAvailable: timeoutAt !== undefined || legacyPendingRetry,
+      });
       if (
         !(error instanceof RemoteError) ||
         error.status !== 404 ||
@@ -466,6 +554,7 @@ export class Messages implements MessagingService {
             queryStartedAt - timeoutAt < 2100))
       )
         return;
+      let absenceCommitted = false;
       await this.ctx.db.transaction(async (tx) => {
         const current = (
           await tx.query<MessageRow>(
@@ -484,7 +573,18 @@ export class Messages implements MessagingService {
         // A2 permits one retry but does not require it. Once absence is proven,
         // finish without adding a second remote call and convergence window.
         await this.fail(tx, current, "NETWORK_TIMEOUT");
+        absenceCommitted = true;
       });
+      if (absenceCommitted)
+        this.observe(row, "message-recovery-result-committed", {
+          queryAttemptId,
+          recoveryState: "terminal",
+          deliveryStatus: "failed",
+          decisionEvidence: legacyPendingRetry
+            ? "legacy-confirmed-absence"
+            : "recorded-timeout-and-late-404",
+          commitBoundary: "outer-commit-confirmed",
+        });
     }
   }
   async fail(
@@ -528,7 +628,7 @@ export class Messages implements MessagingService {
   private async recoverAccount(accountId: string): Promise<void> {
     // The caller owns the account lock. This also repairs an interrupted operation after
     // a database connection loss without requiring the whole application to restart.
-    await this.ctx.db.transaction(async (tx) => {
+    const recovered = await this.ctx.db.transaction(async (tx) => {
       const uncertain = await tx.query<MessageRow>(
         "UPDATE messages SET delivery_status='unknown',dispatch_state='uncertain',timeout_at=null,metadata=metadata || '{\"recoveryNote\":\"发送意图已持久化，但进程未记录远端响应；不自动重发。\"}'::jsonb WHERE account_id=$1 AND dispatch_state='sending' AND delivery_status IN ('queued','unknown') RETURNING *",
         [accountId],
@@ -542,7 +642,15 @@ export class Messages implements MessagingService {
               ? row.metadata.recoveryNote
               : "发送意图已持久化，但进程未记录远端响应；不自动重发。",
         });
+      return uncertain.rows;
     });
+    for (const row of recovered)
+      this.observe(row, "message-recovery-adopted", {
+        recoveryState: "automatic-query-pending",
+        originalResponseReceipt: "not-durably-recorded",
+        recordedTimeoutAvailable: false,
+        commitBoundary: "outer-commit-confirmed",
+      });
   }
   async kick(
     input: { groupId: string; accountId: string; targetPlatformUserId: string },

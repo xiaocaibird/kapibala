@@ -19,6 +19,7 @@ import type {
   ObservationRuntime,
   ObservationSnapshot,
 } from "../qa-observation/types.js";
+import { clockDomain } from "./clock.js";
 
 export const activityProtocol = "qa-runtime-observation/1" as const;
 export const activityRequestSchema = z
@@ -205,6 +206,15 @@ export class ActivityWitness
   private fields(witness: RunWitness): Record<string, unknown> {
     const measured = interval(witness.began, witness.ended ?? point());
     return {
+      runId: witness.runId,
+      groupId: witness.groupId,
+      clockDomain,
+      clockUnit: "ms",
+      applicationPid: process.pid,
+      creationOrEpochStartWindowMs: [witness.began.before, witness.began.after],
+      ...(witness.ended
+        ? { activityEndWindowMs: [witness.ended.before, witness.ended.after] }
+        : {}),
       activityState: witness.state,
       includesUnsavedTail: witness.complete,
       epochIds: [...witness.epochIds],

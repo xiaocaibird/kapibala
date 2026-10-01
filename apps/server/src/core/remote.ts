@@ -1,5 +1,9 @@
 import { RemoteError } from "./errors.js";
 import { currentOperationSignal } from "./db.js";
+export interface RemoteObservation {
+  stage: "dispatch" | "response-headers" | "response-body";
+  responseStatus?: number;
+}
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
@@ -11,6 +15,7 @@ export class RemoteClient {
     timeoutMs = 15000,
     signal?: AbortSignal,
     assertDispatchAllowed?: () => void,
+    observe?: (fact: RemoteObservation) => void,
   ): Promise<T> {
     const operationSignal = currentOperationSignal();
     operationSignal?.throwIfAborted();
@@ -33,8 +38,11 @@ export class RemoteClient {
     // loop busy. Check the original deadline after serialization, without an
     // await between this assertion and dispatch.
     assertDispatchAllowed?.();
+    observe?.({ stage: "dispatch" });
     const response = await fetch(url, init);
+    observe?.({ stage: "response-headers", responseStatus: response.status });
     const raw = await response.text();
+    observe?.({ stage: "response-body", responseStatus: response.status });
     let data: unknown;
     try {
       data = raw ? (JSON.parse(raw) as unknown) : {};

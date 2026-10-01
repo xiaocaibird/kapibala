@@ -1,4 +1,6 @@
+import { randomUUID } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
+import type { LifecycleFact } from "../../core/test-lifecycle-observer.js";
 import type { AppContext } from "../../core/context.js";
 import {
   emit,
@@ -209,6 +211,29 @@ export class AgentTools {
   }
   private async send(run: RunRow, step: StepRow): Promise<void> {
     const input = step.input as { text: string; idempotency_key: string };
+    const fact = {
+      groupId: run.group_id,
+      runId: run.id,
+      stepId: `${run.id}:${step.ordinal}`,
+      toolUseId: step.tool_use_id!,
+      attemptId: this.ctx.testLifecycleObserver ? randomUUID() : "",
+      idempotencyKey: input.idempotency_key,
+    };
+    const observe = (kind: string, fields: Record<string, unknown> = {}) =>
+      this.ctx.testLifecycleObserver?.record({ ...fact, kind, ...fields });
+    observe("send-tool-entered");
+    const deliver = async (clientMsgId: string, keyReused: boolean) => {
+      observe("send-key-resolved", { clientMsgId, keyReused });
+      const result = await this.delivery(clientMsgId, run, fact);
+      // delivery() has actually resolved to its caller. The history transaction
+      // has not started, and no subsequent turn is used as this endpoint.
+      observe("send-tool-result-returned", {
+        clientMsgId,
+        errorCode: result.errorCode ?? null,
+        result: result.value,
+      });
+      return result;
+    };
     const existing = (
       await this.ctx.db.query<{ client_msg_id: string }>(
         "SELECT client_msg_id FROM agent_send_keys WHERE run_id=$1 AND idempotency_key=$2",
@@ -219,11 +244,13 @@ export class AgentTools {
       await this.host.completeStep(
         run,
         step,
-        await this.delivery(existing.client_msg_id, run),
+        await deliver(existing.client_msg_id, true),
       );
       return;
     }
+    observe("send-audit-started");
     const verdict = await this.audit(run, step, input.text);
+    observe("send-audit-completed", { verdict });
     if (verdict === "blocked" || verdict === "expired") return;
     if (verdict === "fail") {
       await this.host.completeStep(
@@ -293,10 +320,33 @@ export class AgentTools {
     await this.host.completeStep(
       run,
       step,
-      outcome ?? (await this.delivery(clientMsgId!, run)),
+      outcome ?? (await deliver(clientMsgId!, false)),
     );
   }
   private async delivery(
+    clientMsgId: string,
+    run: RunRow,
+    fact: Omit<LifecycleFact, "kind">,
+  ): Promise<ToolOutcome> {
+    this.ctx.testLifecycleObserver?.record({
+      ...fact,
+      kind: "send-wait-started",
+      groupId: run.group_id,
+      attemptId: String(fact.attemptId),
+      clientMsgId,
+    });
+    const outcome = await this.waitForDelivery(clientMsgId, run);
+    this.ctx.testLifecycleObserver?.record({
+      ...fact,
+      kind: "send-wait-result-ready",
+      groupId: run.group_id,
+      attemptId: String(fact.attemptId),
+      clientMsgId,
+      errorCode: outcome.errorCode ?? null,
+    });
+    return outcome;
+  }
+  private async waitForDelivery(
     clientMsgId: string,
     run: RunRow,
   ): Promise<ToolOutcome> {

@@ -10,23 +10,31 @@ import {
   requestSchema as resourceRequestSchema,
 } from "./protocol.js";
 import { ObservedRuntimeDatabase, RuntimeObservation } from "./runtime.js";
+import {
+  LifecycleWitness,
+  lifecycleRequestSchema,
+} from "./lifecycle-witness.js";
 
 export const combinedRequestSchema = z.union([
   resourceRequestSchema,
   activityRequestSchema,
+  lifecycleRequestSchema,
 ]);
 export type CombinedRequest = z.infer<typeof combinedRequestSchema>;
 
-/** The sole allowed concurrent pair is a read witness and its same-run barrier. */
+/** Same-run read observers can accompany the original activity barrier. The
+ * controller still requires the same verified owner and rejects other pairs. */
 export function compatibleActivityPair(
   a: CombinedRequest,
   b: CombinedRequest,
 ): boolean {
+  const ac = a.correlation,
+    bc = b.correlation;
   return (
-    a.correlation.kind === "activity" &&
-    b.correlation.kind === "activity" &&
-    a.correlation.runId === b.correlation.runId &&
-    a.correlation.groupId === b.correlation.groupId &&
+    (ac.kind === "activity" || ac.kind === "tool-wait") &&
+    (bc.kind === "activity" || bc.kind === "tool-wait") &&
+    ac.runId === bc.runId &&
+    ac.groupId === bc.groupId &&
     a.mode !== b.mode
   );
 }
@@ -35,13 +43,22 @@ export class CombinedRuntimeObservation implements ObservationRuntime<CombinedRe
   readonly protocol = protocol;
   readonly resource: RuntimeObservation;
   readonly activity: ActivityWitness;
-  private readonly owners = new Map<string, "activity" | "resource">();
+  readonly lifecycle: LifecycleWitness;
+  private readonly owners = new Map<
+    string,
+    "activity" | "resource" | "lifecycle"
+  >();
   constructor(db: ObservedRuntimeDatabase) {
     this.resource = new RuntimeObservation(db);
     this.activity = new ActivityWitness(db);
+    this.lifecycle = new LifecycleWitness(db);
   }
   capabilities(): string[] {
-    return [...this.resource.capabilities(), ...this.activity.capabilities()];
+    return [
+      ...this.resource.capabilities(),
+      ...this.activity.capabilities(),
+      ...this.lifecycle.capabilities(),
+    ];
   }
   async establish(
     id: string,
@@ -51,7 +68,12 @@ export class CombinedRuntimeObservation implements ObservationRuntime<CombinedRe
   ): Promise<ObservationSnapshot> {
     const request = combinedRequestSchema.parse(raw);
     const owner =
-      request.correlation.kind === "activity" ? "activity" : "resource";
+      request.correlation.kind === "activity"
+        ? "activity"
+        : request.correlation.kind === "tool-wait" ||
+            request.correlation.kind === "message-recovery"
+          ? "lifecycle"
+          : "resource";
     const old = this.owners.get(id);
     if (old && old !== owner)
       throw new ControlError(
@@ -59,6 +81,12 @@ export class CombinedRuntimeObservation implements ObservationRuntime<CombinedRe
         "Lease identity cannot change observation domain",
       );
     this.owners.set(id, owner);
+    if (
+      request.mode === "observe-tool-wait" ||
+      request.mode === "observe-agent-lifecycle" ||
+      request.mode === "observe-message-recovery"
+    )
+      return this.lifecycle.establish(id, request, expiresAt, binding);
     if (
       request.mode === "observe-activity" ||
       request.mode === "hold-safe-activity-boundary"
@@ -71,11 +99,17 @@ export class CombinedRuntimeObservation implements ObservationRuntime<CombinedRe
       binding,
     );
   }
-  private forLease(id: string): ActivityWitness | RuntimeObservation {
+  private forLease(
+    id: string,
+  ): ActivityWitness | RuntimeObservation | LifecycleWitness {
     const owner = this.owners.get(id);
     if (!owner)
       throw new ControlError(404, "Unknown runtime observation lease");
-    return owner === "activity" ? this.activity : this.resource;
+    return owner === "activity"
+      ? this.activity
+      : owner === "lifecycle"
+        ? this.lifecycle
+        : this.resource;
   }
   snapshot(id: string): ObservationSnapshot {
     return this.forLease(id).snapshot(id);
@@ -90,6 +124,7 @@ export class CombinedRuntimeObservation implements ObservationRuntime<CombinedRe
     const results = await Promise.allSettled([
       this.activity.close(),
       this.resource.close(),
+      this.lifecycle.close(),
     ]);
     const failures = results.filter((r) => r.status === "rejected");
     if (failures.length)

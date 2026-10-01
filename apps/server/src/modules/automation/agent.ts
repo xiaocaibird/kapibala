@@ -257,7 +257,15 @@ export class AgentModule {
       );
       await notify(tx, run, true);
     });
-    if (committed && created)
+    if (committed && created) {
+      this.ctx.testLifecycleObserver?.record({
+        kind: "agent-run-created",
+        groupId: created.group_id,
+        runId: created.id,
+        attemptId: created.id,
+        creationWindowMs: [before, performance.now()],
+        commitBoundary: "outer-commit-confirmed",
+      });
       this.ctx.testActivityObserver?.runCreated(
         {
           runId: created.id,
@@ -266,6 +274,7 @@ export class AgentModule {
         },
         { before, after: performance.now() },
       );
+    }
   }
   private async readRun(
     id: string,
@@ -304,6 +313,18 @@ export class AgentModule {
   ): Promise<void> {
     const before = performance.now();
     let terminalCommitted = false;
+    const terminalAttemptId = this.ctx.testLifecycleObserver
+      ? randomUUID()
+      : "";
+    this.ctx.testLifecycleObserver?.record({
+      kind: "agent-termination-decided",
+      groupId: run.group_id,
+      runId: run.id,
+      attemptId: terminalAttemptId,
+      decisionWindowMs: [before, performance.now()],
+      status,
+      reason,
+    });
     await this.activityClock.checkpoint(run.id, "run:finish");
     const commit = async (tx: Queryable): Promise<void> => {
       await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
@@ -326,11 +347,21 @@ export class AgentModule {
       // the next tick, while other groups can still start and run sequences.
       if (!(await schedulingTransaction(this.ctx.db, commit))) return;
     } else await this.ctx.db.transaction(commit);
-    if (terminalCommitted)
+    if (terminalCommitted) {
+      this.ctx.testLifecycleObserver?.record({
+        kind: "agent-terminal-committed",
+        groupId: run.group_id,
+        runId: run.id,
+        attemptId: terminalAttemptId,
+        status,
+        reason,
+        commitBoundary: "outer-commit-confirmed",
+      });
       this.ctx.testActivityObserver?.runTerminal(run.id, {
         before,
         after: performance.now(),
       });
+    }
     // Messages that arrived during the previous run are handed off without waiting for another turn.
     await this.scan();
     await this.startNext(run.group_id);
@@ -471,9 +502,18 @@ export class AgentModule {
     let raw = "";
     let code: "BAD_JSON" | "TURN_TIMEOUT" | null = null;
     const operation = currentOperationSignal();
+    const turnAttemptId = this.ctx.testLifecycleObserver ? randomUUID() : "";
     const timeoutMs = Math.min(this.turnTimeoutMs, left);
     const timeout = AbortSignal.timeout(Math.max(1, timeoutMs));
     try {
+      this.ctx.testLifecycleObserver?.record({
+        kind: "agent-turn-dispatched",
+        groupId: run.group_id,
+        runId: run.id,
+        attemptId: turnAttemptId,
+        stepId: `${run.id}:${run.step_count + 1}`,
+        ordinal: run.step_count + 1,
+      });
       const response = await fetch(`${this.ctx.agent.baseUrl}/agent/turn`, {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -481,6 +521,14 @@ export class AgentModule {
         signal: operation ? AbortSignal.any([timeout, operation]) : timeout,
       });
       raw = await response.text();
+      this.ctx.testLifecycleObserver?.record({
+        kind: "agent-turn-response-received",
+        groupId: run.group_id,
+        runId: run.id,
+        attemptId: turnAttemptId,
+        stepId: `${run.id}:${run.step_count + 1}`,
+        responseStatus: response.status,
+      });
       if (!response.ok) code = "BAD_JSON";
     } catch (error) {
       operation?.throwIfAborted();
@@ -575,6 +623,16 @@ export class AgentModule {
         changedFields: ["created"],
       });
     });
+    if (tool.name === "send_message" && !validationCode)
+      this.ctx.testLifecycleObserver?.record({
+        kind: "send-tool-prepared",
+        groupId: run.group_id,
+        runId: run.id,
+        attemptId: turnAttemptId,
+        stepId: `${run.id}:${run.step_count + 1}`,
+        toolUseId: tool.id,
+        commitBoundary: "outer-commit-confirmed",
+      });
     if (validationCode) {
       const updatedRun = (await this.readRun(run.id))!;
       const step = (
@@ -703,6 +761,18 @@ export class AgentModule {
       this.ctx.testActivityObserver?.runTerminal(run.id, {
         before,
         after: performance.now(),
+      });
+    if (step.name === "send_message")
+      this.ctx.testLifecycleObserver?.record({
+        kind: "send-tool-history-committed",
+        groupId: run.group_id,
+        runId: run.id,
+        attemptId: randomUUID(),
+        stepId: `${run.id}:${step.ordinal}`,
+        toolUseId: step.tool_use_id!,
+        errorCode: outcome.errorCode ?? null,
+        result: outcome.value,
+        commitBoundary: "outer-commit-confirmed",
       });
     if (
       this.ctx.testActivityObserver &&

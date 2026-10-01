@@ -57,6 +57,7 @@ try {
     modules: (ctx) => {
       ctx.testRuntimeObserver = runtime.resource;
       ctx.testActivityObserver = runtime.activity;
+      ctx.testLifecycleObserver = runtime.lifecycle;
       const gateway = createGatewayModule(ctx);
       return [gateway, createAutomationModule(ctx, gateway)];
     },
