@@ -1,9 +1,9 @@
 // Real React/API verification in a UUID database; never starts the demo ports.
 // Run with tsx, DATABASE_URL for a disposable PG server and PLAYWRIGHT_MODULE.
 import assert from "node:assert/strict";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { execFileSync } from "node:child_process";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { preview } from "vite";
 import { Database } from "../apps/server/src/core/db.js";
 import { migrate } from "../apps/server/src/core/migrations.js";
@@ -18,6 +18,9 @@ assert(
 const { chromium } = await import(
   process.env.PLAYWRIGHT_MODULE ?? "playwright"
 );
+const evidencePrefix =
+  process.env.ARCHITECTURE_BROWSER_EVIDENCE_PREFIX ??
+  "docs/evidence/architecture-resource-browser";
 const name = `architecture_browser_${randomUUID().replaceAll("-", "")}`;
 const adminUrl = new URL(process.env.DATABASE_URL);
 adminUrl.pathname = "/postgres";
@@ -28,6 +31,19 @@ const report = {
   sourceHead: execFileSync("git", ["rev-parse", "HEAD"], {
     encoding: "utf8",
   }).trim(),
+  sourceFiles: Object.fromEntries(
+    await Promise.all(
+      [
+        "apps/web/src/pages/Sequences.tsx",
+        "scripts/verify-architecture-resource-browser.mjs",
+      ].map(async (path) => [
+        path,
+        createHash("sha256")
+          .update(await readFile(path))
+          .digest("hex"),
+      ]),
+    ),
+  ),
   startedAt: new Date().toISOString(),
   database: name,
   background: false,
@@ -172,6 +188,43 @@ try {
     { gets },
   );
 
+  const documentOrigin = await page.evaluate(() => performance.timeOrigin);
+  const exhaustedAttempts = gets;
+  failures = 0;
+  const retry = page
+    .getByRole("alert")
+    .getByRole("button", { name: "重试", exact: true });
+  await retry.waitFor({ state: "visible", timeout: 2000 });
+  await retry.click();
+  await sampleVisible();
+  await pause(2200);
+  assert.equal(gets, exhaustedAttempts + 1);
+  assert.equal(
+    await page.evaluate(() => performance.timeOrigin),
+    documentOrigin,
+  );
+  assert.equal(
+    await page
+      .getByRole("combobox", { name: "消息序列", exact: true })
+      .inputValue(),
+    "architecture-sequence",
+  );
+  assert.equal(
+    Number((await db.query("SELECT count(*) FROM events")).rows[0].count),
+    0,
+  );
+  assert.equal(await retry.count(), 0);
+  pass(
+    "visible retry restarts the exhausted resource in the same document without events",
+    {
+      exhaustedAttempts,
+      gets,
+      events: 0,
+      documentOrigin,
+      selectedSequence: "architecture-sequence",
+    },
+  );
+
   failures = 99;
   await enter();
   await page
@@ -237,7 +290,7 @@ try {
   assert.deepEqual(report.pageErrors, []);
   await mkdir("docs/evidence", { recursive: true });
   await page.screenshot({
-    path: "docs/evidence/architecture-resource-browser.png",
+    path: `${evidencePrefix}.png`,
     fullPage: true,
   });
   report.passed = true;
@@ -252,7 +305,7 @@ try {
     await mkdir("docs/evidence", { recursive: true });
     report.failurePage = await page.locator("body").ariaSnapshot();
     await page.screenshot({
-      path: "docs/evidence/architecture-resource-browser-failure.png",
+      path: `${evidencePrefix}-failure.png`,
       fullPage: true,
     });
   }
@@ -281,7 +334,7 @@ try {
   report.passed = report.passed === true && report.cleanupErrors.length === 0;
   await mkdir("docs/evidence", { recursive: true });
   await writeFile(
-    "docs/evidence/architecture-resource-browser.json",
+    `${evidencePrefix}.json`,
     JSON.stringify(report, null, 2) + "\n",
   );
   console.log(

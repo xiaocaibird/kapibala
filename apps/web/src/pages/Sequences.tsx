@@ -201,7 +201,11 @@ export function Sequences({
           )
         }
       />
-      <ErrorNotice error={groups.error ?? sequences.error} />
+      <ErrorNotice error={groups.error} retry={() => void groups.reload()} />
+      <ErrorNotice
+        error={sequences.error}
+        retry={() => void sequences.reload()}
+      />
       <ErrorNotice error={preview ? null : error} />
       <AttentionRegion
         targetId="sequence-selection"
