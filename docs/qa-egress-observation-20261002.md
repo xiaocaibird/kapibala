@@ -80,4 +80,13 @@ node scripts/verify-qa-egress-observation.mjs
 | sigkill-incomplete-tail | 实际请求已到达后 SIGKILL；对端关闭且无虚构退出尾记录 |
 | canary-not-retained | header/query/body 合成 canary 与隔离数据库密码不进入账本 |
 
-当前文件先固定契约；固定候选的原始自测证据与资源清理记录在后续独立证据提交中归档。上述工程覆盖不改变 QA 的用例、断言、能力声明或验收结论。
+## 固定候选证据
+
+在干净候选 `ea79f370f4ff6412688a24e31d0426f757887a02` 上执行上述独立脚本，12 组全部通过；同一标准请求序列另经 `preload → tsx` 执行，并逐条对齐实际来源接收与 HTTP 创建。原始报告保留空 `status`、候选 SHA、preload/driver 哈希和运行时版本。这里验证工程观察路径，没有重跑应用全部业务或 QA 第二轮用例。
+
+- [原始报告与实际来源事实](evidence/qa-egress-observation-20261002/report.json)、[标准进程账本](evidence/qa-egress-observation-20261002/standard.ndjson)、[tsx 引导账本](evidence/qa-egress-observation-20261002/standard-tsx.ndjson)。
+- [代理账本](evidence/qa-egress-observation-20261002/proxy.ndjson)、[未处理 socket 错误控制](evidence/qa-egress-observation-20261002/unhandled.process.json)、[SIGKILL 账本](evidence/qa-egress-observation-20261002/kill.ndjson)与[真实进程结果](evidence/qa-egress-observation-20261002/kill.process.json)。控制中的 exit 1 / SIGKILL 是预期注入，不改写为正常退出。
+- [资源清理记录](evidence/qa-egress-observation-20261002/cleanup.json)：只删除已按 ID/label 核对的研发自有 PG 容器和其匿名卷；清理前数据库其他连接为零，清理后容器/卷均不存在。自测桩、子进程及临时 TLS 私钥/证书已退出/删除。
+- [逐文件 SHA256 清单](evidence/qa-egress-observation-20261002/sha256.json)：12 份原始文件按字节复制，未改写账本、进程结果或报告。
+
+上述工程覆盖不改变 QA 的用例、断言、能力声明或验收结论。

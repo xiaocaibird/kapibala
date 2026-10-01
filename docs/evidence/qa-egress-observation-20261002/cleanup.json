@@ -1,0 +1,55 @@
+{
+  "at": "2026-10-01T22:27:16.927264+00:00",
+  "identity": {
+    "id": "ddb1dc757af343f205220c04179f24fb5ccf74a8b9c49bbaf82b4be7f5d84882",
+    "labels": {
+      "codex.owner": "7be5a6",
+      "codex.task": "second-round-egress-observation"
+    },
+    "mounts": [
+      {
+        "Destination": "/var/lib/postgresql/data",
+        "Driver": "local",
+        "Mode": "",
+        "Name": "43b015dce2d6fffdc03f9e69e4ca0592003097b7356624ea19417e54eb93564d",
+        "Propagation": "",
+        "RW": true,
+        "Source": "/var/lib/docker/volumes/43b015dce2d6fffdc03f9e69e4ca0592003097b7356624ea19417e54eb93564d/_data",
+        "Type": "volume"
+      }
+    ],
+    "ports": {
+      "5432/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "62866"
+        }
+      ]
+    }
+  },
+  "otherDbSessionsBeforeRemoval": {
+    "code": 0,
+    "stdout": "0",
+    "stderr": ""
+  },
+  "removed": {
+    "code": 0,
+    "stdout": "ddb1dc757af343f205220c04179f24fb5ccf74a8b9c49bbaf82b4be7f5d84882",
+    "stderr": ""
+  },
+  "containerAfter": {
+    "code": 1,
+    "stdout": "",
+    "stderr": "error: no such object: ddb1dc757af343f205220c04179f24fb5ccf74a8b9c49bbaf82b4be7f5d84882"
+  },
+  "volumesAfter": [
+    {
+      "name": "43b015dce2d6fffdc03f9e69e4ca0592003097b7356624ea19417e54eb93564d",
+      "code": 1,
+      "stdout": "",
+      "stderr": "Error response from daemon: get 43b015dce2d6fffdc03f9e69e4ca0592003097b7356624ea19417e54eb93564d: no such volume"
+    }
+  ],
+  "scope": "only exact owned engineering container; QA/demo resources untouched",
+  "fixtures": "self-test closed owned HTTP/TLS/proxy servers and child processes; removed synthetic TLS key/cert"
+}

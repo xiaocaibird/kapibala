@@ -1,0 +1,311 @@
+{
+  "result": "PASS",
+  "node": "v24.21.0",
+  "undici": "7.29.1",
+  "sut": "ea79f370f4ff6412688a24e31d0426f757887a02",
+  "status": "",
+  "preloadSha256": "1e52e2f081361a5fa5b6fbd835964c8ec5e47e42c8aa817fa8ea00d6b2c5fc3b",
+  "driverSha256": "0cbc0f28c1cc230f4f7999e34aa1c455c900e7d4f42a28fa66118769561760c5",
+  "loader": "entire standard transport sequence also ran with --import preload --import tsx",
+  "cases": [
+    "fetch-http-and-native-http-keepalive",
+    "fetch-https-and-native-https",
+    "preconnected-http",
+    "follow-vs-manual-redirect",
+    "strict-denial-is-visible-attempt",
+    "real-refused-connect",
+    "real-fetch-abort",
+    "real-pg",
+    "env-proxy-original-vs-peer",
+    "unhandled-socket-errors-preserved",
+    "sigkill-incomplete-tail",
+    "canary-not-retained"
+  ],
+  "runs": [
+    {
+      "kind": "standard",
+      "exitCode": 0,
+      "signal": null,
+      "records": 92,
+      "sha256": "67e848daad6ec306ecda13aea157264fe1469d94c528e528c26d7d6f978f994e"
+    },
+    {
+      "kind": "standard-tsx",
+      "exitCode": 0,
+      "signal": null,
+      "records": 100,
+      "sha256": "09154a8a9ddd7ea7de4ee62c5f18575e0eb51ba8465c036b5f5559ae0575357e"
+    },
+    {
+      "kind": "proxy",
+      "exitCode": 0,
+      "signal": null,
+      "records": 11,
+      "sha256": "5f5a19f1e1af13da1f15c98e5d0ab0bc5cf044d30d51b7492bed6364ed618ef9"
+    },
+    {
+      "kind": "unhandled",
+      "exitCode": 1,
+      "signal": null,
+      "records": 5,
+      "sha256": "c26eafcc705b6989413b2893a6b11fc869ffdfdc2271e10ecb2ebe666d9e69dd"
+    },
+    {
+      "kind": "kill",
+      "exitCode": null,
+      "signal": "SIGKILL",
+      "records": 6,
+      "sha256": "e73656defb46246136120431b6dc03c205424e8ffaf64a4363b0483f723b866c"
+    }
+  ],
+  "wire": [
+    {
+      "run": "standard",
+      "path": "/fetch-one",
+      "method": "POST",
+      "at": "2026-10-01T22:26:10.897Z",
+      "remotePort": 50411,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard",
+      "path": "/fetch-two",
+      "method": "POST",
+      "at": "2026-10-01T22:26:10.901Z",
+      "remotePort": 50411,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard",
+      "path": "/fetch-three",
+      "method": "POST",
+      "at": "2026-10-01T22:26:10.902Z",
+      "remotePort": 50411,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard",
+      "path": "/native-one",
+      "method": "GET",
+      "at": "2026-10-01T22:26:10.904Z",
+      "remotePort": 50412,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard",
+      "path": "/native-two",
+      "method": "GET",
+      "at": "2026-10-01T22:26:10.904Z",
+      "remotePort": 50412,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard",
+      "path": "/native-tls",
+      "method": "GET",
+      "at": "2026-10-01T22:26:10.910Z",
+      "remotePort": 50413,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard",
+      "path": "/fetch-tls",
+      "method": "GET",
+      "at": "2026-10-01T22:26:10.913Z",
+      "remotePort": 50414,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard",
+      "path": "/preconnected",
+      "method": "GET",
+      "at": "2026-10-01T22:26:10.914Z",
+      "remotePort": 50415,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard",
+      "path": "/redirect-follow",
+      "method": "GET",
+      "at": "2026-10-01T22:26:10.914Z",
+      "remotePort": 50411,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard",
+      "path": "/follow-target",
+      "method": "GET",
+      "at": "2026-10-01T22:26:10.915Z",
+      "remotePort": 50416,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard",
+      "path": "/redirect-manual",
+      "method": "GET",
+      "at": "2026-10-01T22:26:10.916Z",
+      "remotePort": 50411,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard",
+      "path": "/hold",
+      "method": "GET",
+      "at": "2026-10-01T22:26:10.918Z",
+      "remotePort": 50411,
+      "responseFinished": false,
+      "closed": true
+    },
+    {
+      "run": "standard-tsx",
+      "path": "/fetch-one",
+      "method": "POST",
+      "at": "2026-10-01T22:26:11.047Z",
+      "remotePort": 50421,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard-tsx",
+      "path": "/fetch-two",
+      "method": "POST",
+      "at": "2026-10-01T22:26:11.050Z",
+      "remotePort": 50421,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard-tsx",
+      "path": "/fetch-three",
+      "method": "POST",
+      "at": "2026-10-01T22:26:11.050Z",
+      "remotePort": 50421,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard-tsx",
+      "path": "/native-one",
+      "method": "GET",
+      "at": "2026-10-01T22:26:11.053Z",
+      "remotePort": 50422,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard-tsx",
+      "path": "/native-two",
+      "method": "GET",
+      "at": "2026-10-01T22:26:11.053Z",
+      "remotePort": 50422,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard-tsx",
+      "path": "/native-tls",
+      "method": "GET",
+      "at": "2026-10-01T22:26:11.058Z",
+      "remotePort": 50423,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard-tsx",
+      "path": "/fetch-tls",
+      "method": "GET",
+      "at": "2026-10-01T22:26:11.060Z",
+      "remotePort": 50424,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard-tsx",
+      "path": "/preconnected",
+      "method": "GET",
+      "at": "2026-10-01T22:26:11.061Z",
+      "remotePort": 50425,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard-tsx",
+      "path": "/redirect-follow",
+      "method": "GET",
+      "at": "2026-10-01T22:26:11.062Z",
+      "remotePort": 50421,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard-tsx",
+      "path": "/follow-target",
+      "method": "GET",
+      "at": "2026-10-01T22:26:11.063Z",
+      "remotePort": 50426,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard-tsx",
+      "path": "/redirect-manual",
+      "method": "GET",
+      "at": "2026-10-01T22:26:11.063Z",
+      "remotePort": 50421,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "standard-tsx",
+      "path": "/hold",
+      "method": "GET",
+      "at": "2026-10-01T22:26:11.066Z",
+      "remotePort": 50421,
+      "responseFinished": false,
+      "closed": true
+    },
+    {
+      "run": "proxy",
+      "path": "/proxy-example",
+      "method": "GET",
+      "at": "2026-10-01T22:26:11.171Z",
+      "remotePort": 50431,
+      "responseFinished": true,
+      "closed": true
+    },
+    {
+      "run": "kill",
+      "path": "/hold-kill",
+      "method": "GET",
+      "at": "2026-10-01T22:26:11.268Z",
+      "remotePort": 50441,
+      "responseFinished": false,
+      "closed": true
+    }
+  ],
+  "proxyWire": [
+    {
+      "type": "connect",
+      "authority": "qa-owned-proxy.invalid:80"
+    }
+  ],
+  "limits": [
+    "named Node hooks in preloaded JS realm only",
+    "HTTP creation is not successful dispatch",
+    "native HTTP origin is declared authority",
+    "socket allowlist does not police tunnel destination",
+    "SIGKILL has no complete tail",
+    "PG query contents intentionally absent"
+  ]
+}
