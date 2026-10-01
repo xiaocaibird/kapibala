@@ -62,7 +62,7 @@ QA 第三批固定 SUT / QA `ed50ca14ae3f4140d7f020f282b313b137920209`，run `20
 
 | 当前研发处理 | 已有材料与剩余边界 |
 | --- | --- |
-| C1 非法来源路径 | [规范化前检查修复与开发证据](second-round-media-source-normalization-20261002.md)已交付；另 raw NUL 导致更早入站保存失败仍在修复，不能称 C1-003 全部闭环 |
+| C1 非法来源路径 | [规范化前检查修复与开发证据](second-round-media-source-normalization-20261002.md)已交付；另 raw NUL 已经真实 SSE / PG 复现为 `22P05` 并导致整个入站事务回滚，媒体线仍在修复，独立修复证据待补；不能称 C1-003 全部闭环 |
 | C2 用量关闭观察 | [真实 writer 关闭接入与开发证据](qa-usage-writer-close-20261002.md)已完成；新入口待后续固定批次独立验证，不改写 C2-015 / C2-019 原结果 |
 | POL005 同运行竞争观察 | [真实 run-lock 观察与开发证据](qa-agent-ownership-witness-20261002.md)已完成，区分 lock_busy / capacity_unavailable；QA 仍须在 primary 实际持锁窗口安排 secondary。只补观察缺口，不关闭未知效果强恢复 FAIL |
 

@@ -2,6 +2,8 @@
 
 2026-10-02（北京时间）。状态：**负责人已批准第二轮全部 P0/P1 产品与文档、QA 资产合入 main 后固定版本执行。第三批已结束：SUT / QA 均为 `ed50ca14ae3f4140d7f020f282b313b137920209`，run `2026-10-01T23-12-22.471Z-739fbbec`，112 项为 96 PASS / 6 FAIL / 10 BLOCKED / 0 NOT_RUN，`runnerErrors=[]`。第四批尚未开始，待下一候选组合验证及 main 冻结，不能继承第三批 PASS。** 第二批 `47423c1` 的 80 PASS / 4 FAIL / 28 BLOCKED 保留；UI008、DIA005 在第二、三批均 PASS，GRD003 在第三批 PASS。媒体 raw NUL 入站保存失败仍在修复；用量关闭、run-lock 观察开发已完成，后续独立结果待新批。原件与当前处理见[跟进记录](second-round-followup-20261002.md)；历史研发验证见[集成验证与交接](second-round-integration-20261002.md)。初始 SUT `5906d8d6b230699fec4a51302677a79c409cac46` 及其历史结果保留，各批不拼接成当前通过。本文由研发维护，用于说明业务要求、已确认的变化及交付边界，不是 QA 测试方案或验收报告。
 
+新增入口与开发证据：[run-lock 观察](qa-agent-ownership-witness-20261002.md)、[用量 writer 关闭](qa-usage-writer-close-20261002.md)、[媒体来源规范化前拒绝](second-round-media-source-normalization-20261002.md)。媒体 raw NUL 入站保存问题仍在处理中；这些材料不代表第四批已经开始或通过。
+
 ## 协作与版本边界
 
 - D050 批准[最终交付改进建议](product-enhancement-proposal.md)中全部五项 P0 和五项 P1；D051 允许独立准备 C1/C2 与本轮改进的用例；D052 已进一步批准合 main 后固定版本执行。D050/D051 的旧阶段限制保留历史，不再作为当前等待再次批准的理由。

@@ -2,6 +2,8 @@
 
 2026-10-02（北京时间）。**D052 已批准全部第二轮 P0/P1 产品、文档及 QA 资产本地合 main 后固定版本执行。第三批已结束：SUT / QA 均为 `ed50ca14ae3f4140d7f020f282b313b137920209`，run `2026-10-01T23-12-22.471Z-739fbbec`，112 项为 96 PASS / 6 FAIL / 10 BLOCKED / 0 NOT_RUN，`runnerErrors=[]`。第四批尚未开始，待下一候选完成组合验证并固定 main 后由 QA 独立执行。** 第二批 `47423c1` 的 80 PASS / 4 FAIL / 28 BLOCKED / 0 NOT_RUN 保留；UI008、DIA005 在第二、三批均 PASS，GRD003 在第三批独立复验 PASS。媒体 raw NUL 的入站保存失败仍在修复；用量关闭及 run-lock 观察已完成开发验证，尚无下一批 QA 结果。详见[修复与各批原证据](second-round-followup-20261002.md)。下方保留历史组合、交付和初始冻结记录，各批结果不拼接，第三批 PASS 不继承到第四批。
 
+新增入口与开发证据：[run-lock 观察](qa-agent-ownership-witness-20261002.md)、[用量 writer 关闭](qa-usage-writer-close-20261002.md)、[媒体来源规范化前拒绝](second-round-media-source-normalization-20261002.md)。媒体 raw NUL 入站保存问题仍在处理中；这些材料不代表第四批已经开始或通过。
+
 ## 固定输入与版本边界
 
 | 对象 | 固定输入 | 当前含义 |
