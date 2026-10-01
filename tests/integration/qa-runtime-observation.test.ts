@@ -34,6 +34,7 @@ test("RT02 real savepoint fault preserves original transaction and observes newe
     "tool-wait-witness",
     "message-recovery-witness",
     "agent-lifecycle-witness",
+    "agent-run-lock-witness",
     "media-reference-witness",
   ]);
   for (const target of [
