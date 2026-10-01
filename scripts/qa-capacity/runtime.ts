@@ -122,6 +122,11 @@ export class CapacityRuntime implements TestExecutionObserver {
     const identity = await processIdentity(process.pid);
     const guardian = await processIdentity(identity.pgid);
     const socket = join(folder, `${this.instanceId}.sock`);
+    if (Buffer.byteLength(socket) > 100)
+      throw new ControlError(
+        400,
+        "Use a short registry directory such as /tmp/kap-cap-<id> (Unix socket path limit)",
+      );
     this.registration = {
       instanceId: this.instanceId,
       socket,
