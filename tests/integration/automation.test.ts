@@ -1288,7 +1288,7 @@ test("kick budget exhaustion ends the run while retaining an uncertain non-repla
   await db.query("UPDATE groups SET auto_kick_enabled=true");
   const id = randomUUID();
   await db.query(
-    "INSERT INTO agent_runs(id,group_id,active_ms,step_count) VALUES($1,$2,59900,1)",
+    "INSERT INTO agent_runs(id,group_id,active_ms,step_count) VALUES($1,$2,44000,1)",
     [id, groupId],
   );
   await db.query(
@@ -1301,7 +1301,7 @@ test("kick budget exhaustion ends the run while retaining an uncertain non-repla
       }),
     ],
   );
-  await waitFor(async () => (await latestRun())?.status === "failed");
+  await waitFor(async () => (await latestRun())?.status === "failed", 20000);
   assert.equal((await latestRun()).end_reason, "wall_clock");
   assert.equal(kickCalls, 1);
   const step = (

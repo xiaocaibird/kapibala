@@ -9,10 +9,11 @@ import {
   type Queryable,
 } from "../../core/db.js";
 import { AppError, RemoteError } from "../../core/errors.js";
-import type {
-  KickOptions,
-  MessagingService,
-  SendInput,
+import {
+  KICK_POST_TIMEOUT_MS,
+  type KickOptions,
+  type MessagingService,
+  type SendInput,
 } from "../../core/messaging.js";
 import type { Message } from "../../../../../packages/contracts/src/index.js";
 import {
@@ -702,7 +703,7 @@ export class Messages implements MessagingService {
                 byAccountId: input.accountId,
                 targetPlatformUserId: input.targetPlatformUserId,
               },
-              15000,
+              KICK_POST_TIMEOUT_MS,
               signal,
               options?.assertDispatchAllowed,
             ),

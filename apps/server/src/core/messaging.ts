@@ -9,6 +9,9 @@ export interface SendInput {
   source?: string;
   sourceRef?: string;
 }
+// Only the first side-effecting POST. Confirmation and projection reads have
+// their own timeouts; this is not a completion bound for the whole kick tool.
+export const KICK_POST_TIMEOUT_MS = 15000;
 export interface KickOptions {
   signal?: AbortSignal;
   /** Runs after local admission and validation, before any remote kick. A

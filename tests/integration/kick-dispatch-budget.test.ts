@@ -9,6 +9,7 @@ import {
   delay,
   end,
   tool,
+  until,
 } from "../support/core-automation-fixture.js";
 
 // These waits consume real elapsed time; no clock, budget value, or timer is mocked.
@@ -22,7 +23,7 @@ function kickTurn() {
   });
 }
 
-test("kick does not enter admission when its real preparation transaction consumes the remaining budget", async (t) => {
+test("kick does not enter admission when real preparation consumes the first POST window", async (t) => {
   const f = await automationFixture(t);
   let admissions = 0;
   const original = Messages.prototype.kick;
@@ -39,7 +40,7 @@ test("kick does not enter admission when its real preparation transaction consum
   await f.db.query(
     "CREATE TRIGGER slow_kick_prepare BEFORE UPDATE OF state ON agent_steps FOR EACH ROW EXECUTE FUNCTION slow_kick_prepare()",
   );
-  await f.preparedTool("expired-kick-prepare", 59800, kickTurn().content[0]!);
+  await f.preparedTool("expired-kick-prepare", 44800, kickTurn().content[0]!);
   await f.automation.tick();
   const run = await f.complete("expired-kick-prepare");
   const [step] = await f.steps(run.id);
@@ -64,12 +65,12 @@ test("kick does not enter admission when its real preparation transaction consum
   assert.equal(run.recovery_note, null);
   assert.equal(step?.intent?.dispatchState, "awaiting_admission");
   assert.ok(
-    Number(run.active_ms) > 60000,
-    "retain the real SQL wait and terminal overshoot",
+    Number(run.active_ms) > 45000 && Number(run.active_ms) < 60000,
+    "bill the real SQL wait without pretending the 60s cap was exhausted",
   );
 });
 
-test("kick blocked across its deadline before fetch ends without inventing an unknown external effect", async (t) => {
+test("kick blocked across its first POST window before fetch ends without inventing an unknown external effect", async (t) => {
   let blocked = false;
   let signalAbortedAfterBlock: boolean | undefined;
   let kickFetchCalls = 0;
@@ -101,7 +102,7 @@ test("kick blocked across its deadline before fetch ends without inventing an un
       };
     },
   );
-  await f.preparedTool("expired-kick-fetch", 59000, kickTurn().content[0]!);
+  await f.preparedTool("expired-kick-fetch", 44000, kickTurn().content[0]!);
   await f.automation.tick();
   const run = await f.complete("expired-kick-fetch", 5000);
   const [step] = await f.steps(run.id);
@@ -138,8 +139,8 @@ test("kick blocked across its deadline before fetch ends without inventing an un
   );
   assert.equal(f.audits.length, 1);
   assert.ok(
-    Number(run.active_ms) > 60000,
-    "do not hide the real blocked interval",
+    Number(run.active_ms) > 45000 && Number(run.active_ms) < 60000,
+    "bill the real blocked interval without fabricating 60s exhaustion",
   );
 });
 
@@ -189,15 +190,15 @@ test("a deadline timer already fired before kick fetch is still a known non-disp
     const request = ctx.gateway.request.bind(ctx.gateway);
     ctx.gateway.request = async (...args) => {
       if (args[0].endsWith("/kick")) {
-        await delay(700);
+        await delay(15500);
         expiredSignal = args[3]?.aborted;
       }
       return request(...args);
     };
   });
-  await f.preparedTool("expired-kick-timer", 59500, kickTurn().content[0]!);
+  await f.preparedTool("expired-kick-timer", 44800, kickTurn().content[0]!);
   await f.automation.tick();
-  const run = await f.complete("expired-kick-timer");
+  const run = await f.complete("expired-kick-timer", 20000);
   assert.equal(expiredSignal, true);
   assert.equal(f.gatewayRequests.length, 0);
   assert.equal(run.end_reason, "wall_clock");
@@ -233,7 +234,7 @@ test("failed terminal persistence after a local dispatch rejection keeps the sav
   await f.db.query(
     "CREATE TRIGGER reject_budget_terminal BEFORE UPDATE OF status ON agent_runs FOR EACH ROW EXECUTE FUNCTION reject_budget_terminal()",
   );
-  await f.preparedTool("failed-kick-terminal", 59500, kickTurn().content[0]!);
+  await f.preparedTool("failed-kick-terminal", 44500, kickTurn().content[0]!);
   await f.automation.tick();
   await Promise.race([
     failure.promise,
@@ -256,7 +257,10 @@ test("failed terminal persistence after a local dispatch rejection keeps the sav
   });
   await replacement.recover?.();
   await replacement.tick();
-  const run = await f.complete(beforeRestart.id);
+  await until(async () =>
+    Boolean((await f.readRun(beforeRestart.id)).recovery_note),
+  );
+  const run = await f.readRun(beforeRestart.id);
   t.diagnostic(
     JSON.stringify({
       attempts,
@@ -265,7 +269,12 @@ test("failed terminal persistence after a local dispatch rejection keeps the sav
       intent: (await f.steps(run.id))[0]?.intent,
     }),
   );
-  assert.equal(run.end_reason, "wall_clock");
+  assert.equal(run.status, "running");
+  assert.equal(run.end_reason, null);
+  assert.match(
+    run.recovery_note ?? "",
+    /kick was dispatched before interruption/,
+  );
   assert.equal(
     attempts,
     1,
@@ -278,19 +287,27 @@ test("failed terminal persistence after a local dispatch rejection keeps the sav
   );
 });
 
-test("a real kick sent before its deadline remains an unknown effect if its response times out", async (t) => {
+test("a real kick remains unknown when confirmation outlasts the original run deadline", async (t) => {
   const f = await automationFixture(t, undefined, (remote) => {
-    remote.post("/groups/remote-g/kick", async () => {
-      await delay(700);
-      return { kicked: true };
+    remote.post("/groups/remote-g/kick", async (_request, reply) =>
+      reply.code(504).send({ code: "NETWORK_TIMEOUT" }),
+    );
+    remote.get("/groups/remote-g/members", async () => {
+      await delay(16000);
+      return [];
     });
   });
-  await f.preparedTool("inflight-kick-timeout", 59500, kickTurn().content[0]!);
+  await f.preparedTool("inflight-kick-timeout", 44800, kickTurn().content[0]!);
   await f.automation.tick();
-  const run = await f.complete("inflight-kick-timeout");
+  const run = await f.complete("inflight-kick-timeout", 20000);
   assert.equal(
     f.gatewayRequests.filter((path) => path.endsWith("/kick")).length,
     1,
+  );
+  assert.equal(
+    f.gatewayRequests.filter((path) => path.endsWith("/members")).length,
+    1,
+    "actual confirmation still starts after the POST; the first-stage guard must not reject it",
   );
   assert.equal(run.end_reason, "wall_clock");
   assert.match(run.recovery_note ?? "", /external result remains unknown/);
@@ -324,3 +341,72 @@ test("kick with sufficient budget still dispatches once and preserves the one au
   assert.equal(f.turns.length, 2);
   assert.equal(run.recovery_note, null);
 });
+
+test("a confirmed first kick POST still refreshes members below its admission window", async (t) => {
+  const f = await automationFixture(t, undefined, (remote) => {
+    remote.post("/groups/remote-g/kick", async () => {
+      await delay(350);
+      return { kicked: true };
+    });
+    remote.get("/groups/remote-g/members", async () => []);
+  });
+  await f.preparedTool(
+    "kick-confirmed-below-window",
+    44800,
+    kickTurn().content[0]!,
+  );
+  await f.automation.tick();
+  const run = await f.complete("kick-confirmed-below-window");
+  const [step] = await f.steps(run.id);
+  assert.equal(
+    f.gatewayRequests.filter((path) => path.endsWith("/kick")).length,
+    1,
+  );
+  assert.equal(
+    f.gatewayRequests.filter((path) => path.endsWith("/members")).length,
+    1,
+  );
+  assert.equal(step?.state, "complete");
+  assert.equal(step?.is_error, false);
+  assert.deepEqual(step?.result, { kicked: true });
+  assert.equal(run.recovery_note, null);
+  assert.equal(f.audits.length, 1);
+});
+
+for (const scenario of ["policy", "account", "cancel"] as const) {
+  test(`kick admission preserves ${scenario} precedence with less than 15 seconds remaining`, async (t) => {
+    const f = await automationFixture(t);
+    const id = `kick-order-${scenario}`;
+    await f.preparedTool(id, 45500, kickTurn().content[0]!);
+    if (scenario === "policy")
+      await f.db.query(
+        "UPDATE groups SET auto_kick_enabled=false WHERE id='g'",
+      );
+    else if (scenario === "account")
+      await f.db.query("UPDATE accounts SET status='suspended'");
+    else {
+      await f.db.query("UPDATE groups SET status='unreachable' WHERE id='g'");
+      await f.db.query(
+        "UPDATE agent_runs SET cancel_requested=true WHERE id=$1",
+        [id],
+      );
+    }
+    await f.automation.tick();
+    const run = await f.complete(id);
+    const [step] = await f.steps(id);
+    assert.equal(step?.state, "complete");
+    assert.equal(
+      step?.error_code,
+      scenario === "policy"
+        ? "POLICY_DENIED"
+        : scenario === "account"
+          ? "NO_AVAILABLE_ACCOUNT"
+          : "GROUP_UNREACHABLE",
+    );
+    assert.equal(run.status, scenario === "cancel" ? "cancelled" : "finished");
+    assert.equal(run.end_reason, scenario === "cancel" ? "cancelled" : "final");
+    assert.equal(f.audits.length, scenario === "account" ? 1 : 0);
+    assert.equal(f.gatewayRequests.length, 0);
+    assert.equal(f.turns.length, scenario === "cancel" ? 0 : 1);
+  });
+}

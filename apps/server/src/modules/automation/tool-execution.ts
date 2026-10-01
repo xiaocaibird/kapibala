@@ -9,7 +9,10 @@ import {
   type Queryable,
 } from "../../core/db.js";
 import { AppError, RemoteError } from "../../core/errors.js";
-import type { MessagingService } from "../../core/messaging.js";
+import {
+  KICK_POST_TIMEOUT_MS,
+  type MessagingService,
+} from "../../core/messaging.js";
 import type {
   AgentRun,
   Message,
@@ -520,16 +523,19 @@ export class AgentTools {
       return;
     }
     const remaining = this.host.remaining(run);
-    if (remaining <= 0) {
+    // Admit only a first POST that can receive its existing timeout window.
+    // Policy/account checks above keep their precedence; this neither reserves
+    // time for later confirmation queries nor declares a remote effect failed.
+    if (remaining < KICK_POST_TIMEOUT_MS) {
       await this.host.finish(run, "failed", "wall_clock");
       return;
     }
     const deadline = AbortSignal.timeout(remaining);
     const assertDispatchAllowed = () => {
       currentOperationSignal()?.throwIfAborted();
-      if (this.host.remaining(run) <= 0)
+      if (this.host.remaining(run) < KICK_POST_TIMEOUT_MS)
         throw new KickBudgetExpiredBeforeDispatch(
-          "Activity budget expired before the kick was dispatched",
+          "Activity budget cannot admit the first kick POST timeout window",
         );
     };
     const correlation = {
