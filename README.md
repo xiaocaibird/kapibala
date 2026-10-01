@@ -90,6 +90,7 @@ AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern='timing:' tests/int
 运行版本、进程及本批证据统一见[文档入口](docs/README.md)；当前能力与验证边界见[功能总表](docs/feature-matrix.md)。历史运行记录保留各自版本，不作为当前状态。通过编译或开发者浏览器检查不代表用户已完成人工验收。
 
 - [当前功能总表与需求追踪](docs/feature-matrix.md)
+- [首轮验收收尾、四条工作线与剩余确认](docs/first-acceptance-closeout-20261001.md)
 - [分批功能验收](docs/acceptance.md)
 - [逐条需求与验证证据](docs/requirements-matrix.md)
 - [工程要求](docs/engineering-requirements.md)
