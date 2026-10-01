@@ -421,25 +421,36 @@ export class AgentModule {
   }
   private async turn(run: RunRow): Promise<void> {
     await this.activityClock.checkpoint(run.id, "model:before");
+    if (this.remaining(run) <= 0) {
+      await this.finish(run, "failed", "wall_clock");
+      return;
+    }
+    await this.ctx.db.query(
+      "UPDATE agent_runs SET inflight_turn=true WHERE id=$1",
+      [run.id],
+    );
+    const body = JSON.stringify({
+      runId: run.id,
+      tools,
+      messages: run.history,
+    });
+    // The intent write and request serialization consume the same activity
+    // budget. Never dispatch with time captured before either operation.
     const left = this.remaining(run);
     if (left <= 0) {
       await this.finish(run, "failed", "wall_clock");
       return;
     }
-    const timeoutMs = Math.min(this.turnTimeoutMs, left);
-    await this.ctx.db.query(
-      "UPDATE agent_runs SET inflight_turn=true WHERE id=$1",
-      [run.id],
-    );
     let raw = "";
     let code: "BAD_JSON" | "TURN_TIMEOUT" | null = null;
     const operation = currentOperationSignal();
+    const timeoutMs = Math.min(this.turnTimeoutMs, left);
     const timeout = AbortSignal.timeout(Math.max(1, timeoutMs));
     try {
       const response = await fetch(`${this.ctx.agent.baseUrl}/agent/turn`, {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ runId: run.id, tools, messages: run.history }),
+        body,
         signal: operation ? AbortSignal.any([timeout, operation]) : timeout,
       });
       raw = await response.text();
