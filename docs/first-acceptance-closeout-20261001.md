@@ -4,6 +4,8 @@
 
 正式入口：[当前交付版本独立 QA 验收报告](../qa-acceptance/reports/acceptance/20261002-current-delivery/report.md)及[独立预算组合补充报告](/Users/zcm/Desktop/kapibala/qa-acceptance/reports/followup/20261002-dispatched-kick-budget/report.md)。补充报告提交 `852fc21356fe37af617a714e91573bc47c817b83`，QA 已按首轮授权本地合并；main 集成记录为 `3f08a2faf39142752065302e107fb25630748e26`。本研发分支未复制或修改 QA 目录，补充报告链接指向主工作区。已合 main、开发自测、独立 QA、真人体验和上线评估分别登记。
 
+**报告签发后的技术收尾仍在进行。** KB-CROSS 的在途查询与预算边界、KB-ACTIVITY 的终态活动区间精度、KB-CANCEL 的请求取消原因，以及 READ-CAUSAL-1 的数据库因果关联，仍由研发和 QA 核对最小补证路径；尚不能说已穷尽技术工作、只等待负责人接受偏差。当前没有新增须负责人立即选择的方案。补证不得随机重跑求通过、降低精度或放宽时限；运行中第二实例竞争是独立未测范围，不能由终态后无重放推出结论。
+
 ## 四条工作线
 
 | 工作线 | 已核实状态 | 后续动作与边界 |
