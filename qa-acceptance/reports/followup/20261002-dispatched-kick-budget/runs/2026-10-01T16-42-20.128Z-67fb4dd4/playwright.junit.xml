@@ -1,0 +1,43 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="1" time="65.40949099999999">
+<testsuite name="system/dispatched-kick-budget.spec.ts" timestamp="2026-10-01T16:42:20.568Z" hostname="system" tests="1" failures="0" skipped="0" time="63.929" errors="1">
+<testcase name="[INT-KICK-BUDGET-001] original active budget bounds an already dispatched kick with unresolved 504 confirmation" classname="system/dispatched-kick-budget.spec.ts" time="63.929">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/error-context.md]]
+
+[[ATTACHMENT|artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/trace.zip]]
+]]>
+</system-out>
+<error message="whole original activity: 原A5.8强恢复未满足：原run等待人工或外部结果确认而不能自动续跑；这不是活动预算超时结论" type="AssertionError">
+<![CDATA[  [system] › system/dispatched-kick-budget.spec.ts:31:1 › [INT-KICK-BUDGET-001] original active budget bounds an already dispatched kick with unresolved 504 confirmation 
+
+    AssertionError: whole original activity: 原A5.8强恢复未满足：原run等待人工或外部结果确认而不能自动续跑；这不是活动预算超时结论
+    actual decision and paired outer COMMIT: 原A5.8强恢复未满足：原run等待人工或外部结果确认而不能自动续跑；这不是活动预算超时结论
+
+      754 |     });
+      755 |   }
+    > 756 |   if (failures.length) assert.fail(failures.join('\n'));
+          |                               ^
+      757 |   if (primary && !(primary instanceof BlockedError)) throw primary;
+      758 |   if (missing.length || secondary.length)
+      759 |     throw new BlockedError([...missing, ...secondary].join('; '));
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/dispatched-kick-budget.spec.ts:756:31
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+</testsuites>

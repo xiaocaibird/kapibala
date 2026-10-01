@@ -21,12 +21,18 @@ test('query evidence preserves a pre-landing 404 snapshot even when the reply fo
   const id = String(created.body.groupId);
   const path = `/groups/${id}/messages/by-client-id/timing-selftest`;
   gateway.enqueue(path, { barrier: { phase: 'before-response', name: 'stale-negative' } });
+  const beforeRequest = performance.now();
   const pending = fetch(`${gateway.url}${path}`);
   await gateway.barriers.waitFor('stale-negative');
   const before = gateway.snapshot().requests.find((request) => request.path === path)!;
   assert.equal(before.preparedResponseStatus, 404);
   assert.ok(before.responsePreparedAt);
   assert.equal(before.completedAt, undefined);
+  assert.equal(before.clockDomain, `qa-process-performance:${process.pid}`);
+  assert.ok(before.receivedMonoMs! >= beforeRequest);
+  assert.ok(before.responsePreparedMonoMs! >= before.receivedMonoMs!);
+  assert.ok(before.responsePreparedMonoMs! <= performance.now());
+  assert.equal(before.responseFinishedMonoMs, undefined);
   gateway.enqueue(`/groups/${id}/send`, { effectDelayMs: 0, omitEvent: true });
   assert.equal(
     (
@@ -52,6 +58,8 @@ test('query evidence preserves a pre-landing 404 snapshot even when the reply fo
   assert.equal(completed.responseStatus, 404);
   assert.ok(Date.parse(completed.completedAt!) >= Date.parse(before.responsePreparedAt!));
   assert.notEqual(completed.responseClosedBeforeFinish, true);
+  assert.ok(completed.responseFinishedMonoMs! >= before.responsePreparedMonoMs!);
+  assert.ok(completed.responseFinishedMonoMs! <= performance.now());
   assert.equal((await fetch(`${gateway.url}${path}`)).status, 200);
   assert.equal(gateway.snapshot().messages.length, 1);
 });
@@ -64,10 +72,12 @@ test('a caller-cancelled query is not recorded as a finished response after its 
   const path = `/groups/${String(created.body.groupId)}/messages/by-client-id/absent`;
   gateway.enqueue(path, { barrier: { phase: 'before-response', name: 'cancelled-query' } });
   const controller = new AbortController();
+  const beforeRequest = performance.now();
   const pending = fetch(`${gateway.url}${path}`, { signal: controller.signal });
   const rejected = assert.rejects(pending, /abort/i);
   await gateway.barriers.waitFor('cancelled-query');
   const id = gateway.snapshot().requests.find((request) => request.path === path)!.id;
+  const beforeAbort = performance.now();
   controller.abort();
   await rejected;
   await waitForValue(
@@ -89,6 +99,12 @@ test('a caller-cancelled query is not recorded as a finished response after its 
   assert.equal(evidence.responseClosedBeforeFinish, true);
   assert.equal(evidence.responseFinishedAt, undefined);
   assert.equal(evidence.responseStatus, 404);
+  assert.equal(evidence.clockDomain, `qa-process-performance:${process.pid}`);
+  assert.ok(evidence.receivedMonoMs! >= beforeRequest);
+  assert.ok(evidence.receivedMonoMs! <= beforeAbort);
+  assert.ok(evidence.responseClosedMonoMs! >= beforeAbort);
+  assert.ok(evidence.responseClosedMonoMs! <= performance.now());
+  assert.equal(evidence.responseFinishedMonoMs, undefined);
 });
 
 test('event observation timestamp stays in the QA ledger and is not added to SSE data', async (t) => {

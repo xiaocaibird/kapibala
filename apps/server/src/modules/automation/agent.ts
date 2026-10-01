@@ -1,7 +1,19 @@
 import { randomUUID } from "node:crypto";
+import type { PoolClient } from "pg";
+import type { ActivityPauseCause } from "../../core/test-activity-observer.js";
+import {
+  withTestTransactionObserver,
+  observeTestTransactionQuery,
+  type TransactionBoundaryFact,
+} from "../../core/test-transaction-observer.js";
 import type { FastifyInstance } from "fastify";
 import type { AppContext } from "../../core/context.js";
-import { currentOperationSignal, emit, type Queryable } from "../../core/db.js";
+import {
+  currentOperationSignal,
+  emit,
+  withoutDatabaseDeadline,
+  type Queryable,
+} from "../../core/db.js";
 import { AppError } from "../../core/errors.js";
 import type { MessagingService } from "../../core/messaging.js";
 import type { AgentRun } from "../../../../../packages/contracts/src/index.js";
@@ -65,9 +77,10 @@ export class AgentModule {
       completeStep: (run, step, outcome, endReason, executionAttemptId) =>
         this.completeStep(run, step, outcome, endReason, executionAttemptId),
       finishAfterStep: (run, text) => this.finishAfterStep(run, text),
+      settleAfterKick: (run) => this.settleAfterKick(run),
       remaining: (run) => this.remaining(run),
       finish: (run, status, reason) => this.finish(run, status, reason),
-      pause: (run, reason) => this.pause(run, reason),
+      pause: (run, reason, cause) => this.pause(run, reason, cause),
       readRun: (id) => this.readRun(id),
       checkpoint: (run, phase) => this.activityClock.checkpoint(run.id, phase),
     });
@@ -194,81 +207,92 @@ export class AgentModule {
     let created: RunRow | undefined;
     let transactionEnteredAt: number | undefined;
     let insertWindow: [number, number] | undefined;
-    const committed = await schedulingTransaction(this.ctx.db, async (tx) => {
-      transactionEnteredAt = performance.now();
-      const group = (
-        await tx.query<GroupRow>(
-          "SELECT * FROM groups WHERE id=$1 FOR UPDATE",
-          [groupId],
-        )
-      ).rows[0];
-      if (!group || !group.agent_enabled || group.status !== "active") {
-        await tx.query(
-          "UPDATE agent_pending SET eligible=false WHERE group_id=$1 AND run_id IS NULL",
-          [groupId],
-        );
-        return;
-      }
-      if (
-        (
-          await tx.query(
-            "SELECT id FROM agent_runs WHERE group_id=$1 AND status='running'",
-            [groupId],
+    const transactionBoundaries: TransactionBoundaryFact[] = [];
+    const committed = await withTestTransactionObserver(
+      this.ctx.testActivityObserver || this.ctx.testLifecycleObserver
+        ? (fact) => {
+            transactionBoundaries.push(fact);
+          }
+        : undefined,
+      () =>
+        schedulingTransaction(this.ctx.db, async (tx) => {
+          transactionEnteredAt = performance.now();
+          const group = (
+            await tx.query<GroupRow>(
+              "SELECT * FROM groups WHERE id=$1 FOR UPDATE",
+              [groupId],
+            )
+          ).rows[0];
+          if (!group || !group.agent_enabled || group.status !== "active") {
+            await tx.query(
+              "UPDATE agent_pending SET eligible=false WHERE group_id=$1 AND run_id IS NULL",
+              [groupId],
+            );
+            return;
+          }
+          if (
+            (
+              await tx.query(
+                "SELECT id FROM agent_runs WHERE group_id=$1 AND status='running'",
+                [groupId],
+              )
+            ).rowCount
           )
-        ).rowCount
-      )
-        return;
-      const messages = (
-        await tx.query<RecentRow & { id: string }>(
-          `SELECT m.id,m.msg_id,m.sender_platform_user_id,m.text,m.sent_at,m.is_own FROM agent_pending p JOIN messages m ON m.id=p.message_id WHERE p.group_id=$1 AND p.run_id IS NULL AND p.eligible ORDER BY m.sent_at,m.id FOR UPDATE OF p`,
-          [groupId],
-        )
-      ).rows;
-      if (!messages.length) return;
-      const ownIds = (
-        await tx.query<{ platform_user_id: string }>(
-          "SELECT platform_user_id FROM accounts WHERE platform_user_id IS NOT NULL ORDER BY id",
-        )
-      ).rows.map((a) => a.platform_user_id);
-      const context = {
-        groupId,
-        triggerMessages: messages.map((m) => ({
-          msgId: m.msg_id,
-          senderPlatformUserId: m.sender_platform_user_id,
-          text: m.text,
-          sentAt: m.sent_at.toISOString(),
-        })),
-        policy: { autoKickEnabled: group.auto_kick_enabled },
-        ownPlatformUserIds: ownIds,
-      };
-      const history: ConversationMessage[] = [
-        {
-          role: "user",
-          content: [{ type: "text", text: JSON.stringify(context) }],
-        },
-      ];
-      const id = randomUUID();
-      const insertBefore = performance.now();
-      const run = (
-        await tx.query<RunRow>(
-          "INSERT INTO agent_runs(id,group_id,history) VALUES($1,$2,$3) RETURNING *",
-          [id, groupId, JSON.stringify(history)],
-        )
-      ).rows[0]!;
-      insertWindow = [insertBefore, performance.now()];
-      created = run;
-      await referenceMedia(
-        tx,
-        id,
-        groupId,
-        messages.map((message) => message.msg_id),
-      );
-      await tx.query(
-        "UPDATE agent_pending SET run_id=$1 WHERE message_id=ANY($2::text[])",
-        [id, messages.map((m) => m.id)],
-      );
-      await notify(tx, run, true);
-    });
+            return;
+          const messages = (
+            await tx.query<RecentRow & { id: string }>(
+              `SELECT m.id,m.msg_id,m.sender_platform_user_id,m.text,m.sent_at,m.is_own FROM agent_pending p JOIN messages m ON m.id=p.message_id WHERE p.group_id=$1 AND p.run_id IS NULL AND p.eligible ORDER BY m.sent_at,m.id FOR UPDATE OF p`,
+              [groupId],
+            )
+          ).rows;
+          if (!messages.length) return;
+          const ownIds = (
+            await tx.query<{ platform_user_id: string }>(
+              "SELECT platform_user_id FROM accounts WHERE platform_user_id IS NOT NULL ORDER BY id",
+            )
+          ).rows.map((a) => a.platform_user_id);
+          const context = {
+            groupId,
+            triggerMessages: messages.map((m) => ({
+              msgId: m.msg_id,
+              senderPlatformUserId: m.sender_platform_user_id,
+              text: m.text,
+              sentAt: m.sent_at.toISOString(),
+            })),
+            policy: { autoKickEnabled: group.auto_kick_enabled },
+            ownPlatformUserIds: ownIds,
+          };
+          const history: ConversationMessage[] = [
+            {
+              role: "user",
+              content: [{ type: "text", text: JSON.stringify(context) }],
+            },
+          ];
+          const id = randomUUID();
+          const insertBefore = performance.now();
+          const run = (
+            await observeTestTransactionQuery(tx, "run-insert", () =>
+              tx.query<RunRow>(
+                "INSERT INTO agent_runs(id,group_id,history) VALUES($1,$2,$3) RETURNING *",
+                [id, groupId, JSON.stringify(history)],
+              ),
+            )
+          ).rows[0]!;
+          insertWindow = [insertBefore, performance.now()];
+          created = run;
+          await referenceMedia(
+            tx,
+            id,
+            groupId,
+            messages.map((message) => message.msg_id),
+          );
+          await tx.query(
+            "UPDATE agent_pending SET run_id=$1 WHERE message_id=ANY($2::text[])",
+            [id, messages.map((m) => m.id)],
+          );
+          await notify(tx, run, true);
+        }),
+    );
     if (committed && created) {
       this.ctx.testLifecycleObserver?.record({
         kind: "agent-run-created",
@@ -278,6 +302,7 @@ export class AgentModule {
         creationWindowMs: [before, performance.now()],
         transactionBeginAcknowledgedByMs: transactionEnteredAt,
         creationInsertWindowMs: insertWindow,
+        transactionBoundaries,
         commitBoundary: "outer-commit-confirmed",
       });
       this.ctx.testActivityObserver?.runCreated(
@@ -287,6 +312,7 @@ export class AgentModule {
           persistedActiveMs: Number(created.active_ms),
         },
         { before, after: performance.now() },
+        { phase: "creation", transactionBoundaries },
       );
     }
   }
@@ -298,25 +324,58 @@ export class AgentModule {
       await tx.query<RunRow>("SELECT * FROM agent_runs WHERE id=$1", [id])
     ).rows[0];
   }
-  private async pause(run: RunRow, reason: string): Promise<void> {
+  private async pause(
+    run: RunRow,
+    reason: string,
+    cause: ActivityPauseCause,
+  ): Promise<void> {
     const before = performance.now();
-    await this.ctx.db.transaction(async (tx) => {
-      await tx.query(
-        "UPDATE agent_runs SET recovery_note=$2,updated_at=now() WHERE id=$1",
-        [run.id, reason],
-      );
-      if (run.recovery_note !== reason)
-        await notify(tx, { ...run, recovery_note: reason }, false);
-      await emit(tx, "inconsistency", {
-        kind: "agent_recovery_unknown",
-        ref: run.id,
-        message: reason,
+    const transactionBoundaries: TransactionBoundaryFact[] = [];
+    await withTestTransactionObserver(
+      this.ctx.testActivityObserver || this.ctx.testLifecycleObserver
+        ? (fact) => {
+            transactionBoundaries.push(fact);
+          }
+        : undefined,
+      () =>
+        this.ctx.db.transaction(async (tx) => {
+          await observeTestTransactionQuery(tx, "run-pause-update", () =>
+            tx.query(
+              "UPDATE agent_runs SET recovery_note=$2,updated_at=now() WHERE id=$1",
+              [run.id, reason],
+            ),
+          );
+          if (run.recovery_note !== reason)
+            await notify(tx, { ...run, recovery_note: reason }, false);
+          await emit(tx, "inconsistency", {
+            kind: "agent_recovery_unknown",
+            ref: run.id,
+            message: reason,
+          });
+        }),
+    );
+    try {
+      this.ctx.testLifecycleObserver?.record({
+        kind: "agent-activity-pause-committed",
+        groupId: run.group_id,
+        runId: run.id,
+        attemptId: transactionBoundaries[0]?.transactionAttemptId ?? run.id,
+        transactionBoundaries,
+        transition: "recovery-paused",
+        pauseCause: cause,
+        commitBoundary: "outer-commit-confirmed",
       });
-    });
-    this.ctx.testActivityObserver?.runPaused(run.id, {
-      before,
-      after: performance.now(),
-    });
+    } catch {
+      // Engineering evidence cannot prevent finishing an already paused run.
+    }
+    this.ctx.testActivityObserver?.runPaused(
+      run.id,
+      {
+        before,
+        after: performance.now(),
+      },
+      { phase: "pause", transactionBoundaries, pauseCause: cause },
+    );
   }
   private async finish(
     run: RunRow,
@@ -340,14 +399,17 @@ export class AgentModule {
       reason,
     });
     await this.activityClock.checkpoint(run.id, "run:finish");
-    const commit = async (tx: Queryable): Promise<void> => {
+    const transactionBoundaries: TransactionBoundaryFact[] = [];
+    const commit = async (tx: PoolClient): Promise<void> => {
       await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
         run.group_id,
       ]);
       const updated = (
-        await tx.query<RunRow>(
-          "UPDATE agent_runs SET status=$2,end_reason=$3,summary=$4,inflight_turn=false,updated_at=now() WHERE id=$1 AND status='running' RETURNING *",
-          [run.id, status, reason, finalSummary],
+        await observeTestTransactionQuery(tx, "run-terminal-update", () =>
+          tx.query<RunRow>(
+            "UPDATE agent_runs SET status=$2,end_reason=$3,summary=$4,inflight_turn=false,updated_at=now() WHERE id=$1 AND status='running' RETURNING *",
+            [run.id, status, reason, finalSummary],
+          ),
         )
       ).rows[0];
       if (updated) {
@@ -355,12 +417,23 @@ export class AgentModule {
         terminalCommitted = true;
       }
     };
-    if (options.deferIfLocked) {
-      // Paused-run cancellation is background progress, just like admission. A
-      // lock timeout rolls back status/events and leaves the durable intent for
-      // the next tick, while other groups can still start and run sequences.
-      if (!(await schedulingTransaction(this.ctx.db, commit))) return;
-    } else await this.ctx.db.transaction(commit);
+    const committed = await withTestTransactionObserver(
+      this.ctx.testActivityObserver || this.ctx.testLifecycleObserver
+        ? (fact) => {
+            transactionBoundaries.push(fact);
+          }
+        : undefined,
+      async () => {
+        if (options.deferIfLocked) {
+          // Paused-run cancellation is background progress, just like admission. A
+          // lock timeout rolls back status/events and leaves the durable intent for
+          // the next tick, while other groups can still start and run sequences.
+          if (!(await schedulingTransaction(this.ctx.db, commit))) return false;
+        } else await this.ctx.db.transaction(commit);
+        return true;
+      },
+    );
+    if (!committed) return;
     if (terminalCommitted) {
       this.ctx.testLifecycleObserver?.record({
         kind: "agent-terminal-committed",
@@ -369,16 +442,23 @@ export class AgentModule {
         attemptId: terminalAttemptId,
         status,
         reason,
+        transactionBoundaries,
         commitBoundary: "outer-commit-confirmed",
       });
-      this.ctx.testActivityObserver?.runTerminal(run.id, {
-        before,
-        after: performance.now(),
-      });
+      this.ctx.testActivityObserver?.runTerminal(
+        run.id,
+        {
+          before,
+          after: performance.now(),
+        },
+        { phase: "terminal", transactionBoundaries },
+      );
     }
     // Messages that arrived during the previous run are handed off without waiting for another turn.
-    await this.scan();
-    await this.startNext(run.group_id);
+    await withoutDatabaseDeadline(async () => {
+      await this.scan();
+      await this.startNext(run.group_id);
+    });
   }
   private async run(id: string): Promise<void> {
     let run = await this.readRun(id);
@@ -400,6 +480,7 @@ export class AgentModule {
       await this.pause(
         run,
         "An Agent turn was sent before interruption; the protocol cannot safely replay an unrecorded response.",
+        "unrecorded-model-response",
       );
       return;
     }
@@ -451,37 +532,49 @@ export class AgentModule {
           await this.toolRunner.executeStep(run, pending);
           continue;
         }
-        const group = (
-          await this.ctx.db.query<GroupRow>(
-            "SELECT * FROM groups WHERE id=$1",
-            [run.group_id],
-          )
-        ).rows[0];
-        if (
-          run.cancel_requested ||
-          !group?.agent_enabled ||
-          group.status !== "active"
-        ) {
-          await this.finish(run, "cancelled", "cancelled");
-          return;
-        }
-        if (this.remaining(run) <= 0) {
-          await this.finish(run, "failed", "wall_clock");
-          return;
-        }
-        if (run.protocol_errors >= 3) {
-          await this.finish(run, "failed", "protocol_errors");
-          return;
-        }
-        if (run.step_count >= 12) {
-          await this.finish(run, "failed", "budget_exhausted");
-          return;
-        }
+        if (await this.finishBeforeNextTurn(run)) return;
         await this.turn(run);
       }
     } finally {
       this.deadlines.delete(id);
     }
+  }
+  private async finishBeforeNextTurn(run: RunRow): Promise<boolean> {
+    const group = (
+      await this.ctx.db.query<GroupRow>("SELECT * FROM groups WHERE id=$1", [
+        run.group_id,
+      ])
+    ).rows[0];
+    if (
+      run.cancel_requested ||
+      !group?.agent_enabled ||
+      group.status !== "active"
+    ) {
+      await this.finish(run, "cancelled", "cancelled");
+      return true;
+    }
+    if (this.remaining(run) <= 0) {
+      await this.finish(run, "failed", "wall_clock");
+      return true;
+    }
+    if (run.protocol_errors >= 3) {
+      await this.finish(run, "failed", "protocol_errors");
+      return true;
+    }
+    if (run.step_count >= 12) {
+      await this.finish(run, "failed", "budget_exhausted");
+      return true;
+    }
+    return false;
+  }
+  private async settleAfterKick(previous: RunRow): Promise<void> {
+    const run = await this.readRun(previous.id);
+    if (!run || run.status !== "running" || run.recovery_note) return;
+    if (await this.finishBeforeNextTurn(run)) return;
+    // The next complete model stage cannot start. Finish under the kick's hard
+    // deadline even when PostgreSQL returned just before its work timer fired.
+    if (this.remaining(run) < this.turnTimeoutMs)
+      await this.finish(run, "failed", "wall_clock");
   }
   private remaining(run: RunRow): number {
     return Math.max(
@@ -747,46 +840,70 @@ export class AgentModule {
         ],
       },
     ];
-    await this.ctx.db.transaction(async (tx) => {
-      if (endReason)
-        await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
-          run.group_id,
-        ]);
-      await tx.query(
-        "UPDATE agent_steps SET state='complete',result=$3,result_summary=$4,is_error=$5,error_code=$6 WHERE run_id=$1 AND ordinal=$2",
-        [
-          run.id,
-          step.ordinal,
-          JSON.stringify(outcome.value),
-          summary(outcome.value),
-          Boolean(outcome.errorCode),
-          outcome.errorCode ?? null,
-        ],
-      );
-      await tx.query(
-        "UPDATE agent_runs SET history=$2,updated_at=now() WHERE id=$1",
-        [run.id, JSON.stringify(history)],
-      );
-      await emit(tx, "agent_step_changed", {
-        runId: run.id,
-        groupId: run.group_id,
-        ordinal: step.ordinal,
-        changedFields: ["resultSummary", "isError", "errorCode"],
-      });
-      if (endReason) {
-        // The complete tool result and terminal conclusion are one durable fact.
-        const blocked = (
-          await tx.query<RunRow>(
-            "UPDATE agent_runs SET status='blocked',end_reason=$2,inflight_turn=false WHERE id=$1 AND status='running' RETURNING *",
-            [run.id, endReason],
-          )
-        ).rows[0];
-        if (blocked) {
-          await notify(tx, blocked, true);
-          terminalCommitted = true;
-        }
-      }
-    });
+    const transactionBoundaries: TransactionBoundaryFact[] = [];
+    await withTestTransactionObserver(
+      this.ctx.testActivityObserver || this.ctx.testLifecycleObserver
+        ? (fact) => {
+            transactionBoundaries.push(fact);
+            this.ctx.testLifecycleObserver?.record({
+              kind: "agent-step-save-transaction",
+              groupId: run.group_id,
+              runId: run.id,
+              toolUseId: step.tool_use_id ?? undefined,
+              stepId: `${run.id}:${step.ordinal}`,
+              attemptId: commitAttemptId,
+              ...fact,
+            });
+          }
+        : undefined,
+      () =>
+        this.ctx.db.transaction(async (tx) => {
+          if (endReason)
+            await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
+              run.group_id,
+            ]);
+          await observeTestTransactionQuery(tx, "step-result-update", () =>
+            tx.query(
+              "UPDATE agent_steps SET state='complete',result=$3,result_summary=$4,is_error=$5,error_code=$6 WHERE run_id=$1 AND ordinal=$2",
+              [
+                run.id,
+                step.ordinal,
+                JSON.stringify(outcome.value),
+                summary(outcome.value),
+                Boolean(outcome.errorCode),
+                outcome.errorCode ?? null,
+              ],
+            ),
+          );
+          await observeTestTransactionQuery(tx, "run-history-update", () =>
+            tx.query(
+              "UPDATE agent_runs SET history=$2,updated_at=now() WHERE id=$1",
+              [run.id, JSON.stringify(history)],
+            ),
+          );
+          await emit(tx, "agent_step_changed", {
+            runId: run.id,
+            groupId: run.group_id,
+            ordinal: step.ordinal,
+            changedFields: ["resultSummary", "isError", "errorCode"],
+          });
+          if (endReason) {
+            // The complete tool result and terminal conclusion are one durable fact.
+            const blocked = (
+              await observeTestTransactionQuery(tx, "run-blocked-update", () =>
+                tx.query<RunRow>(
+                  "UPDATE agent_runs SET status='blocked',end_reason=$2,inflight_turn=false WHERE id=$1 AND status='running' RETURNING *",
+                  [run.id, endReason],
+                ),
+              )
+            ).rows[0];
+            if (blocked) {
+              await notify(tx, blocked, true);
+              terminalCommitted = true;
+            }
+          }
+        }),
+    );
     if (terminalCommitted) {
       this.ctx.testLifecycleObserver?.record({
         kind: "agent-terminal-committed",
@@ -795,12 +912,17 @@ export class AgentModule {
         attemptId: commitAttemptId,
         status: "blocked",
         reason: endReason,
+        transactionBoundaries,
         commitBoundary: "outer-commit-confirmed",
       });
-      this.ctx.testActivityObserver?.runTerminal(run.id, {
-        before,
-        after: performance.now(),
-      });
+      this.ctx.testActivityObserver?.runTerminal(
+        run.id,
+        {
+          before,
+          after: performance.now(),
+        },
+        { phase: "terminal", transactionBoundaries },
+      );
     }
     if (step.name === "send_message")
       this.ctx.testLifecycleObserver?.record({

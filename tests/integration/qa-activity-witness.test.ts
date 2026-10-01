@@ -8,6 +8,7 @@ import {
   ActivityWitness,
   type ActivityRequest,
 } from "../../scripts/qa-runtime-observation/activity-witness.js";
+import type { ActivityTransitionEvidence } from "../../apps/server/src/core/test-activity-observer.js";
 import type { Binding } from "../../scripts/qa-capacity/protocol.js";
 import type { ObservationSnapshot } from "../../scripts/qa-observation/types.js";
 import {
@@ -19,11 +20,18 @@ import {
   until,
 } from "../support/core-automation-fixture.js";
 
-async function fixture(t: TestContext) {
+async function fixture(t: TestContext, rejectPauseObservation = false) {
   let witness!: ActivityWitness;
   const f = await automationFixture(t, undefined, undefined, (ctx) => {
     witness = new ActivityWitness(ctx.db);
     ctx.testActivityObserver = witness;
+    if (rejectPauseObservation)
+      ctx.testLifecycleObserver = {
+        record(fact) {
+          if (fact.kind === "agent-activity-pause-committed")
+            throw new Error("controlled recorder failure");
+        },
+      };
   });
   f.onCleanup(() => witness.close());
   await f.app.listen({ host: "127.0.0.1", port: 0 });
@@ -134,6 +142,41 @@ test("activity witness keeps pre-lease creation time and holds only a committed 
   assert.equal(terminal.kind, "activity-terminal");
   assert.equal(terminal.activityState, "terminal");
   assert.equal(terminal.includesUnsavedTail, true);
+  const transitions =
+    terminal.transitionEvidence as ActivityTransitionEvidence[];
+  assert.deepEqual(
+    transitions.map((x) => x.phase),
+    ["creation", "terminal"],
+  );
+  for (const transition of transitions) {
+    const facts = transition.transactionBoundaries;
+    assert.equal(new Set(facts.map((x) => x.transactionAttemptId)).size, 1);
+    assert.ok(
+      facts.every(
+        (x) => x.backendPid !== null && x.windowMs[1] >= x.windowMs[0],
+      ),
+    );
+    assert.equal(facts[0]!.phase, "begin");
+    assert.equal(facts[0]!.edge, "called");
+    assert.equal(facts.at(-1)!.phase, "commit");
+    assert.equal(facts.at(-1)!.edge, "returned");
+  }
+  const creation = transitions[0]!.transactionBoundaries;
+  assert.ok(
+    creation.some((x) => x.phase === "run-insert" && x.edge === "returned"),
+  );
+  const begin = creation.find(
+    (x) => x.phase === "begin" && x.edge === "returned",
+  )!;
+  const broadStart = terminal.creationOrEpochStartWindowMs as [number, number];
+  assert.ok(
+    begin.windowMs[0] >= broadStart[0] && begin.windowMs[1] <= broadStart[1],
+  );
+  assert.ok(
+    transitions[1]!.transactionBoundaries.some(
+      (x) => x.phase === "run-terminal-update" && x.edge === "returned",
+    ),
+  );
   assert.equal(f.turns.length, 2);
   assert.equal(f.gatewayRequests.length, 0);
   assert.equal((await f.witness.release(hold.id)).state, "released");
@@ -266,6 +309,18 @@ test("pre-existing inflight work reports the real recovery pause with incomplete
   );
   const latest = f.witness.snapshot(observation.id).events.at(-1)!;
   assert.equal(latest.activityState, "recovery-paused");
+  const pausedFacts = (
+    latest.transitionEvidence as ActivityTransitionEvidence[]
+  ).at(-1)!;
+  assert.equal(pausedFacts.phase, "pause");
+  assert.equal(pausedFacts.pauseCause, "unrecorded-model-response");
+  assert.ok(
+    pausedFacts.transactionBoundaries.some(
+      (x) => x.phase === "run-pause-update" && x.edge === "returned",
+    ),
+  );
+  assert.equal(pausedFacts.transactionBoundaries.at(-1)!.phase, "commit");
+  assert.equal(pausedFacts.transactionBoundaries.at(-1)!.edge, "returned");
   assert.equal(latest.includesUnsavedTail, false);
   assert.equal(latest.activeElapsedMs, undefined);
   assert.equal(f.witness.snapshot(hold.id).state, "armed");
@@ -551,4 +606,30 @@ test("SIGKILL ends the held instance and a real replacement cannot inherit its l
     }),
   );
   await second.command("close");
+});
+
+test("a failing pause recorder cannot suppress the real pause witness or later cancellation", async (t) => {
+  const f = await fixture(t, true);
+  const id = "pause-recorder-failure";
+  await f.db.query(
+    "INSERT INTO agent_runs(id,group_id,inflight_turn) VALUES($1,'g',true)",
+    [id],
+  );
+  const observed = await f.arm(id);
+  await f.automation.tick();
+  await until(async () => Boolean((await f.readRun(id)).recovery_note));
+  assert.equal(
+    f.witness.snapshot(observed.id).events.at(-1)!.activityState,
+    "recovery-paused",
+  );
+  await f.db.query("UPDATE agent_runs SET cancel_requested=true WHERE id=$1", [
+    id,
+  ]);
+  await f.automation.tick();
+  assert.equal((await f.complete(id)).status, "cancelled");
+  assert.equal(
+    f.witness.snapshot(observed.id).events.at(-1)!.activityState,
+    "terminal",
+  );
+  assert.equal(f.turns.length, 0);
 });

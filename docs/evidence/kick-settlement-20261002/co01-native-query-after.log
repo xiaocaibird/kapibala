@@ -1,0 +1,19 @@
+npm notice run kapibala-platform@0.1.0 npx
+npm notice run 'tsx' --test --test-concurrency=1 tests/integration/kick-database-deadline.test.ts
+✔ combined runtime observation restores native query before a deadline client is reused through pg callbacks (52.800666ms)
+✔ kick database deadline scope is explicit, nested deadlines shrink and clearing preserves its parent (0.160708ms)
+✔ kick database deadline releases a late pool checkout without issuing SQL (113.601ms)
+✔ kick database deadline admits a released row lock and commits domain data and events together (106.8035ms)
+✔ kick database deadline preserves stricter existing session timeouts and restores them for ordinary work (144.090625ms)
+✔ kick database deadline cancels a long row wait at PostgreSQL and acknowledges rollback before reuse (283.846417ms)
+✔ kick database local read timeout destroys the client and never queues rollback behind the unacknowledged query (561.773458ms)
+✔ kick database lost COMMIT reply is unconfirmed to the caller even when PostgreSQL really committed (457.864292ms)
+✔ kick database retains an acknowledged COMMIT when the caller resumes after its deadline (210.190541ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2096.415667

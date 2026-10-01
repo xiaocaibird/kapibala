@@ -1,0 +1,29 @@
+{
+  "runId": "2026-10-01T18-39-27.933Z-15f16ec6",
+  "reviewedAt": "2026-10-01T18:57:20.908185+00:00",
+  "reviewer": "independent read-only QA budget_observation_oracle",
+  "dockerEngineId": "1fbf2675-d415-458c-866c-28fd59cd7267",
+  "scope": "This exact run only, not historical resources",
+  "status": "CORE_OWNED_RESOURCES_CLEAN",
+  "containers": 3,
+  "volumes": 3,
+  "applications": 4,
+  "applicationGuardians": 4,
+  "controllerProcesses": 6,
+  "registries": 2,
+  "identifiedPorts": 13,
+  "allCaseCleanupFailures": [],
+  "evidence": [
+    "snapshot-20261001T183934.090745Z-during-run.json",
+    "snapshot-20261001T184005.409210Z-during-run.json",
+    "snapshot-20261001T184319.346498Z-post-cleanup.json",
+    "application-postchecks.json",
+    "../controllers/stop-request.json"
+  ],
+  "limits": [
+    "First container disappeared before live inspect; its volume tied by this case actual containerId/owner/database plus exact Docker mount/unmount container ID, not time coincidence",
+    "First PostgreSQL HostPort not captured; no claim of individual lsof check for that unknown port. 13 identified ports all checked absent",
+    "First worker72278 extra readonly post ps checked after original review, absent; other workers72633/73114 absent",
+    "Shared Docker backend59212 remains shared infrastructure, no leak classification"
+  ]
+}

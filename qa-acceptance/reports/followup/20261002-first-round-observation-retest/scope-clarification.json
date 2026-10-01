@@ -1,0 +1,112 @@
+{
+  "formatVersion": 1,
+  "kind": "REPORT_SCOPE_CLARIFICATION_NO_ADDITIONAL_PRODUCT_EXECUTION",
+  "sources": [
+    "cases/protocol-boundaries.json",
+    "cases/manual.json",
+    "cases/dispatched-kick-budget.json",
+    "reports/acceptance/20261002-current-delivery/pending-items.json",
+    "requirements/evidence-followup/backend-requirements-20261001.md",
+    "requirements/evidence-followup/static-closeout-contract-20261001.md",
+    "../docs/decisions.md#d047",
+    "../docs/decisions.md#d048"
+  ],
+  "productVsQa": {
+    "C1C2": {
+      "product": "Development/self-test delivery already in main; verified main history includes b02cd01 and1738d3a",
+      "independentQa": "Not executed by this first-round supplement; developer results not inherited"
+    },
+    "secondRoundP0P1": {
+      "qaCommit": "28b3b3199013681fb5266cc409c7161f8726eb17",
+      "status": "Preparation only; not SUT executed and not merged to main"
+    }
+  },
+  "items": [
+    {
+      "id": "BLK-EXT-001",
+      "requirements": [
+        "R-A2-01",
+        "R-A5-11"
+      ],
+      "classification": "EXISTING_REQUIRED_FIRST_ROUND_UNCLOSED_CASE",
+      "historicalState": "BLOCKED_ON_2716_NOT_RETESTED_ON_8E_OR_01F",
+      "existingFacts": "Paired unacknowledged send prefixes; applied branch uniquely sent; quiet no-effect branch still unknown in finite observation. Neither received504 nor an authoritative negative completion guarantee.",
+      "missingFacts": "Actual justified terminal outcome for silent branch, or actual irreversible/manual recovery-paused decision proving failure. Missing operation completion guarantee cannot be manufactured from local logs.",
+      "existingAutomation": "tests/system/protocol-boundaries.spec.ts [BLK-EXT-001] can exercise paired prefixes, preserve remote state across restart, assert no blind resend, inspect actual outcomes; extending a finite wait cannot by itself close liveness.",
+      "closureLimit": "Current protocol cannot promise a legitimate negative terminal for a silent no-response/no-effect branch. A separate valid positive/failure event tests that different trajectory. New protocol/acceptance changes need explicit records; QA does not require a new decision merely to rerun available observations.",
+      "executedInThisSupplement": false
+    },
+    {
+      "id": "GAP-RUNNING-SECOND-INSTANCE-COMPETITION",
+      "classification": "EXISTING_EXTRA_CROSS_COVERAGE_NOT_NEW_THREE_CASE_EXIT_GATE",
+      "source": "reports/acceptance/20261002-current-delivery/pending-items.json",
+      "existingFacts": "Current budget/kick experiment single instance. Terminal-after-start second instance is not running contention. Existing generic multi-instance tests do not cover this precise three-factor run.",
+      "missingFacts": "Same original active run/attempt plus second owned live SUT, actual overlapping ownership/lease contention or takeover, complete common DB/external ledger and clock envelopes.",
+      "existingAutomation": "Process manager can start two owned instances; exact bounded three-factor driver/real ownership observation has not been delivered/executed. Preparation is required before execution; no existing PASS is claimed.",
+      "independentKnownFailClosureNeedsThis": false,
+      "executedInThisSupplement": false,
+      "existingOriginalCoverage": {
+        "case": "AGENT-003",
+        "requirements": [
+          "R-A5-01",
+          "R-A5-02"
+        ],
+        "version": "2716abdd",
+        "rawAndIndependent": "PASS",
+        "meaning": "Same-group running second instance and queued events proved in original finite scenario; not reopened by this unexecuted extra three-factor cross"
+      }
+    },
+    {
+      "id": "FINITE_EVIDENCE_NON_UNIVERSAL",
+      "classification": "EVIDENCE_LIMIT_NOT_AN_UNBOUNDED_NEW_TASK",
+      "scope": "This finite sample does not prove arbitrary future restarts or all future exactly-once effects. Previously observed BLK-EXT-004/005, REC-007 failures retain their own versioned results; do not create an infinite verification gate."
+    },
+    {
+      "id": "MAN-UX-001",
+      "requirements": [
+        "R-A6-03",
+        "ADD-COPY-01"
+      ],
+      "classification": "EXISTING_MANUAL_CASE_PARTIAL",
+      "closedScope": "H18 finite four-state experience stays closed-by-user; no repeated unknown example",
+      "remainingBoundedSteps": [
+        "Unprimed operator views actual account disconnect/release explanation and group creator/admin/member roles",
+        "Operator explains console permissions versus group roles and whether release retains history",
+        "Capture actual misunderstandings/needed guidance with fixed version/browser/viewport screenshots"
+      ],
+      "needsActualHuman": true,
+      "executedInThisSupplement": false
+    },
+    {
+      "id": "MAN-IME-001",
+      "requirements": [
+        "ADD-DIR-11"
+      ],
+      "classification": "EXISTING_REAL_OS_INPUT_MANUAL_CASE",
+      "existingAutomationLimit": "Synthetic composition is separate evidence, not actual OS keyboard/candidate window",
+      "guide": "sharing/manual-execution-20261001.md",
+      "executedInThisSupplement": false
+    },
+    {
+      "id": "MAN-FOCUS-001",
+      "requirements": [
+        "ADD-ATT-02",
+        "ADD-ATT-03"
+      ],
+      "classification": "EXISTING_NATIVE_FOCUS_MANUAL_CASE",
+      "existingAutomationLimit": "DOM/title attributes and engineering screenshots do not replace independent native tab/app/window switching with actual related update/read/operation",
+      "guide": "sharing/manual-execution-20261001.md",
+      "executedInThisSupplement": false
+    }
+  ],
+  "closedObservationGaps": [
+    "READ-CAUSAL-1 actual PG query/lock/rollback attribution in original run",
+    "KB-CROSS original activity-budget signal while original GET pending",
+    "KB-CANCEL actual original GET signal/rejection source"
+  ],
+  "openObservedFailures": [
+    "QA-01F-READ-001",
+    "QA-01F-ACTIVITY-001"
+  ],
+  "nextCandidateLimit": "Engineering preparation source frozen f285777f25dc644fe5181cd40ae2f0c316ae5389; complete self-test/formal execution handoff pending. Distinct kick-work-budget with2s closeout reserve retains original activity-budget. Roughly58s engineering sample is not QA PASS; original01f FAIL unchanged. No new product execution for this clarification."
+}

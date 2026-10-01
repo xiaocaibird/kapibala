@@ -640,6 +640,76 @@
         "旧响应屏障前提的BLOCKED原件保留；本轮是前提补强后独立执行，不是自动重试。",
         "未达running/steps=[]/无目标model/audit/send真实前置时BLOCKED；不插SQL或把源码排队机制当PASS。"
       ]
+    },
+    {
+      "id": "qa-8e047-dispatched-kick-budget",
+      "title": "从零真实活动与已派发kick交叉预算专项",
+      "purpose": "独立真实容量拒绝、实际POST504及确认GET在途跨原预算结束；不注入活动计数、不升级旧恢复结论。",
+      "caseIds": [
+        "INT-KICK-BUDGET-001"
+      ],
+      "projects": [
+        "system"
+      ],
+      "riskBoundaries": [
+        "产品严格活动上限60000ms；38–40及43–44秒只构造前提，不是新SLA；首次未命中B，已得违约F优先。",
+        "单实例无重启；运行中第二实例竞争另列NOT_RUN，peer-close不自动证明预算取消原因。",
+        "已签254全量及51差异报告不改，另冻QA源与目标另立run；0自动重试。"
+      ]
+    },
+    {
+      "id": "qa-01f-first-round-observation",
+      "title": "首轮最小观测固定候选独立补测",
+      "purpose": "真实原活动×已派发kick与取消因果、PG表锁读取回滚和真实保存失败；独立新样本不改旧报告",
+      "caseIds": [
+        "INT-KICK-OBSERVATION-001",
+        "INT-READ-CAUSAL-001",
+        "INT-READ-SAVE-ROLLBACK-001"
+      ],
+      "projects": [
+        "system"
+      ],
+      "riskBoundaries": [
+        "零自动重试；严格5000/60000不新增容差，已证FAIL优先缺证",
+        "真实读取事务与保存事务分列；不把开发样例/单项通过拼成组合PASS",
+        "仅首轮单实例有限证据；第二轮、真人、强恢复与上线结论不升级"
+      ]
+    },
+    {
+      "id": "qa-01f-save-driver-correction",
+      "title": "01f原保存回滚QA适配修正单例补测",
+      "purpose": "只修正异步桩落地与跨进程prepared取证；原3ed首次raw保持，两条时限FAIL不重跑",
+      "caseIds": [
+        "INT-READ-SAVE-ROLLBACK-001"
+      ],
+      "projects": [
+        "system"
+      ],
+      "riskBoundaries": [
+        "新QA源另冻；一次限定补测，零自动重试，原样保留首次QA驱动阻塞",
+        "不改产品/原要求，不涉及第二轮/真实provider/上线门禁"
+      ]
+    },
+    {
+      "id": "qa-first-round-kick-work",
+      "title": "首轮work与hard分离的独立有限补证",
+      "purpose": "固定7d53首轮有限影响复测：真实work GET取消与终态保守上界、正常成功、政策拒绝、两种明确外部拒绝和已派发504确认不重放；原五秒失败及旧hard结论不重签",
+      "caseIds": [
+        "AGENT-017",
+        "AGENT-018",
+        "CAP-008",
+        "CAP-010",
+        "INT-KICK-WORK-001"
+      ],
+      "projects": [
+        "system"
+      ],
+      "riskBoundaries": [
+        "正式工程交接已接收但开发PASS不代签QA；新QA/target/suite冻结，仅一次有限执行，0自动重试；有FAIL/BLOCKED则清理、出报告并暂停，不修正后产品重跑",
+        "原60000不加容差，无最低时长；跨保守COMMIT上界仅B，已证实际活动F优先",
+        "work信号与hard身份分开，hard没发生不补造；正常成功/拒绝回归不声称命中跨work投影或单连接observer复用",
+        "保留旧01f五秒FAIL/活动FAIL及所有历史原件；不执行第二轮、真实provider、真人或上线门禁"
+      ]
     }
   ]
 }

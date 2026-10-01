@@ -6,11 +6,17 @@ import {
   currentOperationSignal,
   emit,
   LockCapacityUnavailableError,
+  withDatabaseDeadline,
   type Queryable,
 } from "../../core/db.js";
 import { AppError, RemoteError } from "../../core/errors.js";
+import type {
+  RemoteObservation,
+  RemoteSignalSource,
+} from "../../core/remote.js";
 import {
   KICK_POST_TIMEOUT_MS,
+  KickRejectionPersistenceError,
   type KickOptions,
   type MessagingService,
   type SendInput,
@@ -667,14 +673,62 @@ export class Messages implements MessagingService {
     input: { groupId: string; accountId: string; targetPlatformUserId: string },
     options?: KickOptions,
   ): Promise<{ kicked: true }> {
+    const observer = this.ctx.testLifecycleObserver;
+    const kickAttemptId = observer
+      ? (options?.observation?.attemptId ?? randomUUID())
+      : "";
+    const observeRemote = (
+      requestPurpose: "post" | "confirmation" | "projection",
+    ) =>
+      observer
+        ? (fact: RemoteObservation) => {
+            observer.record({
+              kind: `kick-${requestPurpose}-${fact.stage}`,
+              groupId: input.groupId,
+              accountId: input.accountId,
+              runId: options?.observation?.runId,
+              toolUseId: options?.observation?.toolUseId,
+              stepId: options?.observation?.stepId,
+              attemptId: kickAttemptId,
+              requestPurpose,
+              ...fact,
+            });
+          }
+        : undefined;
     options?.assertDispatchAllowed?.();
     options?.signal?.throwIfAborted();
     const result = await this.ctx.db.tryWithLock(
       `kick:${input.groupId}:${input.targetPlatformUserId}`,
       async (_connection, lockSignal) => {
-        const signal = options?.signal
-          ? AbortSignal.any([options.signal, lockSignal])
-          : lockSignal;
+        const signal =
+          options?.signal || options?.hardBudgetSignal
+            ? AbortSignal.any([
+                ...(options.signal ? [options.signal] : []),
+                ...(options.hardBudgetSignal ? [options.hardBudgetSignal] : []),
+                lockSignal,
+              ])
+            : lockSignal;
+        const signalSources: RemoteSignalSource[] | undefined = observer
+          ? [
+              { source: "kick-lock", signal: lockSignal },
+              ...(options?.hardBudgetSignal
+                ? [
+                    {
+                      source: "activity-budget" as const,
+                      signal: options.hardBudgetSignal,
+                    },
+                  ]
+                : []),
+              ...(options?.signal && options.observation
+                ? [
+                    {
+                      source: options.observation.signalSource,
+                      signal: options.signal,
+                    },
+                  ]
+                : []),
+            ]
+          : undefined;
         options?.assertDispatchAllowed?.();
         signal.throwIfAborted();
         const group = (
@@ -709,6 +763,8 @@ export class Messages implements MessagingService {
               KICK_POST_TIMEOUT_MS,
               signal,
               options?.assertDispatchAllowed,
+              observeRemote("post"),
+              signalSources,
             ),
           );
         } catch (error) {
@@ -720,18 +776,22 @@ export class Messages implements MessagingService {
               "GROUP_WRITE_FORBIDDEN",
             ].includes(error.code)
           ) {
-            await this.ctx.db.transaction(async (tx) => {
-              if (error.code === "GROUP_WRITE_FORBIDDEN")
-                await markGroupUnreachable(tx, input.groupId);
-              else
-                await changeAccount(
-                  tx,
-                  input.accountId,
-                  error.code === "ACCOUNT_SUSPENDED"
-                    ? "suspended"
-                    : "session_expired",
-                );
-            });
+            try {
+              await this.ctx.db.transaction(async (tx) => {
+                if (error.code === "GROUP_WRITE_FORBIDDEN")
+                  await markGroupUnreachable(tx, input.groupId);
+                else
+                  await changeAccount(
+                    tx,
+                    input.accountId,
+                    error.code === "ACCOUNT_SUSPENDED"
+                      ? "suspended"
+                      : "session_expired",
+                  );
+              });
+            } catch (cause) {
+              throw new KickRejectionPersistenceError(error.code, cause);
+            }
           }
           if (
             !(error instanceof RemoteError) ||
@@ -747,6 +807,9 @@ export class Messages implements MessagingService {
                 undefined,
                 15000,
                 signal,
+                undefined,
+                observeRemote("confirmation"),
+                signalSources,
               ),
             );
           if (
@@ -759,60 +822,82 @@ export class Messages implements MessagingService {
                 "当前成员仍存在；移除与重新加入无法区分，不自动重试。",
             });
         }
-        await this.ctx.db.transaction(async (tx) => {
-          // The kick's confirmed effect is historical evidence. A later rejoin can
-          // already be visible, so project only a fresh snapshot under the group lock.
-          await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
-            input.groupId,
-          ]);
-          let members: { platformUserId: string }[];
-          try {
-            members = z
-              .array(z.object({ platformUserId: z.string() }))
-              .parse(
-                await this.ctx.gateway.request(
-                  `/groups/${encodeURIComponent(group.gateway_group_id)}/members`,
-                  undefined,
-                  15000,
-                  signal,
-                ),
-              );
-          } catch (error) {
-            currentOperationSignal()?.throwIfAborted();
-            this.ctx.log.warn(
-              { err: error, groupId: input.groupId },
-              "已确认移除操作，当前成员列表刷新失败",
-            );
-            // The gateway guarantees member_left and retains its history. Existing
-            // event retry/replay will refresh the projection without repeating kick.
-            await emit(tx, "inconsistency", {
-              kind: "membership_refresh_failed",
-              groupId: input.groupId,
-              platformUserId: input.targetPlatformUserId,
-              operation: "kick",
-              operationConfirmed: true,
-              message:
-                "移除操作已成功，当前成员列表暂无法刷新；保留本地状态，等待网关成员事件重试或重放。",
+        // Preserve a proved effect before a refresh that can outlast the work
+        // allocation. This callback cannot invent a remote success.
+        await options?.afterConfirmation?.();
+        if (signal.aborted) return { kicked: true as const };
+        try {
+          const project = () =>
+            this.ctx.db.transaction(async (tx) => {
+              // The kick's confirmed effect is historical evidence. A later rejoin can
+              // already be visible, so project only a fresh snapshot under the group lock.
+              await tx.query("SELECT id FROM groups WHERE id=$1 FOR UPDATE", [
+                input.groupId,
+              ]);
+              let members: { platformUserId: string }[];
+              try {
+                members = z
+                  .array(z.object({ platformUserId: z.string() }))
+                  .parse(
+                    await this.ctx.gateway.request(
+                      `/groups/${encodeURIComponent(group.gateway_group_id)}/members`,
+                      undefined,
+                      15000,
+                      signal,
+                      undefined,
+                      observeRemote("projection"),
+                      signalSources,
+                    ),
+                  );
+              } catch (error) {
+                currentOperationSignal()?.throwIfAborted();
+                this.ctx.log.warn(
+                  { err: error, groupId: input.groupId },
+                  "已确认移除操作，当前成员列表刷新失败",
+                );
+                // The gateway guarantees member_left and retains its history. Existing
+                // event retry/replay will refresh the projection without repeating kick.
+                await emit(tx, "inconsistency", {
+                  kind: "membership_refresh_failed",
+                  groupId: input.groupId,
+                  platformUserId: input.targetPlatformUserId,
+                  operation: "kick",
+                  operationConfirmed: true,
+                  message:
+                    "移除操作已成功，当前成员列表暂无法刷新；保留本地状态，等待网关成员事件重试或重放。",
+                });
+                return;
+              }
+              if (
+                !members.some(
+                  (member) =>
+                    member.platformUserId === input.targetPlatformUserId,
+                )
+              ) {
+                const removed = await tx.query(
+                  "DELETE FROM members WHERE group_id=$1 AND platform_user_id=$2",
+                  [input.groupId, input.targetPlatformUserId],
+                );
+                if (removed.rowCount)
+                  await emit(tx, "group_changed", {
+                    groupId: input.groupId,
+                    changedFields: ["members"],
+                    directoryChangedFields: ["memberCount"],
+                  });
+              }
             });
-            return;
-          }
-          if (
-            !members.some(
-              (member) => member.platformUserId === input.targetPlatformUserId,
-            )
-          ) {
-            const removed = await tx.query(
-              "DELETE FROM members WHERE group_id=$1 AND platform_user_id=$2",
-              [input.groupId, input.targetPlatformUserId],
-            );
-            if (removed.rowCount)
-              await emit(tx, "group_changed", {
-                groupId: input.groupId,
-                changedFields: ["members"],
-                directoryChangedFields: ["memberCount"],
-              });
-          }
-        });
+          if (options?.workDatabaseDeadline !== undefined)
+            await withDatabaseDeadline(options.workDatabaseDeadline, project);
+          else await project();
+        } catch (error) {
+          // The remote effect is already proved (and the Agent saved it above).
+          // A local lock/query/COMMIT failure in this optional projection must
+          // not downgrade it or make the first POST replayable.
+          this.ctx.log.warn(
+            { err: error, groupId: input.groupId },
+            "已确认移除操作，成员投影未能保存；保留成功事实并等待网关成员事件。",
+          );
+        }
         return { kicked: true as const };
       },
     );

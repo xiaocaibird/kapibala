@@ -9,6 +9,7 @@ import type {
   ActivitySample,
   ActivityWindow,
   TestActivityObserver,
+  ActivityTransitionEvidence,
 } from "../../apps/server/src/core/test-activity-observer.js";
 import {
   ControlError,
@@ -61,6 +62,7 @@ interface RunWitness extends ActivitySample {
     startSource: "run-creation" | "clock-acquisition" | "unwitnessed";
   };
   reason?: string;
+  transitionEvidence?: ActivityTransitionEvidence[];
   lastSuccessfulSample?: {
     epochId: string;
     at: ActivityWindow;
@@ -199,7 +201,11 @@ export class ActivityWitness
       // completeness until the caller explicitly releases it or TTL expires.
     }
   }
-  runCreated(row: ActivitySample, at: ActivityWindow): void {
+  runCreated(
+    row: ActivitySample,
+    at: ActivityWindow,
+    evidence?: ActivityTransitionEvidence,
+  ): void {
     if (this.closed) return;
     const witness = this.observed(row, at);
     // The entire creation transaction must lie inside one witnessed ownership
@@ -208,6 +214,7 @@ export class ActivityWitness
       this.epoch && this.epoch.acquired.after <= at.before,
     );
     witness.began = at;
+    if (evidence) witness.transitionEvidence = [structuredClone(evidence)];
     witness.complete = complete;
     witness.epochObservation = {
       continuous: complete,
@@ -220,19 +227,30 @@ export class ActivityWitness
       : "Creation crossed an unwitnessed clock ownership boundary.";
     this.changed(witness);
   }
-  runPaused(runId: string, at: ActivityWindow): void {
-    this.ended(runId, "recovery-paused", at);
+  runPaused(
+    runId: string,
+    at: ActivityWindow,
+    evidence?: ActivityTransitionEvidence,
+  ): void {
+    this.ended(runId, "recovery-paused", at, evidence);
   }
-  runTerminal(runId: string, at: ActivityWindow): void {
-    this.ended(runId, "terminal", at);
+  runTerminal(
+    runId: string,
+    at: ActivityWindow,
+    evidence?: ActivityTransitionEvidence,
+  ): void {
+    this.ended(runId, "terminal", at, evidence);
   }
   private ended(
     runId: string,
     state: "recovery-paused" | "terminal",
     at: ActivityWindow,
+    evidence?: ActivityTransitionEvidence,
   ): void {
     const witness = this.runs.get(runId);
     if (!witness || this.closed) return;
+    if (evidence)
+      (witness.transitionEvidence ??= []).push(structuredClone(evidence));
     // A paused run's later cancellation must not charge its recovery pause.
     if (!witness.ended) witness.ended = at;
     // A later terminal event or newly established lease must not forget a
@@ -261,6 +279,10 @@ export class ActivityWitness
       includesUnsavedTail: witness.complete,
       epochObservation: { ...witness.epochObservation },
       epochIds: [...witness.epochIds],
+      // Raw SQL boundaries refine what can be proven, not the original activity
+      // definition. A committed pause still breaks continuity; no rounded or
+      // ledger-derived replacement of the original elapsed interval is made.
+      transitionEvidence: structuredClone(witness.transitionEvidence ?? []),
       persistedActiveMs: witness.persistedActiveMs,
       ...(witness.lastSuccessfulSample
         ? {

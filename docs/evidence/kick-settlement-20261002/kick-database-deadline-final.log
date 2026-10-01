@@ -1,0 +1,28 @@
+✔ delivery engineering observer does no identity SQL when absent and recorder failure cannot change a real result (43.52975ms)
+✔ delivery SELECT server timeout is acknowledged and its transaction/settings are cleared before reuse (141.843375ms)
+ℹ {"elapsedMs":112.161,"statementTimeoutMs":100,"originalSleepMs":1000,"sameConnectionReused":true}
+✔ delivery does not swallow a real database cancel as an observation timeout (52.168917ms)
+✔ delivery does not swallow a real database terminate as an observation timeout (46.415625ms)
+✔ delivery propagates non-timeout SQL errors rather than converting them to SEND_TIMEOUT (32.173625ms)
+✔ delivery rollback failure cannot turn an acknowledged statement timeout into retry (139.989833ms)
+✔ delivery preserves ownership loss during rollback after a server timeout (142.084417ms)
+✔ delivery does not accept a SELECT result delivered after its observation deadline (199.89075ms)
+✔ kick database deadline scope is explicit, nested deadlines shrink and clearing preserves its parent (0.382125ms)
+✔ kick database deadline releases a late pool checkout without issuing SQL (120.806542ms)
+✔ kick database deadline admits a released row lock and commits domain data and events together (99.3065ms)
+✔ kick database deadline preserves stricter existing session timeouts and restores them for ordinary work (141.488ms)
+✔ kick database deadline cancels a long row wait at PostgreSQL and acknowledges rollback before reuse (275.107167ms)
+✔ kick database local read timeout destroys the client and never queues rollback behind the unacknowledged query (557.376375ms)
+✔ kick database lost COMMIT reply is unconfirmed to the caller even when PostgreSQL really committed (453.926791ms)
+✔ kick database retains an acknowledged COMMIT when the caller resumes after its deadline (219.097166ms)
+✔ PostgreSQL lock admission distinguishes local capacity, entity contention, and an undefined callback result (65.907708ms)
+✔ Gateway kick maps only actual entity contention to the existing member conflict (157.113583ms)
+ℹ Independent database: kapibala_test_9acff564face413eb5127f3ff6f70b20
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3396.966542

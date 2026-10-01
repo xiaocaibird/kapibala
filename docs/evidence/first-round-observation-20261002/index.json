@@ -1,0 +1,74 @@
+{
+  "kind": "developer-self-test-and-observation-handoff",
+  "baseline": "5cc04f7300ba6f49fc293953b3eb334e0b743fa6",
+  "previousProduct": "8e047aea842bfcec64802e4918b52b460b93c48b",
+  "intermediateSource": "89fd465d8f864b248a9df7402efe88ba6be88fbb",
+  "finalSource": "70dd1eeb83e64b72f250a0b83b63c933feaa4b23",
+  "finalRegression": {
+    "registered": 565,
+    "pass": 554,
+    "fail": 0,
+    "skip": 11,
+    "cancelled": 0,
+    "milliseconds": 282310.368541,
+    "processExit": 0,
+    "command": "node --import tsx --env-file=<private dedicated database env> --test --test-concurrency=2 tests/integration/*.test.ts apps/web/tests/*.test.ts",
+    "skipped": [
+      "﹣ timing: the real twenty-second refresh abort releases a queued login (0.03975ms) # SKIP",
+      "﹣ real terminal lock can outlast 60s even after an immediate model final and an early real decision (0.163375ms) # SKIP",
+      "﹣ timing: the default twelve-second turn timeout discards the late response (0.080792ms) # SKIP",
+      "﹣ timing: three five-second inconclusive audit attempts block without sending (0.019583ms) # SKIP",
+      "﹣ timing: model admission stops within sixty seconds even below the twelve-step cap (0.015167ms) # SKIP",
+      "﹣ CG08 timing: configured 10000ms turn timeout rejects a genuinely late HTTP response (0.311833ms) # SKIP",
+      "﹣ CG08 timing: configured 15000ms turn timeout rejects a genuinely late HTTP response (0.042208ms) # SKIP",
+      "﹣ C2 LIVE: real Gemini via AGENT_URL completes audited backend tools, rejects unsafe text, and sees error results (0.2825ms) # SKIP",
+      "﹣ real kick POST 504 and pending confirmation share the original budget signal and execution identity (0.262708ms) # SKIP",
+      "﹣ optional real-minute run exposes creation, decision, commit and every dispatch without clipping (0.322334ms) # SKIP",
+      "﹣ STREAM default configuration: public HTTP/WS auth and bounded real-reader experiment (measurement-only) (0.280791ms) # SKIP"
+    ]
+  },
+  "build": {
+    "command": "npm run build",
+    "exitCode": 0
+  },
+  "originalRequirements": {
+    "sha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+    "checkExitCode": 0,
+    "modified": false
+  },
+  "runtime": {
+    "node": "v24.21.0",
+    "npm": "12.1.0"
+  },
+  "qaDirectoryModified": false,
+  "secondRoundProductExecution": false,
+  "realPaidModelCalls": false,
+  "qaAcceptancePassed": false,
+  "evidenceScope": {
+    "baseline-89fd465-regression.tap": "fixed intermediate source; then superseded for observer exception isolation",
+    "final-70dd1ee-regression.tap": "fixed final source; development regression, not independent acceptance",
+    "activity-transaction-development.tap": "development worktree sample before final source freeze",
+    "read-causal-development.tap": "development worktree sample; 5008.344083ms still strict five-second failure",
+    "real-agent-save-development.tap": "development worktree real Agent and PG trigger samples; also exercised in final fixed regression",
+    "save-observer-isolation-before.tap": "same narrow tests before repair: three expected failures",
+    "save-observer-isolation-after.tap": "after repair, three passing fake-host wrapper tests",
+    "save-observer-isolation-cleanup.json": "agent-owned UUID database cleanup only; shared container retained until root cleanup"
+  },
+  "cleanup": "cleanup.json",
+  "longDeveloperExperiment": "../first-round-cancellation-observation-20261002/kick-cancellation-developer-first.log",
+  "limitations": [
+    "strict five-second failures unchanged",
+    "activity precision and continuity require independent QA reconstruction",
+    "unknown external effects and strong recovery gaps unchanged",
+    "prepared accepted-message fixtures do not prove remote delivery or timing acceptance",
+    "no second-instance in-flight competition evidence"
+  ],
+  "rawLogWhitespacePreserved": {
+    "file": "save-observer-isolation-before.tap",
+    "lines": [
+      48,
+      50
+    ],
+    "reason": "Original failed-test output retained byte-for-byte; source/document whitespace validation excludes only this raw artifact."
+  }
+}

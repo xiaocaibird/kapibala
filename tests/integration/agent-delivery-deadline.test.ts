@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test, type TestContext } from "node:test";
 import type { PoolClient } from "pg";
+import type { LifecycleFact } from "../../apps/server/src/core/test-lifecycle-observer.js";
 import { AgentTools } from "../../apps/server/src/modules/automation/tool-execution.js";
 import type { ToolOutcome } from "../../apps/server/src/modules/automation/protocol.js";
 import { Messages } from "../../apps/server/src/modules/gateway/messages.js";
@@ -13,6 +14,7 @@ import {
 async function prepared(
   t: Parameters<typeof automationFixture>[0],
   remaining = 60000,
+  hostFailure?: Error,
 ) {
   const f = await automationFixture(t);
   const messages = new Messages(f.ctx);
@@ -40,6 +42,7 @@ async function prepared(
   const tool = new AgentTools(f.ctx, messages, {
     completeStep: async (_run, _step, outcome) => {
       outcomes.push(outcome);
+      if (hostFailure) throw hostFailure;
     },
     remaining: () => remaining,
     readRun: f.readRun,
@@ -52,6 +55,9 @@ async function prepared(
     finishAfterStep: async () => {
       assert.fail("send is not finish");
     },
+    settleAfterKick: async () => {
+      assert.fail("send does not use kick settlement");
+    },
     pause: async () => {
       assert.fail("a read failure does not invent an unknown tool");
     },
@@ -59,6 +65,49 @@ async function prepared(
   const run = await f.readRun("deadline-run");
   const [step] = await f.steps(run.id);
   return { ...f, outcomes, execute: () => tool.executeStep(run, step!) };
+}
+
+for (const edge of ["started", "returned", "failed"] as const) {
+  test(`Agent send save observer isolation: only ${edge} recorder throws`, async (t) => {
+    const originalError = new Error("original host persistence failure");
+    const recorderError = new Error("engineering recorder unavailable");
+    const f = await prepared(
+      t,
+      60000,
+      edge === "failed" ? originalError : undefined,
+    );
+    const observed: string[] = [];
+    const failingEvent = `send-tool-history-save-${edge}`;
+    f.ctx.testLifecycleObserver = {
+      record(fact) {
+        observed.push(fact.kind);
+        if (fact.kind === failingEvent) throw recorderError;
+      },
+    };
+    if (edge === "failed")
+      await assert.rejects(
+        f.execute(),
+        (error: unknown) => error === originalError,
+      );
+    else await f.execute();
+    assert.equal(
+      f.outcomes.length,
+      1,
+      "the observer cannot prevent or duplicate the host call",
+    );
+    assert.equal(f.outcomes[0]!.value.deliveryStatus, "accepted");
+    assert.equal(observed.filter((kind) => kind === failingEvent).length, 1);
+    assert.equal(
+      observed.includes("send-tool-history-save-failed"),
+      edge === "failed",
+    );
+    assert.equal(
+      observed.includes("send-tool-history-save-returned"),
+      edge !== "failed",
+    );
+    assert.equal(f.audits.length, 0);
+    assert.equal(f.gatewayRequests.length, 0);
+  });
 }
 
 function trackAccountReads(
@@ -98,6 +147,13 @@ for (const { table, messageStatus, accountStatus } of [
     { timeout: 15000 },
     async (t) => {
       const f = await prepared(t);
+      const observeCausal =
+        table === "messages" && messageStatus === "accepted";
+      const facts: LifecycleFact[] = [];
+      if (observeCausal)
+        f.ctx.testLifecycleObserver = {
+          record: (fact) => facts.push(structuredClone(fact)),
+        };
       const query = f.db.query.bind(f.db);
       await query("UPDATE messages SET delivery_status=$1,fail_code=$2", [
         messageStatus,
@@ -117,7 +173,12 @@ for (const { table, messageStatus, accountStatus } of [
       };
       f.onCleanup(release);
       await locker.query("BEGIN");
+      const lockerPid = (await locker.query("SELECT pg_backend_pid() AS pid"))
+        .rows[0]!.pid as number;
       await locker.query(`LOCK TABLE ${table} IN ACCESS EXCLUSIVE MODE`);
+      let causalSample:
+        | { pid: number; backend_started: string; blockers: number[] }
+        | undefined;
       const began = performance.now();
       const work = f.execute();
       // Fail-safe releases the fixture lock, not a product timer. A regression
@@ -129,20 +190,36 @@ for (const { table, messageStatus, accountStatus } of [
       let elapsedMs = 0;
       let releasedAtResult = false;
       try {
-        await until(async () =>
-          Boolean(
-            (
-              await query(
-                "SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE $1",
-                [
-                  table === "messages"
-                    ? "SELECT * FROM messages WHERE client_msg_id%"
-                    : "SELECT a.status FROM messages m JOIN accounts%",
-                ],
-              )
-            ).rowCount,
-          ),
-        );
+        await until(async () => {
+          const waiting = await query<{
+            pid: number;
+            backend_started: string;
+            blockers: number[];
+          }>(
+            "SELECT pid,backend_start::text AS backend_started,pg_blocking_pids(pid) AS blockers FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE $1",
+            [
+              table === "messages"
+                ? "SELECT * FROM messages WHERE client_msg_id%"
+                : "SELECT a.status FROM messages m JOIN accounts%",
+            ],
+          );
+          if (!observeCausal) return Boolean(waiting.rowCount);
+          causalSample = waiting.rows.find(
+            (row) =>
+              row.blockers.includes(lockerPid) &&
+              facts.some((fact) => {
+                const backend = fact.backend as
+                  { pid?: number; backendStarted?: string } | undefined;
+                return (
+                  fact.kind === "delivery-read-query-started" &&
+                  fact.queryRole === "delivery-select" &&
+                  backend?.pid === row.pid &&
+                  backend.backendStarted === row.backend_started
+                );
+              }),
+          );
+          return Boolean(causalSample);
+        });
         await work;
         elapsedMs = performance.now() - began;
         releasedAtResult = released;
@@ -164,6 +241,95 @@ for (const { table, messageStatus, accountStatus } of [
       );
       assert.equal(f.outcomes.length, 1);
       assert.equal(f.outcomes[0]!.errorCode, "SEND_TIMEOUT");
+      if (observeCausal) {
+        assert.ok(
+          causalSample,
+          "real blocked reader must match the observer's exact PG identity and our locker",
+        );
+        const firstToolAttempt = facts.find(
+          (fact) => fact.kind === "send-tool-entered",
+        )!.attemptId;
+        const reads = facts.filter((fact) =>
+          fact.kind.startsWith("delivery-read-"),
+        );
+        assert.ok(reads.length > 0);
+        for (const fact of reads) {
+          assert.equal(fact.attemptId, firstToolAttempt);
+          assert.equal(fact.runId, "deadline-run");
+          assert.equal(fact.toolUseId, "deadline-tool");
+          assert.equal(
+            fact.clientMsgId,
+            facts.find((candidate) => candidate.kind === "send-key-resolved")!
+              .clientMsgId,
+          );
+        }
+        const failures = reads.filter(
+          (fact) =>
+            fact.kind === "delivery-read-query-failed" &&
+            fact.queryRole === "delivery-select" &&
+            fact.sqlState === "55P03",
+        );
+        assert.ok(
+          failures.length > 0,
+          "actual server lock timeout must be observed",
+        );
+        for (const failure of failures) {
+          assert.equal(failure.ownReadTimeout, true);
+          const attempt = reads.filter(
+            (fact) => fact.readAttemptId === failure.readAttemptId,
+          );
+          const failedAt = attempt.indexOf(failure);
+          const rollbackStarted = attempt.findIndex(
+            (fact) =>
+              fact.kind === "delivery-read-query-started" &&
+              fact.queryRole === "rollback",
+          );
+          const rollbackReturned = attempt.findIndex(
+            (fact) =>
+              fact.kind === "delivery-read-query-returned" &&
+              fact.queryRole === "rollback",
+          );
+          const releasedAt = attempt.findIndex(
+            (fact) => fact.kind === "delivery-read-client-released",
+          );
+          assert.ok(
+            failedAt < rollbackStarted &&
+              rollbackStarted < rollbackReturned &&
+              rollbackReturned < releasedAt,
+          );
+          assert.equal(attempt[releasedAt]!.disposition, "returned-to-pool");
+          assert.deepEqual(attempt[rollbackReturned]!.backend, failure.backend);
+        }
+        assert.equal(
+          facts.filter((fact) => fact.kind === "send-tool-history-save-started")
+            .length,
+          1,
+        );
+        assert.equal(
+          facts.filter(
+            (fact) => fact.kind === "send-tool-history-save-returned",
+          ).length,
+          1,
+        );
+        assert.equal(
+          facts.filter((fact) => fact.kind === "send-tool-history-committed")
+            .length,
+          0,
+          "fixture host returns but does not perform a history transaction; never fabricate COMMIT",
+        );
+        assert.equal(
+          JSON.stringify(reads).includes("already enqueued"),
+          false,
+          "observation must not publish message text or SQL values",
+        );
+        t.diagnostic(
+          JSON.stringify({
+            causalSample,
+            sameAttemptRealLockTimeouts: failures.length,
+            causalFacts: facts,
+          }),
+        );
+      }
       assert.equal(
         releasedAtResult,
         false,

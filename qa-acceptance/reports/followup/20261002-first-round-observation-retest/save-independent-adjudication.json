@@ -1,0 +1,121 @@
+{
+  "analysisOnly": true,
+  "newProductExecution": false,
+  "caseStatus": "BLOCKED",
+  "rawStatus": "FAIL",
+  "rawFile": "reports/preflight/2026-10-01T18-39-27.933Z-15f16ec6/artifacts/system-delivery-read-causa-a591e-d-same-key-process-recovery-system/evidence/delivery-read-causal-save-rollback.json",
+  "rawSha256": "fb5a01b9eb11863ce70b6d6a34d5045e4af48fe5aeed489182c4938c2270157a",
+  "originalRollback": {
+    "transactionAttemptId": "cdcd4086-cf3a-4c92-9885-35492193aca0",
+    "backendPid": 64,
+    "outcome": "rollback",
+    "beginSourceSeq": 63,
+    "stepSourceSeq": 65,
+    "historySourceSeq": 67,
+    "acknowledgementSourceSeq": 69
+  },
+  "recoveredCommit": {
+    "transactionAttemptId": "1d2dd9df-3fa0-44d0-904a-48e2057b1990",
+    "backendPid": 74,
+    "outcome": "commit",
+    "beginSourceSeq": 25,
+    "stepSourceSeq": 27,
+    "historySourceSeq": 29,
+    "acknowledgementSourceSeq": 31
+  },
+  "originalWindowMs": [
+    112.08912499999997,
+    112.16120799999999
+  ],
+  "recoveredWindowMs": [
+    4.749791000000016,
+    4.785957999999994
+  ],
+  "originalProvenance": {
+    "source": "live-bridge",
+    "applicationPid": 72334,
+    "applicationStarted": "Fri Oct  2 02:39:29 2026"
+  },
+  "recoveredProvenance": {
+    "source": "live-bridge",
+    "applicationPid": 72492,
+    "applicationStarted": "Fri Oct  2 02:39:31 2026"
+  },
+  "originalAttemptId": "b6fda628-f484-4aca-b34a-0df555acfb81",
+  "recoveredAttemptId": "deb88461-a208-4689-a4ca-d72ce5680824",
+  "clientMsgId": "007b9e13-5019-49ec-b169-375f06a2f5dd",
+  "sameKeyReused": true,
+  "actualStepAndHistoryUnchangedAfterRollback": true,
+  "finalRunStatus": "finished",
+  "originalClaimsUnchanged": [
+    {
+      "stage": "original send and audit really happened once before local failure",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: 原消息实际副作用未唯一落地\n\n0 !== 1\n"
+    },
+    {
+      "stage": "finite failure observation side effects",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: 原消息实际副作用未唯一落地\n\n0 !== 1\n"
+    },
+    {
+      "stage": "finite failure observation side effects",
+      "status": "FAIL",
+      "error": "AssertionError [ERR_ASSERTION]: 原消息实际副作用未唯一落地\n\n0 !== 1\n"
+    },
+    {
+      "stage": "finite failure observation side effects",
+      "status": "PASS"
+    },
+    {
+      "stage": "finite failure observation side effects",
+      "status": "PASS"
+    },
+    {
+      "stage": "finite failure observation side effects",
+      "status": "PASS"
+    },
+    {
+      "stage": "original five-second success remains a separate strict check",
+      "status": "PASS"
+    },
+    {
+      "stage": "actual original Agent UPDATE/P0001/outer ROLLBACK",
+      "status": "PASS"
+    },
+    {
+      "stage": "real original step and history remain unchanged by failed transaction",
+      "status": "PASS"
+    },
+    {
+      "stage": "public history never advertises the failed step as saved",
+      "status": "PASS"
+    },
+    {
+      "stage": "no later model turn precedes actual original history commit",
+      "status": "PASS"
+    },
+    {
+      "stage": "finite restart recovery side effects",
+      "status": "PASS"
+    },
+    {
+      "stage": "same original key is reused in a distinct actual process attempt",
+      "status": "BLOCKED",
+      "error": "[BLOCKED] 生命周期观测：缺少真实合法工具持久化来源"
+    },
+    {
+      "stage": "real recovered original step and tool_result are durable",
+      "status": "PASS"
+    },
+    {
+      "stage": "final finite original side effects",
+      "status": "PASS"
+    },
+    {
+      "stage": "final finite original side effects",
+      "status": "PASS"
+    }
+  ],
+  "note": "Local PASS facts cannot promote this raw driver-error experiment to whole-case PASS; no source events rewritten or cross-process timestamps subtracted."
+}

@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<testsuite name="01f-independent-first-round-observation-review" tests="3" failures="2" errors="0" skipped="0">
+  <testcase classname="QA.business-observation-supplement" name="INT-KICK-OBSERVATION-001">
+    <failure type="FAIL" message="Continuous original activity prefix [60007,60016]ms exceeds strict 60000ms; original CROSS/CANCEL proved from same raw run">Continuous original activity prefix [60007,60016]ms exceeds strict 60000ms; original CROSS/CANCEL proved from same raw run</failure>
+    <system-out>First raw status=FAIL; latest selected raw status=FAIL; original bytes archived, no silent retry.</system-out>
+  </testcase>
+  <testcase classname="QA.business-observation-supplement" name="INT-READ-CAUSAL-001">
+    <failure type="FAIL" message="Original send wait [5005.463667,5005.526083]ms exceeds strict 5000ms; real read causal cleanup and history COMMIT independently pass">Original send wait [5005.463667,5005.526083]ms exceeds strict 5000ms; real read causal cleanup and history COMMIT independently pass</failure>
+    <system-out>First raw status=FAIL; latest selected raw status=FAIL; original bytes archived, no silent retry.</system-out>
+  </testcase>
+  <testcase classname="QA.business-observation-supplement" name="INT-READ-SAVE-ROLLBACK-001">
+    <system-out>First raw status=FAIL; latest selected raw status=PASS; original bytes archived, no silent retry.</system-out>
+  </testcase>
+</testsuite>
