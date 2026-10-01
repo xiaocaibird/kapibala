@@ -1,0 +1,478 @@
+TAP version 13
+# Subtest: Agent does not dispatch a model request after its intent write leaves less than the configured turn budget
+ok 1 - Agent does not dispatch a model request after its intent write leaves less than the configured turn budget
+  ---
+  duration_ms: 565.571666
+  type: 'test'
+  ...
+# Independent database: kapibala_test_0697582ebe6f4333970b7a677b4b934e
+# {"runId":"expired-intent","elapsedMs":383.136708,"persistedActiveMs":48174,"modelRequests":0}
+# Subtest: Agent does not dispatch an audit request after its intent write consumes the remaining budget
+ok 2 - Agent does not dispatch an audit request after its intent write consumes the remaining budget
+  ---
+  duration_ms: 481.693334
+  type: 'test'
+  ...
+# Independent database: kapibala_test_04839220594a4e1eafa3a76bbc082175
+# {"runId":"expired-audit-intent","elapsedMs":395.81675000000007,"persistedActiveMs":60177,"auditRequests":0}
+# Subtest: CAP009 exact refused-before-ready SIGKILL resumes the same audited step
+ok 3 - CAP009 exact refused-before-ready SIGKILL resumes the same audited step
+  ---
+  duration_ms: 1504.472
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_b73250a64c224be09e0740dbe96f41a8; revision d832573e7302b00e655da17f8dcce2acac96b4b8; guardian 53386; API http://127.0.0.1:64921; controller http://127.0.0.1:64920
+# {"case":"CAP009-development-repaired","oldGuardian":53386,"newGuardian":53446,"held":{"protocol":"qa-capacity-control/1","leaseId":"fb05165f-7246-459c-92e4-7315f0530809","state":"held","expiresAt":"2026-10-01T16:47:36.930Z","binding":{"apiUrl":"http://127.0.0.1:64921","revision":"d832573e7302b00e655da17f8dcce2acac96b4b8","pid":53386,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T16:47:26.945Z","kind":"capacity-held","holderKeys":["qa-capacity:e621de64-cc85-4829-bfbe-8f5e47db5468:fb05165f-7246-459c-92e4-7315f0530809:0","qa-capacity:e621de64-cc85-4829-bfbe-8f5e47db5468:fb05165f-7246-459c-92e4-7315f0530809:1","qa-capacity:e621de64-cc85-4829-bfbe-8f5e47db5468:fb05165f-7246-459c-92e4-7315f0530809:2","qa-capacity:e621de64-cc85-4829-bfbe-8f5e47db5468:fb05165f-7246-459c-92e4-7315f0530809:3","qa-capacity:e621de64-cc85-4829-bfbe-8f5e47db5468:fb05165f-7246-459c-92e4-7315f0530809:4","qa-capacity:e621de64-cc85-4829-bfbe-8f5e47db5468:fb05165f-7246-459c-92e4-7315f0530809:5","qa-capacity:e621de64-cc85-4829-bfbe-8f5e47db5468:fb05165f-7246-459c-92e4-7315f0530809:6"]},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T16:47:26.958Z","kind":"admission-refused","attemptId":"833600b7-8fa9-410c-b20d-675b1fa3fca0","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":3,"at":"2026-10-01T16:47:26.958Z","kind":"before-ready-held","attemptId":"833600b7-8fa9-410c-b20d-675b1fa3fca0","reason":"capacity","callbackEntered":false,"remoteRequestCount":0}]},"pending":{"run_id":"capacity-run","ordinal":1,"kind":"tool_use","tool_use_id":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"result_summary":"","is_error":false,"error_code":null,"audit_verdict":"pass","raw_response":"{\\"stop_reason\\":\\"tool_use\\",\\"content\\":[{\\"type\\":\\"tool_use\\",\\"id\\":\\"kick-one\\",\\"name\\":\\"kick_user\\",\\"input\\":{\\"platform_user_id\\":\\"external-target\\",\\"reason\\":\\"engineering capacity observation\\"}}]}","state":"executing","result":null,"audit_attempts":1,"intent":{"accountId":"account-2","dispatchState":"awaiting_admission","targetPlatformUserId":"external-target"}},"recovered":{"id":"capacity-run","groupId":"g","status":"finished","endReason":"final","summary":"done","recoveryNote":null,"steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"{\\"kicked\\":true}","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\\"stop_reason\\":\\"tool_use\\",\\"content\\":[{\\"type\\":\\"tool_use\\",\\"id\\":\\"kick-one\\",\\"name\\":\\"kick_user\\",\\"input\\":{\\"platform_user_id\\":\\"external-target\\",\\"reason\\":\\"engineering capacity observation\\"}}]}"},{"ordinal":2,"kind":"final","toolUseId":null,"name":null,"input":null,"resultSummary":"\\"done\\"","isError":false,"errorCode":null,"auditVerdict":null,"rawResponse":"{\\"stop_reason\\":\\"end_turn\\",\\"content\\":[{\\"type\\":\\"text\\",\\"text\\":\\"done\\"}]}"}]},"kicks":1,"audits":1,"turns":2}
+# Subtest: CAP009 a dispatched kick killed before response remains paused without replay
+ok 4 - CAP009 a dispatched kick killed before response remains paused without replay
+  ---
+  duration_ms: 1465.564
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_472125540fba4eb18baefacd74e74000; revision d832573e7302b00e655da17f8dcce2acac96b4b8; guardian 53470; API http://127.0.0.1:65008; controller http://127.0.0.1:65007
+# {"case":"CAP009-dispatched-unknown","saved":{"state":"executing","intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}},"recovered":{"id":"capacity-run","groupId":"g","status":"running","endReason":null,"summary":null,"recoveryNote":"A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.","steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\\"stop_reason\\":\\"tool_use\\",\\"content\\":[{\\"type\\":\\"tool_use\\",\\"id\\":\\"kick-one\\",\\"name\\":\\"kick_user\\",\\"input\\":{\\"platform_user_id\\":\\"external-target\\",\\"reason\\":\\"engineering capacity observation\\"}}]}"}]},"kicks":1,"audits":1,"turns":1}
+# Subtest: CAP009 dispatch intent commit then pre-HTTP SIGKILL stays conservatively paused
+ok 5 - CAP009 dispatch intent commit then pre-HTTP SIGKILL stays conservatively paused
+  ---
+  duration_ms: 1369.180041
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_3094ac1634684b75b22fe10ac1f63fff; revision d832573e7302b00e655da17f8dcce2acac96b4b8; guardian 53512; API http://127.0.0.1:65077; controller http://127.0.0.1:65076
+# {"case":"CAP009-intent-committed-before-http","saved":{"state":"executing","intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}},"recovered":{"id":"capacity-run","groupId":"g","status":"running","endReason":null,"summary":null,"recoveryNote":"A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.","steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\\"stop_reason\\":\\"tool_use\\",\\"content\\":[{\\"type\\":\\"tool_use\\",\\"id\\":\\"kick-one\\",\\"name\\":\\"kick_user\\",\\"input\\":{\\"platform_user_id\\":\\"external-target\\",\\"reason\\":\\"engineering capacity observation\\"}}]}"}]},"kicks":0}
+# Subtest: CAP009 legacy executing intents without a dispatch stage remain paused
+ok 6 - CAP009 legacy executing intents without a dispatch stage remain paused
+  ---
+  duration_ms: 1229.609041
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_02d424e471e24eb0a063a184b3162a85; revision d832573e7302b00e655da17f8dcce2acac96b4b8; guardian 53554; API http://127.0.0.1:65144; controller http://127.0.0.1:65143
+# Subtest: CAP009 two live Agent instances recover one admitted step without duplicate audit or effect
+ok 7 - CAP009 two live Agent instances recover one admitted step without duplicate audit or effect
+  ---
+  duration_ms: 251.544167
+  type: 'test'
+  ...
+# Independent database: kapibala_test_c7b293221e1344f3a2f4606ffbe1ec10
+# Subtest: CAP009 failed durable dispatch write never reaches the gateway
+ok 8 - CAP009 failed durable dispatch write never reaches the gateway
+  ---
+  duration_ms: 216.821875
+  type: 'test'
+  ...
+# Independent database: kapibala_test_b5dc86b46c2d49dea8a0adcc7438c3e0
+# Subtest: CAP009 local kick validation runs before the durable dispatch hook
+ok 9 - CAP009 local kick validation runs before the durable dispatch hook
+  ---
+  duration_ms: 108.280291
+  type: 'test'
+  ...
+# Independent database: kapibala_test_1be5f13dba62438b8966ab8e2acd572d
+# Subtest: tool definitions have all required arguments; invalid protocols are rejected
+ok 10 - tool definitions have all required arguments; invalid protocols are rejected
+  ---
+  duration_ms: 111.035333
+  type: 'test'
+  ...
+# Subtest: sequence variables persist overrides and report the first unresolved step
+ok 11 - sequence variables persist overrides and report the first unresolved step
+  ---
+  duration_ms: 0.372667
+  type: 'test'
+  ...
+# Subtest: PostgreSQL serializes concurrent sequence starts and failed preflight creates no run
+ok 12 - PostgreSQL serializes concurrent sequence starts and failed preflight creates no run
+  ---
+  duration_ms: 27.066375
+  type: 'test'
+  ...
+# Subtest: multiple workers create one agent run and same send key is audited and enqueued once
+ok 13 - multiple workers create one agent run and same send key is audited and enqueued once
+  ---
+  duration_ms: 299.139208
+  type: 'test'
+  ...
+# Subtest: bad JSON, unknown tool, duplicate tool id are recorded without corrupting history
+ok 14 - bad JSON, unknown tool, duplicate tool id are recorded without corrupting history
+  ---
+  duration_ms: 73.702
+  type: 'test'
+  ...
+# Subtest: invalid finish inputs return INVALID_INPUT and allow a later valid completion
+    # Subtest: null followed by end_turn
+    ok 1 - null followed by end_turn
+      ---
+      duration_ms: 82.179583
+      type: 'test'
+      ...
+    # Subtest: null followed by finish
+    ok 2 - null followed by finish
+      ---
+      duration_ms: 87.329667
+      type: 'test'
+      ...
+    # Subtest: missing summary followed by end_turn
+    ok 3 - missing summary followed by end_turn
+      ---
+      duration_ms: 82.949417
+      type: 'test'
+      ...
+    # Subtest: missing summary followed by finish
+    ok 4 - missing summary followed by finish
+      ---
+      duration_ms: 82.864917
+      type: 'test'
+      ...
+    # Subtest: wrong summary type followed by end_turn
+    ok 5 - wrong summary type followed by end_turn
+      ---
+      duration_ms: 208.453041
+      type: 'test'
+      ...
+    # Subtest: wrong summary type followed by finish
+    ok 6 - wrong summary type followed by finish
+      ---
+      duration_ms: 79.584875
+      type: 'test'
+      ...
+    1..6
+ok 15 - invalid finish inputs return INVALID_INPUT and allow a later valid completion
+  ---
+  duration_ms: 624.156291
+  type: 'test'
+  ...
+# Subtest: completed invalid finish recovery honors cancellation and execution limits
+    # Subtest: cancelled
+    ok 1 - cancelled
+      ---
+      duration_ms: 42.39675
+      type: 'test'
+      ...
+    # Subtest: wall_clock
+    ok 2 - wall_clock
+      ---
+      duration_ms: 41.529125
+      type: 'test'
+      ...
+    # Subtest: budget_exhausted
+    ok 3 - budget_exhausted
+      ---
+      duration_ms: 69.578958
+      type: 'test'
+      ...
+    # Subtest: protocol_errors
+    ok 4 - protocol_errors
+      ---
+      duration_ms: 44.060125
+      type: 'test'
+      ...
+    1..4
+ok 16 - completed invalid finish recovery honors cancellation and execution limits
+  ---
+  duration_ms: 198.059958
+  type: 'test'
+  ...
+# Subtest: a successful persisted finish completes recovery without another remote turn
+ok 17 - a successful persisted finish completes recovery without another remote turn
+  ---
+  duration_ms: 45.23575
+  type: 'test'
+  ...
+# Subtest: inconclusive audit blocks without side effects; rejection does not reserve a send key
+ok 18 - inconclusive audit blocks without side effects; rejection does not reserve a send key
+  ---
+  duration_ms: 110.125083
+  type: 'test'
+  ...
+# Subtest: messages arriving during a run become one next trigger and own messages never trigger
+ok 19 - messages arriving during a run become one next trigger and own messages never trigger
+  ---
+  duration_ms: 107.309583
+  type: 'test'
+  ...
+# Subtest: interrupted remote turn is visibly paused and never replayed
+ok 20 - interrupted remote turn is visibly paused and never replayed
+  ---
+  duration_ms: 52.546292
+  type: 'test'
+  ...
+# Subtest: sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step
+ok 21 - sequence rate limit defers, sent event schedules next step, and restart only reschedules earliest step
+  ---
+  duration_ms: 57.576542
+  type: 'test'
+  ...
+# Subtest: persisted final and prepared send recover without replaying prior external work
+ok 22 - persisted final and prepared send recover without replaying prior external work
+  ---
+  duration_ms: 82.797208
+  type: 'test'
+  ...
+# Subtest: kick policy and persisted uncertain kick cannot produce a second side effect
+ok 23 - kick policy and persisted uncertain kick cannot produce a second side effect
+  ---
+  duration_ms: 88.06825
+  type: 'test'
+  ...
+# Subtest: repeated reads stop within twelve steps and result bytes remain bounded
+ok 24 - repeated reads stop within twelve steps and result bytes remain bounded
+  ---
+  duration_ms: 515.578542
+  type: 'test'
+  ...
+# Subtest: disabling Agent during its current step cancels after that step, without another turn
+ok 25 - disabling Agent during its current step cancels after that step, without another turn
+  ---
+  duration_ms: 82.0515
+  type: 'test'
+  ...
+# Subtest: activity budget refuses a new turn that cannot receive the configured timeout
+ok 26 - activity budget refuses a new turn that cannot receive the configured timeout
+  ---
+  duration_ms: 263.41325
+  type: 'test'
+  ...
+# Subtest: activity budget expires during audit without authorizing the prepared tool
+ok 27 - activity budget expires during audit without authorizing the prepared tool
+  ---
+  duration_ms: 353.653708
+  type: 'test'
+  ...
+# Subtest: an accepted send whose account becomes terminal yields SEND_FAILED without a resend
+ok 28 - an accepted send whose account becomes terminal yields SEND_FAILED without a resend
+  ---
+  duration_ms: 62.817916
+  type: 'test'
+  ...
+# Subtest: restart catches up a committed send before rebasing the next unscheduled step
+ok 29 - restart catches up a committed send before rebasing the next unscheduled step
+  ---
+  duration_ms: 51.261458
+  type: 'test'
+  ...
+# Subtest: kick permission errors remain tool errors and a confirmed kick succeeds
+ok 30 - kick permission errors remain tool errors and a confirmed kick succeeds
+  ---
+  duration_ms: 212.47225
+  type: 'test'
+  ...
+# Subtest: SEND_TIMEOUT retries with the same key read the eventual send without re-auditing
+ok 31 - SEND_TIMEOUT retries with the same key read the eventual send without re-auditing
+  ---
+  duration_ms: 5086.418542
+  type: 'test'
+  ...
+# Subtest: sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp
+ok 32 - sequence roles prefer admin, choose the first member, and skip unavailable roles with a timestamp
+  ---
+  duration_ms: 69.231125
+  type: 'test'
+  ...
+# Subtest: loss of the advisory-lock connection aborts a turn without saving a false protocol error
+ok 33 - loss of the advisory-lock connection aborts a turn without saving a false protocol error
+  ---
+  duration_ms: 188.867209
+  type: 'test'
+  ...
+# Subtest: loss of a run lock during audit prevents old-worker effects and permits safe audit recovery
+ok 34 - loss of a run lock during audit prevents old-worker effects and permits safe audit recovery
+  ---
+  duration_ms: 259.286584
+  type: 'test'
+  ...
+# Subtest: kick budget exhaustion ends the run while retaining an uncertain non-replayable effect
+ok 35 - kick budget exhaustion ends the run while retaining an uncertain non-replayable effect
+  ---
+  duration_ms: 16051.519
+  type: 'test'
+  ...
+# Subtest: a stale scheduler transaction cannot enqueue after its ownership connection is lost
+ok 36 - a stale scheduler transaction cannot enqueue after its ownership connection is lost
+  ---
+  duration_ms: 63.940375
+  type: 'test'
+  ...
+# Subtest: closing and recreating modules preserves activity while excluding actual downtime
+ok 37 - closing and recreating modules preserves activity while excluding actual downtime
+  ---
+  duration_ms: 984.885917
+  type: 'test'
+  ...
+# Subtest: queued runs persist online activity across a real shutdown without counting downtime or a second clock
+ok 38 - queued runs persist online activity across a real shutdown without counting downtime or a second clock
+  ---
+  duration_ms: 2094.541208
+  type: 'test'
+  ...
+# Subtest: a follower cannot execute against a stale activity base while the new clock owner initializes
+ok 39 - a follower cannot execute against a stale activity base while the new clock owner initializes
+  ---
+  duration_ms: 1449.389875
+  type: 'test'
+  ...
+# Subtest: an initialization follower takes over after the blocked clock owner connection is terminated
+ok 40 - an initialization follower takes over after the blocked clock owner connection is terminated
+  ---
+  duration_ms: 2043.824
+  type: 'test'
+  ...
+# Subtest: frequent activity samples retain subinterval time instead of losing rounded milliseconds
+ok 41 - frequent activity samples retain subinterval time instead of losing rounded milliseconds
+  ---
+  duration_ms: 31.849292
+  type: 'test'
+  ...
+# Subtest: activity clock survives loss of its own PostgreSQL session and only bills once after takeover
+ok 42 - activity clock survives loss of its own PostgreSQL session and only bills once after takeover
+  ---
+  duration_ms: 1529.064167
+  type: 'test'
+  ...
+# Subtest: inconclusive audit step and blocked run roll back together before recovery
+ok 43 - inconclusive audit step and blocked run roll back together before recovery
+  ---
+  duration_ms: 106.832833
+  type: 'test'
+  ...
+# Subtest: persisted legacy audit-block window cannot resume another Agent turn
+ok 44 - persisted legacy audit-block window cannot resume another Agent turn
+  ---
+  duration_ms: 45.434583
+  type: 'test'
+  ...
+# Subtest: timing: the default twelve-second turn timeout discards the late response
+ok 45 - timing: the default twelve-second turn timeout discards the late response # SKIP
+  ---
+  duration_ms: 0.086833
+  type: 'test'
+  ...
+# Subtest: timing: three five-second inconclusive audit attempts block without sending
+ok 46 - timing: three five-second inconclusive audit attempts block without sending # SKIP
+  ---
+  duration_ms: 0.025333
+  type: 'test'
+  ...
+# Subtest: timing: model admission stops within sixty seconds even below the twelve-step cap
+ok 47 - timing: model admission stops within sixty seconds even below the twelve-step cap # SKIP
+  ---
+  duration_ms: 0.020667
+  type: 'test'
+  ...
+# Subtest: R09: echo confirmation uses only message_sent observation, preserves it after duplicate and restart
+ok 48 - R09: echo confirmation uses only message_sent observation, preserves it after duplicate and restart
+  ---
+  duration_ms: 1280.665166
+  type: 'test'
+  ...
+# Independent database: kapibala_test_b1fff1fa15d74637a9116b55bd01252c
+# Subtest: R09: query confirmation uses only message_sent observation, preserves it after duplicate and restart
+ok 49 - R09: query confirmation uses only message_sent observation, preserves it after duplicate and restart
+  ---
+  duration_ms: 1236.042
+  type: 'test'
+  ...
+# Independent database: kapibala_test_ba0e0115e29f45e7b7c3d485b4c42a38
+# Subtest: R09: event confirmation uses only message_sent observation, preserves it after duplicate and restart
+ok 50 - R09: event confirmation uses only message_sent observation, preserves it after duplicate and restart
+  ---
+  duration_ms: 645.200459
+  type: 'test'
+  ...
+# Independent database: kapibala_test_9f03d2f73e4c48d4a2a56cab4cc8de3b
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: R05: a locked group cannot block another group's Agent or sequence; retry preserves one run and one enqueue
+ok 51 - R05: a locked group cannot block another group's Agent or sequence; retry preserves one run and one enqueue
+  ---
+  duration_ms: 395.555541
+  type: 'test'
+  ...
+# Independent database: kapibala_test_cdee8230b09c4a6cbde355bea0c69f7d
+# tick with group lock held: 140ms
+# Subtest: R05: a real slow member reconciliation holds its group lock without stopping another group
+ok 52 - R05: a real slow member reconciliation holds its group lock without stopping another group
+  ---
+  duration_ms: 396.513
+  type: 'test'
+  ...
+# Independent database: kapibala_test_6f5f34f560d4497ba27712a69e957e6e
+# Subtest: R05: busy takeover defers only that run and must rebase it before dispatch after unlock
+ok 53 - R05: busy takeover defers only that run and must rebase it before dispatch after unlock
+  ---
+  duration_ms: 538.077917
+  type: 'test'
+  ...
+# Independent database: kapibala_test_da242a72c4b4428cbe86b0037d940251
+# Subtest: R09: skipped step still schedules from the actual skip time
+ok 54 - R09: skipped step still schedules from the actual skip time
+  ---
+  duration_ms: 108.636291
+  type: 'test'
+  ...
+# Independent database: kapibala_test_fefefed07f69484b9da745bc4000d489
+# Subtest: R09: observation precedes row-lock wait and survives a failed transaction retry
+ok 55 - R09: observation precedes row-lock wait and survives a failed transaction retry
+  ---
+  duration_ms: 314.196333
+  type: 'test'
+  ...
+# Independent database: kapibala_test_622487268649461d9960e7b0de230785
+# Subtest: R09: migration refuses active old sequences and never fabricates historical observations
+ok 56 - R09: migration refuses active old sequences and never fabricates historical observations
+  ---
+  duration_ms: 84.668458
+  type: 'test'
+  ...
+# Subtest: RT01 default main exposes no runtime controller and binding requires real guardian/port/revision
+ok 57 - RT01 default main exposes no runtime controller and binding requires real guardian/port/revision
+  ---
+  duration_ms: 399.933708
+  type: 'test'
+  ...
+# Developer UUID DB /kapibala_test_8b51fcec1c0344d3997c464e91d4406a; revision d832573e7302b00e655da17f8dcce2acac96b4b8; guardian 57174; API http://127.0.0.1:65451
+# Subtest: RT02 real savepoint fault preserves original transaction and observes newer HTTP waiting
+ok 58 - RT02 real savepoint fault preserves original transaction and observes newer HTTP waiting
+  ---
+  duration_ms: 775.63975
+  type: 'test'
+  ...
+# Developer UUID DB /kapibala_test_ad27ad2a02d643c98b626cb08bf61ca5; revision d832573e7302b00e655da17f8dcce2acac96b4b8; guardian 57549; API http://127.0.0.1:65485
+# {"protocol":"qa-runtime-observation/1","leaseId":"9aeadaa3-c487-4e7b-a0a7-65ee92c8e709","state":"armed","expiresAt":"2026-10-01T16:48:32.511Z","binding":{"apiUrl":"http://127.0.0.1:65485","revision":"d832573e7302b00e655da17f8dcce2acac96b4b8","pid":57549,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"7eb37a4c-3bd7-4978-8f2a-dd58e5424b1b"},"events":[{"seq":1,"at":"2026-10-01T16:48:12.554Z","kind":"remote-success","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"7eb37a4c-3bd7-4978-8f2a-dd58e5424b1b"},"attemptId":"d21a1e3d-5040-4129-b9da-06e8d7423218","instancePid":57549,"requestId":"920dea1c-536c-4499-907a-e1dde31a44a8","transactionId":"3b88fcb1-7c97-4d12-91c4-8ff2e759bf3f"},{"seq":2,"at":"2026-10-01T16:48:12.561Z","kind":"local-save-failed","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"7eb37a4c-3bd7-4978-8f2a-dd58e5424b1b"},"attemptId":"d21a1e3d-5040-4129-b9da-06e8d7423218","instancePid":57549,"requestId":"920dea1c-536c-4499-907a-e1dde31a44a8","transactionId":"3b88fcb1-7c97-4d12-91c4-8ff2e759bf3f","recoverableInOriginalTransaction":true},{"seq":3,"at":"2026-10-01T16:48:12.562Z","kind":"local-retry-held","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"7eb37a4c-3bd7-4978-8f2a-dd58e5424b1b"},"attemptId":"d21a1e3d-5040-4129-b9da-06e8d7423218","instancePid":57549,"requestId":"920dea1c-536c-4499-907a-e1dde31a44a8","transactionId":"3b88fcb1-7c97-4d12-91c4-8ff2e759bf3f"},{"seq":4,"at":"2026-10-01T16:48:12.595Z","kind":"newer-account-intent-waiting","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"7eb37a4c-3bd7-4978-8f2a-dd58e5424b1b"},"attemptId":"d21a1e3d-5040-4129-b9da-06e8d7423218","instancePid":57549,"requestId":"920dea1c-536c-4499-907a-e1dde31a44a8","transactionId":"3b88fcb1-7c97-4d12-91c4-8ff2e759bf3f","waitingIntent":{"requestId":"15de56a4-69ea-45f3-a59c-80780825cfd6","accountId":"account-1","expectedFrom":"online","to":"disconnected","waitingForTransactionId":"3b88fcb1-7c97-4d12-91c4-8ff2e759bf3f"}},{"seq":5,"at":"2026-10-01T16:48:12.632Z","kind":"local-save-committed","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"7eb37a4c-3bd7-4978-8f2a-dd58e5424b1b"},"attemptId":"d21a1e3d-5040-4129-b9da-06e8d7423218","instancePid":57549,"requestId":"920dea1c-536c-4499-907a-e1dde31a44a8","transactionId":"3b88fcb1-7c97-4d12-91c4-8ff2e759bf3f","commitBoundary":"outer-commit-confirmed"}],"snapshotProvenance":{"source":"live-bridge","applicationPid":57591,"applicationStarted":"Fri Oct  2 00:48:12 2026"}}
+# Subtest: RT03 persistent SQL failure exhausts native retries, real rollback, no automatic remote replay
+ok 59 - RT03 persistent SQL failure exhausts native retries, real rollback, no automatic remote replay
+  ---
+  duration_ms: 965.61525
+  type: 'test'
+  ...
+# Developer UUID DB /kapibala_test_cabbe44c73474e3a8f132b19a13943d9; revision d832573e7302b00e655da17f8dcce2acac96b4b8; guardian 57985; API http://127.0.0.1:49155
+# {"protocol":"qa-runtime-observation/1","leaseId":"83b499cd-e490-4796-81a6-1fad9aab0dfc","state":"armed","expiresAt":"2026-10-01T16:48:33.246Z","binding":{"apiUrl":"http://127.0.0.1:49155","revision":"d832573e7302b00e655da17f8dcce2acac96b4b8","pid":57985,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"9d618162-ca0d-4c30-bf77-19e0b2f51ec4"},"events":[{"seq":1,"at":"2026-10-01T16:48:13.282Z","kind":"remote-success","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"9d618162-ca0d-4c30-bf77-19e0b2f51ec4"},"attemptId":"239845d5-6639-4f54-b79e-fe5e452f0ac6","instancePid":57985,"requestId":"f668cdac-087d-4711-ade5-9798602cef74","transactionId":"dbc694a0-bf9b-4821-b49c-35e79cb04ef1"},{"seq":2,"at":"2026-10-01T16:48:13.289Z","kind":"local-save-failed","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"9d618162-ca0d-4c30-bf77-19e0b2f51ec4"},"attemptId":"239845d5-6639-4f54-b79e-fe5e452f0ac6","instancePid":57985,"requestId":"f668cdac-087d-4711-ade5-9798602cef74","transactionId":"dbc694a0-bf9b-4821-b49c-35e79cb04ef1","recoverableInOriginalTransaction":true},{"seq":3,"at":"2026-10-01T16:48:13.319Z","kind":"local-save-failed","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"9d618162-ca0d-4c30-bf77-19e0b2f51ec4"},"attemptId":"239845d5-6639-4f54-b79e-fe5e452f0ac6","instancePid":57985,"requestId":"f668cdac-087d-4711-ade5-9798602cef74","transactionId":"dbc694a0-bf9b-4821-b49c-35e79cb04ef1","recoverableInOriginalTransaction":true},{"seq":4,"at":"2026-10-01T16:48:13.378Z","kind":"local-save-failed","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"9d618162-ca0d-4c30-bf77-19e0b2f51ec4"},"attemptId":"239845d5-6639-4f54-b79e-fe5e452f0ac6","instancePid":57985,"requestId":"f668cdac-087d-4711-ade5-9798602cef74","transactionId":"dbc694a0-bf9b-4821-b49c-35e79cb04ef1","recoverableInOriginalTransaction":true},{"seq":5,"at":"2026-10-01T16:48:13.379Z","kind":"transaction-rolled-back","correlation":{"kind":"account","accountId":"account-1","operation":"connect","intentId":"9d618162-ca0d-4c30-bf77-19e0b2f51ec4"},"attemptId":"239845d5-6639-4f54-b79e-fe5e452f0ac6","instancePid":57985,"requestId":"f668cdac-087d-4711-ade5-9798602cef74","transactionId":"dbc694a0-bf9b-4821-b49c-35e79cb04ef1","rollbackBoundary":"outer-rollback-confirmed"}],"snapshotProvenance":{"source":"live-bridge","applicationPid":58009,"applicationStarted":"Fri Oct  2 00:48:12 2026"}}
+# Subtest: RT04 module diagnostics follow real fail, before-start gate, running, success and release
+ok 60 - RT04 module diagnostics follow real fail, before-start gate, running, success and release
+  ---
+  duration_ms: 1210.719041
+  type: 'test'
+  ...
+# Developer UUID DB /kapibala_test_3fa65e6edb74450ea7e63d597f6e11b1; revision d832573e7302b00e655da17f8dcce2acac96b4b8; guardian 58556; API http://127.0.0.1:49209
+# {"events":[{"seq":1,"at":"2026-10-01T16:48:14.518Z","kind":"module-failed","correlation":{"kind":"module","module":"gateway","attemptLabel":"ba65e31f-38d0-4f72-9ca8-766221c6549c"},"attemptId":"d34405ec-d59d-4db6-aaff-f5830191a558","instancePid":58556,"faultMarker":"qa-runtime-developer-check"},{"seq":2,"at":"2026-10-01T16:48:14.617Z","kind":"module-before-next-held","correlation":{"kind":"module","module":"gateway","attemptLabel":"ba65e31f-38d0-4f72-9ca8-766221c6549c"},"attemptId":"bb59e72b-4faa-4433-87b4-6825642d6917","instancePid":58556,"tickBoundary":"before-activity-and-diagnostics-start"},{"seq":3,"at":"2026-10-01T16:48:14.629Z","kind":"module-running-held","correlation":{"kind":"module","module":"gateway","attemptLabel":"ba65e31f-38d0-4f72-9ca8-766221c6549c"},"attemptId":"bb59e72b-4faa-4433-87b4-6825642d6917","instancePid":58556},{"seq":4,"at":"2026-10-01T16:48:14.666Z","kind":"module-succeeded","correlation":{"kind":"module","module":"gateway","attemptLabel":"ba65e31f-38d0-4f72-9ca8-766221c6549c"},"attemptId":"bb59e72b-4faa-4433-87b4-6825642d6917","instancePid":58556}],"failed":{"name":"gateway","status":"failed","recovery":"succeeded","ticks":2,"successfulTicks":1,"consecutiveFailures":1,"lastStartedAt":"2026-10-01T16:48:14.518Z","lastCompletedAt":"2026-10-01T16:48:14.518Z","lastSucceededAt":"2026-10-01T16:48:14.426Z","lastFailedAt":"2026-10-01T16:48:14.518Z","lastDurationMs":0.05195899999989706,"runningForMs":null,"tickId":"2af0825a-dd38-45d4-b7f9-a1f1ef6e5954","lastFailure":{"reason":"UNEXPECTED_FAILURE","occurredAt":"2026-10-01T16:48:14.518Z","correlation":{"module":"gateway","tickId":"2af0825a-dd38-45d4-b7f9-a1f1ef6e5954"},"recoveredAt":null,"nextStep":"用模块和 tickId 核对受限日志及已有业务状态；尚不能据此判断业务是否完成。"},"nextStep":"用模块和 tickId 核对受限日志及已有业务状态；尚不能据此判断业务是否完成。"},"running":{"name":"gateway","status":"running","recovery":"succeeded","ticks":3,"successfulTicks":1,"consecutiveFailures":1,"lastStartedAt":"2026-10-01T16:48:14.629Z","lastCompletedAt":"2026-10-01T16:48:14.518Z","lastSucceededAt":"2026-10-01T16:48:14.426Z","lastFailedAt":"2026-10-01T16:48:14.518Z","lastDurationMs":0.05195899999989706,"runningForMs":2.0625420000000076,"tickId":"40ce92ab-08f2-4c9c-9425-6c6888c143ab","lastFailure":{"reason":"UNEXPECTED_FAILURE","occurredAt":"2026-10-01T16:48:14.518Z","correlation":{"module":"gateway","tickId":"2af0825a-dd38-45d4-b7f9-a1f1ef6e5954"},"recoveredAt":null,"nextStep":"用模块和 tickId 核对受限日志及已有业务状态；尚不能据此判断业务是否完成。"},"nextStep":"用模块和 tickId 核对受限日志及已有业务状态；尚不能据此判断业务是否完成。"},"done":{"name":"gateway","status":"idle","recovery":"succeeded","ticks":3,"successfulTicks":2,"consecutiveFailures":0,"lastStartedAt":"2026-10-01T16:48:14.629Z","lastCompletedAt":"2026-10-01T16:48:14.666Z","lastSucceededAt":"2026-10-01T16:48:14.666Z","lastFailedAt":"2026-10-01T16:48:14.518Z","lastDurationMs":36.712875000000054,"runningForMs":null,"tickId":"40ce92ab-08f2-4c9c-9425-6c6888c143ab","lastFailure":{"reason":"UNEXPECTED_FAILURE","occurredAt":"2026-10-01T16:48:14.518Z","correlation":{"module":"gateway","tickId":"2af0825a-dd38-45d4-b7f9-a1f1ef6e5954"},"recoveredAt":"2026-10-01T16:48:14.666Z","nextStep":"用模块和 tickId 核对受限日志及已有业务状态；尚不能据此判断业务是否完成。"},"nextStep":"后续调度轮次已成功，保留最近失败供核对；这不代表此前业务或未知远端操作已完成。"}}
+# Subtest: RT05 UUID replay, lease conflicts, independent TTL release, body validation and old instance history
+ok 61 - RT05 UUID replay, lease conflicts, independent TTL release, body validation and old instance history
+  ---
+  duration_ms: 6002.831166
+  type: 'test'
+  ...
+# Developer UUID DB /kapibala_test_4eabbb044084435cb94e711ba5e2f7c7; revision d832573e7302b00e655da17f8dcce2acac96b4b8; guardian 60484; API http://127.0.0.1:49475
+# {"old":{"protocol":"qa-runtime-observation/1","leaseId":"f59fd5a0-1578-4a8e-aa5e-c78351c45597","state":"released","expiresAt":"2026-10-01T16:48:40.435Z","binding":{"apiUrl":"http://127.0.0.1:49475","revision":"d832573e7302b00e655da17f8dcce2acac96b4b8","pid":60484,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"account","accountId":"account-2","operation":"connect","intentId":"53b39d6c-3f11-4fae-aa59-7163beb654c5"},"events":[],"snapshotProvenance":{"source":"retained-after-process-exit","applicationPid":60488,"applicationStarted":"Fri Oct  2 00:48:14 2026"}},"current":{"protocol":"qa-runtime-observation/1","leaseId":"a8bfde2a-5ff2-4d73-ac34-954054854ae2","state":"armed","expiresAt":"2026-10-01T16:48:40.840Z","binding":{"apiUrl":"http://127.0.0.1:49475","revision":"d832573e7302b00e655da17f8dcce2acac96b4b8","pid":60783,"observedOwnerToken":"<redacted>"},"correlation":{"kind":"account","accountId":"account-2","operation":"connect","intentId":"a830603d-172d-4c2e-900f-ee2c2cbbca26"},"events":[],"snapshotProvenance":{"source":"live-bridge","applicationPid":60784,"applicationStarted":"Fri Oct  2 00:48:20 2026"}}}
+# Subtest: RT06 actual module operation failure after advance is never reported as success
+ok 62 - RT06 actual module operation failure after advance is never reported as success
+  ---
+  duration_ms: 0.973042
+  type: 'test'
+  ...
+1..62
+# tests 72
+# suites 0
+# pass 69
+# fail 0
+# cancelled 0
+# skipped 3
+# todo 0
+# duration_ms 55835.482

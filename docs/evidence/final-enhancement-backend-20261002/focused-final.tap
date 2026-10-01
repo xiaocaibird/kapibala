@@ -1,0 +1,274 @@
+TAP version 13
+# Subtest: Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+ok 1 - Agent kick waits for local capacity without failing, repeating audit, or dispatching twice
+  ---
+  duration_ms: 309.762375
+  type: 'test'
+  ...
+# Independent database: kapibala_test_c2d5d60d17384a62b7c0a07e99e31d71
+# Subtest: Agent stops a real capacity wait when the first kick stage no longer fits, without inventing an unknown effect
+ok 2 - Agent stops a real capacity wait when the first kick stage no longer fits, without inventing an unknown effect
+  ---
+  duration_ms: 1338.545458
+  type: 'test'
+  ...
+# Independent database: kapibala_test_9691a229bf7c48528db588d2c66b09af
+# {"case":"capacity-first-kick-stage","priorActiveMs":43800,"firstRefusalElapsedMs":43.77145900000005,"refusalCount":21,"waitBetweenRefusalsMs":1139.634875,"elapsedMs":1249.372584,"status":"failed","endReason":"wall_clock","persistedActiveMs":45039,"modelRequests":0,"audits":1,"kicks":0}
+# Subtest: Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+ok 3 - Agent rechecks kick policy after capacity refusal and preserves the recorded audit
+  ---
+  duration_ms: 218.925417
+  type: 'test'
+  ...
+# Independent database: kapibala_test_0d0272ccfdb64d988118a556ed228ab5
+# Subtest: Agent cancellation while waiting for capacity ends after the current step without another turn
+ok 4 - Agent cancellation while waiting for capacity ends after the current step without another turn
+  ---
+  duration_ms: 199.873083
+  type: 'test'
+  ...
+# Independent database: kapibala_test_75adf03734c14b0ba40d6510db6759b3
+# Subtest: pending kick cancellation retains current-step budget precedence while capacity never arrives
+ok 5 - pending kick cancellation retains current-step budget precedence while capacity never arrives
+  ---
+  duration_ms: 1346.393333
+  type: 'test'
+  ...
+# Independent database: kapibala_test_a3e045dcc1494f88890027197a9e2acd
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: Agent kick rechecks managed target after real admission capacity wait
+ok 6 - Agent kick rechecks managed target after real admission capacity wait
+  ---
+  duration_ms: 323.521
+  type: 'test'
+  ...
+# Independent database: kapibala_test_0425c5ab2a4f46eaa82d833a7eee2091
+# Subtest: managed target: creator cannot be automatically removed
+ok 7 - managed target: creator cannot be automatically removed
+  ---
+  duration_ms: 215.59425
+  type: 'test'
+  ...
+# Independent database: kapibala_test_2302b6b82a00467294ddb9366b201dc6
+# Subtest: managed target: admin cannot be automatically removed
+ok 8 - managed target: admin cannot be automatically removed
+  ---
+  duration_ms: 140.807417
+  type: 'test'
+  ...
+# Independent database: kapibala_test_3eff252f13044c2580dc3475ef102163
+# Subtest: managed target: disconnected ordinary member cannot be automatically removed
+ok 9 - managed target: disconnected ordinary member cannot be automatically removed
+  ---
+  duration_ms: 135.38025
+  type: 'test'
+  ...
+# Independent database: kapibala_test_e0a581d101454b60b8e700c26a4f27cb
+# Subtest: managed target: current account mapping before member projection cannot be automatically removed
+ok 10 - managed target: current account mapping before member projection cannot be automatically removed
+  ---
+  duration_ms: 138.027583
+  type: 'test'
+  ...
+# Independent database: kapibala_test_71f9289fde0f4236b9ecc24b32a13887
+# Subtest: managed target: previous member projection during identity replacement cannot be automatically removed
+ok 11 - managed target: previous member projection during identity replacement cannot be automatically removed
+  ---
+  duration_ms: 136.359584
+  type: 'test'
+  ...
+# Independent database: kapibala_test_86d02ec4785a4377b53e99a23bd97acf
+# Subtest: managed target: an external target retains the audited real kick path
+ok 12 - managed target: an external target retains the audited real kick path
+  ---
+  duration_ms: 145.46525
+  type: 'test'
+  ...
+# Independent database: kapibala_test_454a0039824241d58eb66b7c75ab9c94
+# Subtest: managed target: identity becoming managed during audit is checked after audit
+ok 13 - managed target: identity becoming managed during audit is checked after audit
+  ---
+  duration_ms: 238.73825
+  type: 'test'
+  ...
+# Independent database: kapibala_test_fdd9accbcdc745a48ebc3ef0f508b253
+# Subtest: managed target: identity is rechecked after waiting to persist dispatch intent
+ok 14 - managed target: identity is rechecked after waiting to persist dispatch intent
+  ---
+  duration_ms: 269.045833
+  type: 'test'
+  ...
+# Independent database: kapibala_test_ce204184e24e49aaaeb979bfd4f8a7a1
+# Subtest: Agent disable transaction delegates cancellation and allows only the current step to finish
+ok 15 - Agent disable transaction delegates cancellation and allows only the current step to finish
+  ---
+  duration_ms: 237.1695
+  type: 'test'
+  ...
+# Independent database: kapibala_test_cecdecc9a6e34a4fab9ce307a51b1184
+# Subtest: guard effects: audit fail creates no message/key and makes no remote send
+ok 16 - guard effects: audit fail creates no message/key and makes no remote send
+  ---
+  duration_ms: 221.026625
+  type: 'test'
+  ...
+# Independent database: kapibala_test_2df13e9de3ed41a3837d8e03ea5a8c81
+# {"guard":"audit-fail","audits":1,"remoteSends":0,"messages":0,"keys":0,"errorCode":"AUDIT_REJECTED"}
+# Subtest: guard effects: same key reuses original identity without a second audit or remote send
+ok 17 - guard effects: same key reuses original identity without a second audit or remote send
+  ---
+  duration_ms: 389.747542
+  type: 'test'
+  ...
+# Independent database: kapibala_test_41d59a0d808144e9b2ee1a2433d059d6
+# {"guard":"same-key","audits":1,"remoteSends":1,"messages":1,"keys":1,"results":[{"clientMsgId":"f71b2ada-8071-41ab-a5c3-667e40268012","deliveryStatus":"accepted"},{"clientMsgId":"f71b2ada-8071-41ab-a5c3-667e40268012","deliveryStatus":"accepted"}]}
+# Subtest: slow socket: an in-flight oversized frame cannot authorize further buffers, and stalled close is terminated
+ok 18 - slow socket: an in-flight oversized frame cannot authorize further buffers, and stalled close is terminated
+  ---
+  duration_ms: 455.152875
+  type: 'test'
+  ...
+# Subtest: slow socket: callback starvation closes even below the buffer watermark; ordinary close cancels the fallback
+ok 19 - slow socket: callback starvation closes even below the buffer watermark; ordinary close cancels the fallback
+  ---
+  duration_ms: 161.710708
+  type: 'test'
+  ...
+# Subtest: slow socket: a drained frame larger than the watermark still reaches an able consumer
+ok 20 - slow socket: a drained frame larger than the watermark still reaches an able consumer
+  ---
+  duration_ms: 0.686625
+  type: 'test'
+  ...
+# Subtest: slow socket: control replies wait for a permitted oversized frame instead of disconnecting it
+ok 21 - slow socket: control replies wait for a permitted oversized frame instead of disconnecting it
+  ---
+  duration_ms: 0.73875
+  type: 'test'
+  ...
+# Subtest: slow socket: pending frame admission is bounded and all waiters finish when closed
+ok 22 - slow socket: pending frame admission is bounded and all waiters finish when closed
+  ---
+  duration_ms: 11.426458
+  type: 'test'
+  ...
+# Subtest: realtime: a stopped TCP reader is disconnected without blocking a healthy peer; client cursor replays all remaining durable events
+ok 23 - realtime: a stopped TCP reader is disconnected without blocking a healthy peer; client cursor replays all remaining durable events
+  ---
+  duration_ms: 1792.294
+  type: 'test'
+  ...
+# Independent database: kapibala_test_c8219cba3c7c444e947d6c4cb7087f92
+# Paused TCP reader removed; 80 durable events reached healthy peer and reconnect in exact order
+# Subtest: realtime: marker bursts batch one database request at a time without dropping admitted scope replies or skipping durable replay
+ok 24 - realtime: marker bursts batch one database request at a time without dropping admitted scope replies or skipping durable replay
+  ---
+  duration_ms: 191.922584
+  type: 'test'
+  ...
+# Independent database: kapibala_test_9c677df619a84df49e626fabd948df3d
+# Subtest: realtime: overflowing pending marker capacity closes without launching unbounded database work
+ok 25 - realtime: overflowing pending marker capacity closes without launching unbounded database work
+  ---
+  duration_ms: 268.315042
+  type: 'test'
+  ...
+# Independent database: kapibala_test_323dae34bcb8453c8af6fd2aa01c41fc
+# Subtest: timeline: continuation transfers only its slice and preserves old frozen cursors across writes, page sizes and large offsets
+ok 26 - timeline: continuation transfers only its slice and preserves old frozen cursors across writes, page sizes and large offsets
+  ---
+  duration_ms: 310.444834
+  type: 'test'
+  ...
+# Independent database: kapibala_test_bfce56eea77c4adf8788df5dd4d30f15
+# Frozen snapshot 1252279 bytes; continuation database transfer maximum 91661 bytes for at most 9 items
+# Subtest: diagnostics: only admin sees disabled process-local scheduler data; public health stays unchanged
+ok 27 - diagnostics: only admin sees disabled process-local scheduler data; public health stays unchanged
+  ---
+  duration_ms: 85.460167
+  type: 'test'
+  ...
+# Independent database: kapibala_test_bbcc12d9e77443e38d9ff9abe1a4e2a2
+# Subtest: diagnostics: failures, hung ticks and later recovery are distinguishable without leaking error bodies or claiming business completion
+ok 28 - diagnostics: failures, hung ticks and later recovery are distinguishable without leaking error bodies or claiming business completion
+  ---
+  duration_ms: 422.665792
+  type: 'test'
+  ...
+# Independent database: kapibala_test_bb6e517f26384c21a2be604d7fdd7dd5
+# Subtest: diagnostics: a real PostgreSQL statement cancellation has a stable safe reason and retained recovery history
+ok 29 - diagnostics: a real PostgreSQL statement cancellation has a stable safe reason and retained recovery history
+  ---
+  duration_ms: 294.403959
+  type: 'test'
+  ...
+# Independent database: kapibala_test_1124f69f76ba46bdb1b5289c2ca011ef
+# Subtest: group profile conflict: same-field concurrent edits across instances have one winner
+ok 30 - group profile conflict: same-field concurrent edits across instances have one winner
+  ---
+  duration_ms: 160.899041
+  type: 'test'
+  ...
+# Independent database: kapibala_test_79c76ff9907d4bf4a987ba7cc7ceb6de
+# Subtest: group profile conflict: independent fields can commit concurrently
+ok 31 - group profile conflict: independent fields can commit concurrently
+  ---
+  duration_ms: 214.121292
+  type: 'test'
+  ...
+# Independent database: kapibala_test_64e3a506b9c3425291a39f5bb2d6632e
+# Subtest: group profile conflict: a stale field rolls back the whole patch without events or Agent cancellation
+ok 32 - group profile conflict: a stale field rolls back the whole patch without events or Agent cancellation
+  ---
+  duration_ms: 89.27525
+  type: 'test'
+  ...
+# Independent database: kapibala_test_3cf594be2a7548f39c5218cba077c8fa
+# Subtest: group profile conflict: null and raw original values are compared without normalization
+ok 33 - group profile conflict: null and raw original values are compared without normalization
+  ---
+  duration_ms: 109.246209
+  type: 'test'
+  ...
+# Independent database: kapibala_test_015d24529e324cd88ccf1d5eda088ac4
+# Subtest: group profile conflict: expected is strict nonempty and matches precisely the supplied profile fields
+ok 34 - group profile conflict: expected is strict nonempty and matches precisely the supplied profile fields
+  ---
+  duration_ms: 94.6475
+  type: 'test'
+  ...
+# Independent database: kapibala_test_4c100a317f7a4ff89a5c5602bb6e5aca
+# Subtest: group profile conflict: legacy requests and successful mixed settings retain existing behavior
+ok 35 - group profile conflict: legacy requests and successful mixed settings retain existing behavior
+  ---
+  duration_ms: 100.2535
+  type: 'test'
+  ...
+# Independent database: kapibala_test_6d0e1763665243f8a0b78917f6f11644
+# Subtest: group profile conflict: viewer and unauthenticated requests cannot mutate or inspect conflict details
+ok 36 - group profile conflict: viewer and unauthenticated requests cannot mutate or inspect conflict details
+  ---
+  duration_ms: 88.185958
+  type: 'test'
+  ...
+# Independent database: kapibala_test_109bc7cb1b2b479badbfa6967adf332c
+# Subtest: Agent disable transaction rolls back profile and delegated cancellation when event persistence fails
+ok 37 - Agent disable transaction rolls back profile and delegated cancellation when event persistence fails
+  ---
+  duration_ms: 89.451833
+  type: 'test'
+  ...
+# Independent database: kapibala_test_43078e9bcf424298b4207e2873f06db2
+1..37
+# tests 37
+# suites 0
+# pass 37
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11747.006917
