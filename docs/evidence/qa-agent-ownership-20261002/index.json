@@ -1,0 +1,67 @@
+{
+  "scope": "Development observation verification only; no independent QA verdict or unknown-effect recovery claim.",
+  "baseSource": "c0d98958a3b4fcb5d5529de2b3e3e816f5e23af5",
+  "implementationSource": "d6fd22c0956ddd8296ceaf71f87070fec98e85c4",
+  "finalVerificationSource": "c01e82f5d1651fdcedbe4d694debe5bcdf9b08b7",
+  "difference": "c01e82f only adds the advertised capability to one existing development test expectation. Implementation bytes unchanged.",
+  "runtime": {
+    "node": "v24.21.0",
+    "undici": "7.29.1",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "testCommand": "DATABASE_URL=<owned disposable PG URL> node --import tsx --test --test-reporter=tap tests/integration/qa-agent-ownership.test.ts tests/integration/lock-admission.test.ts tests/integration/qa-backend-lifecycle.test.ts tests/integration/qa-runtime-observation.test.ts tests/integration/qa-combined-observation.test.ts",
+  "archives": [
+    {
+      "path": "fixed-source-tests.redacted.tap.gz",
+      "source": "d6fd22c0956ddd8296ceaf71f87070fec98e85c4",
+      "tests": 18,
+      "pass": 17,
+      "fail": 1,
+      "skipped": 0,
+      "rawSha256": "ac30ea8db9d5d068385bcbd41d67e48ac5986ce309242b67008a015ae67f88f5",
+      "exportedTapSha256": "a5b86bd211f9f2406f435285a1d5295c4cb099a20dbc4b660b345d4577de8a42",
+      "gzipSha256": "fd256ec7ab806ea0e7b42d447f06077b92d271d76c00e5b3c97b623f7a5a1ccd",
+      "redactedFields": 3,
+      "redaction": "Only observedOwnerToken values from disposable development fixtures; all event/status/identity/clock facts retained."
+    },
+    {
+      "path": "final-source-tests.redacted.tap.gz",
+      "source": "c01e82f5d1651fdcedbe4d694debe5bcdf9b08b7",
+      "tests": 18,
+      "pass": 18,
+      "fail": 0,
+      "skipped": 0,
+      "rawSha256": "7888bfb21a28d744dcdb85eb0baca68367cdc522d0b0324ec64a773cc0a46931",
+      "exportedTapSha256": "deee93744523c294f622af6900f6f28aecd1728c97d4dc9bcb01e23b1bf8f444",
+      "gzipSha256": "34ab1607d58026a5f793ad6fbf7d6ad83c1784ad32115378685fb2668815ecf0",
+      "redactedFields": 3,
+      "redaction": "Only observedOwnerToken values from disposable development fixtures; all event/status/identity/clock facts retained."
+    }
+  ],
+  "sourceSha256": {
+    "apps/server/src/modules/automation/agent.ts": "d8fc8895d4802d1036decbb171289bb145551b5fb0d0fea85da92c3fa19610dc",
+    "scripts/qa-runtime-observation/lifecycle-witness.ts": "92cc9220ff9fbe281537883d1e3256406eccafd602b26b8ba4e4c46be96274fd",
+    "tests/integration/qa-agent-ownership.test.ts": "1bfd90d056b81a6ec19cb6234d228346db5cc141451f32c384df0da75e4a9cff",
+    "tests/support/agent-ownership-worker.ts": "37e86e473c06e87f327820f511bd9da77627ceb1a75c5d4261774a6f89ef0a44",
+    "tests/integration/qa-runtime-observation.test.ts": "fd1bc296605222c32e78e3d7d1d7a784654975979210961e7e79a40c71a5988b"
+  },
+  "checks": {
+    "typecheck": {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "sha256": "fda12bb8dec67aaec66c993c8c6091c2d00c21deba8bdbb10a36004e45d03e81"
+    },
+    "originalHash": {
+      "command": "npm run verify:original",
+      "exitCode": 0,
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa"
+    },
+    "cleanup": {
+      "path": "cleanup.json",
+      "sha256": "b71694e89b2fbd2834b437706c200a13e2679bbdec44267ce21161029e473676"
+    }
+  },
+  "developmentWorkerBoundary": "Real child processes/app/Agent.tick/PG/HTTP, with background:false and explicit tick. Existing runtime/combined regression separately starts engineering SUT/guardian/controller.",
+  "retentionBoundary": "Original output bytes preserved locally in /tmp/kap-agent-ownership-*-source-tests.raw.tap (0600); portable archives redact only disposable synthetic observedOwnerToken values, with raw and exported hashes separately recorded."
+}
