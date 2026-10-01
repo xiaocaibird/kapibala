@@ -19,6 +19,7 @@ export interface Member {
   platformUserId: string;
   role: "creator" | "admin" | "member";
 }
+// Limits for trimmed writes, measured in JavaScript UTF-16 code units.
 export const GROUP_NAME_MAX_LENGTH = 80;
 export const GROUP_DESCRIPTION_MAX_LENGTH = 500;
 export interface Group {

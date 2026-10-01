@@ -199,6 +199,105 @@ test("group metadata: shared validation rejects bad input and accepts trimmed li
   assert.equal(patched.json<Group>().description, limits.description.trim());
 });
 
+for (const [field, limit] of [
+  ["name", 80],
+  ["description", 500],
+] as const) {
+  test(`group metadata: ${field} enforces UTF-16 units in both public write routes`, async (t) => {
+    const f = await fixture(t);
+    await f.db.query(
+      "INSERT INTO groups(id,gateway_group_id,creator_account_id,name,description) VALUES('g','remote-g','account-1','unchanged','unchanged')",
+    );
+    const snapshot = async () => ({
+      groups: (await f.db.query("SELECT * FROM groups ORDER BY id")).rows,
+      jobs: (await f.db.query("SELECT * FROM jobs ORDER BY id")).rows,
+      events: (await f.db.query("SELECT * FROM events ORDER BY seq")).rows,
+    });
+    const before = await snapshot();
+    // Emoji are two UTF-16 units; a mixed string catches the one-unit overflow.
+    const exact = "😀".repeat(limit / 2);
+    for (const value of [exact + "a", exact + "😀"]) {
+      for (const [method, url, payload] of [
+        ["POST", "/api/groups", { ...createInput, [field]: value }],
+        ["PATCH", "/api/groups/g", { [field]: value, agentEnabled: true }],
+      ] as const) {
+        const response = await f.api(method, url, payload);
+        assert.equal(
+          response.statusCode,
+          400,
+          `${method} ${field} units=${value.length}: ${response.body}`,
+        );
+        assert.equal(response.json().error.code, "VALIDATION_ERROR");
+        assert.deepEqual(
+          await snapshot(),
+          before,
+          "invalid writes have no partial state/event/job effects",
+        );
+        assert.equal(f.gateway.calls.length, 0);
+      }
+    }
+    for (const value of [
+      "a" + "😀".repeat(limit / 2 - 1),
+      exact,
+      "e\u0301".repeat(limit / 2),
+    ]) {
+      const payload = { [field]: ` \n${value}\t ` };
+      const created = await f.api("POST", "/api/groups", {
+        ...createInput,
+        ...payload,
+      });
+      assert.equal(created.statusCode, 202, created.body);
+      const state = (
+        await f.db.query("SELECT state FROM jobs WHERE id=$1", [
+          created.json().jobId,
+        ])
+      ).rows[0]!.state;
+      assert.equal(
+        state[field],
+        value,
+        "creation stores the trimmed value without truncating it",
+      );
+      const patched = await f.api("PATCH", "/api/groups/g", payload);
+      assert.equal(patched.statusCode, 200, patched.body);
+      assert.equal(patched.json<Group>()[field], value);
+      assert.equal(
+        (await f.api("GET", "/api/groups/g")).json<Group>()[field],
+        value,
+      );
+    }
+  });
+}
+
+test("group metadata: legacy over-limit originals remain readable and conditionally repairable", async (t) => {
+  const f = await fixture(t);
+  const legacy = { name: "😀".repeat(41), description: "😀".repeat(251) };
+  await f.db.query(
+    "INSERT INTO groups(id,gateway_group_id,creator_account_id,name,description) VALUES('g','remote-g','account-1',$1,$2)",
+    [legacy.name, legacy.description],
+  );
+  assert.equal(
+    (await f.api("GET", "/api/groups/g")).json<Group>().name,
+    legacy.name,
+  );
+  assert.equal(
+    (await f.api("GET", "/api/group-directory")).json().items[0].description,
+    legacy.description,
+  );
+  const name = await f.api("PATCH", "/api/groups/g", {
+    name: "修正名称",
+    expected: { name: legacy.name },
+  });
+  assert.equal(name.statusCode, 200, name.body);
+  assert.equal(name.json<Group>().description, legacy.description);
+  const description = await f.api("PATCH", "/api/groups/g", {
+    description: "",
+    expected: { description: legacy.description },
+  });
+  assert.equal(description.statusCode, 200, description.body);
+  assert.equal(description.json<Group>().name, "修正名称");
+  assert.equal(description.json<Group>().description, null);
+});
+
 test("group metadata: partial and concurrent edits preserve omitted values, creation time, and permissions", async (t) => {
   const f = await fixture(t);
   const createdAt = "2020-02-03T04:05:06.789Z";

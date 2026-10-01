@@ -6,8 +6,16 @@ import {
 } from "../../../../packages/contracts/src/index";
 import { ApiError } from "./client";
 
-const nameInput = z.string().trim().min(1).max(GROUP_NAME_MAX_LENGTH);
-const descriptionInput = z.string().trim().max(GROUP_DESCRIPTION_MAX_LENGTH);
+// Match the public UTF-16 write contract; Zod max() counts code points.
+const nameInput = z
+  .string()
+  .trim()
+  .min(1)
+  .refine((value) => value.length <= GROUP_NAME_MAX_LENGTH);
+const descriptionInput = z
+  .string()
+  .trim()
+  .refine((value) => value.length <= GROUP_DESCRIPTION_MAX_LENGTH);
 export interface GroupProfileDraft {
   name: string;
   description: string;

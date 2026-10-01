@@ -16,7 +16,11 @@ import {
   rebaseGroupProfileDraft,
 } from "../src/api/groupProfile";
 import { ApiError } from "../src/api/client";
-import { groupSchema, type Group } from "../src/api/schemas";
+import {
+  groupSchema,
+  groupDirectoryItemSchema,
+  type Group,
+} from "../src/api/schemas";
 import {
   GroupProfile,
   GroupProfileConflictNotice,
@@ -66,6 +70,65 @@ test("metadata limits apply after trimming and reject excess input instead of tr
   assert.throws(
     () => createGroupProfile({ name: "", description: description + "多" }),
     /群简介/,
+  );
+});
+
+for (const [field, limit] of [
+  ["name", 80],
+  ["description", 500],
+] as const) {
+  test(`profile ${field} limits use trimmed UTF-16 units on create and edit`, () => {
+    const original = { name: "原名称", description: "原简介" };
+    const exact = "😀".repeat(limit / 2);
+    for (const value of [exact + "a", exact + "😀"]) {
+      const draft = { ...original, [field]: value };
+      assert.throws(() => createGroupProfile(draft));
+      assert.throws(() => conditionalGroupProfilePatch(original, draft));
+    }
+    for (const value of [
+      "a" + "😀".repeat(limit / 2 - 1),
+      exact,
+      "e\u0301".repeat(limit / 2),
+    ]) {
+      const draft = { ...original, [field]: ` \n${value}\t ` };
+      assert.equal(createGroupProfile(draft)[field], value);
+      assert.deepEqual(conditionalGroupProfilePatch(original, draft), {
+        [field]: value,
+        expected: { [field]: original[field] },
+      });
+    }
+  });
+}
+
+test("legacy over-limit responses stay readable and raw comparison values stay repairable", () => {
+  const legacy = {
+    ...group,
+    name: "😀".repeat(41),
+    description: "😀".repeat(251),
+  };
+  assert.ok(groupSchema.safeParse(legacy).success);
+  assert.ok(
+    groupDirectoryItemSchema.safeParse({ ...legacy, memberCount: 0 }).success,
+  );
+  assert.deepEqual(
+    conditionalGroupProfilePatch(legacy, {
+      name: "修正名称",
+      description: legacy.description,
+    }),
+    {
+      name: "修正名称",
+      expected: { name: legacy.name },
+    },
+  );
+  assert.deepEqual(
+    conditionalGroupProfilePatch(legacy, {
+      name: legacy.name,
+      description: "",
+    }),
+    {
+      description: "",
+      expected: { description: legacy.description },
+    },
   );
 });
 

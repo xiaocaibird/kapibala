@@ -4,15 +4,20 @@ import {
   GROUP_NAME_MAX_LENGTH,
 } from "../../../../../packages/contracts/src/index.js";
 
+// The published profile limits count UTF-16 units, not Zod's code points.
 export const groupNameSchema = z
   .string()
   .trim()
   .min(1)
-  .max(GROUP_NAME_MAX_LENGTH);
+  .refine((value) => value.length <= GROUP_NAME_MAX_LENGTH, {
+    message: `群名称最多 ${GROUP_NAME_MAX_LENGTH} 个 UTF-16 单元`,
+  });
 export const groupDescriptionSchema = z
   .string()
   .trim()
-  .max(GROUP_DESCRIPTION_MAX_LENGTH)
+  .refine((value) => value.length <= GROUP_DESCRIPTION_MAX_LENGTH, {
+    message: `群简介最多 ${GROUP_DESCRIPTION_MAX_LENGTH} 个 UTF-16 单元`,
+  })
   .transform((value) => value || null);
 
 export const groupProfileFields = ["name", "description"] as const;
