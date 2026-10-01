@@ -9,7 +9,11 @@ import {
   type Queryable,
 } from "../../core/db.js";
 import { AppError, RemoteError } from "../../core/errors.js";
-import type { MessagingService, SendInput } from "../../core/messaging.js";
+import type {
+  KickOptions,
+  MessagingService,
+  SendInput,
+} from "../../core/messaging.js";
 import type { Message } from "../../../../../packages/contracts/src/index.js";
 import {
   type AccountRow,
@@ -542,11 +546,9 @@ export class Messages implements MessagingService {
   }
   async kick(
     input: { groupId: string; accountId: string; targetPlatformUserId: string },
-    options?: {
-      signal?: AbortSignal;
-      beforeDispatch?: () => Promise<void>;
-    },
+    options?: KickOptions,
   ): Promise<{ kicked: true }> {
+    options?.assertDispatchAllowed?.();
     options?.signal?.throwIfAborted();
     const result = await this.ctx.db.tryWithLock(
       `kick:${input.groupId}:${input.targetPlatformUserId}`,
@@ -554,6 +556,7 @@ export class Messages implements MessagingService {
         const signal = options?.signal
           ? AbortSignal.any([options.signal, lockSignal])
           : lockSignal;
+        options?.assertDispatchAllowed?.();
         signal.throwIfAborted();
         const group = (
           await this.ctx.db.query<GroupRow>(
@@ -574,6 +577,7 @@ export class Messages implements MessagingService {
         if (!["creator", "admin"].includes(member.role))
           throw new AppError(403, "NO_PERMISSION", "账号没有移除成员权限");
         await options?.beforeDispatch?.();
+        options?.assertDispatchAllowed?.();
         signal.throwIfAborted();
         try {
           z.object({ kicked: z.literal(true) }).parse(
@@ -585,6 +589,7 @@ export class Messages implements MessagingService {
               },
               15000,
               signal,
+              options?.assertDispatchAllowed,
             ),
           );
         } catch (error) {

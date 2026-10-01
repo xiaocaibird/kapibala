@@ -10,9 +10,11 @@ export class RemoteClient {
     body?: unknown,
     timeoutMs = 15000,
     signal?: AbortSignal,
+    assertDispatchAllowed?: () => void,
   ): Promise<T> {
     const operationSignal = currentOperationSignal();
     operationSignal?.throwIfAborted();
+    assertDispatchAllowed?.();
     signal?.throwIfAborted();
     const timeout = AbortSignal.timeout(timeoutMs);
     const requestSignal = AbortSignal.any([
@@ -20,12 +22,18 @@ export class RemoteClient {
       ...(operationSignal ? [operationSignal] : []),
       ...(signal ? [signal] : []),
     ]);
-    const response = await fetch(`${this.baseUrl}${path}`, {
+    const url = `${this.baseUrl}${path}`;
+    const init = {
       method: body === undefined ? "GET" : "POST",
       headers: { "content-type": "application/json" },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
       signal: requestSignal,
-    });
+    };
+    // A timer cannot fire while synchronous work or microtasks keep the event
+    // loop busy. Check the original deadline after serialization, without an
+    // await between this assertion and dispatch.
+    assertDispatchAllowed?.();
+    const response = await fetch(url, init);
     const raw = await response.text();
     let data: unknown;
     try {

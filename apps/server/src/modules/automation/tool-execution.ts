@@ -42,6 +42,10 @@ export interface ToolExecutionHost {
 const sleep = async (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
+// Only the local, synchronous pre-fetch guard creates this proof. A remote
+// error or an abort after dispatch can never establish that no kick was sent.
+class KickBudgetExpiredBeforeDispatch extends Error {}
+
 /** Tool policy and side effects operate only through persisted orchestration hooks. */
 export class AgentTools {
   constructor(
@@ -453,7 +457,19 @@ export class AgentTools {
       await this.host.completeStep(run, step, denied);
       return;
     }
-    const deadline = AbortSignal.timeout(Math.max(1, this.host.remaining(run)));
+    const remaining = this.host.remaining(run);
+    if (remaining <= 0) {
+      await this.host.finish(run, "failed", "wall_clock");
+      return;
+    }
+    const deadline = AbortSignal.timeout(remaining);
+    const assertDispatchAllowed = () => {
+      currentOperationSignal()?.throwIfAborted();
+      if (this.host.remaining(run) <= 0)
+        throw new KickBudgetExpiredBeforeDispatch(
+          "Activity budget expired before the kick was dispatched",
+        );
+    };
     const correlation = {
       groupId: run.group_id,
       runId: run.id,
@@ -470,7 +486,9 @@ export class AgentTools {
           },
           {
             signal: deadline,
+            assertDispatchAllowed,
             beforeDispatch: async () => {
+              assertDispatchAllowed();
               deadline.throwIfAborted();
               // This autocommit runs only inside the admitted kick callback.
               // Its acknowledged commit precedes HTTP dispatch; a crash or SQL
@@ -481,6 +499,7 @@ export class AgentTools {
               );
               if (persisted.rowCount !== 1)
                 throw new Error("Kick dispatch intent was not persisted");
+              assertDispatchAllowed();
             },
           },
         );
@@ -489,6 +508,13 @@ export class AgentTools {
       else await kick();
     } catch (error) {
       currentOperationSignal()?.throwIfAborted();
+      if (error instanceof KickBudgetExpiredBeforeDispatch) {
+        // This process knows fetch never started. Retain any committed intent:
+        // if this terminal commit fails or the process dies, recovery must not
+        // infer this in-memory proof and replay a saved dispatching intent.
+        await this.host.finish(run, "failed", "wall_clock");
+        return;
+      }
       if (error instanceof LockCapacityUnavailableError) {
         // Admission failed before the gateway callback ran. The durable
         // awaiting_admission intent is already safe to resume, even if this

@@ -4,7 +4,11 @@ import { z } from "zod";
 import type { AppContext } from "../../core/context.js";
 import { emit } from "../../core/db.js";
 import { AppError } from "../../core/errors.js";
-import type { MessagingService, PlatformModule } from "../../core/messaging.js";
+import type {
+  KickOptions,
+  MessagingService,
+  PlatformModule,
+} from "../../core/messaging.js";
 import type {
   Group,
   Message,
@@ -330,8 +334,7 @@ export function createGatewayModule(
     register,
     enqueueSend: (input, tx) => messages.enqueueSend(input, tx),
     getMessage: (clientMsgId) => messages.getMessage(clientMsgId),
-    kick: (input, options?: { signal?: AbortSignal }) =>
-      messages.kick(input, options),
+    kick: (input, options?: KickOptions) => messages.kick(input, options),
     recover: async () => {
       await messages.recover();
       events.start();

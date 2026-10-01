@@ -9,6 +9,15 @@ export interface SendInput {
   source?: string;
   sourceRef?: string;
 }
+export interface KickOptions {
+  signal?: AbortSignal;
+  /** Runs after local admission and validation, before any remote kick. A
+   * rejection prevents dispatch; durable intent writes must commit here. */
+  beforeDispatch?: () => Promise<void>;
+  /** Synchronous, repeatable deadline/ownership check. The remote client also
+   * checks after serialization, immediately before the first kick fetch. */
+  assertDispatchAllowed?: () => void;
+}
 export interface MessagingService {
   enqueueSend(input: SendInput, tx?: Queryable): Promise<Message>;
   getMessage(clientMsgId: string): Promise<Message | null>;
@@ -18,12 +27,7 @@ export interface MessagingService {
       accountId: string;
       targetPlatformUserId: string;
     },
-    options?: {
-      signal?: AbortSignal;
-      /** Runs after local admission and validation, before any remote kick. A
-       * rejection prevents dispatch; durable intent writes must commit here. */
-      beforeDispatch?: () => Promise<void>;
-    },
+    options?: KickOptions,
   ): Promise<{ kicked: true }>;
 }
 export interface PlatformModule {
