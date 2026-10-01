@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+import { join } from "node:path";
 import Fastify from "fastify";
 import { z } from "zod";
 import {
@@ -9,13 +11,19 @@ import {
   turnRequestSchema,
   validateTools,
 } from "./protocol.js";
-import type { ModelProvider } from "./provider.js";
+import type {
+  Generation,
+  ModelProvider,
+  UsageObservation,
+} from "./provider.js";
 import {
   canonical,
   digest,
   SessionStore,
   type SessionRecord,
 } from "./sessions.js";
+
+import { UsageJournal, type UsageJournalOptions } from "./usage.js";
 
 export const turnSystem = `You are a group-message assistant. Return exactly one decision in the supplied JSON schema.
 The payload contains one runId, four tool declarations, and the COMPLETE ordered conversation for only that run. Do not invent other runs, tool outputs, facts, delivery, or permissions.
@@ -33,8 +41,16 @@ export async function createGeminiAgent(options: {
   provider: ModelProvider;
   turnTimeoutMs?: number;
   auditTimeoutMs?: number;
+  usage?: UsageJournalOptions;
 }) {
   const store = await SessionStore.open(options.stateDirectory);
+  // The session owner lock is acquired first; each service owns its usage directory.
+  const usage = options.usage
+    ? await UsageJournal.open(
+        join(options.stateDirectory, "usage"),
+        options.usage,
+      )
+    : undefined;
   const app = Fastify({ logger: false, bodyLimit: 1024 * 1024 });
   const activeRuns = new Set<string>();
   const controllers = new Set<AbortController>();
@@ -86,7 +102,48 @@ export async function createGeminiAgent(options: {
       reply.raw.off("close", disconnected);
     }
   }
+  async function generate<T>(
+    input: Generation,
+    validate: (value: unknown) => T,
+  ): Promise<T> {
+    let observation: UsageObservation | undefined;
+    let outcome: UsageObservation["outcome"] = "failure";
+    let errorCode = "AGENT_UNAVAILABLE";
+    try {
+      const generated = await options.provider.generate({
+        ...input,
+        observe: (value) => {
+          observation = value;
+        },
+      });
+      input.signal.throwIfAborted();
+      const value = validate(generated);
+      outcome = "success";
+      return value;
+    } catch (error) {
+      errorCode =
+        error instanceof AgentError
+          ? error.code
+          : error instanceof z.ZodError
+            ? "MODEL_INVALID_OUTPUT"
+            : input.signal.aborted
+              ? "MODEL_CANCELLED"
+              : "AGENT_UNAVAILABLE";
+      throw error;
+    } finally {
+      // This outcome includes local output validation, not downstream tool execution
+      // or session persistence. Cache hits never enter generate and add no inference.
+      if (observation)
+        usage?.record({
+          ...observation,
+          stage: "validated-generation",
+          outcome,
+          errorCode: outcome === "success" ? null : errorCode,
+        });
+    }
+  }
   app.post("/agent/turn", async (request, reply) => {
+    const requestId = randomUUID();
     const input = turnRequestSchema.parse(request.body);
     validateTools(input.tools);
     return run(request, reply, async (signal) => {
@@ -117,16 +174,22 @@ export async function createGeminiAgent(options: {
         await store.write(record);
         let output;
         try {
-          const generated = await options.provider.generate({
-            purpose: "turn",
-            system: turnSystem,
-            payload: input,
-            schema: z.toJSONSchema(decisionSchema),
-            signal,
-            timeoutMs: options.turnTimeoutMs ?? 9000,
-          });
-          signal.throwIfAborted();
-          output = toTurnResponse(generated, input.messages);
+          output = await generate(
+            {
+              correlation: {
+                requestId,
+                attemptId: randomUUID(),
+                runId: input.runId,
+              },
+              purpose: "turn",
+              system: turnSystem,
+              payload: input,
+              schema: z.toJSONSchema(decisionSchema),
+              signal,
+              timeoutMs: options.turnTimeoutMs ?? 9000,
+            },
+            (generated) => toTurnResponse(generated, input.messages),
+          );
         } catch (error) {
           await store.write({ ...record, status: "failed" });
           throw error;
@@ -141,20 +204,26 @@ export async function createGeminiAgent(options: {
     });
   });
   app.post("/agent/audit", async (request, reply) => {
+    const requestId = randomUUID();
     const input = auditRequestSchema.parse(request.body);
     return run(request, reply, async (signal) => {
-      const generated = await options.provider.generate({
-        purpose: "audit",
-        system: auditSystem,
-        payload: input,
-        schema: z.toJSONSchema(auditResponseSchema),
-        signal,
-        timeoutMs: options.auditTimeoutMs ?? 4000,
-      });
-      signal.throwIfAborted();
-      const parsed = auditResponseSchema.safeParse(generated);
-      if (!parsed.success) throw new AgentError(502, "MODEL_INVALID_OUTPUT");
-      return parsed.data;
+      return generate(
+        {
+          correlation: { requestId, attemptId: randomUUID() },
+          purpose: "audit",
+          system: auditSystem,
+          payload: input,
+          schema: z.toJSONSchema(auditResponseSchema),
+          signal,
+          timeoutMs: options.auditTimeoutMs ?? 4000,
+        },
+        (generated) => {
+          const parsed = auditResponseSchema.safeParse(generated);
+          if (!parsed.success)
+            throw new AgentError(502, "MODEL_INVALID_OUTPUT");
+          return parsed.data;
+        },
+      );
     });
   });
   app.addHook("preClose", async () => {
@@ -162,6 +231,9 @@ export async function createGeminiAgent(options: {
     for (const controller of controllers) controller.abort();
     await Promise.allSettled(pending);
   });
-  app.addHook("onClose", () => store.close());
+  app.addHook("onClose", async () => {
+    await usage?.close();
+    await store.close();
+  });
   return app;
 }

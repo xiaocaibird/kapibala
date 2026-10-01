@@ -2,7 +2,14 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { spawn } from "node:child_process";
 import { once } from "node:events";
-import { access, mkdtemp, rm, writeFile } from "node:fs/promises";
+import {
+  access,
+  mkdtemp,
+  readFile,
+  rm,
+  stat,
+  writeFile,
+} from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
@@ -31,6 +38,10 @@ test(
           GEMINI_SESSION_DIR: join(directory, "sessions"),
           GEMINI_AGENT_PORT: "0",
           GEMINI_MODEL: "gemini-3.1-flash-lite",
+          GEMINI_USAGE_ENABLED: "true",
+          GEMINI_USAGE_MAX_RECORDS: "1000",
+          GEMINI_USAGE_MAX_BYTES: "2097152",
+          GEMINI_USAGE_MAX_AGE_DAYS: "30",
           DATABASE_URL: "postgres://must-not-connect.invalid/test",
         },
         stdio: ["ignore", "pipe", "pipe"],
@@ -87,6 +98,13 @@ test(
     assert.equal(signal, null);
     assert.equal(stdout.includes(key) || stderr.includes(key), false);
     assert.equal(stderr, "");
+    const usageFile = join(directory, "sessions", "usage", "usage.jsonl");
+    assert.equal(
+      await readFile(usageFile, "utf8"),
+      "",
+      "invalid requests create no inference usage",
+    );
+    assert.equal((await stat(usageFile)).mode & 0o777, 0o600);
     await assert.rejects(access(join(directory, "sessions", "owner.lock")));
     t.diagnostic(
       JSON.stringify({

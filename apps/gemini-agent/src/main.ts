@@ -4,6 +4,7 @@ import { parse } from "dotenv";
 import { createGeminiAgent } from "./app.js";
 import { GeminiProvider } from "./provider.js";
 import { AgentError } from "./protocol.js";
+import { usageOptions } from "./usage.js";
 
 async function main() {
   let apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
@@ -23,6 +24,7 @@ async function main() {
   const app = await createGeminiAgent({
     stateDirectory: process.env.GEMINI_SESSION_DIR ?? ".runtime/gemini-agent",
     provider: new GeminiProvider({ apiKey, model }),
+    usage: usageOptions(process.env),
   });
   try {
     const address = await app.listen({ host: "127.0.0.1", port });

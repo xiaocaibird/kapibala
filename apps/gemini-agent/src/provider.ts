@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { AgentError } from "./protocol.js";
 
 export interface Generation {
@@ -7,17 +8,26 @@ export interface Generation {
   schema: Record<string, unknown>;
   signal: AbortSignal;
   timeoutMs: number;
+  correlation?: { requestId: string; attemptId: string; runId?: string };
+  observe?: (value: UsageObservation) => void;
 }
 export interface ModelProvider {
   generate(request: Generation): Promise<unknown>;
 }
 export interface UsageObservation {
+  requestId: string;
+  attemptId: string;
+  runId: string | null;
+  observedAt: string;
+  stage: "provider" | "validated-generation";
+  outcome: "success" | "failure";
+  errorCode: string | null;
   purpose: Generation["purpose"];
   model: string;
   elapsedMs: number;
-  inputTokens?: number;
-  outputTokens?: number;
-  totalTokens?: number;
+  inputTokens: number | null;
+  outputTokens: number | null;
+  totalTokens: number | null;
 }
 
 export class GeminiProvider implements ModelProvider {
@@ -38,6 +48,16 @@ export class GeminiProvider implements ModelProvider {
   async generate(input: Generation): Promise<unknown> {
     const began = performance.now();
     const model = this.options.model ?? "gemini-3.1-flash-lite";
+    const correlation = input.correlation ?? {
+      requestId: randomUUID(),
+      attemptId: randomUUID(),
+    };
+    const tokens = {
+      inputTokens: null,
+      outputTokens: null,
+      totalTokens: null,
+    } as Pick<UsageObservation, "inputTokens" | "outputTokens" | "totalTokens">;
+    let failure: AgentError | undefined;
     const timeout = AbortSignal.timeout(input.timeoutMs);
     const signal = AbortSignal.any([timeout, input.signal]);
     try {
@@ -121,6 +141,13 @@ export class GeminiProvider implements ModelProvider {
           totalTokenCount?: number;
         };
       };
+      const token = (value: unknown): number | null =>
+        typeof value === "number" && Number.isSafeInteger(value) && value >= 0
+          ? value
+          : null;
+      tokens.inputTokens = token(body.usageMetadata?.promptTokenCount);
+      tokens.outputTokens = token(body.usageMetadata?.candidatesTokenCount);
+      tokens.totalTokens = token(body.usageMetadata?.totalTokenCount);
       if (body.promptFeedback?.blockReason)
         throw new AgentError(502, "MODEL_BLOCKED");
       if (
@@ -142,27 +169,41 @@ export class GeminiProvider implements ModelProvider {
       const output: unknown = JSON.parse(
         parts.map((part) => part.text).join(""),
       );
-      try {
-        this.options.observe?.({
-          purpose: input.purpose,
-          model,
-          elapsedMs: performance.now() - began,
-          inputTokens: body.usageMetadata?.promptTokenCount,
-          outputTokens: body.usageMetadata?.candidatesTokenCount,
-          totalTokens: body.usageMetadata?.totalTokenCount,
-        });
-      } catch {
-        /* Observations cannot authorize or interrupt a turn. */
-      }
+
       return output;
     } catch (error) {
-      if (error instanceof AgentError) throw error;
-      if (input.signal.aborted) throw new AgentError(499, "MODEL_CANCELLED");
-      if (timeout.aborted) throw new AgentError(504, "MODEL_TIMEOUT");
-      if (error instanceof SyntaxError)
-        throw new AgentError(502, "MODEL_INVALID_OUTPUT");
+      failure =
+        error instanceof AgentError
+          ? error
+          : input.signal.aborted
+            ? new AgentError(499, "MODEL_CANCELLED")
+            : timeout.aborted
+              ? new AgentError(504, "MODEL_TIMEOUT")
+              : error instanceof SyntaxError
+                ? new AgentError(502, "MODEL_INVALID_OUTPUT")
+                : new AgentError(502, "MODEL_UNAVAILABLE");
       // Never surface provider bodies, request headers, URLs or exception text.
-      throw new AgentError(502, "MODEL_UNAVAILABLE");
+      throw failure;
+    } finally {
+      const observation: UsageObservation = {
+        ...correlation,
+        runId: correlation.runId ?? null,
+        observedAt: new Date().toISOString(),
+        stage: "provider",
+        purpose: input.purpose,
+        model,
+        elapsedMs: performance.now() - began,
+        outcome: failure ? "failure" : "success",
+        errorCode: failure?.code ?? null,
+        ...tokens,
+      };
+      for (const observe of [this.options.observe, input.observe]) {
+        try {
+          observe?.(observation);
+        } catch {
+          /* Observations cannot authorize or interrupt a generation. */
+        }
+      }
     }
   }
 }
