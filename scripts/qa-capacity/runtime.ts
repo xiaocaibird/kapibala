@@ -336,6 +336,11 @@ export class CapacityRuntime implements TestExecutionObserver {
             409,
             "No owned capacity saturation established",
           );
+        if (lease.release || Date.now() >= Date.parse(expiresAt))
+          throw new ControlError(
+            409,
+            "Lease expired before holders could be acknowledged",
+          );
         this.append(lease, { kind: "capacity-held", holderKeys: keys });
         return this.snapshot(id);
       }
