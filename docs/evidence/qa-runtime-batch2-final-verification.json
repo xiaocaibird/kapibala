@@ -1,0 +1,68 @@
+{
+  "kind": "DEVELOPER_REGRESSION_NOT_QA",
+  "revision": "06500491052b999c38d183102fbadb24c11e7015",
+  "owner": "kapibala-qa-runtime-batch2-729b88d4-10f",
+  "startedAt": "2026-10-01T06:19:23.735Z",
+  "checks": [
+    {
+      "name": "focused",
+      "command": [
+        "node",
+        "--import",
+        "tsx",
+        "--test",
+        "tests/integration/qa-runtime-observation.test.ts",
+        "tests/integration/account-remote-boundary.test.ts",
+        "tests/integration/core-resource-observability.test.ts",
+        "tests/integration/qa-message-observation.test.ts",
+        "tests/integration/agent-dispatch-budget.test.ts",
+        "tests/integration/agent-kick-recovery.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-runtime-batch2-final-focused.log",
+      "bytes": 25317,
+      "sha256": "adb81a5437ff2f9fb6d71f1e943dbe8f29e0f02175ad5194ee3c4b6ae3064c1f"
+    },
+    {
+      "name": "typecheck",
+      "command": [
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-runtime-batch2-final-typecheck.log",
+      "bytes": 187,
+      "sha256": "30e005d1a7d2022100d69e674fdc8d0abac49571306d528064a9c19c76300bfd"
+    },
+    {
+      "name": "original",
+      "command": [
+        "npm",
+        "run",
+        "verify:original"
+      ],
+      "code": 0,
+      "signal": null,
+      "path": "docs/evidence/qa-runtime-batch2-final-original.log",
+      "bytes": 196,
+      "sha256": "345d0db98133e0be9a4197305445a5a83ed71562385d6d8c57d9ad4bdad383aa"
+    }
+  ],
+  "cleanup": {
+    "remainingDatabases": "",
+    "containerAbsent": true,
+    "remainingOwnedVolumes": []
+  },
+  "database": {
+    "container": "1d2339a1f0ea5a8ebe20c0d884944ae6819c6acf3e5743d314e02ae24a3671e8",
+    "port": "60531",
+    "volumes": [
+      "a14ea4e24e9f45b8a14836aadc7d313f3fabb82d0875c463837d6e2aa4b26d16"
+    ]
+  },
+  "passed": true,
+  "finishedAt": "2026-10-01T06:19:34.741Z"
+}
