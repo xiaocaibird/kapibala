@@ -201,9 +201,12 @@ export class Messages implements MessagingService {
     });
     return messageDto(row);
   }
-  async getMessage(clientMsgId: string): Promise<Message | null> {
+  async getMessage(
+    clientMsgId: string,
+    reader: Queryable = this.ctx.db,
+  ): Promise<Message | null> {
     const row = (
-      await this.ctx.db.query<MessageRow>(
+      await reader.query<MessageRow>(
         "SELECT * FROM messages WHERE client_msg_id=$1",
         [clientMsgId],
       )

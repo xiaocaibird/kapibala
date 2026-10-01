@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { test, type TestContext } from "node:test";
+import type { PoolClient } from "pg";
 import { AgentTools } from "../../apps/server/src/modules/automation/tool-execution.js";
 import type { ToolOutcome } from "../../apps/server/src/modules/automation/protocol.js";
 import { Messages } from "../../apps/server/src/modules/gateway/messages.js";
 import { withOperationSignal } from "../../apps/server/src/core/db.js";
 import {
   automationFixture,
-  delay,
   until,
 } from "../support/core-automation-fixture.js";
 
@@ -61,6 +61,32 @@ async function prepared(
   return { ...f, outcomes, execute: () => tool.executeStep(run, step!) };
 }
 
+function trackAccountReads(
+  t: TestContext,
+  f: Awaited<ReturnType<typeof prepared>>,
+) {
+  let count = 0;
+  const seen = new WeakSet<PoolClient>();
+  const acquire = (client: PoolClient) => {
+    if (seen.has(client)) return;
+    seen.add(client);
+    const query = client.query.bind(client);
+    t.mock.method(client, "query", (sql: unknown, ...args: unknown[]) => {
+      if (
+        typeof sql === "string" &&
+        sql.startsWith("SELECT a.status FROM messages m JOIN accounts")
+      )
+        count++;
+      return Reflect.apply(query, client, [sql, ...args]);
+    });
+  };
+  f.db.pool.on("acquire", acquire);
+  f.onCleanup(async () => {
+    f.db.pool.removeListener("acquire", acquire);
+  });
+  return () => count;
+}
+
 for (const { table, messageStatus, accountStatus } of [
   { table: "messages", messageStatus: "accepted", accountStatus: "online" },
   { table: "accounts", messageStatus: "accepted", accountStatus: "online" },
@@ -68,7 +94,7 @@ for (const { table, messageStatus, accountStatus } of [
   { table: "accounts", messageStatus: "accepted", accountStatus: "suspended" },
 ] as const) {
   test(
-    `Agent delivery discards a late ${table} read (${messageStatus}/${accountStatus}) after its original five-second deadline`,
+    `Agent delivery completes its five-second observation while ${table} remains locked (${messageStatus}/${accountStatus})`,
     { timeout: 15000 },
     async (t) => {
       const f = await prepared(t);
@@ -80,16 +106,7 @@ for (const { table, messageStatus, accountStatus } of [
       await query("UPDATE accounts SET status=$1 WHERE id='account-1'", [
         accountStatus,
       ]);
-      let accountReads = 0;
-      const tracked = t.mock.method(
-        f.db,
-        "query",
-        async (sql: string, values?: unknown[]) => {
-          if (sql.startsWith("SELECT a.status FROM messages m JOIN accounts"))
-            accountReads++;
-          return query(sql, values);
-        },
-      );
+      const accountReads = trackAccountReads(t, f);
       const locker = await f.db.pool.connect();
       let released = false;
       const release = async () => {
@@ -103,6 +120,14 @@ for (const { table, messageStatus, accountStatus } of [
       await locker.query(`LOCK TABLE ${table} IN ACCESS EXCLUSIVE MODE`);
       const began = performance.now();
       const work = f.execute();
+      // Fail-safe releases the fixture lock, not a product timer. A regression
+      // without server cancellation will complete only after this release and
+      // fail releasedAtResult, rather than leave teardown blocked forever.
+      const safetyRelease = setTimeout(() => {
+        void release();
+      }, 6500);
+      let elapsedMs = 0;
+      let releasedAtResult = false;
       try {
         await until(async () =>
           Boolean(
@@ -118,35 +143,41 @@ for (const { table, messageStatus, accountStatus } of [
             ).rowCount,
           ),
         );
-        // Hold a real database read beyond the full, unshortened five seconds.
-        // No clock, timer, start boundary, or product budget is mocked.
-        await delay(5100);
+        await work;
+        elapsedMs = performance.now() - began;
+        releasedAtResult = released;
       } finally {
+        clearTimeout(safetyRelease);
         await release();
         await work;
-        tracked.mock.restore();
       }
-      const elapsedMs = performance.now() - began;
       t.diagnostic(
         JSON.stringify({
           table,
           messageStatus,
           accountStatus,
           elapsedMs,
-          accountReads,
+          accountReads: accountReads(),
+          releasedAtResult,
           outcome: f.outcomes[0],
         }),
       );
       assert.equal(f.outcomes.length, 1);
       assert.equal(f.outcomes[0]!.errorCode, "SEND_TIMEOUT");
       assert.equal(
-        accountReads,
-        table === "messages" ? 0 : 1,
-        "an expired message read must not start another account read",
+        releasedAtResult,
+        false,
+        "the tool returns while the table lock is still held",
       );
+      if (table === "messages") assert.equal(accountReads(), 0);
+      else
+        assert.ok(
+          accountReads() > 1,
+          "retry local read timeouts throughout the original window",
+        );
       assert.ok(
-        elapsedMs > 5000,
-        "retain the real blocking tail; this is not a strict-time PASS",
+        elapsedMs >= 5000,
+        "no early SEND_TIMEOUT; measured scheduling/cleanup tail is not a strict-time PASS",
       );
       assert.equal(f.audits.length, 0);
       assert.equal(f.gatewayRequests.length, 0);
@@ -250,16 +281,7 @@ test("Agent delivery returns a timely sent observation without waiting for an un
     "UPDATE accounts SET status='suspended' WHERE id='account-1'",
   );
   const query = f.db.query.bind(f.db);
-  let accountReads = 0;
-  const tracked = t.mock.method(
-    f.db,
-    "query",
-    async (sql: string, values?: unknown[]) => {
-      if (sql.startsWith("SELECT a.status FROM messages m JOIN accounts"))
-        accountReads++;
-      return query(sql, values);
-    },
-  );
+  const accountReads = trackAccountReads(t, f);
   const locker = await f.db.pool.connect();
   let released = false;
   const release = async () => {
@@ -282,20 +304,19 @@ test("Agent delivery returns a timely sent observation without waiting for an un
   } finally {
     clearTimeout(timer);
     await release();
-    tracked.mock.restore();
   }
   t.diagnostic(
     JSON.stringify({
       case: "timely-sent",
       elapsedMs: performance.now() - began,
-      accountReads,
+      accountReads: accountReads(),
       releasedAtResult,
     }),
   );
   assert.equal(f.outcomes[0]!.value.deliveryStatus, "sent");
   assert.equal(f.outcomes[0]!.errorCode, undefined);
   assert.equal(
-    accountReads,
+    accountReads(),
     0,
     "sent already proves delivery and is exempt from account-terminal rejection",
   );
@@ -305,3 +326,171 @@ test("Agent delivery returns a timely sent observation without waiting for an un
     "return while the irrelevant account lock is still held",
   );
 });
+
+for (const deliveryStatus of ["cancelled", "failed", "unknown"] as const) {
+  test(
+    `Agent delivery preserves ${deliveryStatus} and same-key sent recovery`,
+    { timeout: 10000 },
+    async (t) => {
+      const f = await prepared(t);
+      await f.db.query("UPDATE messages SET delivery_status=$1,fail_code=$2", [
+        deliveryStatus,
+        deliveryStatus === "cancelled"
+          ? "GROUP_UNREACHABLE"
+          : deliveryStatus === "failed"
+            ? "ACCOUNT_TERMINAL"
+            : null,
+      ]);
+      const started = performance.now();
+      await f.execute();
+      const elapsedMs = performance.now() - started;
+      assert.equal(
+        f.outcomes[0]!.errorCode,
+        deliveryStatus === "unknown"
+          ? "SEND_TIMEOUT"
+          : deliveryStatus === "cancelled"
+            ? "GROUP_UNREACHABLE"
+            : "SEND_FAILED",
+      );
+      if (deliveryStatus === "unknown") assert.ok(elapsedMs >= 5000);
+      assert.equal(
+        (await f.db.query("SELECT delivery_status FROM messages")).rows[0]!
+          .delivery_status,
+        deliveryStatus,
+      );
+      await f.db.query(
+        "UPDATE messages SET delivery_status='sent',msg_id='recovered-sent'",
+      );
+      await f.execute();
+      assert.equal(f.outcomes[1]!.value.deliveryStatus, "sent");
+      assert.equal(
+        (await f.db.query("SELECT * FROM agent_send_keys")).rowCount,
+        1,
+      );
+      assert.equal(f.audits.length, 0);
+      assert.equal(f.gatewayRequests.length, 0);
+      t.diagnostic(
+        JSON.stringify({ deliveryStatus, elapsedMs, outcomes: f.outcomes }),
+      );
+    },
+  );
+}
+
+test("Agent delivery observes sent after a timed-out message read is released inside the same window", async (t) => {
+  const f = await prepared(t);
+  await f.db.query("UPDATE messages SET delivery_status='unknown'");
+  const locker = await f.db.pool.connect();
+  let released = false;
+  const release = async () => {
+    if (released) return;
+    released = true;
+    await locker.query("COMMIT");
+    locker.release();
+  };
+  f.onCleanup(release);
+  await locker.query("BEGIN");
+  await locker.query("LOCK TABLE messages IN ACCESS EXCLUSIVE MODE");
+  const started = performance.now();
+  const work = f.execute();
+  try {
+    await until(async () =>
+      Boolean(
+        (
+          await f.db.query(
+            "SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock' AND query LIKE 'SELECT * FROM messages WHERE client_msg_id%'",
+          )
+        ).rowCount,
+      ),
+    );
+    // Longer than the local 50 ms lock timeout, shorter than the tool window.
+    await new Promise((resolve) => setTimeout(resolve, 200));
+    await locker.query(
+      "UPDATE messages SET delivery_status='sent',msg_id='arrived-during-wait'",
+    );
+    await release();
+    await work;
+  } finally {
+    await release();
+    await work;
+  }
+  assert.equal(f.outcomes[0]!.value.deliveryStatus, "sent");
+  assert.equal(f.outcomes[0]!.errorCode, undefined);
+  assert.equal(f.audits.length, 0);
+  assert.equal(f.gatewayRequests.length, 0);
+  t.diagnostic(
+    JSON.stringify({
+      case: "sent-after-lock-release",
+      elapsedMs: performance.now() - started,
+    }),
+  );
+});
+
+for (const deliveryStatus of ["sent", "accepted", "failed"] as const) {
+  test(`Agent delivery retains timely ${deliveryStatus} when successful cleanup returns after the window`, async (t) => {
+    const f = await prepared(t, 100);
+    await f.db.query(
+      "UPDATE messages SET delivery_status=$1,fail_code=$2,msg_id=$3",
+      [
+        deliveryStatus,
+        deliveryStatus === "failed" ? "ACCOUNT_TERMINAL" : null,
+        deliveryStatus === "sent" ? "timely-sent" : null,
+      ],
+    );
+    let delayed = false;
+    let observedAt = 0;
+    const seen = new WeakSet<PoolClient>();
+    const listener = (client: PoolClient) => {
+      if (seen.has(client)) return;
+      seen.add(client);
+      const query = client.query.bind(client);
+      t.mock.method(
+        client,
+        "query",
+        async (sql: unknown, ...args: unknown[]) => {
+          const result = await Reflect.apply(query, client, [sql, ...args]);
+          if (
+            typeof sql === "string" &&
+            (sql.startsWith("SELECT * FROM messages WHERE client_msg_id") ||
+              sql.startsWith("SELECT a.status FROM messages m JOIN accounts"))
+          )
+            observedAt = performance.now();
+          if (sql === "ROLLBACK" && !delayed) {
+            delayed = true;
+            // The real server rollback succeeds. Only delivery of its completion
+            // is held here, exposing cleanup/JS delay independently of SELECT.
+            await new Promise((resolve) => setTimeout(resolve, 150));
+          }
+          return result;
+        },
+      );
+    };
+    f.db.pool.on("acquire", listener);
+    f.onCleanup(async () => {
+      f.db.pool.removeListener("acquire", listener);
+    });
+    const started = performance.now();
+    await f.execute();
+    const elapsedMs = performance.now() - started;
+    assert.ok(observedAt - started < 100);
+    assert.ok(elapsedMs >= 150);
+    assert.equal(delayed, true);
+    assert.equal(
+      f.outcomes[0]!.errorCode,
+      deliveryStatus === "failed" ? "SEND_FAILED" : undefined,
+    );
+    if (deliveryStatus !== "failed")
+      assert.equal(f.outcomes[0]!.value.deliveryStatus, deliveryStatus);
+    assert.equal(f.audits.length, 0);
+    assert.equal(f.gatewayRequests.length, 0);
+    t.diagnostic(
+      JSON.stringify({
+        case: "timely-observation-late-cleanup",
+        deliveryStatus,
+        windowMs: 100,
+        observedAfterMs: observedAt - started,
+        elapsedMs,
+        cleanupCompletionDelayMs: 150,
+      }),
+    );
+  });
+}

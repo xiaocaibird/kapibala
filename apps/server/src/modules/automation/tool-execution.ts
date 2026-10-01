@@ -13,10 +13,7 @@ import {
   KICK_POST_TIMEOUT_MS,
   type MessagingService,
 } from "../../core/messaging.js";
-import type {
-  AgentRun,
-  Message,
-} from "../../../../../packages/contracts/src/index.js";
+import type { AgentRun } from "../../../../../packages/contracts/src/index.js";
 import {
   auditSchema,
   toolError,
@@ -26,6 +23,7 @@ import {
 } from "./protocol.js";
 import type { GroupRow, RecentRow, RunRow, StepRow } from "./types.js";
 import { referenceMedia } from "../media-files/index.js";
+import { observeDelivery } from "./delivery-observation.js";
 
 export interface ToolExecutionHost {
   completeStep(
@@ -358,50 +356,58 @@ export class AgentTools {
     clientMsgId: string,
     run: RunRow,
   ): Promise<ToolOutcome> {
-    const deadline = Date.now() + Math.min(5000, this.host.remaining(run));
-    let message: Message | null = null;
-    while (Date.now() < deadline) {
-      message = await this.messaging.getMessage(clientMsgId);
-      // A read may wait behind database locks beyond the original deadline.
-      // Do not authorize another read or use a late observation as this tool's
-      // result. The durable message is unchanged and the same key can read it
-      // again on a later invocation. Reads stay serial; no abandoned query races.
-      if (Date.now() >= deadline) break;
-      // A timely confirmed send is final even if the account later becomes
-      // terminal. Its outcome does not depend on another account read.
-      if (message?.deliveryStatus === "sent")
-        return { value: { clientMsgId, deliveryStatus: "sent" } };
-      const account = (
-        await this.ctx.db.query<{ status: string }>(
-          "SELECT a.status FROM messages m JOIN accounts a ON a.id=m.account_id WHERE m.client_msg_id=$1",
-          [clientMsgId],
-        )
-      ).rows[0];
-      if (Date.now() >= deadline) break;
-      if (account && ["suspended", "session_expired"].includes(account.status))
-        return toolError(
-          "SEND_FAILED",
-          "The sending account entered a terminal state before delivery completed.",
-        );
-      if (message?.deliveryStatus === "accepted")
-        return {
-          value: { clientMsgId, deliveryStatus: message.deliveryStatus },
-        };
-      if (
-        message &&
-        ["failed", "cancelled"].includes(message.deliveryStatus ?? "")
-      )
-        return toolError(
-          message.failCode === "GROUP_UNREACHABLE" ||
-            message.failCode === "GROUP_WRITE_FORBIDDEN"
-            ? "GROUP_UNREACHABLE"
-            : "SEND_FAILED",
-          message.failCode ?? "Message could not be sent.",
-        );
-      // Polling/DB reads already consumed part of the original wait budget.
-      // Do not add a fresh 100ms sleep when less than that remains. Timer and
-      // database scheduling still determine the actual return boundary.
-      const left = deadline - Date.now();
+    const deadline =
+      performance.now() + Math.min(5000, this.host.remaining(run));
+    while (performance.now() < deadline) {
+      const observation = await observeDelivery(
+        this.ctx.db,
+        deadline,
+        async (reader) => {
+          const message = await this.messaging.getMessage(clientMsgId, reader);
+          // A timely confirmed send is final even if the account later becomes
+          // terminal. Never make it wait for an unrelated account lock.
+          if (message?.deliveryStatus === "sent")
+            return { value: { clientMsgId, deliveryStatus: "sent" } };
+          const account = (
+            await reader.query<{ status: string }>(
+              "SELECT a.status FROM messages m JOIN accounts a ON a.id=m.account_id WHERE m.client_msg_id=$1",
+              [clientMsgId],
+            )
+          ).rows[0];
+          if (
+            account &&
+            ["suspended", "session_expired"].includes(account.status)
+          )
+            return toolError(
+              "SEND_FAILED",
+              "The sending account entered a terminal state before delivery completed.",
+            );
+          if (message?.deliveryStatus === "accepted")
+            return {
+              value: { clientMsgId, deliveryStatus: message.deliveryStatus },
+            };
+          if (
+            message &&
+            ["failed", "cancelled"].includes(message.deliveryStatus ?? "")
+          )
+            return toolError(
+              message.failCode === "GROUP_UNREACHABLE" ||
+                message.failCode === "GROUP_WRITE_FORBIDDEN"
+                ? "GROUP_UNREACHABLE"
+                : "SEND_FAILED",
+              message.failCode ?? "Message could not be sent.",
+            );
+          return undefined;
+        },
+      );
+      // A local read timeout gives no new delivery fact. Keep the original
+      // observation window and idempotency key; never fail the stored message.
+      // Timeliness was fixed before cleanup; a late successful ROLLBACK
+      // cannot change an already observed sent/accepted/failure into unknown.
+      if (observation.status === "observed" && observation.value)
+        return observation.value;
+      if (performance.now() >= deadline) break;
+      const left = deadline - performance.now();
       if (left > 0) await sleep(Math.min(100, left));
     }
     return toolError(

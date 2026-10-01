@@ -341,7 +341,8 @@ export function createGatewayModule(
     name: "gateway",
     register,
     enqueueSend: (input, tx) => messages.enqueueSend(input, tx),
-    getMessage: (clientMsgId) => messages.getMessage(clientMsgId),
+    getMessage: (clientMsgId, reader) =>
+      messages.getMessage(clientMsgId, reader),
     kick: (input, options?: KickOptions) => messages.kick(input, options),
     recover: async () => {
       await media.recover();

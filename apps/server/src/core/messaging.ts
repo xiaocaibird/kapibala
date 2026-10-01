@@ -23,7 +23,7 @@ export interface KickOptions {
 }
 export interface MessagingService {
   enqueueSend(input: SendInput, tx?: Queryable): Promise<Message>;
-  getMessage(clientMsgId: string): Promise<Message | null>;
+  getMessage(clientMsgId: string, reader?: Queryable): Promise<Message | null>;
   kick(
     input: {
       groupId: string;
