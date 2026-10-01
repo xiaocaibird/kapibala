@@ -166,12 +166,26 @@ export async function createCapacityController(directory: string) {
   }
   async function gone(record: Record): Promise<boolean> {
     try {
+      process.kill(record.registration.appPid, 0);
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === "ESRCH") return true;
+      throw error;
+    }
+    try {
       return (
         (await processIdentity(record.registration.appPid)).started !==
         record.registration.appStarted
       );
-    } catch {
-      return true;
+    } catch (error) {
+      // ps timing out is not proof that the holder process died. Only ESRCH
+      // from a fresh kernel PID check authorizes this release fallback.
+      try {
+        process.kill(record.registration.appPid, 0);
+      } catch (probe) {
+        if ((probe as NodeJS.ErrnoException).code === "ESRCH") return true;
+        throw probe;
+      }
+      throw error;
     }
   }
   async function refresh(
