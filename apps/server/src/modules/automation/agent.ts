@@ -191,7 +191,10 @@ export class AgentModule {
   private async startNext(groupId: string): Promise<void> {
     const before = performance.now();
     let created: RunRow | undefined;
+    let transactionEnteredAt: number | undefined;
+    let insertWindow: [number, number] | undefined;
     const committed = await schedulingTransaction(this.ctx.db, async (tx) => {
+      transactionEnteredAt = performance.now();
       const group = (
         await tx.query<GroupRow>(
           "SELECT * FROM groups WHERE id=$1 FOR UPDATE",
@@ -244,12 +247,14 @@ export class AgentModule {
         },
       ];
       const id = randomUUID();
+      const insertBefore = performance.now();
       const run = (
         await tx.query<RunRow>(
           "INSERT INTO agent_runs(id,group_id,history) VALUES($1,$2,$3) RETURNING *",
           [id, groupId, JSON.stringify(history)],
         )
       ).rows[0]!;
+      insertWindow = [insertBefore, performance.now()];
       created = run;
       await tx.query(
         "UPDATE agent_pending SET run_id=$1 WHERE message_id=ANY($2::text[])",
@@ -264,6 +269,8 @@ export class AgentModule {
         runId: created.id,
         attemptId: created.id,
         creationWindowMs: [before, performance.now()],
+        transactionBeginAcknowledgedByMs: transactionEnteredAt,
+        creationInsertWindowMs: insertWindow,
         commitBoundary: "outer-commit-confirmed",
       });
       this.ctx.testActivityObserver?.runCreated(
@@ -699,8 +706,22 @@ export class AgentModule {
     step: StepRow,
     outcome: ToolOutcome,
     endReason?: "audit_blocked",
+    executionAttemptId?: string,
   ): Promise<void> {
     const before = performance.now();
+    const commitAttemptId =
+      executionAttemptId ??
+      (this.ctx.testLifecycleObserver ? randomUUID() : "");
+    if (endReason)
+      this.ctx.testLifecycleObserver?.record({
+        kind: "agent-termination-decided",
+        groupId: run.group_id,
+        runId: run.id,
+        attemptId: commitAttemptId,
+        status: "blocked",
+        reason: endReason,
+        decisionWindowMs: [before, performance.now()],
+      });
     let terminalCommitted = false;
     const content = resultContent(outcome.value);
     const history: ConversationMessage[] = [
@@ -757,17 +778,27 @@ export class AgentModule {
         }
       }
     });
-    if (terminalCommitted)
+    if (terminalCommitted) {
+      this.ctx.testLifecycleObserver?.record({
+        kind: "agent-terminal-committed",
+        groupId: run.group_id,
+        runId: run.id,
+        attemptId: commitAttemptId,
+        status: "blocked",
+        reason: endReason,
+        commitBoundary: "outer-commit-confirmed",
+      });
       this.ctx.testActivityObserver?.runTerminal(run.id, {
         before,
         after: performance.now(),
       });
+    }
     if (step.name === "send_message")
       this.ctx.testLifecycleObserver?.record({
         kind: "send-tool-history-committed",
         groupId: run.group_id,
         runId: run.id,
-        attemptId: randomUUID(),
+        attemptId: commitAttemptId,
         stepId: `${run.id}:${step.ordinal}`,
         toolUseId: step.tool_use_id!,
         errorCode: outcome.errorCode ?? null,

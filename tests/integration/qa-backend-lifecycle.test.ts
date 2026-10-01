@@ -268,9 +268,12 @@ test("real controller preserves lost-response dispatch identity across SIGKILL a
     (e) => e.kind === "message-recovery-adopted",
   )!;
   assert.equal(adopted.attemptId, dispatch.attemptId);
-    assert.notEqual(adopted.clockDomain, dispatch.clockDomain);
-    assert.equal(pending.events.some((e) => e.kind === "message-send-dispatch"), false);
-    assert.equal(pending.events[0]!.includesPriorProcessHistory, false);
+  assert.notEqual(adopted.clockDomain, dispatch.clockDomain);
+  assert.equal(
+    pending.events.some((e) => e.kind === "message-send-dispatch"),
+    false,
+  );
+  assert.equal(pending.events[0]!.includesPriorProcessHistory, false);
   assert.equal(adopted.recordedTimeoutAvailable, false);
   assert.equal(adopted.originalResponseReceipt, "not-durably-recorded");
   assert.ok(

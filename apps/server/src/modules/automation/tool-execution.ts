@@ -29,6 +29,7 @@ export interface ToolExecutionHost {
     step: StepRow,
     outcome: ToolOutcome,
     endReason?: "audit_blocked",
+    executionAttemptId?: string,
   ): Promise<void>;
   finishAfterStep(run: RunRow, text: string): Promise<void>;
   remaining(run: RunRow): number;
@@ -131,6 +132,7 @@ export class AgentTools {
     run: RunRow,
     step: StepRow,
     text: string,
+    executionAttemptId?: string,
   ): Promise<"pass" | "fail" | "blocked" | "expired"> {
     if (step.audit_verdict === "pass" || step.audit_verdict === "fail")
       return step.audit_verdict;
@@ -206,6 +208,7 @@ export class AgentTools {
         "The run is blocked; no side effect was executed.",
       ),
       "audit_blocked",
+      executionAttemptId,
     );
     return "blocked";
   }
@@ -222,6 +225,8 @@ export class AgentTools {
     const observe = (kind: string, fields: Record<string, unknown> = {}) =>
       this.ctx.testLifecycleObserver?.record({ ...fact, kind, ...fields });
     observe("send-tool-entered");
+    const complete = (outcome: ToolOutcome) =>
+      this.host.completeStep(run, step, outcome, undefined, fact.attemptId);
     const deliver = async (clientMsgId: string, keyReused: boolean) => {
       observe("send-key-resolved", { clientMsgId, keyReused });
       const result = await this.delivery(clientMsgId, run, fact);
@@ -241,21 +246,15 @@ export class AgentTools {
       )
     ).rows[0];
     if (existing) {
-      await this.host.completeStep(
-        run,
-        step,
-        await deliver(existing.client_msg_id, true),
-      );
+      await complete(await deliver(existing.client_msg_id, true));
       return;
     }
     observe("send-audit-started");
-    const verdict = await this.audit(run, step, input.text);
+    const verdict = await this.audit(run, step, input.text, fact.attemptId);
     observe("send-audit-completed", { verdict });
     if (verdict === "blocked" || verdict === "expired") return;
     if (verdict === "fail") {
-      await this.host.completeStep(
-        run,
-        step,
+      await complete(
         toolError("AUDIT_REJECTED", "Message was rejected by audit."),
       );
       return;
@@ -317,11 +316,7 @@ export class AgentTools {
         else throw error;
       }
     });
-    await this.host.completeStep(
-      run,
-      step,
-      outcome ?? (await deliver(clientMsgId!, false)),
-    );
+    await complete(outcome ?? (await deliver(clientMsgId!, false)));
   }
   private async delivery(
     clientMsgId: string,
