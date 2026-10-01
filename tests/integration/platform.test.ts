@@ -36,7 +36,10 @@ async function until<T>(
   } while (Date.now() < end);
   throw new Error(`Timed out: ${JSON.stringify(value)}`);
 }
-async function fixture(t: Parameters<typeof temporaryDatabase>[0]) {
+async function fixture(
+  t: Parameters<typeof temporaryDatabase>[0],
+  configureGateway?: (gateway: FastifyInstance) => void,
+) {
   const temporary = await temporaryDatabase(t);
   const { db } = temporary;
   await migrate(db);
@@ -44,6 +47,7 @@ async function fixture(t: Parameters<typeof temporaryDatabase>[0]) {
   temporary.onCleanup(() => rm(dir, { recursive: true, force: true }));
   const gateway = createGatewaySimulator(join(dir, "gateway.json"));
   temporary.onCleanup(() => gateway.close());
+  configureGateway?.(gateway);
   const agent = createAgentSimulator(join(dir, "agent.json"));
   temporary.onCleanup(() => agent.close());
   const gatewayUrl = await gateway.listen({ host: "127.0.0.1", port: 0 });
@@ -1257,7 +1261,29 @@ test("platform: Agent SEND_TIMEOUT repeats the same key and reads proven failure
 });
 
 test("platform: Agent kick deadline cancels real HTTP confirmation without replaying an uncertain effect", async (t) => {
-  const f = await fixture(t);
+  let releaseConfirmation!: () => void;
+  const heldConfirmation = new Promise<void>((resolve) => {
+    releaseConfirmation = resolve;
+  });
+  let kickReceivedAt: number | undefined;
+  let confirmationReceivedAt: number | undefined;
+  let confirmationClosedAt: number | undefined;
+  let confirmationReleased = false;
+  const f = await fixture(t, (gateway) => {
+    // Test-local HTTP scheduling, not a new simulator control or a mocked result.
+    // The simulator's existing request recorder runs before this hook.
+    gateway.addHook("preHandler", async (request, reply) => {
+      if (request.url.endsWith("/kick")) kickReceivedAt = performance.now();
+      if (kickReceivedAt !== undefined && request.url.endsWith("/members")) {
+        confirmationReceivedAt = performance.now();
+        reply.raw.once("close", () => {
+          confirmationClosedAt = performance.now();
+        });
+        await heldConfirmation;
+        if (reply.raw.destroyed) return reply;
+      }
+    });
+  });
   try {
     const g = await f.group();
     await f.control("gateway", "/member", {
@@ -1265,66 +1291,148 @@ test("platform: Agent kick deadline cancels real HTTP confirmation without repla
       platformUserId: "deadline-target",
       joined: true,
     });
+    // The application sees 504 and cannot conclude whether the effect happened.
+    // Hold the real follow-up GET; do not alter the protocol or fabricate a result.
+    await f.control("gateway", "/config", {
+      kickFaults: ["NETWORK_TIMEOUT_NO_EFFECT"],
+    });
     const id = randomUUID();
-    const started = Date.now();
+    const input = {
+      platform_user_id: "deadline-target",
+      reason: "deadline test",
+    };
+    const history = [
+      {
+        role: "assistant",
+        content: [
+          { type: "tool_use", id: "deadline-kick", name: "kick_user", input },
+        ],
+      },
+    ];
+    const started = performance.now();
     await f.db.transaction(async (tx) => {
       await tx.query(
         "UPDATE groups SET agent_enabled=true,auto_kick_enabled=true WHERE id=$1",
         [g.id],
       );
+      // Enough real remaining time for the first configured 15s POST window.
       await tx.query(
-        "INSERT INTO agent_runs(id,group_id,active_ms,step_count) VALUES($1,$2,59500,1)",
-        [id, g.id],
+        "INSERT INTO agent_runs(id,group_id,active_ms,step_count,history) VALUES($1,$2,43000,1,$3)",
+        [id, g.id, JSON.stringify(history)],
       );
       await tx.query(
         "INSERT INTO agent_steps(run_id,ordinal,kind,tool_use_id,name,input,state,audit_verdict) VALUES($1,1,'tool_use','deadline-kick','kick_user',$2,'ready','pass')",
-        [
-          id,
-          JSON.stringify({
-            platform_user_id: "deadline-target",
-            reason: "deadline test",
-          }),
-        ],
+        [id, JSON.stringify(input)],
       );
     });
+    await until(
+      async () => confirmationReceivedAt,
+      (at) => at !== undefined,
+      5000,
+    );
+    assert.ok(kickReceivedAt !== undefined && kickReceivedAt > started);
+    assert.ok(confirmationReceivedAt! > kickReceivedAt);
     const run = await until(
       async () => (await f.api<AgentRun>("GET", `/api/agent-runs/${id}`)).body,
       (run) => run.status === "failed",
-      2000,
+      20000,
     );
+    const terminalObservedAt = performance.now();
     assert.equal(run.endReason, "wall_clock");
-    assert.ok(
-      Date.now() - started < 950,
-      "run must stop before the simulator's one-second kick response",
+    assert.equal(
+      confirmationReleased,
+      false,
+      "run stops while the real confirmation response is still held",
     );
     assert.match(run.recoveryNote ?? "", /unknown/);
+    await until(
+      async () => confirmationClosedAt,
+      (at) => at !== undefined,
+    );
     const step = (
       await f.db.query<{
         state: string;
         is_error: boolean;
         error_code: string | null;
+        intent: { dispatchState: string };
       }>("SELECT * FROM agent_steps WHERE run_id=$1", [id])
     ).rows[0]!;
     assert.equal(step.state, "executing");
     assert.equal(step.is_error, false);
     assert.equal(step.error_code, null);
-    // A disconnected HTTP caller cannot undo the already dispatched side effect.
+    assert.equal(step.intent.dispatchState, "dispatching");
+    const saved = (
+      await f.db.query<{ active_ms: number; history: unknown }>(
+        "SELECT active_ms,history FROM agent_runs WHERE id=$1",
+        [id],
+      )
+    ).rows[0]!;
+    assert.deepEqual(
+      saved.history,
+      history,
+      "no invented tool_result for an uncertain effect",
+    );
+    // A cancelled confirmation does not authorize replaying the dispatched POST.
+    confirmationReleased = true;
+    releaseConfirmation();
     await new Promise((resolve) => setTimeout(resolve, 1200));
     const second = await f.build();
     await second.ready();
     await new Promise((resolve) => setTimeout(resolve, 250));
     const remote = await f.control("gateway", "");
-    assert.equal(
-      (remote.requests as { path: string }[]).filter((r) =>
-        r.path.endsWith("/kick"),
-      ).length,
-      1,
+    const requests = remote.requests as { at: string; path: string }[];
+    const kicks = requests.filter((r) => r.path.endsWith("/kick"));
+    const confirmations = requests.filter(
+      (r) => r.path.endsWith("/members") && r.at >= kicks[0]!.at,
+    );
+    assert.equal(kicks.length, 1);
+    assert.ok(
+      confirmations.length >= 1,
+      "a real HTTP membership confirmation was received",
     );
     assert.equal(
-      (await f.api<AgentRun>("GET", `/api/agent-runs/${id}`)).body.status,
+      (await f.api<AgentRun>("GET", `/api/agent-runs/${id}`, undefined, second))
+        .body.status,
       "failed",
     );
+    assert.match(
+      (await f.api<AgentRun>("GET", `/api/agent-runs/${id}`, undefined, second))
+        .body.recoveryNote ?? "",
+      /unknown/,
+    );
+    assert.deepEqual(
+      (await f.db.query("SELECT history FROM agent_runs WHERE id=$1", [id]))
+        .rows[0]!.history,
+      history,
+    );
+    assert.equal(
+      ((await f.control("agent", "")).audits as unknown[]).length,
+      0,
+      "reuse the persisted audit pass",
+    );
+    t.diagnostic(
+      JSON.stringify({
+        case: "platform-real-kick-confirmation-deadline",
+        priorActiveMs: 43000,
+        kickReceivedElapsedMs: kickReceivedAt - started,
+        confirmationReceivedElapsedMs: confirmationReceivedAt! - started,
+        confirmationClosedElapsedMs: confirmationClosedAt! - started,
+        terminalObservedElapsedMs: terminalObservedAt - started,
+        persistedActiveMs: Number(saved.active_ms),
+        kickRequests: kicks.length,
+        confirmationRequests: confirmations.length,
+        status: run.status,
+        endReason: run.endReason,
+        recoveryNote: run.recoveryNote,
+        historyUnchanged: true,
+        secondInstanceStatus: "failed",
+        database: new URL(f.databaseUrl).pathname.slice(1),
+        evidenceRole:
+          "real HTTP confirmation cancellation and non-replay; not a strict 60000ms PASS",
+      }),
+    );
   } finally {
+    releaseConfirmation();
     await f.close();
   }
 });
