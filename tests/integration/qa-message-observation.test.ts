@@ -237,6 +237,12 @@ test("MO05 TTL releases real held receipt; bad target and duplicate UUID cannot 
   await f.seed();
   const lease = await f.arm("receipt-before-commit", 5000);
   const initial = await f.snapshot(lease.id);
+  const premature = await f.request(
+    "POST",
+    `/qa/message/v1/leases/${lease.id}/advance`,
+  );
+  assert.equal(premature.status, 409);
+  assert.equal((await f.snapshot(lease.id)).state, "armed");
   const duplicate = await f.request(
     "PUT",
     `/qa/message/v1/leases/${lease.id}`,

@@ -90,6 +90,8 @@ export class MessageObservationRuntime
     return structuredClone(l.snapshot);
   }
   async advance(id: string) {
+    if (this.snapshot(id).state === "armed")
+      throw new ControlError(409, "No actual message boundary is held");
     return this.release(id);
   }
   async release(id: string) {
