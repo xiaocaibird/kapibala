@@ -21,7 +21,11 @@ import {
   until,
 } from "../support/core-automation-fixture.js";
 
-async function scenario(t: TestContext, budgetProfile: boolean) {
+async function scenario(
+  t: TestContext,
+  budgetProfile: boolean,
+  lateObservation = false,
+) {
   const f = await automationFixture(t);
   await f.app.close();
   const parentClockDomain = `parent-performance:${process.pid}:${randomUUID()}`;
@@ -196,17 +200,27 @@ async function scenario(t: TestContext, budgetProfile: boolean) {
   const second = await launch();
   const startupAfter = performance.now();
   const resumedId = randomUUID();
-  await second.command("arm", {
-    leaseId: resumedId,
-    runId,
-    mode: "observe-activity",
-    ttlMs: 120000,
-  });
+  if (!lateObservation) {
+    await second.command("arm", {
+      leaseId: resumedId,
+      runId,
+      mode: "observe-activity",
+      ttlMs: 120000,
+    });
+  }
   await second.command("tick");
   await until(
     async () => (await f.readRun(runId)).status !== "running",
     budgetProfile ? 55000 : 5000,
   );
+  if (lateObservation) {
+    await second.command("arm", {
+      leaseId: resumedId,
+      runId,
+      mode: "observe-activity",
+      ttlMs: 120000,
+    });
+  }
   const afterRecovery = await second.capture(resumedId);
   const terminal = await f.readRun(runId);
   assert.equal(terminal.recovery_note, null);
@@ -221,6 +235,26 @@ async function scenario(t: TestContext, budgetProfile: boolean) {
     undefined,
   );
   assert.equal(f.gatewayRequests.length, 0);
+  if (lateObservation) {
+    assert.deepEqual(afterRecovery.snapshot.events.at(-1)!.epochObservation, {
+      continuous: false,
+      startSource: "unwitnessed",
+    });
+    assert.throws(
+      () =>
+        joinKilledActivityEpochs({
+          beforeKill,
+          killed,
+          afterRecovery,
+          persistedAfterExitMs,
+        }),
+      /late reconstruction is insufficient/,
+    );
+    t.diagnostic(
+      "Actual recovered run completed before lease: late terminal reconstruction rejected, not counted as zero activity",
+    );
+    return;
+  }
   const combined = joinKilledActivityEpochs({
     beforeKill,
     killed,
@@ -297,4 +331,10 @@ test(
   "original 60-second activity profile produces bounded cross-epoch evidence without changing its acceptance standard",
   { timeout: 100000 },
   async (t) => scenario(t, true),
+);
+
+test(
+  "recovery completing before a lease cannot manufacture a zero-length new epoch",
+  { timeout: 20000 },
+  async (t) => scenario(t, false, true),
 );

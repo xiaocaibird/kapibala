@@ -1,6 +1,4 @@
 import assert from "node:assert/strict";
-import { rename, readdir, readFile } from "node:fs/promises";
-import { join } from "node:path";
 import type { ActivityObservationSnapshot } from "../../scripts/qa-runtime-observation/activity-witness.js";
 import { randomUUID } from "node:crypto";
 import { test } from "node:test";
@@ -110,16 +108,7 @@ test("AC01 real controller permits witness plus same-run safe boundary and expos
   assert.deepEqual(live2.events.slice(0, live1.events.length), live1.events);
   // Losing bridge reachability while its process lives must fail, not claim a
   // process exit or calibrate from an old retained snapshot.
-  const registrationFile = (await readdir(f.directory)).find((name) =>
-    name.endsWith(".json"),
-  )!;
-  const registration = JSON.parse(
-    await readFile(join(f.directory, registrationFile), "utf8"),
-  ) as { socket: string };
-  await rename(
-    registration.socket,
-    registration.socket + ".temporarily-unreachable",
-  );
+  process.kill(live2.clockObservation.applicationPid, "SIGSTOP");
   try {
     const unavailable = await f.request("GET", `/leases/${safe.id}`);
     assert.equal(unavailable.status, 503);
@@ -129,10 +118,7 @@ test("AC01 real controller permits witness plus same-run safe boundary and expos
     );
     process.kill(live2.clockObservation.applicationPid, 0);
   } finally {
-    await rename(
-      registration.socket + ".temporarily-unreachable",
-      registration.socket,
-    );
+    process.kill(live2.clockObservation.applicationPid, "SIGCONT");
   }
   const immediatelyBeforeKill = (await f.snapshot(
     safe.id,

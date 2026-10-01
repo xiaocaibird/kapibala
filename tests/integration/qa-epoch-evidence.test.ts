@@ -47,6 +47,7 @@ function evidence() {
           applicationPid: 11,
           activityState: "active",
           includesUnsavedTail: true,
+          epochObservation: { continuous: true, startSource: "run-creation" },
           creationOrEpochStartWindowMs: [0, 2],
           continuationDurable: true,
           remoteInFlightCount: 0,
@@ -86,6 +87,7 @@ function evidence() {
       applicationPid: 21,
       activityState: "terminal",
       includesUnsavedTail: false,
+      epochObservation: { continuous: true, startSource: "clock-acquisition" },
       creationOrEpochStartWindowMs: [6900, 6902],
       activityEndWindowMs: [7990, 7992],
     },
@@ -127,6 +129,21 @@ test("epoch join maps different process clock origins and includes an uncertain 
 
 test("epoch join rejects cached clocks, absent raw samples, ownership gaps and wrong process identities", () => {
   const mutations: ((input: ReturnType<typeof evidence>) => void)[] = [
+    (v) => {
+      delete v.afterRecovery.snapshot.events[0]!.epochObservation;
+    },
+    (v) => {
+      v.afterRecovery.snapshot.events[0]!.epochObservation = {
+        continuous: false,
+        startSource: "unwitnessed",
+      };
+    },
+    (v) => {
+      v.afterRecovery.snapshot.events[0]!.epochObservation = {
+        continuous: true,
+        startSource: "run-creation",
+      };
+    },
     (v) => {
       v.beforeKill.snapshot.snapshotProvenance!.source =
         "retained-after-process-exit";

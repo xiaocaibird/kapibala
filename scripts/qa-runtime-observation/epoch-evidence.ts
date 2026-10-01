@@ -114,6 +114,19 @@ export function joinKilledActivityEpochs(input: {
     b = calibration(next);
   const old = event(first),
     resumed = event(next, "activity-terminal");
+  const originalCoverage = old.epochObservation as
+    { continuous?: unknown; startSource?: unknown } | undefined;
+  const recoveredCoverage = resumed.epochObservation as
+    { continuous?: unknown; startSource?: unknown } | undefined;
+  if (
+    originalCoverage?.continuous !== true ||
+    originalCoverage.startSource !== "run-creation" ||
+    recoveredCoverage?.continuous !== true ||
+    recoveredCoverage.startSource !== "clock-acquisition"
+  )
+    throw new Error(
+      "Continuous creation and recovery acquisition witnesses are required; late reconstruction is insufficient",
+    );
   const hasGap = (capture: ActivityCapture, epochId: string) =>
     capture.snapshot.events.some(
       (entry) =>

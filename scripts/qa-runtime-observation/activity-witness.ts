@@ -56,6 +56,10 @@ interface RunWitness extends ActivitySample {
   ended?: ActivityWindow;
   state: ActivityState;
   complete: boolean;
+  epochObservation: {
+    continuous: boolean;
+    startSource: "run-creation" | "clock-acquisition" | "unwitnessed";
+  };
   reason?: string;
   lastSuccessfulSample?: {
     epochId: string;
@@ -109,6 +113,7 @@ export class ActivityWitness
       began: at,
       state: this.epoch ? "active" : "unknown",
       complete: false,
+      epochObservation: { continuous: false, startSource: "unwitnessed" },
       reason:
         "Run creation or earlier epoch tail was not witnessed by this process.",
     };
@@ -132,6 +137,10 @@ export class ActivityWitness
         continue;
       witness.complete = false;
       witness.lastSuccessfulSample = undefined;
+      witness.epochObservation = {
+        continuous: true,
+        startSource: "clock-acquisition",
+      };
       witness.began = at;
       witness.ended = undefined;
       witness.state = "active";
@@ -154,6 +163,10 @@ export class ActivityWitness
         continue;
       if (witness.state !== "active") {
         witness.complete = false;
+        witness.epochObservation = {
+          continuous: false,
+          startSource: "unwitnessed",
+        };
         witness.began = at;
         witness.state = "active";
         witness.ended = undefined;
@@ -175,6 +188,7 @@ export class ActivityWitness
     for (const witness of this.runs.values()) {
       if (witness.state !== "active") continue;
       witness.complete = false;
+      witness.epochObservation.continuous = false;
       witness.state = "unknown";
       witness.ended = point();
       witness.reason =
@@ -195,6 +209,10 @@ export class ActivityWitness
     );
     witness.began = at;
     witness.complete = complete;
+    witness.epochObservation = {
+      continuous: complete,
+      startSource: "run-creation",
+    };
     witness.state = this.epoch ? "active" : "unknown";
     witness.ended = undefined;
     witness.reason = complete
@@ -237,6 +255,7 @@ export class ActivityWitness
         : {}),
       activityState: witness.state,
       includesUnsavedTail: witness.complete,
+      epochObservation: { ...witness.epochObservation },
       epochIds: [...witness.epochIds],
       persistedActiveMs: witness.persistedActiveMs,
       ...(witness.lastSuccessfulSample
@@ -458,6 +477,7 @@ export class ActivityWitness
     lease.snapshot.state = "held";
     const onAbort = () => {
       witness.complete = false;
+      witness.epochObservation.continuous = false;
       witness.state = "unknown";
       witness.ended = point();
       witness.reason =
