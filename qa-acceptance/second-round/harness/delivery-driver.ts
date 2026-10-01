@@ -8,6 +8,7 @@ import type { QaEnvironment } from '../../harness/environment.js';
 import type { RoundResult } from './result.js';
 import { BlockedError } from '../../harness/security.js';
 import { readmeIsolatedDelivery } from './delivery-isolated.js';
+import { buildDeliveryTraceability } from './delivery-traceability.js';
 
 const signedReports: Record<string,string>={
   'reports/acceptance/20261002-current-delivery/report.md':'aa119fea808ee72d38eb21ef7f0022f3d7c36c69014dd204bb6d3bd5449d17c2',
@@ -137,7 +138,7 @@ export async function runDeliveryCase(caseId:string,input:{sutDirectory:string;o
     facts.currentProductDiff=diff.stdout;facts.historyInterpretation='First-round historical FAIL/BLOCKED remain historical. Work-budget five-case pass closes only its actual fixed-source sample; new enhancements do not waive original limitations.';
     if(caseId.endsWith('001')) facts.impactMap={media:['C1','media migration/storage/lifecycle'],model:['C2','P1-05'],
       frontend:['P0-03','P0-04','P1-02'],guards:['P0-05','P1-04'],diagnostics:['P1-03'],timeline:['P1-01'],knownLocalPolicyBudgetFix:['P1-04 crossed with original kick work/settlement budget']};
-    if(caseId==='SR-BE-DEL-001')uncoveredVariants.push('材料hash、文件级diff和类别impactMap已经核查；逐条需求→实现/开发自测/独立QA证据/责任去向的完整人工核对表尚未附入，不能由类别映射宣告完成。');
+    if(caseId==='SR-BE-DEL-001')facts.requirementTraceability=await buildDeliveryTraceability({sutDirectory,outputDir,manifest});
   } else if(caseId==='SR-BE-DEL-003') {
     const original=await readFile(resolve(sutDirectory,'docs/original-interview-question.md'));
     assert.equal(sha(original),'c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75');

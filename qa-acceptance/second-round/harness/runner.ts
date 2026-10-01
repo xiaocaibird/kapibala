@@ -10,12 +10,20 @@ import type { TargetConfig } from '../../harness/types.js';
 import { secondRoundCases, secondRoundFingerprint, secondRoundRoot } from './scope.js';
 import { OwnedControllers } from './controllers.js';
 import { SecondRoundEnvironment } from './environment.js';
+import { runProviderTransportCase } from './provider-transport-cases.js';
+import { runProviderRegressionCase } from './backend-provider-regressions.js';
+import { runMediaIoCase } from './media-io-cases.js';
+import { runMediaMigrationCase } from './media-migration-case.js';
+import { runProviderBudgetCase } from './backend-provider-budgets.js';
+import { runMediaUiCase } from './media-ui.js';
+import { runMediaObservationCase } from './media-observation-cases.js';
 import { mediaDriver, providerDriver, providerEnvironment } from './driver-factories.js';
 import { runUiCase } from './ui-runner.js';
 import { runBackendCase, BACKEND_EXECUTABLE_IDS } from '../tests/backend-flows.js';
 import { runTimelineCase } from './timeline-driver.js';
 import { runDeliveryCase } from './delivery-driver.js';
-import { runUsageCase } from './provider-usage-cases.js';
+import { runDeliveryRecoveryCase } from './delivery-recovery.js';
+import { runUsageCase, providerUsageConfiguration } from './provider-usage-cases.js';
 import * as operations from '../tests/media-provider.js';
 import { classifyError, combineVariants, type RoundResult } from './result.js';
 import { writeSecondRoundReport } from './report.js';
@@ -98,7 +106,23 @@ try {
     const pass=(variant:string):RoundResult=>({caseId:c.id,status:'PASS',variants:[{id:variant,status:'PASS',evidence:[dir]}]});
     const environment=async()=>{qa=new SecondRoundEnvironment(validated,cluster!,dir,rt);await qa.initialize();await qa.api.login();await qa.ownership('c1-media-files');return qa;};
     try {
-      if(c.id.startsWith('SR-C1-')||c.id.startsWith('SR-C2-')) {
+      if(c.id==='SR-C1-013') {
+        if(!browser)browser=await ({chromium,firefox,webkit}[browserName as 'chromium'|'firefox'|'webkit']).launch({headless:validated.ui.headless??true});
+        await runMediaUiCase(await environment(),browser);result=pass('actual-media-ws-and-background-notification-control');
+      } else if(c.id==='SR-C1-008'||c.id==='SR-C1-014') {
+        result=await runMediaObservationCase(c.id,{target:validated,cluster,outputDir:dir,runtimeDir:rt});
+      } else if(c.id==='SR-C1-012') {
+        result=await runMediaMigrationCase({target:validated,cluster,outputDir:dir,runtimeDir:rt});
+      } else if(c.id==='SR-C1-015') {
+        result=await runMediaIoCase({target:validated,cluster,outputDir:dir,runtimeDir:rt});
+      } else if(c.id==='SR-C2-010'||c.id==='SR-C2-019') {
+        const driver=providerDriver({target:validated,cluster,outputDir:dir,runtimeDir:rt});
+        result=await (c.id==='SR-C2-010'?runProviderBudgetCase:runProviderRegressionCase)({providerDriver:driver,providerEnvironment:()=>providerEnvironment(driver),outputDir:dir});
+      } else if(c.id==='SR-C2-020') {
+        await runProviderTransportCase(providerDriver({target:validated,cluster,outputDir:dir,runtimeDir:rt}));result=pass('actual-offline-transport-and-owned-exit-facts');
+      } else if(c.id==='SR-C2-018') {
+        await providerUsageConfiguration(providerDriver({target:validated,cluster,outputDir:dir,runtimeDir:rt}));result=pass('actual-offline-config-and-owned-temp-matrix');
+      } else if(c.id.startsWith('SR-C1-')||c.id.startsWith('SR-C2-')) {
         const name=c.automation?.split('#')[1];
         if(!name||!(name in operations))throw new BlockedError(`No reviewed executable entry for ${c.id}; ${c.dependencies?.join(', ')}`);
         const operation=operations[name as keyof typeof operations] as (driver:unknown)=>Promise<void>;
@@ -117,6 +141,7 @@ try {
       } else if((BACKEND_EXECUTABLE_IDS as readonly string[]).includes(c.id)) {
         result=await runBackendCase(c.id,{qa:await environment(),outputDir:dir,sutDirectory:sut});
       } else if(c.id.startsWith('SR-BE-DB-'))result=await runTimelineCase(c.id,await environment());
+      else if(c.id==='SR-BE-DEL-005') result=await runDeliveryRecoveryCase({target:validated,cluster,outputDir:dir,runtimeDir:rt});
       else if((c.id.startsWith('SR-BE-DEL-')&&c.id!=='SR-BE-DEL-005')||c.id.startsWith('SR-BE-MUT-')) {
         result=await runDeliveryCase(c.id,{sutDirectory:sut,outputDir:dir,manifest,qa:c.id==='SR-BE-DEL-004'?await environment():undefined});
       } else throw new BlockedError(`Declared case remains missing an independently observed engineering fault window; ${c.dependencies?.join(', ')}; see requirements/current-execution.md and reports/readiness/backend.json`);
@@ -127,7 +152,7 @@ try {
     } finally {
       try{await qa?.close();}catch(e){cleanupErrors.push(String(e));}
     }
-    assert.ok(result);result.cleanupErrors=cleanupErrors;result.status=combineVariants(result.variants,[...(result.uncoveredVariants??[]),...cleanupErrors]);
+    assert.ok(result);result.cleanupErrors=[...(result.cleanupErrors??[]),...cleanupErrors];result.status=combineVariants(result.variants,[...(result.uncoveredVariants??[]),...result.cleanupErrors]);
     result.startedAt=startedAt;result.completedAt=new Date().toISOString();result.durationMs=performance.now()-start;result.attempt=1;result.phase=smokeIds.has(c.id)?'smoke':'acceptance';
     results.push(result);await writeFile(resolve(dir,'result.json'),JSON.stringify(result,null,2)+'\n');await event({event:'case-complete',caseId:c.id,status:result.status,durationMs:result.durationMs,reason:result.reason});
     console.log(JSON.stringify({event:'case-complete',caseId:c.id,status:result.status,durationMs:result.durationMs,reason:result.reason}));

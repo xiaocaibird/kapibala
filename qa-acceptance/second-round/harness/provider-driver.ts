@@ -11,9 +11,10 @@ export interface ProviderLifecycle {
   capabilities?: string[];
   /** Install reviewed offline transport before launch; synthetic key only. */
   open(options: Record<string, Json>, upstreamUrl: string): Promise<ProviderHost>;
-  restart(signal: 'SIGTERM' | 'SIGKILL', options?: { usageEnabled: boolean }): Promise<Awaited<ReturnType<ProviderDriver['restart']>> & { agentUrl?: string }>;
+  restart(signal: 'SIGTERM' | 'SIGKILL', options?: { usageEnabled?: boolean; factoryUsageSupplied?: boolean }): Promise<Awaited<ReturnType<ProviderDriver['restart']>> & { agentUrl?: string }>;
   /** Compare PID and start identity, not only kill(pid, 0). */
   verifyExited(pid: number): Promise<Evidence>;
+  stop?(mode:'SIGTERM'|'SIGKILL'):ReturnType<ProviderDriver['stopProvider']>;
   cleanup(): ReturnType<ProviderDriver['cleanup']>;
   evidence(name: string, value: unknown): Promise<void>;
   logs(): Promise<string[]>;
@@ -32,6 +33,8 @@ export function createProviderHttpDriver(binding: ProviderLifecycle): ProviderDr
   const core: Partial<ProviderDriver> = {
     contractReference: binding.contractReference,
     capabilities: [P.protocol, P.upstream, P.history, P.restart, P.pending, P.storage, ...(binding.capabilities ?? [])], usageContract: null,
+    async upstreamFacts(){const snapshot=active().wire.snapshot();const evidence=proof('provider:actual-upstream-lifecycle',snapshot);await binding.evidence('provider-upstream-lifecycle',evidence);return {records:snapshot.records,evidence};},
+    async stopProvider(mode){if(!binding.stop)throw new PreparationBlocked('Actual provider stop not connected');const result=await binding.stop(mode);if(mode==='SIGKILL')lastKilledPid=result.beforePid;return result;},
     async open(options) { wire = new ProviderWireStub(); await wire.start(); host = await binding.open(options ?? {}, wire.url); checkedOrigin(host.agentUrl); return host.ownership; },
     evidence: binding.evidence,
     async cleanup() {

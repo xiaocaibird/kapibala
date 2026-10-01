@@ -71,7 +71,7 @@ export class ProviderWireStub {
     await new Promise<void>((resolve, reject) => { this.server.once('error', reject); this.server.listen(0, '127.0.0.1', () => { this.server.off('error', reject); resolve(); }); });
     this.url = `http://127.0.0.1:${(this.server.address() as AddressInfo).port}`; return this.url;
   }
-  enqueue(plan: Plan) { this.plans.push(structuredClone(plan)); }
+  enqueue(plan: Plan) { if(plan.fault==='redirect'){const u=new URL(plan.redirectLocation??'');if(u.protocol!=='http:'||u.hostname!=='127.0.0.1'||!u.port||u.username||u.password)throw new Error('Redirect test target must be explicitly owned loopback');} this.plans.push(structuredClone(plan)); }
   calls(): ProviderCall[] { return structuredClone(this.records.map((r) => r.call)); }
   snapshot() { return structuredClone({ records: this.records, errors: this.errors, unconsumedPlans: this.plans.length, activeHolds: this.holds.filter((h) => !h.released).map(({ id, callId }) => ({ id, callId })) }); }
   holdNext(purpose: Plan['purpose']): Barrier {
@@ -129,6 +129,7 @@ export class ProviderWireStub {
     if (plan.delayResponseMs) { let timer: NodeJS.Timeout | undefined; await Promise.race([closedPromise, new Promise<void>((resolve) => { timer = setTimeout(resolve, plan.delayResponseMs); })]); if (timer) clearTimeout(timer); }
     if (res.destroyed) return;
     if (plan.fault === 'network-error') { res.destroy(); return; }
+    if (plan.fault === 'redirect'){entry.responseStatus=302;entry.responseBody='QA_REDIRECT';res.writeHead(302,{location:plan.redirectLocation!});res.end('QA_REDIRECT');return;}
     const status = plan.fault === 'http-401' ? 401 : plan.fault === 'http-429' ? 429 : String(plan.fault) === 'http-500' ? 500 : 200;
     const body = plan.fault === 'bad-json' ? '{bad-json' : JSON.stringify(responseWire(plan));
     entry.responseStatus = status; entry.responseBody = body;

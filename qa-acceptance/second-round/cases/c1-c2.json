@@ -55,7 +55,8 @@
     ],
     "automation": "tests/media-provider.ts#mediaDownload",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C1-002",
@@ -114,7 +115,8 @@
     ],
     "automation": "tests/media-provider.ts#mediaDuplicateReplay",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C1-003",
@@ -174,7 +176,8 @@
     ],
     "automation": "tests/media-provider.ts#mediaSourceFailures",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C1-004",
@@ -231,7 +234,8 @@
     ],
     "automation": "tests/media-provider.ts#mediaRetryRecovery",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C1-005",
@@ -290,7 +294,8 @@
     ],
     "automation": "tests/media-provider.ts#mediaRetention",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C1-006",
@@ -348,7 +353,8 @@
     ],
     "automation": "tests/media-provider.ts#mediaDeletedPaths",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C1-007",
@@ -406,7 +412,8 @@
     ],
     "automation": "tests/media-provider.ts#mediaActiveReferences",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C1-008",
@@ -457,16 +464,17 @@
     ],
     "mode": "automated-driver",
     "state": "NOT_RUN",
-    "readiness": "driver-pending",
+    "readiness": "implemented-pending-frozen-execution",
     "dependencies": [
       "SR-DEP-CANDIDATE",
       "SR-DEP-DELIVERY",
       "SR-DEP-MEDIA",
       "SR-DEP-OWNED-FAULTS"
     ],
-    "automation": "tests/media-provider.ts#mediaReferenceCleanupRace",
-    "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "automation": "harness/media-observation-cases.ts#runMediaObservationCase",
+    "executionBoundary": "Only the authorized runner dispatches this version-bound real driver; missing true observations remain BLOCKED.",
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C1-009",
@@ -525,7 +533,8 @@
     ],
     "automation": "tests/media-provider.ts#mediaCrashRecovery",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C1-010",
@@ -583,7 +592,8 @@
     ],
     "automation": "tests/media-provider.ts#mediaDeletionFailure",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C1-011",
@@ -640,7 +650,8 @@
     ],
     "automation": "tests/media-provider.ts#mediaSharedDirectory",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C1-012",
@@ -691,16 +702,17 @@
     ],
     "mode": "automated-driver",
     "state": "NOT_RUN",
-    "readiness": "driver-pending",
+    "readiness": "implemented-pending-frozen-execution",
     "dependencies": [
       "SR-DEP-CANDIDATE",
       "SR-DEP-DELIVERY",
       "SR-DEP-MEDIA",
       "SR-DEP-OWNED-FAULTS"
     ],
-    "automation": "tests/media-provider.ts#mediaMigration",
+    "automation": "harness/media-migration-case.ts#runMediaMigrationCase",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-001",
@@ -758,7 +770,8 @@
     ],
     "automation": "tests/media-provider.ts#providerProtocol",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-002",
@@ -816,7 +829,8 @@
     ],
     "automation": "tests/media-provider.ts#providerDefaultAndSwitch",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-003",
@@ -873,7 +887,8 @@
     ],
     "automation": "tests/media-provider.ts#providerHistory",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-004",
@@ -935,7 +950,8 @@
     ],
     "automation": "tests/media-provider.ts#providerCompletedReuse",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-005",
@@ -993,7 +1009,8 @@
     ],
     "automation": "tests/media-provider.ts#providerConcurrency",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-006",
@@ -1051,7 +1068,8 @@
     ],
     "automation": "tests/media-provider.ts#providerFailures",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-007",
@@ -1109,7 +1127,8 @@
     ],
     "automation": "tests/media-provider.ts#providerPendingAndLock",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-008",
@@ -1166,7 +1185,8 @@
     ],
     "automation": "tests/media-provider.ts#providerPrivateStorage",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-009",
@@ -1227,7 +1247,8 @@
     ],
     "automation": "tests/media-provider.ts#providerBackendPolicies",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-010",
@@ -1276,16 +1297,17 @@
     ],
     "mode": "automated-driver",
     "state": "NOT_RUN",
-    "readiness": "driver-pending",
+    "readiness": "implemented-pending-frozen-execution",
     "dependencies": [
       "SR-DEP-CANDIDATE",
       "SR-DEP-DELIVERY",
       "SR-DEP-MODEL",
       "SR-DEP-OWNED-FAULTS"
     ],
-    "automation": "tests/media-provider.ts#providerBackendBudgets",
+    "automation": "harness/backend-provider-budgets.ts#runProviderBudgetCase",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-011",
@@ -1346,7 +1368,8 @@
     ],
     "automation": "tests/media-provider.ts#providerBackendAudit",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-012",
@@ -1405,7 +1428,8 @@
     ],
     "automation": "tests/media-provider.ts#providerStrongRecovery",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-013",
@@ -1473,7 +1497,8 @@
     ],
     "automation": "tests/media-provider.ts#providerUsage",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-014",
@@ -1535,7 +1560,8 @@
     ],
     "automation": "tests/media-provider.ts#providerUsageFailureBounds",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-015",
@@ -1598,7 +1624,8 @@
     ],
     "automation": "tests/media-provider.ts#providerUsageLifecycle",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-016",
@@ -1661,7 +1688,8 @@
     ],
     "automation": "tests/media-provider.ts#providerUsageQueue",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-017",
@@ -1720,7 +1748,8 @@
     ],
     "automation": "tests/media-provider.ts#providerReal",
     "executionBoundary": "No SUT, database, browser or real provider executed during preparation. Driver interfaces are not installed adapters.",
-    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes."
+    "oracleBoundary": "Raw public behavior and independently observed effects determine assertions; developer tests/current implementation do not supply expected outcomes.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C1-013",
@@ -1763,20 +1792,18 @@
     "cleanup": [
       "恢复每项自有故障，核本例process/socket/file归属后清理；保留原始FAIL与清理缺口。"
     ],
-    "mode": "manual",
+    "mode": "automated-driver",
     "state": "NOT_RUN",
-    "readiness": "driver-pending",
+    "readiness": "implemented-pending-frozen-execution",
     "dependencies": [
       "SR-DEP-CANDIDATE",
       "SR-DEP-DELIVERY",
       "SR-DEP-MEDIA",
       "SR-DEP-OWNED-FAULTS"
     ],
-    "automation": null,
+    "automation": "harness/media-ui.ts#runMediaUiCase",
     "executionBoundary": "Written procedure only; no empty automation entry and no product execution.",
-    "manualCoverage": [
-      "该细项尚未自动接入，须按本步骤补工程观察/驱动或人工记录，不能由同组其它函数通过替代。"
-    ]
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C1-014",
@@ -1819,20 +1846,18 @@
     "cleanup": [
       "恢复每项自有故障，核本例process/socket/file归属后清理；保留原始FAIL与清理缺口。"
     ],
-    "mode": "manual",
+    "mode": "automated-driver",
     "state": "NOT_RUN",
-    "readiness": "driver-pending",
+    "readiness": "implemented-pending-frozen-execution",
     "dependencies": [
       "SR-DEP-CANDIDATE",
       "SR-DEP-DELIVERY",
       "SR-DEP-MEDIA",
       "SR-DEP-OWNED-FAULTS"
     ],
-    "automation": null,
-    "executionBoundary": "Written procedure only; no empty automation entry and no product execution.",
-    "manualCoverage": [
-      "该细项尚未自动接入，须按本步骤补工程观察/驱动或人工记录，不能由同组其它函数通过替代。"
-    ]
+    "automation": "harness/media-observation-cases.ts#runMediaObservationCase",
+    "executionBoundary": "Only the authorized runner dispatches this version-bound real driver; missing true observations remain BLOCKED.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C1-015",
@@ -1876,20 +1901,18 @@
     "cleanup": [
       "恢复每项自有故障，核本例process/socket/file归属后清理；保留原始FAIL与清理缺口。"
     ],
-    "mode": "manual",
+    "mode": "automated-driver",
     "state": "NOT_RUN",
-    "readiness": "driver-pending",
+    "readiness": "implemented-pending-frozen-execution",
     "dependencies": [
       "SR-DEP-CANDIDATE",
       "SR-DEP-DELIVERY",
       "SR-DEP-MEDIA",
       "SR-DEP-OWNED-FAULTS"
     ],
-    "automation": null,
+    "automation": "harness/media-io-cases.ts#runMediaIoCase",
     "executionBoundary": "Written procedure only; no empty automation entry and no product execution.",
-    "manualCoverage": [
-      "该细项尚未自动接入，须按本步骤补工程观察/驱动或人工记录，不能由同组其它函数通过替代。"
-    ]
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-018",
@@ -1934,20 +1957,18 @@
     "cleanup": [
       "恢复每项自有故障，核本例process/socket/file归属后清理；保留原始FAIL与清理缺口。"
     ],
-    "mode": "manual",
+    "mode": "automated-driver",
     "state": "NOT_RUN",
-    "readiness": "driver-pending",
+    "readiness": "implemented-pending-frozen-execution",
     "dependencies": [
       "SR-DEP-CANDIDATE",
       "SR-DEP-DELIVERY",
       "SR-DEP-USAGE",
       "SR-DEP-OWNED-FAULTS"
     ],
-    "automation": null,
-    "executionBoundary": "Written procedure only; no empty automation entry and no product execution.",
-    "manualCoverage": [
-      "该细项尚未自动接入，须按本步骤补工程观察/驱动或人工记录，不能由同组其它函数通过替代。"
-    ]
+    "automation": "harness/provider-usage-cases.ts#providerUsageConfiguration",
+    "executionBoundary": "Only the authorized runner dispatches this version-bound real driver; missing true observations remain BLOCKED.",
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-019",
@@ -1991,20 +2012,17 @@
     "cleanup": [
       "恢复每项自有故障，核本例process/socket/file归属后清理；保留原始FAIL与清理缺口。"
     ],
-    "mode": "existing-regression",
+    "mode": "automated-driver",
     "state": "NOT_RUN",
-    "readiness": "driver-pending",
+    "readiness": "implemented-pending-frozen-execution",
     "dependencies": [
       "SR-DEP-CANDIDATE",
       "SR-DEP-DELIVERY",
       "SR-DEP-OWNED-FAULTS",
       "SR-DEP-OWNED-FAULTS"
     ],
-    "automation": null,
+    "automation": "harness/backend-provider-regressions.ts#runProviderRegressionCase",
     "executionBoundary": "Written procedure only; no empty automation entry and no product execution.",
-    "manualCoverage": [
-      "该细项尚未自动接入，须按本步骤补工程观察/驱动或人工记录，不能由同组其它函数通过替代。"
-    ],
     "regressionReferences": [
       {
         "catalog": "../cases/backend.json",
@@ -2021,7 +2039,8 @@
         "id": "AGENT-028",
         "automation": "../tests/system/agent.spec.ts"
       }
-    ]
+    ],
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   },
   {
     "id": "SR-C2-020",
@@ -2065,19 +2084,17 @@
     "cleanup": [
       "恢复每项自有故障，核本例process/socket/file归属后清理；保留原始FAIL与清理缺口。"
     ],
-    "mode": "manual",
+    "mode": "automated-driver",
     "state": "NOT_RUN",
-    "readiness": "driver-pending",
+    "readiness": "implemented-pending-frozen-execution",
     "dependencies": [
       "SR-DEP-CANDIDATE",
       "SR-DEP-DELIVERY",
       "SR-DEP-MODEL",
       "SR-DEP-OWNED-FAULTS"
     ],
-    "automation": null,
+    "automation": "harness/provider-transport-cases.ts#runProviderTransportCase",
     "executionBoundary": "Written procedure only; no empty automation entry and no product execution.",
-    "manualCoverage": [
-      "该细项尚未自动接入，须按本步骤补工程观察/驱动或人工记录，不能由同组其它函数通过替代。"
-    ]
+    "executionBaseline": "requirements/execution-baseline.json; preparation preconditions are superseded only by each authorized frozen execution manifest"
   }
 ]

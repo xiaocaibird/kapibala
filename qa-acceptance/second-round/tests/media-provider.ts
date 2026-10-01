@@ -154,7 +154,12 @@ export async function mediaDuplicateReplay(driver?: MediaDriver) {
 export async function mediaSourceFailures(driver?: MediaDriver) {
   await withOwnedDriver(driver, [M.basic, M.sourceFaults, M.egress], 'media-source-errors', async (d) => {
     for (const fault of ['404', 'redirect-foreign', 'declared-oversize', 'stream-oversize'] as const) {
-      const a = await attachment(d, { fault }); proof(await d.cycle('download'));
+      const a = await attachment(d, { fault }); await d.read(a.ref); proof(await d.cycle('download'));
+      const actualRequests=(await d.sourceRequests()).filter(r=>r.url===a.source.url);
+      need(actualRequests.length>0, '来源故障必须由本文件真实HTTP请求触发');
+      assert.equal(actualRequests[0]!.responseStatus, fault==='404'?404:fault==='redirect-foreign'?302:200);
+      if(fault==='stream-oversize')need(Number(actualRequests[0]!.responseBytes)>20*1024*1024,'真实流超限字节尚未写出');
+      await d.evidence('source-fault-'+fault,actualRequests);
       const row = await d.awaitMessage(a.ref, 'path-null', 30_000); cleared(row);
       assert.equal(row.text, `text:${a.ref.msgId}`);
     }
@@ -164,12 +169,13 @@ export async function mediaSourceFailures(driver?: MediaDriver) {
       'http://user:password@127.0.0.1:1/media/x', `${validSource.url}?query=1`, `${validSource.url}#fragment`, `${validSource.url}/../escape`]) {
       const ref = { groupId, msgId: randomUUID() };
       proof(await d.emit({ ...ref, text: 'unsafe source remains text', mediaUrl }));
+      await d.read(ref); // establish actual ingestion before observing its download cycle
       proof(await d.cycle('download')); cleared(await d.read(ref));
     }
     const after = await d.egress(); proof(after.evidence);
     assert.deepEqual(after.attempts, baseline.attempts, '独立出口不得收到非法来源请求');
     assert.ok(!after.attempts.some((r) => new URL(r.url).hostname === 'qa-foreign.invalid'), '重定向也不得发往外部目标');
-  });
+  }, { egress: true });
 }
 export async function mediaRetryRecovery(driver?: MediaDriver) {
   await withOwnedDriver(driver, [M.basic, M.sourceFaults, M.barriers, M.restart], 'media-retry', async (d) => {
@@ -769,13 +775,17 @@ export async function providerUsageLifecycle(driver?: ProviderDriver) {
     const value = await d.usage(), files = await d.usageFiles(); proof(value.evidence); proof(files.evidence);
     if (!option.enabled) { assert.equal(value.records.length, 0); assert.equal(files.files.length, 0); return; }
     assert.equal(value.records.length, 1); assert.deepEqual(value.records[0]!.usage, { inputTokens: 0, outputTokens: 0, totalTokens: 0 });
-    const disabled = await d.restart('SIGTERM', { usageEnabled: false }); proof(disabled.evidence); assert.equal(disabled.started, true);
-    assert.deepEqual((await d.usage()).records, value.records, '关闭留存不能删除既有记录');
-    const enabled = await d.restart('SIGTERM', { usageEnabled: true }); proof(enabled.evidence); assert.equal(enabled.started, true);
+    const disabled = await d.restart('SIGTERM', option.entry === 'factory' ? { factoryUsageSupplied: false } : { usageEnabled: false }); proof(disabled.evidence); assert.equal(disabled.started, true);
+    assert.equal(usageProfile(d).enabled, false, '实际新进程的 usage 已关闭');
+    await d.enqueue({ purpose: 'turn', proposal: { kind: 'text', text: 'disabled usage still serves' } });
+    success(await d.exchange('/agent/turn', turnRequest())); proof((await d.settleUsage()).evidence);
+    assert.deepEqual((await d.usage()).records, value.records, '关闭留存不能删除既有记录或新增调用记录');
+    const enabled = await d.restart('SIGTERM', option.entry === 'factory' ? { factoryUsageSupplied: true } : { usageEnabled: true }); proof(enabled.evidence); assert.equal(enabled.started, true);
+    assert.equal(usageProfile(d).enabled, true, '实际新进程的 usage 已重新启用');
     assert.equal((await lstat(files.root)).mode & 0o777, 0o700);
     for (const file of files.files) { const stat = await lstat(file); assert.ok(stat.isFile() && !stat.isSymbolicLink()); assert.equal(stat.mode & 0o777, 0o600); }
     const age = await d.advanceUsageRetention(); proof(age.evidence);
-    const before = await d.usage(); assert.ok(before.records.some((r) => r.serviceCallId === age.oldestEligibleRecordId), '无空闲定时清理前仍保留');
+    const before = await d.usage(); assert.ok(before.records.some((r) => r.serviceCallId === age.oldestEligibleRecordId), '显式老化输入在停止后的原文件中保留，启动裁剪尚未执行');
     const restart = await d.restart('SIGTERM'); proof(restart.evidence); assert.equal(restart.started, true);
     assert.ok(!(await d.usage()).records.some((r) => r.serviceCallId === age.oldestEligibleRecordId), '启动按实际年龄清理');
     const closed = await d.shutdownUsageWriter(); proof(closed.evidence); assert.equal(closed.rejectedAfterClose, true);
@@ -798,7 +808,14 @@ export async function providerUsageQueue(driver?: ProviderDriver) {
     need(queue.dropped > 0, '未真正触发队列溢出，不能仅以低载证明溢出诊断');
     assert.ok(queue.diagnosticCodes.includes('USAGE_QUEUE_FULL'));
     assert.equal((await d.calls()).length, 141, '日志写屏障不能阻塞正常离线推理响应');
-    await gate.release(); proof((await d.settleUsage()).evidence);
+    const observed=await d.usageObservation(); proof(observed.evidence); assert.equal(observed.snapshot.usage.truncatedEvents,0);
+    const accepted=observed.snapshot.usage.events.filter(e=>e.kind==='enqueued').map(e=>e.attemptId!);
+    const rejected=observed.snapshot.usage.events.filter(e=>e.kind==='rejected-queue-full').map(e=>e.attemptId!);
+    assert.equal(accepted.length+rejected.length,141); assert.equal(rejected.length,queue.dropped);
+    assert.equal(new Set([...accepted,...rejected]).size,141,'accepted/dropped must identify distinct actual attempts');
+    await gate.release(); const settled=await d.settleUsage(); proof(settled.evidence); assert.equal(settled.dropped,queue.dropped);
+    const persisted=await d.usage(); proof(persisted.evidence);
+    assert.deepEqual(persisted.records.map(r=>r.attemptId).sort(),accepted.sort(),'all accepted finite-batch records settle, rejected attempts are not invented');
   });
  });
 }

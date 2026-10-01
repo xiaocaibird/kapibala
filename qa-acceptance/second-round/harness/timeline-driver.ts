@@ -5,7 +5,8 @@ import { resolve } from 'node:path';
 import { Client } from 'pg';
 import type { QaEnvironment } from '../../harness/environment.js';
 import { PlatformClient, eventually, type Message } from '../../harness/platform-client.js';
-import type { RoundResult } from './result.js';
+import { combineVariants, type RoundResult } from './result.js';
+import { runDatabaseApplicationRollback } from './backend-database-rollback.js';
 import { BlockedError } from '../../harness/security.js';
 
 // Publicly delivered storage measurement mapping. These SQLs are measured inputs,
@@ -111,8 +112,8 @@ export async function runTimelineCase(caseId:string,qa:QaEnvironment):Promise<Ro
   if(caseId==='SR-BE-DB-001'||caseId==='SR-BE-DB-002') {
     await measurement(qa,caseId.endsWith('002'));
     const files=[1000,10000].map(n=>resolve(qa.outputDir,`timeline-measurement-${n}.json`));
-    if(caseId.endsWith('002')) return {caseId,status:'BLOCKED',variants:[{id:'same-database-queries-and-api',status:'PASS',evidence:files}],
-      uncoveredVariants:['真实原/新版应用回滚复跑及最终优化diff独立核查尚未附入，不把SQL比较冒称应用回滚已验证']};
+    if(caseId.endsWith('002')) {const rollback=await runDatabaseApplicationRollback(qa);const variants:RoundResult['variants']=[{id:'same-database-queries-and-api',status:'PASS',evidence:files},...rollback.variants];
+      return {...rollback,caseId,variants,status:combineVariants(variants,[...(rollback.uncoveredVariants??[]),...(rollback.cleanupErrors??[])])};}
     return {caseId,status:'PASS',variants:[{id:'real-two-scale-plans-and-http',status:'PASS',evidence:files}]};
   }
   const {group,accounts}=await qa.api.createGroup(1);

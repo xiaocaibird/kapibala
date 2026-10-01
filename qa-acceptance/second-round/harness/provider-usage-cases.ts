@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { randomUUID, createHash } from 'node:crypto';
 import { readFile, lstat } from 'node:fs/promises';
 import { C2_CAPABILITIES as P, PreparationBlocked, type Json, type ProviderDriver, type ProviderFault, type UsageRecord } from '../contracts/media-provider.js';
-import { withOwnedDriver, turnRequest, assertTurnResponse, assertAuditResponse, providerPendingAndLock, providerCompletedReuse } from '../tests/media-provider.js';
+import { withOwnedDriver, turnRequest, assertTurnResponse, assertAuditResponse, providerPendingAndLock, providerCompletedReuse, providerUsageQueue } from '../tests/media-provider.js';
 import { decodeProviderWire } from './provider-wire.js';
 import { assertUsageRecord, expectedTokens, USAGE_FIELDS } from './backend-oracles.js';
 type Plan = Parameters<ProviderDriver['enqueue']>[0];
@@ -54,7 +54,7 @@ export async function runUsageCase(id: string, driver: ProviderDriver): Promise<
     await d.settleUsage(); assert.equal((await d.calls()).length, count); assert.deepEqual((await d.usage()).records, first.after.records);
     await observedOne(d, successPlan(9)); assert.equal((await d.calls()).length, count + 1);
   });
-  if (id === 'SR-BE-USG-004') return run(driver, id, async (d) => {
+  if (id === 'SR-BE-USG-004') { await run(driver, id, async (d) => {
     const requests = [turnRequest(), turnRequest()];
     for (const n of [31, 41]) await d.enqueue(successPlan(n));
     await d.enqueue({ purpose: 'audit', proposal: { kind: 'audit', verdict: 'pass', reason: 'parallel audit' }, actualUsage: { inputTokens: 51, outputTokens: 1 } });
@@ -68,8 +68,7 @@ export async function runUsageCase(id: string, driver: ProviderDriver): Promise<
       assert.equal(matches.length, 1); assert.equal((record.raw as Record<string, Json>).inputTokens, matches[0]!.actualUsage?.inputTokens);
     }
     assert.equal(actual.records.find((r) => r.purpose === 'audit')!.runId, null); assert.equal((actual.records.find((r) => r.purpose === 'audit')!.raw as Record<string, Json>).inputTokens, 51); await d.evidence('usage-concurrent-actual-records', actual);
-    throw new PreparationBlocked('Concurrent identity sample executed; writer-held queue overflow/64+64 capacity has no actual fixture, not inferred from low load');
-  });
+  }); return providerUsageQueue(driver); }
   if (id === 'SR-BE-USG-005' || id === 'SR-BE-USG-009') return run(driver, id, async (d) => {
     await observedOne(d, successPlan()); const fault = await d.usageWriteFault();
     try {
@@ -97,8 +96,9 @@ export async function runUsageCase(id: string, driver: ProviderDriver): Promise<
     const logs = (await d.logs()).join('\n'); for (const marker of canaries) assert.ok(!logs.includes(marker)); assert.ok(!logs.includes('qa-offline-synthetic-key'));
   });
   if (id === 'SR-BE-USG-008') {
-    await providerCompletedReuse(driver); await providerPendingAndLock(driver);
-    throw new PreparationBlocked('Normal completed reuse and provider-pending hard kill executed; actual queued-usage-write hard-kill window remains unbound');
+    const errors:unknown[]=[];
+    for(const [name,body] of [['completed',providerCompletedReuse],['pending',providerPendingAndLock],['queued',providerQueuedWriteCrash]] as const)try{await body(driver);}catch(e){errors.push(e);await driver.evidence(`usage-crash-${name}-result`,{status:e instanceof PreparationBlocked?'BLOCKED':'FAIL',error:String(e)});}
+    if(errors.length)throw errors.find(e=>!(e instanceof PreparationBlocked))??errors[0];return;
   }
   if (id === 'SR-BE-USG-006' || id === 'SR-BE-USG-010') {
     for (const enabled of [true, false]) await run(driver, `${id}-${enabled}`, async (d) => {
@@ -107,14 +107,17 @@ export async function runUsageCase(id: string, driver: ProviderDriver): Promise<
       else assert.equal(files.files.length, 0);
       await d.evidence('usage-main-enable-disable-permissions', { enabled, files, value });
     }, { usageEnabled: enabled });
-    throw new PreparationBlocked(id.endsWith('006') ? 'Main toggle/private permissions executed; exact stopped-owner temp/foreign-owner cleanup and key-file isolation subvariants lack an independent host fixture' : 'Main default/false executed; factory absent/explicit usage and key-file-only config isolation have no independent delivered host');
+    if(id.endsWith('006'))await providerUsageTemporaryFiles(driver);
+    else await providerUsageEntryMatrix(driver);
+    throw new PreparationBlocked(id.endsWith('006') ? 'Owned temp/unsafe-mode/link/name cleanup and main permission/toggle executed; true foreign UID and key-file isolation remain unbound' : 'Main default/exact-false and factory absent/explicit matrices executed; production key-file-only import isolation remains unbound');
   }
   if (id === 'SR-BE-USG-011') {
     for (const limit of [1, 2]) await run(driver, `${id}-records-${limit}`, async (d) => {
       for (let i = 0; i < limit + 2; i++) { await d.enqueue(successPlan(i)); assert.equal((await d.exchange('/agent/turn', turnRequest())).status, 200); }
       await d.settleUsage(); const actual = await d.usage(); assert.equal(actual.records.length, limit); assert.ok(actual.actualBytes <= 4096); await d.evidence('usage-actual-record-byte-bound', { configured: { records: limit, bytes: 4096 }, actual });
     }, { usageMaxRecords: limit, usageMaxBytes: 4096 });
-    throw new PreparationBlocked('Actual records limit and UTF-8 file bound samples executed; complete 10000/16MiB edge, illegal configuration and trusted age clock matrices remain unbound');
+    await providerUsageConfigurationMatrix(driver);await providerUsageRetention(driver);
+    throw new PreparationBlocked('Actual small retention, configuration matrix and stopped-file age input startup/write expiration executed; filling maximum 10000 record/16MiB capacity remains unbound');
   }
   if (id === 'SR-BE-USG-013') return run(driver, id, async (d) => {
     const base: Record<string, Json> = { promptTokenCount: 3, candidatesTokenCount: 4, totalTokenCount: 99 };
@@ -128,4 +131,76 @@ export async function runUsageCase(id: string, driver: ProviderDriver): Promise<
     const mixed = await observedOne(d, { purpose: 'turn', fault: 'native-function-call', rawUsage: { promptTokenCount: 3, candidatesTokenCount: null, totalTokenCount: 99 } } as Plan); assert.notEqual(mixed.response.status, 200);
   });
   throw new PreparationBlocked(`No reviewed usage operation mapping for ${id}`);
+}
+
+
+export async function providerQueuedWriteCrash(driver:ProviderDriver) {
+  return withOwnedDriver(driver,[P.protocol,P.upstream,P.usage,P.usageQueue,P.restart],'usage-held-write-crash',async d=>{
+    const gate=await d.holdUsageWrites();
+    try {
+      const request=turnRequest();await d.enqueue(successPlan());const initial=await d.exchange('/agent/turn',request);assert.equal(initial.status,200);
+      const reached=await gate.reached();await d.evidence('usage-crash-real-held-window',reached);
+      const before=await d.usage(),calls=(await d.calls()).length;assert.equal(before.records.length,0,'held first batch is not persisted');
+      const stopped=await d.restart('SIGKILL');await d.evidence('usage-crash-actual-restart',stopped);
+      const lock=await d.lockState();await d.evidence('usage-crash-actual-lock',lock);
+      if(!stopped.started){assert.ok(lock.exists&&!lock.actualOwnerAlive&&lock.ownedDirectoryVerified);await d.evidence('usage-crash-manual-owned-lock-reclaim',await d.reclaimOwnedStaleLock());assert.equal((await d.restart('SIGTERM')).started,true);}
+      const after=await d.usage();assert.equal(after.records.length,0,'actual pre-write kill loses unpersisted telemetry');
+      assert.deepEqual((await d.exchange('/agent/turn',request)).body,initial.body);assert.equal((await d.calls()).length,calls,'completed session cache must not repurchase inference');
+      await d.evidence('usage-crash-best-effort-result',{before,after,stopped,lock,limitation:'Manual owned stale-lock reclaim is explicitly recorded; this scenario does not satisfy strong automatic recovery or waive C2-012'});
+    }finally{await gate.release();}
+  });
+}
+export async function providerUsageTemporaryFiles(driver:ProviderDriver) {
+  return run(driver,'usage-private-temporary-cleanup',async d=>{
+    const first=await observedOne(d,successPlan());const sessions=await d.sessionFiles();
+    const sessionBytes=await Promise.all(sessions.records.map(async path=>({path,bytes:await readFile(path)})));
+    await d.evidence('usage-private-temporary-cleanup',await d.usageTemporaryCleanup());
+    for(const prior of sessionBytes)assert.deepEqual(await readFile(prior.path),prior.bytes,'session replay file preserved');
+    const count=(await d.calls()).length;assert.deepEqual((await d.exchange('/agent/turn',first.request)).body,first.response.body);assert.equal((await d.calls()).length,count);
+  });
+}
+export async function providerUsageEntryMatrix(driver:ProviderDriver) {
+  const variants:Record<string,Json>[]=[{}, {usageEnabled:false}, {usageEnabled:'False'}, {usageEnabled:'0'}, {usageEntry:'factory',factoryUsageSupplied:false,usageEnabled:true}, {usageEntry:'factory',factoryUsageSupplied:true,usageEnabled:false}];
+  for(const [i,options] of variants.entries())await run(driver,`usage-entry-${i}`,async d=>{
+    const profile=d.usageContract!;const expected=options.usageEntry==='factory'?options.factoryUsageSupplied===true:String(options.usageEnabled)!=='false';assert.equal(profile.enabled,expected);
+    await d.enqueue(successPlan());assert.equal((await d.exchange('/agent/turn',turnRequest())).status,200);await d.settleUsage();const actual=await d.usage();assert.equal(actual.records.length,expected?1:0);
+    if(!expected)assert.equal((await d.usageFiles()).files.length,0);
+    await d.evidence('usage-entry-matrix',{options,profile,actual});
+  },options);
+}
+export async function providerUsageConfigurationMatrix(driver:ProviderDriver) {
+  const valid:Record<string,Json>[]=[{}, {usageMaxRecords:1,usageMaxBytes:4096,usageMaxAgeDays:1},{usageMaxRecords:10000,usageMaxBytes:16777216,usageMaxAgeDays:365}];
+  const invalid:Record<string,Json>[]=[];
+  for(const [key,lo,hi] of [['usageMaxRecords',1,10000],['usageMaxBytes',4096,16777216],['usageMaxAgeDays',1,365]] as const)
+    for(const value of [lo-1,hi+1,lo+0.5,'not-a-number'])invalid.push({[key]:value});
+  const errors:unknown[]=[];
+  for(const [i,options] of [...valid,...invalid].entries())try{await run(driver,`usage-config-${i}`,async d=>{
+    const bad=i>=valid.length,seen=await d.usageObservation();assert.equal(seen.snapshot.usage.initialized,!bad);await d.enqueue(successPlan());assert.equal((await d.exchange('/agent/turn',turnRequest())).status,200);await d.settleUsage();const actual=await d.usage();assert.equal(actual.records.length,bad?0:1);
+    if(bad){const lines=(await d.logs()).flatMap(x=>x.split('\n'));assert.ok(lines.some(x=>x.includes('USAGE_STORE_UNAVAILABLE')));await d.evidence('usage-invalid-configuration',{options,seen,actual,diagnostic:'USAGE_STORE_UNAVAILABLE'});}
+    else {assert.ok(actual.actualBytes<=Number(options.usageMaxBytes??2097152));await d.evidence('usage-valid-configuration',{options,seen,actual});}
+  },options);}catch(e){errors.push(e);await driver.evidence(`usage-config-${i}-result`,{options,error:String(e),status:e instanceof PreparationBlocked?'BLOCKED':'FAIL'});}
+  if(errors.length)throw errors.find(e=>!(e instanceof PreparationBlocked))??errors[0];
+}
+/** Full C2-018 finite procedure; true age expiration remains a separate case. */
+export async function providerUsageConfiguration(driver:ProviderDriver) {
+  const errors:unknown[]=[];
+  for(const [name,body] of [['tokens',()=>runUsageCase('SR-BE-USG-013',driver)],['config',()=>providerUsageConfigurationMatrix(driver)],['temp',()=>providerUsageTemporaryFiles(driver)]] as const)try{await body();}catch(e){errors.push(e);await driver.evidence(`usage-configuration-${name}-result`,{error:String(e),status:e instanceof PreparationBlocked?'BLOCKED':'FAIL'});}
+  if(errors.length)throw errors.find(e=>!(e instanceof PreparationBlocked))??errors[0];
+}
+
+export async function providerUsageRetention(driver:ProviderDriver){
+  const errors:unknown[]=[];
+  for(const mode of ['startup','write'] as const)try{await run(driver,`usage-retention-${mode}`,async d=>{
+    await observedOne(d,successPlan());const input=await d.installUsageAgeFixture(mode==='startup'?-86400000:8000);await d.evidence('usage-explicit-persistent-age-input',input);
+    const before=await d.usage();assert.ok(before.records.some(r=>r.attemptId===input.oldestEligibleRecordId));assert.equal((await d.restart('SIGTERM')).started,true);
+    if(mode==='write'){
+      const loaded=await d.usage();if(!loaded.records.some(r=>r.attemptId===input.oldestEligibleRecordId))throw new PreparationBlocked('Near-boundary old record expired during actual startup; write-time fixture not established');
+      while(Date.now()<=Date.parse(input.expiresAt)+50)await new Promise(r=>setTimeout(r,Math.min(100,Math.max(1,Date.parse(input.expiresAt)+51-Date.now()))));
+      const beforeWrite=await d.usage();if(!beforeWrite.records.some(r=>r.attemptId===input.oldestEligibleRecordId))throw new PreparationBlocked('Write-time retention prerequisite already expired/trimmed before actual new write');
+      await d.enqueue(successPlan(19));assert.equal((await d.exchange('/agent/turn',turnRequest())).status,200);await d.settleUsage();
+      await d.evidence('usage-expiration-write-real-clock',{input,beforeWrite,actualWallTime:new Date().toISOString(),actualFile:await d.usage()});
+    }
+    const final=await d.usage();assert.ok(!final.records.some(r=>r.attemptId===input.oldestEligibleRecordId));assert.equal(final.records.length,mode==='startup'?0:1);await d.evidence('usage-retention-actual-final',{mode,input,final});
+  },{usageMaxAgeDays:1});}catch(error){errors.push(error);await driver.evidence(`usage-retention-${mode}-result`,{status:error instanceof PreparationBlocked?'BLOCKED':'FAIL',error:String(error)});}
+  if(errors.length)throw errors.find(e=>!(e instanceof PreparationBlocked))??errors[0];
 }

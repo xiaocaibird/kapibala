@@ -58,6 +58,11 @@ async function closePreview(ui: PublicUiDriver): Promise<void> {
   if (await preview.isVisible()) await preview.getByRole('button', { name: '返回编辑', exact: true }).click();
 }
 async function assertOrigin(ui: PublicUiDriver, origin: 'group' | 'run-list', groupId: string): Promise<void> {
+  // A hash updates before React commits the destination. Observe the actual
+  // destination navigation, then read one settled snapshot; do not resubmit.
+  await expect(ui.page.locator('nav a.active')).toHaveText(origin === 'group' ? '群组工作台' : 'Agent 运行');
+  if (origin === 'group') await expect(ui.page.locator('.page-header')).toContainText('网关群 ID');
+  else await expect(ui.page.getByRole('combobox', { name: '查看群组', exact: true })).toBeVisible();
   const value = await ui.location();
   assert.equal(value.kind, origin);
   if (origin === 'group') assert.equal(value.groupId, groupId);
@@ -139,7 +144,7 @@ async function sequenceRuntimeRegressions(ui: PublicUiDriver, qa: QaEnvironment,
   await ui.setPrecheckContext(profile.precheckInitial); await ui.startPrecheck();
   await expect(ui.dialog('预检通过 · 确认发送内容')).toBeVisible();
   const privileged = group.members.filter((m) => ['creator', 'admin'].includes(m.role) && m.accountId).map((m) => m.accountId!);
-  for (const accountId of privileged) await qa.api.require(qa.api.post(`/api/accounts/${accountId}/disconnect`));
+  for (const accountId of privileged) await qa.api.require(qa.api.post(`/api/accounts/${accountId}/transition`, { expectedFrom: 'online', to: 'disconnected' }));
   // A current-fact change may correctly invalidate the old preview. Re-precheck
   // in that case, recording it; either path must use runtime account truth.
   if (!await ui.canConfirmPrecheck()) {

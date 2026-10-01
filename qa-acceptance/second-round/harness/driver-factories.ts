@@ -10,6 +10,7 @@ import { redact } from '../../harness/security.js';
 import { C1_CAPABILITIES as M,C2_CAPABILITIES as P,PreparationBlocked,type Evidence,type Json,type ProviderDriver,type MediaDriver,type BackendFacts } from '../contracts/media-provider.js';
 import { SecondRoundEnvironment,OwnedOfflineProvider,actualListenerIdentity } from './environment.js';
 import { createMediaHttpDriver } from './media-driver.js';
+import { mediaEgress } from './media-egress.js';
 import { MediaDatabaseFixtures } from './media-fixtures.js';
 import { createProviderHttpDriver } from './provider-driver.js';
 import { ProviderUsageFiles } from './provider-usage.js';
@@ -27,7 +28,7 @@ export function mediaDriver(context:DriverContext):MediaDriver {
     await writeFile(resolve(directory,`${++serial}-${name}.json`),redact(value));
   };
   return createMediaHttpDriver({contractReference:fixture.contractReference,
-    capabilities:[M.age,M.cleanup,M.barriers,M.restart,M.multi,M.references,M.unlink],
+    capabilities:[M.age,M.cleanup,M.barriers,M.restart,M.multi,M.references,M.unlink,M.egress],
     retentionContract:{reference:`${context.target.sut.revision}:docs/qa-media-scenarios-20261002.md`,zeroDaysSupported:true},
     open:async(options={})=>{
       env=new SecondRoundEnvironment(context.target,context.cluster,resolve(context.outputDir,`variant-${++variant}`),resolve(context.runtimeDir,`variant-${variant}`),options);
@@ -36,11 +37,11 @@ export function mediaDriver(context:DriverContext):MediaDriver {
     },evidence,
     cleanup:async()=>{const failures:string[]=[];
       // A fixture gate is released while the app is already stopped, so cleanup cannot dispatch a pending effect.
-      try{await env?.kill('SIGKILL');}catch(e){failures.push(String(e));}
+      try{await env?.kill(env.mediaOptions.egress===true?'SIGTERM':'SIGKILL');if(env?.mediaOptions.egress===true)await mediaEgress(env,true);}catch(e){failures.push(String(e));}
       try{await fixture.cleanup();}catch(e){failures.push(String(e));}
       try{await env?.close();}catch(e){failures.push(String(e));}
       const value={failures,evidence:proof('media:cleanup',{failures,variant})};await evidence('cleanup-summary',value);env=undefined;return value;},
-    operations:{failUnlink:fixture.failUnlink.bind(fixture),age:fixture.age.bind(fixture),cycle:fixture.cycle.bind(fixture),hold:fixture.hold.bind(fixture),secondInstance:fixture.secondInstance.bind(fixture),
+    operations:{egress:()=>mediaEgress(active()),failUnlink:fixture.failUnlink.bind(fixture),age:fixture.age.bind(fixture),cycle:fixture.cycle.bind(fixture),hold:fixture.hold.bind(fixture),secondInstance:fixture.secondInstance.bind(fixture),
       startReference:fixture.startReference.bind(fixture),run:fixture.run.bind(fixture),agentRequests:fixture.agentRequests.bind(fixture),finishReference:fixture.finishReference.bind(fixture),
       restart:async(mode)=>{const e=active(),before=await actualListenerIdentity(e.api.baseUrl),database=e.ownedStorage().database;
         await e.restart(mode);const after=await actualListenerIdentity(e.api.baseUrl);
@@ -68,16 +69,17 @@ export function providerDriver(context:DriverContext):ProviderDriver {
     return env;
   };
   let driver:ProviderDriver;
-  const usage=new ProviderUsageFiles(()=>({sessionDirectory:active().sessionDirectory,resourceRoot:active().runtimeDirectory,options,
+  const usage=new ProviderUsageFiles(()=>({sessionDirectory:active().sessionDirectory,resourceRoot:active().runtimeDirectory,options,observation:active().observation,initialObservation:active().initialObservation,evidence,
     stopGracefully:async()=>{const result=await active().stop('SIGTERM');if(!result)throw new PreparationBlocked('No actual provider exit outcome');return {...result,evidence:proof('provider:normal-exit',result)};},
     start:async()=>{await active().start(typeof options.usageEnabled==='boolean'?{usageEnabled:options.usageEnabled}:{});relay!.pointTo(active().address);return active().ownership().evidence;},logs}),()=>driver.calls(),`${context.target.sut.revision}:docs/final-enhancement-measurement-20261002.md`);
   driver=createProviderHttpDriver({contractReference:`${context.target.sut.revision}:docs/qa-offline-model-entry-20261002.md`,
-    capabilities:[P.backend,P.usage,P.usageFault],
+    capabilities:[P.backend,P.usage,P.usageFault,P.usageQueue],
     open:async(opt,upstreamUrl)=>{
       options=opt;groups.clear();provider=new OwnedOfflineProvider(context.target,resolve(context.runtimeDir,`variant-${++variant}`),resolve(context.outputDir,`variant-${variant}`),upstreamUrl,opt);
       await mkdir(provider.outputDirectory,{recursive:true});await provider.start();relay=new ServiceRelay();await relay.start(provider.address);
       return {ownership:provider.ownership(),agentUrl:relay.url,sessionDirectory:provider.sessionDirectory};
     },evidence,logs,
+    stop:async(mode)=>{const p=active(),beforePid=p.identities[0]?.pid;if(!beforePid)throw new PreparationBlocked('No actual provider PID');const exit=await p.stop(mode);if(!exit)throw new PreparationBlocked('No actual exit');return {beforePid,exit,evidence:proof('provider:actual-stop',{beforePid,exit,mode})};},
     restart:async(mode,changes)=>{if(changes)options={...options,...changes};const result=await active().restart(mode,changes);if(result.started)relay!.pointTo(active().address);
       return {...result,beforePid:result.beforePid!,agentUrl:relay!.url,evidence:proof('provider:actual-restart',result)};},
     verifyExited:async(pid)=>{try{const line=(await exec('ps',['-o','pid=,lstart=,command=','-p',String(pid)],{timeout:2000})).stdout.trim();if(line)throw new PreparationBlocked('PID still exists; do not reclaim ambiguous owner');}
@@ -88,7 +90,7 @@ export function providerDriver(context:DriverContext):ProviderDriver {
       try{await provider?.stop('SIGTERM');}catch(e){failures.push(String(e));}
       try{if(relay)await evidence('agent-relay-ledger',relay.ledger);await relay?.close();}catch(e){failures.push(String(e));}relay=undefined;
       const result={failures,evidence:proof('provider:cleanup',{failures,variant,actualExit:provider?.lastStopOutcome})};await evidence('cleanup-summary',result);provider=undefined;return result;},
-    operations:{usage:usage.usage.bind(usage),usageFiles:usage.usageFiles.bind(usage),settleUsage:usage.settleUsage.bind(usage),usageWriteFault:usage.usageWriteFault.bind(usage),diagnostics:usage.diagnostics.bind(usage),
+    operations:{installUsageAgeFixture:usage.installUsageAgeFixture.bind(usage),advanceUsageRetention:()=>usage.installUsageAgeFixture(-86400000),providerEgress:(requireExit)=>active().egress(requireExit),usageTemporaryCleanup:usage.usageTemporaryCleanup.bind(usage),usageObservation:usage.usageObservation.bind(usage),holdUsageWrites:usage.holdUsageWrites.bind(usage),usageQueue:usage.usageQueue.bind(usage),usage:usage.usage.bind(usage),usageFiles:usage.usageFiles.bind(usage),settleUsage:usage.settleUsage.bind(usage),usageWriteFault:usage.usageWriteFault.bind(usage),diagnostics:usage.diagnostics.bind(usage),
       competingSessionOwner:async()=>{
         const primary=active(),before=await readFile(resolve(primary.sessionDirectory,'owner.lock'),'utf8');
         const liveBefore=await actualListenerIdentity(primary.address),logPath=resolve(primary.outputDirectory,`competing-owner-${++serial}.log`);
