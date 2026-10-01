@@ -364,6 +364,10 @@ export class AgentTools {
       // result. The durable message is unchanged and the same key can read it
       // again on a later invocation. Reads stay serial; no abandoned query races.
       if (Date.now() >= deadline) break;
+      // A timely confirmed send is final even if the account later becomes
+      // terminal. Its outcome does not depend on another account read.
+      if (message?.deliveryStatus === "sent")
+        return { value: { clientMsgId, deliveryStatus: "sent" } };
       const account = (
         await this.ctx.db.query<{ status: string }>(
           "SELECT a.status FROM messages m JOIN accounts a ON a.id=m.account_id WHERE m.client_msg_id=$1",
@@ -372,7 +376,6 @@ export class AgentTools {
       ).rows[0];
       if (Date.now() >= deadline) break;
       if (
-        message?.deliveryStatus !== "sent" &&
         account &&
         ["suspended", "session_expired"].includes(account.status)
       )
@@ -380,10 +383,7 @@ export class AgentTools {
           "SEND_FAILED",
           "The sending account entered a terminal state before delivery completed.",
         );
-      if (
-        message &&
-        ["accepted", "sent"].includes(message.deliveryStatus ?? "")
-      )
+      if (message?.deliveryStatus === "accepted")
         return {
           value: { clientMsgId, deliveryStatus: message.deliveryStatus },
         };
