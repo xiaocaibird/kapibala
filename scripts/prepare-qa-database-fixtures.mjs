@@ -179,6 +179,8 @@ try {
       "exec",
       containerId,
       "pg_isready",
+      "-h",
+      "127.0.0.1",
       "-U",
       "qa",
     ]);
