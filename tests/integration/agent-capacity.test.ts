@@ -130,7 +130,7 @@ test("Agent kick waits for local capacity without failing, repeating audit, or d
 });
 
 test("Agent stops a real capacity wait when the first kick stage no longer fits, without inventing an unknown effect", async (t) => {
-  const priorActiveMs = 43800;
+  const priorActiveMs = 41800;
   const f = await saturatedKick(t, priorActiveMs);
   const savedHistory = (await f.readRun(f.id)).history;
   await until(
@@ -160,7 +160,7 @@ test("Agent stops a real capacity wait when the first kick stage no longer fits,
   );
   assert.ok(
     f.refusals[0]! - f.startedAt < 1200,
-    "first refusal precedes the 15s admission threshold",
+    "first refusal precedes the 17s admission threshold (15s POST plus 2s settlement)",
   );
   assert.ok(
     f.refusals.at(-1)! - f.refusals[0]! > 500,
@@ -172,7 +172,7 @@ test("Agent stops a real capacity wait when the first kick stage no longer fits,
     "retain the recorded tool_use without a fabricated tool_result",
   );
   assert.ok(
-    Number(completed.active_ms) >= 45000 && Number(completed.active_ms) < 48000,
+    Number(completed.active_ms) >= 43000 && Number(completed.active_ms) < 46000,
     "bill the real wait; do not consume or clip to 60000",
   );
   assert.equal(completed.status, "failed");
@@ -217,7 +217,7 @@ test("Agent cancellation while waiting for capacity ends after the current step 
 });
 
 test("pending kick cancellation retains current-step budget precedence while capacity never arrives", async (t) => {
-  const f = await saturatedKick(t, 43800);
+  const f = await saturatedKick(t, 41800);
   await f.db.query("UPDATE agent_runs SET cancel_requested=true WHERE id=$1", [
     f.id,
   ]);

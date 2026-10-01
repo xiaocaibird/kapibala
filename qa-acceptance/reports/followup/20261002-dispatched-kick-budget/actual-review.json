@@ -1,0 +1,432 @@
+{
+  "formatVersion": 1,
+  "reviewedAt": "2026-10-01T17:09:38.130151+00:00",
+  "reviewer": "Independent AI QA intake_smoke_gate; no human impersonation",
+  "basis": {
+    "runId": "2026-10-01T16-42-20.128Z-67fb4dd4",
+    "sutRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+    "qaRevision": "60cd3dda117b9b38906902458175cd81bd42212a",
+    "qaTreeSha256": "7f86d020b3c0efc6c47e5364e4ed37c276a4a0d1cdae8f067fe88107587e3a03",
+    "targetSha256": "4ac2ac1d38208333653a6e5aadaecc46c6a0cf7c49ce92b082fe276d42bfd998",
+    "suiteSha256": "5d4a5ef7763424458ca420a49f36d6f0f8b39f8ad588b6f41ab4544924c55b73",
+    "phase": "developer-preflight",
+    "attempt": 0
+  },
+  "caseId": "INT-KICK-BUDGET-001",
+  "project": "system",
+  "rawStatus": "FAIL",
+  "reviewedStatus": "BLOCKED",
+  "reason": "Two original assertions enforce A5.8 recovery before budget evaluation; this run did not restart. Activity interval straddles60000 and continuity is false, with no trusted lower bound over60000. Exact GET closed before mapped stop decision. No new activity FAIL or combination PASS is justified; original raw and historical strong recovery FAIL remain.",
+  "signingRecommendation": "APPROVE_AS_BLOCKED_SUPPLEMENT_NOT_PRODUCT_PASS",
+  "blockingReportIssues": [],
+  "rawAttempt": {
+    "id": "INT-KICK-BUDGET-001",
+    "status": "FAIL",
+    "reason": "AssertionError: whole original activity: 原A5.8强恢复未满足：原run等待人工或外部结果确认而不能自动续跑；这不是活动预算超时结论\nactual decision and paired outer COMMIT: 原A5.8强恢复未满足：原run等待人工或外部结果确认而不能自动续跑；这不是活动预算超时结论",
+    "durationMs": 63929,
+    "attempt": 0,
+    "startedAt": "2026-10-01T16:42:20.748Z",
+    "completedAt": "2026-10-01T16:43:24.677Z",
+    "project": "system",
+    "evidence": [
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/evidence",
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/error-context.md",
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/trace.zip"
+    ]
+  },
+  "identities": {
+    "runId": "da392c93-db91-4d45-bf6f-a4a4d321ca5c",
+    "groupId": "5d06a49c-ad78-4302-b1be-c84198a08d50",
+    "applicationPid": 33699,
+    "guardianPid": 33698,
+    "clockDomain": "process-performance:33699:89a92717-a9a2-4b89-8429-f1848db6b1f8",
+    "epochIds": [
+      "6087de17-4363-4654-a905-bf5abdb1a1bc"
+    ],
+    "terminalAttemptId": "acb44504-323e-4e2a-96ad-a4bea5d91bbd",
+    "lifecycleSourceSequences": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "droppedThroughSourceSeq": 0,
+    "singleObservedApplicationAndEpoch": true,
+    "ownerTokenLimit": "Archived token is redacted; actual ownership verification and associated process/port records retained, no claim to recover token equality from redacted bytes."
+  },
+  "budget": {
+    "status": "BLOCKED",
+    "activityIntervalMs": [
+      59999,
+      60008
+    ],
+    "maximumTrustedObservedLowerMs": 59999,
+    "includesUnsavedTail": true,
+    "continuous": false,
+    "pausedEventSequence": 709,
+    "preciseTerminalEnvelopeMsDiagnostic": [
+      "59999.129208",
+      "60007.215958"
+    ],
+    "creationWindowMs": [
+      1641.977959,
+      1647.535042
+    ],
+    "actualDecisionWindowMs": [
+      61649.343292,
+      61649.352
+    ],
+    "creationToDecisionOnlineMsDiagnosticOnly": [
+      "60001.808250",
+      "60007.374041"
+    ],
+    "activityViolationProven": false,
+    "activityComplianceProven": false,
+    "reason": "Creation-to-decision includes paused tail and cannot substitute for complete continuous activity. Terminal interval crosses60000; persisted59956 is not truth."
+  },
+  "decisionAndCommit": {
+    "status": "PASS_EXISTENCE_AND_PAIRING_ONLY",
+    "decisionSequence": 5,
+    "commitSequence": 6,
+    "sameAttempt": "acb44504-323e-4e2a-96ad-a4bea5d91bbd",
+    "commitWindowMs": [
+      61653.175209,
+      61653.175209
+    ],
+    "commitAfterDecisionMs": [
+      "3.823209",
+      "3.831917"
+    ],
+    "publicStatus": "failed",
+    "publicEndReason": "wall_clock",
+    "doesNotEstablishActivityCompliance": true
+  },
+  "pendingRequestCrossing": {
+    "status": "BLOCKED",
+    "calibrations": [
+      {
+        "parentClockDomain": "qa-process-performance:33643",
+        "parentWindowMs": [
+          46205.995167,
+          46237.438417
+        ],
+        "applicationMonotonicMs": 44840.945125,
+        "applicationStarted": "Fri Oct  2 00:42:21 2026",
+        "offsetMs": [
+          "1365.050042",
+          "1396.493292"
+        ]
+      },
+      {
+        "parentClockDomain": "qa-process-performance:33643",
+        "parentWindowMs": [
+          63079.727084,
+          63121.210459
+        ],
+        "applicationMonotonicMs": 61714.929875,
+        "applicationStarted": "Fri Oct  2 00:42:21 2026",
+        "offsetMs": [
+          "1364.797209",
+          "1406.280584"
+        ]
+      }
+    ],
+    "intersectionOffsetMs": [
+      "1365.050042",
+      "1396.493292"
+    ],
+    "mappedParentDecisionWindowMs": [
+      "63014.393334",
+      "63045.845292"
+    ],
+    "requestId": 17,
+    "parentClockDomain": "qa-process-performance:33643",
+    "receivedMonoMs": 48343.176125,
+    "closedMonoMs": 63009.885042,
+    "closedBeforeFinish": true,
+    "responseFinished": false,
+    "requestDurationMs": "14666.708917",
+    "closePrecedesDecisionLowerMs": "4.508292",
+    "directPendingAfterDecision": false,
+    "mappedCrossing": false,
+    "cancellationCause": "UNPROVEN",
+    "ordinary15000msTimeoutCause": "NOT_ESTABLISHED",
+    "lateCleanupResponse200": "External-facts contains responseStatus200/completedAt after QA barrier release on an already closed socket. No responseFinishedAt exists; this is not evidence of SUT receiving200."
+  },
+  "publicAndSideEffects": {
+    "status": "PASS_BOUNDED_FACTS_ONLY",
+    "auditCount": 1,
+    "agentTurnCount": 1,
+    "kickPostCount": 1,
+    "kickEffectCount": 1,
+    "postRequestId": 16,
+    "actualPostHttpStatus": 504,
+    "effectObservedUpperFromReceiptMs": "4.386875",
+    "capacityReleaseActivityMs": [
+      38213,
+      38219
+    ],
+    "postResponseReleaseActivityMs": [
+      43146,
+      43152
+    ],
+    "finalRunApi": {
+      "line": 1118,
+      "requestId": "9f0bc199-d375-41f8-be09-2131f7d003d7",
+      "startedAt": "2026-10-01T16:43:25.322Z",
+      "durationMs": 3.1867910000000848,
+      "body": {
+        "id": "da392c93-db91-4d45-bf6f-a4a4d321ca5c",
+        "groupId": "5d06a49c-ad78-4302-b1be-c84198a08d50",
+        "status": "failed",
+        "endReason": "wall_clock",
+        "summary": null,
+        "recoveryNote": "The activity budget expired during a kick. Its external result remains unknown and the saved intent will not be replayed.",
+        "steps": [
+          {
+            "ordinal": 1,
+            "kind": "tool_use",
+            "toolUseId": "qa-kick-dispatched-original-budget",
+            "name": "kick_user",
+            "input": {
+              "reason": "QA boundary dispatched-original-budget",
+              "platform_user_id": "qa-shared-external-target"
+            },
+            "resultSummary": "Activity budget ended while the kick outcome remained unknown; this intent is not replayed.",
+            "isError": false,
+            "errorCode": null,
+            "auditVerdict": "pass",
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"qa-kick-dispatched-original-budget\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"qa-shared-external-target\",\"reason\":\"QA boundary dispatched-original-budget\"}}]}"
+          }
+        ]
+      }
+    },
+    "finalGroupApi": {
+      "line": 1116,
+      "requestId": "1c854022-a826-4410-88e9-f9b076587317",
+      "startedAt": "2026-10-01T16:43:25.274Z",
+      "durationMs": 4.117125000004307,
+      "body": {
+        "id": "5d06a49c-ad78-4302-b1be-c84198a08d50",
+        "name": null,
+        "description": null,
+        "createdAt": "2026-10-01T16:42:22.660Z",
+        "gatewayGroupId": "gateway-group-1",
+        "status": "active",
+        "creatorAccountId": "account-1",
+        "agentEnabled": true,
+        "autoKickEnabled": true,
+        "members": [
+          {
+            "accountId": "account-2",
+            "platformUserId": "platform-account-2",
+            "role": "admin"
+          },
+          {
+            "accountId": "account-1",
+            "platformUserId": "platform-account-1",
+            "role": "creator"
+          },
+          {
+            "accountId": "account-3",
+            "platformUserId": "platform-account-3",
+            "role": "member"
+          },
+          {
+            "accountId": null,
+            "platformUserId": "qa-shared-external-target",
+            "role": "member"
+          }
+        ],
+        "activeAgentRunId": null,
+        "activeSequenceRunId": null
+      }
+    },
+    "finiteObservation": {
+      "samples": 11,
+      "firstBeforeMs": 63168.658334,
+      "firstAfterMs": 63170.945084,
+      "lastBeforeMs": 64693.777,
+      "lastAfterMs": 64696.647584,
+      "minimumSpanMs": "1522.831916",
+      "noNewTurnAfterDecision": true,
+      "notPermanentGuarantee": true
+    },
+    "originalInFlightEffectIsNotNewLateDispatch": true
+  },
+  "rawFailureAttribution": {
+    "failures": [
+      "whole original activity: 原A5.8强恢复未满足：原run等待人工或外部结果确认而不能自动续跑；这不是活动预算超时结论",
+      "actual decision and paired outer COMMIT: 原A5.8强恢复未满足：原run等待人工或外部结果确认而不能自动续跑；这不是活动预算超时结论"
+    ],
+    "helperRecoveryCheckPrecedesBudget": true,
+    "knownStrongRecoveryConclusion": "FAIL_UNCHANGED_FROM_PRIOR_SIGNED_REPORTS",
+    "restartExecutedThisRun": false,
+    "noNewBudgetDefectEstablished": true,
+    "postRunCorrectionQaRevision": "318cc3290ef31b73bdee015fc132163e48ff6298",
+    "correctionProductRetested": false,
+    "postRunToolStagesPassed": 7,
+    "postRunSelfTestsPassed": 309
+  },
+  "claimReview": [
+    {
+      "id": "SCOPE",
+      "status": "PASS",
+      "reason": "固定版本、单实例、新建原run、真实时间、零SQL活动计数注入；仅一次执行、attempt=0。"
+    },
+    {
+      "id": "CAPACITY",
+      "status": "PASS",
+      "reason": "真实准入拒绝且callbackEntered=false/remoteRequestCount=0；38–40秒活动窗口释放前零kick请求/效果。"
+    },
+    {
+      "id": "POST-EFFECT",
+      "status": "PASS",
+      "reason": "唯一kick POST #16实际收到并落地一次；效果观察保守上界4.386875ms；真实HTTP504已完成。"
+    },
+    {
+      "id": "CONFIRMATION-CROSS",
+      "status": "BLOCKED",
+      "reason": "唯一确认GET #17关闭早于实际预算决定映射下界4.508292ms，未建立仍在途跨决定的正证。"
+    },
+    {
+      "id": "ACTIVE-BUDGET",
+      "status": "BLOCKED",
+      "reason": "包含未保存尾段的活动区间[59999,60008]ms跨严格60000ms，且尾段暂停/continuous=false；不可判通过或活动超限。"
+    },
+    {
+      "id": "DECISION-COMMIT",
+      "status": "PASS",
+      "reason": "真实failed/wall_clock决定与同attempt外层COMMIT配对；仅证明决定和持久状态存在，不替代活动预算符合性。"
+    },
+    {
+      "id": "PUBLIC-UNKNOWN",
+      "status": "PASS",
+      "reason": "公开终态failed/wall_clock；原step审计pass、isError=false/errorCode=null、unknown说明诚实保留，群activeAgentRunId为空。"
+    },
+    {
+      "id": "FINITE-NO-REPLAY",
+      "status": "PASS",
+      "reason": "一次审计、一次turn、一次POST/副作用；实际stop后未见新turn，有限1500ms观察中未见重放；不外推永久保证。"
+    },
+    {
+      "id": "TRANSPORT-CAUSE",
+      "status": "BLOCKED",
+      "reason": "GET关闭且未finish为实际传输事实；缺原请求取消来源，不能声明由预算主动取消，亦不新增取消SLA。"
+    },
+    {
+      "id": "CLEANUP",
+      "status": "PASS",
+      "reason": "自有进程/控制器/注册目录/端口退出，实际Mounts精确映射容器及匿名卷消失，cleanup.failures=[]。"
+    }
+  ],
+  "claimCounts": {
+    "PASS": 7,
+    "BLOCKED": 3
+  },
+  "caseCounts": {
+    "PASS": 0,
+    "FAIL": 0,
+    "BLOCKED": 1
+  },
+  "claimsAreNotTenRegisteredCaseObligations": true,
+  "archiveIntegrity": {
+    "archive": {
+      "sha256": "f44e9604985dc3f39fad30f8ebfbf6742da6e227b0840b3fc71fb405cf512a30",
+      "bytes": 13448153
+    },
+    "memberFilesVerified": 1411,
+    "allMemberHashesMatched": true,
+    "deliveredManifestResultsEventsRunnerMatchArchiveBytes": true,
+    "selectedMembers": {
+      "2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/evidence/dispatched-kick-budget-final.json": {
+        "sha256": "a84c5e29bca9845153287539772acb6dc9ea55b41e416f1995fda81f3a2f8aa8",
+        "bytes": 5925212
+      },
+      "2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/evidence/external-facts.json": {
+        "sha256": "d3cdb614a6a1c8a8be38339b026631b2194848faf6ea0643e18893abe7be4f15",
+        "bytes": 25101
+      },
+      "2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/evidence/cleanup.json": {
+        "sha256": "cba068aa696fc61a6a027ecd0940bb42f93c4bc29bb0456f61c9e6b80279eb78",
+        "bytes": 65
+      },
+      "2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/evidence/dispatched-kick-budget-cleanup.json": {
+        "sha256": "e9bd0f1dae78f19d8b8f161e47ae420ed269d754e62b185514f85ddf24fd22bd",
+        "bytes": 20228
+      },
+      "2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/evidence/environment.json": {
+        "sha256": "f3a8fd43e596c14f6adde0065a33320e30f900f5561e1828fd397af5e354fff5",
+        "bytes": 1165
+      },
+      "2026-10-01T16-42-20.128Z-67fb4dd4/artifacts/system-dispatched-kick-bud-a73a0-unresolved-504-confirmation-system/evidence/api.ndjson": {
+        "sha256": "66595afb2ad5764f9b472f96cf11c016cf9b74f8616b35cfd90a0dad05cec928",
+        "bytes": 952798
+      }
+    }
+  },
+  "sourceIndex": {
+    "reports/followup/20261002-dispatched-kick-budget/runs/2026-10-01T16-42-20.128Z-67fb4dd4/manifest.json": {
+      "sha256": "3598abe3e466fc370ccfcaa53e6815275a0b7ed90b57a89de1f94f8d04d9f56b",
+      "bytes": 69564
+    },
+    "reports/followup/20261002-dispatched-kick-budget/runs/2026-10-01T16-42-20.128Z-67fb4dd4/results.json": {
+      "sha256": "ac7886e0af3ce522da2245a366dc3d0fe96f967cbee41cb28a3ae5ed43f55dfb",
+      "bytes": 212031
+    },
+    "reports/followup/20261002-dispatched-kick-budget/runs/2026-10-01T16-42-20.128Z-67fb4dd4/events.json": {
+      "sha256": "fe517903c0ddda67ccf3f74f532e0bda8b90b79f10a9b6d99dcb737fa0b8c03e",
+      "bytes": 1283
+    },
+    "reports/followup/20261002-dispatched-kick-budget/runs/2026-10-01T16-42-20.128Z-67fb4dd4/runner-summary.json": {
+      "sha256": "f095e7552579277335d73bae1d00c8074dba48f109eea4bf2c02be4c9d5f3227",
+      "bytes": 97
+    },
+    "reports/followup/20261002-dispatched-kick-budget/runs/2026-10-01T16-42-20.128Z-67fb4dd4/evidence-index.json": {
+      "sha256": "7a5aee503df48d7dd829aa6321e4db376321a555234108a4f7007154238a7f26",
+      "bytes": 393708
+    },
+    "reports/followup/20261002-dispatched-kick-budget/summary.json": {
+      "sha256": "98ca01e80b70e8fddc0c4b32863e1adcae65fd28ba2390bae3797fbbbb5978c0",
+      "bytes": 5690
+    },
+    "reports/followup/20261002-dispatched-kick-budget/report.md": {
+      "sha256": "acfecfffa8e05140f6198aa4bb23f50a0090874fb09909908e359af53e444e9f",
+      "bytes": 6149
+    },
+    "reports/followup/20261002-dispatched-kick-budget/reviewed.junit.xml": {
+      "sha256": "8cd448c897a977c51b4bd98d7ca0ac50f85f196440121c0865cebc04e17a3d0a",
+      "bytes": 891
+    },
+    "reports/followup/20261002-dispatched-kick-budget/resource-review/final-resource-review.json": {
+      "sha256": "dd3165ea779cc9deb67d61b5e2202d5b0c7f818002e2cd0a6033085c201f6840",
+      "bytes": 9361
+    },
+    "reports/followup/20261002-dispatched-kick-budget/tooling-after-scope-fix/tooling-verification.json": {
+      "sha256": "4b3758e789e2fdcae2ad60efca8e8783554b90bf624bfdc319a0a95834a436bf",
+      "bytes": 2035
+    },
+    "reports/acceptance/20261002-current-delivery/report.md": {
+      "sha256": "aa119fea808ee72d38eb21ef7f0022f3d7c36c69014dd204bb6d3bd5449d17c2",
+      "bytes": 5685
+    }
+  },
+  "cleanup": {
+    "caseFailures": [],
+    "caseSecondary": [],
+    "resourceReview": "reports/followup/20261002-dispatched-kick-budget/resource-review/final-resource-review.json",
+    "status": "PASS_FOR_THIS_RUN_EXACT_RESOURCES",
+    "containerId": "8e4b6ac29276f8eac720b6972ed76b17575cb7cf43d033bc3ed2f086921e2a30",
+    "anonymousVolume": "6c3e047291a14b0a748bdc1451e0ec93c8c542a39117c39c6d9aa4f71b79d950",
+    "sameDockerEngine": true,
+    "noLiveInspectionByThisReviewer": true
+  },
+  "scopeLimits": [
+    "One product run, attempt0; no automatic retry or post-correction product execution.",
+    "No second instance or arbitrary-restart test; old A5.8 failures not closed.",
+    "Prior254case full and51case delta unchanged; this separate case remainsBLOCKED.",
+    "No new humanIME/focus/fullUX or release-readiness evidence.",
+    "Reviewer read raw archives/reports only; wrote actual-review.json/.md, no product or resource operations."
+  ]
+}

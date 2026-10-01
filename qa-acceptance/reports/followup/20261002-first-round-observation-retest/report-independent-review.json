@@ -1,0 +1,229 @@
+{
+  "formatVersion": 1,
+  "kind": "INDEPENDENT_REPORT_CONSISTENCY_AND_ARCHIVE_REVIEW",
+  "reviewedAt": "2026-10-01T19:31:02.147124+00:00",
+  "reviewer": "independent QA subagent /root/observation_contract_review",
+  "status": "READY_TO_ISSUE_WITH_BUSINESS_FAIL",
+  "signingBlockers": [],
+  "newProductExecutionByReviewer": false,
+  "sutOrDatabaseConnectedByReviewer": false,
+  "selfTestsExecutedByReviewerInThisReview": false,
+  "authorizedWriteScope": "Only this report-independent-review.json; no raw, report, source, database or resource mutation",
+  "reviewScope": [
+    "Current report.md/results.json/scope-clarification.json amended final scope and engineering-candidate classification",
+    "Consistency of first raw results, first independent review, explicit save correction run, latest results and JUnit denominator",
+    "Revalidation of all original archive entries against index and live original disk bytes without extraction or modification",
+    "Original historical report SHA preservation and QA self-test log counts",
+    "Historical AGENT-003/SEQ-003/BLK-EXT-001/MAN-UX-001 original case definitions and independent versioned results",
+    "C1/C2 cited integration commits are main ancestors; new engineering source object exists and is not presented as independently QA executed"
+  ],
+  "reviewedObjects": [
+    {
+      "path": "report.md",
+      "bytes": 13142,
+      "sha256": "abea5db2561b7bac53ab12c16967893321d739580c9ea5aa669555a71eb6a07d"
+    },
+    {
+      "path": "results.json",
+      "bytes": 25899,
+      "sha256": "5b33fdf5bcaed0cc6f5f388f875ba914d7708d2891fdfc7981d1208d66b9f5b6"
+    },
+    {
+      "path": "scope-clarification.json",
+      "bytes": 6295,
+      "sha256": "9c50dad0b87111a861dacb4c27836f469c61dfec3feea75bd64620930f4c01d6"
+    },
+    {
+      "path": "junit.xml",
+      "bytes": 1461,
+      "sha256": "101acd7a385cf613afacd9f499b6fcbf6fc12faddf28d76c7c39383954c33c06"
+    },
+    {
+      "path": "original-file-index.json",
+      "bytes": 510947,
+      "sha256": "ce2895d62d81e9564690060cb5b368096812bacfa5d85b733635b50150abd9df"
+    },
+    {
+      "path": "original-evidence.tar.gz",
+      "bytes": 18286284,
+      "sha256": "e792980dfd53b463eec25f1d4296602f21e23d71850d12fcd9be71678b193868"
+    },
+    {
+      "path": "execution-support/build-report.py",
+      "bytes": 24868,
+      "sha256": "6a5c22bddbcf5cf2c4754435b13c5b01443dcd764048350f0f96cb431fd38f6a"
+    },
+    {
+      "path": "save-correction-independent-review.json",
+      "bytes": 3881,
+      "sha256": "73e6856a74b4c004c48040e348db17db9977006cdc346acdb9d349068dd755ec"
+    },
+    {
+      "path": "resource-audit/independent-review.json",
+      "bytes": 1341,
+      "sha256": "70e8613dd8bbd014b6a7a7393b47cb21794b63091bf925a5f61a233f9951dad3"
+    },
+    {
+      "path": "resource-audit/correction-independent-review.json",
+      "bytes": 1667,
+      "sha256": "ce59940380aa316e0a877e84e5b4fbdc329342020503c651b227ed87806931f8"
+    },
+    {
+      "path": "tooling/correction-execution-freeze/test-self.log",
+      "bytes": 35095,
+      "sha256": "b10065633c80d2e6989387ca0aef30b9059f9138a5b41c2a15cfa9cdb27e625f"
+    }
+  ],
+  "productVersion": {
+    "sutRevision": "01f2c1a237e84bcff68ade470402b369b345cd58",
+    "productSourceRevision": "70dd1eeb83e64b72f250a0b83b63c933feaa4b23",
+    "firstQaRevision": "3ed9a178a7538be58068de8d85f4ff7fb54f8967",
+    "correctionQaRevision": "ad712b6d68c4b4a72cf2a4984575e4dc147d6592",
+    "firstRunId": "2026-10-01T18-39-27.933Z-15f16ec6",
+    "correctionRunId": "2026-10-01T19-06-58.963Z-ecfeb5bc",
+    "engineeringPreparationSource": "f285777f25dc644fe5181cd40ae2f0c316ae5389",
+    "engineeringPreparationSourceRole": "Preparation handoff only; complete engineering self-test/formal handoff pending; no independent QA execution or change to01f results"
+  },
+  "executionAccounting": {
+    "firstRaw": {
+      "PASS": 0,
+      "FAIL": 3,
+      "BLOCKED": 0
+    },
+    "firstIndependent": {
+      "PASS": 0,
+      "FAIL": 2,
+      "BLOCKED": 1
+    },
+    "latestIndependent": {
+      "PASS": 1,
+      "FAIL": 2,
+      "BLOCKED": 0
+    },
+    "caseCount": 3,
+    "productCaseInvocations": 4,
+    "runCount": 2,
+    "automaticRetries": 0,
+    "junit": {
+      "tests": 3,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "qaSelfTests": {
+      "tests": 343,
+      "pass": 343,
+      "fail": 0,
+      "skipped": 0,
+      "basis": "Actual final test-self.log read; not a product acceptance denominator"
+    },
+    "wholeCandidateSuiteReexecuted": false,
+    "businessRecommendation": "FAIL_NOT_ACCEPTED",
+    "releaseReadiness": "NOT_ASSESSED"
+  },
+  "strictFailuresRetained": [
+    {
+      "caseId": "INT-READ-CAUSAL-001",
+      "defectId": "QA-01F-READ-001",
+      "status": "FAIL",
+      "maximumMs": 5000,
+      "observedWindowMs": [
+        5005.463667,
+        5005.526083
+      ]
+    },
+    {
+      "caseId": "INT-KICK-OBSERVATION-001",
+      "defectId": "QA-01F-ACTIVITY-001",
+      "status": "FAIL",
+      "maximumMs": 60000,
+      "observedContinuousPrefixMs": [
+        60007,
+        60016
+      ],
+      "reason": "Already proven continuous active lower bound exceeds limit; later pause or continuous=false does not downgrade to BLOCKED"
+    }
+  ],
+  "saveCaseReviewBoundary": {
+    "latestStatus": "PASS",
+    "firstRawStatus": "FAIL",
+    "firstIndependentStatus": "BLOCKED",
+    "basis": "Consistency checked against separately signed independent read_causal_retest review and exact bound correction evidence; no developer PASS inherited",
+    "limits": [
+      "Limited actual save failure / retained-state restart / distinct ROLLBACK and COMMIT trajectory only",
+      "QA 2000ms actual-landing observation gate is not original request-receipt-to-effect strict2s proof",
+      "No proof of arbitrary restart or all future exactly-once effects"
+    ]
+  },
+  "scopeCorrections": {
+    "AGENT-003": {
+      "historicalVersion": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+      "rawAndIndependent": "PASS",
+      "meaning": "Original running second instance and pending event scenario remains PASS; not reopened by missing extra three-factor combination"
+    },
+    "SEQ-003": {
+      "historicalVersion": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+      "rawAndIndependent": "PASS"
+    },
+    "GAP-RUNNING-SECOND-INSTANCE-COMPETITION": {
+      "state": "Extra pre-existing bounded cross coverage not executed in this supplement",
+      "notNewThreeCaseExitGate": true
+    },
+    "BLK-EXT-001": {
+      "historicalRawAndIndependent": "BLOCKED",
+      "notRetestedOn8eOr01f": true,
+      "meaning": "Existing no-effect branch terminal evidence gap; finite wait cannot supply nonexistent negative completion guarantee",
+      "noNewProtocolOrDeadlineMandated": true,
+      "noRepeatedD039DecisionRequired": true
+    },
+    "MAN-UX-001": {
+      "historicalRawAndIndependent": "BLOCKED",
+      "remainingScope": "Independent unprimed account disconnect/release, console permissions versus group creator/admin/member and retained-history explanation; actual misunderstanding/guidance/version evidence",
+      "H18": "Limited four-state experience closed-by-user, remains closed; no repeated four-state or invented unknown task"
+    },
+    "C1C2": {
+      "developmentAndSelfTestDelivery": "Already in main",
+      "mainAncestorChecks": {
+        "b02cd01": true,
+        "1738d3a": true
+      },
+      "independentQa": "Not executed in this first-round supplement; developer results not inherited"
+    },
+    "secondRoundP0P1": {
+      "qaCommit": "28b3b3199013681fb5266cc409c7161f8726eb17",
+      "state": "Preparation only; no SUT execution or main merge claimed"
+    },
+    "universalClaims": "Finite evidence boundary only, not an infinite new acceptance task",
+    "observerExceptions": "Retained engineering risk; no fabricated current product FAIL or new mandatory case"
+  },
+  "originalArchiveVerification": {
+    "performedByThisReviewer": "Complete streaming per-entry SHA/size verification previously performed and freshly repeated during current signing review; each entry also compared with live original disk bytes",
+    "fileCount": 1559,
+    "uncompressedBytes": 766909283,
+    "archiveBytes": 18286284,
+    "archiveSha256": "e792980dfd53b463eec25f1d4296602f21e23d71850d12fcd9be71678b193868",
+    "indexSha256": "ce2895d62d81e9564690060cb5b368096812bacfa5d85b733635b50150abd9df",
+    "missingEntries": 0,
+    "unexpectedOrDuplicateEntries": 0,
+    "hashOrSizeMismatches": 0,
+    "rawFilesChangedByReviewer": false
+  },
+  "historicalReportsVerifiedUnchanged": [
+    {
+      "path": "reports/acceptance/20261002-current-delivery/report.md",
+      "sha256": "aa119fea808ee72d38eb21ef7f0022f3d7c36c69014dd204bb6d3bd5449d17c2"
+    },
+    {
+      "path": "reports/followup/20261002-dispatched-kick-budget/report.md",
+      "sha256": "acfecfffa8e05140f6198aa4bb23f50a0090874fb09909908e359af53e444e9f",
+      "old8eActivityWindowMs": [
+        59999,
+        60008
+      ],
+      "oldStatus": "BLOCKED"
+    }
+  ],
+  "resourceReviewBoundary": "Reviewed separate signed ownership/cleanup records for both runs; no resources queried or cleaned by this reviewer. Uncaptured PG HostPort remains disclosed in both run records; no assertion of its individual lsof recheck or all historical resources clean.",
+  "reportLinksChecked": "All local report.md links resolve at review time",
+  "reportOrRawModifiedByReviewer": false
+}

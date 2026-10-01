@@ -1,0 +1,109 @@
+{
+  "requiredFirstRound": [
+    {
+      "id": "QA-01F-READ-001",
+      "severity": "P1",
+      "kind": "EXISTING_CONFIRMED_FAILURE_NOT_CLOSED",
+      "cases": [
+        "INT-READ-CAUSAL-001",
+        "AGENT-028",
+        "INT-READ-001"
+      ],
+      "lastActualFailureSource": "01f (ordinary variants also8e)",
+      "facts": "Original actual tool/PG wait [5005.463667,5005.526083]ms >5000; genuine query/rollback/release facts present. No new 7d53 reproduction or PASS claimed.",
+      "currentDisposition": "NOT_RETESTED_ON_7D53; NO_CLOSURE",
+      "required": true
+    },
+    {
+      "id": "QA8E-D02",
+      "severity": "P1",
+      "kind": "EXISTING_STRONG_RECOVERY_FAILURE",
+      "cases": [
+        "BLK-EXT-004",
+        "REC-007"
+      ],
+      "lastActualFailureSource": "8e",
+      "facts": "Kick effect before durable result, including target rejoin: actual public recovery pause, no automatic original-run completion; no duplicate effect invented. Engineering direction decided; original guarantee unchanged.",
+      "currentDisposition": "NOT_RETESTED_ON_7D53; NO_CLOSURE",
+      "required": true
+    },
+    {
+      "id": "QA8E-D03",
+      "severity": "P1",
+      "kind": "EXISTING_STRONG_RECOVERY_FAILURE",
+      "cases": [
+        "BLK-EXT-005"
+      ],
+      "lastActualFailureSource": "8e",
+      "facts": "Unrecorded model response interruption leaves actual recovery-paused run; legal different response allowed, exact replay not required.",
+      "currentDisposition": "NOT_RETESTED_ON_7D53; NO_CLOSURE",
+      "required": true
+    },
+    {
+      "id": "INT-MSG-007",
+      "kind": "EXISTING_HISTORICAL_FAILURE",
+      "lastActualFailureSource": "2716",
+      "facts": "Crash after first confirmation observed but before INSERT: original actual dispatch-time scheduling not preserved.",
+      "currentDisposition": "NOT_RETESTED_ON_7D53; NO_CLOSURE",
+      "required": true
+    },
+    {
+      "id": "BLK-EXT-002",
+      "kind": "EXISTING_PROTOCOL_FAILURE",
+      "lastActualFailureSource": "2716",
+      "facts": "Create-group success reply lost: original group identity / extra remote group not guaranteed by current operation protocol.",
+      "currentDisposition": "NOT_RETESTED_ON_7D53; NO_CLOSURE",
+      "required": true
+    },
+    {
+      "id": "BLK-EXT-003",
+      "kind": "EXISTING_PROTOCOL_FAILURE",
+      "lastActualFailureSource": "2716",
+      "facts": "Promote reply lost: role truth and maximum two original calls have historical failure; ordinary kick does not retest it.",
+      "currentDisposition": "NOT_RETESTED_ON_7D53; NO_CLOSURE",
+      "required": true
+    },
+    {
+      "id": "BLK-EXT-001",
+      "kind": "EXISTING_REQUIRED_PROTOCOL_BLOCKER",
+      "lastActualFailureSource": "2716 BLOCKED",
+      "facts": "Silent no-response/no-effect send prefix lacks authoritative negative outcome. Finite waiting cannot manufacture negative terminal/liveness proof. Do not repeat D039 direction decision.",
+      "currentDisposition": "NOT_RETESTED_ON_7D53; BLOCKER_UNCLOSED",
+      "required": true
+    },
+    {
+      "id": "MANUAL-FIRST-ROUND",
+      "kind": "EXISTING_REAL_HUMAN_EVIDENCE",
+      "cases": [
+        "MAN-IME-001",
+        "MAN-FOCUS-001",
+        "MAN-UX-001"
+      ],
+      "facts": "Real IME, OS focus and missing operator evidence are still separate. H18 four-state wording acceptance stays closed-by-user; no reopening of its finite accepted examples.",
+      "currentDisposition": "NOT_RUN_IN_THIS_RETEST; HUMAN_SCOPE_REMAINS",
+      "required": true
+    }
+  ],
+  "extraUnexecutedBoundaries": [
+    {
+      "id": "GAP-RUNNING-SECOND-INSTANCE-COMPETITION",
+      "state": "NOT_RUN",
+      "kind": "EXISTING_EXTRA_CROSS_COVERAGE_NOT_NEW_DEFECT_OR_EXIT_GATE",
+      "facts": "Budget × dispatched kick × running second instance; generic AGENT003 on2716 remains priorPASS, not this three-factor PASS."
+    },
+    {
+      "id": "KICK-WORK-PROJECTION-FAULTS",
+      "state": "NOT_RUN",
+      "kind": "FINITE_IMPACT_BOUNDARY_NOT_NEW_PRODUCT_FAILURE",
+      "facts": "Known-success/explicit-refusal cross-work PG projection or repair; actual save failure/cancel-priority/pool-late/unknownCOMMIT combinations not automatically covered by ordinary success/refusal."
+    },
+    {
+      "id": "CO01-NATIVE-PG-REUSE",
+      "state": "NOT_RUN",
+      "kind": "FINITE_IMPACT_BOUNDARY_NOT_NEW_PRODUCT_FAILURE",
+      "facts": "Deterministic same PG connection deadline-wrapper release then native callback reuse: development before/after evidence exists; this QA sample does not force that trajectory."
+    }
+  ],
+  "continuation": "PAUSED_AWAITING_HUMAN_DECISION_NO_AUTOMATIC_REPAIR_OR_RETEST",
+  "noNewDecisionAboutPreviouslyDecidedDirection": true
+}

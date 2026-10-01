@@ -67,7 +67,16 @@ export async function reportDirectory(root: string, path: string, create = false
         throw new Error('报告目录不能经过符号链接或普通文件');
     } catch (e) {
       if ((e as NodeJS.ErrnoException).code !== 'ENOENT' || !create) throw e;
-      await mkdir(current);
+      try {
+        await mkdir(current);
+      } catch (creationError) {
+        if ((creationError as NodeJS.ErrnoException).code !== 'EEXIST') throw creationError;
+        // Another owned writer may create the same parent concurrently. Recheck
+        // its real type; EEXIST alone must not permit a symlink or ordinary file.
+        const existing = await lstat(current);
+        if (existing.isSymbolicLink() || !existing.isDirectory())
+          throw new Error('报告目录不能经过符号链接或普通文件');
+      }
     }
   }
   return out;

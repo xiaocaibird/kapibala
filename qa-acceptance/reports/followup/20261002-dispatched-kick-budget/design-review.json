@@ -1,0 +1,219 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-01T16:40:24.987361+00:00",
+  "reviewType": "STATIC_PROTOCOL_DESIGN_REVIEW",
+  "sutRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+  "qaRevisionAtRead": "ac5e8e639237070fb5c48751ce04a7645b4a19ab",
+  "branch": "agent/qa-dispatched-kick-budget-supplement",
+  "productExecuted": false,
+  "implementationReview": "STATIC_NARROW_REVIEW_COMPLETE_NO_NEW_FREEZE_BLOCKER",
+  "findings": [
+    {
+      "id": "DKB-D01",
+      "category": "premise",
+      "status": "REQUIRES_ASSERTION",
+      "title": "HTTP request屏障已派发，504 before-response不等同效果完成",
+      "evidence": [
+        "harness/gateway.ts:392-413",
+        "harness/gateway.ts:462-497",
+        "harness/gateway.ts:675-700"
+      ],
+      "recommendation": "固定 POST path、request.id、byAccountId/targetPlatformUserId；before-response 命中后另核 effect.kind=kick 同群/目标恰一次、当前members无目标。504 asynchronous effect 可晚于barrier，不仅凭barrier推断。"
+    },
+    {
+      "id": "DKB-D02",
+      "category": "timing",
+      "status": "WINDOW_NOT_GUARANTEED",
+      "title": "43–44秒504与15秒单次GET可能先于60秒结束",
+      "evidence": [
+        "requirements/evidence-followup/repair-intake-8e047-20261001.md:10",
+        "contracts/runtime-observation.md"
+      ],
+      "recommendation": "38–40秒/43–44秒仅夹具目标范围，不能成为产品SLA。15秒GET若从43–44秒开始可在58–59秒取消；若随后合法早终止或未达到预算取消窗口则专项前提BLOCKED。须保存真实活动/实际决定和该GET关闭区间，不能把responseClosedBeforeFinish直接命名为budget取消。"
+    },
+    {
+      "id": "DKB-D03",
+      "category": "causality",
+      "status": "REQUIRES_ASSERTION",
+      "title": "精确确认GET及504接收链归属",
+      "evidence": [
+        "harness/gateway.ts:380-385",
+        "harness/gateway.ts:567-572",
+        "contracts/simulator.md:26",
+        "harness/lifecycle-observation.ts:12-41"
+      ],
+      "recommendation": "仅用目标群members路径且method GET的下一plan；arm之前保存request.id基线。用barrier.context.id锁定后续GET，核GET.at在该POST实际504响应之后且无旧请求/其他同群生产者。网关finish只证明写完不是SUT处理，现有lifecycle无kick-query事件；用隔离单群唯一候选因果链并诚实保留此接口局限，若存在多个合理来源则BLOCKED。GET before-response已捕获返回body，不会在release时刷新快照。"
+    },
+    {
+      "id": "DKB-D04",
+      "category": "oracle",
+      "status": "REUSE_STRICT_HELPERS",
+      "title": "真实活动预算及首次硬失败优先",
+      "evidence": [
+        "tests/support/agent-activity-budget.ts",
+        "harness/runtime-observation.ts:397-423",
+        "contracts/runtime-observation.md"
+      ],
+      "recommendation": "使用同run/group/epoch/applicationPid/clockDomain完整activity以及actual decision/同attempt COMMIT；SQL persisted active_ms和QA墙钟只能诊断。任一已证明lower>60000先FAIL，不加容差；跨界/缺段/缺决定配对BLOCKED，不能覆盖已观察重踢、重复审计、错误工具终态等硬FAIL。"
+    },
+    {
+      "id": "DKB-D05",
+      "category": "cleanup",
+      "status": "REQUIRES_SEPARATE_LEDGER",
+      "title": "清理释放不能制造验收期成功或迟发",
+      "evidence": [
+        "harness/environment.ts:172-178",
+        "harness/environment.ts:249-280",
+        "harness/gateway.ts:489-510",
+        "harness/barrier.ts:67-75"
+      ],
+      "recommendation": "先保存判定时刻原始API/账本/租约，已结束请求可释放；仍在途时先停止该例自有SUT再放行屏障或让环境按server→gateway关闭。Gateway close会释放屏障/取消定时器；finally后新增效果只作cleanup事实，不倒填PASS。保留主FAIL，清理错误独立记录。"
+    },
+    {
+      "id": "DKB-D06",
+      "category": "scope",
+      "status": "REQUIRED_RESULT_LIMIT",
+      "title": "安全未知不等于强恢复成功，二实例另列NOT_RUN",
+      "evidence": [
+        "../docs/original-interview-question.md:264",
+        "contracts/runtime-observation.md",
+        "contracts/capacity-observation.md"
+      ],
+      "recommendation": "实际POST已生效但当前请求无可达明确结果时，可验证不重放/审计唯一/历史保留；仅unknown或暂停不能宣称同run正常结束。公开明确recoveryNote暂停需按原强恢复口径单列失败，有限等待无完成证据BLOCKED；不得因为run失败就假定已生效tool失败合法。当前单实例专项不覆盖第二实例竞争/接管，单列NOT_RUN。"
+    }
+  ],
+  "sourceIndex": [
+    {
+      "path": "harness/gateway.ts",
+      "sha256": "f319717539814baaf563b85164f2f7e575c0d4c6a073c900733588d6f1324f26",
+      "bytes": 33512
+    },
+    {
+      "path": "harness/barrier.ts",
+      "sha256": "3c7b7636bc2c8488bc28a4bd7068171a521d71ac0c256c938a65c8f022b4b177",
+      "bytes": 2174
+    },
+    {
+      "path": "harness/runtime-observation.ts",
+      "sha256": "d45cd5e0dada4f7a2757a62c1e4e3f4e240e7079fe9b7ae624a39f528b53583f",
+      "bytes": 24672
+    },
+    {
+      "path": "harness/lifecycle-observation.ts",
+      "sha256": "dad97f04a9016e82bdd1ca5e38cc46ee4d9b7110afe038c285e0dbb8604892c8",
+      "bytes": 20622
+    },
+    {
+      "path": "harness/environment.ts",
+      "sha256": "9e84c047bfd704352a5c605bdf02c92f4b4a365fcc9d06a36cf592097055660a",
+      "bytes": 10034
+    },
+    {
+      "path": "tests/support/agent-activity-budget.ts",
+      "sha256": "3ef26daae42550d7fcee1131eb219ac36d9213939024b3b000327cc46f94cae7",
+      "bytes": 3900
+    },
+    {
+      "path": "contracts/simulator.md",
+      "sha256": "1c7f64df8b0c1528c6dc80c573b7e1865e5bb2f6e1d160950ab647614a1eb971",
+      "bytes": 12976
+    },
+    {
+      "path": "contracts/runtime-observation.md",
+      "sha256": "b9898c2538f06607d51d6981a63f0a4d1c3675ce22c73e408394910f503e8d4b",
+      "bytes": 24873
+    },
+    {
+      "path": "contracts/capacity-observation.md",
+      "sha256": "661b0a821e75e58f17c5b5493fc8d289d46e80dc5ffee7fdc61475c680d1932e",
+      "bytes": 11892
+    },
+    {
+      "path": "requirements/evidence-followup/repair-intake-8e047-20261001.md",
+      "sha256": "954989913432b1bfe5c8d26bb0837c61e4b0439115b58b56a12abbbbfe6d7691",
+      "bytes": 3287
+    },
+    {
+      "path": "../docs/original-interview-question.md",
+      "sha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+      "bytes": 33219
+    },
+    {
+      "path": "tests/system/dispatched-kick-budget.spec.ts",
+      "sha256": "92737c36c27661c4a10c283a0b21114264b8dd2e92b73f664fdb59c0ee278758",
+      "bytes": 30357
+    },
+    {
+      "path": "cases/dispatched-kick-budget.json",
+      "sha256": "59af7514b5a74ae06a158776ce3772c81cfd7095ff0d82f8400f515022550d01",
+      "bytes": 6836
+    }
+  ],
+  "wipFindings": [
+    {
+      "id": "DKB-W01",
+      "status": "CORRECTED_AND_READ_ONLY_REVIEWED",
+      "location": "tests/system/dispatched-kick-budget.spec.ts real-capacity-refusal/sample",
+      "issue": "等待只读capacityLease.latest而采样不刷新该lease，真实拒绝不会进入latest。",
+      "required": "主动snapshot容量lease并校验held/TTL。"
+    },
+    {
+      "id": "DKB-W02",
+      "status": "CORRECTED_AND_READ_ONLY_REVIEWED",
+      "location": "tests/system/dispatched-kick-budget.spec.ts actual-confirmation-in-flight/windowClosedBeforeTerminal",
+      "issue": "采到GET时activity>=45秒不证明GET实际开始>=45秒；关闭和决定在两次采样间可一起出现，不能排除15秒HTTP超时先关。",
+      "required": "以同域真实开始/关闭包围排除普通超时；缺证保留BLOCKED，已确证预算超限/重放仍FAIL。"
+    }
+  ],
+  "narrowReview": {
+    "status": "PASS_STATIC_ONLY",
+    "productExecuted": false,
+    "sourceMutatedByReviewer": false,
+    "reviewedFiles": [
+      "tests/system/dispatched-kick-budget.spec.ts",
+      "cases/dispatched-kick-budget.json",
+      "harness/gateway.ts (only new QA monotonic ledger fields)"
+    ],
+    "verified": [
+      "capacity lease主动snapshot后读取实际refusal/held/TTL，不再只读初始latest",
+      "504在独立effect与成员缺席后放行；GET使用明确目标路径/method/基线与屏障context.id",
+      "实际读取termination-decided后同步确认该GET账本尚未记录finish/close；没有正向跨界样本不能以未观察到提前close反推PASS",
+      "完整activity下界/决定与同attempt COMMIT保留原60000；FAIL独立累积，BLOCKED和cleanup不能覆盖",
+      "原工具/audit/POST/effect计数、不伪造工具失败、活动引用清空及有限后观察均保留",
+      "清理对仍运行或仍有pending的自有SUT先stop再release，测试期与cleanup账本分离",
+      "取消来源细项BLOCKED不变成新API验收门槛；二实例/重启/任意未知恢复明确NOT_RUN",
+      "Gateway接收/响应准备/finish/close取自同一QA worker performance.now，只入QA账本不进wire；同parentClockDomain",
+      "备选两次真实live snapshotMeasured严格同PID/启动串/domain，读数前进，offset交集非空，实际同attempt决定处于校准间；仅received<decisionLower且close>decisionUpper、未finish可证明跨界",
+      "审计唯一断言仅在实际唯一pass已进入真实容量拒绝后启用；短QA setup诱发合法审计重试只作为前提B",
+      "效果观察采用POST接收至实际成员缺席的父时钟上界<=2000作保守夹具证明；错过只记B，不据此新增产品SLA",
+      "末轮next-turn唯一仅在确认GET唯一且未响应的已证未知窗口断言；若另一个未持有GET已合法泄露成功，归前提B而非误报下一turnF。实际停止后派发/重复POST或effect仍独立FAIL。"
+    ],
+    "remainingExecutionLimits": [
+      "43–44秒及确认45秒窗口不能预先保证命中；未命中仍B，无自动重试。",
+      "正向pending证据基于独立网关实际记录的finish/close观测，不声称给出不可见客户端abort原因或精确网络内因果时间。",
+      "本复核没有产品执行，不批准把单例或自身静态结果外推至全量业务通过。"
+    ]
+  },
+  "reviewedSourceRevisions": [
+    {
+      "scope": "before-monotonic-mapping",
+      "files": [
+        {
+          "path": "harness/gateway.ts",
+          "sha256": "f319717539814baaf563b85164f2f7e575c0d4c6a073c900733588d6f1324f26",
+          "bytes": 33512
+        },
+        {
+          "path": "tests/system/dispatched-kick-budget.spec.ts",
+          "sha256": "92737c36c27661c4a10c283a0b21114264b8dd2e92b73f664fdb59c0ee278758",
+          "bytes": 30357
+        },
+        {
+          "path": "cases/dispatched-kick-budget.json",
+          "sha256": "59af7514b5a74ae06a158776ce3772c81cfd7095ff0d82f8400f515022550d01",
+          "bytes": 6836
+        }
+      ]
+    }
+  ]
+}

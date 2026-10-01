@@ -1,0 +1,231 @@
+npm notice run kapibala-platform@0.1.0 npx
+npm notice run 'tsx' --test --test-concurrency=1 tests/integration/kick-dispatch-budget.test.ts tests/integration/agent-capacity.test.ts tests/integration/agent-kick-recovery.test.ts
+✔ Agent kick waits for local capacity without failing, repeating audit, or dispatching twice (359.051959ms)
+ℹ Independent database: kapibala_test_21fc1f7923cd4c6e92a75eeb55ec1711
+✔ Agent stops a real capacity wait when the first kick stage no longer fits, without inventing an unknown effect (1360.3225ms)
+ℹ Independent database: kapibala_test_2554f3afdb0f4978b53244fbe29e037a
+ℹ {"case":"capacity-first-kick-stage","priorActiveMs":41800,"firstRefusalElapsedMs":49.864915999999994,"refusalCount":19,"waitBetweenRefusalsMs":1112.858875,"elapsedMs":1241.161416,"status":"failed","endReason":"wall_clock","persistedActiveMs":43024,"modelRequests":0,"audits":1,"kicks":0}
+✔ Agent rechecks kick policy after capacity refusal and preserves the recorded audit (223.17875ms)
+ℹ Independent database: kapibala_test_32141e040c7740df98cf7adb13ca9b6e
+✔ Agent cancellation while waiting for capacity ends after the current step without another turn (221.192625ms)
+ℹ Independent database: kapibala_test_d6fc22c41e6c43df8c1278fc1edca861
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ pending kick cancellation retains current-step budget precedence while capacity never arrives (1422.262083ms)
+ℹ Independent database: kapibala_test_174d110e8b354597b2d350e1a2edc685
+✖ CAP009 exact refused-before-ready SIGKILL resumes the same audited step (287.539333ms)
+✖ CAP009 a dispatched kick killed before response remains paused without replay (245.918291ms)
+✖ CAP009 dispatch intent commit then pre-HTTP SIGKILL stays conservatively paused (249.913666ms)
+✖ CAP009 legacy executing intents without a dispatch stage remain paused (249.861625ms)
+✔ CAP009 two live Agent instances recover one admitted step without duplicate audit or effect (241.244458ms)
+ℹ Independent database: kapibala_test_c0bebd84a4044cddb8a98fdfea3205a0
+✔ CAP009 failed durable dispatch write never reaches the gateway (142.709875ms)
+ℹ Independent database: kapibala_test_3c4f88f57c6e42548684c107bd9cdc59
+✔ CAP009 local kick validation runs before the durable dispatch hook (76.155167ms)
+ℹ Independent database: kapibala_test_174b8ac1040a4176bab81ad5de6eb5b5
+✔ kick does not enter admission when real preparation consumes the first POST window (543.942375ms)
+ℹ Independent database: kapibala_test_770b3740f7ca4471881e2ca0401e41b9
+ℹ {"admissions":0,"persistedActiveMs":43201,"recoveryNote":null,"intent":{"accountId":"account-2","dispatchState":"awaiting_admission","targetPlatformUserId":"external-target"}}
+✔ kick blocked across its first POST window before fetch ends without inventing an unknown external effect (1655.395542ms)
+ℹ Independent database: kapibala_test_f5ae5c6ee3cf41a485a56002c5a16304
+ℹ {"blocked":true,"signalAbortedAfterBlock":false,"kickFetchCalls":0,"persistedActiveMs":43549,"recoveryNote":null,"intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}}
+✔ RemoteClient checks the synchronous dispatch guard after real request serialization (147.150083ms)
+ℹ Independent database: kapibala_test_4ce56db8c4f5426795d7a5c40eba7137
+ℹ {"serialized":true,"elapsedBeyondDeadlineMs":35.149209000000155,"remoteRequests":0}
+✔ a deadline timer already fired before kick fetch is still a known non-dispatch (15646.905125ms)
+ℹ Independent database: kapibala_test_86d3bbc656dc4449a481cf53af2f6825
+✔ failed terminal persistence after a local dispatch rejection keeps the saved intent non-replayable (884.015125ms)
+ℹ Independent database: kapibala_test_a74076914cb34ad9b8dac632845c3cdf
+ℹ {"attempts":1,"persistedActiveMs":43269,"stateAfterReplacement":"running","intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}}
+✔ a real kick remains unknown when confirmation outlasts the work allocation before the original run deadline (15338.667375ms)
+ℹ Independent database: kapibala_test_0ddaeff255b44b27ab8461ed8a1b670f
+✔ kick with sufficient budget still dispatches once and preserves the one audit (225.5675ms)
+ℹ Independent database: kapibala_test_38da0143e37046d1b15f6098888737da
+✔ a confirmed first kick POST still refreshes members below its admission window (626.347084ms)
+ℹ Independent database: kapibala_test_ca7083adb1dd4c0896894a366795a402
+✔ kick admission preserves policy precedence with less than the 17-second admission allocation (235.440667ms)
+ℹ Independent database: kapibala_test_da3fe00d517442fd82f317573159f412
+✔ kick admission preserves account precedence with less than the 17-second admission allocation (147.63825ms)
+ℹ Independent database: kapibala_test_f1b7d412b61645bd8f799c4a0324a0df
+{"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+✔ kick admission preserves cancel precedence with less than the 17-second admission allocation (221.874459ms)
+ℹ Independent database: kapibala_test_a41b42c75c6144fbb11fd21d6a8a1551
+ℹ tests 23
+ℹ suites 0
+ℹ pass 19
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 42705.027083
+
+✖ failing tests:
+
+test at tests/integration/agent-kick-recovery.test.ts:19:1
+✖ CAP009 exact refused-before-ready SIGKILL resumes the same audited step (287.539333ms)
+  Error: SUT failed to start: /Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61
+      throw new ControlError(
+            ^
+  
+  ControlError: Commit engineering and product sources before starting the controlled SUT
+      at sourceRevision (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity-server.ts:20:18) {
+    status: 409
+  }
+  
+  Node.js v24.21.0
+  
+      at <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:163:13)
+      at async start (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+      ... 3 lines matching cause stack trace ...
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    [cause]: Error: SUT exited: /Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61
+        throw new ControlError(
+              ^
+    
+    ControlError: Commit engineering and product sources before starting the controlled SUT
+        at sourceRevision (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity-server.ts:20:18) {
+      status: 409
+    }
+    
+    Node.js v24.21.0
+    
+        at <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:158:46)
+        at until (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/core-automation-fixture.ts:35:15)
+        at async start (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+        at async capacityFixture (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:195:3)
+        at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/integration/agent-kick-recovery.test.ts:20:13)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+  }
+
+test at tests/integration/agent-kick-recovery.test.ts:90:1
+✖ CAP009 a dispatched kick killed before response remains paused without replay (245.918291ms)
+  Error: SUT failed to start: /Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61
+      throw new ControlError(
+            ^
+  
+  ControlError: Commit engineering and product sources before starting the controlled SUT
+      at sourceRevision (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity-server.ts:20:18) {
+    status: 409
+  }
+  
+  Node.js v24.21.0
+  
+      at <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:163:13)
+      at async start (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+      ... 3 lines matching cause stack trace ...
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    [cause]: Error: SUT exited: /Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61
+        throw new ControlError(
+              ^
+    
+    ControlError: Commit engineering and product sources before starting the controlled SUT
+        at sourceRevision (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity-server.ts:20:18) {
+      status: 409
+    }
+    
+    Node.js v24.21.0
+    
+        at <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:158:46)
+        at until (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/core-automation-fixture.ts:35:15)
+        at async start (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+        at async capacityFixture (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:195:3)
+        at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/integration/agent-kick-recovery.test.ts:91:13)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  }
+
+test at tests/integration/agent-kick-recovery.test.ts:122:1
+✖ CAP009 dispatch intent commit then pre-HTTP SIGKILL stays conservatively paused (249.913666ms)
+  Error: SUT failed to start: /Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61
+      throw new ControlError(
+            ^
+  
+  ControlError: Commit engineering and product sources before starting the controlled SUT
+      at sourceRevision (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity-server.ts:20:18) {
+    status: 409
+  }
+  
+  Node.js v24.21.0
+  
+      at <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:163:13)
+      at async start (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+      ... 3 lines matching cause stack trace ...
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    [cause]: Error: SUT exited: /Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61
+        throw new ControlError(
+              ^
+    
+    ControlError: Commit engineering and product sources before starting the controlled SUT
+        at sourceRevision (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity-server.ts:20:18) {
+      status: 409
+    }
+    
+    Node.js v24.21.0
+    
+        at <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:158:46)
+        at until (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/core-automation-fixture.ts:35:15)
+        at async start (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+        at async capacityFixture (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:195:3)
+        at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/integration/agent-kick-recovery.test.ts:123:13)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  }
+
+test at tests/integration/agent-kick-recovery.test.ts:162:1
+✖ CAP009 legacy executing intents without a dispatch stage remain paused (249.861625ms)
+  Error: SUT failed to start: /Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61
+      throw new ControlError(
+            ^
+  
+  ControlError: Commit engineering and product sources before starting the controlled SUT
+      at sourceRevision (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity-server.ts:20:18) {
+    status: 409
+  }
+  
+  Node.js v24.21.0
+  
+      at <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:163:13)
+      at async start (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+      ... 3 lines matching cause stack trace ...
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    [cause]: Error: SUT exited: /Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61
+        throw new ControlError(
+              ^
+    
+    ControlError: Commit engineering and product sources before starting the controlled SUT
+        at sourceRevision (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity/ownership.ts:61:11)
+        at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+        at async <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/scripts/qa-capacity-server.ts:20:18) {
+      status: 409
+    }
+    
+    Node.js v24.21.0
+    
+        at <anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:158:46)
+        at until (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/core-automation-fixture.ts:35:15)
+        at async start (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:157:5)
+        at async capacityFixture (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/support/capacity-control-fixture.ts:195:3)
+        at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/integration/agent-kick-recovery.test.ts:163:13)
+        at async Test.run (node:internal/test_runner/test:1409:7)
+        at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+  }

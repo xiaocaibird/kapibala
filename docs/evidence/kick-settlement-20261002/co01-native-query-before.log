@@ -1,0 +1,31 @@
+npm notice run kapibala-platform@0.1.0 npx
+npm notice run 'tsx' --test --test-name-pattern=combined runtime observation restores tests/integration/kick-database-deadline.test.ts
+✖ combined runtime observation restores native query before a deadline client is reused through pg callbacks (48.752125ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 219.52925
+
+✖ failing tests:
+
+test at tests/integration/kick-database-deadline.test.ts:24:1
+✖ combined runtime observation restores native query before a deadline client is reused through pg callbacks (48.752125ms)
+  AssertionError [ERR_ASSERTION]: the observer must not reinstall the expired deadline query during release
+  
+  false !== true
+  
+      at TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-test-fixtures/kapibala/tests/integration/kick-database-deadline.test.ts:66:14)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

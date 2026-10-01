@@ -1,6 +1,17 @@
 import pg, { type QueryResult, type QueryResultRow, type PoolClient } from "pg";
 import { AsyncLocalStorage } from "node:async_hooks";
+import { installTestTransactionObserver } from "./test-transaction-observer.js";
 import type { PlatformEventArguments } from "../../../../packages/contracts/src/index.js";
+import {
+  currentDatabaseDeadline,
+  DeadlineConnection,
+} from "./database-deadline.js";
+export {
+  currentDatabaseDeadline,
+  withDatabaseDeadline,
+  withoutDatabaseDeadline,
+  DatabaseDeadlineExceededError,
+} from "./database-deadline.js";
 
 const operationSignals = new AsyncLocalStorage<AbortSignal>();
 export function currentOperationSignal(): AbortSignal | undefined {
@@ -117,13 +128,31 @@ export class Database implements Queryable {
     values?: unknown[],
   ): Promise<QueryResult<R>> {
     guardOperation();
+    const deadline = currentDatabaseDeadline();
+    if (deadline !== undefined) {
+      const connection = await DeadlineConnection.connect(this.pool, deadline);
+      try {
+        guardOperation();
+        const result = await connection.client.query<R>(sql, values);
+        guardOperation();
+        return result;
+      } finally {
+        await connection.release();
+      }
+    }
     const result = await this.pool.query<R>(sql, values);
     guardOperation();
     return result;
   }
   async transaction<T>(fn: (tx: PoolClient) => Promise<T>): Promise<T> {
     guardOperation();
-    const tx = await this.pool.connect();
+    const deadline = currentDatabaseDeadline();
+    const bounded =
+      deadline === undefined
+        ? undefined
+        : await DeadlineConnection.connect(this.pool, deadline);
+    const tx = bounded?.client ?? (await this.pool.connect());
+    const observation = installTestTransactionObserver(tx);
     const controller = new AbortController();
     const signal = scopedSignal(controller);
     let connectionFailed = false;
@@ -136,7 +165,9 @@ export class Database implements Queryable {
     try {
       return await operationSignals.run(signal, async () => {
         signal.throwIfAborted();
-        await tx.query("BEGIN");
+        await (observation
+          ? observation.query("begin", () => tx.query("BEGIN"))
+          : tx.query("BEGIN"));
         const events: PendingEvent[] = [];
         const result = await transactionEvents.run({ tx, events }, () =>
           fn(tx),
@@ -146,22 +177,28 @@ export class Database implements Queryable {
         // No transaction may hold this lock and then wait for another domain row.
         await persistEvents(tx, events);
         signal.throwIfAborted();
-        await tx.query("COMMIT");
+        await (observation
+          ? observation.query("commit", () => tx.query("COMMIT"))
+          : tx.query("COMMIT"));
         return result;
       });
     } catch (error) {
       // A rollback on a broken socket must not hide the original failure.
-      if (!connectionFailed) {
+      if (!connectionFailed && !bounded?.poisoned) {
         try {
-          await tx.query("ROLLBACK");
+          await (observation
+            ? observation.query("rollback", () => tx.query("ROLLBACK"))
+            : tx.query("ROLLBACK"));
         } catch {
           connectionFailed = true;
         }
       }
       throw error;
     } finally {
+      observation?.release();
       tx.removeListener("error", onError);
-      tx.release(connectionFailed);
+      if (bounded) await bounded.release(connectionFailed);
+      else tx.release(connectionFailed);
     }
   }
   // Session locks span remote calls. A lease alone cannot fence a still-running remote request.
@@ -184,6 +221,7 @@ export class Database implements Queryable {
     if (this.activeLocks >= 8) return { status: "capacity_unavailable" };
     this.activeLocks++;
     let client: PoolClient | undefined;
+    let bounded: DeadlineConnection | undefined;
     const controller = new AbortController();
     const signal = scopedSignal(controller);
     let connectionFailed = false;
@@ -194,7 +232,12 @@ export class Database implements Queryable {
       controller.abort(error);
     };
     try {
-      client = await this.pool.connect();
+      const deadline = currentDatabaseDeadline();
+      bounded =
+        deadline === undefined
+          ? undefined
+          : await DeadlineConnection.connect(this.pool, deadline);
+      client = bounded?.client ?? (await this.pool.connect());
       client.on("error", onError);
       signal.throwIfAborted();
       const r = await client.query<{ locked: boolean }>(
@@ -214,7 +257,7 @@ export class Database implements Queryable {
       throw error;
     } finally {
       try {
-        if (client && locked && !connectionFailed) {
+        if (client && locked && !connectionFailed && !bounded?.poisoned) {
           try {
             await client.query(
               "SELECT pg_advisory_unlock(hashtextextended($1, 0))",
@@ -227,7 +270,8 @@ export class Database implements Queryable {
         }
       } finally {
         client?.removeListener("error", onError);
-        client?.release(connectionFailed);
+        if (bounded) await bounded.release(connectionFailed);
+        else client?.release(connectionFailed);
         this.activeLocks--;
       }
     }
