@@ -1,0 +1,200 @@
+{
+  "reviewedAt": "2026-10-01T15:36:07.645690+00:00",
+  "reviewer": "Independent AI QA file-only review",
+  "basis": {
+    "runId": "2026-10-01T15-29-58.209Z-a06abe2a",
+    "phase": "developer-preflight",
+    "sutRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+    "qaRevision": "02ea807faed44ebaed8a41741f4056de8e04e87a",
+    "targetSha256": "f4b8af5af353520cbf776b42be407f97598c5f032fd4ff04219eb57f38557aab",
+    "qaTreeSha256": "750fb6a6395683331f9e4506bc9f62861dc49c00018fa493188f74e0d67f1dbb"
+  },
+  "rawEvent": {
+    "id": "INT-READ-001",
+    "status": "BLOCKED",
+    "reason": "BlockedError: [BLOCKED] 真实locker身份或ACCESS EXCLUSIVE持锁未证实",
+    "durationMs": 5106,
+    "attempt": 0,
+    "startedAt": "2026-10-01T15:29:58.807Z",
+    "completedAt": "2026-10-01T15:30:03.913Z",
+    "project": "system",
+    "evidence": [
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence",
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/error-context.md",
+      "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/trace.zip"
+    ]
+  },
+  "rawStatus": "BLOCKED",
+  "reviewedStatus": "BLOCKED",
+  "classification": "QA fixture decoding defect; intended scenario not completed",
+  "runner": {
+    "runnerStatus": "failed",
+    "runnerErrors": [],
+    "completedAt": "2026-10-01T15:30:04.994Z"
+  },
+  "rawIntegrity": [
+    "执行器整体状态: failed"
+  ],
+  "cause": {
+    "expectedRelationOid": 16447,
+    "expectedJsType": "number",
+    "actualJsonRelation": "16447",
+    "actualJsonJsType": "string",
+    "actualLocker": {
+      "pid": 69,
+      "datname": "qa_28e23dcabce14e80be3f0a6b",
+      "usename": "qa",
+      "application_name": "qa-int-read-locker-7d051fad-e878-4d46-a630-6bd98b67ebac",
+      "backend_start": "2026-10-01 15:30:00.468878+00",
+      "xact_start": "2026-10-01 15:30:01.646358+00",
+      "query_start": "2026-10-01 15:30:01.647404+00",
+      "state": "idle in transaction",
+      "wait_event_type": "Client",
+      "wait_event": "ClientRead",
+      "query": "LOCK TABLE public.messages IN ACCESS EXCLUSIVE MODE",
+      "blockers": [],
+      "relation_locks": [
+        {
+          "relation": "16447",
+          "mode": "AccessExclusiveLock",
+          "granted": true
+        }
+      ]
+    },
+    "sameBackendStartAndDatabase": true,
+    "actualLockHeld": true,
+    "strictComparisonRejectedCanonicalOidRepresentation": true
+  },
+  "timing": {
+    "lockerAcquired": {
+      "at": "2026-10-01T15:30:01.647Z",
+      "parentMs": 2999.448958
+    },
+    "onlyPgSample": {
+      "at": "2026-10-01T15:30:01.650Z",
+      "beforeMs": 2999.496917,
+      "afterMs": 3002.230125
+    },
+    "qaLockerRollback": {
+      "beforeMs": 3002.319833,
+      "afterMs": 3002.61175,
+      "at": "2026-10-01T15:30:01.651Z"
+    },
+    "toolActualCompletionObserved": false,
+    "physicalFiveSecondVerdict": null,
+    "caseDurationNotToolDuration": true
+  },
+  "notExecuted": [
+    "post-gateway-release blocked reader collection",
+    "while-locked actual tool return and timing",
+    "after-return PG query/transaction diagnostic",
+    "post-unlock original sent and same-key reuse assertions",
+    "same-attempt history completion"
+  ],
+  "sideEffectsAtCleanupSnapshot": {
+    "sendRequests": 1,
+    "actualSendEffects": 0,
+    "toolAudits": 1,
+    "qualification": "Test exited during fixture check; delayed actual-send effect was not observed. Do not infer failed or successful final message delivery."
+  },
+  "qaCleanup": {
+    "clientEnd": [
+      {
+        "role": "locker",
+        "endCompleted": true,
+        "at": "2026-10-01T15:30:01.652Z"
+      },
+      {
+        "role": "observer",
+        "endCompleted": true,
+        "at": "2026-10-01T15:30:01.663Z"
+      }
+    ],
+    "pgErrors": [],
+    "fixtureCleanup": {
+      "completedAt": "2026-10-01T15:30:04.748Z",
+      "failures": []
+    }
+  },
+  "sutRollbackProven": false,
+  "remainingCorrelationGap": "Tool execution attempt is not yet associated with real PostgreSQL backend/query/transaction; this run ended before even collecting candidate readers. No claim of SUT ROLLBACK success.",
+  "minimalCorrection": "Explicit SQL cast l.relation::bigint in diagnostic JSON builder; owner, backend_start, lock mode and actual blocking checks unchanged. Static typecheck and original 5 tool tests passed; real-PG new-version test is pending root execution. Old B retained.",
+  "sourceIndex": {
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/manifest.json": {
+      "sha256": "607766afa220a70e5c37b0d4e27c448250b8e794dfe732d0e624bbb22ab6755c",
+      "bytes": 98817
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/events.json": {
+      "sha256": "cd94f677337af23f61613212b19282658ef0082653d8e1aa5f288a45e12c93f9",
+      "bytes": 1022
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/results.json": {
+      "sha256": "44c4a8af4a2ca090c08b47d1beb2b3e00e588c3de25e7f087dfeed89ca43e9b6",
+      "bytes": 231297
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/runner-summary.json": {
+      "sha256": "7f7bd4c2a49769f1a5edaed540daa63858ff0d458ead39f98cd043512c553502",
+      "bytes": 97
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/acceptance.md": {
+      "sha256": "f2387f3a2b26b504572739854bb021402d3f078fd93de5dd73cde7fb515fe95b",
+      "bytes": 183997
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/junit.xml": {
+      "sha256": "b1dd776094da0d693e963475f02b08be9c0a2082a868c223c3528c208bb31632",
+      "bytes": 462
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/delivery-read-raw-database-observation.json": {
+      "sha256": "091649abd5802ea4e95273e1a79808ff1c4cbeeeb20575ceb5eb8dd46fa0a405",
+      "bytes": 29837
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-106667c9-f7a3-4bf0-b0ce-726e6bb6d220.json": {
+      "sha256": "ac288e0b3af255946174a0098392490bdefbed619b6c5d933eb0f62c723e7ab9",
+      "bytes": 10553
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/cleanup.json": {
+      "sha256": "58a909b83b4cdac1d98e3850cc0d673f852f7560f7d535074d96cb2f438a7b7b",
+      "bytes": 65
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-be1ebe9c-c169-491a-8f39-ed26fb3aa7d1.json": {
+      "sha256": "dff4f6d0551ac38fa6e13531a8de74af41ed6896f6660ce640405534c7829a97",
+      "bytes": 688
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/delivery-read-before-lock.json": {
+      "sha256": "4ab319916eb81e9076859f6b9afe9fa77b53620fe4dc9edbe4063ea0283e6853",
+      "bytes": 9843
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-0f3b8463-e917-4676-9c78-8942a77d7baf.json": {
+      "sha256": "77116c9a70556c4c1ca24e3b2097d83b55a357de19a5a15a5f9c55006f57a2d3",
+      "bytes": 10559
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/external-facts.json": {
+      "sha256": "52d3f5198736f5f9e21800572bfa601cdb43374a19eb4622c05a2e951ba2303c",
+      "bytes": 18160
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/environment.json": {
+      "sha256": "f9177e5a08e092fbed3b739e163f99b6ca6440adb12aeaebb6a7875f16a46110",
+      "bytes": 1165
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/runtime-control-28e7880d-fc5d-45f7-9b29-727b8789f928.json": {
+      "sha256": "996a984140429d8a204e67d78a57c61bcafd74ff3219e5632c24e1a13e08fbda",
+      "bytes": 10553
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/api.ndjson": {
+      "sha256": "00887339563a8e30dbf5a8b837f70c0f2ba65cc20538b3606dc4f12944cb1b7d",
+      "bytes": 38851
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence/server.log": {
+      "sha256": "44ed50ef70b872b235a6d046fca017a69d5ce094c4cca3f0e5e9b17464de63dd",
+      "bytes": 18531
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/error-context.md": {
+      "sha256": "cabce601ca5950600c0362275296c614154c86ba0d1e218c6590591cff4ebb1e",
+      "bytes": 5487
+    },
+    "reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/trace.zip": {
+      "sha256": "6efed287843903688fc59b5ffe9ca0dbfe02a451e1a7bcd370a08619ecf77d70",
+      "bytes": 5994
+    }
+  }
+}

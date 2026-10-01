@@ -1,0 +1,123 @@
+[
+  {
+    "priority": "P1",
+    "mode": "automated",
+    "preconditions": [
+      "产品执行须绑定已交付固定候选及新授权；独立PG、网关、Agent和浏览器上下文",
+      "公开UI routes/selectors适配已确认，至少3服务账号"
+    ],
+    "data": {
+      "projects": [
+        "chromium"
+      ],
+      "firstTool": "审计pass并真实sent",
+      "secondTool": "500、非法JSON、unknown三次无明确结论"
+    },
+    "timing": [
+      "所有准备/终态采样上限仅诊断，未形成前提判BLOCKED；不新增业务SLA或5秒/60秒容差"
+    ],
+    "faults": [
+      "只使用独立Agent真实响应/屏障和公开API；不改写产品状态、浏览器响应或DOM"
+    ],
+    "evidence": [
+      "公开API实际runId/status/endReason/steps及独立网关请求和落地账本",
+      "浏览器trace、每个状态的实际可见文字及截图；缺失前提单独保留"
+    ],
+    "cleanup": [
+      "finally释放仅本例Agent屏障；独立fixture关闭浏览器与自有进程/数据库"
+    ],
+    "automation": "tests/ui/console.spec.ts",
+    "id": "UI-038",
+    "title": "审计阻塞说明不否认前序真实成功副作用",
+    "requirements": [
+      "R-A5-07",
+      "R-A5-14",
+      "R-A6-03",
+      "R-B4-02"
+    ],
+    "preparation": {
+      "state": "script-ready",
+      "owner": "QA",
+      "details": [
+        "现有公开API与独立Agent/Gateway可建立两工具事实链；尚未在新候选执行"
+      ]
+    },
+    "steps": [
+      "第一工具真实send_message；在第二模型响应屏障内确认公开sent、独立远端一条落地、第一步骤成功",
+      "释放第二工具响应，三次审计无结论后观察blocked/audit_blocked，第二工具零发送，前一条消息和成功步骤保留",
+      "登录群详情，按API实际runId选择唯一运行链接；核对该运行列表与详情的阻塞说明",
+      "页面说明须限定本次工具并提示前序步骤可能已执行；核对查看前后公开轨迹不变"
+    ],
+    "expected": [
+      "同run第一工具真实成功一次，第二工具审计三次但无副作用，合计4次审计且无虚构重发",
+      "列表及详情不宣称整个run没有副作用或已经回滚；不要求固定文案逐字相等",
+      "前序工具/文本与被阻塞工具/文本可查看，活动run引用清空；纯查看不改变事实"
+    ]
+  },
+  {
+    "priority": "P1",
+    "mode": "automated",
+    "preconditions": [
+      "产品执行须绑定已交付固定候选及新授权；独立PG、网关、Agent和浏览器上下文",
+      "公开UI routes/selectors适配已确认，至少3服务账号"
+    ],
+    "data": {
+      "projects": [
+        "chromium"
+      ],
+      "requiredStates": [
+        "failed/wall_clock/steps=[]",
+        "cancelled/cancelled/steps=[]"
+      ],
+      "notEvidence": [
+        "3次协议错误产生3步的failed",
+        "已有工具完成后的cancelled",
+        "组件静态渲染或伪造API响应"
+      ]
+    },
+    "timing": [
+      "所有准备/终态采样上限仅诊断，未形成前提判BLOCKED；不新增业务SLA或5秒/60秒容差"
+    ],
+    "faults": [
+      "只使用独立Agent真实响应/屏障和公开API；不改写产品状态、浏览器响应或DOM"
+    ],
+    "evidence": [
+      "公开API实际runId/status/endReason/steps及独立网关请求和落地账本",
+      "浏览器trace、每个状态的实际可见文字及截图；缺失前提单独保留"
+    ],
+    "cleanup": [
+      "finally释放仅本例Agent屏障；独立fixture关闭浏览器与自有进程/数据库"
+    ],
+    "automation": "tests/ui/console.spec.ts",
+    "id": "UI-039",
+    "title": "真实零步骤failed与cancelled详情不再提示等待第一步",
+    "requirements": [
+      "R-A5-06",
+      "R-A5-13",
+      "R-A5-14",
+      "R-B4-02"
+    ],
+    "preparation": {
+      "state": "dependency-pending",
+      "owner": "QA与工程观测接入",
+      "details": [
+        "已实现公开取消尝试和逐状态页面/外部事实断言；模型响应屏障是已派发窗口，不能保证零步骤",
+        "failed需真实创建后/首次派发前可控活动窗口；当前协议没有该入口，禁止SQL伪造终态或active_ms",
+        "cancelled若当前模型轮合法完成产生步骤，零步骤文案子场景仍BLOCKED；任何独立已证实副作用违约不得被BLOCKED覆盖"
+      ]
+    },
+    "steps": [
+      "真实外部消息创建run，首个模型响应在独立Agent屏障内保留；记录实际已派发与公开步骤，公开关闭agentEnabled后释放当前轮",
+      "观察实际取消结果并记录；仅真实cancelled且steps=[]时进入该状态的页面文案验证，未形成则记子场景BLOCKED",
+      "failed子场景仅接受真实活动预算导致公开failed/wall_clock/steps=[]；缺少可控创建后首派发前窗口时明确BLOCKED，不构造不存在接口",
+      "对每个真实零步终态，登录→群→精确runId详情，确认终态/无步骤说明且没有等待第一步提示；重新API读取确认页面未改事实",
+      "合并两状态：分别有证据才允许整例PASS，任一真实UI违约FAIL，缺失状态保留BLOCKED"
+    ],
+    "expected": [
+      "终态无步骤页面不能提示仍在等待第一步；须实际显示无步骤，不把加载未完成/空白当通过",
+      "取消与失败各自状态/endReason/steps、活动引用、零外部发送和零审计由公开API/独立账本证明",
+      "不会为了得到零步骤去删除真实已完成步骤、提前终止当前合法步骤或篡改账本",
+      "没有真实零步骤前提不证明文案错误，但必须保留该状态未验收，不能合并成已通过"
+    ]
+  }
+]

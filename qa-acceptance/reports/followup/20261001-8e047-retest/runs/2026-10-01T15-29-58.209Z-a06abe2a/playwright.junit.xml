@@ -1,0 +1,45 @@
+<testsuites id="" name="" tests="1" failures="0" skipped="0" errors="1" time="6.511664000000001">
+<testsuite name="system/delivery-read-boundaries.spec.ts" timestamp="2026-10-01T15:29:58.636Z" hostname="system" tests="1" failures="0" skipped="0" time="5.106" errors="1">
+<testcase name="[INT-READ-001] actual database lock cannot be hidden by abandoned delivery reads or same-key resend" classname="system/delivery-read-boundaries.spec.ts" time="5.106">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/error-context.md]]
+
+[[ATTACHMENT|artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/trace.zip]]
+]]>
+</system-out>
+<error message="[BLOCKED] 真实locker身份或ACCESS EXCLUSIVE持锁未证实" type="BlockedError">
+<![CDATA[  [system] › system/delivery-read-boundaries.spec.ts:45:1 › [INT-READ-001] actual database lock cannot be hidden by abandoned delivery reads or same-key resend 
+
+    BlockedError: [BLOCKED] 真实locker身份或ACCESS EXCLUSIVE持锁未证实
+
+       at support/delivery-read-observation.ts:76
+
+      74 |     )
+      75 |   )
+    > 76 |     throw new BlockedError('真实locker身份或ACCESS EXCLUSIVE持锁未证实');
+         |           ^
+      77 |   return sample.activities.filter(
+      78 |     (row) =>
+      79 |       row.pid !== owner.lockerPid &&
+        at blockedMessageReaders (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/support/delivery-read-observation.ts:76:11)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/delivery-read-boundaries.spec.ts:282:5
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T15-29-58.209Z-a06abe2a/artifacts/system-delivery-read-bound-f1836-ry-reads-or-same-key-resend-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+</testsuites>

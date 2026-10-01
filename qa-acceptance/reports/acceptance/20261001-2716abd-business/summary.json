@@ -1,0 +1,3786 @@
+{
+  "formatVersion": 1,
+  "reportKind": "independent-qa-full-business-acceptance",
+  "candidate": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+  "qaRevision": "ec46f9b30fb2f5a312c92fc78463ddbfe200042f",
+  "qaTreeBeforeSha256": "40b301c87542929beab4974f140879da2a698ac9498056cc2c3a3c5c1f52b0bd",
+  "qaTreeAfterSha256": "40b301c87542929beab4974f140879da2a698ac9498056cc2c3a3c5c1f52b0bd",
+  "businessSha256": "8738023cc523dfbddebf347135a4c2883bac6eab98afea93c0b79e387b6d500c",
+  "targetSha256": "6ccd4df091116eea6ee0324771526dde531bb834d5e3264bc76c5e9f706a028e",
+  "originalRequirementSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+  "dependencyLockSha256": "7462a4670d1e4036156d1639ebfeaa0cd4276bc918d1b805b3677d862c2cb883",
+  "startedAt": "2026-10-01T14:26:25.113Z",
+  "completedAt": "2026-10-01T15:04:32.133Z",
+  "conclusions": {
+    "businessConformity": "FAIL",
+    "unconditionalAcceptance": false,
+    "releaseReadiness": "NOT_ASSESSED",
+    "C1C2": "MATERIALS_RECEIVED_NOT_EXECUTED"
+  },
+  "metrics": {
+    "requirementCount": 116,
+    "caseCount": 254,
+    "automatedCaseCount": 248,
+    "manualCaseCount": 6,
+    "automatedCaseProjectPairs": 256,
+    "totalCaseProjectPairs": 262,
+    "caseCounts": {
+      "PASS": 240,
+      "FAIL": 5,
+      "BLOCKED": 9,
+      "NOT_RUN": 0
+    },
+    "obligationCounts": {
+      "PASS": 248,
+      "FAIL": 5,
+      "BLOCKED": 9,
+      "NOT_RUN": 0
+    },
+    "automaticRetries": 0,
+    "attemptRecordRatePercent": 100,
+    "definiteExecutionRatePercent": 96.45669291338582,
+    "casePassRatePercent": 94.48818897637796
+  },
+  "integrity": [],
+  "runnerErrors": [],
+  "results": [
+    {
+      "id": "CAP-REG-001",
+      "status": "PASS",
+      "durationMs": 3941,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity--CAP-REG-0-97ac8-during-overlapping-requests-system/evidence"
+      ],
+      "title": "不同群同名目标的重叠 kick 保持各自审计、步骤和副作用唯一",
+      "requirements": [
+        "R-A5-01",
+        "R-A5-07",
+        "R-A5-08",
+        "R-A5-09"
+      ],
+      "automation": "tests/system/capacity.spec.ts"
+    },
+    {
+      "id": "CAP-REG-002",
+      "status": "PASS",
+      "durationMs": 1893,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity--CAP-REG-0-24249-dispatch-after-audit-passes-system/evidence"
+      ],
+      "title": "审计等待期间关闭 autoKick 后不得继续派发",
+      "requirements": [
+        "R-A5-07",
+        "R-A5-09"
+      ],
+      "automation": "tests/system/capacity.spec.ts"
+    },
+    {
+      "id": "CAP-REG-003",
+      "status": "PASS",
+      "durationMs": 1905,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity--CAP-REG-0-d18b6--dispatching-a-stale-choice-system/evidence"
+      ],
+      "title": "审计等待后重新检查执行账号在线状态",
+      "requirements": [
+        "R-A5-07",
+        "R-A5-08"
+      ],
+      "automation": "tests/system/capacity.spec.ts"
+    },
+    {
+      "id": "CAP-REG-004",
+      "status": "PASS",
+      "durationMs": 1982,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity--CAP-REG-0-0969c-itute-for-an-eligible-actor-system/evidence"
+      ],
+      "title": "审计等待后成员身份和管理员角色均重新检查",
+      "requirements": [
+        "R-A5-07",
+        "R-A5-08"
+      ],
+      "automation": "tests/system/capacity.spec.ts"
+    },
+    {
+      "id": "CAP-001",
+      "status": "PASS",
+      "durationMs": 3247,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity-control--C-c40a9--original-audited-step-once-system/evidence"
+      ],
+      "title": "确证容量拒绝后零远端且释放后同一步只审计/踢人一次",
+      "requirements": [
+        "ENG-ADMISSION-01",
+        "R-A5-05",
+        "R-A5-07",
+        "R-A5-09"
+      ],
+      "automation": "tests/system/capacity-control.spec.ts"
+    },
+    {
+      "id": "CAP-002",
+      "status": "PASS",
+      "durationMs": 4826,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity-control--C-3baf2-ish-and-prevents-later-work-system/evidence"
+      ],
+      "title": "容量拒绝后关闭 Agent，原当前步完成后取消且无后续工作",
+      "requirements": [
+        "ENG-ADMISSION-01",
+        "R-A5-13"
+      ],
+      "automation": "tests/system/capacity-control.spec.ts"
+    },
+    {
+      "id": "CAP-003",
+      "status": "BLOCKED",
+      "reason": "BlockedError: [BLOCKED] capacity actual activity budget: [BLOCKED] 活动真值区间跨越60秒上限；不能证明上限符合，不引入尾差容忍; capacity actual stop decision: [BLOCKED] 实际停止决定区间跨60000ms，不能用公开终态或提交时间补证",
+      "durationMs": 63841,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/trace.zip"
+      ],
+      "title": "持续容量拒绝计入原 60 秒活动预算",
+      "requirements": [
+        "ENG-ADMISSION-01",
+        "R-A5-05",
+        "R-A5-06"
+      ],
+      "automation": "tests/system/capacity-control.spec.ts"
+    },
+    {
+      "id": "CAP-004",
+      "status": "PASS",
+      "durationMs": 2226,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity-control--C-c5457-o-effect-admission-deferral-system/evidence"
+      ],
+      "title": "容量等待期间关闭踢人政策再次检查",
+      "requirements": [
+        "ENG-ADMISSION-01",
+        "R-A5-07",
+        "R-A5-09"
+      ],
+      "automation": "tests/system/capacity-control.spec.ts"
+    },
+    {
+      "id": "CAP-005",
+      "status": "PASS",
+      "durationMs": 4080,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity-control--C-5c31e-cancels-without-a-late-kick-system/evidence"
+      ],
+      "title": "容量等待期间群变不可写阻止迟发踢人",
+      "requirements": [
+        "ENG-ADMISSION-01",
+        "R-A2-11",
+        "R-A5-13"
+      ],
+      "automation": "tests/system/capacity-control.spec.ts"
+    },
+    {
+      "id": "CAP-006",
+      "status": "PASS",
+      "durationMs": 4694,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity-control--C-1b5ac-administrator-qualification-system/evidence"
+      ],
+      "title": "容量等待后在线、成员与管理员资格复核",
+      "requirements": [
+        "ENG-ADMISSION-01",
+        "R-A1-04",
+        "R-A5-08"
+      ],
+      "automation": "tests/system/capacity-control.spec.ts"
+    },
+    {
+      "id": "CAP-007",
+      "status": "PASS",
+      "durationMs": 5564,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity-control--C-ce353-ified-removed-member-result-system/evidence"
+      ],
+      "title": "容量等待中目标退出或重新加入后按同一用户身份完成移除且不重复",
+      "requirements": [
+        "ENG-ADMISSION-01",
+        "R-A5-09",
+        "R-A5-11"
+      ],
+      "automation": "tests/system/capacity-control.spec.ts"
+    },
+    {
+      "id": "CAP-008",
+      "status": "PASS",
+      "durationMs": 5524,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity-control--C-45f2f-nership-or-permission-error-system/evidence"
+      ],
+      "title": "容量延期后真实网关群主或权限错误仍按原业务契约返回",
+      "requirements": [
+        "ENG-ADMISSION-01",
+        "R-A5-09"
+      ],
+      "automation": "tests/system/capacity-control.spec.ts"
+    },
+    {
+      "id": "CAP-009",
+      "status": "PASS",
+      "durationMs": 3559,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity-control--C-479cb-run-without-replaying-audit-system/evidence"
+      ],
+      "title": "容量已拒绝但 ready 持久化之前崩溃的恢复",
+      "requirements": [
+        "ENG-ADMISSION-01",
+        "R-A5-11"
+      ],
+      "automation": "tests/system/capacity-control.spec.ts"
+    },
+    {
+      "id": "CAP-010",
+      "status": "PASS",
+      "durationMs": 4222,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-capacity-control--C-2769f-and-replay-the-unknown-kick-system/evidence"
+      ],
+      "title": "已派发且2秒内收敛的504踢人遇容量压力不退回重放",
+      "requirements": [
+        "ENG-ADMISSION-01",
+        "R-A5-09",
+        "R-A5-11"
+      ],
+      "automation": "tests/system/capacity-control.spec.ts"
+    },
+    {
+      "id": "ARC-API-001",
+      "status": "PASS",
+      "durationMs": 811,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-sequence-contracts--ARC-API-001-序列定义拒绝额外字段、非法类型和不连续步号-system/evidence"
+      ],
+      "title": "序列定义的独立严格输入矩阵",
+      "requirements": [
+        "ENG-CONTRACT-01",
+        "R-B1-02",
+        "R-A0-03"
+      ],
+      "automation": "tests/api/sequence-contracts.spec.ts"
+    },
+    {
+      "id": "ARC-API-002",
+      "status": "PASS",
+      "durationMs": 3024,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-sequence-contracts--ARC-API-002-启动参数拒绝类型与键错误且失败后合法请求可执行-system/evidence"
+      ],
+      "title": "序列启动的键类型边界与失败后可重试",
+      "requirements": [
+        "ENG-CONTRACT-01",
+        "R-B1-02",
+        "R-A0-03"
+      ],
+      "automation": "tests/api/sequence-contracts.spec.ts"
+    },
+    {
+      "id": "ARC-API-003",
+      "status": "PASS",
+      "durationMs": 5531,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-sequence-contracts--ARC-API-003-缺省变量对象与显式空对象兼容-system/evidence"
+      ],
+      "title": "序列启动缺省变量对象兼容",
+      "requirements": [
+        "ENG-CONTRACT-01",
+        "R-B1-02",
+        "R-A0-03"
+      ],
+      "automation": "tests/api/sequence-contracts.spec.ts"
+    },
+    {
+      "id": "ARC-UI-BLK-001",
+      "status": "PASS",
+      "durationMs": 6239,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/attachments/resource-observation-final-dd8b3a70ac4ab07904c9f285cfc17146b9228cab.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-observation-boundaries--d3e18-001-通用账号资源读取失败不能提前确认未呈现的新状态-chromium/evidence"
+      ],
+      "title": "通用资源读取失败不能提交成功快照或提前确认未呈现提醒",
+      "requirements": [
+        "ENG-READ-02",
+        "ADD-ATT-03"
+      ],
+      "automation": "tests/ui/observation-boundaries.spec.ts"
+    },
+    {
+      "id": "ARC-UI-001",
+      "status": "PASS",
+      "durationMs": 3224,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-001-序列定义额外字段明确拒绝而非静默剥离-chromium/attachments/architecture-final-40a7b0e5dff26c851368d8ac8a9f3c4c75aecf2f.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-001-序列定义额外字段明确拒绝而非静默剥离-chromium/attachments/architecture-browser-eb1dc6bca80171a8d9f0fda2d614815d4774b4a2.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-001-序列定义额外字段明确拒绝而非静默剥离-chromium/attachments/architecture-final-057a4cc139806677ff023abc547524317d51b4e2.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-001-序列定义额外字段明确拒绝而非静默剥离-chromium/evidence"
+      ],
+      "title": "序列定义额外字段明确拒绝而非静默剥离",
+      "requirements": [
+        "ENG-CONTRACT-01"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-002",
+      "status": "PASS",
+      "durationMs": 4015,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-002-非连续或重复步号在浏览器阻止提交-chromium/attachments/architecture-final-43877690c560e81c8cf035d400ce83edd622fae3.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-002-非连续或重复步号在浏览器阻止提交-chromium/attachments/architecture-browser-8203bea5b008164564ac6f7c9d8b26b2fecff95c.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-002-非连续或重复步号在浏览器阻止提交-chromium/attachments/architecture-final-0aa04fb75443ab139eec360f3f5123f2f12e82a0.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-002-非连续或重复步号在浏览器阻止提交-chromium/evidence"
+      ],
+      "title": "非连续或重复步号在浏览器阻止提交",
+      "requirements": [
+        "ENG-CONTRACT-01"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-003",
+      "status": "PASS",
+      "durationMs": 4003,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-003-已登记序列尺寸边界在浏览器明确拒绝-chromium/attachments/architecture-final-dff9d82bfc858ab2f91c26ce5efe5f3ee0033cd7.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-003-已登记序列尺寸边界在浏览器明确拒绝-chromium/attachments/architecture-browser-9762b5ac6ee4d0a89789da5ce2c0fd2730a2f9ee.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-003-已登记序列尺寸边界在浏览器明确拒绝-chromium/attachments/architecture-final-557e1bdeb7ab7dd7fe883c684d77372b9ad91c97.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-003-已登记序列尺寸边界在浏览器明确拒绝-chromium/evidence"
+      ],
+      "title": "已登记序列尺寸边界在浏览器明确拒绝",
+      "requirements": [
+        "ENG-CONTRACT-01"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-004",
+      "status": "PASS",
+      "durationMs": 9823,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-004-vars和stepVars非法键值不发预检或启动请求-chromium/attachments/architecture-final-a5cac9912abf1b87a601f6904457b466e77e95a2.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-004-vars和stepVars非法键值不发预检或启动请求-chromium/attachments/architecture-browser-b48eb1df6f9d6bec4b5227da2896d22d7e87543d.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-004-vars和stepVars非法键值不发预检或启动请求-chromium/attachments/architecture-final-b1158c94cee36183cbf92d648ade05a14e805558.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-004-vars和stepVars非法键值不发预检或启动请求-chromium/evidence"
+      ],
+      "title": "vars和stepVars非法键值不发预检或启动请求",
+      "requirements": [
+        "ENG-CONTRACT-01"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-005",
+      "status": "PASS",
+      "durationMs": 4848,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-005-合法序列一次保存并保留公开输入行为-chromium/attachments/architecture-final-04c36dbe9e836b22d22fb77612a6b7dbed3a5390.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-005-合法序列一次保存并保留公开输入行为-chromium/attachments/architecture-browser-1189ba345843ef627b411dab7680b49e6617af0b.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-005-合法序列一次保存并保留公开输入行为-chromium/attachments/architecture-final-f94b1479d4c337471bb287643357c7ca386cacc9.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-005-合法序列一次保存并保留公开输入行为-chromium/evidence"
+      ],
+      "title": "合法序列一次保存并保留公开输入行为",
+      "requirements": [
+        "ENG-CONTRACT-01"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-006",
+      "status": "PASS",
+      "durationMs": 4879,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-006-序列写请求503失败不自动重放-chromium/attachments/architecture-final-ede147e412a1a4e2053f74e9010b945aa5d2a1f7.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-006-序列写请求503失败不自动重放-chromium/attachments/architecture-browser-b6940ca2ee11c9d9842f6f0afe4e23d4d15760be.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-006-序列写请求503失败不自动重放-chromium/attachments/architecture-final-1a61e980fc43a3c9b2ba036c839bfc1d18281045.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-006-序列写请求503失败不自动重放-chromium/evidence"
+      ],
+      "title": "序列写请求503失败不自动重放",
+      "requirements": [
+        "ENG-READ-02"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-007",
+      "status": "PASS",
+      "durationMs": 6194,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-007-无后续事件或轮询时两次503后自动呈现-chromium/attachments/architecture-final-743357027e2a8f56f1219573371c055ed0d11294.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-007-无后续事件或轮询时两次503后自动呈现-chromium/attachments/architecture-browser-b2dba06f598dc98920b43ae6833572acb4e4f544.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-007-无后续事件或轮询时两次503后自动呈现-chromium/attachments/architecture-final-883e3896de610ca14832d5b7d3fb6ffff2c08361.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-007-无后续事件或轮询时两次503后自动呈现-chromium/evidence"
+      ],
+      "title": "无后续事件或轮询时两次503后自动呈现",
+      "requirements": [
+        "ENG-READ-01"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-008",
+      "status": "PASS",
+      "durationMs": 5387,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-008-权限403不形成资源请求风暴-chromium/attachments/architecture-final-4bb13387d66c4b4ef371a1bf81fb30dcbeebe452.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-008-权限403不形成资源请求风暴-chromium/attachments/architecture-browser-3ff26c36c88873b84742cdf6985e65b84a1854a5.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-008-权限403不形成资源请求风暴-chromium/attachments/architecture-final-891115269a62a9cfe0847023ad1a275bbd6ca8b9.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-008-权限403不形成资源请求风暴-chromium/evidence"
+      ],
+      "title": "权限403不形成资源请求风暴",
+      "requirements": [
+        "ENG-READ-01"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-009",
+      "status": "PASS",
+      "durationMs": 5245,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-009-429不无视限流进行通用重试-chromium/attachments/architecture-final-743d4036d1c39a078729d31d6e2f97e51d87b905.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-009-429不无视限流进行通用重试-chromium/attachments/architecture-browser-87502596830951f573f9467a34ff5244a344851e.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-009-429不无视限流进行通用重试-chromium/attachments/architecture-final-7ecd27e55d90618555d67a70dd389d32250147d8.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-009-429不无视限流进行通用重试-chromium/evidence"
+      ],
+      "title": "429不无视限流进行通用重试",
+      "requirements": [
+        "ENG-READ-01"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-010",
+      "status": "PASS",
+      "durationMs": 5466,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-010-请求校验400不自动重试-chromium/attachments/architecture-final-c3f8a7e73eb493e4032c7e4034d5f1af51b98769.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-010-请求校验400不自动重试-chromium/attachments/architecture-browser-2f5702ba6c392c57dbc30c8835521968b6a7f90b.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-010-请求校验400不自动重试-chromium/attachments/architecture-final-0fc64795b31c076ea883eb8a2d805720abef632e.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-010-请求校验400不自动重试-chromium/evidence"
+      ],
+      "title": "请求校验400不自动重试",
+      "requirements": [
+        "ENG-READ-01"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-011",
+      "status": "PASS",
+      "durationMs": 5446,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-011-成功HTTP的非法响应格式不按502临时错误重试-chromium/attachments/architecture-final-c900b9916df99ac42e18ff86b0bd4cb62329666d.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-011-成功HTTP的非法响应格式不按502临时错误重试-chromium/attachments/architecture-browser-87699bb0748007c355fc3fded4d6dd85d51ffb9a.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-011-成功HTTP的非法响应格式不按502临时错误重试-chromium/attachments/architecture-final-5b5f9b23dab568b3fb6bd438faa0c32e5f3ac5a6.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-011-成功HTTP的非法响应格式不按502临时错误重试-chromium/evidence"
+      ],
+      "title": "成功HTTP的非法响应格式不按502临时错误重试",
+      "requirements": [
+        "ENG-READ-01"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-012",
+      "status": "PASS",
+      "durationMs": 7248,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-012-持续暂时失败耗尽后停止自动读取-chromium/attachments/architecture-final-5d1728938802f39bb29d355e661eb9046018865c.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-012-持续暂时失败耗尽后停止自动读取-chromium/attachments/architecture-browser-ae83be4a63d30014fa9c0c42a22fef8da2b3a606.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-012-持续暂时失败耗尽后停止自动读取-chromium/attachments/architecture-final-0acdfc743e7cc5363586ad87dad9e4eaa70149bc.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-012-持续暂时失败耗尽后停止自动读取-chromium/evidence"
+      ],
+      "title": "持续暂时失败耗尽后停止自动读取",
+      "requirements": [
+        "ENG-READ-01"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-013",
+      "status": "PASS",
+      "durationMs": 5589,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-013-切页取消旧读取及后续退避-chromium/attachments/architecture-final-31e9d9c96e99f434ad77c899531a6fda56dbdc7b.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-013-切页取消旧读取及后续退避-chromium/attachments/architecture-browser-bc6007e37ce0aa5bc75fc9da4d74c84b19694cd0.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-013-切页取消旧读取及后续退避-chromium/attachments/architecture-final-0ecaa78a6198b64dd584602598f6d02fa7b5d6f4.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-013-切页取消旧读取及后续退避-chromium/evidence"
+      ],
+      "title": "切页取消旧读取及后续退避",
+      "requirements": [
+        "ENG-READ-02"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-014",
+      "status": "PASS",
+      "durationMs": 5705,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-014-换身份期间旧读取迟到不能覆盖新会话-chromium/attachments/architecture-final-774bb8184332ceb790c633538f1e1e643c0b2743.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-014-换身份期间旧读取迟到不能覆盖新会话-chromium/attachments/architecture-browser-e32230b625ec0af71a8c1df20e817cc28c7e7fd6.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-014-换身份期间旧读取迟到不能覆盖新会话-chromium/attachments/architecture-final-0b23c728c1bf8a5909395ba7c6b974d7fad58b2e.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-014-换身份期间旧读取迟到不能覆盖新会话-chromium/evidence"
+      ],
+      "title": "换身份期间旧读取迟到不能覆盖新会话",
+      "requirements": [
+        "ENG-READ-02"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-015",
+      "status": "PASS",
+      "durationMs": 10436,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/attachments/architecture-final-d38d03dadf84c95eba71657def9f55f2cc604ba3.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/attachments/architecture-browser-a36199b9288219dd532a3f3a6595feca3ddb24eb.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/attachments/architecture-final-4a861aef1b345d38ab2a7bf9973a624aa3e42533.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/evidence"
+      ],
+      "title": "耗尽后显式同页刷新可开始新一轮",
+      "requirements": [
+        "ENG-READ-01"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-016",
+      "status": "PASS",
+      "durationMs": 5477,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-016-错误后离页取消退避期间的后续读取-chromium/attachments/architecture-final-f82516f16d63903fb4c265aee0bfe5716e60f5a9.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-016-错误后离页取消退避期间的后续读取-chromium/attachments/architecture-browser-2e317dae275283cecf68213c111f8916f278d19f.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-016-错误后离页取消退避期间的后续读取-chromium/attachments/architecture-final-1ec3285224a7d62b6b84baa34a4cc8089e1dcdc6.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-016-错误后离页取消退避期间的后续读取-chromium/evidence"
+      ],
+      "title": "错误后离页取消退避期间的后续读取",
+      "requirements": [
+        "ENG-READ-02"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-017",
+      "status": "PASS",
+      "durationMs": 7946,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-017-在途读取期间多个实时失效合并且不能延长失败预算-chromium/attachments/architecture-final-c5b43a1b4542f1e3a8d08c9704b91ba266ac3771.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-017-在途读取期间多个实时失效合并且不能延长失败预算-chromium/attachments/architecture-browser-7f412ff11b249fb5c76be43486a1d7b06e517b14.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-017-在途读取期间多个实时失效合并且不能延长失败预算-chromium/attachments/architecture-final-0724685f5948969db45458206666f5db09807642.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-017-在途读取期间多个实时失效合并且不能延长失败预算-chromium/evidence"
+      ],
+      "title": "在途读取期间多个实时失效合并且不能延长失败预算",
+      "requirements": [
+        "ENG-READ-02"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "ARC-UI-018",
+      "status": "PASS",
+      "durationMs": 19464,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-018-网络失败及其他已登记暂时HTTP错误均可自动恢复-chromium/attachments/architecture-final-6ad2d5cdaed1a5741a7cdf92246738d4d9b77e32.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-018-网络失败及其他已登记暂时HTTP错误均可自动恢复-chromium/attachments/architecture-browser-b3382de0989a9bed40504da8820bb5a486970517.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-018-网络失败及其他已登记暂时HTTP错误均可自动恢复-chromium/attachments/architecture-final-72d70370817a6c3175893703ee0a504ed4353952.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-architecture--ARC-UI-018-网络失败及其他已登记暂时HTTP错误均可自动恢复-chromium/evidence"
+      ],
+      "title": "网络失败及其他已登记暂时HTTP错误均可自动恢复",
+      "requirements": [
+        "ENG-READ-01"
+      ],
+      "automation": "tests/ui/architecture.spec.ts"
+    },
+    {
+      "id": "STATE-11",
+      "status": "PASS",
+      "durationMs": 800,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-11-state-transition-idle-to-idle-system/evidence"
+      ],
+      "title": "state transition idle to idle",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-12",
+      "status": "PASS",
+      "durationMs": 828,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-12-state-transition-idle-to-online-system/evidence"
+      ],
+      "title": "state transition idle to online",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-13",
+      "status": "PASS",
+      "durationMs": 783,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-13-state-transition-idle-to-rate-limited-system/evidence"
+      ],
+      "title": "state transition idle to rate_limited",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-14",
+      "status": "PASS",
+      "durationMs": 769,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-14-state-transition-idle-to-disconnected-system/evidence"
+      ],
+      "title": "state transition idle to disconnected",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-15",
+      "status": "PASS",
+      "durationMs": 788,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-15-state-transition-idle-to-suspended-system/evidence"
+      ],
+      "title": "state transition idle to suspended",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-16",
+      "status": "PASS",
+      "durationMs": 793,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-16-sta-72bd2-ion-idle-to-session-expired-system/evidence"
+      ],
+      "title": "state transition idle to session_expired",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-21",
+      "status": "PASS",
+      "durationMs": 785,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-21-state-transition-online-to-idle-system/evidence"
+      ],
+      "title": "state transition online to idle",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-22",
+      "status": "PASS",
+      "durationMs": 783,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-22-state-transition-online-to-online-system/evidence"
+      ],
+      "title": "state transition online to online",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-23",
+      "status": "PASS",
+      "durationMs": 786,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-23-sta-c5616-tion-online-to-rate-limited-system/evidence"
+      ],
+      "title": "state transition online to rate_limited",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-24",
+      "status": "PASS",
+      "durationMs": 780,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-24-sta-a103c-tion-online-to-disconnected-system/evidence"
+      ],
+      "title": "state transition online to disconnected",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-25",
+      "status": "PASS",
+      "durationMs": 786,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-25-state-transition-online-to-suspended-system/evidence"
+      ],
+      "title": "state transition online to suspended",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-26",
+      "status": "PASS",
+      "durationMs": 768,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-26-sta-8537e-n-online-to-session-expired-system/evidence"
+      ],
+      "title": "state transition online to session_expired",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-31",
+      "status": "PASS",
+      "durationMs": 787,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-31-state-transition-rate-limited-to-idle-system/evidence"
+      ],
+      "title": "state transition rate_limited to idle",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-32",
+      "status": "PASS",
+      "durationMs": 788,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-32-sta-927f7-tion-rate-limited-to-online-system/evidence"
+      ],
+      "title": "state transition rate_limited to online",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-33",
+      "status": "PASS",
+      "durationMs": 804,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-33-sta-d2ff2-ate-limited-to-rate-limited-system/evidence"
+      ],
+      "title": "state transition rate_limited to rate_limited",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-34",
+      "status": "PASS",
+      "durationMs": 822,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-34-sta-5b9d0-ate-limited-to-disconnected-system/evidence"
+      ],
+      "title": "state transition rate_limited to disconnected",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-35",
+      "status": "PASS",
+      "durationMs": 817,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-35-sta-d21bb-n-rate-limited-to-suspended-system/evidence"
+      ],
+      "title": "state transition rate_limited to suspended",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-36",
+      "status": "PASS",
+      "durationMs": 800,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-36-sta-952be--limited-to-session-expired-system/evidence"
+      ],
+      "title": "state transition rate_limited to session_expired",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-41",
+      "status": "PASS",
+      "durationMs": 834,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-41-state-transition-disconnected-to-idle-system/evidence"
+      ],
+      "title": "state transition disconnected to idle",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-42",
+      "status": "PASS",
+      "durationMs": 797,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-42-sta-48d8c-tion-disconnected-to-online-system/evidence"
+      ],
+      "title": "state transition disconnected to online",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-43",
+      "status": "PASS",
+      "durationMs": 774,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-43-sta-19ac8-isconnected-to-rate-limited-system/evidence"
+      ],
+      "title": "state transition disconnected to rate_limited",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-44",
+      "status": "PASS",
+      "durationMs": 786,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-44-sta-80d78-isconnected-to-disconnected-system/evidence"
+      ],
+      "title": "state transition disconnected to disconnected",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-45",
+      "status": "PASS",
+      "durationMs": 779,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-45-sta-96411-n-disconnected-to-suspended-system/evidence"
+      ],
+      "title": "state transition disconnected to suspended",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-46",
+      "status": "PASS",
+      "durationMs": 781,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-46-sta-584ba-onnected-to-session-expired-system/evidence"
+      ],
+      "title": "state transition disconnected to session_expired",
+      "requirements": [
+        "R-A1-01"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-51",
+      "status": "PASS",
+      "durationMs": 777,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-51-state-transition-suspended-to-idle-system/evidence"
+      ],
+      "title": "state transition suspended to idle",
+      "requirements": [
+        "R-A1-01",
+        "R-A1-02"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-52",
+      "status": "PASS",
+      "durationMs": 780,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-52-state-transition-suspended-to-online-system/evidence"
+      ],
+      "title": "state transition suspended to online",
+      "requirements": [
+        "R-A1-01",
+        "R-A1-02"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-53",
+      "status": "PASS",
+      "durationMs": 778,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-53-sta-bd079-n-suspended-to-rate-limited-system/evidence"
+      ],
+      "title": "state transition suspended to rate_limited",
+      "requirements": [
+        "R-A1-01",
+        "R-A1-02"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-54",
+      "status": "PASS",
+      "durationMs": 784,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-54-sta-88d72-n-suspended-to-disconnected-system/evidence"
+      ],
+      "title": "state transition suspended to disconnected",
+      "requirements": [
+        "R-A1-01",
+        "R-A1-02"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-55",
+      "status": "PASS",
+      "durationMs": 791,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-55-sta-41920-tion-suspended-to-suspended-system/evidence"
+      ],
+      "title": "state transition suspended to suspended",
+      "requirements": [
+        "R-A1-01",
+        "R-A1-02"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-56",
+      "status": "PASS",
+      "durationMs": 782,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-56-sta-9f177-uspended-to-session-expired-system/evidence"
+      ],
+      "title": "state transition suspended to session_expired",
+      "requirements": [
+        "R-A1-01",
+        "R-A1-02"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-61",
+      "status": "PASS",
+      "durationMs": 833,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-61-sta-38783-ion-session-expired-to-idle-system/evidence"
+      ],
+      "title": "state transition session_expired to idle",
+      "requirements": [
+        "R-A1-01",
+        "R-A1-02"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-62",
+      "status": "PASS",
+      "durationMs": 807,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-62-sta-0fcc1-n-session-expired-to-online-system/evidence"
+      ],
+      "title": "state transition session_expired to online",
+      "requirements": [
+        "R-A1-01",
+        "R-A1-02"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-63",
+      "status": "PASS",
+      "durationMs": 777,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-63-sta-597fe-ion-expired-to-rate-limited-system/evidence"
+      ],
+      "title": "state transition session_expired to rate_limited",
+      "requirements": [
+        "R-A1-01",
+        "R-A1-02"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-64",
+      "status": "PASS",
+      "durationMs": 777,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-64-sta-1be7e-ion-expired-to-disconnected-system/evidence"
+      ],
+      "title": "state transition session_expired to disconnected",
+      "requirements": [
+        "R-A1-01",
+        "R-A1-02"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-65",
+      "status": "PASS",
+      "durationMs": 785,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-65-sta-e5db9-ession-expired-to-suspended-system/evidence"
+      ],
+      "title": "state transition session_expired to suspended",
+      "requirements": [
+        "R-A1-01",
+        "R-A1-02"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-66",
+      "status": "PASS",
+      "durationMs": 782,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-66-sta-d9cf0--expired-to-session-expired-system/evidence"
+      ],
+      "title": "state transition session_expired to session_expired",
+      "requirements": [
+        "R-A1-01",
+        "R-A1-02"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-041",
+      "status": "PASS",
+      "durationMs": 773,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-041-va-c02a4-e-expectedFrom-are-explicit-system/evidence"
+      ],
+      "title": "validation precedence and stale expectedFrom are explicit",
+      "requirements": [
+        "R-A1-03",
+        "R-A0-03"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-042",
+      "status": "PASS",
+      "durationMs": 808,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-042-co-e1609-are-and-swap-has-one-winner-system/evidence"
+      ],
+      "title": "concurrent compare-and-swap has one winner",
+      "requirements": [
+        "R-A1-03"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-043",
+      "status": "PASS",
+      "durationMs": 815,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-043-re-f9202-ins-stable-gateway-identity-system/evidence"
+      ],
+      "title": "reconnect retains stable gateway identity",
+      "requirements": [
+        "R-A1-07",
+        "R-A1-08"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-044",
+      "status": "PASS",
+      "durationMs": 1831,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-044-re-8fc85-essing-and-cannot-reconnect-system/evidence"
+      ],
+      "title": "repeated suspended events preserve processing and cannot reconnect",
+      "requirements": [
+        "R-A1-02",
+        "R-A1-04",
+        "R-A2-08"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "STATE-045",
+      "status": "PASS",
+      "durationMs": 1834,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-accounts--STATE-045-re-36150-essing-and-cannot-reconnect-system/evidence"
+      ],
+      "title": "repeated session_expired events preserve processing and cannot reconnect",
+      "requirements": [
+        "R-A1-02",
+        "R-A1-04",
+        "R-A2-08"
+      ],
+      "automation": "tests/api/accounts.spec.ts"
+    },
+    {
+      "id": "AUTH-001",
+      "status": "PASS",
+      "durationMs": 772,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-auth--AUTH-001-health-login-and-UTC-account-contract-system/evidence"
+      ],
+      "title": "health, login and UTC account contract",
+      "requirements": [
+        "R-A0-04",
+        "R-A0-06"
+      ],
+      "automation": "tests/api/auth.spec.ts"
+    },
+    {
+      "id": "AUTH-002",
+      "status": "PASS",
+      "durationMs": 758,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-auth--AUTH-002-protect-b1d36-ing-and-invalid-credentials-system/evidence"
+      ],
+      "title": "protected reads reject missing and invalid credentials",
+      "requirements": [
+        "R-A0-03",
+        "R-A0-04"
+      ],
+      "automation": "tests/api/auth.spec.ts"
+    },
+    {
+      "id": "AUTH-003",
+      "status": "PASS",
+      "durationMs": 1694,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-auth--AUTH-003-viewer--c1eaf-nal-business-write-endpoint-system/evidence"
+      ],
+      "title": "viewer cannot execute any original business write endpoint",
+      "requirements": [
+        "R-A0-05"
+      ],
+      "automation": "tests/api/auth.spec.ts"
+    },
+    {
+      "id": "AUTH-004",
+      "status": "PASS",
+      "durationMs": 777,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-auth--AUTH-004-refresh-f0335-e-only-HttpOnly-and-rotates-system/evidence"
+      ],
+      "title": "refresh token is cookie-only, HttpOnly and rotates",
+      "requirements": [
+        "R-B3-01",
+        "R-B3-02"
+      ],
+      "automation": "tests/api/auth.spec.ts"
+    },
+    {
+      "id": "AUTH-005",
+      "status": "PASS",
+      "durationMs": 769,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-auth--AUTH-005-refresh-8e76f-new-credentials-immediately-system/evidence"
+      ],
+      "title": "refresh replay revokes both new credentials immediately",
+      "requirements": [
+        "R-B3-02"
+      ],
+      "automation": "tests/api/auth.spec.ts"
+    },
+    {
+      "id": "AUTH-006",
+      "status": "PASS",
+      "durationMs": 765,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-auth--AUTH-006-logout--1964f-ng-access-token-immediately-system/evidence"
+      ],
+      "title": "logout invalidates the existing access token immediately",
+      "requirements": [
+        "R-B3-03"
+      ],
+      "automation": "tests/api/auth.spec.ts"
+    },
+    {
+      "id": "AUTH-007",
+      "status": "PASS",
+      "durationMs": 902280,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-auth--AUTH-007-access--b0d3c-fifteen-minutes-real-clock--system/evidence"
+      ],
+      "title": "access token expires at fifteen minutes (real clock)",
+      "requirements": [
+        "R-A0-04"
+      ],
+      "automation": "tests/api/auth.spec.ts"
+    },
+    {
+      "id": "GROUP-001",
+      "status": "PASS",
+      "durationMs": 823,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-groups--GROUP-001-crea-bab5d-tus-before-external-effects-system/evidence"
+      ],
+      "title": "creation validates members and online status before external effects",
+      "requirements": [
+        "R-A3-01"
+      ],
+      "automation": "tests/api/groups.spec.ts"
+    },
+    {
+      "id": "GROUP-002",
+      "status": "PASS",
+      "durationMs": 1735,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-groups--GROUP-002-asyn-4153c-r-and-event-confirmed-roles-system/evidence"
+      ],
+      "title": "asynchronous creation materializes creator and event-confirmed roles",
+      "requirements": [
+        "R-A3-01",
+        "R-A3-02",
+        "R-A3-03",
+        "R-A3-04"
+      ],
+      "automation": "tests/api/groups.spec.ts"
+    },
+    {
+      "id": "GROUP-003",
+      "status": "PASS",
+      "durationMs": 11240,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-groups--GROUP-003-acce-e35fe-ned-fails-after-ten-seconds-system/evidence"
+      ],
+      "title": "accepted join without member_joined fails after ten seconds",
+      "requirements": [
+        "R-A3-03",
+        "R-A3-04",
+        "R-A3-05"
+      ],
+      "automation": "tests/api/groups.spec.ts"
+    },
+    {
+      "id": "GROUP-004",
+      "status": "PASS",
+      "durationMs": 3127,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-groups--GROUP-004-invi-3b2e6-ut-retry-resetting-the-wait-system/evidence"
+      ],
+      "title": "invite readiness is respected without retry resetting the wait",
+      "requirements": [
+        "R-B2-01"
+      ],
+      "automation": "tests/api/groups.spec.ts"
+    },
+    {
+      "id": "GROUP-005",
+      "status": "PASS",
+      "durationMs": 1565,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-groups--GROUP-005-expi-2c9bb-d-once-and-joining-succeeds-system/evidence"
+      ],
+      "title": "expired invitation is refreshed once and joining succeeds",
+      "requirements": [
+        "R-B2-02"
+      ],
+      "automation": "tests/api/groups.spec.ts"
+    },
+    {
+      "id": "GROUP-006",
+      "status": "PASS",
+      "durationMs": 2108,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-groups--GROUP-006-leav-94891--with-creator-strictly-last-system/evidence"
+      ],
+      "title": "leave-all removes service accounts with creator strictly last",
+      "requirements": [
+        "R-B2-04"
+      ],
+      "automation": "tests/api/groups.spec.ts"
+    },
+    {
+      "id": "GROUP-007",
+      "status": "PASS",
+      "durationMs": 1977,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-groups--GROUP-007-fail-60c20-ontinues-remaining-accounts-system/evidence"
+      ],
+      "title": "failed noncreator leave preserves owner and continues remaining accounts",
+      "requirements": [
+        "R-B2-04",
+        "R-A3-05"
+      ],
+      "automation": "tests/api/groups.spec.ts"
+    },
+    {
+      "id": "GROUP-008",
+      "status": "PASS",
+      "durationMs": 2795,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-groups--GROUP-008-memb-324f6-ined-event-before-promotion-system/evidence"
+      ],
+      "title": "member rows wait for actual joined event before promotion",
+      "requirements": [
+        "R-A3-03",
+        "R-A3-04"
+      ],
+      "automation": "tests/api/groups.spec.ts"
+    },
+    {
+      "id": "GROUP-009",
+      "status": "PASS",
+      "durationMs": 1307,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-groups--GROUP-009-ALRE-3ccd5-t-waiting-for-another-event-system/evidence"
+      ],
+      "title": "ALREADY_MEMBER confirms existing membership without waiting for another event",
+      "requirements": [
+        "R-B2-03"
+      ],
+      "automation": "tests/api/groups.spec.ts"
+    },
+    {
+      "id": "GROUP-010",
+      "status": "PASS",
+      "durationMs": 5906,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-groups--GROUP-010-leav-d0f9c--keeps-left-groups-inactive-system/evidence"
+      ],
+      "title": "leave-all preserves public external members and keeps left groups inactive",
+      "requirements": [
+        "R-B2-04",
+        "ADD-LEFT-MEMBERS-01"
+      ],
+      "automation": "tests/api/groups.spec.ts"
+    },
+    {
+      "id": "MSG-001",
+      "status": "PASS",
+      "durationMs": 3323,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-001-acce-3d9ff--and-own-echo-stays-one-row-system/evidence"
+      ],
+      "title": "accepted is observable until message_sent and own echo stays one row",
+      "requirements": [
+        "R-A2-01",
+        "R-A2-02",
+        "R-A2-06"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-002",
+      "status": "PASS",
+      "durationMs": 3907,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-002-rate-d82ec-deadline-and-preserves-FIFO-system/evidence"
+      ],
+      "title": "rate limiting blocks all account sends until deadline and preserves FIFO",
+      "requirements": [
+        "R-A2-09",
+        "R-A1-06"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-003",
+      "status": "PASS",
+      "durationMs": 1869,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-003-term-c5199-d-removes-member-atomically-system/evidence"
+      ],
+      "title": "terminal marking cancels queued sends and removes member atomically",
+      "requirements": [
+        "R-A1-04"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-004",
+      "status": "PASS",
+      "durationMs": 3320,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-004-504--7bdc4-econciled-without-resending-system/evidence"
+      ],
+      "title": "504 that lands within two seconds is reconciled without resending",
+      "requirements": [
+        "R-A2-03"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-005",
+      "status": "PASS",
+      "durationMs": 3975,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-005-abse-dd569-o-second-uncertainty-window-system/evidence"
+      ],
+      "title": "absent 504 permits at most one retry after the two-second uncertainty window",
+      "requirements": [
+        "R-A2-03"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-006",
+      "status": "PASS",
+      "durationMs": 7079,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-006-unav-ec155-rves-unknown-until-recovery-system/evidence"
+      ],
+      "title": "unavailable confirmation preserves unknown until recovery",
+      "requirements": [
+        "R-A2-04"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-007",
+      "status": "PASS",
+      "durationMs": 1859,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-007-sync-2f6d2-s-without-relying-on-events-system/evidence"
+      ],
+      "title": "synchronous ACCOUNT_SUSPENDED applies terminal consequences without relying on events",
+      "requirements": [
+        "R-A2-10",
+        "R-A1-04"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-008",
+      "status": "PASS",
+      "durationMs": 1798,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-008-sync-6403e-s-without-relying-on-events-system/evidence"
+      ],
+      "title": "synchronous SESSION_EXPIRED applies terminal consequences without relying on events",
+      "requirements": [
+        "R-A2-10",
+        "R-A1-04"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-009",
+      "status": "PASS",
+      "durationMs": 1873,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-009-SEND-ff1ce-OUP-only-fails-that-message-system/evidence"
+      ],
+      "title": "SENDER_NOT_IN_GROUP only fails that message",
+      "requirements": [
+        "R-A2-12"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-010",
+      "status": "PASS",
+      "durationMs": 1830,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-010-ACCO-72e5d-INE-only-fails-that-message-system/evidence"
+      ],
+      "title": "ACCOUNT_OFFLINE only fails that message",
+      "requirements": [
+        "R-A2-12"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-011",
+      "status": "PASS",
+      "durationMs": 1753,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-011-inco-9fa19-sages-are-merged-and-sorted-system/evidence"
+      ],
+      "title": "incoming duplicate and out-of-order historical messages are merged and sorted",
+      "requirements": [
+        "R-A2-05",
+        "R-A4-02"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-012",
+      "status": "PASS",
+      "durationMs": 2110,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-012-snap-75006-tes-under-concurrent-writes-system/evidence"
+      ],
+      "title": "snapshot cursor traversal has no omission or duplicates under concurrent writes",
+      "requirements": [
+        "R-A4-01"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-013",
+      "status": "PASS",
+      "durationMs": 1429,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-013-manu-cfd11-nd-nonmember-before-enqueue-system/evidence"
+      ],
+      "title": "manual send validates unavailable account and nonmember before enqueue",
+      "requirements": [
+        "R-A2-12"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-014",
+      "status": "PASS",
+      "durationMs": 4057,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-014-leav-31a75-ts-stale-timer-resurrection-system/evidence"
+      ],
+      "title": "leaving rate_limited manually prevents stale timer resurrection",
+      "requirements": [
+        "R-A1-06",
+        "R-A1-08"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-015",
+      "status": "PASS",
+      "durationMs": 2872,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-015-asyn-48e10-OUNT-SUSPENDED-consequences-system/evidence"
+      ],
+      "title": "asynchronous message_failed applies ACCOUNT_SUSPENDED consequences",
+      "requirements": [
+        "R-A2-02",
+        "R-A2-10",
+        "R-A1-04"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-016",
+      "status": "PASS",
+      "durationMs": 2827,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-016-asyn-9e75e-RITE-FORBIDDEN-consequences-system/evidence"
+      ],
+      "title": "asynchronous message_failed applies GROUP_WRITE_FORBIDDEN consequences",
+      "requirements": [
+        "R-A2-02",
+        "R-A2-11"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "MSG-017",
+      "status": "PASS",
+      "durationMs": 1897,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-017-mess-7fd8e-on-still-merges-one-own-row-system/evidence"
+      ],
+      "title": "message echo arriving before confirmation still merges one own row",
+      "requirements": [
+        "R-A2-01",
+        "R-A2-05",
+        "R-A2-06"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "WS-001",
+      "status": "PASS",
+      "durationMs": 1813,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-realtime--WS-001-busin-a8408-ictly-increasing-global-seq-system/evidence"
+      ],
+      "title": "business events start after auth and have strictly increasing global seq",
+      "requirements": [
+        "R-A4-03",
+        "R-A4-04",
+        "R-A1-05"
+      ],
+      "automation": "tests/api/realtime.spec.ts"
+    },
+    {
+      "id": "WS-002",
+      "status": "PASS",
+      "durationMs": 2866,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-realtime--WS-002-unaut-9e40b--receive-no-business-events-system/evidence"
+      ],
+      "title": "unauthenticated and invalid-token sockets receive no business events",
+      "requirements": [
+        "R-A4-03"
+      ],
+      "automation": "tests/api/realtime.spec.ts"
+    },
+    {
+      "id": "WS-003",
+      "status": "PASS",
+      "durationMs": 1925,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-realtime--WS-003-accou-443bf--terminal-state-and-cleanup-system/evidence"
+      ],
+      "title": "account_terminal is published only after terminal state and cleanup",
+      "requirements": [
+        "R-A4-04",
+        "R-A1-04",
+        "R-A1-05"
+      ],
+      "automation": "tests/api/realtime.spec.ts"
+    },
+    {
+      "id": "AGENT-001",
+      "status": "PASS",
+      "durationMs": 1869,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-001-fo-3c38c-ntext-keep-one-run-identity-system/evidence"
+      ],
+      "title": "four schema-complete tools and correct trigger context keep one run identity",
+      "requirements": [
+        "R-A5-02",
+        "R-A5-03",
+        "R-A5-14",
+        "R-A5-17"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-002",
+      "status": "PASS",
+      "durationMs": 3192,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-002-du-61c58-ho-never-duplicate-triggers-system/evidence"
+      ],
+      "title": "duplicate inbound and own echo never duplicate triggers",
+      "requirements": [
+        "R-A5-01",
+        "R-A2-06"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-003",
+      "status": "PASS",
+      "durationMs": 2538,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-003-mu-26f13-atches-all-pending-messages-system/evidence"
+      ],
+      "title": "multi-instance active run excludes competitors and batches all pending messages",
+      "requirements": [
+        "R-A5-01",
+        "R-A5-02"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-004",
+      "status": "PASS",
+      "durationMs": 1853,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-004-no-035ee-ory-without-assistant-block-system/evidence"
+      ],
+      "title": "non-JSON produces BAD_JSON history without assistant block",
+      "requirements": [
+        "R-A5-03",
+        "R-A5-04",
+        "R-A5-14"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-005",
+      "status": "PASS",
+      "durationMs": 1874,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-005-fe-41252-ory-without-assistant-block-system/evidence"
+      ],
+      "title": "fenced JSON produces BAD_JSON history without assistant block",
+      "requirements": [
+        "R-A5-03",
+        "R-A5-04",
+        "R-A5-14"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-006",
+      "status": "PASS",
+      "durationMs": 1876,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-006-mu-184f2-ory-without-assistant-block-system/evidence"
+      ],
+      "title": "multiple blocks produces BAD_JSON history without assistant block",
+      "requirements": [
+        "R-A5-03",
+        "R-A5-04",
+        "R-A5-14"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-007",
+      "status": "PASS",
+      "durationMs": 1843,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-007-st-2b00a-ory-without-assistant-block-system/evidence"
+      ],
+      "title": "stop reason mismatch produces BAD_JSON history without assistant block",
+      "requirements": [
+        "R-A5-03",
+        "R-A5-04",
+        "R-A5-14"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-008",
+      "status": "PASS",
+      "durationMs": 1858,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-008-no-cf260-ory-without-assistant-block-system/evidence"
+      ],
+      "title": "non-2xx produces BAD_JSON history without assistant block",
+      "requirements": [
+        "R-A5-03",
+        "R-A5-04",
+        "R-A5-14"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-009",
+      "status": "PASS",
+      "durationMs": 1869,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-009-UN-15074-t-tool-use-and-error-result-system/evidence"
+      ],
+      "title": "UNKNOWN_TOOL appends assistant tool use and error result",
+      "requirements": [
+        "R-A5-03",
+        "R-A5-04"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-010",
+      "status": "PASS",
+      "durationMs": 1866,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-010-IN-ab91d-t-tool-use-and-error-result-system/evidence"
+      ],
+      "title": "INVALID_INPUT appends assistant tool use and error result",
+      "requirements": [
+        "R-A5-03",
+        "R-A5-04"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-011",
+      "status": "PASS",
+      "durationMs": 1846,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-011-du-e3464--and-has-no-repeated-effect-system/evidence"
+      ],
+      "title": "duplicate tool_use id is protocol error and has no repeated effect",
+      "requirements": [
+        "R-A5-04"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-012",
+      "status": "PASS",
+      "durationMs": 1852,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-012-th-ae58f-l-response-resets-the-count-system/evidence"
+      ],
+      "title": "three consecutive protocol errors fail and a legal response resets the count",
+      "requirements": [
+        "R-A5-04",
+        "R-A5-05"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-013",
+      "status": "PASS",
+      "durationMs": 1982,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-013-re-a02db--cannot-exceed-twelve-turns-system/evidence"
+      ],
+      "title": "repeated read loop cannot exceed twelve turns",
+      "requirements": [
+        "R-A5-05",
+        "R-A5-18"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-014",
+      "status": "PASS",
+      "durationMs": 1973,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-014-au-b96d2-jected-key-remains-reusable-system/evidence"
+      ],
+      "title": "audit rejection blocks side effect and rejected key remains reusable",
+      "requirements": [
+        "R-A5-07",
+        "R-A5-10"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-015",
+      "status": "PASS",
+      "durationMs": 1844,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-015-th-aff5d-block-run-without-execution-system/evidence"
+      ],
+      "title": "three inconclusive audit attempts block run without execution",
+      "requirements": [
+        "R-A5-07"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-016",
+      "status": "PASS",
+      "durationMs": 5110,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-016-id-ec0da-thout-another-audit-or-send-system/evidence"
+      ],
+      "title": "idempotency retry returns current sent state without another audit or send",
+      "requirements": [
+        "R-A5-10",
+        "R-A5-16",
+        "R-A2-03"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-017",
+      "status": "PASS",
+      "durationMs": 1861,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-017-ki-1fc49-y-never-calls-external-kick-system/evidence"
+      ],
+      "title": "kick denied by policy never calls external kick",
+      "requirements": [
+        "R-A5-09"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-018",
+      "status": "PASS",
+      "durationMs": 2895,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-018-pe-7c6cb-es-owner-or-promoted-member-system/evidence"
+      ],
+      "title": "permitted kick audits exact action and uses owner or promoted member",
+      "requirements": [
+        "R-A5-07",
+        "R-A5-08",
+        "R-A5-09"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-019",
+      "status": "PASS",
+      "durationMs": 2881,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-019-OW-6c3fd--changing-group-or-accounts-system/evidence"
+      ],
+      "title": "OWNER_LEFT is returned as tool error without changing group or accounts",
+      "requirements": [
+        "R-A5-09"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-020",
+      "status": "PASS",
+      "durationMs": 2914,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-020-NO-b72af--changing-group-or-accounts-system/evidence"
+      ],
+      "title": "NO_PERMISSION is returned as tool error without changing group or accounts",
+      "requirements": [
+        "R-A5-09"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-021",
+      "status": "PASS",
+      "durationMs": 2274,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-021-re-3d8de-unt-byte-and-summary-limits-system/evidence"
+      ],
+      "title": "recent messages include new arrivals and obey text, count, byte and summary limits",
+      "requirements": [
+        "R-A5-12",
+        "R-A5-15"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-022",
+      "status": "PASS",
+      "durationMs": 1901,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-022-di-dd8bf--step-complete-then-cancels-system/evidence"
+      ],
+      "title": "disabling agent lets current step complete then cancels",
+      "requirements": [
+        "R-A5-13"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-023",
+      "status": "PASS",
+      "durationMs": 1824,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-023-fi-273f9-d-does-not-ask-another-turn-system/evidence"
+      ],
+      "title": "finish tool stores summary and does not ask another turn",
+      "requirements": [
+        "R-A5-17"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-024",
+      "status": "PASS",
+      "durationMs": 18280,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-024-tu-8a76f-ponse-never-sends-a-message-system/evidence"
+      ],
+      "title": "turn timeout records error and late response never sends a message",
+      "requirements": [
+        "R-A5-06",
+        "R-A5-04"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-025",
+      "status": "FAIL",
+      "reason": "AssertionError: 活动预算已证明超过原始60秒上限",
+      "durationMs": 62094,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/trace.zip"
+      ],
+      "defectId": "DEF-AGENT-025",
+      "title": "run stays within sixty-second active wall-clock budget including slow turns",
+      "requirements": [
+        "R-A5-06"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-026",
+      "status": "PASS",
+      "durationMs": 1902,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-026-no-659e7-OUNT-as-ordinary-tool-error-system/evidence"
+      ],
+      "title": "no online member returns NO_AVAILABLE_ACCOUNT as ordinary tool error",
+      "requirements": [
+        "R-A5-08"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-027",
+      "status": "PASS",
+      "durationMs": 1889,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-027-ra-3ac9e-KiB-and-remains-inspectable-system/evidence"
+      ],
+      "title": "raw protocol response truncates to two KiB and remains inspectable",
+      "requirements": [
+        "R-A5-12",
+        "R-A5-14"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-028",
+      "status": "FAIL",
+      "reason": "AssertionError: 实际工具状态等待下界超过原始5000ms上限",
+      "durationMs": 7128,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/trace.zip"
+      ],
+      "defectId": "DEF-AGENT-028",
+      "title": "unknown send times out in five seconds and same key still cannot resend",
+      "requirements": [
+        "R-A5-10",
+        "R-A5-16"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-029",
+      "status": "PASS",
+      "durationMs": 4054,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-029-ki-acac5-ip-and-never-executes-twice-system/evidence"
+      ],
+      "title": "kick timeout reconciles membership and never executes twice",
+      "requirements": [
+        "R-A5-09"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-030",
+      "status": "PASS",
+      "durationMs": 2003,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-030-ac-c0a98-ND-FAILED-and-run-continues-system/evidence"
+      ],
+      "title": "account becoming terminal during send returns SEND_FAILED and run continues",
+      "requirements": [
+        "R-A5-08",
+        "R-A5-16"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-031",
+      "status": "PASS",
+      "durationMs": 3085,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-031-gr-9663c-p-and-stops-future-triggers-system/evidence"
+      ],
+      "title": "group write error cancels current run after its step and stops future triggers",
+      "requirements": [
+        "R-A2-11",
+        "R-A5-13",
+        "R-A5-16"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-032",
+      "status": "PASS",
+      "durationMs": 2010,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-032-tw-507e6-ithout-a-thirteenth-request-system/evidence"
+      ],
+      "title": "twelve distinct turns exhaust budget without a thirteenth request",
+      "requirements": [
+        "R-A5-05"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-033",
+      "status": "PASS",
+      "durationMs": 1971,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-033-au-6fd44--do-not-consume-turn-budget-system/evidence"
+      ],
+      "title": "audit retries resolve before informing agent and do not consume turn budget",
+      "requirements": [
+        "R-A5-07"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "REC-001",
+      "status": "PASS",
+      "durationMs": 3194,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-001-S-594e6-uding-out-of-order-delivery-system/evidence"
+      ],
+      "title": "SSE reconnect recovers all retained events once including out-of-order delivery",
+      "requirements": [
+        "R-A2-08",
+        "R-A2-05"
+      ],
+      "automation": "tests/system/recovery.spec.ts"
+    },
+    {
+      "id": "REC-002",
+      "status": "PASS",
+      "durationMs": 2631,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-002-h-716ae-ents-produced-while-stopped-system/evidence"
+      ],
+      "title": "hard process restart recovers events produced while stopped",
+      "requirements": [
+        "R-A2-08"
+      ],
+      "automation": "tests/system/recovery.spec.ts"
+    },
+    {
+      "id": "REC-003",
+      "status": "PASS",
+      "durationMs": 2961,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-003-d-13086-oduces-inconsistency-notice-system/evidence"
+      ],
+      "title": "database write outage loses no event and produces inconsistency notice",
+      "requirements": [
+        "R-A2-07"
+      ],
+      "automation": "tests/system/recovery.spec.ts"
+    },
+    {
+      "id": "REC-004",
+      "status": "PASS",
+      "durationMs": 2239,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-004-c-0b2d7-duplicates-gateway-delivery-system/evidence"
+      ],
+      "title": "crash after send effect before response never duplicates gateway delivery",
+      "requirements": [
+        "R-A2-01"
+      ],
+      "automation": "tests/system/recovery.spec.ts"
+    },
+    {
+      "id": "REC-005",
+      "status": "PASS",
+      "durationMs": 11684,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-005-s-678f5-and-spaces-subsequent-sends-system/evidence"
+      ],
+      "title": "sequence restart reschedules only earliest overdue step and spaces subsequent sends",
+      "requirements": [
+        "R-B1-09"
+      ],
+      "automation": "tests/system/recovery.spec.ts"
+    },
+    {
+      "id": "REC-006",
+      "status": "PASS",
+      "durationMs": 2344,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-006-a-00f5a-es-already-sent-tool-effect-system/evidence"
+      ],
+      "title": "agent restarts with same run id and reconciles already-sent tool effect",
+      "requirements": [
+        "R-A5-11",
+        "R-A2-01"
+      ],
+      "automation": "tests/system/recovery.spec.ts"
+    },
+    {
+      "id": "REC-007",
+      "status": "FAIL",
+      "reason": "Error: Condition not reached: /api/agent-runs/88ea65ee-78b6-4302-b3f9-390fad340e3b; last={\"id\":\"88ea65ee-78b6-4302-b3f9-390fad340e3b\",\"groupId\":\"6fb85114-1d3e-4421-b58c-792fe918d3bd\",\"status\":\"running\",\"endReason\":null,\"summary\":null,\"recoveryNote\":\"A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.\",\"steps\":[{\"ordinal\":1,\"kind\":\"tool_use\",\"toolUseId\":\"recover-kick\",\"name\":\"kick_user\",\"input\":{\"reason\":\"recovery\",\"platform_user_id\":\"recover-kick-target\"},\"resultSummary\":\"\",\"isError\":false,\"errorCode\":null,\"auditVerdict\":\"pass\",\"rawResponse\":\"{\\\"stop_reason\\\":\\\"tool_use\\\",\\\"content\\\":[{\\\"type\\\":\\\"tool_use\\\",\\\"id\\\":\\\"recover-kick\\\",\\\"name\\\":\\\"kick_user\\\",\\\"input\\\":{\\\"platform_user_id\\\":\\\"recover-kick-target\\\",\\\"reason\\\":\\\"recovery\\\"}}]}\"}]}",
+      "durationMs": 32302,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/trace.zip"
+      ],
+      "defectId": "DEF-REC-007",
+      "title": "agent restart after kick effect uses membership reconciliation without repeating kick",
+      "requirements": [
+        "R-A5-11",
+        "R-A5-09"
+      ],
+      "automation": "tests/system/recovery.spec.ts"
+    },
+    {
+      "id": "REC-008",
+      "status": "PASS",
+      "durationMs": 2661,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-008-r-b7604-ves-data-and-schema-version-system/evidence"
+      ],
+      "title": "repeated migration preserves data and schema version",
+      "requirements": [
+        "R-A0-01"
+      ],
+      "automation": "tests/system/recovery.spec.ts"
+    },
+    {
+      "id": "SEQ-001",
+      "status": "PASS",
+      "durationMs": 3417,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-sequence--SEQ-001-v-61909-erride-with-original-source-system/evidence"
+      ],
+      "title": "variables inherit latest nonempty override with original source",
+      "requirements": [
+        "R-B1-03",
+        "R-B1-05"
+      ],
+      "automation": "tests/system/sequence.spec.ts"
+    },
+    {
+      "id": "SEQ-002",
+      "status": "PASS",
+      "durationMs": 3036,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-sequence--SEQ-002-a-343a1-s-no-running-record-or-send-system/evidence"
+      ],
+      "title": "all-step preflight rejects step three and leaves no running record or send",
+      "requirements": [
+        "R-B1-04"
+      ],
+      "automation": "tests/system/sequence.spec.ts"
+    },
+    {
+      "id": "SEQ-003",
+      "status": "PASS",
+      "durationMs": 7075,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-sequence--SEQ-003-s-afb42-it-exactly-one-sequence-run-system/evidence"
+      ],
+      "title": "simultaneous starts admit exactly one sequence run",
+      "requirements": [
+        "R-B1-06"
+      ],
+      "automation": "tests/system/sequence.spec.ts"
+    },
+    {
+      "id": "SEQ-004",
+      "status": "PASS",
+      "durationMs": 2884,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-sequence--SEQ-004-a-9f019--selected-lexicographically-system/evidence"
+      ],
+      "title": "admin preferred and member selected lexicographically",
+      "requirements": [
+        "R-B1-01"
+      ],
+      "automation": "tests/system/sequence.spec.ts"
+    },
+    {
+      "id": "SEQ-005",
+      "status": "PASS",
+      "durationMs": 5786,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-sequence--SEQ-005-n-3079e-l-sent-event-not-acceptance-system/evidence"
+      ],
+      "title": "next delay begins at actual sent event, not acceptance",
+      "requirements": [
+        "R-B1-07"
+      ],
+      "automation": "tests/system/sequence.spec.ts"
+    },
+    {
+      "id": "SEQ-006",
+      "status": "PASS",
+      "durationMs": 2096,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-sequence--SEQ-006-u-9f320-tamp-and-progress-continues-system/evidence"
+      ],
+      "title": "unavailable member step is skipped with timestamp and progress continues",
+      "requirements": [
+        "R-B1-01",
+        "R-B1-08"
+      ],
+      "automation": "tests/system/sequence.spec.ts"
+    },
+    {
+      "id": "SEQ-007",
+      "status": "PASS",
+      "durationMs": 5478,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-sequence--SEQ-007-r-84c76--and-preserves-later-delays-system/evidence"
+      ],
+      "title": "rate-limited role waits rather than skips and preserves later delays",
+      "requirements": [
+        "R-B1-01",
+        "R-B1-07",
+        "R-A2-09"
+      ],
+      "automation": "tests/system/sequence.spec.ts"
+    },
+    {
+      "id": "SEQ-008",
+      "status": "PASS",
+      "durationMs": 2096,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-sequence--SEQ-008-g-33cbd-hile-account-remains-online-system/evidence"
+      ],
+      "title": "group write prohibition stops sequence while account remains online",
+      "requirements": [
+        "R-A2-11"
+      ],
+      "automation": "tests/system/sequence.spec.ts"
+    },
+    {
+      "id": "SEQ-009",
+      "status": "PASS",
+      "durationMs": 2179,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-sequence--SEQ-009-p-fcf60-leaves-other-braces-literal-system/evidence"
+      ],
+      "title": "placeholder grammar includes letters digits underscore and leaves other braces literal",
+      "requirements": [
+        "R-B1-02"
+      ],
+      "automation": "tests/system/sequence.spec.ts"
+    },
+    {
+      "id": "SEQ-010",
+      "status": "PASS",
+      "durationMs": 2611,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-sequence--SEQ-010-t-7a25a--step-and-advances-progress-system/evidence"
+      ],
+      "title": "terminal account skips its queued sequence step and advances progress",
+      "requirements": [
+        "R-A1-04",
+        "R-B1-08"
+      ],
+      "automation": "tests/system/sequence.spec.ts"
+    },
+    {
+      "id": "AGENT-034",
+      "status": "PASS",
+      "durationMs": 1858,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-034-mi-49d78-ory-without-assistant-block-system/evidence"
+      ],
+      "title": "missing stop reason produces BAD_JSON history without assistant block",
+      "requirements": [
+        "R-A5-03",
+        "R-A5-04",
+        "R-A5-14"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-035",
+      "status": "PASS",
+      "durationMs": 1868,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-035-ze-77fd4-ory-without-assistant-block-system/evidence"
+      ],
+      "title": "zero content blocks produces BAD_JSON history without assistant block",
+      "requirements": [
+        "R-A5-03",
+        "R-A5-04",
+        "R-A5-14"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "AGENT-036",
+      "status": "PASS",
+      "durationMs": 1863,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-agent--AGENT-036-te-2265e-ory-without-assistant-block-system/evidence"
+      ],
+      "title": "text surrounding JSON produces BAD_JSON history without assistant block",
+      "requirements": [
+        "R-A5-03",
+        "R-A5-04",
+        "R-A5-14"
+      ],
+      "automation": "tests/system/agent.spec.ts"
+    },
+    {
+      "id": "MSG-018",
+      "status": "PASS",
+      "durationMs": 2819,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-messages--MSG-018-term-40dfa-ts-queue-across-every-group-system/evidence"
+      ],
+      "title": "terminal event removes account and cancels its queue across every group",
+      "requirements": [
+        "R-A1-04"
+      ],
+      "automation": "tests/api/messages.spec.ts"
+    },
+    {
+      "id": "EXT-001",
+      "status": "PASS",
+      "durationMs": 1735,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/extensions-api--EXT-001-群资料可选、名称回退基础数据、局部编辑与简介清空-system/evidence"
+      ],
+      "title": "群资料可选、局部编辑及简介清空",
+      "requirements": [
+        "ADD-META-01",
+        "ADD-META-02",
+        "ADD-META-03",
+        "ADD-META-04"
+      ],
+      "automation": "tests/extensions/api.spec.ts"
+    },
+    {
+      "id": "EXT-002",
+      "status": "PASS",
+      "durationMs": 1756,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/extensions-api--EXT-002-viewer不能修改群资料与原值条件-system/evidence"
+      ],
+      "title": "viewer资料越权拒绝",
+      "requirements": [
+        "R-A0-05",
+        "ADD-META-01",
+        "ADD-CONFLICT-01"
+      ],
+      "automation": "tests/extensions/api.spec.ts"
+    },
+    {
+      "id": "EXT-003",
+      "status": "PASS",
+      "durationMs": 2724,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/extensions-api--EXT-003-名称简介及两个ID可搜索，特殊字符按字面匹配-system/evidence"
+      ],
+      "title": "目录四字段及字面搜索",
+      "requirements": [
+        "ADD-DIR-02"
+      ],
+      "automation": "tests/extensions/api.spec.ts"
+    },
+    {
+      "id": "EXT-004",
+      "status": "PASS",
+      "durationMs": 22097,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/extensions-api--EXT-004-原群列表数组兼容，目录默认分页与全部页面遍历-system/evidence"
+      ],
+      "title": "目录分页兼容与双向遍历",
+      "requirements": [
+        "ADD-DIR-01",
+        "ADD-DIR-04",
+        "ADD-DIR-06"
+      ],
+      "automation": "tests/extensions/api.spec.ts"
+    },
+    {
+      "id": "EXT-005",
+      "status": "PASS",
+      "durationMs": 786,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/extensions-api--EXT-005-目录边界、非法查询和未经授权访问-system/evidence"
+      ],
+      "title": "目录输入边界与鉴权",
+      "requirements": [
+        "ADD-DIR-04"
+      ],
+      "automation": "tests/extensions/api.spec.ts"
+    },
+    {
+      "id": "EXT-006",
+      "status": "PASS",
+      "durationMs": 2628,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/extensions-api--EXT-006-游标绑定查询且不能跨身份绕过权限-system/evidence"
+      ],
+      "title": "完整查询游标绑定",
+      "requirements": [
+        "ADD-DIR-05",
+        "ADD-DIR-12"
+      ],
+      "automation": "tests/extensions/api.spec.ts"
+    },
+    {
+      "id": "EXT-007",
+      "status": "PASS",
+      "durationMs": 3057,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/extensions-api--EXT-007-群状态和Agent开关组合先过滤再分页-system/evidence"
+      ],
+      "title": "组合筛选先于分页",
+      "requirements": [
+        "ADD-DIR-12"
+      ],
+      "automation": "tests/extensions/api.spec.ts"
+    },
+    {
+      "id": "EXT-008",
+      "status": "PASS",
+      "durationMs": 1708,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/extensions-api--EXT-008-同字段竞争只一成功，冲突返回当前快照-system/evidence"
+      ],
+      "title": "同字段并发原值竞争",
+      "requirements": [
+        "ADD-CONFLICT-01",
+        "ADD-CONFLICT-02"
+      ],
+      "automation": "tests/extensions/api.spec.ts"
+    },
+    {
+      "id": "EXT-009",
+      "status": "PASS",
+      "durationMs": 1870,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/extensions-api--EXT-009-冲突整请求无资料和开关副作用-system/evidence"
+      ],
+      "title": "冲突请求无部分副作用",
+      "requirements": [
+        "ADD-CONFLICT-02"
+      ],
+      "automation": "tests/extensions/api.spec.ts"
+    },
+    {
+      "id": "EXT-010",
+      "status": "PASS",
+      "durationMs": 1768,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/extensions-api--EXT-010-不同字段编辑共存，旧调用继续兼容-system/evidence"
+      ],
+      "title": "异字段并发及旧请求兼容",
+      "requirements": [
+        "ADD-CONFLICT-03",
+        "ADD-META-04"
+      ],
+      "automation": "tests/extensions/api.spec.ts"
+    },
+    {
+      "id": "EXT-011",
+      "status": "PASS",
+      "durationMs": 1721,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/extensions-api--EXT-011-null原值可比较，原值不trim，错误条件组合拒绝-system/evidence"
+      ],
+      "title": "null原值与非法条件",
+      "requirements": [
+        "ADD-CONFLICT-01"
+      ],
+      "automation": "tests/extensions/api.spec.ts"
+    },
+    {
+      "id": "EXT-012",
+      "status": "PASS",
+      "durationMs": 2186,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/extensions-api--EXT-012-资料创建时间与条件更新跨重启保留-system/evidence"
+      ],
+      "title": "资料跨重启持久性",
+      "requirements": [
+        "ADD-META-03",
+        "ADD-META-04",
+        "ADD-CONFLICT-01"
+      ],
+      "automation": "tests/extensions/api.spec.ts"
+    },
+    {
+      "id": "BLK-MIG-001",
+      "status": "PASS",
+      "durationMs": 2005,
+      "evidence": [],
+      "title": "已有历史schema低于候选时明确拒启且不改变结构数据",
+      "requirements": [
+        "R-A0-02"
+      ],
+      "automation": "tests/system/fixture-boundaries.spec.ts"
+    },
+    {
+      "id": "BASE-001",
+      "status": "PASS",
+      "durationMs": 1131,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/foundation-startup--BASE-001-全新未迁移数据库拒绝正常启动-system/evidence"
+      ],
+      "title": "全新未迁移schema拒启",
+      "requirements": [
+        "R-A0-02"
+      ],
+      "automation": "tests/foundation/startup.spec.ts"
+    },
+    {
+      "id": "BASE-002",
+      "status": "PASS",
+      "durationMs": 763,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/foundation-startup--BASE-002-交付说明和技术依赖声明可定位-system/evidence"
+      ],
+      "title": "交付声明与栈约束入口",
+      "requirements": [
+        "R-A0-06"
+      ],
+      "automation": "tests/foundation/startup.spec.ts"
+    },
+    {
+      "id": "API-001",
+      "status": "PASS",
+      "durationMs": 1817,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/foundation-contracts--API-001-原始主要读取接口必需字段和类型符合独立契约-system/evidence"
+      ],
+      "title": "独立公开API结构契约",
+      "requirements": [
+        "R-A0-03",
+        "R-A0-06",
+        "R-A3-05",
+        "R-A5-14",
+        "R-B1-05"
+      ],
+      "automation": "tests/foundation/contracts.spec.ts"
+    },
+    {
+      "id": "DIAG-001",
+      "status": "PASS",
+      "durationMs": 1871,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/api-diagnostics--DIAG-001--97cbd-ed-secret-and-business-data-system/evidence"
+      ],
+      "title": "后台诊断仅管理员可读且不泄漏测试凭据或业务样本",
+      "requirements": [
+        "ENG-DIAG-01"
+      ],
+      "automation": "tests/api/diagnostics.spec.ts"
+    },
+    {
+      "id": "INT-MSG-006",
+      "status": "PASS",
+      "durationMs": 4848,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-2a93a-t-origin-across-local-delay-system/evidence"
+      ],
+      "title": "已识别504后延迟本地保存仍从原接收起按5秒确定状态",
+      "requirements": [
+        "R-A2-01",
+        "R-A2-03"
+      ],
+      "automation": "tests/system/integration-message-boundaries.spec.ts"
+    },
+    {
+      "id": "INT-MSG-007",
+      "status": "FAIL",
+      "reason": "AssertionError: 后步排期确定偏离原首次接收时间区间，不能用重放时刻代替",
+      "durationMs": 4765,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/trace.zip"
+      ],
+      "defectId": "DEF-INT-MSG-007",
+      "title": "单实例首次确认已观察但INSERT未发出时崩溃的排期时间保留",
+      "requirements": [
+        "R-A2-01",
+        "R-A2-08",
+        "R-B1-07",
+        "R-B1-09"
+      ],
+      "automation": "tests/system/integration-message-boundaries.spec.ts"
+    },
+    {
+      "id": "INT-MSG-008",
+      "status": "PASS",
+      "durationMs": 22579,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-26779-tities-without-rescheduling-system/evidence"
+      ],
+      "title": "receipt自动提交已确认但业务未应用时崩溃后复用首次时间",
+      "requirements": [
+        "R-A2-01",
+        "R-A2-08",
+        "R-B1-07",
+        "R-B1-09"
+      ],
+      "automation": "tests/system/integration-message-boundaries.spec.ts"
+    },
+    {
+      "id": "INT-MSG-001",
+      "status": "PASS",
+      "durationMs": 4259,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-2c24f-cannot-negate-a-landed-send-system/evidence"
+      ],
+      "title": "旧404跨过2秒确认窗不能否定已真实落地消息",
+      "requirements": [
+        "R-A2-03",
+        "R-A2-04"
+      ],
+      "automation": "tests/system/integration-message-timing.spec.ts"
+    },
+    {
+      "id": "INT-MSG-002",
+      "status": "PASS",
+      "durationMs": 7273,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-effdf-d-recover-on-real-responses-system/evidence"
+      ],
+      "title": "真实查询响应持续延迟跨5秒后仍unknown并按恢复2秒收敛",
+      "requirements": [
+        "R-A2-03",
+        "R-A2-04"
+      ],
+      "automation": "tests/system/integration-message-timing.spec.ts"
+    },
+    {
+      "id": "INT-MSG-003",
+      "status": "PASS",
+      "durationMs": 5751,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-1235f-timed-from-the-original-504-system/evidence"
+      ],
+      "title": "慢但可用的确认查询仍从最初504计五秒",
+      "requirements": [
+        "R-A2-03"
+      ],
+      "automation": "tests/system/integration-message-timing.spec.ts"
+    },
+    {
+      "id": "INT-MSG-004",
+      "status": "PASS",
+      "durationMs": 9273,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-ecaa1-e-original-two-second-bound-system/evidence"
+      ],
+      "title": "查询503恢复成慢200后仍保留原两秒判定",
+      "requirements": [
+        "R-A2-04"
+      ],
+      "automation": "tests/system/integration-message-timing.spec.ts"
+    },
+    {
+      "id": "INT-MSG-005",
+      "status": "PASS",
+      "durationMs": 12259,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-028ef-uence-timing-across-restart-system/evidence"
+      ],
+      "title": "同一确认以不同eventId迟到并在公开提交后重启不改排期",
+      "requirements": [
+        "R-B1-07",
+        "R-B1-09",
+        "R-A2-08"
+      ],
+      "automation": "tests/system/integration-message-timing.spec.ts"
+    },
+    {
+      "id": "INT-ACT-001",
+      "status": "FAIL",
+      "reason": "AssertionError: 两个真实活动段安全下界已超过原始60000ms上限",
+      "durationMs": 67512,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/trace.zip"
+      ],
+      "defectId": "DEF-INT-ACT-001",
+      "title": "安全阶段重启累计活动预算、恢复归因与完整尾段真值",
+      "requirements": [
+        "R-A5-06",
+        "R-A5-11"
+      ],
+      "automation": "tests/system/integration-runtime.spec.ts"
+    },
+    {
+      "id": "INT-ACCOUNT-001",
+      "status": "PASS",
+      "durationMs": 2711,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-runtime-87a64-n-before-a-newer-disconnect-system/evidence"
+      ],
+      "title": "远端成功后的局部保存暂错在原事务恢复，新断开不被旧连接覆盖",
+      "requirements": [
+        "R-A1-03",
+        "R-A1-05",
+        "R-A1-07",
+        "R-A1-08",
+        "ENG-ACCOUNT-RECOVERY-01"
+      ],
+      "automation": "tests/system/integration-runtime.spec.ts"
+    },
+    {
+      "id": "INT-ACCOUNT-002",
+      "status": "PASS",
+      "durationMs": 4131,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-runtime-9f043--or-automatic-remote-replay-system/evidence"
+      ],
+      "title": "持续本地保存失败显式回滚，无虚假状态事件或远端自动重放",
+      "requirements": [
+        "R-A1-05",
+        "R-A1-07",
+        "ENG-ACCOUNT-RECOVERY-01"
+      ],
+      "automation": "tests/system/integration-runtime.spec.ts"
+    },
+    {
+      "id": "INT-DIAG-002",
+      "status": "PASS",
+      "durationMs": 1349,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-runtime-76161-hful-restricted-diagnostics-system/evidence"
+      ],
+      "title": "真实tick失败、进行中保持与恢复诊断及错误样本脱敏",
+      "requirements": [
+        "ENG-DIAG-01"
+      ],
+      "automation": "tests/system/integration-runtime.spec.ts"
+    },
+    {
+      "id": "INT-STREAM-001",
+      "status": "PASS",
+      "durationMs": 53979,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-streams-344ee-ived-cursor-replay-complete-system/evidence"
+      ],
+      "title": "真实暂停TCP读取与健康消费者并行、按实际已收游标重放",
+      "requirements": [
+        "ENG-STREAM-01",
+        "R-A4-03",
+        "R-A4-04"
+      ],
+      "automation": "tests/system/integration-streams.spec.ts"
+    },
+    {
+      "id": "INT-STREAM-002",
+      "status": "PASS",
+      "durationMs": 2158,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-streams-a7924--confirmations-and-backfill-system/evidence"
+      ],
+      "title": "续页改变页大小并交错发送确认、历史补投与新消息，冻结集合内容保持",
+      "requirements": [
+        "ENG-STREAM-01",
+        "R-A4-01",
+        "R-A4-02"
+      ],
+      "automation": "tests/system/integration-streams.spec.ts"
+    },
+    {
+      "id": "MAN-UX-001",
+      "status": "BLOCKED",
+      "reason": "人工执行 independent QA evidence review (no impersonated human) @ 2026-10-01T14:36:46.869486+00:00: 四态有限体验阶段按已记录负责人认可关闭，不要求重做未知样例；原始用例要求未经预读说明的真人理解，目前2716正式运行仍无此记录，不回填技术PASS。",
+      "durationMs": 0,
+      "evidence": [
+        "manual-limitations/assessment.json",
+        "manual-limitations/manual-disposition.json",
+        "manual/2d136be4-7beb-454f-ade2-55e19cbbf7ef.json"
+      ],
+      "title": "操作员能识别阻断、失败与账号/群角色含义",
+      "requirements": [
+        "R-A6-03",
+        "ADD-COPY-01"
+      ],
+      "automation": null
+    },
+    {
+      "id": "MAN-IME-001",
+      "status": "BLOCKED",
+      "reason": "人工执行 independent QA evidence review (no impersonated human) @ 2026-10-01T14:36:46.869486+00:00: 当前2716正式运行没有真实操作系统输入法的键盘候选/网络时间线。composition自动化不替代本义务，记录缺证而不是产品失败。",
+      "durationMs": 0,
+      "evidence": [
+        "manual-limitations/assessment.json",
+        "manual-limitations/manual-disposition.json",
+        "manual/b79ed0f9-9db4-4c6f-b762-5dc2f10f7d15.json"
+      ],
+      "title": "真实操作系统中文输入法不触发中间查询",
+      "requirements": [
+        "ADD-DIR-11"
+      ],
+      "automation": null
+    },
+    {
+      "id": "MAN-FOCUS-001",
+      "status": "BLOCKED",
+      "reason": "人工执行 independent QA evidence review (no impersonated human) @ 2026-10-01T14:36:46.869486+00:00: 当前2716正式运行没有真人跨应用/标签栏/窗口焦点与实际favicon呈现证据。独立headed自动化不替代该真人义务。",
+      "durationMs": 0,
+      "evidence": [
+        "manual-limitations/assessment.json",
+        "manual-limitations/manual-disposition.json",
+        "manual/05a04f63-c0f7-46e6-b824-ca612e91981a.json"
+      ],
+      "title": "真实失焦与浏览器标签标题favicon呈现",
+      "requirements": [
+        "ADD-ATT-02",
+        "ADD-ATT-03"
+      ],
+      "automation": null
+    },
+    {
+      "id": "MAN-DELIVERY-001",
+      "status": "PASS",
+      "reason": "人工执行 Independent QA intake_risk_map (AI receiver/document review; not human UX) @ 2026-10-01T14:34:36.098591+00:00: 正式run开始后独立接收并复核固定2716 Git候选、父链、非shallow历史、干净tracked/untracked交付状态、README与原文哈希。候选与d761产品源间仅文档/证据变更，版本可独立识别；ignored依赖/构建明确列出。本条不依赖旧PASS，也不等同上线或真人体验。",
+      "durationMs": 0,
+      "evidence": [
+        "manual-review/README.md",
+        "manual-review/source-index.json",
+        "manual-review/candidate-source/README.md",
+        "manual-review/candidate-source/docs/qa-final-boundaries-followup-20261001.md",
+        "manual-review/preparation/build-preparation.json",
+        "manual-review/preparation/verify-original.log",
+        "manual/c21df728-9c71-4023-a177-277ce4bb9e81.json"
+      ],
+      "title": "接收方核对仓库Git历史及版本对应",
+      "requirements": [
+        "R-DELIVERY-01"
+      ],
+      "automation": null
+    },
+    {
+      "id": "MAN-DELIVERY-002",
+      "status": "PASS",
+      "reason": "人工执行 Independent QA intake_risk_map (AI receiver/document review; not human UX) @ 2026-10-01T14:34:36.098591+00:00: 接收方从新clone/detach2716和全新npm ci完成README启动：正式run开始后README --smoke真实通过健康、两角色、随机API/WS与独立状态；正常入口独立Chromium两角色登录并浏览6账号/空群页，真实响应200、pageerror0及四截图。初次浏览取证将strong误作heading导致30秒观察中断，原始需复核标记保留；仅修QA定位后新实例实际完成。三次实例均精确清理容器、命名卷和状态目录，私有manifest未归档，真实模型调用0。",
+      "durationMs": 0,
+      "evidence": [
+        "manual-review/README.md",
+        "manual-review/readme-preparation.json",
+        "manual-review/readme-npm-ci.log",
+        "manual-review/readme-execution-first.json",
+        "manual-review/execute-readme-first.mjs",
+        "manual-review/readme-execution.json",
+        "manual-review/execute-readme.mjs",
+        "manual-review/readme-smoke.log",
+        "manual-review/readme-ui.log",
+        "manual-review/readme-ui-recheck.log",
+        "manual-review/admin-accounts.png",
+        "manual-review/admin-groups.png",
+        "manual-review/viewer-accounts.png",
+        "manual-review/viewer-groups.png",
+        "manual-review/readme-smoke-resources.json",
+        "manual-review/readme-smoke-cleanup.json",
+        "manual-review/readme-ui-resources.json",
+        "manual-review/readme-ui-cleanup.json",
+        "manual-review/readme-ui-recheck-resources.json",
+        "manual-review/readme-ui-recheck-cleanup.json",
+        "manual/da3d1340-6876-4b3d-a23d-d1a15a6b3e86.json"
+      ],
+      "title": "接收方只依README在全新隔离环境复现启动",
+      "requirements": [
+        "R-DELIVERY-02"
+      ],
+      "automation": null
+    },
+    {
+      "id": "BLK-EXT-001",
+      "status": "BLOCKED",
+      "reason": "BlockedError: [BLOCKED] No terminal evidence within observation budget for does-not-land. The 10s probe is not a product deadline or proof of permanent non-recovery; retain CL-01 protocol risk.",
+      "durationMs": 19579,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-390f1-fabricated-two-second-bound-system/trace.zip"
+      ],
+      "title": "未收到响应的发送崩溃：相同前缀下落地/不落地两个分支",
+      "requirements": [
+        "R-A2-01",
+        "R-A5-11"
+      ],
+      "automation": "tests/system/protocol-boundaries.spec.ts"
+    },
+    {
+      "id": "BLK-EXT-002",
+      "status": "BLOCKED",
+      "reason": "BlockedError: [BLOCKED] Created group job has no terminal evidence within 20s probe; CL-01 recovery still unresolved",
+      "durationMs": 21318,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/trace.zip"
+      ],
+      "title": "建群成功响应丢失：原群身份与额外远端群核对",
+      "requirements": [
+        "R-A3-02",
+        "R-A2-01"
+      ],
+      "automation": "tests/system/protocol-boundaries.spec.ts"
+    },
+    {
+      "id": "BLK-EXT-003",
+      "status": "BLOCKED",
+      "reason": "BlockedError: [BLOCKED] No next promotion or terminal job within 20s probe; not proof of infinite stall",
+      "durationMs": 21898,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/trace.zip"
+      ],
+      "title": "promote响应丢失：角色真相与两次调用上限",
+      "requirements": [
+        "R-A3-02",
+        "R-A3-04"
+      ],
+      "automation": "tests/system/protocol-boundaries.spec.ts"
+    },
+    {
+      "id": "BLK-EXT-004",
+      "status": "BLOCKED",
+      "reason": "BlockedError: [BLOCKED] Restarted kick run remains open within 20s observation budget; no arbitrary recovery deadline asserted",
+      "durationMs": 23406,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/trace.zip"
+      ],
+      "title": "kick已生效后目标重新加入：恢复不重踢",
+      "requirements": [
+        "R-A5-09",
+        "R-A5-11"
+      ],
+      "automation": "tests/system/protocol-boundaries.spec.ts"
+    },
+    {
+      "id": "BLK-EXT-005",
+      "status": "BLOCKED",
+      "reason": "BlockedError: [BLOCKED] Run not terminal within 20s probe; original recovery obligation retained without inventing a deadline",
+      "durationMs": 22499,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/error-context.md",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/trace.zip"
+      ],
+      "title": "模型未执行响应丢失：允许不同合法响应且保留已持久历史",
+      "requirements": [
+        "R-A5-02",
+        "R-A5-11"
+      ],
+      "automation": "tests/system/protocol-boundaries.spec.ts"
+    },
+    {
+      "id": "DOC-MAN-001",
+      "status": "PASS",
+      "reason": "人工执行 Independent QA intake_risk_map (AI receiver/document review; not human UX) @ 2026-10-01T14:34:36.098591+00:00: 正式run开始后重新核对固定2716文档和ec46f9b批准目录的32个必验追加条款，逐组定位CR/D/QA-D6的来源日期、要求影响、实现版本、验收入口和替代关系。建议/批准/开发验证/用户验收有明确区分；D039/D041方向不冒称强保证通过，D042差异明确，H16/H17真人复验和H18有限认可/H19仅评估分别记录。此为文档可追踪性审核，不对所述产品功能或真人体验代签PASS。",
+      "durationMs": 0,
+      "evidence": [
+        "manual-review/README.md",
+        "manual-review/source-index.json",
+        "manual-review/doc-traceability.json",
+        "manual-review/approved-additions.json",
+        "manual-review/candidate-source/docs/change-requests.md",
+        "manual-review/candidate-source/docs/decisions.md",
+        "manual-review/candidate-source/docs/feature-matrix.md",
+        "manual-review/candidate-source/docs/human-review-record.md",
+        "manual-review/qa-source/requirements/sequence-failure-policy.md",
+        "manual-review/qa-source/requirements/left-members-decision.md",
+        "manual/02653eb6-b90c-45a0-aa40-cf9522cf349b.json"
+      ],
+      "title": "追加需求台账来源与状态审核",
+      "requirements": [
+        "ADD-DOC-01"
+      ],
+      "automation": null
+    },
+    {
+      "id": "BLK-SPEC-002",
+      "status": "PASS",
+      "durationMs": 31266,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-sequence-failure-po-2defb--never-advances-later-steps-system/evidence"
+      ],
+      "title": "普通序列发送失败终止整run且重启后不发送后续步骤",
+      "requirements": [
+        "ADD-SEQ-FAIL-01",
+        "R-B1-07",
+        "R-B1-08",
+        "R-A2-12",
+        "R-A2-03",
+        "R-A2-04"
+      ],
+      "automation": "tests/system/sequence-failure-policy.spec.ts"
+    },
+    {
+      "id": "BLK-SPEC-001",
+      "status": "PASS",
+      "durationMs": 6557,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-spec-boundaries--BL-9ce46-9-keeps-its-actor-and-order-system/evidence"
+      ],
+      "title": "序列在线候选过滤与已入队限流消息的账号及顺序保持",
+      "requirements": [
+        "R-B1-01",
+        "R-A2-09"
+      ],
+      "automation": "tests/system/spec-boundaries.spec.ts"
+    },
+    {
+      "id": "BLK-SPEC-003",
+      "status": "PASS",
+      "durationMs": 2655,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-spec-boundaries--BL-d6381-explicit-disconnect-effects-system/evidence"
+      ],
+      "title": "手动状态遵守CAS和已提交事件，离线目标产生明确disconnect效果",
+      "requirements": [
+        "R-A1-01",
+        "R-A1-08"
+      ],
+      "automation": "tests/system/spec-boundaries.spec.ts"
+    },
+    {
+      "id": "BLK-SPEC-004",
+      "status": "PASS",
+      "durationMs": 3021,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-spec-boundaries--BL-bc827-ess-error-resets-the-streak-system/evidence"
+      ],
+      "title": "混合协议错误累计三次，合法工具业务错误清零连续计数",
+      "requirements": [
+        "R-A5-04",
+        "R-A5-05"
+      ],
+      "automation": "tests/system/spec-boundaries.spec.ts"
+    },
+    {
+      "id": "BLK-SPEC-005",
+      "status": "PASS",
+      "durationMs": 2925,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-spec-boundaries--BL-3dc74--side-effects-or-a-new-turn-system/evidence"
+      ],
+      "title": "第三次未知审计与关闭Agent重叠时合法终态稳定且不产生副作用",
+      "requirements": [
+        "R-A5-07",
+        "R-A5-13"
+      ],
+      "automation": "tests/system/spec-boundaries.spec.ts"
+    },
+    {
+      "id": "BLK-SPEC-006",
+      "status": "PASS",
+      "durationMs": 6726,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-spec-boundaries--BL-be9ba-ndependent-boundary-oracles-system/evidence"
+      ],
+      "title": "资料版本化输入规则、工具公开schema一致性及明确字节上限",
+      "requirements": [
+        "ADD-META-04",
+        "R-A5-12",
+        "R-A5-15"
+      ],
+      "automation": "tests/system/spec-boundaries.spec.ts"
+    },
+    {
+      "id": "UI-023",
+      "status": "PASS",
+      "durationMs": 3616,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-023-简介摘要最多两行纯文本、详情完整且空简介无占位-chromium/attachments/ui-final-screenshot-d1b420761ef234267734ec9e4d842e0deafbd840.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-023-简介摘要最多两行纯文本、详情完整且空简介无占位-chromium/attachments/ui-final-state-dfc27d12a775e192e3048dbaecd4170f73a0114b.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-023-简介摘要最多两行纯文本、详情完整且空简介无占位-chromium/evidence"
+      ],
+      "title": "简介两行纯文本摘要与完整详情",
+      "requirements": [
+        "ADD-DIR-03"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-024",
+      "status": "PASS",
+      "durationMs": 15630,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-024-单页五秒刷新、并发失效合并且无关消息不遍历目录-chromium/attachments/ui-final-screenshot-a109378e23f620dc3dd49f171d33b498f81f0b12.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-024-单页五秒刷新、并发失效合并且无关消息不遍历目录-chromium/attachments/ui-final-state-3a43e6d1318861a3f1a92744679d4953dfc5b05c.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-024-单页五秒刷新、并发失效合并且无关消息不遍历目录-chromium/evidence"
+      ],
+      "title": "单页五秒轮询及并发失效合并",
+      "requirements": [
+        "ADD-DIR-07",
+        "ADD-DIR-11"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-025",
+      "status": "PASS",
+      "durationMs": 33559,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-025-同标签返回保留条件与已加载页，整页刷新清空目录内存-chromium/attachments/ui-final-screenshot-a2f13409b1ef0fca3d8b0ee5804db017c5363749.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-025-同标签返回保留条件与已加载页，整页刷新清空目录内存-chromium/attachments/ui-final-state-98a53d71e927475d25b8b77325baf2c8e8a5ce92.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-025-同标签返回保留条件与已加载页，整页刷新清空目录内存-chromium/evidence"
+      ],
+      "title": "返回恢复内存条件分页位置及刷新清空",
+      "requirements": [
+        "ADD-DIR-09",
+        "ADD-DIR-06"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-026",
+      "status": "PASS",
+      "durationMs": 3890,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-026-注销后更换身份不复用上一会话目录条件-chromium/attachments/ui-final-screenshot-703a894e5b1c478b36d916dd2e5684e74fb6e328.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-026-注销后更换身份不复用上一会话目录条件-chromium/attachments/ui-final-state-303c957f59c149d7d2e1c983e155d7409c587fdd.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-026-注销后更换身份不复用上一会话目录条件-chromium/evidence"
+      ],
+      "title": "注销换身份清除目录会话状态",
+      "requirements": [
+        "ADD-DIR-09",
+        "R-A6-01"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-027",
+      "status": "PASS",
+      "durationMs": 4068,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-027-composition期间不查询中间文本，确认后只查完成词且不抢焦点-chromium/attachments/ui-final-screenshot-0ec09a3a3a3762547b6a288085c58dc93e52a9ee.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-027-composition期间不查询中间文本，确认后只查完成词且不抢焦点-chromium/attachments/ui-final-state-a1d09dbe06ff8c52df8028ab10741ffd94eab610.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-027-composition期间不查询中间文本，确认后只查完成词且不抢焦点-chromium/evidence"
+      ],
+      "title": "浏览器composition不发中间查询",
+      "requirements": [
+        "ADD-DIR-11"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-028",
+      "status": "PASS",
+      "durationMs": 6687,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/attachments/ui-final-screenshot-55d3bb3bc16f1c6e86ff51176df51444c357bdd4.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/attachments/ui-final-state-b9a87937c771b005349d0c8dc0b487c931bd83b5.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/evidence"
+      ],
+      "title": "前台安静与失焦静态标题favicon",
+      "requirements": [
+        "ADD-ATT-02",
+        "ADD-ATT-03"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-029",
+      "status": "PASS",
+      "durationMs": 4875,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-029-内容加载失败不能确认，成功呈现后相关操作才清提醒-chromium/attachments/ui-final-screenshot-e896de73dd240139f98131b7a721937613ffd738.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-029-内容加载失败不能确认，成功呈现后相关操作才清提醒-chromium/attachments/ui-final-state-dcf165174339de0f752c93fbbe91fa2bb925918a.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-029-内容加载失败不能确认，成功呈现后相关操作才清提醒-chromium/evidence"
+      ],
+      "title": "加载失败不冒称已确认",
+      "requirements": [
+        "ADD-ATT-03"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-030",
+      "status": "PASS",
+      "durationMs": 14335,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/attachments/ui-final-screenshot-55637920d61570bb7fac116e4f4cea49872a52d1.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/attachments/ui-final-state-308674f6f26d45fcd24d25eed9d3e070a059eed1.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/evidence"
+      ],
+      "title": "列表范围消失的两阶段确认",
+      "requirements": [
+        "ADD-ATT-01",
+        "ADD-ATT-04"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-031",
+      "status": "PASS",
+      "durationMs": 2916,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-031-状态先改变后还原仍保留期间变化候选-chromium/attachments/ui-final-screenshot-c24ec3f4734a190b64cbdf136ee4d6223c8d92df.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-031-状态先改变后还原仍保留期间变化候选-chromium/attachments/ui-final-state-815f55ef8287ecfa3851184b4f516dd7119e6900.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-031-状态先改变后还原仍保留期间变化候选-chromium/evidence"
+      ],
+      "title": "变化后回原值保留期间变化候选",
+      "requirements": [
+        "ADD-ATT-04"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-032",
+      "status": "PASS",
+      "durationMs": 57052,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-032-提醒确认不改变刷新后的分页资格或恢复旧分页链-chromium/attachments/ui-final-screenshot-96214a9b7dc37c3d9bc345b68d73e3e652fb040f.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-032-提醒确认不改变刷新后的分页资格或恢复旧分页链-chromium/attachments/ui-final-state-f3ccedec9f8276f9765a89862de2493b08439f99.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-032-提醒确认不改变刷新后的分页资格或恢复旧分页链-chromium/evidence"
+      ],
+      "title": "提醒确认不改变刷新后的分页资格或恢复旧分页链",
+      "requirements": [
+        "ADD-ATT-05",
+        "ADD-DIR-08"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-033",
+      "status": "PASS",
+      "durationMs": 6845,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-033-本地手动发送先带clientMsgId，回流早于响应不误标远端未读-chromium/attachments/ui-final-screenshot-68031ab6154ba095d268fc7795c3caf7c8adba2a.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-033-本地手动发送先带clientMsgId，回流早于响应不误标远端未读-chromium/attachments/ui-final-state-d804cca914a4822fcba1fc1b2c5cac62b99302af.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-033-本地手动发送先带clientMsgId，回流早于响应不误标远端未读-chromium/evidence"
+      ],
+      "title": "本地手动clientMsgId及早回流归属",
+      "requirements": [
+        "ADD-ATT-06"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-034",
+      "status": "PASS",
+      "durationMs": 3308,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-034-Agent自己的自动消息仍参与失焦提醒-chromium/attachments/ui-final-screenshot-e2a90fa56ea834974b438d4122b650b5d2023e37.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-034-Agent自己的自动消息仍参与失焦提醒-chromium/attachments/ui-final-state-a0f272fac0b49d31189d01e786949c2f261db24a.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-034-Agent自己的自动消息仍参与失焦提醒-chromium/evidence"
+      ],
+      "title": "Agent自动消息失焦提醒",
+      "requirements": [
+        "ADD-ATT-06"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-035",
+      "status": "PASS",
+      "durationMs": 5057,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-035-序列自动发送不因isOwn被排除提醒-chromium/attachments/ui-final-screenshot-de94d4dc2c93faae53b8326d27287bac7d4562ca.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-035-序列自动发送不因isOwn被排除提醒-chromium/attachments/ui-final-state-07be6db93b757a746c5bb4e25a787b75174f0610.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-035-序列自动发送不因isOwn被排除提醒-chromium/evidence"
+      ],
+      "title": "序列自动消息失焦提醒",
+      "requirements": [
+        "ADD-ATT-06"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-036",
+      "status": "PASS",
+      "durationMs": 4475,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-036-编辑卸载后迟到成功不能污染新页面或重放提交-chromium/attachments/ui-final-screenshot-62796b5f9a166c3ab66d5ccd5fac868cef770c8f.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-036-编辑卸载后迟到成功不能污染新页面或重放提交-chromium/attachments/ui-final-state-91e1fc7781082403dd9af224815148383e445ed8.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-036-编辑卸载后迟到成功不能污染新页面或重放提交-chromium/evidence"
+      ],
+      "title": "编辑卸载迟到结果隔离",
+      "requirements": [
+        "ADD-FORM-02"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-037",
+      "status": "PASS",
+      "durationMs": 1896,
+      "evidence": [],
+      "title": "目录微秒及同时间ID跨页边界的确定性数据夹具",
+      "requirements": [
+        "ADD-DIR-01",
+        "ADD-DIR-05"
+      ],
+      "automation": "tests/system/fixture-boundaries.spec.ts"
+    },
+    {
+      "id": "UI-001",
+      "status": "PASS",
+      "durationMs": 13792,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-chromium/attachments/ui-final-screenshot-ca48d8dd9885e41f9cc789e423853ff658bf2c35.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-chromium/attachments/ui-final-state-dd51babf2fd331f6f549cc61aecbd507fca9dbff.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-chromium/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-firefox-smoke/attachments/ui-final-screenshot-55b9b2c1d8faa8670ae552f73875300c68f3ae45.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-firefox-smoke/attachments/ui-final-state-39f3883f6465fad254e1ade76bc6bad1f7221513.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-firefox-smoke/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-webkit-smoke/attachments/ui-final-screenshot-e0564f49128742480b151a7ebd59ccf9a152f916.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-webkit-smoke/attachments/ui-final-state-2042379b547c9986d7b427bdd253cd2a0d28f70a.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-webkit-smoke/evidence"
+      ],
+      "title": "viewer登录后各页不提供业务写入口",
+      "requirements": [
+        "R-A6-01",
+        "R-A0-05"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-002",
+      "status": "PASS",
+      "durationMs": 1961,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-002-账号状态实时显示且操作符合当前状态-chromium/attachments/ui-final-screenshot-ded72074be09c27b77694e12f32c0f0395ea1174.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-002-账号状态实时显示且操作符合当前状态-chromium/attachments/ui-final-state-5380390119fb14dbae58a6e9ec98b399c1764fab.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-002-账号状态实时显示且操作符合当前状态-chromium/evidence"
+      ],
+      "title": "账号状态与合法操作实时更新",
+      "requirements": [
+        "R-A6-02",
+        "ADD-COPY-01"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-003",
+      "status": "PASS",
+      "durationMs": 12295,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-003-群详情显示角色和实时消息，回流不重复-compat-chromium/attachments/ui-final-screenshot-1dff5ceeb4f769bda39c31d77e7ed65ed0d09e6a.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-003-群详情显示角色和实时消息，回流不重复-compat-chromium/attachments/ui-final-state-fc8589e6393bbf44a2d3facd2606b61390196d98.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-003-群详情显示角色和实时消息，回流不重复-compat-chromium/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-003-群详情显示角色和实时消息，回流不重复-compat-firefox-smoke/attachments/ui-final-screenshot-beeacd300a6f312e7789cf332f1c946b4c1ba82e.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-003-群详情显示角色和实时消息，回流不重复-compat-firefox-smoke/attachments/ui-final-state-c74591a3fc5948965d555576d9682332cd4a603a.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-003-群详情显示角色和实时消息，回流不重复-compat-firefox-smoke/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-003-群详情显示角色和实时消息，回流不重复-compat-webkit-smoke/attachments/ui-final-screenshot-add3aa86623033d39c0f939a08b0e8fd8329ed45.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-003-群详情显示角色和实时消息，回流不重复-compat-webkit-smoke/attachments/ui-final-state-e4a6651fb5258f0009ecf83bc00591e691fd3386.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-003-群详情显示角色和实时消息，回流不重复-compat-webkit-smoke/evidence"
+      ],
+      "title": "群角色及消息回流只显示一行",
+      "requirements": [
+        "R-A6-03",
+        "R-A4-02"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-004",
+      "status": "PASS",
+      "durationMs": 4694,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-004-自发消息展示accepted到sent且保持一行-chromium/attachments/ui-final-screenshot-b0d7bbff4bc4cd80cc816620a1062f0db54e9c52.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-004-自发消息展示accepted到sent且保持一行-chromium/attachments/ui-final-state-86b80e52195818a1f3d346e1b2c5f9d209377b4f.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-004-自发消息展示accepted到sent且保持一行-chromium/evidence"
+      ],
+      "title": "页面显示accepted到sent",
+      "requirements": [
+        "R-A6-03",
+        "R-A2-02",
+        "R-A4-02"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-005",
+      "status": "PASS",
+      "durationMs": 3165,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-005-加载更早与实时新增按消息身份合并-chromium/attachments/ui-final-screenshot-77fe379933d274694d36407723ed4f2867f761c9.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-005-加载更早与实时新增按消息身份合并-chromium/attachments/ui-final-state-8a2e03a842a7156532fab9a016541700eed46759.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-005-加载更早与实时新增按消息身份合并-chromium/evidence"
+      ],
+      "title": "历史分页和实时新增合并",
+      "requirements": [
+        "R-A4-01",
+        "R-A4-02",
+        "R-A6-03"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-006",
+      "status": "PASS",
+      "durationMs": 8328,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-006-浏览器断线恢复后3秒内补齐-compat-chromium/attachments/ui-final-screenshot-0f6b65b5e642ab8b9cee3c80813622485545b2b0.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-006-浏览器断线恢复后3秒内补齐-compat-chromium/attachments/ui-final-state-d5da9dbcbbb41830f1bc070c268cb477b07a78a8.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-006-浏览器断线恢复后3秒内补齐-compat-chromium/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-006-浏览器断线恢复后3秒内补齐-compat-firefox-smoke/attachments/ui-final-screenshot-e653dafbda720997ebd06704347073fe4bf47c58.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-006-浏览器断线恢复后3秒内补齐-compat-firefox-smoke/attachments/ui-final-state-d657db73f9216b4724bd6d6771c02c40d9e9ea52.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-006-浏览器断线恢复后3秒内补齐-compat-firefox-smoke/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-006-浏览器断线恢复后3秒内补齐-compat-webkit-smoke/attachments/ui-final-screenshot-b21f1e1a7b28ab188df97032d1d175cadb147434.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-006-浏览器断线恢复后3秒内补齐-compat-webkit-smoke/attachments/ui-final-state-1de6d8ed8fa51d67112e8fb420426c3e14cde72c.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-006-浏览器断线恢复后3秒内补齐-compat-webkit-smoke/evidence"
+      ],
+      "title": "前端断线3秒内补齐",
+      "requirements": [
+        "R-B4-01"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-007",
+      "status": "PASS",
+      "durationMs": 2840,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-007-审计阻断在群运行列表醒目可见-chromium/attachments/ui-final-screenshot-584a28cf3c8526b7fb4677e6b15767d591aa5fab.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-007-审计阻断在群运行列表醒目可见-chromium/attachments/ui-final-state-29d2f757e7341cfe4419f84709561e676f497d9f.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-007-审计阻断在群运行列表醒目可见-chromium/evidence"
+      ],
+      "title": "审计阻断显示在群运行列表",
+      "requirements": [
+        "R-A6-03",
+        "R-A5-07"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-008",
+      "status": "PASS",
+      "durationMs": 9248,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-chromium/attachments/ui-final-screenshot-11a4bf816009270ccbbb8e007504451494ef9603.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-chromium/attachments/ui-final-state-435eb6007455970fea472b617f5e3c8afabfd448.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-chromium/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-firefox-smoke/attachments/ui-final-screenshot-ae2a835840f4090fde3f58981a6882f80ada971d.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-firefox-smoke/attachments/ui-final-state-00c0bf2fb65c32d0aa48f1ff28a22c5e0e528f29.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-firefox-smoke/evidence",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-webkit-smoke/attachments/ui-final-screenshot-35c7aa5c3ef27ee06e1a6ad6ee609f557cf3df05.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-webkit-smoke/attachments/ui-final-state-9b07156194511d837e53ba246a367d28c4b98807.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-webkit-smoke/evidence"
+      ],
+      "title": "登录至Agent步骤详情完整旅程",
+      "requirements": [
+        "R-B4-02",
+        "R-A5-14"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-009",
+      "status": "PASS",
+      "durationMs": 7332,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-009-序列预检展示继承与来源，确认后才启动-chromium/attachments/ui-final-screenshot-e2a046b2605f17023d3402898282e1b329be70d1.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-009-序列预检展示继承与来源，确认后才启动-chromium/attachments/ui-final-state-2e16b1e75ceff94d0f42942a6ad3555ded13e4ec.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-009-序列预检展示继承与来源，确认后才启动-chromium/evidence"
+      ],
+      "title": "序列预检变量继承与来源",
+      "requirements": [
+        "R-B1-03",
+        "R-B1-05"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-010",
+      "status": "PASS",
+      "durationMs": 4345,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-010-序列预检缺值显示步骤与key且零发送-chromium/attachments/ui-final-screenshot-ab45c954463b297d63574d79419fcbd37ba0c6ce.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-010-序列预检缺值显示步骤与key且零发送-chromium/attachments/ui-final-state-f3c06d7177b7cb4a1d4ee0bace7d2e7030cef07d.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-010-序列预检缺值显示步骤与key且零发送-chromium/evidence"
+      ],
+      "title": "序列预检错误定位",
+      "requirements": [
+        "R-B1-04"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-011",
+      "status": "PASS",
+      "durationMs": 5010,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-011-多个页面请求同时401只续期一次并恢复加载-chromium/attachments/ui-final-screenshot-ec93fd2ae347441deba43014f6630847b4b85262.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-011-多个页面请求同时401只续期一次并恢复加载-chromium/attachments/ui-final-state-8ec3ccd731afad2764f30a11c0982ff0d9001887.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-011-多个页面请求同时401只续期一次并恢复加载-chromium/evidence"
+      ],
+      "title": "前端并发401单次续期",
+      "requirements": [
+        "R-B3-04"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-012",
+      "status": "PASS",
+      "durationMs": 3877,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/attachments/ui-final-screenshot-41d138fcd717e6ceeea8c2516c217ab420c3e068.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/attachments/ui-final-state-89114476595fbe48d326ba75075ab2db7b1e703f.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-012-群名称简介按纯文本显示且日期不随编辑变化-chromium/evidence"
+      ],
+      "title": "群资料纯文本呈现",
+      "requirements": [
+        "ADD-META-01",
+        "ADD-META-02",
+        "ADD-DIR-03"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-013",
+      "status": "PASS",
+      "durationMs": 2985,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/attachments/ui-final-screenshot-7ec2a720e30a4817bdfcebafe2c47b06879fb290.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/attachments/ui-final-state-3be4550b89cd61f804bb996914049b4ab1396369.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-013-编辑表单未改直接关闭，dirty可继续或放弃-chromium/evidence"
+      ],
+      "title": "编辑表单dirty关闭保护",
+      "requirements": [
+        "ADD-FORM-01"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-014",
+      "status": "PASS",
+      "durationMs": 3895,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-014-提交中关闭受限，失败保留输入且不重放写入-chromium/attachments/ui-final-screenshot-90cdc31e973a7c45685f24f0606289dfb2374c18.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-014-提交中关闭受限，失败保留输入且不重放写入-chromium/attachments/ui-final-state-529bdf6e853d9d0b6354de3154c3b153c90dfb0c.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-014-提交中关闭受限，失败保留输入且不重放写入-chromium/evidence"
+      ],
+      "title": "提交中保护及失败保留草稿",
+      "requirements": [
+        "ADD-FORM-02"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-015",
+      "status": "PASS",
+      "durationMs": 2910,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/attachments/ui-final-screenshot-f7d3b5a9a57792de9d9e54f92e5cdb8098f15cd1.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/attachments/ui-final-state-f6582a1ec2e116a0cb520a4800f7df98e5b358fd.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-015-同字段冲突保留草稿，明确再确认才提交-chromium/evidence"
+      ],
+      "title": "冲突必须明确再次确认",
+      "requirements": [
+        "ADD-CONFLICT-04"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-016",
+      "status": "PASS",
+      "durationMs": 5305,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-016-搜索旧响应不能覆盖新条件且不抢焦点-chromium/attachments/ui-final-screenshot-498dc53b65b0c33384cf09eff296da5840c5b662.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-016-搜索旧响应不能覆盖新条件且不抢焦点-chromium/attachments/ui-final-state-a8975b148c86049dbcbc817ddb1a303b40426554.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-016-搜索旧响应不能覆盖新条件且不抢焦点-chromium/evidence"
+      ],
+      "title": "搜索迟到响应隔离",
+      "requirements": [
+        "ADD-DIR-11"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-017",
+      "status": "PASS",
+      "durationMs": 28366,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/attachments/ui-final-screenshot-c29f643e78e3ae68197ac45d690facb439533ce8.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/attachments/ui-final-state-677145cfafc412ee3198047778e3dacd132dae3a.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/evidence"
+      ],
+      "title": "多页过期和原子刷新",
+      "requirements": [
+        "ADD-DIR-08",
+        "ADD-ATT-05"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-018",
+      "status": "PASS",
+      "durationMs": 2750,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-018-目录组合筛选、清关键词与重置含义不同-chromium/attachments/ui-final-screenshot-9f1facbe13b3874ea26532edb65de4aefb1c90ce.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-018-目录组合筛选、清关键词与重置含义不同-chromium/attachments/ui-final-state-7fec7f5d6de6c387e406e4408e2a70c4f78aa314.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-018-目录组合筛选、清关键词与重置含义不同-chromium/evidence"
+      ],
+      "title": "组合筛选clear与reset",
+      "requirements": [
+        "ADD-DIR-12"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-019",
+      "status": "PASS",
+      "durationMs": 3136,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-019-初次失败可重试，成功空搜索不冒充加载错误-chromium/attachments/ui-final-screenshot-c8600ac4cfdbc1520fabce4a3597b60eb6838756.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-019-初次失败可重试，成功空搜索不冒充加载错误-chromium/attachments/ui-final-state-a400a3aa568f84977610b8b437fd15a22bf4ebb6.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-019-初次失败可重试，成功空搜索不冒充加载错误-chromium/evidence"
+      ],
+      "title": "首次错误与成功空结果区分",
+      "requirements": [
+        "ADD-DIR-10"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-020",
+      "status": "PASS",
+      "durationMs": 7971,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-020-当前群失焦只提示相关更新，聚焦本身不确认-chromium/attachments/ui-final-screenshot-bda32483d08217a280207b4db0b75dd2d7d1e421.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-020-当前群失焦只提示相关更新，聚焦本身不确认-chromium/attachments/ui-final-state-1a0b6c530019fa233a8eebd72eb7f6ac5cf01624.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-020-当前群失焦只提示相关更新，聚焦本身不确认-chromium/evidence"
+      ],
+      "title": "失焦提醒和呈现后确认",
+      "requirements": [
+        "ADD-ATT-01",
+        "ADD-ATT-02",
+        "ADD-ATT-03"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-021",
+      "status": "PASS",
+      "durationMs": 5855,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-021-离开群详情销毁提醒范围，旧群变化不污染新页-chromium/attachments/ui-final-screenshot-af902e2cd5e83f8f36ca049dd527a7896a3c72fa.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-021-离开群详情销毁提醒范围，旧群变化不污染新页-chromium/attachments/ui-final-state-011591ef718d6f0fba746aef2078bc71be930f88.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-021-离开群详情销毁提醒范围，旧群变化不污染新页-chromium/evidence"
+      ],
+      "title": "路由范围销毁",
+      "requirements": [
+        "ADD-ATT-01"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    },
+    {
+      "id": "UI-022",
+      "status": "PASS",
+      "durationMs": 1952,
+      "evidence": [
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/attachments/ui-final-screenshot-5a3803074f798c09c59cefd5d29df425e711d9b8.png",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/attachments/ui-final-state-25f2ab83e0fb4531b47c55c7615f56b362e81bf8.json",
+        "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/ui-console--UI-022-创建群表单同样执行未保存关闭保护-chromium/evidence"
+      ],
+      "title": "创建表单关闭保护",
+      "requirements": [
+        "ADD-FORM-01"
+      ],
+      "automation": "tests/ui/console.spec.ts"
+    }
+  ],
+  "excluded": "7 release gates and 5 candidate cases; no old-version PASS imported",
+  "rawRun": "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a",
+  "automaticOriginal": "automation-original/results.json",
+  "manualAudit": "manual-reviews.ndjson"
+}

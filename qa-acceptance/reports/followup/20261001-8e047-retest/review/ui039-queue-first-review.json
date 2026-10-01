@@ -1,0 +1,372 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-10-01T16:03:21.828225+00:00",
+  "basis": {
+    "runId": "2026-10-01T15-56-07.250Z-42ecefbf",
+    "qaRevision": "b076790de087406de12336bdfd385a569b014f83",
+    "sutRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+    "targetSha256": "1dd9aed24f3d4692aefc6b342fa1fd78794bea833ef0be85f26b3e7db3788a02",
+    "phase": "developer-preflight",
+    "startedAt": "2026-10-01T15:56:07.306Z"
+  },
+  "reviewType": "READ_ONLY_RAW_ADJUDICATION",
+  "rawUnchanged": true,
+  "cases": [
+    {
+      "caseId": "UI-039",
+      "project": "chromium",
+      "rawStatus": "FAIL",
+      "reviewedStatus": "BLOCKED",
+      "reason": "QA在同一已认证浏览器会话中逐状态重复login；第二次入口正常恢复admin工作台，测试等待不存在的username至120秒超时。取消空态页面尚未验证，不能记产品FAIL或整例PASS。",
+      "attribution": "QA_NAVIGATION_ERROR",
+      "rawDefectId": "DEF-UI-039",
+      "rawReason": "\u001b[31mTest timeout of 120000ms exceeded.\u001b[39m\nError: locator.fill: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[autocomplete=\"username\"]')\u001b[22m\n",
+      "durationMs": 120335,
+      "subscenarios": {
+        "failed": {
+          "rawStatus": "PASS",
+          "reviewedStatus": "PASS",
+          "backendPremiseStatus": "PASS",
+          "uiStatus": "PASS",
+          "runId": "bc5d4c64-5b8e-46da-98ee-f479712e22d4",
+          "groupId": "ec000e6a-a8f6-4323-93c0-ef7da999216d",
+          "publicState": {
+            "id": "bc5d4c64-5b8e-46da-98ee-f479712e22d4",
+            "groupId": "ec000e6a-a8f6-4323-93c0-ef7da999216d",
+            "status": "failed",
+            "endReason": "wall_clock",
+            "summary": null,
+            "recoveryNote": null,
+            "steps": []
+          },
+          "externalFacts": {
+            "modelCalls": 0,
+            "auditCalls": 0,
+            "sendOrKickRequests": 0,
+            "ownLandedMessages": 0
+          },
+          "activeAgentRunId": null,
+          "ready": true,
+          "reason": "真实failed零步详情已显示失败/wall_clock/0步/暂无步骤，未显示等待第一步；查看后公开状态和零副作用复核完成。",
+          "evidence": [
+            "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/evidence/ui039-public-queue-final.json",
+            "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/evidence/ui039-per-state-results.json",
+            "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/evidence/ui039-failed-copy.json"
+          ],
+          "rawReason": null
+        },
+        "cancelled": {
+          "rawStatus": "FAIL",
+          "reviewedStatus": "BLOCKED",
+          "backendPremiseStatus": "PASS",
+          "uiStatus": "NOT_RUN",
+          "runId": "456d0f04-b9df-464f-bc65-6c2ea2313ae3",
+          "groupId": "8bb69957-79f4-4e03-a3f9-96590369e75f",
+          "publicState": {
+            "id": "456d0f04-b9df-464f-bc65-6c2ea2313ae3",
+            "groupId": "8bb69957-79f4-4e03-a3f9-96590369e75f",
+            "status": "cancelled",
+            "endReason": "cancelled",
+            "summary": null,
+            "recoveryNote": null,
+            "steps": []
+          },
+          "externalFacts": {
+            "modelCalls": 0,
+            "auditCalls": 0,
+            "sendOrKickRequests": 0,
+            "ownLandedMessages": 0
+          },
+          "activeAgentRunId": null,
+          "ready": true,
+          "reason": "真实cancelled零步前提成立；第二次登录停在已认证工作台等待不存在的username，未进入该run详情，不能判断取消空态文案。",
+          "evidence": [
+            "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/evidence/ui039-public-queue-final.json",
+            "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/evidence/ui039-per-state-results.json",
+            "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/trace.zip"
+          ],
+          "rawReason": "Error: locator.fill: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[autocomplete=\"username\"]')\u001b[22m\n"
+        }
+      }
+    }
+  ],
+  "observedFacts": {
+    "fourInitialRequests": 4,
+    "observationSamples": 472,
+    "observationElapsedMs": 50717.054333,
+    "initialWaiting": true,
+    "readyStates": {
+      "failed": true,
+      "cancelled": true
+    },
+    "targetEverDispatched": {
+      "failed": false,
+      "cancelled": false
+    },
+    "firstLoginPost": {
+      "member": "1-trace.network",
+      "at": "2026-10-01T15:57:08.173Z",
+      "url": "http://127.0.0.1:54467/api/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    "secondHomeNavigation": {
+      "member": "1-trace.trace",
+      "type": "before",
+      "callId": "call@303",
+      "startTime": 61140.602,
+      "method": "goto",
+      "url": "http://127.0.0.1:54467/",
+      "selector": null
+    },
+    "secondUsernameFill": {
+      "member": "1-trace.trace",
+      "type": "before",
+      "callId": "call@313",
+      "startTime": 61176.367,
+      "method": "fill",
+      "url": null,
+      "selector": "input[autocomplete=\"username\"]"
+    },
+    "secondHomeRefresh": {
+      "member": "1-trace.network",
+      "at": "2026-10-01T15:57:08.487Z",
+      "url": "http://127.0.0.1:54467/api/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    "cancelledCopyArtifactExists": false,
+    "lastPageUrl": "http://127.0.0.1:54467/",
+    "lastPageIsAuthenticatedAdminWorkspace": true
+  },
+  "traceTimeline": [
+    {
+      "member": "test.trace",
+      "type": "after",
+      "callId": "pw:api@206",
+      "endTime": 122533.208,
+      "error": {
+        "name": "",
+        "message": "Error: locator.fill: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[autocomplete=\"username\"]')\u001b[22m\n",
+        "stack": "Error: locator.fill: Test timeout of 120000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('input[autocomplete=\"username\"]')\u001b[22m\n\n    at login (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/console.spec.ts:90:39)\n    at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/console.spec.ts:2831:9"
+      }
+    },
+    {
+      "member": "1-trace.trace",
+      "type": "before",
+      "callId": "call@15",
+      "startTime": 60667.398,
+      "method": "goto",
+      "url": "http://127.0.0.1:54467/",
+      "selector": null
+    },
+    {
+      "member": "1-trace.trace",
+      "type": "before",
+      "callId": "call@25",
+      "startTime": 60728.338,
+      "method": "fill",
+      "url": null,
+      "selector": "input[autocomplete=\"username\"]"
+    },
+    {
+      "member": "1-trace.trace",
+      "type": "before",
+      "callId": "call@29",
+      "startTime": 60774.419,
+      "method": "fill",
+      "url": null,
+      "selector": "input[autocomplete=\"current-password\"]"
+    },
+    {
+      "member": "1-trace.trace",
+      "type": "before",
+      "callId": "call@34",
+      "startTime": 60818.516,
+      "method": "click",
+      "url": null,
+      "selector": "button.login-submit"
+    },
+    {
+      "member": "1-trace.trace",
+      "type": "before",
+      "callId": "call@51",
+      "startTime": 60913.267,
+      "method": "goto",
+      "url": "http://127.0.0.1:54467/#/groups/ec000e6a-a8f6-4323-93c0-ef7da999216d",
+      "selector": null
+    },
+    {
+      "member": "1-trace.trace",
+      "type": "before",
+      "callId": "call@71",
+      "startTime": 60949.672,
+      "method": "click",
+      "url": null,
+      "selector": "a.run-list-item >> internal:and=\"a[href$=\\\"/bc5d4c64-5b8e-46da-98ee-f479712e22d4\\\"]\""
+    },
+    {
+      "member": "1-trace.trace",
+      "type": "before",
+      "callId": "call@303",
+      "startTime": 61140.602,
+      "method": "goto",
+      "url": "http://127.0.0.1:54467/",
+      "selector": null
+    },
+    {
+      "member": "1-trace.trace",
+      "type": "before",
+      "callId": "call@313",
+      "startTime": 61176.367,
+      "method": "fill",
+      "url": null,
+      "selector": "input[autocomplete=\"username\"]"
+    }
+  ],
+  "publicNetworkTimeline": [
+    {
+      "member": "1-trace.network",
+      "at": "2026-10-01T15:57:08.033Z",
+      "url": "http://127.0.0.1:54467/api/auth/refresh",
+      "method": "POST",
+      "status": 401
+    },
+    {
+      "member": "1-trace.network",
+      "at": "2026-10-01T15:57:08.173Z",
+      "url": "http://127.0.0.1:54467/api/auth/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "member": "1-trace.network",
+      "at": "2026-10-01T15:57:08.183Z",
+      "url": "http://127.0.0.1:54467/api/auth/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "member": "1-trace.network",
+      "at": "2026-10-01T15:57:08.317Z",
+      "url": "http://127.0.0.1:54467/api/agent-runs/bc5d4c64-5b8e-46da-98ee-f479712e22d4",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "member": "1-trace.network",
+      "at": "2026-10-01T15:57:08.387Z",
+      "url": "http://127.0.0.1:54467/api/agent-runs/bc5d4c64-5b8e-46da-98ee-f479712e22d4",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "member": "1-trace.network",
+      "at": "2026-10-01T15:57:08.487Z",
+      "url": "http://127.0.0.1:54467/api/auth/refresh",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "member": "1-trace.network",
+      "at": "2026-10-01T15:57:08.502Z",
+      "url": "http://127.0.0.1:54467/api/auth/me",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "integrityNotes": {
+    "rawPhase": "developer-preflight",
+    "qaTreeSha256": "3f3a11385b0f8008fc604b543e4ce89a6b687a391f63aa2f4b19c5c5588301bd",
+    "qaDirtyEntryCount": 365,
+    "allDirtyEntriesAreUntrackedReportAssets": true
+  },
+  "sourceIndex": [
+    {
+      "path": "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/manifest.json",
+      "sha256": "1e97ba9a38e17192d0380df9e65d666c1b4794c0fd76926c1af9d88388d1c4c4",
+      "bytes": 106640
+    },
+    {
+      "path": "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/results.json",
+      "sha256": "e0f062e8055906ab38058a4243f9ef50b96f2421367fd2ed239c7a5092533067",
+      "bytes": 253850
+    },
+    {
+      "path": "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/runner-summary.json",
+      "sha256": "db165c858c72a11249ba825886b2d0d27c463ffc08cfeccc188402f8b9bd5d49",
+      "bytes": 97
+    },
+    {
+      "path": "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/playwright.json",
+      "sha256": "745c56c3203879cf4bccbe094422b0f1579a4c7dec2cc005ddae6c63d649044d",
+      "bytes": 10318
+    },
+    {
+      "path": "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/evidence/ui039-public-queue-first-proof.json",
+      "sha256": "540d258d7517768a0424b94ba0a62de11145efa005c57f70d0fb6c469eecb260",
+      "bytes": 23828
+    },
+    {
+      "path": "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/evidence/ui039-public-queue-before-disable.json",
+      "sha256": "62bd8d70fa302407c1526b7aedb593dd02334d12a9d08acd5fd989377819f77b",
+      "bytes": 3764
+    },
+    {
+      "path": "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/evidence/ui039-public-queue-final.json",
+      "sha256": "3c33281ac4e87ba63a94e4344450685ef7216990857ea1db0193d744ae4302b5",
+      "bytes": 134341
+    },
+    {
+      "path": "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/evidence/ui039-public-queue-samples.json",
+      "sha256": "53ced6caff01fc124c3cc507539b0c3a56f051c4a23d2061508f3502c7866fae",
+      "bytes": 4538119
+    },
+    {
+      "path": "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/evidence/ui039-per-state-results.json",
+      "sha256": "c61c54ee4ce972bbcae076359bf6692d9ffaa78c69c05bed49b2cd2b97adab90",
+      "bytes": 119772
+    },
+    {
+      "path": "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/evidence/ui039-failed-copy.json",
+      "sha256": "fed991db1637ae5ccd939560d98140c3a4745a04423b0bb3b516cab2b5f13288",
+      "bytes": 1370
+    },
+    {
+      "path": "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/evidence/ui-final.json",
+      "sha256": "36ce0abde5d59a85f1053189bd10250ab5e22698019ad88d066802b1a0ca7389",
+      "bytes": 1685
+    },
+    {
+      "path": "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/evidence/api.ndjson",
+      "sha256": "9cf18b9fcff7405755c5e898426b789f3d93f9b6dedee0b6d7e40cd9b0dce189",
+      "bytes": 4905731
+    },
+    {
+      "path": "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/trace.zip",
+      "sha256": "31da1561723642c57405c08d67b565e4451f78e508aead31626dacd0f02392e7",
+      "bytes": 2900815
+    },
+    {
+      "path": "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/error-context.md",
+      "sha256": "694d1c50c15bac2df114ac7d34943d612ca177b6f45bb1bf2db03621b2d4dd50",
+      "bytes": 17041
+    },
+    {
+      "path": "reports/preflight/2026-10-01T15-56-07.250Z-42ecefbf/artifacts/ui-console--UI-039-真实零步骤failed与cancelled详情不再提示等待第一步-chromium/evidence/ui-final.png",
+      "sha256": "4b05b2f2a02dc492468e58a976636a883c5c3a222496b60911c362c64be37f23",
+      "bytes": 155023
+    },
+    {
+      "path": "git:b076790de087406de12336bdfd385a569b014f83:qa-acceptance/tests/ui/console.spec.ts",
+      "sha256": "bd0027332c22361a06c2af9302fd0dbde0e18aadb3afabe2d9f885c12f4eb53a",
+      "bytes": 123074
+    }
+  ],
+  "limits": [
+    "本轮属于developer-preflight补证，未改成新的全量正式业务验收。",
+    "failed子场景PASS不能扩展成UI-039整例PASS，也不能补填cancelled页面未执行断言。",
+    "两个真实零步骤终态不证明严格60秒/5秒等其他专项通过。",
+    "最小纠正是同一浏览器只登录一次后分别导航两个真实run；须另冻结QA和新运行留证，旧raw FAIL保持。"
+  ]
+}

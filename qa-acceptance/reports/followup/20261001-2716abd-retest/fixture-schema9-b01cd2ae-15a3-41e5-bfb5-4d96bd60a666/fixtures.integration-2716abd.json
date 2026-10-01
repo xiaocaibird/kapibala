@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "artifacts": {
+    "legacySchema": {
+      "manifest": "reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/legacy-schema.json",
+      "sha256": "b4e076347c893f801ebafd2d921095d2e5f86f7ab9d83b701a92dc821cbbd4a7"
+    },
+    "directoryPrecision": {
+      "manifest": "reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/directory-precision.json",
+      "sha256": "cef6cc8a2e0af6407220ab61b0d99f12053b2777a4f9548175899ac1245c3ad0"
+    }
+  },
+  "observation": {
+    "confirmed": true,
+    "candidateRevision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+    "reviewReference": "reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/review.json",
+    "rowSelector": "section:has(> .panel-header > h2:text-is(\"账号列表\")) tbody > tr:has(strong:text-is(\"{id}\"))",
+    "stateSelector": "td:nth-child(3) .badge",
+    "errorSelector": "main > [role=\"alert\"]",
+    "refreshSelector": ".page-header button:text-is(\"刷新\")",
+    "acknowledgeSelector": "td:nth-child(3) .badge",
+    "stateText": {
+      "online": "在线",
+      "disconnected": "已离线"
+    }
+  },
+  "unmigratedSchema": {
+    "confirmed": true,
+    "candidateRevision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+    "reviewReference": "reports/followup/20261001-2716abd-retest/fixture-schema9-b01cd2ae-15a3-41e5-bfb5-4d96bd60a666/review.json",
+    "controlSchemaVersion": 9,
+    "rejectionLogIncludes": [
+      "Schema mismatch: installed=0, required=9; run npm run db:migrate"
+    ]
+  }
+}

@@ -1,0 +1,2995 @@
+{
+  "reviewedAt": "2026-10-01T15:42:25.981823+00:00",
+  "method": "Offline independent Decimal arithmetic from this run original JSON lexemes; no tolerance; no SUT/controller/DB calls. Reused generic interval/identity checks, never prior candidate values/results. This is a developer-preflight subset, not new full-business acceptance.",
+  "run": {
+    "runId": "2026-10-01T15-22-40.633Z-4281d669",
+    "phase": "developer-preflight",
+    "startedAt": "2026-10-01T15:22:40.684Z",
+    "qaRevision": "02ea807faed44ebaed8a41741f4056de8e04e87a",
+    "sutRevision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+    "targetSha256": "f4b8af5af353520cbf776b42be407f97598c5f032fd4ff04219eb57f38557aab",
+    "qaTreeBeforeSha256": "750fb6a6395683331f9e4506bc9f62861dc49c00018fa493188f74e0d67f1dbb",
+    "qaTreeAfterSha256": "750fb6a6395683331f9e4506bc9f62861dc49c00018fa493188f74e0d67f1dbb",
+    "runnerErrors": [],
+    "integrity": []
+  },
+  "cases": {
+    "AGENT-025": {
+      "reviewStatus": "PASS",
+      "requiredMaximumMs": 60000,
+      "source": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/evidence/wall-clock-window.json",
+      "identity": {
+        "binding": {
+          "apiUrl": "http://127.0.0.1:63819",
+          "revision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+          "pid": 84971,
+          "observedOwnerToken": "[REDACTED]"
+        },
+        "correlation": {
+          "kind": "tool-wait",
+          "groupId": "19b763de-1798-4dd5-a293-4756604d9ff3",
+          "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f",
+          "toolUseId": "all-run-steps"
+        },
+        "snapshotProvenance": {
+          "source": "live-bridge",
+          "applicationPid": 84972,
+          "applicationStarted": "Thu Oct  1 23:23:58 2026"
+        }
+      },
+      "lifecycleCompleteness": {
+        "localEvents": 16,
+        "localSequenceContiguous": true,
+        "droppedThroughSourceSeq": 0,
+        "sourceSequencesIncreasing": true,
+        "sourceSequenceGaps": "global source stream filtered by resource; gaps do not imply truncation",
+        "attachment": {
+          "seq": 1,
+          "at": "2026-10-01T15:24:00.647Z",
+          "kind": "lifecycle-observation-attached",
+          "attemptId": "30c9b376-6cef-4908-8fa4-24066aec1bf4",
+          "clockDomain": "process-performance:84972:9fd61305-4dc6-402c-b64e-f8cd8c96a112",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            "1732.154709",
+            "1732.154709"
+          ],
+          "applicationPid": 84972,
+          "instancePid": 84971,
+          "databaseIdentity": "151fdc18d13104f0b55332e6a177c1b97cdaae531f1cc52ff721701165d0778b",
+          "resourceId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f",
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "19b763de-1798-4dd5-a293-4756604d9ff3",
+            "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f",
+            "toolUseId": "all-run-steps"
+          },
+          "historyScope": "this-process-only",
+          "droppedThroughSourceSeq": 0,
+          "includesPriorProcessHistory": false
+        }
+      },
+      "creation": {
+        "kind": "agent-run-created",
+        "groupId": "19b763de-1798-4dd5-a293-4756604d9ff3",
+        "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f",
+        "attemptId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f",
+        "creationWindowMs": [
+          "1512.548167",
+          "1518.713792"
+        ],
+        "transactionBeginAcknowledgedByMs": "1513.388667",
+        "creationInsertWindowMs": [
+          "1515.424209",
+          "1516.101"
+        ],
+        "commitBoundary": "outer-commit-confirmed",
+        "clockDomain": "process-performance:84972:9fd61305-4dc6-402c-b64e-f8cd8c96a112",
+        "clockUnit": "ms",
+        "monotonicMs": [
+          "1518.761917",
+          "1518.761917"
+        ],
+        "applicationPid": 84972,
+        "at": "2026-10-01T15:24:00.433Z",
+        "seq": 2,
+        "sourceSeq": 1,
+        "instancePid": 84971,
+        "correlation": {
+          "kind": "tool-wait",
+          "groupId": "19b763de-1798-4dd5-a293-4756604d9ff3",
+          "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f",
+          "toolUseId": "all-run-steps"
+        }
+      },
+      "actualStop": {
+        "kind": "agent-termination-decided",
+        "groupId": "19b763de-1798-4dd5-a293-4756604d9ff3",
+        "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f",
+        "attemptId": "27a452b2-4aaf-4f2c-8836-8676084d11de",
+        "decisionWindowMs": [
+          "49693.589792",
+          "49693.6105"
+        ],
+        "status": "failed",
+        "reason": "wall_clock",
+        "clockDomain": "process-performance:84972:9fd61305-4dc6-402c-b64e-f8cd8c96a112",
+        "clockUnit": "ms",
+        "monotonicMs": [
+          "49693.614375",
+          "49693.614375"
+        ],
+        "applicationPid": 84972,
+        "at": "2026-10-01T15:24:48.608Z",
+        "seq": 15,
+        "sourceSeq": 14,
+        "instancePid": 84971,
+        "correlation": {
+          "kind": "tool-wait",
+          "groupId": "19b763de-1798-4dd5-a293-4756604d9ff3",
+          "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f",
+          "toolUseId": "all-run-steps"
+        }
+      },
+      "matchingCommit": {
+        "kind": "agent-terminal-committed",
+        "groupId": "19b763de-1798-4dd5-a293-4756604d9ff3",
+        "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f",
+        "attemptId": "27a452b2-4aaf-4f2c-8836-8676084d11de",
+        "status": "failed",
+        "reason": "wall_clock",
+        "commitBoundary": "outer-commit-confirmed",
+        "clockDomain": "process-performance:84972:9fd61305-4dc6-402c-b64e-f8cd8c96a112",
+        "clockUnit": "ms",
+        "monotonicMs": [
+          "49701.189959",
+          "49701.189959"
+        ],
+        "applicationPid": 84972,
+        "at": "2026-10-01T15:24:48.616Z",
+        "seq": 16,
+        "sourceSeq": 15,
+        "instancePid": 84971,
+        "correlation": {
+          "kind": "tool-wait",
+          "groupId": "19b763de-1798-4dd5-a293-4756604d9ff3",
+          "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f",
+          "toolUseId": "all-run-steps"
+        }
+      },
+      "decisionElapsedMs": [
+        "48174.876000",
+        "48181.062333"
+      ],
+      "commitAfterDecisionMs": [
+        "7.579459",
+        "7.600167"
+      ],
+      "activity": {
+        "events": 577,
+        "epochId": "808fd17d-3d6d-4f18-8e6c-c5bb0f8321a4",
+        "continuous": true,
+        "startSource": "run-creation",
+        "includesUnsavedTail": true,
+        "startMs": [
+          "1512.548167",
+          "1518.839792"
+        ],
+        "last": {
+          "seq": 577,
+          "at": "2026-10-01T15:24:48.616Z",
+          "kind": "activity-terminal",
+          "correlation": {
+            "kind": "activity",
+            "groupId": "19b763de-1798-4dd5-a293-4756604d9ff3",
+            "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f",
+            "toolUseId": "all-run-steps"
+          },
+          "attemptId": "8c09a64a-803a-46a4-9935-2c6318331da7",
+          "instancePid": 84971,
+          "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f",
+          "groupId": "19b763de-1798-4dd5-a293-4756604d9ff3",
+          "clockDomain": "process-performance:84972:9fd61305-4dc6-402c-b64e-f8cd8c96a112",
+          "clockUnit": "ms",
+          "applicationPid": 84972,
+          "creationOrEpochStartWindowMs": [
+            "1512.548167",
+            "1518.839792"
+          ],
+          "activityEndWindowMs": [
+            "49693.589792",
+            "49701.260917"
+          ],
+          "activityState": "terminal",
+          "includesUnsavedTail": true,
+          "epochObservation": {
+            "continuous": true,
+            "startSource": "run-creation"
+          },
+          "epochIds": [
+            "808fd17d-3d6d-4f18-8e6c-c5bb0f8321a4"
+          ],
+          "persistedActiveMs": 48182,
+          "lastSuccessfulSample": {
+            "epochId": "808fd17d-3d6d-4f18-8e6c-c5bb0f8321a4",
+            "windowMs": [
+              "49694.278459",
+              "49695.48725"
+            ],
+            "persistedActiveMs": 48182
+          },
+          "clockSource": "process performance.now brackets around confirmed product creation, ownership and terminal boundaries",
+          "activeElapsedMs": [
+            48174,
+            48189
+          ]
+        }
+      },
+      "activityReportedBounds": [
+        48174,
+        48189
+      ],
+      "dispatchCount": 6,
+      "noDispatchAfterStopInCapturedHistory": true,
+      "publicObservationOnly": {
+        "start": [
+          1790868240343,
+          1790868240460
+        ],
+        "end": [
+          1790868288599,
+          1790868288661
+        ],
+        "monotonicStart": [
+          "79268.530167",
+          "79385.356"
+        ],
+        "monotonicEnd": [
+          "127524.227333",
+          "127585.702708"
+        ],
+        "independentOnlineMs": [
+          "48138.871333",
+          "48317.17254099999"
+        ],
+        "publicTerminalObserved": true,
+        "status": "failed",
+        "endReason": "wall_clock"
+      },
+      "capacityPersistedDiagnosticOnly": null,
+      "missingReportedByRunner": [],
+      "externalTurns": [
+        {
+          "id": 1,
+          "at": "2026-10-01T15:24:00.443Z",
+          "completedAt": "2026-10-01T15:24:08.451Z",
+          "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f"
+        },
+        {
+          "id": 2,
+          "at": "2026-10-01T15:24:08.478Z",
+          "completedAt": "2026-10-01T15:24:16.480Z",
+          "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f"
+        },
+        {
+          "id": 3,
+          "at": "2026-10-01T15:24:16.501Z",
+          "completedAt": "2026-10-01T15:24:24.501Z",
+          "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f"
+        },
+        {
+          "id": 4,
+          "at": "2026-10-01T15:24:24.528Z",
+          "completedAt": "2026-10-01T15:24:32.529Z",
+          "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f"
+        },
+        {
+          "id": 5,
+          "at": "2026-10-01T15:24:32.559Z",
+          "completedAt": "2026-10-01T15:24:40.560Z",
+          "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f"
+        },
+        {
+          "id": 6,
+          "at": "2026-10-01T15:24:40.581Z",
+          "completedAt": "2026-10-01T15:24:48.582Z",
+          "runId": "02816ba4-19f7-4d03-84cd-db6a6c771d1f"
+        }
+      ],
+      "noSendOrKickEffectInCapturedExternalFacts": true,
+      "rawAttempt": {
+        "id": "AGENT-025",
+        "status": "PASS",
+        "durationMs": 50226,
+        "attempt": 0,
+        "startedAt": "2026-10-01T15:23:58.598Z",
+        "completedAt": "2026-10-01T15:24:48.824Z",
+        "project": "system",
+        "evidence": [
+          "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/evidence"
+        ]
+      }
+    },
+    "CAP-003": {
+      "reviewStatus": "PASS",
+      "requiredMaximumMs": 60000,
+      "source": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-active-budget.json",
+      "identity": {
+        "binding": {
+          "apiUrl": "http://127.0.0.1:64353",
+          "revision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+          "pid": 88291,
+          "observedOwnerToken": "[REDACTED]"
+        },
+        "correlation": {
+          "kind": "tool-wait",
+          "groupId": "f8eabeff-d3fb-4ea7-9796-e19321efd198",
+          "runId": "1df94282-e178-4518-8a1e-2c2efa629592",
+          "toolUseId": "all-run-steps"
+        },
+        "snapshotProvenance": {
+          "source": "live-bridge",
+          "applicationPid": 88292,
+          "applicationStarted": "Thu Oct  1 23:25:18 2026"
+        }
+      },
+      "lifecycleCompleteness": {
+        "localEvents": 6,
+        "localSequenceContiguous": true,
+        "droppedThroughSourceSeq": 0,
+        "sourceSequencesIncreasing": true,
+        "sourceSequenceGaps": "global source stream filtered by resource; gaps do not imply truncation",
+        "attachment": {
+          "seq": 1,
+          "at": "2026-10-01T15:25:20.425Z",
+          "kind": "lifecycle-observation-attached",
+          "attemptId": "34b4fa77-fd23-4b97-a303-d9f5a6aa5fab",
+          "clockDomain": "process-performance:88292:80631819-3548-41a1-9b97-427a51cd7ee4",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            "1787.07675",
+            "1787.07675"
+          ],
+          "applicationPid": 88292,
+          "instancePid": 88291,
+          "databaseIdentity": "430d93ea444c7671f4ff3f15556f99dca9486ffcdf6d5424d5c76c60774c6e5b",
+          "resourceId": "1df94282-e178-4518-8a1e-2c2efa629592",
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "f8eabeff-d3fb-4ea7-9796-e19321efd198",
+            "runId": "1df94282-e178-4518-8a1e-2c2efa629592",
+            "toolUseId": "all-run-steps"
+          },
+          "historyScope": "this-process-only",
+          "droppedThroughSourceSeq": 0,
+          "includesPriorProcessHistory": false
+        }
+      },
+      "creation": {
+        "kind": "agent-run-created",
+        "groupId": "f8eabeff-d3fb-4ea7-9796-e19321efd198",
+        "runId": "1df94282-e178-4518-8a1e-2c2efa629592",
+        "attemptId": "1df94282-e178-4518-8a1e-2c2efa629592",
+        "creationWindowMs": [
+          "1514.103208",
+          "1520.636167"
+        ],
+        "transactionBeginAcknowledgedByMs": "1514.993708",
+        "creationInsertWindowMs": [
+          "1517.044167",
+          "1517.834708"
+        ],
+        "commitBoundary": "outer-commit-confirmed",
+        "clockDomain": "process-performance:88292:80631819-3548-41a1-9b97-427a51cd7ee4",
+        "clockUnit": "ms",
+        "monotonicMs": [
+          "1520.698125",
+          "1520.698125"
+        ],
+        "applicationPid": 88292,
+        "at": "2026-10-01T15:25:20.158Z",
+        "seq": 2,
+        "sourceSeq": 1,
+        "instancePid": 88291,
+        "correlation": {
+          "kind": "tool-wait",
+          "groupId": "f8eabeff-d3fb-4ea7-9796-e19321efd198",
+          "runId": "1df94282-e178-4518-8a1e-2c2efa629592",
+          "toolUseId": "all-run-steps"
+        }
+      },
+      "actualStop": {
+        "kind": "agent-termination-decided",
+        "groupId": "f8eabeff-d3fb-4ea7-9796-e19321efd198",
+        "runId": "1df94282-e178-4518-8a1e-2c2efa629592",
+        "attemptId": "2fa75b35-a4e8-46da-a4a0-a8062dfe189f",
+        "decisionWindowMs": [
+          "46525.074375",
+          "46525.094583"
+        ],
+        "status": "failed",
+        "reason": "wall_clock",
+        "clockDomain": "process-performance:88292:80631819-3548-41a1-9b97-427a51cd7ee4",
+        "clockUnit": "ms",
+        "monotonicMs": [
+          "46525.096875",
+          "46525.096875"
+        ],
+        "applicationPid": 88292,
+        "at": "2026-10-01T15:26:05.163Z",
+        "seq": 5,
+        "sourceSeq": 4,
+        "instancePid": 88291,
+        "correlation": {
+          "kind": "tool-wait",
+          "groupId": "f8eabeff-d3fb-4ea7-9796-e19321efd198",
+          "runId": "1df94282-e178-4518-8a1e-2c2efa629592",
+          "toolUseId": "all-run-steps"
+        }
+      },
+      "matchingCommit": {
+        "kind": "agent-terminal-committed",
+        "groupId": "f8eabeff-d3fb-4ea7-9796-e19321efd198",
+        "runId": "1df94282-e178-4518-8a1e-2c2efa629592",
+        "attemptId": "2fa75b35-a4e8-46da-a4a0-a8062dfe189f",
+        "status": "failed",
+        "reason": "wall_clock",
+        "commitBoundary": "outer-commit-confirmed",
+        "clockDomain": "process-performance:88292:80631819-3548-41a1-9b97-427a51cd7ee4",
+        "clockUnit": "ms",
+        "monotonicMs": [
+          "46530.588542",
+          "46530.588542"
+        ],
+        "applicationPid": 88292,
+        "at": "2026-10-01T15:26:05.168Z",
+        "seq": 6,
+        "sourceSeq": 5,
+        "instancePid": 88291,
+        "correlation": {
+          "kind": "tool-wait",
+          "groupId": "f8eabeff-d3fb-4ea7-9796-e19321efd198",
+          "runId": "1df94282-e178-4518-8a1e-2c2efa629592",
+          "toolUseId": "all-run-steps"
+        }
+      },
+      "decisionElapsedMs": [
+        "45004.438208",
+        "45010.991375"
+      ],
+      "commitAfterDecisionMs": [
+        "5.493959",
+        "5.514167"
+      ],
+      "activity": {
+        "events": 536,
+        "epochId": "a0c11991-f8eb-4ed5-bd7a-c25b4b7c58f8",
+        "continuous": true,
+        "startSource": "run-creation",
+        "includesUnsavedTail": true,
+        "startMs": [
+          "1514.103208",
+          "1520.770708"
+        ],
+        "last": {
+          "seq": 536,
+          "at": "2026-10-01T15:26:05.169Z",
+          "kind": "activity-terminal",
+          "correlation": {
+            "kind": "activity",
+            "groupId": "f8eabeff-d3fb-4ea7-9796-e19321efd198",
+            "runId": "1df94282-e178-4518-8a1e-2c2efa629592",
+            "toolUseId": "all-run-steps"
+          },
+          "attemptId": "8f5cfafb-d4d5-4f7b-b1dc-b9189badd950",
+          "instancePid": 88291,
+          "runId": "1df94282-e178-4518-8a1e-2c2efa629592",
+          "groupId": "f8eabeff-d3fb-4ea7-9796-e19321efd198",
+          "clockDomain": "process-performance:88292:80631819-3548-41a1-9b97-427a51cd7ee4",
+          "clockUnit": "ms",
+          "applicationPid": 88292,
+          "creationOrEpochStartWindowMs": [
+            "1514.103208",
+            "1520.770708"
+          ],
+          "activityEndWindowMs": [
+            "46525.074375",
+            "46530.622083"
+          ],
+          "activityState": "terminal",
+          "includesUnsavedTail": true,
+          "epochObservation": {
+            "continuous": true,
+            "startSource": "run-creation"
+          },
+          "epochIds": [
+            "a0c11991-f8eb-4ed5-bd7a-c25b4b7c58f8"
+          ],
+          "persistedActiveMs": 45012,
+          "lastSuccessfulSample": {
+            "epochId": "a0c11991-f8eb-4ed5-bd7a-c25b4b7c58f8",
+            "windowMs": [
+              "46525.730083",
+              "46526.540292"
+            ],
+            "persistedActiveMs": 45012
+          },
+          "clockSource": "process performance.now brackets around confirmed product creation, ownership and terminal boundaries",
+          "activeElapsedMs": [
+            45004,
+            45017
+          ]
+        }
+      },
+      "activityReportedBounds": [
+        45004,
+        45017
+      ],
+      "dispatchCount": 1,
+      "noDispatchAfterStopInCapturedHistory": true,
+      "publicObservationOnly": {
+        "independentOnline": [
+          0,
+          "45153.37762500001"
+        ]
+      },
+      "capacityPersistedDiagnosticOnly": [
+        45012,
+        45090
+      ],
+      "missingReportedByRunner": [],
+      "externalTurns": [
+        {
+          "id": 1,
+          "at": "2026-10-01T15:25:20.168Z",
+          "completedAt": "2026-10-01T15:25:20.175Z",
+          "runId": "1df94282-e178-4518-8a1e-2c2efa629592"
+        }
+      ],
+      "noSendOrKickEffectInCapturedExternalFacts": true,
+      "releaseFollowup": {
+        "postReleaseSource": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-post-release-qa-kick-capacity-budget.json",
+        "postReleaseObservation": {
+          "observationMs": 1500,
+          "elapsedMs": "1595.9604170000093",
+          "scope": "只证明本次释放后的有限持续观察期；不宣称排除无限期迟发",
+          "completedCurrentStep": {
+            "requests": 0,
+            "effects": 0,
+            "turns": 1
+          },
+          "samples": [
+            {
+              "at": "2026-10-01T15:26:05.466Z",
+              "status": "failed",
+              "endReason": "wall_clock"
+            },
+            {
+              "at": "2026-10-01T15:26:05.579Z",
+              "status": "failed",
+              "endReason": "wall_clock"
+            },
+            {
+              "at": "2026-10-01T15:26:05.690Z",
+              "status": "failed",
+              "endReason": "wall_clock"
+            },
+            {
+              "at": "2026-10-01T15:26:05.807Z",
+              "status": "failed",
+              "endReason": "wall_clock"
+            },
+            {
+              "at": "2026-10-01T15:26:05.924Z",
+              "status": "failed",
+              "endReason": "wall_clock"
+            },
+            {
+              "at": "2026-10-01T15:26:06.036Z",
+              "status": "failed",
+              "endReason": "wall_clock"
+            },
+            {
+              "at": "2026-10-01T15:26:06.147Z",
+              "status": "failed",
+              "endReason": "wall_clock"
+            },
+            {
+              "at": "2026-10-01T15:26:06.257Z",
+              "status": "failed",
+              "endReason": "wall_clock"
+            },
+            {
+              "at": "2026-10-01T15:26:06.368Z",
+              "status": "failed",
+              "endReason": "wall_clock"
+            },
+            {
+              "at": "2026-10-01T15:26:06.482Z",
+              "status": "failed",
+              "endReason": "wall_clock"
+            },
+            {
+              "at": "2026-10-01T15:26:06.595Z",
+              "status": "failed",
+              "endReason": "wall_clock"
+            },
+            {
+              "at": "2026-10-01T15:26:06.707Z",
+              "status": "failed",
+              "endReason": "wall_clock"
+            },
+            {
+              "at": "2026-10-01T15:26:06.820Z",
+              "status": "failed",
+              "endReason": "wall_clock"
+            },
+            {
+              "at": "2026-10-01T15:26:06.935Z",
+              "status": "failed",
+              "endReason": "wall_clock"
+            },
+            {
+              "at": "2026-10-01T15:26:07.050Z",
+              "status": "failed",
+              "endReason": "wall_clock"
+            }
+          ]
+        },
+        "source": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-budget-final.json",
+        "observedAt": "2026-10-01T15:26:07.057Z",
+        "runId": "1df94282-e178-4518-8a1e-2c2efa629592",
+        "status": "failed",
+        "endReason": "wall_clock",
+        "capturedKickRequests": 0,
+        "capturedKickEffects": 0,
+        "capturedTurns": 1
+      },
+      "actualCapacityRefusal": {
+        "source": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-http-7a16149c-0074-486d-b171-94d8b7b5bd03.json",
+        "refusals": 722,
+        "readyPersisted": 722,
+        "first": {
+          "groupId": "f8eabeff-d3fb-4ea7-9796-e19321efd198",
+          "runId": "1df94282-e178-4518-8a1e-2c2efa629592",
+          "toolUseId": "qa-kick-capacity-budget",
+          "seq": 2,
+          "at": "2026-10-01T15:25:20.518Z",
+          "kind": "admission-refused",
+          "attemptId": "84b12496-1c9b-4037-8ad6-648a8898ed7f",
+          "reason": "capacity",
+          "callbackEntered": false,
+          "remoteRequestCount": 0
+        },
+        "last": {
+          "groupId": "f8eabeff-d3fb-4ea7-9796-e19321efd198",
+          "runId": "1df94282-e178-4518-8a1e-2c2efa629592",
+          "toolUseId": "qa-kick-capacity-budget",
+          "seq": 1444,
+          "at": "2026-10-01T15:26:05.104Z",
+          "kind": "admission-refused",
+          "attemptId": "2ba94c98-aff9-4c06-8f3f-34adb701a439",
+          "reason": "capacity",
+          "callbackEntered": false,
+          "remoteRequestCount": 0
+        },
+        "finalState": "released",
+        "externalTurnCountThroughCleanup": 1,
+        "events": [
+          {
+            "groupId": "f8eabeff-d3fb-4ea7-9796-e19321efd198",
+            "runId": "1df94282-e178-4518-8a1e-2c2efa629592",
+            "toolUseId": "qa-kick-capacity-budget",
+            "seq": 1,
+            "at": "2026-10-01T15:25:20.503Z",
+            "kind": "capacity-held",
+            "holderKeys": [
+              "qa-capacity:850eed76-87e3-44bc-afbf-793bf8041069:b7733b4b-1732-4aaa-89c6-ccf680de79e8:0",
+              "qa-capacity:850eed76-87e3-44bc-afbf-793bf8041069:b7733b4b-1732-4aaa-89c6-ccf680de79e8:1",
+              "qa-capacity:850eed76-87e3-44bc-afbf-793bf8041069:b7733b4b-1732-4aaa-89c6-ccf680de79e8:2",
+              "qa-capacity:850eed76-87e3-44bc-afbf-793bf8041069:b7733b4b-1732-4aaa-89c6-ccf680de79e8:3",
+              "qa-capacity:850eed76-87e3-44bc-afbf-793bf8041069:b7733b4b-1732-4aaa-89c6-ccf680de79e8:4",
+              "qa-capacity:850eed76-87e3-44bc-afbf-793bf8041069:b7733b4b-1732-4aaa-89c6-ccf680de79e8:5",
+              "qa-capacity:850eed76-87e3-44bc-afbf-793bf8041069:b7733b4b-1732-4aaa-89c6-ccf680de79e8:6"
+            ]
+          },
+          {
+            "groupId": "f8eabeff-d3fb-4ea7-9796-e19321efd198",
+            "runId": "1df94282-e178-4518-8a1e-2c2efa629592",
+            "toolUseId": "qa-kick-capacity-budget",
+            "seq": 1446,
+            "at": "2026-10-01T15:26:05.240Z",
+            "kind": "run-terminal",
+            "status": "failed",
+            "endReason": "wall_clock",
+            "activeElapsedMs": [
+              45012,
+              45090
+            ],
+            "clockSource": "persisted active_ms through last sample; upper includes DB sample-to-terminal-observation tail plus 1ms timestamp resolution; prior hard-crash unsampled tail is not reconstructable"
+          }
+        ]
+      },
+      "rawAttempt": {
+        "id": "CAP-003",
+        "status": "PASS",
+        "durationMs": 48840,
+        "attempt": 0,
+        "startedAt": "2026-10-01T15:25:18.321Z",
+        "completedAt": "2026-10-01T15:26:07.161Z",
+        "project": "system",
+        "evidence": [
+          "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence"
+        ]
+      }
+    },
+    "AGENT-028": {
+      "reviewStatus": "FAIL",
+      "requiredMaximumMs": 5000,
+      "source": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/evidence/send-timeout-window.json",
+      "identity": {
+        "binding": {
+          "apiUrl": "http://127.0.0.1:63977",
+          "revision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+          "pid": 85836,
+          "observedOwnerToken": "[REDACTED]"
+        },
+        "correlation": {
+          "kind": "tool-wait",
+          "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+          "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+          "toolUseId": "all-run-steps"
+        },
+        "snapshotProvenance": {
+          "source": "live-bridge",
+          "applicationPid": 85837,
+          "applicationStarted": "Thu Oct  1 23:24:49 2026"
+        }
+      },
+      "lifecycleCompleteness": {
+        "localEvents": 26,
+        "localSequenceContiguous": true,
+        "droppedThroughSourceSeq": 0,
+        "sourceSequencesIncreasing": true,
+        "sourceSequenceGaps": "global source stream filtered by resource; gaps do not imply truncation",
+        "attachment": {
+          "seq": 1,
+          "at": "2026-10-01T15:24:50.738Z",
+          "kind": "lifecycle-observation-attached",
+          "attemptId": "65be5a3a-34e5-474a-b8c6-e040c224d65e",
+          "clockDomain": "process-performance:85837:256320b2-ecc5-490e-81cf-4c8838b587d4",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            "1605.333333",
+            "1605.333333"
+          ],
+          "applicationPid": 85837,
+          "instancePid": 85836,
+          "databaseIdentity": "bc369b69b7bb040c422cb43638d38289362d13f62951cf3f06698976f79663fb",
+          "resourceId": "703a2548-9142-498b-b466-c6a6a2e72213",
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+            "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+            "toolUseId": "all-run-steps"
+          },
+          "historyScope": "this-process-only",
+          "droppedThroughSourceSeq": 0,
+          "includesPriorProcessHistory": false
+        }
+      },
+      "events": {
+        "send-key-resolved": {
+          "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+          "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+          "stepId": "703a2548-9142-498b-b466-c6a6a2e72213:1",
+          "toolUseId": "send-timeout",
+          "attemptId": "53d725fa-0e40-4bf5-ad38-7c5cf2cc3fe2",
+          "idempotencyKey": "timeout",
+          "kind": "send-key-resolved",
+          "clientMsgId": "68a3801c-a319-43f3-a270-3fdb0733b3c3",
+          "keyReused": false,
+          "clockDomain": "process-performance:85837:256320b2-ecc5-490e-81cf-4c8838b587d4",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            "1561.940333",
+            "1561.940333"
+          ],
+          "applicationPid": 85837,
+          "at": "2026-10-01T15:24:50.695Z",
+          "seq": 9,
+          "sourceSeq": 8,
+          "instancePid": 85836,
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+            "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+            "toolUseId": "all-run-steps"
+          }
+        },
+        "send-wait-started": {
+          "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+          "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+          "stepId": "703a2548-9142-498b-b466-c6a6a2e72213:1",
+          "toolUseId": "send-timeout",
+          "attemptId": "53d725fa-0e40-4bf5-ad38-7c5cf2cc3fe2",
+          "idempotencyKey": "timeout",
+          "kind": "send-wait-started",
+          "clientMsgId": "68a3801c-a319-43f3-a270-3fdb0733b3c3",
+          "clockDomain": "process-performance:85837:256320b2-ecc5-490e-81cf-4c8838b587d4",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            "1561.981917",
+            "1561.981917"
+          ],
+          "applicationPid": 85837,
+          "at": "2026-10-01T15:24:50.695Z",
+          "seq": 10,
+          "sourceSeq": 9,
+          "instancePid": 85836,
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+            "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+            "toolUseId": "all-run-steps"
+          }
+        },
+        "send-wait-result-ready": {
+          "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+          "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+          "stepId": "703a2548-9142-498b-b466-c6a6a2e72213:1",
+          "toolUseId": "send-timeout",
+          "attemptId": "53d725fa-0e40-4bf5-ad38-7c5cf2cc3fe2",
+          "idempotencyKey": "timeout",
+          "kind": "send-wait-result-ready",
+          "clientMsgId": "68a3801c-a319-43f3-a270-3fdb0733b3c3",
+          "errorCode": "SEND_TIMEOUT",
+          "clockDomain": "process-performance:85837:256320b2-ecc5-490e-81cf-4c8838b587d4",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            "6563.341583",
+            "6563.341583"
+          ],
+          "applicationPid": 85837,
+          "at": "2026-10-01T15:24:55.696Z",
+          "seq": 11,
+          "sourceSeq": 259,
+          "instancePid": 85836,
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+            "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+            "toolUseId": "all-run-steps"
+          }
+        },
+        "send-tool-result-returned": {
+          "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+          "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+          "stepId": "703a2548-9142-498b-b466-c6a6a2e72213:1",
+          "toolUseId": "send-timeout",
+          "attemptId": "53d725fa-0e40-4bf5-ad38-7c5cf2cc3fe2",
+          "idempotencyKey": "timeout",
+          "kind": "send-tool-result-returned",
+          "clientMsgId": "68a3801c-a319-43f3-a270-3fdb0733b3c3",
+          "errorCode": "SEND_TIMEOUT",
+          "result": {
+            "code": "SEND_TIMEOUT",
+            "message": "Delivery could not be confirmed within five seconds.",
+            "hint": "Retrying this idempotency key reads the same outbound message."
+          },
+          "clockDomain": "process-performance:85837:256320b2-ecc5-490e-81cf-4c8838b587d4",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            "6563.411708",
+            "6563.411708"
+          ],
+          "applicationPid": 85837,
+          "at": "2026-10-01T15:24:55.696Z",
+          "seq": 12,
+          "sourceSeq": 260,
+          "instancePid": 85836,
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+            "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+            "toolUseId": "all-run-steps"
+          }
+        },
+        "send-tool-history-committed": {
+          "kind": "send-tool-history-committed",
+          "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+          "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+          "attemptId": "53d725fa-0e40-4bf5-ad38-7c5cf2cc3fe2",
+          "stepId": "703a2548-9142-498b-b466-c6a6a2e72213:1",
+          "toolUseId": "send-timeout",
+          "errorCode": "SEND_TIMEOUT",
+          "result": {
+            "code": "SEND_TIMEOUT",
+            "message": "Delivery could not be confirmed within five seconds.",
+            "hint": "Retrying this idempotency key reads the same outbound message."
+          },
+          "commitBoundary": "outer-commit-confirmed",
+          "clockDomain": "process-performance:85837:256320b2-ecc5-490e-81cf-4c8838b587d4",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            "6571.09575",
+            "6571.09575"
+          ],
+          "applicationPid": 85837,
+          "at": "2026-10-01T15:24:55.704Z",
+          "seq": 13,
+          "sourceSeq": 261,
+          "instancePid": 85836,
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+            "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+            "toolUseId": "all-run-steps"
+          }
+        }
+      },
+      "actualWaitStartEnvelopeMs": [
+        "1561.940333",
+        "1561.981917"
+      ],
+      "readyToPhysicalReturnEnvelopeMs": [
+        "6563.341583",
+        "6563.411708"
+      ],
+      "elapsedMs": [
+        "5001.359666",
+        "5001.471375"
+      ],
+      "excessAlreadyAtReadyLowerMs": "1.359666",
+      "historyCommitAfterPhysicalReturnMs": [
+        "7.684042",
+        "7.684042"
+      ],
+      "originalRunnerInterval": {
+        "start": [
+          "1561.940333",
+          "1561.981917"
+        ],
+        "end": [
+          "6563.341583",
+          "6563.411708"
+        ],
+        "elapsed": [
+          "5001.359666",
+          "5001.471374999999"
+        ],
+        "clientMsgId": "68a3801c-a319-43f3-a270-3fdb0733b3c3",
+        "attemptId": "53d725fa-0e40-4bf5-ad38-7c5cf2cc3fe2",
+        "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+        "stepId": "703a2548-9142-498b-b466-c6a6a2e72213:1",
+        "toolUseId": "send-timeout",
+        "enteredSeq": 6,
+        "clockDomain": "process-performance:85837:256320b2-ecc5-490e-81cf-4c8838b587d4",
+        "errorCode": "SEND_TIMEOUT",
+        "readyErrorCode": "SEND_TIMEOUT",
+        "keyReused": false,
+        "result": {
+          "code": "SEND_TIMEOUT",
+          "message": "Delivery could not be confirmed within five seconds.",
+          "hint": "Retrying this idempotency key reads the same outbound message."
+        },
+        "returnedSeq": 12,
+        "droppedThroughSourceSeq": 0,
+        "earlierStages": [
+          {
+            "kind": "send-tool-prepared",
+            "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+            "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+            "attemptId": "5cd6b935-60c9-4e4d-8cd6-a837ec5d6639",
+            "stepId": "703a2548-9142-498b-b466-c6a6a2e72213:1",
+            "toolUseId": "send-timeout",
+            "commitBoundary": "outer-commit-confirmed",
+            "clockDomain": "process-performance:85837:256320b2-ecc5-490e-81cf-4c8838b587d4",
+            "clockUnit": "ms",
+            "monotonicMs": [
+              "1546.604792",
+              "1546.604792"
+            ],
+            "applicationPid": 85837,
+            "at": "2026-10-01T15:24:50.679Z",
+            "seq": 5,
+            "sourceSeq": 4,
+            "instancePid": 85836,
+            "correlation": {
+              "kind": "tool-wait",
+              "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+              "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+              "toolUseId": "all-run-steps"
+            }
+          },
+          {
+            "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+            "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+            "stepId": "703a2548-9142-498b-b466-c6a6a2e72213:1",
+            "toolUseId": "send-timeout",
+            "attemptId": "53d725fa-0e40-4bf5-ad38-7c5cf2cc3fe2",
+            "idempotencyKey": "timeout",
+            "kind": "send-tool-entered",
+            "clockDomain": "process-performance:85837:256320b2-ecc5-490e-81cf-4c8838b587d4",
+            "clockUnit": "ms",
+            "monotonicMs": [
+              "1548.585292",
+              "1548.585292"
+            ],
+            "applicationPid": 85837,
+            "at": "2026-10-01T15:24:50.681Z",
+            "seq": 6,
+            "sourceSeq": 5,
+            "instancePid": 85836,
+            "correlation": {
+              "kind": "tool-wait",
+              "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+              "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+              "toolUseId": "all-run-steps"
+            }
+          },
+          {
+            "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+            "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+            "stepId": "703a2548-9142-498b-b466-c6a6a2e72213:1",
+            "toolUseId": "send-timeout",
+            "attemptId": "53d725fa-0e40-4bf5-ad38-7c5cf2cc3fe2",
+            "idempotencyKey": "timeout",
+            "kind": "send-audit-started",
+            "clockDomain": "process-performance:85837:256320b2-ecc5-490e-81cf-4c8838b587d4",
+            "clockUnit": "ms",
+            "monotonicMs": [
+              "1549.24425",
+              "1549.24425"
+            ],
+            "applicationPid": 85837,
+            "at": "2026-10-01T15:24:50.682Z",
+            "seq": 7,
+            "sourceSeq": 6,
+            "instancePid": 85836,
+            "correlation": {
+              "kind": "tool-wait",
+              "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+              "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+              "toolUseId": "all-run-steps"
+            }
+          },
+          {
+            "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+            "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+            "stepId": "703a2548-9142-498b-b466-c6a6a2e72213:1",
+            "toolUseId": "send-timeout",
+            "attemptId": "53d725fa-0e40-4bf5-ad38-7c5cf2cc3fe2",
+            "idempotencyKey": "timeout",
+            "kind": "send-audit-completed",
+            "verdict": "pass",
+            "clockDomain": "process-performance:85837:256320b2-ecc5-490e-81cf-4c8838b587d4",
+            "clockUnit": "ms",
+            "monotonicMs": [
+              "1556.683375",
+              "1556.683375"
+            ],
+            "applicationPid": 85837,
+            "at": "2026-10-01T15:24:50.689Z",
+            "seq": 8,
+            "sourceSeq": 7,
+            "instancePid": 85836,
+            "correlation": {
+              "kind": "tool-wait",
+              "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+              "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+              "toolUseId": "all-run-steps"
+            }
+          }
+        ],
+        "history": [
+          {
+            "kind": "send-tool-history-committed",
+            "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+            "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+            "attemptId": "53d725fa-0e40-4bf5-ad38-7c5cf2cc3fe2",
+            "stepId": "703a2548-9142-498b-b466-c6a6a2e72213:1",
+            "toolUseId": "send-timeout",
+            "errorCode": "SEND_TIMEOUT",
+            "result": {
+              "code": "SEND_TIMEOUT",
+              "message": "Delivery could not be confirmed within five seconds.",
+              "hint": "Retrying this idempotency key reads the same outbound message."
+            },
+            "commitBoundary": "outer-commit-confirmed",
+            "clockDomain": "process-performance:85837:256320b2-ecc5-490e-81cf-4c8838b587d4",
+            "clockUnit": "ms",
+            "monotonicMs": [
+              "6571.09575",
+              "6571.09575"
+            ],
+            "applicationPid": 85837,
+            "at": "2026-10-01T15:24:55.704Z",
+            "seq": 13,
+            "sourceSeq": 261,
+            "instancePid": 85836,
+            "correlation": {
+              "kind": "tool-wait",
+              "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+              "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+              "toolUseId": "all-run-steps"
+            }
+          }
+        ],
+        "historyCandidates": [
+          {
+            "kind": "send-tool-history-committed",
+            "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+            "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+            "attemptId": "53d725fa-0e40-4bf5-ad38-7c5cf2cc3fe2",
+            "stepId": "703a2548-9142-498b-b466-c6a6a2e72213:1",
+            "toolUseId": "send-timeout",
+            "errorCode": "SEND_TIMEOUT",
+            "result": {
+              "code": "SEND_TIMEOUT",
+              "message": "Delivery could not be confirmed within five seconds.",
+              "hint": "Retrying this idempotency key reads the same outbound message."
+            },
+            "commitBoundary": "outer-commit-confirmed",
+            "clockDomain": "process-performance:85837:256320b2-ecc5-490e-81cf-4c8838b587d4",
+            "clockUnit": "ms",
+            "monotonicMs": [
+              "6571.09575",
+              "6571.09575"
+            ],
+            "applicationPid": 85837,
+            "at": "2026-10-01T15:24:55.704Z",
+            "seq": 13,
+            "sourceSeq": 261,
+            "instancePid": 85836,
+            "correlation": {
+              "kind": "tool-wait",
+              "groupId": "cfdb4478-d809-49da-a645-0a1e6a142675",
+              "runId": "703a2548-9142-498b-b466-c6a6a2e72213",
+              "toolUseId": "all-run-steps"
+            }
+          }
+        ]
+      },
+      "boundary": "Lower bound ends at result-ready before physical return and history COMMIT; no COMMIT/public lag is charged to manufacture this failure.",
+      "rawAttempt": {
+        "id": "AGENT-028",
+        "status": "FAIL",
+        "reason": "AssertionError: 实际工具状态等待下界超过原始5000ms上限",
+        "durationMs": 7083,
+        "attempt": 0,
+        "startedAt": "2026-10-01T15:24:48.828Z",
+        "completedAt": "2026-10-01T15:24:55.911Z",
+        "project": "system",
+        "evidence": [
+          "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/evidence",
+          "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/error-context.md",
+          "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/trace.zip"
+        ]
+      }
+    },
+    "INT-ACT-001": {
+      "reviewStatus": "PASS",
+      "requiredMaximumMs": 60000,
+      "fullCollectorSource": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-restart-raw-8b134d7a-bfc1-443d-82d3-2492ac5ba55c.json",
+      "runnerAggregateSource": "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-restart-budget-1fea2b69-d2cb-45e0-b4ae-54fce3f766ca.json",
+      "parentClockDomain": "qa-parent:86187:8b9f48f7-6bff-44cd-aaf0-653d69835859",
+      "oldIdentity": {
+        "binding": {
+          "apiUrl": "http://127.0.0.1:64899",
+          "revision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+          "pid": 90983,
+          "observedOwnerToken": "[REDACTED]"
+        },
+        "correlation": {
+          "kind": "activity",
+          "groupId": "b3ee597d-8443-4d30-9d13-8e211c5b64c5",
+          "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+          "toolUseId": "all-run-steps"
+        },
+        "snapshotProvenance": {
+          "source": "live-bridge",
+          "applicationPid": 90984,
+          "applicationStarted": "Thu Oct  1 23:26:37 2026"
+        }
+      },
+      "newIdentity": {
+        "binding": {
+          "apiUrl": "http://127.0.0.1:64899",
+          "revision": "8e047aea842bfcec64802e4918b52b460b93c48b",
+          "pid": 91547,
+          "observedOwnerToken": "[REDACTED]"
+        },
+        "correlation": {
+          "kind": "activity",
+          "groupId": "b3ee597d-8443-4d30-9d13-8e211c5b64c5",
+          "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+          "toolUseId": "all-run-steps"
+        },
+        "snapshotProvenance": {
+          "source": "live-bridge",
+          "applicationPid": 91548,
+          "applicationStarted": "Thu Oct  1 23:27:05 2026"
+        }
+      },
+      "oldEpochId": "3c2af7f7-4e4c-4ac8-807d-619add0061e2",
+      "newEpochId": "ff7f0937-0307-468f-a4e5-c675f12038e3",
+      "oldCalibrationInputs": [
+        {
+          "parentWindowMs": [
+            "123942.412417",
+            "123947.288708"
+          ],
+          "clockObservation": {
+            "clockDomain": "process-performance:90984:6502e23e-da97-4808-ba83-a9ac22c4c162",
+            "clockUnit": "ms",
+            "applicationPid": 90984,
+            "monotonicMs": "22656.879958"
+          },
+          "offsetMs": [
+            "101285.532459",
+            "101290.408750"
+          ]
+        },
+        {
+          "parentWindowMs": [
+            "123947.29125",
+            "123952.057458"
+          ],
+          "clockObservation": {
+            "clockDomain": "process-performance:90984:6502e23e-da97-4808-ba83-a9ac22c4c162",
+            "clockUnit": "ms",
+            "applicationPid": 90984,
+            "monotonicMs": "22661.748375"
+          },
+          "offsetMs": [
+            "101285.542875",
+            "101290.309083"
+          ]
+        }
+      ],
+      "oldOffsetIntersectionMs": [
+        "101285.542875",
+        "101290.309083"
+      ],
+      "oldCreationMs": [
+        "1517.2145",
+        "1524.601041"
+      ],
+      "creationParentMs": [
+        "102802.757375",
+        "102814.910124"
+      ],
+      "safeBoundary": {
+        "seq": 49,
+        "at": "2026-10-01T15:27:00.045Z",
+        "kind": "activity-safe-held",
+        "correlation": {
+          "kind": "activity",
+          "groupId": "b3ee597d-8443-4d30-9d13-8e211c5b64c5",
+          "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+          "toolUseId": "all-run-steps"
+        },
+        "attemptId": "081a6ceb-2f2c-490f-8d88-799baf85eefd",
+        "instancePid": 90983,
+        "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+        "groupId": "b3ee597d-8443-4d30-9d13-8e211c5b64c5",
+        "clockDomain": "process-performance:90984:6502e23e-da97-4808-ba83-a9ac22c4c162",
+        "clockUnit": "ms",
+        "applicationPid": 90984,
+        "creationOrEpochStartWindowMs": [
+          "1517.2145",
+          "1524.601041"
+        ],
+        "activityState": "active",
+        "includesUnsavedTail": true,
+        "epochObservation": {
+          "continuous": true,
+          "startSource": "run-creation"
+        },
+        "epochIds": [
+          "3c2af7f7-4e4c-4ac8-807d-619add0061e2"
+        ],
+        "persistedActiveMs": 21084,
+        "lastSuccessfulSample": {
+          "epochId": "3c2af7f7-4e4c-4ac8-807d-619add0061e2",
+          "windowMs": [
+            "22600.804625",
+            "22602.143125"
+          ],
+          "persistedActiveMs": 21084
+        },
+        "clockSource": "process performance.now brackets around confirmed product creation, ownership and terminal boundaries",
+        "activeElapsedMs": [
+          21091,
+          21099
+        ],
+        "stepId": "850330792646afe8f37a083ba08ac7ed521057fb427a02dba9b5752c7379bef5",
+        "continuationDurable": true,
+        "remoteInFlightCount": 0,
+        "safeBoundary": "read-tool-result-outer-commit-confirmed-before-next-dispatch"
+      },
+      "safeHeldThroughKill": true,
+      "leaseExpiresAt": "2026-10-01T15:28:46.163Z",
+      "killAfterUtc": 1790868420131,
+      "actualExit": {
+        "parentClockDomain": "qa-parent:86187:8b9f48f7-6bff-44cd-aaf0-653d69835859",
+        "applicationPid": 90984,
+        "applicationStarted": "Thu Oct  1 23:26:37 2026",
+        "guardianPid": 90983,
+        "signal": "SIGKILL",
+        "signalRequestedBeforeMs": "123980.315958",
+        "processExitObservedAfterMs": "123987.093875",
+        "exitObservation": "owned-process-confirmed-absent",
+        "checks": [
+          {
+            "pid": 90983,
+            "args": [
+              "-p",
+              "90983",
+              "-o",
+              "ppid=,pgid=,uid=,lstart="
+            ],
+            "requestWindowMs": [
+              "123969.099583",
+              "123972.018208"
+            ],
+            "stdout": "86187 90983   501 Thu Oct  1 23:26:37 2026    \n",
+            "stderr": "",
+            "exitCode": 0,
+            "identity": {
+              "pid": 90983,
+              "parentPid": 86187,
+              "processGroupId": 90983,
+              "uid": 501,
+              "started": "Thu Oct  1 23:26:37 2026"
+            }
+          },
+          {
+            "pid": 90984,
+            "args": [
+              "-p",
+              "90984",
+              "-o",
+              "ppid=,pgid=,uid=,lstart="
+            ],
+            "requestWindowMs": [
+              "123972.344",
+              "123974.979042"
+            ],
+            "stdout": "90983 90983   501 Thu Oct  1 23:26:37 2026    \n",
+            "stderr": "",
+            "exitCode": 0,
+            "identity": {
+              "pid": 90984,
+              "parentPid": 90983,
+              "processGroupId": 90983,
+              "uid": 501,
+              "started": "Thu Oct  1 23:26:37 2026"
+            }
+          },
+          {
+            "pid": 90983,
+            "args": [
+              "-p",
+              "90983",
+              "-o",
+              "ppid=,pgid=,uid=,lstart="
+            ],
+            "requestWindowMs": [
+              "123975.685125",
+              "123978.145375"
+            ],
+            "stdout": "86187 90983   501 Thu Oct  1 23:26:37 2026    \n",
+            "stderr": "",
+            "exitCode": 0,
+            "identity": {
+              "pid": 90983,
+              "parentPid": 86187,
+              "processGroupId": 90983,
+              "uid": 501,
+              "started": "Thu Oct  1 23:26:37 2026"
+            }
+          },
+          {
+            "pid": 90984,
+            "args": [
+              "-p",
+              "90984",
+              "-o",
+              "ppid=,pgid=,uid=,lstart="
+            ],
+            "requestWindowMs": [
+              "123978.346",
+              "123980.143417"
+            ],
+            "stdout": "90983 90983   501 Thu Oct  1 23:26:37 2026    \n",
+            "stderr": "",
+            "exitCode": 0,
+            "identity": {
+              "pid": 90984,
+              "parentPid": 90983,
+              "processGroupId": 90983,
+              "uid": 501,
+              "started": "Thu Oct  1 23:26:37 2026"
+            }
+          },
+          {
+            "pid": 90984,
+            "args": [
+              "-p",
+              "90984",
+              "-o",
+              "ppid=,pgid=,uid=,lstart="
+            ],
+            "requestWindowMs": [
+              "123984.750292",
+              "123987.093875"
+            ],
+            "stdout": "",
+            "stderr": "",
+            "exitCode": 1,
+            "identity": null
+          }
+        ]
+      },
+      "exitWindowMs": [
+        "123980.315958",
+        "123987.093875"
+      ],
+      "oldActiveMs": [
+        "21165.405834",
+        "21184.336500"
+      ],
+      "newCalibration": {
+        "parentWindowMs": [
+          "157721.665542",
+          "157742.536125"
+        ],
+        "clockObservation": {
+          "clockDomain": "process-performance:91548:ae51ff55-aa3d-4402-bcc8-27ce722f849d",
+          "clockUnit": "ms",
+          "applicationPid": 91548,
+          "monotonicMs": "28611.46925"
+        },
+        "offsetMs": [
+          "129110.196292",
+          "129131.066875"
+        ]
+      },
+      "newAcquisitionMs": [
+        "195.721667",
+        "197.036833"
+      ],
+      "newStartParentMs": [
+        "129305.917959",
+        "129328.103708"
+      ],
+      "newActiveMs": [
+        "28248.085042",
+        "28249.416416"
+      ],
+      "actualStop": {
+        "kind": "agent-termination-decided",
+        "groupId": "b3ee597d-8443-4d30-9d13-8e211c5b64c5",
+        "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+        "attemptId": "9eed1bd9-224f-4bc9-9696-23b2e0d459bd",
+        "decisionWindowMs": [
+          "28445.121875",
+          "28445.138083"
+        ],
+        "status": "failed",
+        "reason": "wall_clock",
+        "clockDomain": "process-performance:91548:ae51ff55-aa3d-4402-bcc8-27ce722f849d",
+        "clockUnit": "ms",
+        "monotonicMs": [
+          "28445.144292",
+          "28445.144292"
+        ],
+        "applicationPid": 91548,
+        "at": "2026-10-01T15:27:33.700Z",
+        "seq": 10,
+        "sourceSeq": 9,
+        "instancePid": 91547,
+        "correlation": {
+          "kind": "tool-wait",
+          "groupId": "b3ee597d-8443-4d30-9d13-8e211c5b64c5",
+          "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+          "toolUseId": "all-run-steps"
+        }
+      },
+      "matchingCommit": {
+        "kind": "agent-terminal-committed",
+        "groupId": "b3ee597d-8443-4d30-9d13-8e211c5b64c5",
+        "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+        "attemptId": "9eed1bd9-224f-4bc9-9696-23b2e0d459bd",
+        "status": "failed",
+        "reason": "wall_clock",
+        "commitBoundary": "outer-commit-confirmed",
+        "clockDomain": "process-performance:91548:ae51ff55-aa3d-4402-bcc8-27ce722f849d",
+        "clockUnit": "ms",
+        "monotonicMs": [
+          "28449.00775",
+          "28449.00775"
+        ],
+        "applicationPid": 91548,
+        "at": "2026-10-01T15:27:33.703Z",
+        "seq": 11,
+        "sourceSeq": 10,
+        "instancePid": 91547,
+        "correlation": {
+          "kind": "tool-wait",
+          "groupId": "b3ee597d-8443-4d30-9d13-8e211c5b64c5",
+          "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+          "toolUseId": "all-run-steps"
+        }
+      },
+      "commitAfterDecisionMs": [
+        "3.869667",
+        "3.885875"
+      ],
+      "activityTerminalEndMsDiagnostic": [
+        "28445.121875",
+        "28449.04325"
+      ],
+      "newEpochCompleteness": {
+        "continuous": true,
+        "startSource": "clock-acquisition"
+      },
+      "newEpochIncludesPriorUnsavedTail": false,
+      "startupWindowMs": [
+        "129025.763167",
+        "129501.28925"
+      ],
+      "startupGapMs": [
+        "0",
+        "302.340541"
+      ],
+      "provenDowntimeMs": [
+        "5038.669292",
+        "5045.447209"
+      ],
+      "fullActiveMs": [
+        "49413.490876",
+        "49736.093457"
+      ],
+      "tailSinceLastAckMs": [
+        "87.863750",
+        "100.746375"
+      ],
+      "unsavedTailMs": [
+        0,
+        "100.746375"
+      ],
+      "allRecoverySnapshotsImmutablePrefix": true,
+      "recoverySnapshotCount": 218,
+      "newLifecycle": {
+        "localEvents": 11,
+        "localSequenceContiguous": true,
+        "droppedThroughSourceSeq": 0,
+        "sourceSequencesIncreasing": true,
+        "sourceSequenceGaps": "global source stream filtered by resource; gaps do not imply truncation",
+        "attachment": {
+          "seq": 1,
+          "at": "2026-10-01T15:27:05.828Z",
+          "kind": "lifecycle-observation-attached",
+          "attemptId": "0b62686f-15d3-4570-b516-7d46621dd5eb",
+          "clockDomain": "process-performance:91548:ae51ff55-aa3d-4402-bcc8-27ce722f849d",
+          "clockUnit": "ms",
+          "monotonicMs": [
+            "573.187833",
+            "573.187833"
+          ],
+          "applicationPid": 91548,
+          "instancePid": 91547,
+          "databaseIdentity": "157547dc4b7b042d4a8813a87e4fbf68951b5ac0a52412fccdbe9262859023cd",
+          "resourceId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+          "correlation": {
+            "kind": "tool-wait",
+            "groupId": "b3ee597d-8443-4d30-9d13-8e211c5b64c5",
+            "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+            "toolUseId": "all-run-steps"
+          },
+          "historyScope": "this-process-only",
+          "droppedThroughSourceSeq": 0,
+          "includesPriorProcessHistory": false
+        }
+      },
+      "retainedSnapshotUsedForCalibration": false,
+      "ledger": {
+        "beforeActiveMs": "21084",
+        "afterExitActiveMs": "21170",
+        "beforeRestartActiveMs": "21170",
+        "finalActiveMsDiagnostic": "49420",
+        "beforeSteps": 3,
+        "finalSteps": 7,
+        "downtimeUnchanged": true,
+        "postExitCoversLastAck": true,
+        "sameRunHistoryPrefixPreserved": true,
+        "uniqueCompletedReadToolIds": [
+          "activity-0",
+          "activity-1",
+          "activity-2",
+          "activity-3",
+          "activity-4",
+          "activity-5",
+          "activity-6"
+        ],
+        "postExitWindow": [
+          "123994.036",
+          "123999.991958"
+        ],
+        "beforeRestartWindow": [
+          "129003.911",
+          "129020.64375"
+        ]
+      },
+      "externalTurns": [
+        {
+          "requestId": 1,
+          "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+          "at": "2026-10-01T15:26:38.966Z",
+          "completedAt": "2026-10-01T15:26:45.974Z",
+          "toolUseId": "activity-0",
+          "priorToolIds": []
+        },
+        {
+          "requestId": 2,
+          "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+          "at": "2026-10-01T15:26:46.007Z",
+          "completedAt": "2026-10-01T15:26:53.008Z",
+          "toolUseId": "activity-1",
+          "priorToolIds": [
+            "activity-0"
+          ]
+        },
+        {
+          "requestId": 3,
+          "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+          "at": "2026-10-01T15:26:53.029Z",
+          "completedAt": "2026-10-01T15:27:00.028Z",
+          "toolUseId": "activity-2",
+          "priorToolIds": [
+            "activity-0",
+            "activity-1"
+          ]
+        },
+        {
+          "requestId": 4,
+          "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+          "at": "2026-10-01T15:27:05.574Z",
+          "completedAt": "2026-10-01T15:27:12.574Z",
+          "toolUseId": "activity-3",
+          "priorToolIds": [
+            "activity-0",
+            "activity-1",
+            "activity-2"
+          ]
+        },
+        {
+          "requestId": 5,
+          "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+          "at": "2026-10-01T15:27:12.611Z",
+          "completedAt": "2026-10-01T15:27:19.612Z",
+          "toolUseId": "activity-4",
+          "priorToolIds": [
+            "activity-0",
+            "activity-1",
+            "activity-2",
+            "activity-3"
+          ]
+        },
+        {
+          "requestId": 6,
+          "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+          "at": "2026-10-01T15:27:19.630Z",
+          "completedAt": "2026-10-01T15:27:26.630Z",
+          "toolUseId": "activity-5",
+          "priorToolIds": [
+            "activity-0",
+            "activity-1",
+            "activity-2",
+            "activity-3",
+            "activity-4"
+          ]
+        },
+        {
+          "requestId": 7,
+          "runId": "fd7237bd-ea82-403a-9e88-703902b96c46",
+          "at": "2026-10-01T15:27:26.648Z",
+          "completedAt": "2026-10-01T15:27:33.650Z",
+          "toolUseId": "activity-6",
+          "priorToolIds": [
+            "activity-0",
+            "activity-1",
+            "activity-2",
+            "activity-3",
+            "activity-4",
+            "activity-5"
+          ]
+        }
+      ],
+      "publicRunReads": 220,
+      "finalPublicRun": {
+        "id": "fd7237bd-ea82-403a-9e88-703902b96c46",
+        "groupId": "b3ee597d-8443-4d30-9d13-8e211c5b64c5",
+        "status": "failed",
+        "endReason": "wall_clock",
+        "summary": null,
+        "recoveryNote": null,
+        "steps": [
+          {
+            "ordinal": 1,
+            "kind": "tool_use",
+            "toolUseId": "activity-0",
+            "name": "get_recent_messages",
+            "input": {
+              "limit": 1
+            },
+            "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"activity-external\",\"isOwn\":false,\"text\":\"runtime-budget-trigger\",\"sentAt\":\"2026-10-01T15:26:38.885Z\"}],\"truncated\":false}",
+            "isError": false,
+            "errorCode": null,
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"activity-0\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":1}}]}"
+          },
+          {
+            "ordinal": 2,
+            "kind": "tool_use",
+            "toolUseId": "activity-1",
+            "name": "get_recent_messages",
+            "input": {
+              "limit": 2
+            },
+            "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"activity-external\",\"isOwn\":false,\"text\":\"runtime-budget-trigger\",\"sentAt\":\"2026-10-01T15:26:38.885Z\"}],\"truncated\":false}",
+            "isError": false,
+            "errorCode": null,
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"activity-1\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":2}}]}"
+          },
+          {
+            "ordinal": 3,
+            "kind": "tool_use",
+            "toolUseId": "activity-2",
+            "name": "get_recent_messages",
+            "input": {
+              "limit": 3
+            },
+            "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"activity-external\",\"isOwn\":false,\"text\":\"runtime-budget-trigger\",\"sentAt\":\"2026-10-01T15:26:38.885Z\"}],\"truncated\":false}",
+            "isError": false,
+            "errorCode": null,
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"activity-2\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":3}}]}"
+          },
+          {
+            "ordinal": 4,
+            "kind": "tool_use",
+            "toolUseId": "activity-3",
+            "name": "get_recent_messages",
+            "input": {
+              "limit": 4
+            },
+            "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"activity-external\",\"isOwn\":false,\"text\":\"runtime-budget-trigger\",\"sentAt\":\"2026-10-01T15:26:38.885Z\"}],\"truncated\":false}",
+            "isError": false,
+            "errorCode": null,
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"activity-3\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":4}}]}"
+          },
+          {
+            "ordinal": 5,
+            "kind": "tool_use",
+            "toolUseId": "activity-4",
+            "name": "get_recent_messages",
+            "input": {
+              "limit": 5
+            },
+            "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"activity-external\",\"isOwn\":false,\"text\":\"runtime-budget-trigger\",\"sentAt\":\"2026-10-01T15:26:38.885Z\"}],\"truncated\":false}",
+            "isError": false,
+            "errorCode": null,
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"activity-4\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":5}}]}"
+          },
+          {
+            "ordinal": 6,
+            "kind": "tool_use",
+            "toolUseId": "activity-5",
+            "name": "get_recent_messages",
+            "input": {
+              "limit": 6
+            },
+            "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"activity-external\",\"isOwn\":false,\"text\":\"runtime-budget-trigger\",\"sentAt\":\"2026-10-01T15:26:38.885Z\"}],\"truncated\":false}",
+            "isError": false,
+            "errorCode": null,
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"activity-5\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":6}}]}"
+          },
+          {
+            "ordinal": 7,
+            "kind": "tool_use",
+            "toolUseId": "activity-6",
+            "name": "get_recent_messages",
+            "input": {
+              "limit": 7
+            },
+            "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-1\",\"senderPlatformUserId\":\"activity-external\",\"isOwn\":false,\"text\":\"runtime-budget-trigger\",\"sentAt\":\"2026-10-01T15:26:38.885Z\"}],\"truncated\":false}",
+            "isError": false,
+            "errorCode": null,
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"activity-6\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":7}}]}"
+          }
+        ]
+      },
+      "finalPublicGroup": {
+        "id": "b3ee597d-8443-4d30-9d13-8e211c5b64c5",
+        "name": null,
+        "description": null,
+        "createdAt": "2026-10-01T15:26:38.029Z",
+        "gatewayGroupId": "gateway-group-1",
+        "status": "active",
+        "creatorAccountId": "account-1",
+        "agentEnabled": true,
+        "autoKickEnabled": false,
+        "members": [
+          {
+            "accountId": "account-2",
+            "platformUserId": "platform-account-2",
+            "role": "admin"
+          },
+          {
+            "accountId": "account-1",
+            "platformUserId": "platform-account-1",
+            "role": "creator"
+          },
+          {
+            "accountId": "account-3",
+            "platformUserId": "platform-account-3",
+            "role": "member"
+          }
+        ],
+        "activeAgentRunId": null,
+        "activeSequenceRunId": null
+      },
+      "noPausedRecoveryObserved": true,
+      "noNewDispatchAfterActualStopInCapturedHistory": true,
+      "noGatewaySendOrKickEffects": true,
+      "independentVsRunnerArithmetic": {
+        "oldOffsetMs": {
+          "independent": [
+            "101285.542875",
+            "101290.309083"
+          ],
+          "runner": [
+            "101285.542875",
+            "101290.309083"
+          ],
+          "difference": [
+            "0.000000",
+            "0.000000"
+          ]
+        },
+        "newOffsetMs": {
+          "independent": [
+            "129110.196292",
+            "129131.066875"
+          ],
+          "runner": [
+            "129110.19629200001",
+            "129131.06687500002"
+          ],
+          "difference": [
+            "-1E-11",
+            "-2E-11"
+          ]
+        },
+        "creationParentMs": {
+          "independent": [
+            "102802.757375",
+            "102814.910124"
+          ],
+          "runner": [
+            "102802.757375",
+            "102814.910124"
+          ],
+          "difference": [
+            "0.000000",
+            "0.000000"
+          ]
+        },
+        "exitWindowMs": {
+          "independent": [
+            "123980.315958",
+            "123987.093875"
+          ],
+          "runner": [
+            "123980.315958",
+            "123987.093875"
+          ],
+          "difference": [
+            "0.000000",
+            "0.000000"
+          ]
+        },
+        "newStartParentMs": {
+          "independent": [
+            "129305.917959",
+            "129328.103708"
+          ],
+          "runner": [
+            "129305.91795900001",
+            "129328.10370800002"
+          ],
+          "difference": [
+            "-1E-11",
+            "-2E-11"
+          ]
+        },
+        "oldActiveMs": {
+          "independent": [
+            "21165.405834",
+            "21184.336500"
+          ],
+          "runner": [
+            "21165.405834000005",
+            "21184.336500000005"
+          ],
+          "difference": [
+            "-5E-12",
+            "-5E-12"
+          ]
+        },
+        "newActiveMs": {
+          "independent": [
+            "28248.085042",
+            "28249.416416"
+          ],
+          "runner": [
+            "28248.085042000002",
+            "28249.416416"
+          ],
+          "difference": [
+            "-2E-12",
+            "0.000000"
+          ]
+        },
+        "provenDowntimeMs": {
+          "independent": [
+            "5038.669292",
+            "5045.447209"
+          ],
+          "runner": [
+            "5038.669291999991",
+            "5045.447208999991"
+          ],
+          "difference": [
+            "9E-12",
+            "9E-12"
+          ]
+        },
+        "startupGapMs": {
+          "independent": [
+            "0",
+            "302.340541"
+          ],
+          "runner": [
+            0,
+            "302.34054100002686"
+          ],
+          "difference": [
+            "0",
+            "-2.686E-11"
+          ]
+        },
+        "fullActiveMs": {
+          "independent": [
+            "49413.490876",
+            "49736.093457"
+          ],
+          "runner": [
+            "49413.49087600001",
+            "49736.09345700003"
+          ],
+          "difference": [
+            "-1E-11",
+            "-3E-11"
+          ]
+        }
+      },
+      "scopeLimit": "One safe committed read-tool boundary, one real app SIGKILL and restart, this original run only. Not arbitrary in-flight side effect crash recovery; not all DB locks or every future 60s execution; no second post-terminal restart tested. Unsaved tail lower 0 is no assertion of zero loss. Entire startup gap conservatively included in upper.",
+      "rawAttempt": {
+        "id": "INT-ACT-001",
+        "status": "PASS",
+        "durationMs": 56879,
+        "attempt": 0,
+        "startedAt": "2026-10-01T15:26:37.123Z",
+        "completedAt": "2026-10-01T15:27:34.002Z",
+        "project": "system",
+        "evidence": [
+          "/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence"
+        ]
+      }
+    }
+  },
+  "sourceIndex": {
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/manifest.json": {
+      "sha256": "36ad83f07396c55918350a163899f116a2dfcaa62502ea761ac618b6cb63445c",
+      "bytes": 109619
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/results.json": {
+      "sha256": "753725f7d65a55e345c2948a3954c7d31fb532903e92b5d513292e56239a5222",
+      "bytes": 345827
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/events.json": {
+      "sha256": "1ad3ecd3b92eb14cb89e6f82d498b82e1c1243cc784257e31c3a08c086b90b2a",
+      "bytes": 22945
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/runner-summary.json": {
+      "sha256": "e947d595d59227071e934872a27eb888624db881d294cd332ded5a20ee8cbbcb",
+      "bytes": 97
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/evidence/wall-clock-window.json": {
+      "sha256": "bdad25809f23ed311265bb0dfc80436da30c1eac23e31ff11456cb0ea75bca0f",
+      "bytes": 899841
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-agent--AGENT-025-ru-085da-budget-including-slow-turns-system/evidence/external-facts.json": {
+      "sha256": "e522e4571adaeb1b38a494e5cf5712b3340091e0edfd199ffdaf503d94c83202",
+      "bytes": 48317
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-active-budget.json": {
+      "sha256": "02b54dedd2e45ed748dcd4aac63317f5081908476170a29f05077f1f964398d8",
+      "bytes": 877522
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/external-facts.json": {
+      "sha256": "722cc38c0838204d64d0b0591a95928d16cf48bf774e99e950a131bba363faa0",
+      "bytes": 18229
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-http-7a16149c-0074-486d-b171-94d8b7b5bd03.json": {
+      "sha256": "dd9731cc3fe15d8425650d8b34002d9f9612835bd2c089aeb4d29bf3f139d333",
+      "bytes": 562218
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-budget-final.json": {
+      "sha256": "0d11fd71abeb2077b4328599a02743e6f46e6e833b11135b30c8772827d25e1e",
+      "bytes": 20575
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-capacity-control--C-4b677-without-resetting-the-clock-system/evidence/capacity-post-release-qa-kick-capacity-budget.json": {
+      "sha256": "f0e88d3ac81195fbfe0ad1274c06a509da46f96cafac34ddf6ac2b7e181f3516",
+      "bytes": 1927
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/evidence/send-timeout-window.json": {
+      "sha256": "99673b898885eb18a75032b43724ad4c16562860907f8c9b77cbbd834efb1d62",
+      "bytes": 26962
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/evidence/send-timeout-actual-interval.json": {
+      "sha256": "8af4dc56b19d86dccc9209478194f85179149dcfe501410e00c7c0d4a0b38c59",
+      "bytes": 6808
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-restart-raw-8b134d7a-bfc1-443d-82d3-2492ac5ba55c.json": {
+      "sha256": "0d4ee00e9992efc3001fe3dddea858c7d03e2a55f93cef255b2a9292bd33ba3e",
+      "bytes": 1227944
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-restart-budget-1fea2b69-d2cb-45e0-b4ae-54fce3f766ca.json": {
+      "sha256": "4fb85701dda1109eca1b726b4f48241bc12a73fa82d471b78ce8ef44d71bba30",
+      "bytes": 3144
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-live-calibration-before-kill-3a1ba895-3da3-441e-be8e-28fba8e8b084.json": {
+      "sha256": "f9dd1dbe9ce3149eccf40879c9cee446a2806fa1bd5ec9568bde2b2409a97c38",
+      "bytes": 161175
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-kill-window-fd8bfd4c-874c-4cd2-ba51-772395662bdf.json": {
+      "sha256": "ce9529c9651cbf259b11c0c951b7139000e05a046317c05007d2e48e06be0664",
+      "bytes": 78965
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/application-owned-identity-2d53e329-d24f-4b84-9d0d-b2354786ab59.json": {
+      "sha256": "6e1d0b504b8d31a9c937abe6348e2359fa5ed9b1bb96fd847e543f7d141c18e0",
+      "bytes": 1368
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/application-owned-identity-ad645f45-17e5-4182-bc63-18f696d8b49c.json": {
+      "sha256": "35929caa72c9c93ae92fcd84711b4159e9f04b1a8209ec9c4ad1c063e56eacc0",
+      "bytes": 1371
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-5cfc2324-8ab3-4281-8444-d3aec27b76d9.json": {
+      "sha256": "949a59b0010b67c4959e4f30268973c1114ddf8552a3b0f1188e3e9d4d59a62f",
+      "bytes": 42688
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-4f0cc476-ad7f-487d-93f7-b1f5aa8fb368.json": {
+      "sha256": "5bb61702264f23c66da4c9a8f272d39811b424af93181cf0ecc799b50a8fbeff",
+      "bytes": 324379
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-c29c20f2-8fa5-45b7-bac0-f4a19937f640.json": {
+      "sha256": "862dc9fe79b42c019f8ff650cb53e97b1f8cabb55169bb86d76c5cf876fbad33",
+      "bytes": 423743
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-8ec2d9d1-80b0-41c9-970c-7f4f62e8ae36.json": {
+      "sha256": "bb3b6037fb8b62b5ce7dd9cb716ae5314d56c29159a398b24979ed361f87552d",
+      "bytes": 386481
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-d0d42789-cad7-4c91-8899-b8913b942a4f.json": {
+      "sha256": "96f37c812a7c971fba5109854c3aedfb058118a0aad89dce3c75f186d77e9205",
+      "bytes": 264036
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-94ed0dd1-6674-43d5-bc20-e6a3a674463c.json": {
+      "sha256": "54b2c9bc0a62c59ed0e6eb3c4ddc9949afceeb00115016cf70087b84c3c4040d",
+      "bytes": 354539
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-52b03da7-6550-4302-8435-18c6f75d8878.json": {
+      "sha256": "8dfc3942715d8faa614ccae77bf216a566e13cb38379f9db0451d7f9ab8494c4",
+      "bytes": 116996
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-be5043bb-a1ed-4482-bb06-862a55973c2b.json": {
+      "sha256": "7ef6a5af59fe35bbb4dde2eb717f1e0bb732ba12d8658640f1cb1b62a448a65d",
+      "bytes": 602986
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-1c1a46b1-a5e4-4c6f-8664-ca5037649fe1.json": {
+      "sha256": "098ce2599c81bd87f7305eedd15753b8446663de7697af497f14201ea36ffab2",
+      "bytes": 108155
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-8672bcc3-26bd-4fb0-8a1b-f0f4356e25da.json": {
+      "sha256": "e621421c803e514457c65ffa57b19e3c65dd3108e84ea23144d61161c102d638",
+      "bytes": 189562
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-650bf0b6-7cf7-4739-854e-540be9d76cd1.json": {
+      "sha256": "531f29ee9cc915d62f89c4be30403480e791ffca1393308f27f9ea6283812e3d",
+      "bytes": 587019
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-03b052a9-6567-407d-969d-3373f4661bc9.json": {
+      "sha256": "952d6c06f2395d1aa4f02bfc39e6e0cd7a46ec43e1fe0e096dcb7ab058ab62a3",
+      "bytes": 594115
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-4e0d358b-55d6-45d6-9410-f88187f0fa9c.json": {
+      "sha256": "0b05193e65ee59341a83b6a1c664656943d6e79f666cf8a567731013cebc85b6",
+      "bytes": 79848
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-4a305226-5fad-4aef-ad1d-307f42307498.json": {
+      "sha256": "1b9a23310df1d083452174a3e6aef9c8ea2b73135a53ab13377bd8be0e4e1d04",
+      "bytes": 487640
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-a327350e-7455-402e-be8d-4e0b11aa8e75.json": {
+      "sha256": "2d62c20d46b28306a9ee296abe5d634b9b47450fa00828504000500970ed0708",
+      "bytes": 161249
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-820cfb1c-38c8-4d83-bea5-01cbc4aaf55d.json": {
+      "sha256": "bcfc9a2ff3a8bc0510d2135908d93002f595b64fc46ef98b8b7eca82f1675ed3",
+      "bytes": 136459
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-37692348-985e-428f-aac8-c8f4af871ad6.json": {
+      "sha256": "dbefa4dd0dcaef22a9e813dd749905495efbcf7a184e5a2b41d2265d032a05b4",
+      "bytes": 397123
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-5b345625-647f-4e6a-ae9d-bce60c0a6820.json": {
+      "sha256": "a33684644ae96def6ad40a135cbd9663e410058a443693a27167d7ae71551fed",
+      "bytes": 37378
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-e0fdc8ed-aa1c-4300-a934-894796d83227.json": {
+      "sha256": "effef725cd9b4bc5d37c307f7f9fec135a953dcfd706cff35fbd77e0e40a85eb",
+      "bytes": 232099
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-cd058ec0-8a14-49a0-b3a1-3be6ea1a3526.json": {
+      "sha256": "2dcd7515f67cee17f30ba801a042f0dbe705e37864eeaea8e42af88f12212554",
+      "bytes": 9090
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-e7e6aedf-f5af-4b5d-af0e-5c9f8044e64e.json": {
+      "sha256": "32983a6f7abea81c35316d34915f64ebde9da7c14e8ac387089c26817ce0b780",
+      "bytes": 365188
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-8f3f4c76-2798-4d5f-b9ee-af08298b28c1.json": {
+      "sha256": "64d00b6fa3a3cf328430fd8a3b41a6ce11fe71ce819044770e4eb4eaaf677316",
+      "bytes": 155939
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-765b0b3d-8ae8-4513-a777-e0cc75aebe07.json": {
+      "sha256": "309181f050042c639561be2089b72246f1c0d2f6474c7a8ea4c8120e5dc919e5",
+      "bytes": 556851
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-eefe32b5-391d-4900-9b25-6d0da007b7f7.json": {
+      "sha256": "843ed733d76289da4ff9a327646690330c1cdf97934bb983aff0a64efbc30496",
+      "bytes": 95775
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-6cfda006-760c-4829-bcd4-fdf838adfee9.json": {
+      "sha256": "65782cf7d3c100b2e9535c44fa100e031d7e4db2114dd00a2d7709ab8315a496",
+      "bytes": 370509
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-a47a73b0-f57a-437e-90fd-6a25b9501eb5.json": {
+      "sha256": "2ca66220b516434daed0cecc1095dcbd9d51763371212a4a20bc2958ca1a5a6c",
+      "bytes": 382932
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-0d5bf069-a559-467c-9cbf-6affeaf5653a.json": {
+      "sha256": "7e90df569a5b491593f95ee06e6dad1326d78699b6f9b8c5bcac911817bbd99e",
+      "bytes": 466345
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-40126222-acad-472e-bdb0-d0e159dbbf25.json": {
+      "sha256": "f9f4c5ebc11a1dc649e3bbfc15676cb40534e277bfb38221915d1b5f7d125aa7",
+      "bytes": 595889
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-d4444375-dbb4-4500-8795-5dd637b279d5.json": {
+      "sha256": "cf6d817d64d4d0af099d8ab797bdd714fd7cfa87f7add873640ec6499b430964",
+      "bytes": 535552
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-16b377cd-6768-48c2-873e-288df4d0be4a.json": {
+      "sha256": "e308e3e33bfcc8c492fb8f2ae92a8a3972ee3d65103990666e8350b0fa98771a",
+      "bytes": 446805
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-5408dd82-0ba5-45c5-81d0-34d8f3221261.json": {
+      "sha256": "0823852c68a6140eaa858803f62cedb7178f2eb4e243af0d638d6533eaef150a",
+      "bytes": 409544
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-3cc7d335-4288-4c02-91b4-df6eb08560a1.json": {
+      "sha256": "dc0bf5f9ff325e2645c5c93ab4393b1e5a75948355c697e36f2286e09e3b8191",
+      "bytes": 437928
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-d4cc8bd2-d4a6-47bd-aa57-c2592de56e85.json": {
+      "sha256": "9ac26ad60dbc71c07bf7b640824e101093ec3c7d40fe83dc22303c5ecd622ef3",
+      "bytes": 429061
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-6e2924a4-d863-4c4b-b2c5-d646b647da66.json": {
+      "sha256": "565541487f584a1f6a21f82c3d11b0186d4e0868921a327899e7a7411973a9cb",
+      "bytes": 404218
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-d4736f7d-a60d-483d-b0ff-3c6682d2359f.json": {
+      "sha256": "70a0e742deed44eb67201d5c4b327350fc97418eca52e6802a9f889e375c7c48",
+      "bytes": 221449
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-65520a87-4525-4981-9256-5aa8f7d124f8.json": {
+      "sha256": "79599cf436a6a6da2fcd2dc5d323c6249dbaab106af9f9ad64f5e25c815933f3",
+      "bytes": 175402
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-f4064eab-f195-43e3-9183-ab301915e481.json": {
+      "sha256": "6d4ae200150ce472308605462a9e1ca8ca27ab32330599bca3f6e41044455d9b",
+      "bytes": 503606
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-ba944d29-c12f-4720-8513-cdaddbf1ed0c.json": {
+      "sha256": "07e9be197c3755a4fe0618bcdb2c470d641b4053cc080aba007ee76ee66e209c",
+      "bytes": 494740
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-3db4e9d6-61a6-4596-a293-8921ec0105df.json": {
+      "sha256": "2b81e371c64d6f674572f3a40d7e7886a633b876ec8778ae5fb01cdbaf4efc55",
+      "bytes": 33837
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-437f7637-65bb-4652-b0fc-2857d15e6c68.json": {
+      "sha256": "945d30f220d329798c4f46c950a968cfc402ef6978f15e24718ff32a5612240c",
+      "bytes": 186018
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-26d7f978-9e5b-426f-8e3a-3cc0c237bbe5.json": {
+      "sha256": "340d95e2f6fae088488986167546eb3137354f9d9b4fd09659b05f94c16bb972",
+      "bytes": 255164
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-d84e63fe-01ff-44f0-b152-d7c8f8e184e8.json": {
+      "sha256": "c54434b685b94a5d3dd241bca30cf78de4d7adc08862774ddd9068f485313802",
+      "bytes": 248065
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-d2155455-70ef-47ae-a350-54f07f76b873.json": {
+      "sha256": "1c70c54dd9602f3d077e60a2efb262616d5ee91a662f745825e5217d6888be95",
+      "bytes": 539101
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-9a1aedce-7348-4bc5-a171-2df7323d9efc.json": {
+      "sha256": "2ca9fa4c88656c356da90112f3318c19b96c25bcc0e543b22f6d022f66273db1",
+      "bytes": 200184
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-4a20f7a2-2509-4097-819b-40a761a7b15c.json": {
+      "sha256": "d75619ebb5abd59c1aa67fa8d3d96400857dbf7c147cd213c1fd91da5aab2188",
+      "bytes": 101082
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-5dae6eff-ae74-4a4c-890d-28889309044c.json": {
+      "sha256": "4ddd4c4d7bda276fc48040d6909c57e00f773459142c0baa8420595c7f60fc3b",
+      "bytes": 327927
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-189d5644-f5ce-41f5-a573-10dd0c86cc2c.json": {
+      "sha256": "46a5359000ed78c4b57a9c78e4a7fa17c886a749daeda21efb48950f3dd42001",
+      "bytes": 411321
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-f6bfa8da-e896-450a-a454-9be5ece76f47.json": {
+      "sha256": "97640864bc04bcc1b320f2200f7eaf317808a0a0e8f5f51f15f9c2f91e526c96",
+      "bytes": 462795
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-44cf6d36-a661-444c-9ce4-4b7f2d5b454c.json": {
+      "sha256": "4be508ff0720ca52c4ee7610b378c960d25d652639ea304953426c31d4b39eb1",
+      "bytes": 226774
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-4a7b27f6-78ee-4ee0-bdc7-f3922a7a668f.json": {
+      "sha256": "2cbeebd8eb9d0256cd49d1be5d092c92772cee1317c65183c16b20254aeb2990",
+      "bytes": 581695
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-088dbe86-eb8c-46e9-8c1d-1a3ef38d3dd8.json": {
+      "sha256": "08d922a0c7bdac4b15332d8b145859d70e6f21848aa6516dbdc582622b3a046d",
+      "bytes": 533778
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-6edc13d2-f199-49fc-bc51-be52f3b2956a.json": {
+      "sha256": "295a9bb676bdae68273328289634cd6fa93aaea3f4af82f0f558eae19b038659",
+      "bytes": 17921
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-a3ecea82-5e4d-4e58-9749-f22b95c3b5a9.json": {
+      "sha256": "39826c4b1aedfe15260c630ed82586b6504873bcd15715a98f5e5af6ea284a2f",
+      "bytes": 219677
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-1e8a888b-a8be-4381-a4d8-3726eb36af86.json": {
+      "sha256": "33f967998d275488d03e8a523c34976522f401877fa010c236d2aaae22cfed3b",
+      "bytes": 269363
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-6e32a67c-b51b-43e0-853e-40f435c1756d.json": {
+      "sha256": "a3bae6b9dbb041d9bb09d84830257bcdcfa22a75b3ee968bae0768486e79f81d",
+      "bytes": 132921
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-4b38f889-3a91-46f3-aeba-882568e6446f.json": {
+      "sha256": "21f5d6f3b4084f0d387d8550e3ddd807c0bba3e49c1733e91e669273c7c36d70",
+      "bytes": 85157
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-00ce612b-e4b2-4673-a3c9-6e2b19764859.json": {
+      "sha256": "eae3be67ffd7f6daea6dbf9c1e92f1e26776ec07e8298425055f25aaadb22b23",
+      "bytes": 352765
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-272ae93e-a35f-491e-b6e6-5db1b3d3c5fb.json": {
+      "sha256": "f41c703183820291859e3bee0002d2246080b8a53af47746e55988f271de767c",
+      "bytes": 551522
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-2d639ec1-20c5-4bca-8e8e-18e8e4ecd9a0.json": {
+      "sha256": "fe76cefb495cdce2fc0a214ae4f1437cf620baf30da4221152dd71c857e0dab9",
+      "bytes": 56847
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-b32b51f8-5200-4e92-9b1e-49348531973f.json": {
+      "sha256": "d627d9a60675cb49ca2567a63dd2a3d073351dac407acc9441c0a5ba3c7c8cce",
+      "bytes": 177172
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-49b453dc-9e86-4caa-b886-94f8fbd6dbf3.json": {
+      "sha256": "efaf4dec4a5aa2799344ee0380a0345fdcc54e4ee507c53efc6a7ff47adc8b92",
+      "bytes": 63923
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-7202ee32-97aa-444e-b083-2e326c6efacf.json": {
+      "sha256": "8ee2e5a43c0157251b84d5bd988ec83da337ac2776f477fd2f07a02108dda422",
+      "bytes": 88697
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-a8aba1dc-480f-43d8-9b57-b58603c8ace0.json": {
+      "sha256": "c0d99d0ac1ba6a61866dc4d28de9a385ae1a9b2421ae0a5e60f795b38b4d01d0",
+      "bytes": 295976
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-6e2f85a3-74f3-4b15-835c-f22e62dcf97f.json": {
+      "sha256": "484f7ff61a6e661c9d9d94cb377bc8716eb2b70e926944c34240b0c179dc0f93",
+      "bytes": 349219
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-3065c30f-1402-4c63-a0a6-d3a8f9dc857b.json": {
+      "sha256": "4cfe1d48d354c8025f91dc12d1c70525f4f5c7470802befad621c7f8aede2bae",
+      "bytes": 480540
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-f5bd3f91-b2c9-41b2-80e0-5f917a30b85d.json": {
+      "sha256": "6501b59f320c48df1585a845d1277d17cd2ef8e1a5a54bc05873919b3e17f4f0",
+      "bytes": 473443
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-93f7cf0e-3467-414f-8a94-069c8ebd573f.json": {
+      "sha256": "bba80724476ecc506b4a993f0214ea4d2cdaec341442be4b05b700c5ac7c26d3",
+      "bytes": 196646
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-77af1ec8-dfce-4027-a96e-4d594590a892.json": {
+      "sha256": "07b154bce590dc90ebc3af18fae004c325080fb6cf3e75e7b534a9aab34da5bc",
+      "bytes": 178944
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-81dc55ec-3869-43cf-8a58-49150b165e41.json": {
+      "sha256": "15163497783102c9e92d7e6fe32ce86b97a86a41a3e4c10707ffdf65b3eded6e",
+      "bytes": 425514
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-5e53fa64-7cf8-4062-bf7f-fc3e7afbfba6.json": {
+      "sha256": "46f1d7cff7553999509a337957135829d123689c5f8831baff9deb4be38b74b4",
+      "bytes": 519578
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-3969617e-b09c-48e5-a052-7edbc6ab4f1f.json": {
+      "sha256": "364abcaa566477a14583eee6f7e079993e92aff44ed71e61cd965c807ebc5f6c",
+      "bytes": 53304
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-b902b8c5-2dc9-415a-9101-78de721a538d.json": {
+      "sha256": "245455893992761ef89df00744f43ceccb9998c8c395a189b14b8485f8803d8e",
+      "bytes": 482314
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-a4ffe5b6-42ba-4a7c-aa15-d9c9a565b00d.json": {
+      "sha256": "1ffee607f52fe4692d70b41b1abea2a37e79da76a698fb88efb120bc06fa76b1",
+      "bytes": 106386
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-dcae257e-9f20-4a61-8b12-8b74091ee063.json": {
+      "sha256": "a9d1209430954cdd53837c404915d9337e803ea28e83fbadfccd4ab0c657dcce",
+      "bytes": 572823
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-32517cf2-6262-431c-b7da-463b23fb3f36.json": {
+      "sha256": "e04dafe1d92d38d9df24e345902e7f1d7c4b2fff444b7bf9bf4467376c4e64ae",
+      "bytes": 240973
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-7a21f783-a06c-4135-be7b-9283722742b5.json": {
+      "sha256": "73625c68f52c2ec77b4a2d180a4bccf6deec5b34e2dd7a7ae31011b14f510fdf",
+      "bytes": 501835
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-cca6abb7-d68c-41e3-af26-158d8f567588.json": {
+      "sha256": "293993de31400fff9cee5dffe0ede83893fe325e13f89e4b65efdfab10f574f9",
+      "bytes": 393577
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-afed427c-f061-41f8-b777-ac328eb21769.json": {
+      "sha256": "d2b58fe46965b35ea3ca63e4f99d180527d684d4a4a7cea046c891e852cd253a",
+      "bytes": 381155
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-afeb1fdb-7edc-4859-80d2-beeeee14e7ff.json": {
+      "sha256": "7e5845f288f99b55bfec336ee6bcb4de4032edcdee3773639c2934f28506f209",
+      "bytes": 244518
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-f12946b3-0c2d-40ed-b876-d70d6d8a72af.json": {
+      "sha256": "08fe73c3eab4641d8678b3334c02245dc6ab8bbb24c34065e8a03320aa212038",
+      "bytes": 131151
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-e1882660-8c8a-4b56-9cb7-19c7acaea473.json": {
+      "sha256": "72c76d12dc429f9370dc6549c531622db54820f4aa3a3cdd33047c47685a9eec",
+      "bytes": 374056
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-564c81c0-e836-4847-a645-86eebc6fd776.json": {
+      "sha256": "337a3f29c064d11c6eee6bf7b03ce64cb3c3ea5d77bc8055b6b2295032997c29",
+      "bytes": 182484
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-bc801d5b-144f-4fde-a74a-2d257bb7e1df.json": {
+      "sha256": "1051edcbaf02e43bc370414dc1a48aa74df30fdca1a7916e4d636004cfc70c58",
+      "bytes": 345674
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-1f795fb0-e56c-485e-9526-a982927fdc0f.json": {
+      "sha256": "e532f71c32bd02658cf92d1c8b0f772b9d0f70c7a3b8b26dc328c263a3555687",
+      "bytes": 390029
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-68e769b6-6bf5-4738-86f6-eb58d27bd9b7.json": {
+      "sha256": "fcb8c60d23ba6e66225971bde4446f73b74d3793f502731ce6f4f07b3c1b392a",
+      "bytes": 285333
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-8bec8d73-66c0-4028-b4b2-7290f9a2be74.json": {
+      "sha256": "422f1949b4910b5c141e40351675b41dd7a2327a4d57885d1400e662376e477e",
+      "bytes": 457469
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-44154dbb-c5e7-48bc-95ac-e9f2197807db.json": {
+      "sha256": "9a42995afda68d0a7520697632387449284e93fdf97825faf198fca2d4e7d165",
+      "bytes": 46227
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-9405f4a8-e3b8-4f69-a8ee-0660b12c7aac.json": {
+      "sha256": "c2b473af46e562932d514ae383c36a1b44e00c3435f6cc529df2ac56919a0ba0",
+      "bytes": 450356
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-ca58f2a7-0ba7-43df-964d-1313453f2531.json": {
+      "sha256": "8eb68c4f6a944ca80dec22a7ac4a0844640b5830864f4fb8b7acd5be20221709",
+      "bytes": 40918
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-ad1a8a89-5c3b-461d-9cdb-eeb1524ab346.json": {
+      "sha256": "43a272ee7c76a7ac4b9b90b8289183205c3e08c72f925af5ea01fd3a5df28b97",
+      "bytes": 294205
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-f6433fd4-e5d5-463e-9e67-a9056ba03761.json": {
+      "sha256": "ea9b573f27e753f99be5b7f0e16cc29ce85f034999204acfbb9d3fd5b50f8bcd",
+      "bytes": 12621
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-6b612e08-4bc1-406f-ac1d-7a124cb02104.json": {
+      "sha256": "97062a746e41096420564093543aa209ad6ef8c2b241a7336e42657e400923d7",
+      "bytes": 49767
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-e8585ce4-52f5-4ed5-96e9-1ce79e51b071.json": {
+      "sha256": "a8451a6495c30f82a94657fcc810fd20c99440fbce092fe501d866aa0e5d4465",
+      "bytes": 209040
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-690db534-ebda-454d-9797-e76b2989a06d.json": {
+      "sha256": "c7f0302503ba36f011b20d75db29f3a44ee943ceb47a47f5436133d814fbb039",
+      "bytes": 356316
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-94419d00-90e0-4042-8096-0e0e5bac72e8.json": {
+      "sha256": "08a7d4ae654afc324fbc3e1bbf1981ad1faf2e112353fc23b3c152e5e8570c7f",
+      "bytes": 542652
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-7ed09921-335c-4744-a6b0-32401ca5516f.json": {
+      "sha256": "7ec409518bde23a66e2ae5361fb1fd9ed11e289f01831c861fca6e4c20237ace",
+      "bytes": 565723
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-5e074015-059d-4044-84de-0129ba3df8e6.json": {
+      "sha256": "524fae74a3efd0f8447b91e88b8f42d84925664eed42912f6fdcbca95500b8d3",
+      "bytes": 191333
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-414339e3-214b-4d00-9084-300085a3b59d.json": {
+      "sha256": "2550348b3a898026cf19268c5415a8d9a38c0d216ca0d6e1901ea141fa2dd082",
+      "bytes": 469894
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-c4bc1620-ce78-4c3d-bde5-7491d412b834.json": {
+      "sha256": "7fa6f8eb9395cb223060171037ad47bbdc43b14d3ff62dc9bdd97b99e0550207",
+      "bytes": 47997
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-60c6c8d0-8fb3-459f-be07-2a1b5855d62d.json": {
+      "sha256": "b96fbb34f2abc69d5dac3a85c5b192f70579d1847136131761e1cd68b2353e88",
+      "bytes": 578147
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-189e4810-05ea-4bc5-b36f-ef7184024a13.json": {
+      "sha256": "d584bf600e49b45189145d4736b7f1fa239b0152f83cfd937fc660b44a427cf5",
+      "bytes": 147074
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-bd92d2f8-9f19-4a74-b8e0-a9ca6b556bcf.json": {
+      "sha256": "a698015d04b3b09e7970568bfb8100e7e58e0b9157015cb29c0434c38ff1e0ed",
+      "bytes": 281780
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-9639b459-aeb8-453f-b1ce-f59fc2c93214.json": {
+      "sha256": "68ad0613344cf6cc9589c4bcd89b0938b7a13543391dcb27566b7c2c5fd6d232",
+      "bytes": 141768
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-d55f1fa6-013b-47e3-af5c-640eebba21dc.json": {
+      "sha256": "60d4de9cf105b3a1adc3e40d9ef4b58984b1187f2fdbf6a3ed8f4475e4aa1a8f",
+      "bytes": 122304
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-850a7226-7128-41c3-9183-eaa741fe029e.json": {
+      "sha256": "d75dede88e83cf5d3ad863ef1270da7d128f0e51acd01a1acd5a95931b2f5f00",
+      "bytes": 510706
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-74fac919-f5ba-4620-bba9-c5de0e9ab2ac.json": {
+      "sha256": "21f5f69c547c2547be7de0d84bb8ec5abf069c6720a949ac177932c757a78dfa",
+      "bytes": 299525
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-0c2e3b39-a1ff-45d6-a482-e00c1be266a6.json": {
+      "sha256": "cdcf6f1a27e2b2c2ef13ae3c7ab74a94cd3d7065466b8926578ec3e3220748c5",
+      "bytes": 432602
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-b6a0a353-840d-45d1-8418-310a282a3964.json": {
+      "sha256": "f91d8af5a93b6c917119d99394ad7eaa2d8b52576c877560c9b63ff00f6a3803",
+      "bytes": 76307
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-7b79fc47-89ce-4a9f-88a6-0ce422136db2.json": {
+      "sha256": "830ef9cc1ee6c843e4ee8a2c9646ac023312a7d50f43cf18078de75c8a088b61",
+      "bytes": 544426
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-aeadbe83-a3cf-4358-83d0-7d0b56aedf67.json": {
+      "sha256": "6331e77f9da8271ac1e61c43e110a1c2b38eb0bd75febb15a3d8eb172f715e9f",
+      "bytes": 16154
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-19d2aa3b-a07f-4fd1-9387-068132e45ead.json": {
+      "sha256": "6885939efff9d3e3e77d43addf27ed58110dab15439e46df7d095d550ef4bb50",
+      "bytes": 471668
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-f108ef59-217c-45be-8b94-82d72e8f15d7.json": {
+      "sha256": "8b3222c5436b073be77b11ca2e11023156d345e5c0ec6e7522cf7fbd5595c554",
+      "bytes": 265813
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-b0eb1847-d60d-4d4b-981d-983a50eaac4f.json": {
+      "sha256": "f371a2838568e39d6e18a3149ca1bf813597414a31d77a55dc4902c08e425baf",
+      "bytes": 55077
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-d0055a20-5306-4d2e-9af0-a5bc010727bb.json": {
+      "sha256": "285431710f5d42a22aa52465972b42c231be7ac4cac65cf9a9be214f8739adf8",
+      "bytes": 151517
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-2089589f-078b-4ed9-b7be-72938a2c6ebd.json": {
+      "sha256": "0047a01dc5f297da7da7d27c61b895c77464de3dd39384b1421896ab0e187124",
+      "bytes": 441477
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-3d43d2c6-8150-4276-be65-4c5fa4fda74e.json": {
+      "sha256": "e4dea691750fe2f167ff1369eb1972093e433cf7ed66b39334d6e05f2e56a58d",
+      "bytes": 333251
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-db82967c-00bb-43dc-95c6-8b5acd88dfe8.json": {
+      "sha256": "595d50fd9ee591ec51708d9036e24ba8286f75a266e4ecd857761020c76042c3",
+      "bytes": 319050
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-473eed93-1820-464a-8635-b5e96016ad9e.json": {
+      "sha256": "453f92f34061a4aa4c0b7e7506d73569ad997fce45c9347494466188dfe49a8b",
+      "bytes": 32072
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-9220a4c7-38d2-4fba-8dcc-4794f493c6e2.json": {
+      "sha256": "2cfe80764589a538536f8632b56ad67eab8ea827487e99ebf03148806180d1e4",
+      "bytes": 35608
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-0ea60033-2552-42f8-a4de-11bd46b6dd5b.json": {
+      "sha256": "4512c8b5a6042753824fa8983122992a83bda2d90d7ab92a3ee7127dd1e8ea6e",
+      "bytes": 574597
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-e4ba391c-894a-4b37-ac5f-0801d2bcc342.json": {
+      "sha256": "21cf27fdd4e899ce8f7ba91c2a5c19ee375ab3e39520ebe4022b859ea0652b19",
+      "bytes": 414869
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-3649bfc3-6605-4ab0-88d4-2a25c06eaa22.json": {
+      "sha256": "b81b29969594a51f10a7eb2792c2e04ae958c47380dcc6b4ab29b2a90bc7bdc7",
+      "bytes": 272907
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-80c9d25b-15f1-4d8c-857f-ba411f6ef313.json": {
+      "sha256": "0d848c2baa31c2554eb85049f0b1f7457baa85949a8c3afcd8c7f3bb0b18d462",
+      "bytes": 560401
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-ee37d830-87c3-4a23-82c9-34b0bd3fa45a.json": {
+      "sha256": "601df175f11f2784b6cdcc1b5eb1a2489180bfe344140452b63886fd6b432c56",
+      "bytes": 78077
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-862667aa-d485-4e07-8644-d01e006937c4.json": {
+      "sha256": "616fee9ac07a40a7cc8802e26ba96dfe3534ae0a109b6a95f342b965c50530c8",
+      "bytes": 171864
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-534b3616-7072-4837-a2a7-67366840d78f.json": {
+      "sha256": "751a20ee7c17d5a1bf37c7dce09fbddc4be037a0b967df24fcd824c9ac5e4319",
+      "bytes": 492965
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-17e6cd6b-ccfa-4b4b-b616-cf3fb7cca8c3.json": {
+      "sha256": "e8d03d4b3d28100af2b8407b777d3c0072c369b2e06bf469f332e4d907b5ce40",
+      "bytes": 395355
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-e7f3fbf1-6cb5-45bd-bd1e-5af45ea498b7.json": {
+      "sha256": "9643d5ac5b99269fbaebdd5bc8797d1fa83cf3ed63820e04fd766be3d05e83c5",
+      "bytes": 489415
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-f833dd3a-6aba-48ce-a740-97c253fd07f7.json": {
+      "sha256": "30f8f7dabb114e183b6e490fb1d5478cfc46cd3eac9fb78bce04b9b996ebc94f",
+      "bytes": 521354
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-83e2bb49-3fd2-4a01-a74d-27cd416eec1a.json": {
+      "sha256": "f8bfce23898fe06fd479d0163f67ca2270262d6b1cf35851f0258c27b88f1728",
+      "bytes": 69231
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-6b137012-9918-4031-9ccb-ddc367d72866.json": {
+      "sha256": "c282eefcc53030f3e611c46ae77b56ae8a77b1e151effd59a126cc0db0f56386",
+      "bytes": 212582
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-0656b1bd-05bb-4ad5-9c00-c24f1c4eb921.json": {
+      "sha256": "df9a4c8873f3255d6457e3bbe0683e7e56192858ae6a238f6a525cc8397958d7",
+      "bytes": 388253
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-3f7121ed-d1aa-4ec9-adf2-d0794f9b6ea3.json": {
+      "sha256": "3f77b47c00337ddc167cb35ed98c51985fd281a8494233948627034d5145f435",
+      "bytes": 343899
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-b192b045-5b34-4af7-b8d7-ede35719dd30.json": {
+      "sha256": "bfb1f6391fc5f010d13d3bff78210f0d199cd2017ed689502ea395d391a0a14b",
+      "bytes": 23225
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-5c36a206-9994-4072-860c-6b82c2607b1a.json": {
+      "sha256": "4ee089206262c5224783a659c3451026e642399381e7e8fd7b66ecb461d9e6e8",
+      "bytes": 287108
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-97d50ffe-3b72-424c-a3d1-3890bafb654d.json": {
+      "sha256": "052fe14871df66630c317be214a1ff77ee55ea1d7a6cf510eb13f04c8c1aac62",
+      "bytes": 335027
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-4603085c-180f-477e-93aa-f52c1f719655.json": {
+      "sha256": "c496b01bed6def28892891130835b3a4b13c89ed7e84d02988929388768612e0",
+      "bytes": 616507
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-24c57ed8-835a-4bc3-8bb2-2f95fe3085a8.json": {
+      "sha256": "8ea61e8c1018e15ee983cb4c07fad24e24e6843779efa2bbde1c3b2ad3d7ebfd",
+      "bytes": 320828
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-1d40fe87-52de-4068-b7e4-665ab2cdc44f.json": {
+      "sha256": "add9776b844f717e03e86704ab055747646a537fecb4534cb3fa3439b13e7f0c",
+      "bytes": 400673
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-4dbd85ae-5ef1-4baf-9f0d-9385576eef81.json": {
+      "sha256": "fbc919347792ef2656d5cca2d792c85ccff41363123f801e3522174d9c7db48b",
+      "bytes": 599439
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-9e3b2ee7-066f-40a4-a3a5-091befa7c347.json": {
+      "sha256": "50ee4048a60f775a09925f854214d422048806e3e1043e116f25ec610604a96d",
+      "bytes": 198415
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-924d571e-3f43-4465-be10-64f6b761879c.json": {
+      "sha256": "142ecb069eb343eb84e0fac81ca8080a69412bfa9ec2ccbe198463f7ed21c6e0",
+      "bytes": 67463
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-22570895-6121-4201-8087-7bc5119066d2.json": {
+      "sha256": "b9bd23273d9a7963fb77699336f5ff303497a2f1abc7e31a6d0971d56c3b57ff",
+      "bytes": 609213
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-7b842426-9a74-40d7-8ed6-a3f580dfb6e8.json": {
+      "sha256": "88d56c01ee0a8226d9c31eb95d622052c1c5151077613cb47b987e5a79f17b06",
+      "bytes": 28535
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-f3d227e8-4b68-4903-bce9-a03e288865bc.json": {
+      "sha256": "8297a2687d50ac59dee14f2752f6b01c44f97ab2ef7491eb6ef43759ef78d971",
+      "bytes": 443253
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-6ab0bcd5-75d4-4425-94ad-ac2c7f734a11.json": {
+      "sha256": "03ce128ab9c22895f07332a9c9e3d9c248b6879d4abaab60c10eaaeaf06182ae",
+      "bytes": 159479
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-d562b446-d0fe-40f3-8889-62de6dcd0c26.json": {
+      "sha256": "5e2dec0aa6d415936430de5a0fce61732885831489f8265ef3a103c91e06d39a",
+      "bytes": 418418
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-87215b62-2759-42d2-913b-d737e7e5b88e.json": {
+      "sha256": "f71c2840df5f529939fca4b47631b85937f404abc8ca22c5a8b583f011a096b3",
+      "bytes": 361640
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-413b097a-4290-41e5-9700-8a42b11aebde.json": {
+      "sha256": "3f5871886e59a7c8526bd95f68ffaa3c6406b0f427ee6d7145f9d379b05798ee",
+      "bytes": 97545
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-d08e905c-1463-4ee5-b99e-6dd0e442a4a7.json": {
+      "sha256": "45d9436dad4f3a7245f3eba442a7174007e6d08a9063e14e4f395868be8e039c",
+      "bytes": 253389
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-dbcce068-6550-408d-b5a8-030ca2ec78d5.json": {
+      "sha256": "15a2bfbdd5000884bbc5d2b8c149d9d5570254d66e1c5afa8d33cd7a585e4cd5",
+      "bytes": 523129
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-5f1398c5-ad0b-4dd4-ae07-cffdf54053c4.json": {
+      "sha256": "ccb33b127a02cd96ec4ba73b128048ef16083e9b488fe549a5258637d91a7f7e",
+      "bytes": 377607
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-9e7ad331-c8ca-4ad0-8144-cc9d11c79c74.json": {
+      "sha256": "ccae5e2e3baef338486dfcf6b77b89ae91199f823335c3b7cd8130cb56a0e332",
+      "bytes": 283556
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-597b1680-e7c7-42e9-ac53-6ca0fa3c9a6f.json": {
+      "sha256": "10c84ea280fe5f6eadac566378b340f965e36b79a668812541547479aaf10a51",
+      "bytes": 223224
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-3909e50c-5e33-4475-a9ed-fc210ef84872.json": {
+      "sha256": "cecd70f6193876b07af4273964510f0c04871a40229864b488e06dad740c1a4a",
+      "bytes": 233874
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-41161ed0-2693-4bd5-8190-91fe525b6c93.json": {
+      "sha256": "f7508996d2f193619bbb4e24b3286b167626393e3baf6fefabe2d7e8e0ef6a0a",
+      "bytes": 251615
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-9702de8d-d07a-4cb7-aba7-4c911f106f32.json": {
+      "sha256": "98d0ac3b6cf237cc5ed49a6c254369ae5cdb2cd2f533021b8f6107bc199ad4e5",
+      "bytes": 166555
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-5bc0453e-c6dc-4a3a-baa7-7d8ff9684cef.json": {
+      "sha256": "ac298d85dce22599a100e1fee15668c8a77bd0f66843eff2b3ac0ba8f5f960c3",
+      "bytes": 120536
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-273db0b0-8779-4112-bc63-5e0fb2d82483.json": {
+      "sha256": "33228eefd0d3bba72a997e6ba30b7e9afa6f5dff3828e07f4888a58f87df6142",
+      "bytes": 310180
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-eb6a5a6e-104d-491e-a5ea-ce070398c025.json": {
+      "sha256": "a330ae868fad40c636fc324998d741a5e8757164930403a435035afdb591435f",
+      "bytes": 230324
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-65e49a01-4999-4505-ae44-6ac010177463.json": {
+      "sha256": "038e2c1cc866e70c44dea442b0e673c2666e1b5fcd98ea56350f128a8f3a1cd4",
+      "bytes": 109925
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-6c3de3d9-88b3-4b14-972a-fe5c29be6154.json": {
+      "sha256": "dbf6f11c321f26710686ef057d97487e186722ec5c641982464caab6487e4a6e",
+      "bytes": 65693
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-c18410af-47c8-4591-9cb8-06ac836a38aa.json": {
+      "sha256": "36e6c488c930d284b514735697b4e33f1f2e81026fe22492304a92cefcf04bda",
+      "bytes": 21456
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-562da223-57af-458d-abe3-fea9f656a3e0.json": {
+      "sha256": "a0cc1d4592e0bb197254468e3c0b3db39d020f48f7ea947ccfd3c9779cb15243",
+      "bytes": 507153
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-9a2371c5-ae3e-48db-b61c-c99c7ebcb62a.json": {
+      "sha256": "64b1a98e58cbee868bdc57b94c03fd6432ea8db206af0d030eddd96bb749669a",
+      "bytes": 113464
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-ba3ddf1c-db88-4b7d-aee6-e2fdf6991ebf.json": {
+      "sha256": "6fff274a0f24717d2889bc21e186bc3b68c611b4f26ecc9cf1d95aa8ea4d2c10",
+      "bytes": 407771
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-9439f82a-9c3a-4176-9538-0314f05277b8.json": {
+      "sha256": "66f854baa59fd130bf1f59134a8acaee75133df4a3e612edf73c882dccef1ef2",
+      "bytes": 60385
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-1e2a8183-ecc7-457d-8bf8-e4c8e1f18f9c.json": {
+      "sha256": "d1bc222f10c23e5df53135657d31cabe1e8ea64b358f43335580231b64362770",
+      "bytes": 342124
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-d03e2bf5-4135-4e85-af6a-57d70eafde7c.json": {
+      "sha256": "267668b5a8a6fe733f7126c599185596b089a5afab109a5a0670f905651f6c63",
+      "bytes": 526680
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-b1e1216d-984e-4e61-8785-bd122184ec65.json": {
+      "sha256": "562a8e69e44693c473b842ce82858facdee244b23f10e110e01836d08ef657c3",
+      "bytes": 317281
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-3c00c045-3d7c-4944-861c-355f0a66438d.json": {
+      "sha256": "154e67c8f759c50dcb22ee3c920d073f8e3b920035b2463da0c1a3da6f639224",
+      "bytes": 434380
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-5cfc5619-7b80-41ec-bc34-da0c2e1dfa2d.json": {
+      "sha256": "8c2aa51e07a10ee3296b8696583363f16c058e5d82b5e59ac1b89f658072728f",
+      "bytes": 402447
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-42037920-091b-4d8f-badb-4f82d9ff2eb6.json": {
+      "sha256": "29c9d05f8c18127258b4eaf9b4cfee8a2ed6721b10bf798d0d2f5f39af2a3dfa",
+      "bytes": 210812
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-4c46225c-2555-46e0-b185-20d077d0f5a3.json": {
+      "sha256": "a12478021ea34eebcdade8f5b89a0d0e5a626c8708fb1d2628ca89090ddfb800",
+      "bytes": 164786
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-d4b8f6b1-14c7-4086-8005-05913f24d205.json": {
+      "sha256": "5374307d7481894ac78b9ed23e1d3349f11660af5c31545af3275cb88db58e6d",
+      "bytes": 303074
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-d741758a-aa89-404f-bf7f-8d498073ecb3.json": {
+      "sha256": "e806e9a9a9e2c9771800ab2b46d39db04250dcfb921c9539d8d0daae75f5d723",
+      "bytes": 338569
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-32f5c5f9-b530-40fb-9081-98dfed51d0a5.json": {
+      "sha256": "6b856d25fbaf1505b08e69de0f6ff52fa7bf24f614e78d1b80fefd2afa48dd2b",
+      "bytes": 24992
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-5b0fe0b0-7cdc-40de-a8db-19431c85e6a6.json": {
+      "sha256": "e7592ba23c965386bb391f74f1d78f0cfa5433bd0d54fa55d909df20d0f8d3e9",
+      "bytes": 207269
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-fe69ba33-2fd9-411c-850a-adbbcfb783da.json": {
+      "sha256": "2d8aea51799d3c1f533a8d46d1c37577fd0ad6517b08fbf8e8283d4d014b47f7",
+      "bytes": 420193
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-e287a83d-bc66-43b8-90ed-bb509564ab82.json": {
+      "sha256": "8f03a187903a9210bf3e7b81d8631a197f5b74536326f7d84dc125b43dd63907",
+      "bytes": 514254
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-ddcf7ee0-5fa0-486c-b923-7bc4d9e902ca.json": {
+      "sha256": "afde15955a3a343245ce4e12a28f16e7f0241c85692dc888f5ec037d087f971f",
+      "bytes": 372283
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-bd2dfa3f-f270-4f44-811b-eb73d242110f.json": {
+      "sha256": "3b3f4f3654444f00905adb607e53253ea00defc1b5a7fcf90a4fafd81a41dbf4",
+      "bytes": 363414
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-04066987-66d6-4bf8-a110-738d78fb9062.json": {
+      "sha256": "ad30008226af7a145ad62d4be2124497e73f119ac33665914a3a14628e2a89c0",
+      "bytes": 276458
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-62b9331c-a155-4c16-9a74-3b8981f4130e.json": {
+      "sha256": "6e6b69261b9b30e902334ede7fb12b8a63ee28a1182ca1b3d9da89cd33276d70",
+      "bytes": 292431
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-047a522d-ec5d-4fa2-8213-cdd19adf84a3.json": {
+      "sha256": "7cb597f1621cb54088690f6e62ec2b40110640431d27b7e62216c878e02352d4",
+      "bytes": 92236
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-d7388c37-c9ef-4a33-9595-24876e8c2a54.json": {
+      "sha256": "fc315a8f66ab2d950cff210f4634fc2ea053bc98d31114d7d54892768bfc9d89",
+      "bytes": 143537
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-263e4679-8907-495b-8312-33aa6649c78e.json": {
+      "sha256": "8205fbe4bd59fd980a89418b22fbd706e387b2dcade7a3d9adfd8818d9b56059",
+      "bytes": 311955
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-0b579387-5f74-46c6-ae59-9cdd4ffcce07.json": {
+      "sha256": "31489f4800a880ff7e6712a87bc2e4e30ab8fac9e2298bec8dc43fbb3ecbd0e0",
+      "bytes": 478763
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-63ebd80d-b32e-4cf1-afe3-c4c03b6f9831.json": {
+      "sha256": "a42419a80c78defbde307f678365f08b909be64efd77de31d629c62c149140f4",
+      "bytes": 563949
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-78205afb-9fa8-4663-982e-0fec730a4524.json": {
+      "sha256": "079920e89f7ef3c6b563bbb54a4ba8ae866154ab713173ccf55e877bdc16f0ea",
+      "bytes": 498285
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-8348897f-4c93-4791-b5ee-7793618599f2.json": {
+      "sha256": "fc98803a3e14d1bf5c3355c8d4fd7141d594aa9db9f6b52bb32117fc093dcc02",
+      "bytes": 83385
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-1790f54a-aa9b-4390-9f86-522b3a9113ba.json": {
+      "sha256": "c64d2b5773ed1eec39e73389551b65c6ec39d39135cc269bd3592b3b905af25f",
+      "bytes": 237424
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-1c515dcd-4b45-4ab1-862b-399086b86578.json": {
+      "sha256": "0cd4fd3735deedad9e312f99940d189edb0bc119a843904652471a7cb17867a6",
+      "bytes": 585246
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-04f82523-54f0-4989-8360-19f7b543d73c.json": {
+      "sha256": "b94c34e375eea6913f98c82938b140e33dafe23d743f5bb77fe16af923061d4a",
+      "bytes": 90466
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-dc5f5257-580b-4ad7-bc52-46dd6bdf8b8a.json": {
+      "sha256": "d93f040f8f444f630637bcd025813853fad04771454cba5e0ffbb6a9a7d38c6e",
+      "bytes": 329702
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-d29cec98-979d-41be-88cf-c19e5dbd7901.json": {
+      "sha256": "086b853f8bd922a62fb19f0a721bf1ae72f7f90b0b938b1f6f162c9de60d8f7d",
+      "bytes": 201955
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-e6ae164e-6174-42f4-ac09-663099bd239b.json": {
+      "sha256": "716ef18e3810b8887af79ee2d7b666b262a0970f30037020566bdb227f69a7d5",
+      "bytes": 74537
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-34693cd1-19d3-4181-896e-ee77fa21090d.json": {
+      "sha256": "c80e93e9a36a9c6542745582a912fa5a51f05673ee601a7c3ae8db0e35f3847e",
+      "bytes": 569273
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-26260c9b-ddcc-4fc7-8abe-ba0f9d430439.json": {
+      "sha256": "5d7309b8ad2e1a87afd376831032378c21a0a9675c95440639eaf35ee97bbc58",
+      "bytes": 187788
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-f8229e14-73c5-480f-85e0-83e3703d0651.json": {
+      "sha256": "555fecda7af0311f5a5f1ff28c8f7af8237ba9ffde8b9a1b98b06f4b1bd4de82",
+      "bytes": 5561
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-911d9897-60bf-40bb-be31-85150479b5e7.json": {
+      "sha256": "33278668a5f11a078cb12ddb6a79442ee063d759c04c68b43ed5f4d239d8e3b8",
+      "bytes": 530231
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-13bbf9c3-a74f-4245-ae1a-747cd100f469.json": {
+      "sha256": "6d34f86537f2454f4c3a92d58a1370bec2d569be82f93970dbd2fcf0ddac58b5",
+      "bytes": 461019
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-63a74fc3-4a3a-4029-a5a2-382737e96970.json": {
+      "sha256": "b8f8087341eef5799d0d82bba50f08357cf21f415a9452380c53da5df93ddc15",
+      "bytes": 553301
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-8f8eb9cb-eeaf-4c84-8484-0653cfa80dc1.json": {
+      "sha256": "e9067e4e8ff690911226da222150e5a33e1f42b9daa40061d8f35d6c98598676",
+      "bytes": 14384
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-1e0819ae-ff72-4d45-ada9-00013fc71b5b.json": {
+      "sha256": "f244d68fe181fe08e195faabf1a6004ba443207e54301335124d5ba929e35a84",
+      "bytes": 168324
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-1d713602-da72-440f-a750-ebb4f3c456a1.json": {
+      "sha256": "a71aac49060e183527032f9677839ac7593e0435e1ee2078d72cab165840ee48",
+      "bytes": 102852
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-b99226e7-4b4c-4f62-9485-910f2fb81e35.json": {
+      "sha256": "253fedc0d35c923ec13b7a348bc08a9ffbf74e718e786dd1c7d8628ffe920dbc",
+      "bytes": 125844
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-92b18cbc-81e2-47c5-9598-ddb77e112073.json": {
+      "sha256": "2f5df6e93eab903371d50e1dc58d16d7e610bbd4d84a26b509062ac973e941c7",
+      "bytes": 138223
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-cada1fdf-efd7-4f4d-ad6f-e8ded88950e4.json": {
+      "sha256": "0e05130664f767420e815c2023c8695f221c12f0df81644aa2b3cffa3bc1032b",
+      "bytes": 118768
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-3ff76630-2113-4304-9788-4a760997dfbc.json": {
+      "sha256": "bd9470e36c835d5615d2c33e1e89e160fc05091e35fe521f231e7c19bd6dad0a",
+      "bytes": 590567
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-00c4db94-adc4-46e3-9c0c-874f2fdf1953.json": {
+      "sha256": "69c45e8658139e65edb013d3c8addc9ece9b251ce55fc5e6a83c3f0ec044a812",
+      "bytes": 258714
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-c322068b-8349-4720-aa15-29ca212b47bd.json": {
+      "sha256": "e9005ea435435f30fc51384615445436249bd063dd8fa63f685b4a54307f92d6",
+      "bytes": 242747
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-c60d9706-6e4e-473c-9dd8-3cbd9f2a7de8.json": {
+      "sha256": "78b76dd686f0802a4d0341d2f0d523dc9f399605e8bc9f2351e213a73219c6cb",
+      "bytes": 262264
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-7b31357c-b990-4ba7-a663-ccd915b10714.json": {
+      "sha256": "0da3f22ef15f9e314ee05731b9c2ccfd3341c9f095820959b8efa90657263fec",
+      "bytes": 274682
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-0a9ada9a-52ef-4e29-a910-c62ca4978e39.json": {
+      "sha256": "86dacd0f794df939370ba6fc88347c5c36173b5a899121bc44631529f9683121",
+      "bytes": 547975
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-5f87277c-7f71-4856-a721-8c1c2cfd499c.json": {
+      "sha256": "4966d4ad591e8027803d53b50b13c559502f7b55283688de17be60e33e49dd7b",
+      "bytes": 216128
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-619d711a-9ffa-4128-8cf8-ae87de22e52d.json": {
+      "sha256": "ab70ca8999970f1bfdc312d07f66a1c3f528980842d9a6be92362426035dc8cf",
+      "bytes": 512481
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-recovery-measured-0fe394be-0596-432b-9701-77d98ef31c1e.json": {
+      "sha256": "6722565ebe5378f46de07d77adb4d3b8b45297ff82908ab95d85af66440283d2",
+      "bytes": 129381
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-after-exit-retained-37a1e6cf-8285-4298-895f-46483ad4acab.json": {
+      "sha256": "965fd59d95bc09a1e7c5bc5e772a3d4cc2bcfa3fcc0a914b11c733b9bdc17616",
+      "bytes": 76109
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-ledger-held-before-kill-9d5aa101-0886-46ec-8c32-d070b0e29e95.json": {
+      "sha256": "46b453a65f5f07572837887cfb5ef667fa6df48dcd5895c46ecd1712677afd1b",
+      "bytes": 4818
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-ledger-after-actual-exit-b8e44dff-4003-470c-be7d-20dfbe84d5aa.json": {
+      "sha256": "baf682e3d61390ec78e3fa3d1c7e8d867830db2b3092ca208015c9186097f025",
+      "bytes": 4815
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-ledger-before-restart-b94e494a-658d-4621-b25f-3da56fda47de.json": {
+      "sha256": "fb150d7deb4153deabdd329ccf8ef1db4da3736aa219f7909b5931ccc6f0fc18",
+      "bytes": 4814
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-ledger-terminal-4bf01e3e-0ea0-4b57-809b-d62fd6ff8872.json": {
+      "sha256": "64ccb42a089b477c4a951ae0443e44ee3014c1734d8a75a4d445e0b72810405e",
+      "bytes": 9676
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/activity-ledger-acknowledged-comparison-9f4c11b4-b2e9-4754-93b3-5c612a6329ab.json": {
+      "sha256": "37b4957099399b248108789fe0f6c8e5ba29908faec5c0d4d430d30bb8c6c0dd",
+      "bytes": 99
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/external-facts.json": {
+      "sha256": "e25ec05501a2bb94b920b64d02711b25dba98a0272c7c5295ab66bf6d44f6b3b",
+      "bytes": 57938
+    },
+    "reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-integration-runtime-5f6a1-time-without-tail-tolerance-system/evidence/api.ndjson": {
+      "sha256": "ae45d6b82b0f4fe146c5449e530ce000fc86e8fb02dc9930b0fd330c7818b114",
+      "bytes": 937694
+    }
+  },
+  "sourceCount": 245,
+  "inputsUnchangedAtReviewEnd": true
+}

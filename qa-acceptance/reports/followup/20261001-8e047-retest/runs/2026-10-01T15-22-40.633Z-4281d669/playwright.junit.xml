@@ -1,0 +1,252 @@
+<testsuites id="" name="" tests="43" failures="0" skipped="0" errors="4" time="376.402144">
+<testsuite name="api/messages.spec.ts" timestamp="2026-10-01T15:22:41.063Z" hostname="system" tests="9" failures="0" skipped="0" time="30.113" errors="0">
+<testcase name="[MSG-001] accepted is observable until message_sent and own echo stays one row" classname="api/messages.spec.ts" time="3.435">
+</testcase>
+<testcase name="[MSG-002] rate limiting blocks all account sends until deadline and preserves FIFO" classname="api/messages.spec.ts" time="4.035">
+</testcase>
+<testcase name="[MSG-003] terminal marking cancels queued sends and removes member atomically" classname="api/messages.spec.ts" time="1.837">
+</testcase>
+<testcase name="[MSG-004] 504 that lands within two seconds is reconciled without resending" classname="api/messages.spec.ts" time="3.341">
+</testcase>
+<testcase name="[MSG-005] absent 504 permits at most one retry after the two-second uncertainty window" classname="api/messages.spec.ts" time="3.954">
+</testcase>
+<testcase name="[MSG-006] unavailable confirmation preserves unknown until recovery" classname="api/messages.spec.ts" time="7.04">
+</testcase>
+<testcase name="[MSG-007] synchronous ACCOUNT_SUSPENDED applies terminal consequences without relying on events" classname="api/messages.spec.ts" time="1.829">
+</testcase>
+<testcase name="[MSG-008] synchronous SESSION_EXPIRED applies terminal consequences without relying on events" classname="api/messages.spec.ts" time="1.811">
+</testcase>
+<testcase name="[MSG-016] asynchronous message_failed applies GROUP_WRITE_FORBIDDEN consequences" classname="api/messages.spec.ts" time="2.831">
+</testcase>
+</testsuite>
+<testsuite name="system/agent.spec.ts" timestamp="2026-10-01T15:22:41.063Z" hostname="system" tests="19" failures="0" skipped="0" time="116.739" errors="1">
+<testcase name="[AGENT-001] four schema-complete tools and correct trigger context keep one run identity" classname="system/agent.spec.ts" time="1.897">
+</testcase>
+<testcase name="[AGENT-003] multi-instance active run excludes competitors and batches all pending messages" classname="system/agent.spec.ts" time="2.562">
+</testcase>
+<testcase name="[AGENT-012] three consecutive protocol errors fail and a legal response resets the count" classname="system/agent.spec.ts" time="1.927">
+</testcase>
+<testcase name="[AGENT-014] audit rejection blocks side effect and rejected key remains reusable" classname="system/agent.spec.ts" time="2.037">
+</testcase>
+<testcase name="[AGENT-015] three inconclusive audit attempts block run without execution" classname="system/agent.spec.ts" time="1.9">
+</testcase>
+<testcase name="[AGENT-016] idempotency retry returns current sent state without another audit or send" classname="system/agent.spec.ts" time="5.096">
+</testcase>
+<testcase name="[AGENT-017] kick denied by policy never calls external kick" classname="system/agent.spec.ts" time="1.906">
+</testcase>
+<testcase name="[AGENT-018] permitted kick audits exact action and uses owner or promoted member" classname="system/agent.spec.ts" time="2.9">
+</testcase>
+<testcase name="[AGENT-019] OWNER_LEFT is returned as tool error without changing group or accounts" classname="system/agent.spec.ts" time="2.951">
+</testcase>
+<testcase name="[AGENT-020] NO_PERMISSION is returned as tool error without changing group or accounts" classname="system/agent.spec.ts" time="2.929">
+</testcase>
+<testcase name="[AGENT-022] disabling agent lets current step complete then cancels" classname="system/agent.spec.ts" time="1.881">
+</testcase>
+<testcase name="[AGENT-024] turn timeout records error and late response never sends a message" classname="system/agent.spec.ts" time="18.326">
+</testcase>
+<testcase name="[AGENT-025] run stays within sixty-second active wall-clock budget including slow turns" classname="system/agent.spec.ts" time="50.226">
+</testcase>
+<testcase name="[AGENT-028] unknown send times out in five seconds and same key still cannot resend" classname="system/agent.spec.ts" time="7.083">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/error-context.md]]
+
+[[ATTACHMENT|artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/trace.zip]]
+]]>
+</system-out>
+<error message="实际工具状态等待下界超过原始5000ms上限" type="AssertionError">
+<![CDATA[  [system] › system/agent.spec.ts:1037:1 › [AGENT-028] unknown send times out in five seconds and same key still cannot resend 
+
+    AssertionError: 实际工具状态等待下界超过原始5000ms上限
+
+       at ../harness/lifecycle-observation.ts:326
+
+      324 |   assert.equal(window.errorCode, expectedCode, '实际工具交还结果错误');
+      325 |   assert.equal(window.readyErrorCode, expectedCode, '状态等待结果与交还结果不一致');
+    > 326 |   assert.ok(window.elapsed[0] <= 5000, '实际工具状态等待下界超过原始5000ms上限');
+          |          ^
+      327 |   if (expectedCode === 'SEND_TIMEOUT')
+      328 |     assert.ok(window.elapsed[1] >= 5000, '未满5秒且无结论却提前宣告SEND_TIMEOUT');
+      329 |   if (window.elapsed[1] > 5000)
+        at assertToolWaitBudget (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/lifecycle-observation.ts:326:10)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/agent.spec.ts:1145:9
+        at optionalActivityObservation (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/support/agent-activity-budget.ts:21:12)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/agent.spec.ts:1137:5
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-agent--AGENT-028-un-e7c9e-ame-key-still-cannot-resend-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="[AGENT-029] kick timeout reconciles membership and never executes twice" classname="system/agent.spec.ts" time="4.015">
+</testcase>
+<testcase name="[AGENT-030] account becoming terminal during send returns SEND_FAILED and run continues" classname="system/agent.spec.ts" time="2.034">
+</testcase>
+<testcase name="[AGENT-031] group write error cancels current run after its step and stops future triggers" classname="system/agent.spec.ts" time="3.078">
+</testcase>
+<testcase name="[AGENT-032] twelve distinct turns exhaust budget without a thirteenth request" classname="system/agent.spec.ts" time="1.99">
+</testcase>
+<testcase name="[AGENT-033] audit retries resolve before informing agent and do not consume turn budget" classname="system/agent.spec.ts" time="2.001">
+</testcase>
+</testsuite>
+<testsuite name="system/capacity-control.spec.ts" timestamp="2026-10-01T15:22:41.063Z" hostname="system" tests="10" failures="0" skipped="0" time="86.786" errors="0">
+<testcase name="[CAP-001] confirmed capacity refusal makes no request and release resumes the original audited step once" classname="system/capacity-control.spec.ts" time="3.179">
+</testcase>
+<testcase name="[CAP-002] cancellation after admission refusal lets only the current step finish and prevents later work" classname="system/capacity-control.spec.ts" time="4.845">
+</testcase>
+<testcase name="[CAP-003] persistent admission refusal consumes the original active budget without resetting the clock" classname="system/capacity-control.spec.ts" time="48.84">
+</testcase>
+<testcase name="[CAP-004] policy is rechecked after confirmed zero-effect admission deferral" classname="system/capacity-control.spec.ts" time="2.205">
+</testcase>
+<testcase name="[CAP-005] group unreachability during admission wait cancels without a late kick" classname="system/capacity-control.spec.ts" time="4.02">
+</testcase>
+<testcase name="[CAP-006] deferred execution rechecks online membership and administrator qualification" classname="system/capacity-control.spec.ts" time="4.649">
+</testcase>
+<testcase name="[CAP-007] departure or rejoin before deferred dispatch preserves one tool identity and the specified removed-member result" classname="system/capacity-control.spec.ts" time="5.573">
+</testcase>
+<testcase name="[CAP-008] capacity deferral does not replace a later explicit gateway ownership or permission error" classname="system/capacity-control.spec.ts" time="5.612">
+</testcase>
+<testcase name="[CAP-009] crash after proven zero-effect refusal before durable readiness resumes the original run without replaying audit" classname="system/capacity-control.spec.ts" time="3.615">
+</testcase>
+<testcase name="[CAP-010] admission pressure after a dispatched convergent 504 does not reset and replay the unknown kick" classname="system/capacity-control.spec.ts" time="4.248">
+</testcase>
+</testsuite>
+<testsuite name="system/integration-runtime.spec.ts" timestamp="2026-10-01T15:22:41.063Z" hostname="system" tests="1" failures="0" skipped="0" time="56.879" errors="0">
+<testcase name="[INT-ACT-001] activity budget accumulates across restart and excludes proven downtime without tail tolerance" classname="system/integration-runtime.spec.ts" time="56.879">
+</testcase>
+</testsuite>
+<testsuite name="system/protocol-boundaries.spec.ts" timestamp="2026-10-01T15:22:41.063Z" hostname="system" tests="2" failures="0" skipped="0" time="45.826" errors="2">
+<testcase name="[BLK-EXT-004] an already effective kick is not repeated against a rejoined target after restart" classname="system/protocol-boundaries.spec.ts" time="23.35">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/error-context.md]]
+
+[[ATTACHMENT|artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/trace.zip]]
+]]>
+</system-out>
+<error message="[BLOCKED] Restarted kick run remains open within 20s observation budget; no arbitrary recovery deadline asserted" type="BlockedError">
+<![CDATA[  [system] › system/protocol-boundaries.spec.ts:392:1 › [BLK-EXT-004] an already effective kick is not repeated against a rejoined target after restart 
+
+    BlockedError: [BLOCKED] Restarted kick run remains open within 20s observation budget; no arbitrary recovery deadline asserted
+
+      458 |     await evidence(qa, 'kick-rejoin-resumed', result);
+      459 |     if (!result.complete)
+    > 460 |       throw new BlockedError(
+          |             ^
+      461 |         'Restarted kick run remains open within 20s observation budget; no arbitrary recovery deadline asserted',
+      462 |       );
+      463 |     expect(result.last.status).toBe('finished');
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/protocol-boundaries.spec.ts:460:13
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+<testcase name="[BLK-EXT-005] a lost unexecuted model response may change while persisted history and effects survive" classname="system/protocol-boundaries.spec.ts" time="22.476">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/error-context.md]]
+
+[[ATTACHMENT|artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/trace.zip]]
+]]>
+</system-out>
+<error message="[BLOCKED] Run not terminal within 20s probe; original recovery obligation retained without inventing a deadline" type="BlockedError">
+<![CDATA[  [system] › system/protocol-boundaries.spec.ts:482:1 › [BLK-EXT-005] a lost unexecuted model response may change while persisted history and effects survive 
+
+    BlockedError: [BLOCKED] Run not terminal within 20s probe; original recovery obligation retained without inventing a deadline
+
+      535 |     await evidence(qa, 'lost-model-response-resumed', result);
+      536 |     if (!result.complete)
+    > 537 |       throw new BlockedError(
+          |             ^
+      538 |         'Run not terminal within 20s probe; original recovery obligation retained without inventing a deadline',
+      539 |       );
+      540 |     expect(qa.agent.snapshot().turns.some((turn) => turn.id > before.id)).toBe(true);
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/protocol-boundaries.spec.ts:537:13
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+<testsuite name="system/recovery.spec.ts" timestamp="2026-10-01T15:22:41.063Z" hostname="system" tests="2" failures="0" skipped="0" time="34.754" errors="1">
+<testcase name="[REC-006] agent restarts with same run id and reconciles already-sent tool effect" classname="system/recovery.spec.ts" time="2.365">
+</testcase>
+<testcase name="[REC-007] agent restart after kick effect uses membership reconciliation without repeating kick" classname="system/recovery.spec.ts" time="32.389">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/error-context.md]]
+
+[[ATTACHMENT|artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/trace.zip]]
+]]>
+</system-out>
+<error message="Condition not reached: /api/agent-runs/da8a8d00-5135-4a0a-8182-613fcffdd78a; last={&quot;id&quot;:&quot;da8a8d00-5135-4a0a-8182-613fcffdd78a&quot;,&quot;groupId&quot;:&quot;4d07b094-010f-410f-b1d6-f0e764836ca0&quot;,&quot;status&quot;:&quot;running&quot;,&quot;endReason&quot;:null,&quot;summary&quot;:null,&quot;recoveryNote&quot;:&quot;A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.&quot;,&quot;steps&quot;:[{&quot;ordinal&quot;:1,&quot;kind&quot;:&quot;tool_use&quot;,&quot;toolUseId&quot;:&quot;recover-kick&quot;,&quot;name&quot;:&quot;kick_user&quot;,&quot;input&quot;:{&quot;reason&quot;:&quot;recovery&quot;,&quot;platform_user_id&quot;:&quot;recover-kick-target&quot;},&quot;resultSummary&quot;:&quot;&quot;,&quot;isError&quot;:false,&quot;errorCode&quot;:null,&quot;auditVerdict&quot;:&quot;pass&quot;,&quot;rawResponse&quot;:&quot;{\&quot;stop_reason\&quot;:\&quot;tool_use\&quot;,\&quot;content\&quot;:[{\&quot;type\&quot;:\&quot;tool_use\&quot;,\&quot;id\&quot;:\&quot;recover-kick\&quot;,\&quot;name\&quot;:\&quot;kick_user\&quot;,\&quot;input\&quot;:{\&quot;platform_user_id\&quot;:\&quot;recover-kick-target\&quot;,\&quot;reason\&quot;:\&quot;recovery\&quot;}}]}&quot;}]}" type="Error">
+<![CDATA[  [system] › system/recovery.spec.ts:407:1 › [REC-007] agent restart after kick effect uses membership reconciliation without repeating kick 
+
+    Error: Condition not reached: /api/agent-runs/da8a8d00-5135-4a0a-8182-613fcffdd78a; last={"id":"da8a8d00-5135-4a0a-8182-613fcffdd78a","groupId":"4d07b094-010f-410f-b1d6-f0e764836ca0","status":"running","endReason":null,"summary":null,"recoveryNote":"A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.","steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"recover-kick","name":"kick_user","input":{"reason":"recovery","platform_user_id":"recover-kick-target"},"resultSummary":"","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"recover-kick\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"recover-kick-target\",\"reason\":\"recovery\"}}]}"}]}
+
+       at ../harness/platform-client.ts:106
+
+      104 |     await new Promise((resolve) => setTimeout(resolve, options.intervalMs ?? 50));
+      105 |   } while (performance.now() < deadline);
+    > 106 |   throw new Error(
+          |         ^
+      107 |     `Condition not reached: ${options.description ?? 'public API predicate'}; last=${JSON.stringify(last)}`,
+      108 |   );
+      109 | }
+        at eventually (/Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/harness/platform-client.ts:106:9)
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/system/recovery.spec.ts:453:15
+
+    attachment #1: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T15-22-40.633Z-4281d669/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</error>
+</testcase>
+</testsuite>
+</testsuites>

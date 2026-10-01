@@ -1,0 +1,1051 @@
+{
+  "reviewer": "独立 AI QA 证据审阅；非研发自测、非真人手工验收",
+  "reviewedAt": "2026-10-01T14:57:47.966307+00:00",
+  "basis": {
+    "runId": "2026-10-01T14-26-25.068Z-1e0cb38a",
+    "phase": "business-acceptance",
+    "sutRevision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+    "qaRevision": "ec46f9b30fb2f5a312c92fc78463ddbfe200042f",
+    "targetSha256": "6ccd4df091116eea6ee0324771526dde531bb834d5e3264bc76c5e9f706a028e",
+    "qaTreeSha256": "40b301c87542929beab4974f140879da2a698ac9498056cc2c3a3c5c1f52b0bd"
+  },
+  "rawRecordsUnchanged": true,
+  "formalRunFinalIntegrityPending": true,
+  "scope": "Only six specified recovery cases. Per-case completed artifacts; final raw events binding follows when available. No whole-run verdict.",
+  "cases": [
+    {
+      "caseId": "BLK-EXT-002",
+      "project": "system",
+      "rawStatus": "BLOCKED",
+      "rawReason": "BlockedError: [BLOCKED] Created group job has no terminal evidence within 20s probe; CL-01 recovery still unresolved",
+      "rawStatusSource": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/error-context.md",
+      "rawStatusBinding": "Per-case error artifact plus pinned reporter classification; bind to final events.json separately.",
+      "reviewedStatus": "FAIL",
+      "state": "INDEPENDENT_CASE_REVIEW_COMPLETED",
+      "environment": {
+        "revision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+        "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+        "apiPort": 50171,
+        "database": "qa_3efc4b1e57374caabd98e1ee",
+        "startedAt": "2026-10-01T14:52:45.674Z"
+      },
+      "kill": {
+        "at": "2026-10-01T14:52:45.762Z",
+        "pid": 97097
+      },
+      "cleanup": {
+        "completedAt": "2026-10-01T14:53:06.289Z",
+        "failures": []
+      },
+      "evidenceDirectory": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence",
+      "engineeringDirectionConfirmed": true,
+      "acceptanceStandardChanged": false,
+      "deviationAcceptedByThisReview": false,
+      "faultChain": {
+        "resourceId": "8e3c72ba-458c-45e5-9f61-01536e9edc0e",
+        "remoteId": "gateway-group-1",
+        "requestAtCrash": {
+          "id": 8,
+          "at": "2026-10-01T14:52:45.761Z",
+          "method": "POST",
+          "path": "/groups",
+          "body": {
+            "creatorAccountId": "account-1"
+          },
+          "responsePreparedAt": "2026-10-01T14:52:45.761Z",
+          "preparedResponseStatus": 200,
+          "responseClosedAt": "2026-10-01T14:52:45.766Z",
+          "responseClosedBeforeFinish": true
+        },
+        "matchingEffect": [
+          {
+            "at": "2026-10-01T14:52:45.761Z",
+            "kind": "create",
+            "groupId": "gateway-group-1",
+            "accountId": "account-1"
+          }
+        ],
+        "barriersAtCrash": [
+          {
+            "name": "created-id-lost",
+            "hits": 1,
+            "at": "2026-10-01T14:52:45.761Z",
+            "context": {
+              "id": 8,
+              "at": "2026-10-01T14:52:45.761Z",
+              "method": "POST",
+              "path": "/groups",
+              "body": {
+                "creatorAccountId": "account-1"
+              },
+              "responsePreparedAt": "2026-10-01T14:52:45.761Z",
+              "preparedResponseStatus": 200,
+              "responseClosedAt": "2026-10-01T14:52:45.766Z",
+              "responseClosedBeforeFinish": true
+            }
+          }
+        ],
+        "finalRemoteGroups": [
+          {
+            "groupId": "gateway-group-1",
+            "creatorAccountId": "account-1",
+            "writable": true,
+            "members": [
+              {
+                "platformUserId": "platform-account-1",
+                "role": "creator"
+              }
+            ]
+          }
+        ],
+        "finalCallCount": 1,
+        "observations": 360,
+        "secondPromotionWindowTested": null
+      },
+      "publicNoteEvidence": {
+        "source": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence/api.ndjson",
+        "matchingResponseCount": 360,
+        "first": {
+          "line": 30,
+          "qaRequestId": "4fa4276d-eab0-498f-a5de-64bf7666904c",
+          "startedAt": "2026-10-01T14:52:46.228Z",
+          "path": "/api/jobs/8e3c72ba-458c-45e5-9f61-01536e9edc0e",
+          "body": {
+            "id": "8e3c72ba-458c-45e5-9f61-01536e9edc0e",
+            "status": "running",
+            "errors": [],
+            "groupId": null,
+            "recoveryNote": "建群请求已开始但没有保存结果；网关没有查询本次创建结果的接口，不自动重新建群。",
+            "processing": true
+          }
+        },
+        "last": {
+          "line": 748,
+          "qaRequestId": "77b5b416-d48d-4fba-9128-37bf1af6d7ac",
+          "startedAt": "2026-10-01T14:53:06.228Z",
+          "path": "/api/jobs/8e3c72ba-458c-45e5-9f61-01536e9edc0e",
+          "body": {
+            "id": "8e3c72ba-458c-45e5-9f61-01536e9edc0e",
+            "status": "running",
+            "errors": [],
+            "groupId": null,
+            "recoveryNote": "建群请求已开始但没有保存结果；网关没有查询本次创建结果的接口，不自动重新建群。",
+            "processing": true
+          }
+        },
+        "exactNote": "建群请求已开始但没有保存结果；网关没有查询本次创建结果的接口，不自动重新建群。"
+      },
+      "decision": "D039",
+      "requirements": [
+        "原总则192任意重启",
+        "原A3建群/角色"
+      ],
+      "reason": "本次完整故障链和同资源真实公开recoveryNote，与2716版公开恢复说明共同证实保守暂停、不自动完成原任务；有限20/30秒不是失败依据。不要求盲重放，未观测重复效果不得写成已发生。",
+      "rawEventsConfirmed": false
+    },
+    {
+      "caseId": "BLK-EXT-003",
+      "project": "system",
+      "rawStatus": "BLOCKED",
+      "rawReason": "BlockedError: [BLOCKED] No next promotion or terminal job within 20s probe; not proof of infinite stall",
+      "rawStatusSource": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/error-context.md",
+      "rawStatusBinding": "Per-case error artifact plus pinned reporter classification; bind to final events.json separately.",
+      "reviewedStatus": "FAIL",
+      "state": "INDEPENDENT_CASE_REVIEW_COMPLETED",
+      "environment": {
+        "revision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+        "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+        "apiPort": 50293,
+        "database": "qa_d0092afe010b4434a17bc897",
+        "startedAt": "2026-10-01T14:53:08.429Z"
+      },
+      "kill": {
+        "at": "2026-10-01T14:53:09.025Z",
+        "pid": 98852
+      },
+      "cleanup": {
+        "completedAt": "2026-10-01T14:53:29.567Z",
+        "failures": []
+      },
+      "evidenceDirectory": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence",
+      "engineeringDirectionConfirmed": true,
+      "acceptanceStandardChanged": false,
+      "deviationAcceptedByThisReview": false,
+      "faultChain": {
+        "resourceId": "2385e426-bae3-4a33-8619-a85b04233d45",
+        "remoteId": "gateway-group-1",
+        "requestAtCrash": {
+          "id": 12,
+          "at": "2026-10-01T14:53:09.023Z",
+          "method": "POST",
+          "path": "/groups/gateway-group-1/promote",
+          "body": {
+            "byAccountId": "account-1",
+            "accountId": "account-2"
+          },
+          "responsePreparedAt": "2026-10-01T14:53:09.023Z",
+          "preparedResponseStatus": 200,
+          "responseClosedAt": "2026-10-01T14:53:09.030Z",
+          "responseClosedBeforeFinish": true
+        },
+        "matchingEffect": [
+          {
+            "at": "2026-10-01T14:53:09.023Z",
+            "kind": "promote",
+            "groupId": "gateway-group-1",
+            "accountId": "account-2"
+          }
+        ],
+        "barriersAtCrash": [
+          {
+            "name": "prepare-promotion",
+            "hits": 1,
+            "at": "2026-10-01T14:53:08.518Z",
+            "context": {
+              "id": 8,
+              "at": "2026-10-01T14:53:08.517Z",
+              "method": "POST",
+              "path": "/groups",
+              "body": {
+                "creatorAccountId": "account-1"
+              },
+              "responsePreparedAt": "2026-10-01T14:53:08.518Z",
+              "preparedResponseStatus": 200,
+              "responseStatus": 200,
+              "completedAt": "2026-10-01T14:53:08.518Z",
+              "responseFinishedAt": "2026-10-01T14:53:08.518Z",
+              "responseClosedAt": "2026-10-01T14:53:08.518Z",
+              "responseClosedBeforeFinish": false
+            }
+          },
+          {
+            "name": "promotion-first",
+            "hits": 1,
+            "at": "2026-10-01T14:53:09.023Z",
+            "context": {
+              "id": 12,
+              "at": "2026-10-01T14:53:09.023Z",
+              "method": "POST",
+              "path": "/groups/gateway-group-1/promote",
+              "body": {
+                "byAccountId": "account-1",
+                "accountId": "account-2"
+              },
+              "responsePreparedAt": "2026-10-01T14:53:09.023Z",
+              "preparedResponseStatus": 200,
+              "responseClosedAt": "2026-10-01T14:53:09.030Z",
+              "responseClosedBeforeFinish": true
+            }
+          }
+        ],
+        "finalRemoteGroups": [
+          {
+            "groupId": "gateway-group-1",
+            "creatorAccountId": "account-1",
+            "writable": true,
+            "members": [
+              {
+                "platformUserId": "platform-account-1",
+                "role": "creator"
+              },
+              {
+                "platformUserId": "platform-account-2",
+                "role": "admin"
+              }
+            ]
+          }
+        ],
+        "finalCallCount": 1,
+        "observations": 349,
+        "secondPromotionWindowTested": false
+      },
+      "publicNoteEvidence": {
+        "source": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence/api.ndjson",
+        "matchingResponseCount": 349,
+        "first": {
+          "line": 30,
+          "qaRequestId": "b94511a4-7588-4a41-a8e8-9c024fd7eb06",
+          "startedAt": "2026-10-01T14:53:09.498Z",
+          "path": "/api/jobs/2385e426-bae3-4a33-8619-a85b04233d45",
+          "body": {
+            "id": "2385e426-bae3-4a33-8619-a85b04233d45",
+            "status": "running",
+            "errors": [],
+            "groupId": "5297ca17-6002-42fe-8502-54ed16914afe",
+            "recoveryNote": "提升管理员请求已开始但没有保存结果；网关没有查询管理员角色的接口，结果未知时不自动重试。",
+            "processing": true
+          }
+        },
+        "last": {
+          "line": 726,
+          "qaRequestId": "003b0d06-b444-45bc-802b-3491665c1032",
+          "startedAt": "2026-10-01T14:53:29.498Z",
+          "path": "/api/jobs/2385e426-bae3-4a33-8619-a85b04233d45",
+          "body": {
+            "id": "2385e426-bae3-4a33-8619-a85b04233d45",
+            "status": "running",
+            "errors": [],
+            "groupId": "5297ca17-6002-42fe-8502-54ed16914afe",
+            "recoveryNote": "提升管理员请求已开始但没有保存结果；网关没有查询管理员角色的接口，结果未知时不自动重试。",
+            "processing": true
+          }
+        },
+        "exactNote": "提升管理员请求已开始但没有保存结果；网关没有查询管理员角色的接口，结果未知时不自动重试。"
+      },
+      "decision": "D039",
+      "requirements": [
+        "原总则192任意重启",
+        "原A3建群/角色"
+      ],
+      "reason": "本次完整故障链和同资源真实公开recoveryNote，与2716版公开恢复说明共同证实保守暂停、不自动完成原任务；有限20/30秒不是失败依据。不要求盲重放，未观测重复效果不得写成已发生。",
+      "rawEventsConfirmed": false
+    },
+    {
+      "caseId": "BLK-EXT-004",
+      "project": "system",
+      "rawStatus": "BLOCKED",
+      "rawReason": "BlockedError: [BLOCKED] Restarted kick run remains open within 20s observation budget; no arbitrary recovery deadline asserted",
+      "rawStatusSource": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/error-context.md",
+      "rawStatusBinding": "Per-case error artifact plus pinned reporter classification; bind to final events.json separately.",
+      "reviewedStatus": "FAIL",
+      "state": "INDEPENDENT_CASE_REVIEW_COMPLETED",
+      "environment": {
+        "revision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+        "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+        "apiPort": 50504,
+        "database": "qa_30a1db5360474512b6e26582",
+        "startedAt": "2026-10-01T14:53:52.352Z"
+      },
+      "kill": {
+        "at": "2026-10-01T14:53:53.419Z",
+        "pid": 1597
+      },
+      "cleanup": {
+        "completedAt": "2026-10-01T14:54:15.021Z",
+        "failures": []
+      },
+      "evidenceDirectory": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence",
+      "engineeringDirectionConfirmed": true,
+      "acceptanceStandardChanged": false,
+      "deviationAcceptedByThisReview": false,
+      "faultChain": {
+        "resourceId": "7d503442-5a82-40f3-83bf-739b73e266e2",
+        "actualKick": {
+          "at": "2026-10-01T14:53:53.413Z",
+          "kind": "kick",
+          "accountId": "account-2",
+          "groupId": "gateway-group-1",
+          "platformUserId": "kick-rejoin-target"
+        },
+        "request": {
+          "id": 16,
+          "at": "2026-10-01T14:53:53.413Z",
+          "method": "POST",
+          "path": "/groups/gateway-group-1/kick",
+          "body": {
+            "byAccountId": "account-2",
+            "targetPlatformUserId": "kick-rejoin-target"
+          },
+          "responsePreparedAt": "2026-10-01T14:53:53.413Z",
+          "preparedResponseStatus": 200,
+          "responseClosedAt": "2026-10-01T14:53:53.425Z",
+          "responseClosedBeforeFinish": true,
+          "responseStatus": 200,
+          "completedAt": "2026-10-01T14:53:54.424Z"
+        },
+        "oldMemberLeft": {
+          "eventId": 5,
+          "type": "member_left",
+          "recordedAt": "2026-10-01T14:53:54.424Z",
+          "data": {
+            "groupId": "gateway-group-1",
+            "platformUserId": "kick-rejoin-target",
+            "eventId": 5,
+            "type": "member_left"
+          }
+        },
+        "subsequentRejoin": {
+          "eventId": 6,
+          "type": "member_joined",
+          "recordedAt": "2026-10-01T14:53:54.465Z",
+          "data": {
+            "groupId": "gateway-group-1",
+            "platformUserId": "kick-rejoin-target",
+            "eventId": 6,
+            "type": "member_joined"
+          }
+        },
+        "finalKickCallCount": 1,
+        "rejoinedTargetStillPresent": true,
+        "observations": 351
+      },
+      "publicNoteEvidence": {
+        "source": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence/api.ndjson",
+        "matchingResponseCount": 351,
+        "first": {
+          "line": 72,
+          "qaRequestId": "8ed341ab-caa5-40dc-b431-3376ead35350",
+          "startedAt": "2026-10-01T14:53:54.951Z",
+          "path": "/api/agent-runs/7d503442-5a82-40f3-83bf-739b73e266e2",
+          "body": {
+            "id": "7d503442-5a82-40f3-83bf-739b73e266e2",
+            "groupId": "a7135e14-0f4c-4979-ab66-5ee3c4348ebb",
+            "status": "running",
+            "endReason": null,
+            "summary": null,
+            "recoveryNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
+            "steps": [
+              {
+                "ordinal": 1,
+                "kind": "tool_use",
+                "toolUseId": "kick-before-rejoin",
+                "name": "kick_user",
+                "input": {
+                  "reason": "single authorized removal",
+                  "platform_user_id": "kick-rejoin-target"
+                },
+                "resultSummary": "",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": "pass",
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"kick-before-rejoin\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"kick-rejoin-target\",\"reason\":\"single authorized removal\"}}]}"
+              }
+            ]
+          }
+        },
+        "last": {
+          "line": 772,
+          "qaRequestId": "efe37a4d-e18c-4f0b-85b6-f8dc21677416",
+          "startedAt": "2026-10-01T14:54:14.952Z",
+          "path": "/api/agent-runs/7d503442-5a82-40f3-83bf-739b73e266e2",
+          "body": {
+            "id": "7d503442-5a82-40f3-83bf-739b73e266e2",
+            "groupId": "a7135e14-0f4c-4979-ab66-5ee3c4348ebb",
+            "status": "running",
+            "endReason": null,
+            "summary": null,
+            "recoveryNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
+            "steps": [
+              {
+                "ordinal": 1,
+                "kind": "tool_use",
+                "toolUseId": "kick-before-rejoin",
+                "name": "kick_user",
+                "input": {
+                  "reason": "single authorized removal",
+                  "platform_user_id": "kick-rejoin-target"
+                },
+                "resultSummary": "",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": "pass",
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"kick-before-rejoin\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"kick-rejoin-target\",\"reason\":\"single authorized removal\"}}]}"
+              }
+            ]
+          }
+        },
+        "exactNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe."
+      },
+      "decision": "D039",
+      "requirements": [
+        "原总则192任意重启",
+        "原A5.8/264同run续跑、效果不重复不记失败"
+      ],
+      "reason": "本次完整故障链和同资源真实公开recoveryNote，与2716版公开恢复说明共同证实保守暂停、不自动完成原任务；有限20/30秒不是失败依据。不要求盲重放，未观测重复效果不得写成已发生。",
+      "rawEventsConfirmed": false
+    },
+    {
+      "caseId": "BLK-EXT-005",
+      "project": "system",
+      "rawStatus": "BLOCKED",
+      "rawReason": "BlockedError: [BLOCKED] Run not terminal within 20s probe; original recovery obligation retained without inventing a deadline",
+      "rawStatusSource": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/error-context.md",
+      "rawStatusBinding": "Per-case error artifact plus pinned reporter classification; bind to final events.json separately.",
+      "reviewedStatus": "FAIL",
+      "state": "INDEPENDENT_CASE_REVIEW_COMPLETED",
+      "environment": {
+        "revision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+        "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+        "apiPort": 50596,
+        "database": "qa_8c7680c7794748bd82dfb7b7",
+        "startedAt": "2026-10-01T14:54:17.022Z"
+      },
+      "kill": {
+        "at": "2026-10-01T14:54:18.234Z",
+        "pid": 3648
+      },
+      "cleanup": {
+        "completedAt": "2026-10-01T14:54:38.780Z",
+        "failures": []
+      },
+      "evidenceDirectory": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence",
+      "engineeringDirectionConfirmed": true,
+      "acceptanceStandardChanged": false,
+      "deviationAcceptedByThisReview": false,
+      "faultChain": {
+        "resourceId": "7ace8a52-b075-429b-98bc-9a086cacf647",
+        "persistedPriorToolResult": {
+          "type": "tool_result",
+          "content": "{\"clientMsgId\":\"07a7821a-07da-4bec-a47f-b18c831b9232\",\"deliveryStatus\":\"sent\"}",
+          "tool_use_id": "persisted-send"
+        },
+        "lostResponseRequest": {
+          "id": 3,
+          "at": "2026-10-01T14:54:18.226Z",
+          "path": "/agent/turn"
+        },
+        "lostResponseCompletedAtCrash": false,
+        "barrier": [
+          {
+            "name": "lost-model-response",
+            "hits": 1,
+            "at": "2026-10-01T14:54:18.226Z"
+          }
+        ],
+        "actualSendEffects": [
+          {
+            "at": "2026-10-01T14:54:18.172Z",
+            "kind": "send",
+            "accountId": "account-2",
+            "groupId": "gateway-group-1",
+            "clientMsgId": "07a7821a-07da-4bec-a47f-b18c831b9232",
+            "msgId": "gateway-message-2"
+          }
+        ],
+        "finalSendCallCount": 1,
+        "finalTurnCount": 2,
+        "observations": 353,
+        "notRequired": "Identical lost unexecuted model response is not an acceptance requirement."
+      },
+      "publicNoteEvidence": {
+        "source": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence/api.ndjson",
+        "matchingResponseCount": 353,
+        "first": {
+          "line": 72,
+          "qaRequestId": "80f79002-6fe0-4a2a-b311-3355aa1517a7",
+          "startedAt": "2026-10-01T14:54:18.710Z",
+          "path": "/api/agent-runs/7ace8a52-b075-429b-98bc-9a086cacf647",
+          "body": {
+            "id": "7ace8a52-b075-429b-98bc-9a086cacf647",
+            "groupId": "d8d55113-2a68-4096-b0db-06370bd96515",
+            "status": "running",
+            "endReason": null,
+            "summary": null,
+            "recoveryNote": "An Agent turn was sent before interruption; the protocol cannot safely replay an unrecorded response.",
+            "steps": [
+              {
+                "ordinal": 1,
+                "kind": "tool_use",
+                "toolUseId": "persisted-send",
+                "name": "send_message",
+                "input": {
+                  "text": "effect before lost model turn",
+                  "idempotency_key": "persisted-send-key"
+                },
+                "resultSummary": "{\"clientMsgId\":\"07a7821a-07da-4bec-a47f-b18c831b9232\",\"deliveryStatus\":\"sent\"}",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": "pass",
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"persisted-send\",\"name\":\"send_message\",\"input\":{\"text\":\"effect before lost model turn\",\"idempotency_key\":\"persisted-send-key\"}}]}"
+              }
+            ]
+          }
+        },
+        "last": {
+          "line": 776,
+          "qaRequestId": "8ad9720d-61fe-4ab9-8655-4205a76dc8ee",
+          "startedAt": "2026-10-01T14:54:38.712Z",
+          "path": "/api/agent-runs/7ace8a52-b075-429b-98bc-9a086cacf647",
+          "body": {
+            "id": "7ace8a52-b075-429b-98bc-9a086cacf647",
+            "groupId": "d8d55113-2a68-4096-b0db-06370bd96515",
+            "status": "running",
+            "endReason": null,
+            "summary": null,
+            "recoveryNote": "An Agent turn was sent before interruption; the protocol cannot safely replay an unrecorded response.",
+            "steps": [
+              {
+                "ordinal": 1,
+                "kind": "tool_use",
+                "toolUseId": "persisted-send",
+                "name": "send_message",
+                "input": {
+                  "text": "effect before lost model turn",
+                  "idempotency_key": "persisted-send-key"
+                },
+                "resultSummary": "{\"clientMsgId\":\"07a7821a-07da-4bec-a47f-b18c831b9232\",\"deliveryStatus\":\"sent\"}",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": "pass",
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"persisted-send\",\"name\":\"send_message\",\"input\":{\"text\":\"effect before lost model turn\",\"idempotency_key\":\"persisted-send-key\"}}]}"
+              }
+            ]
+          }
+        },
+        "exactNote": "An Agent turn was sent before interruption; the protocol cannot safely replay an unrecorded response."
+      },
+      "decision": "D039",
+      "requirements": [
+        "原总则192任意重启",
+        "原A5.8/264同run续跑、效果不重复不记失败"
+      ],
+      "reason": "本次完整故障链和同资源真实公开recoveryNote，与2716版公开恢复说明共同证实保守暂停、不自动完成原任务；有限20/30秒不是失败依据。不要求盲重放，未观测重复效果不得写成已发生。",
+      "rawEventsConfirmed": false
+    },
+    {
+      "caseId": "REC-007",
+      "project": "system",
+      "rawStatus": "FAIL",
+      "rawReason": "Error: Condition not reached: /api/agent-runs/88ea65ee-78b6-4302-b3f9-390fad340e3b; last={\"id\":\"88ea65ee-78b6-4302-b3f9-390fad340e3b\",\"groupId\":\"6fb85114-1d3e-4421-b58c-792fe918d3bd\",\"status\":\"running\",\"endReason\":null,\"summary\":null,\"recoveryNote\":\"A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.\",\"steps\":[{\"ordinal\":1,\"kind\":\"tool_use\",\"toolUseId\":\"recover-kick\",\"name\":\"kick_user\",\"input\":{\"reason\":\"recovery\",\"platform_user_id\":\"recover-kick-target\"},\"resultSummary\":\"\",\"isError\":false,\"errorCode\":null,\"auditVerdict\":\"pass\",\"rawResponse\":\"{\\\"stop_reason\\\":\\\"tool_use\\\",\\\"content\\\":[{\\\"type\\\":\\\"tool_use\\\",\\\"id\\\":\\\"recover-kick\\\",\\\"name\\\":\\\"kick_user\\\",\\\"input\\\":{\\\"platform_user_id\\\":\\\"recover-kick-target\\\",\\\"reason\\\":\\\"recovery\\\"}}]}\"}]}",
+      "rawStatusSource": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/error-context.md",
+      "rawStatusBinding": "Per-case error artifact plus pinned reporter classification; bind to final events.json separately.",
+      "reviewedStatus": "FAIL",
+      "state": "INDEPENDENT_CASE_REVIEW_COMPLETED",
+      "environment": {
+        "revision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+        "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+        "apiPort": 51286,
+        "database": "qa_ee02387973ac4e0eb4ee73d1",
+        "startedAt": "2026-10-01T14:55:05.821Z"
+      },
+      "kill": {
+        "at": "2026-10-01T14:55:06.882Z",
+        "pid": 8483
+      },
+      "cleanup": {
+        "completedAt": "2026-10-01T14:55:37.415Z",
+        "failures": []
+      },
+      "evidenceDirectory": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence",
+      "engineeringDirectionConfirmed": true,
+      "acceptanceStandardChanged": false,
+      "deviationAcceptedByThisReview": false,
+      "faultChain": {
+        "resourceId": "88ea65ee-78b6-4302-b3f9-390fad340e3b",
+        "actualKick": {
+          "at": "2026-10-01T14:55:06.877Z",
+          "kind": "kick",
+          "accountId": "account-2",
+          "groupId": "gateway-group-1",
+          "platformUserId": "recover-kick-target"
+        },
+        "request": {
+          "id": 16,
+          "at": "2026-10-01T14:55:06.877Z",
+          "method": "POST",
+          "path": "/groups/gateway-group-1/kick",
+          "body": {
+            "byAccountId": "account-2",
+            "targetPlatformUserId": "recover-kick-target"
+          },
+          "responsePreparedAt": "2026-10-01T14:55:06.877Z",
+          "preparedResponseStatus": 200,
+          "responseClosedAt": "2026-10-01T14:55:06.886Z",
+          "responseClosedBeforeFinish": true,
+          "responseStatus": 200,
+          "completedAt": "2026-10-01T14:55:07.887Z"
+        },
+        "targetAbsent": true,
+        "finalKickCallCount": 1,
+        "barriers": [
+          {
+            "name": "kick-landed",
+            "at": "2026-10-01T14:55:06.877Z",
+            "hits": 1
+          }
+        ]
+      },
+      "publicNoteEvidence": {
+        "source": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence/api.ndjson",
+        "matchingResponseCount": 531,
+        "first": {
+          "line": 72,
+          "qaRequestId": "454090bf-b2fa-4c21-9d00-1f78fc572a40",
+          "startedAt": "2026-10-01T14:55:07.345Z",
+          "path": "/api/agent-runs/88ea65ee-78b6-4302-b3f9-390fad340e3b",
+          "body": {
+            "id": "88ea65ee-78b6-4302-b3f9-390fad340e3b",
+            "groupId": "6fb85114-1d3e-4421-b58c-792fe918d3bd",
+            "status": "running",
+            "endReason": null,
+            "summary": null,
+            "recoveryNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
+            "steps": [
+              {
+                "ordinal": 1,
+                "kind": "tool_use",
+                "toolUseId": "recover-kick",
+                "name": "kick_user",
+                "input": {
+                  "reason": "recovery",
+                  "platform_user_id": "recover-kick-target"
+                },
+                "resultSummary": "",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": "pass",
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"recover-kick\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"recover-kick-target\",\"reason\":\"recovery\"}}]}"
+              }
+            ]
+          }
+        },
+        "last": {
+          "line": 1132,
+          "qaRequestId": "cc0f1dd4-53ed-47b7-827e-51da1da2420a",
+          "startedAt": "2026-10-01T14:55:37.307Z",
+          "path": "/api/agent-runs/88ea65ee-78b6-4302-b3f9-390fad340e3b",
+          "body": {
+            "id": "88ea65ee-78b6-4302-b3f9-390fad340e3b",
+            "groupId": "6fb85114-1d3e-4421-b58c-792fe918d3bd",
+            "status": "running",
+            "endReason": null,
+            "summary": null,
+            "recoveryNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.",
+            "steps": [
+              {
+                "ordinal": 1,
+                "kind": "tool_use",
+                "toolUseId": "recover-kick",
+                "name": "kick_user",
+                "input": {
+                  "reason": "recovery",
+                  "platform_user_id": "recover-kick-target"
+                },
+                "resultSummary": "",
+                "isError": false,
+                "errorCode": null,
+                "auditVerdict": "pass",
+                "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"recover-kick\",\"name\":\"kick_user\",\"input\":{\"platform_user_id\":\"recover-kick-target\",\"reason\":\"recovery\"}}]}"
+              }
+            ]
+          }
+        },
+        "exactNote": "A kick was dispatched before interruption; membership changes cannot prove whether replay is safe."
+      },
+      "decision": "D039",
+      "requirements": [
+        "原总则192任意重启",
+        "原A5.8/264同run续跑、效果不重复不记失败"
+      ],
+      "reason": "本次完整故障链和同资源真实公开recoveryNote，与2716版公开恢复说明共同证实保守暂停、不自动完成原任务；有限20/30秒不是失败依据。不要求盲重放，未观测重复效果不得写成已发生。",
+      "rawEventsConfirmed": false
+    },
+    {
+      "caseId": "INT-MSG-007",
+      "project": "system",
+      "rawStatus": "FAIL",
+      "rawReason": "AssertionError: 后步排期确定偏离原首次接收时间区间，不能用重放时刻代替",
+      "rawStatusSource": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/error-context.md",
+      "rawStatusBinding": "Per-case error artifact plus pinned reporter classification; bind to final events.json separately.",
+      "reviewedStatus": "FAIL",
+      "state": "INDEPENDENT_CASE_REVIEW_COMPLETED",
+      "environment": {
+        "revision": "2716abdd2d43a779b6a0972a6323f895cf2b5b9c",
+        "cwd": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+        "apiPort": 65434,
+        "database": "qa_46d7f9e7b14d46c09430ba0e",
+        "startedAt": "2026-10-01T14:49:24.946Z"
+      },
+      "kill": {
+        "at": "2026-10-01T14:49:28.072Z",
+        "pid": 83149
+      },
+      "cleanup": {
+        "completedAt": "2026-10-01T14:49:28.981Z",
+        "failures": []
+      },
+      "evidenceDirectory": "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence",
+      "engineeringDirectionConfirmed": true,
+      "acceptanceStandardChanged": false,
+      "deviationAcceptedByThisReview": false,
+      "faultChain": {
+        "resourceId": "c3fb69e9-ddda-40af-bc61-5cf276028646",
+        "originalReceiptMs": [
+          1790866166337,
+          1790866166558
+        ],
+        "held": {
+          "seq": 1,
+          "at": "2026-10-01T14:49:26.533Z",
+          "kind": "window-held",
+          "phase": "receipt-before-commit",
+          "attemptId": "cf39fe0d-91f7-4672-bf16-82d6828ff86e",
+          "clientMsgId": "5ce9254e-15cc-40c4-b116-1e050d638c76",
+          "msgId": "gateway-message-1",
+          "eventId": "3",
+          "observedAt": "2026-10-01T14:49:26.531Z",
+          "instancePid": 83149,
+          "databaseIdentity": "484161dd17ba6b7641dcd6114e40cf91ec75106f8f57a02f79a1064ed1a9add1",
+          "localBoundary": "receipt-insert-not-issued",
+          "receiptPresentAtProbe": false,
+          "receiptObservedAt": null,
+          "coverage": {
+            "scope": "bound-instance",
+            "allDatabaseWritersProven": false
+          }
+        },
+        "originalMessageEvent": {
+          "eventId": 3,
+          "type": "message_sent",
+          "recordedAt": "2026-10-01T14:49:26.254Z",
+          "data": {
+            "clientMsgId": "5ce9254e-15cc-40c4-b116-1e050d638c76",
+            "msgId": "gateway-message-1",
+            "sentAt": "2026-10-01T14:49:26.207Z",
+            "eventId": 3,
+            "type": "message_sent"
+          }
+        },
+        "crashLower": 1790866168072,
+        "restartUpper": 1790866168564,
+        "replayLower": 1790866168625,
+        "replayDeliveryUpper": 1790866168889,
+        "replayedSameMessageNewEvent": {
+          "eventId": 4,
+          "type": "message_sent",
+          "recordedAt": "2026-10-01T14:49:28.888Z",
+          "data": {
+            "clientMsgId": "5ce9254e-15cc-40c4-b116-1e050d638c76",
+            "msgId": "gateway-message-1",
+            "sentAt": "2026-10-01T14:49:26.207Z",
+            "eventId": 4,
+            "type": "message_sent"
+          }
+        },
+        "expectedScheduleMs": [
+          1790866186337,
+          1790866186558
+        ],
+        "actualScheduleCellMs": [
+          1790866188862,
+          1790866188863
+        ],
+        "provenLateByAtLeastMs": 2304,
+        "publicResumedRun": {
+          "id": "c3fb69e9-ddda-40af-bc61-5cf276028646",
+          "status": "running",
+          "currentStepIndex": 2,
+          "steps": [
+            {
+              "index": 1,
+              "status": "sent",
+              "scheduledAt": "2026-10-01T14:49:26.036Z",
+              "sentAt": "2026-10-01T14:49:28.862Z",
+              "clientMsgId": "5ce9254e-15cc-40c4-b116-1e050d638c76",
+              "resolvedVars": {},
+              "varSources": {}
+            },
+            {
+              "index": 2,
+              "status": "pending",
+              "scheduledAt": "2026-10-01T14:49:48.862Z",
+              "sentAt": null,
+              "clientMsgId": null,
+              "resolvedVars": {},
+              "varSources": {}
+            }
+          ]
+        },
+        "sendCallCountAtFailure": 1,
+        "unexecutedAfterFailure": "Subsequent duplicate delivery stability and second-step completion assertions were not reached."
+      },
+      "reason": "原INSERT未发出窗口确实命中，原到期前重启/重放完成，公开后步排期确定晚于首次接收+20秒区间；本次最小偏移2304ms，D041已确认工程处理不改变技术FAIL。",
+      "decision": "D041",
+      "requirements": [
+        "原B1排期语义",
+        "原总则192任意重启"
+      ],
+      "rawEventsConfirmed": false
+    }
+  ],
+  "sourceIndex": {
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/manifest.json": {
+      "sha256": "ae1d1445bd71c924343cef39b9006289503debe63382120711df01d4eef67af6",
+      "bytes": 672463
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/error-context.md": {
+      "sha256": "deadf248b637b5abcae202c8f13860e8ce40a5059bea554944dec46a56039da6",
+      "bytes": 10226
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence/environment.json": {
+      "sha256": "dd37b89f6dd67492e956c3a5a480937feba4c7575fe190dee56e428f6604fb24",
+      "bytes": 1165
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence/cleanup.json": {
+      "sha256": "be97b1970e6b01e6bf8524ec5908aec3880397265dbbc32e1fd010e8168d6c0e",
+      "bytes": 65
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence/kill-1790866365762.json": {
+      "sha256": "86ed201861bc2a43f2ad59cfbc13d39c5570fec72a534c73fe4517679d2ce8b3",
+      "bytes": 54
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence/api.ndjson": {
+      "sha256": "dfe43c4d6f83ae9963ea9a95f877304f64373b051253c4dc139fb879299028ff",
+      "bytes": 427790
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence/created-id-lost-at-crash.json": {
+      "sha256": "a172232a3d2b9e948106b4b709e9608d2d380603bddd6d238967a70f852ff5a1",
+      "bytes": 6940
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence/created-id-lost-observation.json": {
+      "sha256": "a26e745eda9f4ba386ca87c7e2434d34fad32d8cf4231cd4477ec57611fa7f4b",
+      "bytes": 7585
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-83d92-iled-without-another-create-system/evidence/created-id-lost-final-ledger.json": {
+      "sha256": "2e2e806043514039b7fbc345d652fe7dc84fe61780b3d0f1fe22c0210fdc3fa3",
+      "bytes": 7200
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/error-context.md": {
+      "sha256": "22bcea1fcd2a6ffee93be53c317aa2c8d62c395f8c4a02493b70ae09a168acd0",
+      "bytes": 10720
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence/environment.json": {
+      "sha256": "0d0dae90257a77cc84891dd0be8ca291e970bd8eeb2c1a26cd1a1934994679b2",
+      "bytes": 1165
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence/cleanup.json": {
+      "sha256": "0b927fe48706c8ad014fdc239294dd9ab476c6ef3e550eff42179fe452f6c449",
+      "bytes": 65
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence/kill-1790866389025.json": {
+      "sha256": "356838dc266da9b21920362f216f13416318af058f32f7ec50df919f1326dd84",
+      "bytes": 54
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence/api.ndjson": {
+      "sha256": "b5dd3d2b819fed31212e2bc764ac17734470718010fbd7612e49d33a0a12326e",
+      "bytes": 432888
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence/promotion-first-crash.json": {
+      "sha256": "d1303fd232e496a1ac89ff8aedc3d4fcceea1e9876d742cd4a47c3b5537ff71e",
+      "bytes": 10810
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence/promotion-first-recovery.json": {
+      "sha256": "8e13acb7fc70cfc2022f533d23e907bfc3ba692b78dc5acc0351eb6bb1333501",
+      "bytes": 11511
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8943-acts-and-the-two-call-limit-system/evidence/promotion-final-ledger.json": {
+      "sha256": "d146d0e34fa8750f55601a58cd153daaf327f346db32727730e0b4221bc86f0e",
+      "bytes": 11071
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/error-context.md": {
+      "sha256": "413d1baa752a34aa5ad9e644cec3ec2935a1b6d01721a238a46d1d9e4322723f",
+      "bytes": 9997
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence/environment.json": {
+      "sha256": "5f3f87d121c0c7ba4ac5c81a8842cab03bee2ef2005e4021a2b2eda12d300994",
+      "bytes": 1165
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence/cleanup.json": {
+      "sha256": "bae4d05c23918325552a9184ac48cc10ef4c3740c31bd9e49ed103c8ef955414",
+      "bytes": 65
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence/kill-1790866433419.json": {
+      "sha256": "44f61d0f138c366498f974a45802381dd8abff6a2986d9a7ca28ba1a0632b288",
+      "bytes": 53
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence/api.ndjson": {
+      "sha256": "e03bd5de46b240be082970700ae36f479dd7fd00150d00805886e6a858f37740",
+      "bytes": 658431
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence/kick-applied-then-rejoined.json": {
+      "sha256": "7e9e9c07304755fdf5efeb1c7fb566118fd3edf7917d1c3dbe2cdb60ff924d9b",
+      "bytes": 19777
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence/kick-rejoin-resumed.json": {
+      "sha256": "504e2172aaad54322da5955106b50df89ba6021379499e613d4649c485b55a7b",
+      "bytes": 22022
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-1e31b-joined-target-after-restart-system/evidence/kick-rejoin-final-ledger.json": {
+      "sha256": "50fe807d54d6ebc820a496d2bd4217cd412bd6c447f830a79c0fb6ab3d6da80f",
+      "bytes": 20932
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/error-context.md": {
+      "sha256": "da2e0521b8d4e15181faae7a89cf64e816945148675039f3b4a83cdbd42b424b",
+      "bytes": 6453
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence/environment.json": {
+      "sha256": "013d4638da47f2102b780829a5b077dbbeddbe0aeabc2edf60b6f7f6a6b75c54",
+      "bytes": 1165
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence/cleanup.json": {
+      "sha256": "07c02e3543794e99a39d50b022e3277835efb443b432b869f33553f506bfae8b",
+      "bytes": 65
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence/kill-1790866458234.json": {
+      "sha256": "24fa02c6b77cbbcfd605cbe79404d53bf475a3a99ae9126548f1c1aeac1d0d36",
+      "bytes": 53
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence/api.ndjson": {
+      "sha256": "ad6aebca85125bf4b6b60754ce5b16faa4adae086760b85adcc5bb81522447a4",
+      "bytes": 698971
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence/lost-model-response-at-crash.json": {
+      "sha256": "e162469e14b361d4aa9fb2012ce49e551d5def1fff06d7e5cda3ee77127b29a3",
+      "bytes": 28622
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence/lost-model-response-resumed.json": {
+      "sha256": "455ecb7fde84a17eb6fb07f70d98c6531d6e5d7d74c1adffafb41b3e3bbb0c93",
+      "bytes": 30242
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-protocol-boundaries-e8352-history-and-effects-survive-system/evidence/lost-model-response-final-ledger.json": {
+      "sha256": "de3ff7a9639502c82307e17e15d202edf4b391d4c306fd31bd144f424c1d5a6f",
+      "bytes": 29069
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/error-context.md": {
+      "sha256": "067115e5da25e0dedb1f57b99a1275211a5f6bb7266a0cb3ca5279ec28b0cbac",
+      "bytes": 10010
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence/environment.json": {
+      "sha256": "8c76d43b366e6541acc75b89a70817b27fe015626e4dada7623d70d65fe40a7d",
+      "bytes": 1165
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence/cleanup.json": {
+      "sha256": "ae46897a4d04112e68fa6fbdee288842e8984d4957eccd9c3e43644fd89f127c",
+      "bytes": 65
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence/kill-1790866506882.json": {
+      "sha256": "005a9ed246a46214816b65ad722362397ca72e670ab4751f64883d78ff94534a",
+      "bytes": 53
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence/api.ndjson": {
+      "sha256": "b085c667a4966f80e72ab41313032b4de7de83bb1e5ca867d75b74ba9ea43868",
+      "bytes": 952862
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-recovery--REC-007-a-acffc-tion-without-repeating-kick-system/evidence/external-facts.json": {
+      "sha256": "013425c096ee0d73029e8e47688e87751544750d845dc114d5bfa3d0e52aef85",
+      "bytes": 19101
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/error-context.md": {
+      "sha256": "8e11d5f6c1bc7c365dfc7d3f55b418670d4c45e0dc24a53a3a7d245b75a40545",
+      "bytes": 15685
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence/environment.json": {
+      "sha256": "17404889e35aa26f290e91cbde2fb49eb8b203d75d7e338e53e5138ef50ba728",
+      "bytes": 1165
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence/cleanup.json": {
+      "sha256": "8f10a1c1f6fa36985aef7353e6de898162f03f9ad8d2b0fd467f0780462d0a52",
+      "bytes": 65
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence/kill-1790866168072.json": {
+      "sha256": "6087f0c5f117dc6e238615c6be88646aa2551e47f31c763f809481e7dfd5621f",
+      "bytes": 54
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence/api.ndjson": {
+      "sha256": "af65c9b5baf984c288db29624854eb35e614b231adfcc75923941fcfaf1bb7f8",
+      "bytes": 43002
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence/receipt-window-before-kill.json": {
+      "sha256": "fddced1d1f47a474ea0419c73f1021253709c012c40d5286f6b0ed64b996ad7f",
+      "bytes": 15359
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence/receipt-window-after-restart.json": {
+      "sha256": "27f704148d79f84e71ac9d315b4915fed6308761da3d08a5f7f34d592e432d32",
+      "bytes": 17917
+    },
+    "reports/runs/2026-10-01T14-26-25.068Z-1e0cb38a/artifacts/system-integration-message-64129--original-scheduling-origin-system/evidence/message-window-final-ledger.json": {
+      "sha256": "bb2903ae9efbe4d4d61e8ead7505feabe6f147d764fd879517df065c1c2030a0",
+      "bytes": 14554
+    }
+  }
+}

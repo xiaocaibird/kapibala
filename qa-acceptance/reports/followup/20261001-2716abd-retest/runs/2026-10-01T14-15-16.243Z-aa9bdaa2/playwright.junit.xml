@@ -1,0 +1,181 @@
+<testsuites id="" name="" tests="12" failures="1" skipped="0" errors="0" time="157.95686600000002">
+<testsuite name="ui/architecture.spec.ts" timestamp="2026-10-01T14:15:16.601Z" hostname="chromium" tests="1" failures="0" skipped="0" time="10.832" errors="0">
+<testcase name="[ARC-UI-015] 耗尽后显式同页刷新可开始新一轮" classname="ui/architecture.spec.ts" time="10.832">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/attachments/architecture-final-7e213e5d4c71eca46c5b6860a2e24d94240ff209.png]]
+
+[[ATTACHMENT|artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/attachments/architecture-browser-8d20772a29a7cc5d7032861082671a138e66a254.json]]
+
+[[ATTACHMENT|artifacts/ui-architecture--ARC-UI-015-耗尽后显式同页刷新可开始新一轮-chromium/attachments/architecture-final-a1f9a85f2ede7bec3a5a29d40ce24aa2d613724b.json]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="ui/console.spec.ts" timestamp="2026-10-01T14:15:16.601Z" hostname="chromium" tests="11" failures="1" skipped="0" time="142.977" errors="0">
+<testcase name="[UI-001] viewer通过浏览器登录且各页无写入口 @compat" classname="ui/console.spec.ts" time="4.501">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-chromium/attachments/ui-final-screenshot-1e8b9b784ec1585c480c147e1bc55b0601444f6a.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-001-viewer通过浏览器登录且各页无写入口-compat-chromium/attachments/ui-final-state-313eede30fd50b5e412a3b4077c67dc80cdd834e.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-008] 登录到群再到Agent步骤，错误原文和审计结果可读 @compat" classname="ui/console.spec.ts" time="3.291">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-chromium/attachments/ui-final-screenshot-8d9340dfc29e362c4ae852220ab375c6095a9995.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-008-登录到群再到Agent步骤，错误原文和审计结果可读-compat-chromium/attachments/ui-final-state-6a4e50650cd8b9486d2811c57a983b3686bc13f6.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-016] 搜索旧响应不能覆盖新条件且不抢焦点" classname="ui/console.spec.ts" time="5.427">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-016-搜索旧响应不能覆盖新条件且不抢焦点-chromium/attachments/ui-final-screenshot-c16916e918c546c72c253a4799332ed6964ececa.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-016-搜索旧响应不能覆盖新条件且不抢焦点-chromium/attachments/ui-final-state-1f854086f9b02ea2178c32936fa625eccf8fd497.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-017] 多页过期禁止旧游标，失败保留列表，成功整体换首页" classname="ui/console.spec.ts" time="30.962">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/attachments/ui-final-screenshot-5247ae7b46c7c7917194dc506ba3778551ef9b75.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/attachments/ui-final-state-236709634b61987111d9e322e0f5a39102348830.json]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/video.webm]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/error-context.md]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/trace.zip]]
+]]>
+</system-out>
+<failure message="expect(locator).toHaveCount(expected) failed" type="expect.toHaveCount">
+<![CDATA[  [chromium] › ui/console.spec.ts:695:1 › [UI-017] 多页过期禁止旧游标，失败保留列表，成功整体换首页 ────────────────────────
+
+    Error: expect(locator).toHaveCount(expected) failed
+
+    Locator:  locator('a[data-directory-group-id]')
+    Expected: 23
+    Received: 20
+    Timeout:  8000ms
+
+    Call log:
+      - Expect "toHaveCount" locator('a[data-directory-group-id]') with timeout 8000ms
+      - waiting for locator('a[data-directory-group-id]')
+        20 × locator resolved to 20 elements
+           - unexpected value "20"
+
+
+      705 |   await expect(element(page, qa, 'directoryItem')).toHaveCount(20);
+      706 |   await element(page, qa, 'loadMoreGroups').click();
+    > 707 |   await expect(element(page, qa, 'directoryItem')).toHaveCount(23);
+          |                                                    ^
+      708 |   await qa.api.require(qa.api.patch(`/api/groups/${first!.id}`, { name: '变化名称' }));
+      709 |   await expect(element(page, qa, 'directoryStale')).toBeVisible();
+      710 |   const more = element(page, qa, 'loadMoreGroups');
+        at /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/tests/ui/console.spec.ts:707:52
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T14-15-16.243Z-aa9bdaa2/artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: ui-final-screenshot (image/png) ─────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T14-15-16.243Z-aa9bdaa2/artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/attachments/ui-final-screenshot-5247ae7b46c7c7917194dc506ba3778551ef9b75.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: ui-final-state (application/json) ───────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T14-15-16.243Z-aa9bdaa2/artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/attachments/ui-final-state-236709634b61987111d9e322e0f5a39102348830.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: qa-evidence-directory (text/plain) ──────────────────────────────────────────────
+    /Users/zcm/.codex/worktrees/independent-qa-acceptance/kapibala/qa-acceptance/reports/preflight/2026-10-01T14-15-16.243Z-aa9bdaa2/artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/evidence
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T14-15-16.243Z-aa9bdaa2/artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../reports/preflight/2026-10-01T14-15-16.243Z-aa9bdaa2/artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/error-context.md
+
+    attachment #7: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../reports/preflight/2026-10-01T14-15-16.243Z-aa9bdaa2/artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../reports/preflight/2026-10-01T14-15-16.243Z-aa9bdaa2/artifacts/ui-console--UI-017-多页过期禁止旧游标，失败保留列表，成功整体换首页-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+</testcase>
+<testcase name="[UI-020] 当前群失焦只提示相关更新，聚焦本身不确认" classname="ui/console.spec.ts" time="8.312">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-020-当前群失焦只提示相关更新，聚焦本身不确认-chromium/attachments/ui-final-screenshot-81307159b0979c9ebfc290c2fe21350d7fef2452.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-020-当前群失焦只提示相关更新，聚焦本身不确认-chromium/attachments/ui-final-state-4232831a47bb36036984acee72152a354b365091.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-028] 前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除" classname="ui/console.spec.ts" time="6.879">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/attachments/ui-final-screenshot-5c7bc9953c42443b880d8e29299314e22bdecbf0.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-028-前台呈现安静，失焦标题和favicon静态提醒且聚焦不清除-chromium/attachments/ui-final-state-ad7f13aeaea41730b76ae5be45a7890c61051ca9.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-030] 搜索范围记录消失先展示成功结果，再明确确认范围变化" classname="ui/console.spec.ts" time="14.66">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/attachments/ui-final-screenshot-05beaf3706a87a9c88393c08c07c8007d38bccc0.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-030-搜索范围记录消失先展示成功结果，再明确确认范围变化-chromium/attachments/ui-final-state-60b67f2b5ba00b7ff366b075d6a5774b97e31a2e.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-031] 状态先改变后还原仍保留期间变化候选" classname="ui/console.spec.ts" time="3.171">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-031-状态先改变后还原仍保留期间变化候选-chromium/attachments/ui-final-screenshot-5e6b7ca680af5e8d3da23e547f59f3c8c520ecd2.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-031-状态先改变后还原仍保留期间变化候选-chromium/attachments/ui-final-state-049515dd620bb29d19c4dfaa735078166df75575.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-032] 提醒确认不改变刷新后的分页资格或恢复旧分页链" classname="ui/console.spec.ts" time="57.074">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不改变刷新后的分页资格或恢复旧分页链-chromium/attachments/ui-final-screenshot-01f8a7c698d618ea1e264946a7bcbba935a321db.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-032-提醒确认不改变刷新后的分页资格或恢复旧分页链-chromium/attachments/ui-final-state-7e9bbb6683d5c660e98078a5833a29d1e5693242.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-034] Agent自己的自动消息仍参与失焦提醒" classname="ui/console.spec.ts" time="3.506">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-034-Agent自己的自动消息仍参与失焦提醒-chromium/attachments/ui-final-screenshot-43d6ffea4fb1ec3667eee75c7c32522301c5d81c.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-034-Agent自己的自动消息仍参与失焦提醒-chromium/attachments/ui-final-state-ffaddf38349e4e6dab511fce6b1bc46cdf13aec2.json]]
+]]>
+</system-out>
+</testcase>
+<testcase name="[UI-035] 序列自动发送不因isOwn被排除提醒" classname="ui/console.spec.ts" time="5.194">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|artifacts/ui-console--UI-035-序列自动发送不因isOwn被排除提醒-chromium/attachments/ui-final-screenshot-d794e1470205acaf0a2cacbe0b78873e3bc1951e.png]]
+
+[[ATTACHMENT|artifacts/ui-console--UI-035-序列自动发送不因isOwn被排除提醒-chromium/attachments/ui-final-state-7241b16e3e502364f29ddd99dd187f24175e8e18.json]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>
