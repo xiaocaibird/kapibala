@@ -624,6 +624,22 @@
         "缺少特定tool-query/ROLLBACK关联接口时记录接入阻塞，不能声称已证明串行清理或成功尾段。",
         "schema与PG状态只定位故障窗口，不能按业务内部持久实现倒推正确预期。真实时限或副作用违例仍记FAIL。"
       ]
+    },
+    {
+      "id": "qa-8e047-zero-step-queue-retest",
+      "title": "真实排队建立零步骤终态的浏览器独立补证",
+      "purpose": "复用公开创建、消息、模型响应延迟和取消，先实际证明四个holder与目标尚未派发，再对真实零步骤failed/cancelled逐状态验收页面。",
+      "caseIds": [
+        "UI-039"
+      ],
+      "projects": [
+        "chromium"
+      ],
+      "riskBoundaries": [
+        "独立目标AGENT_TURN_TIMEOUT_MS=15000；51秒仅准备估计，不作为实际断言或新业务SLA。",
+        "旧响应屏障前提的BLOCKED原件保留；本轮是前提补强后独立执行，不是自动重试。",
+        "未达running/steps=[]/无目标model/audit/send真实前置时BLOCKED；不插SQL或把源码排队机制当PASS。"
+      ]
     }
   ]
 }

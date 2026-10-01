@@ -37,7 +37,7 @@ const send = (id: string) => ({
 const activitySql = `SELECT a.pid, a.datname, a.usename, a.application_name,
  a.backend_start::text, a.xact_start::text, a.query_start::text,
  a.state, a.wait_event_type, a.wait_event, a.query, pg_blocking_pids(a.pid) AS blockers,
- COALESCE((SELECT json_agg(json_build_object('relation',l.relation,'mode',l.mode,'granted',l.granted))
+ COALESCE((SELECT json_agg(json_build_object('relation',l.relation::bigint,'mode',l.mode,'granted',l.granted))
  FROM pg_locks l WHERE l.pid=a.pid AND l.locktype='relation'), '[]'::json) AS relation_locks
  FROM pg_stat_activity a WHERE a.datname=current_database() AND a.backend_type='client backend'
  ORDER BY a.pid`;

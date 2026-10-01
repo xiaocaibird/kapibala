@@ -8,6 +8,7 @@ import { test, expect } from '../fixtures.js';
 import { BlockedError } from '../../harness/security.js';
 import type { QaEnvironment } from '../../harness/environment.js';
 import type { AgentRun, Group } from '../../harness/platform-client.js';
+import type { AgentRequest, AgentResponsePlan } from '../../harness/agent.js';
 import {
   observeDirectory,
   directoryPremise,
@@ -2407,148 +2408,497 @@ test('[UI-038] 审计阻塞说明不否认前序真实成功副作用', async ({
 });
 
 test('[UI-039] 真实零步骤failed与cancelled详情不再提示等待第一步', async ({ qa, page }) => {
-  const blockers: string[] = [];
-  const outcomes: Record<string, unknown> = {};
-  await qa.api.login();
-  const { group } = await qa.api.createGroup();
-  const barrier = `zero-step-cancel-${randomUUID()}`;
-  const before = qa.gateway.snapshot();
-  const noUnexpectedEffect = () => {
-    const facts = qa.gateway.snapshot();
-    expect(
-      facts.messages.filter((m) => m.groupId === group.gatewayGroupId && m.accountId !== null),
-    ).toHaveLength(0);
-    expect(
-      facts.requests
-        .slice(before.requests.length)
-        .filter((r) => r.method === 'POST' && /\/(send|kick)$/.test(r.path)),
-    ).toHaveLength(0);
-    expect(qa.agent.snapshot().audits).toHaveLength(0);
-  };
-  const verifyEmptyTerminal = async (actual: AgentRun, status: 'failed' | 'cancelled') => {
-    expect(actual.status).toBe(status);
-    expect(actual.endReason).toBe(status === 'failed' ? 'wall_clock' : 'cancelled');
-    expect(actual.steps).toHaveLength(0);
-    expect((await qa.api.group(actual.groupId)).activeAgentRunId).toBeNull();
-    await login(page, qa);
-    await go(page, qa, 'group', actual.groupId);
-    const link = element(page, qa, 'runLink').and(
-      page.locator(`a[href$="/${encodeURIComponent(actual.id)}"]`),
-    );
-    await expect(link).toHaveCount(1);
-    await link.click();
-    await expect(page).toHaveURL((url) => decodeURIComponent(url.href).endsWith(`/${actual.id}`));
-    await expect(page.locator('main')).toContainText(
-      status === 'failed' ? /失败|failed/ : /已取消|cancelled/,
-    );
-    await expect(page.locator('main')).toContainText(
-      /暂无步骤|没有步骤|无步骤|no steps|no step records/i,
-    );
-    const visibleText = await page.locator('main').innerText();
-    expect(visibleText).not.toMatch(
-      /正在等待第一步结果|waiting for (?:the )?first (?:step|result)/i,
-    );
-    expect(await qa.api.agentRun(actual.id)).toEqual(actual);
-    await qa.evidence(`ui039-${status}-copy`, { actual, visibleText });
-    outcomes[status] = { status: 'PASS', runId: actual.id, evidence: `ui039-${status}-copy` };
-  };
-  // The existing external response barrier observes an already dispatched first
-  // model request. It is a real cancellation probe, not a pre-dispatch guarantee.
-  qa.agent.enqueueTurns({
-    barrier: { phase: 'before-response', name: barrier },
-    body: {
-      stop_reason: 'end_turn',
-      content: [{ type: 'text', text: '零步骤取消前提：当前模型轮真实返回' }],
-    },
-  });
-  try {
-    await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { agentEnabled: true }));
-    incoming(qa, group, barrier);
-    const created = await observe({
-      read: () => qa.api.require(qa.api.get<AgentRun[]>(`/api/groups/${group.id}/agent-runs`)),
-      invariant: (items) => {
-        expect(items.length).toBeLessThanOrEqual(1);
-        noUnexpectedEffect();
+  test.setTimeout(120_000);
+  type Role = 'failed' | 'cancelled';
+  type BoundRun = { group: Group; runId: string };
+  type Read = { beforeMono: number; afterMono: number; value: AgentRun };
+  type Targets<T> = { failed: T; cancelled: T };
+  const timing = {
+    modelMs: 14_000,
+    auditMs: 4_000,
+    effectMs: 10_000,
+    responseMs: 10_000,
+    requiredModelTimeoutMs: '15000',
+    diagnosticMs: 70_000,
+  } as const;
+  const object = (value: unknown): Record<string, unknown> =>
+    value && typeof value === 'object' && !Array.isArray(value)
+      ? (value as Record<string, unknown>)
+      : {};
+  const requestRunId = (request: AgentRequest) => String(object(request.body).runId ?? '');
+  function requestGroupId(request: AgentRequest): string | undefined {
+    const messages = object(request.body).messages;
+    if (!Array.isArray(messages)) return undefined;
+    const content = object(messages[0]).content;
+    if (!Array.isArray(content)) return undefined;
+    try {
+      return String(object(JSON.parse(String(object(content[0]).text))).groupId ?? '');
+    } catch {
+      return undefined;
+    }
+  }
+
+  function firstHolderPlans(): AgentResponsePlan[] {
+    return Array.from({ length: 4 }, () => ({
+      responseDelayMs: timing.modelMs,
+      body: {
+        stop_reason: 'tool_use',
+        content: [
+          {
+            type: 'tool_use',
+            id: 'holder-read',
+            name: 'get_recent_messages',
+            input: { limit: 10 },
+          },
+        ],
       },
-      complete: (items) => items.length === 1,
-      durationMs: 10_000,
-    });
-    if (!created.complete) {
-      blockers.push('cancelled：有限观察未取得本轮真实run，不将10秒诊断上限作为业务SLA');
-      outcomes.cancelled = { status: 'BLOCKED', observed: created };
-    } else {
-      const runId = created.last[0]!.id;
-      let hit;
-      try {
-        hit = await qa.agent.barriers.waitFor(barrier, 5_000);
-      } catch (error) {
-        blockers.push(`cancelled：首个模型响应屏障未命中：${String(error)}`);
-      }
-      const heldState = await qa.api.agentRun(runId);
-      await qa.evidence('ui039-cancelled-before-disable', { hit, heldState });
-      await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { agentEnabled: false }));
-      // Allow the actual current model round to finish; do not require terminal
-      // state while held and do not discard a real returned step to make zero.
-      qa.agent.barriers.release(barrier);
-      const terminal = await observe({
-        read: () => qa.api.agentRun(runId),
-        invariant: (actual) => {
-          expect(actual.id).toBe(runId);
-          expect(actual.groupId).toBe(group.id);
-          if (actual.status === 'cancelled') expect(actual.endReason).toBe('cancelled');
-          if (actual.status === 'failed')
-            expect(['wall_clock', 'budget_exhausted', 'protocol_errors']).toContain(
-              actual.endReason,
-            );
-          noUnexpectedEffect();
+    }));
+  }
+  function boundHolderPlans(runIds: string[], nonce: string): AgentResponsePlan[] {
+    assert.equal(new Set(runIds).size, 4, 'Four distinct observed holder runs are required');
+    assert.equal(runIds.length, 4);
+    // TakePlan searches by actual runId. Different second/third arrival order cannot
+    // accidentally consume another holder's plan or a target's scripted response.
+    return runIds.flatMap((runId, index) => [
+      {
+        runId,
+        responseDelayMs: timing.modelMs,
+        body: {
+          stop_reason: 'tool_use',
+          content: [
+            {
+              type: 'tool_use',
+              id: 'holder-send',
+              name: 'send_message',
+              input: {
+                text: `holder-effect:${nonce}:${runId}`,
+                idempotency_key: `h${index + 1}`,
+              },
+            },
+          ],
         },
-        complete: (actual) => actual.status !== 'running',
-        durationMs: 20_000,
-      });
-      await qa.evidence('ui039-cancelled-terminal-premise', terminal);
-      if (
-        terminal.complete &&
-        terminal.last.status === 'cancelled' &&
-        terminal.last.steps.length === 0 &&
-        hit
-      ) {
-        await verifyEmptyTerminal(terminal.last, 'cancelled');
-      } else {
-        blockers.push(
-          'cancelled：未形成可证实的真实cancelled/steps=[]；当前轮产生步骤不等于文案失败',
-        );
-        outcomes.cancelled = { status: 'BLOCKED', observed: terminal };
-      }
-      // A coincident genuine zero-step wall_clock result may independently supply
-      // the failed-state UI premise, but is never relabelled as cancelled.
-      if (
-        terminal.complete &&
-        terminal.last.status === 'failed' &&
-        terminal.last.endReason === 'wall_clock' &&
-        terminal.last.steps.length === 0
-      )
-        await verifyEmptyTerminal(terminal.last, 'failed');
-    }
-    if (!outcomes.failed) {
-      blockers.push(
-        'failed：当前交付观察协议无真实创建后/首轮派发前活动hold；模型超时会产生步骤，禁止SQL写终态或active_ms伪造零步骤',
+      },
+      {
+        runId,
+        responseDelayMs: timing.modelMs,
+        body: {
+          stop_reason: 'tool_use',
+          content: [
+            {
+              type: 'tool_use',
+              id: 'holder-finish',
+              name: 'finish',
+              input: { summary: `holder-finished:${nonce}:${runId}` },
+            },
+          ],
+        },
+      },
+    ]);
+  }
+  function fourInitialHolderRequests(holderRuns: BoundRun[], requests: AgentRequest[]): boolean {
+    if (holderRuns.length !== 4 || new Set(holderRuns.map((r) => r.runId)).size !== 4) return false;
+    return holderRuns.every((holder) => {
+      const matching = requests.filter((r) => requestRunId(r) === holder.runId);
+      return (
+        matching.length === 1 &&
+        requestGroupId(matching[0]!) === holder.group.id &&
+        matching[0]!.completedAt === undefined &&
+        matching[0]!.responseStatus === undefined
       );
-      outcomes.failed = {
-        status: 'BLOCKED',
-        dependency:
-          'owned pre-first-dispatch active window with actual run identity; not delivered',
-      };
+    });
+  }
+
+  function classifyZeroStepTarget(
+    role: Role,
+    run: AgentRun,
+    actualModelCalls: number,
+    actualAuditCalls: number,
+    actualSendOrKickCalls: number,
+    actualOwnMessages: number,
+  ) {
+    // Known protocol/effect violations must survive a neighbouring missed premise.
+    if (run.status === 'cancelled') assert.equal(run.endReason, 'cancelled');
+    if (run.status === 'failed')
+      assert.ok(
+        ['wall_clock', 'budget_exhausted', 'protocol_errors'].includes(run.endReason ?? ''),
+      );
+    if (actualModelCalls === 0) {
+      assert.equal(actualAuditCalls, 0, 'No actual target model dispatch can justify an audit');
+      assert.equal(
+        actualSendOrKickCalls,
+        0,
+        'No actual target model dispatch can justify a tool side effect',
+      );
+      assert.equal(
+        actualOwnMessages,
+        0,
+        'No actual target model dispatch can justify an own message',
+      );
     }
-    noUnexpectedEffect();
+    const ready =
+      run.status === role &&
+      run.endReason === (role === 'failed' ? 'wall_clock' : 'cancelled') &&
+      run.steps.length === 0 &&
+      actualModelCalls === 0;
+    return {
+      ready,
+      role,
+      actualStatus: run.status,
+      actualEndReason: run.endReason,
+      actualSteps: run.steps.length,
+      actualModelCalls,
+      reason: ready
+        ? 'Real public terminal, empty steps and complete external ledger has zero target model calls'
+        : 'Actual workload did not establish this requested zero-step terminal; this is not a status-copy PASS',
+    };
+  }
+
+  /** The returned targets are separate UI prerequisites, not a whole-case PASS.
+   * Call the existing public page assertions independently for every ready target;
+   * preserve a proved UI FAIL; collect missing target states as BLOCKED afterwards.
+   */
+  async function preparePublicQueueZeroSteps(qa: QaEnvironment) {
+    if (qa.config.sut.env.AGENT_TURN_TIMEOUT_MS !== timing.requiredModelTimeoutMs)
+      throw new BlockedError(
+        'UI039 dedicated frozen target must explicitly set AGENT_TURN_TIMEOUT_MS=15000; do not reuse the 12000 target',
+      );
+    await qa.api.login();
+    const groups: Group[] = [];
+    const snapshots: unknown[] = [];
+    const nonce = randomUUID();
+    let bound: { holders: BoundRun[]; targets: Targets<BoundRun> } | undefined;
+    const targetEverDispatched = { failed: false, cancelled: false };
+    const blocked: string[] = [];
+    const readRun = async (runId: string): Promise<Read> => {
+      const beforeMono = performance.now();
+      const value = await qa.api.agentRun(runId);
+      return { beforeMono, afterMono: performance.now(), value };
+    };
+    const createObservedRun = async (group: Group): Promise<BoundRun> => {
+      await qa.api.require(qa.api.patch(`/api/groups/${group.id}`, { agentEnabled: true }));
+      qa.gateway.emitMessage({
+        groupId: group.gatewayGroupId,
+        senderPlatformUserId: `queue-probe-${nonce}`,
+        text: `public-queue-fixture:${nonce}:${group.id}`,
+      });
+      const seen = await observe({
+        read: () => qa.api.require(qa.api.get<AgentRun[]>(`/api/groups/${group.id}/agent-runs`)),
+        invariant: (items) =>
+          assert.ok(items.length <= 1, 'Independent new group has at most one triggered run'),
+        complete: (items) => items.length === 1,
+        durationMs: 10_000,
+      });
+      if (!seen.complete)
+        throw new BlockedError('Public run creation not observed within diagnostic budget');
+      const actual = seen.last[0]!;
+      assert.equal(actual.groupId, group.id);
+      return { group, runId: actual.id };
+    };
+    try {
+      // All six groups already exist, active and disabled, before any model delay
+      // starts. Group construction time must not consume the 14s proof window.
+      for (let i = 0; i < 6; i++) {
+        const { group } = await qa.api.createGroup();
+        assert.equal(group.status, 'active');
+        assert.equal(group.agentEnabled, false);
+        groups.push(group);
+      }
+      qa.agent.enqueueTurns(...firstHolderPlans());
+      const holders: BoundRun[] = [];
+      for (const group of groups.slice(0, 4)) holders.push(await createObservedRun(group));
+      const firstProof = await observe({
+        read: async () => ({
+          at: new Date().toISOString(),
+          observedMono: performance.now(),
+          runs: await Promise.all(holders.map((r) => readRun(r.runId))),
+          agent: qa.agent.snapshot(),
+        }),
+        invariant: (sample) => {
+          assert.equal(new Set(sample.runs.map((r) => r.value.id)).size, 4);
+          snapshots.push({ phase: 'four-holder-initial-requests', ...sample });
+        },
+        complete: (sample) =>
+          sample.runs.every((r) => r.value.status === 'running' && r.value.steps.length === 0) &&
+          fourInitialHolderRequests(holders, sample.agent.turns),
+        durationMs: 8_000,
+      });
+      if (!firstProof.complete)
+        throw new BlockedError(
+          'Four distinct actually pending first model requests not simultaneously proved; do not infer slots from the private implementation',
+        );
+      await qa.evidence('ui039-public-queue-first-proof', { nonce, holders, firstProof });
+      qa.agent.enqueueTurns(
+        ...boundHolderPlans(
+          holders.map((h) => h.runId),
+          nonce,
+        ),
+      );
+      // Audit has groupId/text, no runId. Four identical delayed passes are safe to
+      // enqueue globally; their actual groupId/text are checked from raw requests.
+      qa.agent.enqueueAudits(
+        ...Array.from({ length: 4 }, () => ({
+          responseDelayMs: timing.auditMs,
+          body: { verdict: 'pass', reason: 'public queue fixture holder only' },
+        })),
+      );
+      for (const holder of holders)
+        qa.gateway.enqueue(`/groups/${holder.group.gatewayGroupId}/send`, {
+          method: 'POST',
+          effectDelayMs: timing.effectMs,
+          responseDelayMs: timing.responseMs,
+        });
+      const failed = await createObservedRun(groups[4]!);
+      const cancelled = await createObservedRun(groups[5]!);
+      bound = { holders, targets: { failed, cancelled } };
+      const sample = async () => {
+        const reads = await Promise.all(
+          [failed, cancelled, ...holders].map((r) => readRun(r.runId)),
+        );
+        const agent = qa.agent.snapshot(),
+          gateway = qa.gateway.snapshot();
+        const mapped = { failed: reads[0]!, cancelled: reads[1]! };
+        const targets = Object.fromEntries(
+          (['failed', 'cancelled'] as const).map((role) => {
+            const target = bound!.targets[role];
+            const modelCalls = agent.turns.filter((r) => requestRunId(r) === target.runId);
+            targetEverDispatched[role] ||= modelCalls.length > 0;
+            const audits = agent.audits.filter((r) => object(r.body).groupId === target.group.id);
+            const mutations = gateway.requests.filter(
+              (r) =>
+                r.method === 'POST' &&
+                r.path.startsWith(`/groups/${target.group.gatewayGroupId}/`) &&
+                /\/(send|kick)$/.test(r.path),
+            );
+            const own = gateway.messages.filter(
+              (m) => m.groupId === target.group.gatewayGroupId && m.accountId !== null,
+            );
+            const actual = mapped[role].value;
+            assert.equal(actual.id, target.runId);
+            assert.equal(actual.groupId, target.group.id);
+            return [
+              role,
+              {
+                read: mapped[role],
+                modelRequestIds: modelCalls.map((r) => r.id),
+                classification: classifyZeroStepTarget(
+                  role,
+                  actual,
+                  modelCalls.length,
+                  audits.length,
+                  mutations.length,
+                  own.length,
+                ),
+              },
+            ];
+          }),
+        ) as Targets<{
+          read: Read;
+          modelRequestIds: number[];
+          classification: ReturnType<typeof classifyZeroStepTarget>;
+        }>;
+        const entry = {
+          at: new Date().toISOString(),
+          observedMono: performance.now(),
+          targets,
+          holderReads: reads.slice(2),
+          holderModelCalls: holders.map((h) => ({
+            runId: h.runId,
+            requests: agent.turns
+              .filter((r) => requestRunId(r) === h.runId)
+              .map((r) => ({
+                id: r.id,
+                at: r.at,
+                completedAt: r.completedAt,
+                responseStatus: r.responseStatus,
+              })),
+          })),
+        };
+        snapshots.push(entry);
+        return entry;
+      };
+      const queueProof = await sample();
+      await qa.evidence('ui039-public-queue-before-disable', queueProof);
+      const waitingBeforeDisable = Object.fromEntries(
+        (['failed', 'cancelled'] as const).map((role) => [
+          role,
+          queueProof.targets[role].read.value.status === 'running' &&
+            queueProof.targets[role].read.value.steps.length === 0 &&
+            queueProof.targets[role].modelRequestIds.length === 0,
+        ]),
+      ) as Targets<boolean>;
+      const initialWaiting = waitingBeforeDisable.failed && waitingBeforeDisable.cancelled;
+      // This is the actual public operation. No cancellation status is written by QA.
+      await qa.api.require(
+        qa.api.patch(`/api/groups/${cancelled.group.id}`, { agentEnabled: false }),
+      );
+      const observed = await observe({
+        read: sample,
+        invariant: () => {},
+        complete: (s) =>
+          (['failed', 'cancelled'] as const).every(
+            (role) => s.targets[role].read.value.status !== 'running',
+          ),
+        durationMs: timing.diagnosticMs,
+        intervalMs: 100,
+      });
+      const final = observed.last;
+      const readyStates = { failed: false, cancelled: false };
+      for (const role of ['failed', 'cancelled'] as const) {
+        readyStates[role] =
+          waitingBeforeDisable[role] &&
+          !targetEverDispatched[role] &&
+          final.targets[role].classification.ready;
+        // The other target remaining running cannot suppress this target's real
+        // ready state or its subsequent independent visible-copy assertion.
+        if (!readyStates[role])
+          blocked.push(
+            `${role}: ${
+              waitingBeforeDisable[role]
+                ? final.targets[role].classification.reason
+                : 'Initial public running/steps=[]/zero-dispatch premise was not established'
+            }`,
+          );
+        if (final.targets[role].read.value.status !== 'running')
+          assert.equal((await qa.api.group(bound.targets[role].group.id)).activeAgentRunId, null);
+      }
+      const agent = qa.agent.snapshot();
+      for (const audit of agent.audits) {
+        const holder = holders.find((h) => h.group.id === object(audit.body).groupId);
+        if (holder) assert.equal(object(audit.body).text, `holder-effect:${nonce}:${holder.runId}`);
+      }
+      await qa.evidence('ui039-public-queue-final', {
+        nonce,
+        timing,
+        bound,
+        initialWaiting,
+        waitingBeforeDisable,
+        readyStates,
+        targetEverDispatched,
+        blocked,
+        observed,
+        agent,
+        gateway: qa.gateway.snapshot(),
+        boundary:
+          'Public waiting state plus retained complete external request ledger; no public queue position/slot field is invented. 51s estimate is not an assertion.',
+      });
+      return {
+        ...bound,
+        final,
+        readyStates,
+        blocked,
+        snapshots,
+        initialWaiting,
+        waitingBeforeDisable,
+        targetEverDispatched,
+      };
+    } finally {
+      await qa.evidence('ui039-public-queue-samples', {
+        nonce,
+        bound,
+        snapshots,
+        blocked,
+        gateway: qa.gateway.snapshot(),
+        agent: qa.agent.snapshot(),
+      });
+      // No custom locks/controllers exist. Caller still owns the ordinary QaEnvironment
+      // and must let its normal fixture close pending simulator tasks/SUT/DB/browser.
+      // Do not release by killing foreign holders or mutate terminal rows.
+    }
+  }
+
+  const outcomes: Record<string, unknown> = {};
+  const blockers: string[] = [];
+  let firstFailure: unknown;
+  try {
+    const prepared = await preparePublicQueueZeroSteps(qa);
+    blockers.push(...prepared.blocked);
+    for (const role of ['failed', 'cancelled'] as const) {
+      const target = prepared.targets[role];
+      const actual = prepared.final.targets[role].read.value;
+      if (!prepared.readyStates[role]) {
+        outcomes[role] = {
+          status: 'BLOCKED',
+          runId: target.runId,
+          actual,
+          observation: prepared.final.targets[role].classification,
+        };
+        continue;
+      }
+      try {
+        expect(actual.status).toBe(role);
+        expect(actual.endReason).toBe(role === 'failed' ? 'wall_clock' : 'cancelled');
+        expect(actual.steps).toHaveLength(0);
+        await login(page, qa);
+        await go(page, qa, 'group', actual.groupId);
+        const link = element(page, qa, 'runLink').and(
+          page.locator(`a[href$="/${encodeURIComponent(actual.id)}"]`),
+        );
+        await expect(link).toHaveCount(1);
+        await link.click();
+        await expect(page).toHaveURL((url) =>
+          decodeURIComponent(url.href).endsWith(`/${actual.id}`),
+        );
+        await expect(page.locator('main')).toContainText(
+          role === 'failed' ? /失败|failed/ : /已取消|cancelled/,
+        );
+        await expect(page.locator('main')).toContainText(
+          /暂无步骤|没有步骤|无步骤|no steps|no step records/i,
+        );
+        const visibleText = await page.locator('main').innerText();
+        await qa.evidence(`ui039-${role}-copy`, {
+          actual,
+          visibleText,
+          observedPrerequisite: prepared.final.targets[role],
+          beforeDisable: prepared.waitingBeforeDisable[role],
+        });
+        expect(visibleText).toMatch(/暂无步骤|没有步骤|无步骤|no steps|no step records/i);
+        expect(visibleText).not.toMatch(
+          /正在等待第一步结果|waiting for (?:the )?first (?:step|result)/i,
+        );
+        expect(await qa.api.agentRun(actual.id)).toEqual(actual);
+        expect((await qa.api.group(actual.groupId)).activeAgentRunId).toBeNull();
+        const agent = qa.agent.snapshot(),
+          gateway = qa.gateway.snapshot();
+        expect(agent.turns.filter((r) => requestRunId(r) === actual.id)).toHaveLength(0);
+        expect(agent.audits.filter((r) => object(r.body).groupId === actual.groupId)).toHaveLength(
+          0,
+        );
+        expect(
+          gateway.requests.filter(
+            (r) =>
+              r.method === 'POST' &&
+              r.path.startsWith(`/groups/${target.group.gatewayGroupId}/`) &&
+              /\/(send|kick)$/.test(r.path),
+          ),
+        ).toHaveLength(0);
+        expect(
+          gateway.messages.filter(
+            (m) => m.groupId === target.group.gatewayGroupId && m.accountId !== null,
+          ),
+        ).toHaveLength(0);
+        outcomes[role] = { status: 'PASS', runId: actual.id, evidence: `ui039-${role}-copy` };
+      } catch (error) {
+        if (error instanceof BlockedError) {
+          blockers.push(`${role}: ${error.message}`);
+          outcomes[role] = { status: 'BLOCKED', runId: actual.id, reason: error.message };
+        } else {
+          firstFailure ??= error;
+          outcomes[role] = { status: 'FAIL', runId: actual.id, reason: String(error) };
+        }
+      }
+    }
+    // Independent state checks both run, and a proved error outranks a missing
+    // premise in the other state. Never convert the first FAIL to BLOCKED.
+    if (firstFailure !== undefined) throw firstFailure;
     if (blockers.length) throw new BlockedError(blockers.join('；'));
+    expect(Object.values(outcomes).length).toBe(2);
   } finally {
-    qa.agent.barriers.release(barrier);
     await qa.evidence('ui039-per-state-results', {
       outcomes,
       blockers,
       gateway: qa.gateway.snapshot(),
       agent: qa.agent.snapshot(),
-      boundary: '两个零步骤终态分别必须有真实公开状态与页面证据；任一缺少不得判整例PASS',
+      boundary: '真实公开排队前提；两个零步骤终态各有状态与页面证据才PASS，缺前提B不掩盖明确FAIL',
     });
   }
 });

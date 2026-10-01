@@ -1241,24 +1241,26 @@
 - 优先级：P1；方法：automated
 - 自动化入口：tests/ui/console.spec.ts
 
-**准备状态：dependency-pending；责任方：QA与工程观测接入**
+**准备状态：script-ready；责任方：QA**
 
-1. 已实现公开取消尝试和逐状态页面/外部事实断言；模型响应屏障是已派发窗口，不能保证零步骤
-2. failed需真实创建后/首次派发前可控活动窗口；当前协议没有该入口，禁止SQL伪造终态或active_ms
-3. cancelled若当前模型轮合法完成产生步骤，零步骤文案子场景仍BLOCKED；任何独立已证实副作用违约不得被BLOCKED覆盖
+1. 此前缺少首派发前hook的判断不充分：本轮用现有公开工作负载尝试真实排队前提；原UI039首次BLOCKED及dependency-pending记录保持
+2. 四个首轮计划相同，后两轮按真实runId分别绑定；审计只按原协议groupId/text核验，不能要求不存在的runId字段
+3. 实际目标有派发/有步骤/未取得所需终态时对应子场景BLOCKED；两个角色独立检查，真实文案FAIL优先保留；尚未产品实跑
 
 **前置条件**
 
-1. 产品执行须绑定已交付固定候选及新授权；独立PG、网关、Agent和浏览器上下文
-2. 公开UI routes/selectors适配已确认，至少3服务账号
+1. 固定新候选与单独授权target：AGENT_TURN_TIMEOUT_MS=15000；独立PG、Gateway、Agent和浏览器
+2. 先真实创建6个active且agentEnabled=false的群，至少3个可复用在线服务账号；公开UI定位已确认
+3. 只有4个不同holder run首模型请求真实进入且响应尚未完成后才触发2目标；不以工程内部容量常量作oracle
 
 **执行步骤**
 
-1. 真实外部消息创建run，首个模型响应在独立Agent屏障内保留；记录实际已派发与公开步骤，公开关闭agentEnabled后释放当前轮
-2. 观察实际取消结果并记录；仅真实cancelled且steps=[]时进入该状态的页面文案验证，未形成则记子场景BLOCKED
-3. failed子场景仅接受真实活动预算导致公开failed/wall_clock/steps=[]；缺少可控创建后首派发前窗口时明确BLOCKED，不构造不存在接口
-4. 对每个真实零步终态，登录→群→精确runId详情，确认终态/无步骤说明且没有等待第一步提示；重新API读取确认页面未改事实
-5. 合并两状态：分别有证据才允许整例PASS，任一真实UI违约FAIL，缺失状态保留BLOCKED
+1. 预建6群；4个holder依次真实触发，证明4个不同run首模型请求已进入且响应未结束，公开状态running/steps=[]
+2. 给各实际holder runId绑定第二轮send和第三轮finish；四个合法pass审计延迟4秒，各群发送落地与响应各延迟10秒
+3. 在此前提后公开触发failed和cancelled两个目标；保存目标running/steps=[]与独立Agent全账本零模型请求，再公开关闭cancelled目标agentEnabled
+4. 持续采样目标与holder真实状态，直到两个目标终态或有限诊断结束；不从约51秒推断已排队/已经终止
+5. 每个真实匹配的零步骤终态独立登录→群→精确runId详情，核对实际可见终态/无步骤说明且无等待第一步；重新核对公开状态和零目标派发/审计/发送
+6. 两状态分别留证：两个都验证才PASS，任一明确业务/文案违约FAIL，任一前提未命中BLOCKED且不能掩盖另一状态FAIL
 
 **预期结果**
 
@@ -1269,20 +1271,24 @@
 
 **时序要求**
 
-1. 所有准备/终态采样上限仅诊断，未形成前提判BLOCKED；不新增业务SLA或5秒/60秒容差
+1. 14000/4000/10000ms仅控制真实外部响应/副作用，用于造数；原5秒/60秒及15秒配置不修改、不钳制
+2. 70秒轮询与120秒测试预算仅诊断；约51秒只是估计，不是业务SLA或成功证据；独立活动预算验收仍由原专项负责
 
 **故障注入**
 
-1. 只使用独立Agent真实响应/屏障和公开API；不改写产品状态、浏览器响应或DOM
+1. 独立Agent延迟真实模型/审计响应，独立Gateway延迟真实发送落地与202响应；没有504分支，不增加幂等或否定查询保证
+2. 仅公开API创建/触发/关闭Agent；不写SQL账本、模拟成功API、操作内部DOM状态或使用新hook
 
 **取证**
 
-1. 公开API实际runId/status/endReason/steps及独立网关请求和落地账本
-2. 浏览器trace、每个状态的实际可见文字及截图；缺失前提单独保留
+1. 四个真实holder请求的runId、trigger context groupId、接收/完成时间、按runId后续计划；原始审计groupId/text和Gateway落地账本
+2. 目标公开runId/status/endReason/steps采样与完整Agent请求账本；首次等待证明、disable操作和每角色ready/B原因
+3. 每个真实终态的浏览器trace、实际可见文字与截图；最终逐状态PASS/FAIL/BLOCKED，真实FAIL优先
 
 **清理**
 
-1. finally释放仅本例Agent屏障；独立fixture关闭浏览器与自有进程/数据库
+1. 没有新增控制器或锁；finally保存全部本例账本；普通独立fixture关闭自有pending tasks、浏览器、进程与数据库
+2. 不结束其他任务holder，不用删除或改写目标终态解除前提
 
 **数据**
 
@@ -1292,13 +1298,26 @@
     "chromium"
   ],
   "requiredStates": [
-    "failed/wall_clock/steps=[]",
-    "cancelled/cancelled/steps=[]"
+    "failed/wall_clock/steps=[]且从未派发模型",
+    "cancelled/cancelled/steps=[]且从未派发模型"
   ],
+  "holders": {
+    "count": 4,
+    "turns": [
+      "get_recent_messages",
+      "send_message",
+      "finish"
+    ],
+    "eachModelResponseDelayMs": 14000,
+    "auditResponseDelayMs": 4000,
+    "gatewayEffectDelayMs": 10000,
+    "gatewayResponseDelayMs": 10000
+  },
   "notEvidence": [
-    "3次协议错误产生3步的failed",
-    "已有工具完成后的cancelled",
-    "组件静态渲染或伪造API响应"
+    "估算51秒",
+    "预存或篡改active_ms/终态/steps",
+    "已有步骤终态或被派发模型的目标",
+    "组件渲染或伪造API响应"
   ]
 }
 ```
