@@ -382,7 +382,11 @@ export class AgentTools {
             : "SEND_FAILED",
           message.failCode ?? "Message could not be sent.",
         );
-      await sleep(100);
+      // Polling/DB reads already consumed part of the original wait budget.
+      // Do not add a fresh 100ms sleep when less than that remains. Timer and
+      // database scheduling still determine the actual return boundary.
+      const left = deadline - Date.now();
+      if (left > 0) await sleep(Math.min(100, left));
     } while (Date.now() < deadline);
     return toolError(
       "SEND_TIMEOUT",
