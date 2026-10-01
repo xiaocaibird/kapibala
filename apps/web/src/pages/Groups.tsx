@@ -397,13 +397,15 @@ function GroupDirectoryView({
       <div className="section-heading">
         <h2>{hasConditions ? "匹配结果" : "所有群组"}</h2>
         <span className="muted small" aria-live="polite">
-          {pendingQuery
-            ? "正在应用搜索条件…"
-            : !state.initialized
-              ? state.error && !busy
-                ? "暂未取得群目录"
-                : "正在读取群目录"
-              : `已加载 ${state.items.length} 个群 · ${state.stale ? "列表待刷新" : state.nextCursor ? "还有更多" : "已全部加载"}`}
+          {state.composing
+            ? "正在输入，完成选词后再搜索"
+            : pendingQuery
+              ? "等待应用搜索条件…"
+              : !state.initialized
+                ? state.error && !busy
+                  ? "暂未取得群目录"
+                  : "正在读取群目录"
+                : `已加载 ${state.items.length} 个群 · ${state.stale ? "列表待刷新" : state.nextCursor ? "还有更多" : "已全部加载"}`}
         </span>
       </div>
       {!state.initialized ? (

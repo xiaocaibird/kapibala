@@ -440,6 +440,46 @@ try {
   );
   await go("groups");
   const search = page.getByRole("searchbox");
+  // Synthetic composition covers our event handling and copy only. A real OS
+  // input method remains a separate human/browser compatibility exercise.
+  const compositionRequests = [];
+  const captureSearch = (request) => {
+    const requestUrl = new URL(request.url());
+    if (requestUrl.pathname === "/api/group-directory")
+      compositionRequests.push(requestUrl.searchParams.get("q") ?? "");
+  };
+  await wait();
+  page.on("request", captureSearch);
+  await search.focus();
+  await search.dispatchEvent("compositionstart", { data: "" });
+  await search.fill("ceshi");
+  await wait();
+  await page.getByText("正在输入，完成选词后再搜索", { exact: true }).waitFor();
+  assert.deepEqual(compositionRequests, []);
+  assert.ok(await search.evaluate((el) => el === document.activeElement));
+  assert.ok(
+    await page
+      .getByRole("button", { name: "刷新列表", exact: true })
+      .isDisabled(),
+  );
+  assert.ok(
+    await page
+      .getByRole("button", { name: "重置条件", exact: true })
+      .isEnabled(),
+  );
+  await search.fill("测试");
+  await search.dispatchEvent("compositionend", { data: "测试" });
+  await page.getByText("等待应用搜索条件…", { exact: true }).waitFor();
+  await wait();
+  assert.deepEqual(compositionRequests, ["测试"]);
+  assert.ok(await search.evaluate((el) => el === document.activeElement));
+  page.off("request", captureSearch);
+  await page.screenshot({
+    path: ".runtime/manual-ui-composition-committed.png",
+  });
+  pass(
+    "synthetic composition shows input copy without an intermediate request; committed text queries once and retains focus",
+  );
   await search.fill("测试");
   await wait();
   assert.ok(await search.evaluate((el) => el === document.activeElement));
