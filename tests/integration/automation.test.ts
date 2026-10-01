@@ -233,6 +233,7 @@ const messaging: MessagingService = {
       : null;
   },
   async kick(_input, options): Promise<{ kicked: true }> {
+    await options?.beforeDispatch?.();
     kickCalls++;
     if (kickFailure) throw new RemoteError(409, kickFailure);
     if (kickWaitForAbort)

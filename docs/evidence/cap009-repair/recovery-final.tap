@@ -1,0 +1,63 @@
+TAP version 13
+# Subtest: CAP009 exact refused-before-ready SIGKILL resumes the same audited step
+ok 1 - CAP009 exact refused-before-ready SIGKILL resumes the same audited step
+  ---
+  duration_ms: 1454.241959
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_5c8bac2373f148f1a4c89461ba364805; revision 57ecd83fd82703221cdc88042d8f5e096afef36e; guardian 91430; API http://127.0.0.1:52495; controller http://127.0.0.1:52494
+# {"case":"CAP009-development-repaired","oldGuardian":91430,"newGuardian":91480,"held":{"protocol":"qa-capacity-control/1","leaseId":"e8f8be22-79ca-4e90-8924-cf8d18efef3d","state":"held","expiresAt":"2026-10-01T06:02:55.324Z","binding":{"apiUrl":"http://127.0.0.1:52495","revision":"57ecd83fd82703221cdc88042d8f5e096afef36e","pid":91430,"observedOwnerToken":"<redacted>"},"correlation":{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one"},"events":[{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":1,"at":"2026-10-01T06:02:45.337Z","kind":"capacity-held","holderKeys":["qa-capacity:cad903b0-bba0-4388-9ca2-37ce28218be9:e8f8be22-79ca-4e90-8924-cf8d18efef3d:0","qa-capacity:cad903b0-bba0-4388-9ca2-37ce28218be9:e8f8be22-79ca-4e90-8924-cf8d18efef3d:1","qa-capacity:cad903b0-bba0-4388-9ca2-37ce28218be9:e8f8be22-79ca-4e90-8924-cf8d18efef3d:2","qa-capacity:cad903b0-bba0-4388-9ca2-37ce28218be9:e8f8be22-79ca-4e90-8924-cf8d18efef3d:3","qa-capacity:cad903b0-bba0-4388-9ca2-37ce28218be9:e8f8be22-79ca-4e90-8924-cf8d18efef3d:4","qa-capacity:cad903b0-bba0-4388-9ca2-37ce28218be9:e8f8be22-79ca-4e90-8924-cf8d18efef3d:5","qa-capacity:cad903b0-bba0-4388-9ca2-37ce28218be9:e8f8be22-79ca-4e90-8924-cf8d18efef3d:6"]},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":2,"at":"2026-10-01T06:02:45.349Z","kind":"admission-refused","attemptId":"07ceeb8e-02f9-4d5e-a738-00df8938eb2d","reason":"capacity","callbackEntered":false,"remoteRequestCount":0},{"groupId":"g","runId":"capacity-run","toolUseId":"kick-one","seq":3,"at":"2026-10-01T06:02:45.349Z","kind":"before-ready-held","attemptId":"07ceeb8e-02f9-4d5e-a738-00df8938eb2d","reason":"capacity","callbackEntered":false,"remoteRequestCount":0}]},"pending":{"run_id":"capacity-run","ordinal":1,"kind":"tool_use","tool_use_id":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"result_summary":"","is_error":false,"error_code":null,"audit_verdict":"pass","raw_response":"{\\"stop_reason\\":\\"tool_use\\",\\"content\\":[{\\"type\\":\\"tool_use\\",\\"id\\":\\"kick-one\\",\\"name\\":\\"kick_user\\",\\"input\\":{\\"platform_user_id\\":\\"external-target\\",\\"reason\\":\\"engineering capacity observation\\"}}]}","state":"executing","result":null,"audit_attempts":1,"intent":{"accountId":"account-2","dispatchState":"awaiting_admission","targetPlatformUserId":"external-target"}},"recovered":{"id":"capacity-run","groupId":"g","status":"finished","endReason":"final","summary":"done","recoveryNote":null,"steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"{\\"kicked\\":true}","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\\"stop_reason\\":\\"tool_use\\",\\"content\\":[{\\"type\\":\\"tool_use\\",\\"id\\":\\"kick-one\\",\\"name\\":\\"kick_user\\",\\"input\\":{\\"platform_user_id\\":\\"external-target\\",\\"reason\\":\\"engineering capacity observation\\"}}]}"},{"ordinal":2,"kind":"final","toolUseId":null,"name":null,"input":null,"resultSummary":"\\"done\\"","isError":false,"errorCode":null,"auditVerdict":null,"rawResponse":"{\\"stop_reason\\":\\"end_turn\\",\\"content\\":[{\\"type\\":\\"text\\",\\"text\\":\\"done\\"}]}"}]},"kicks":1,"audits":1,"turns":2}
+# Subtest: CAP009 a dispatched kick killed before response remains paused without replay
+ok 2 - CAP009 a dispatched kick killed before response remains paused without replay
+  ---
+  duration_ms: 1472.396625
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_77ffd6e206184388b80b51ffd0bf95b9; revision 57ecd83fd82703221cdc88042d8f5e096afef36e; guardian 91502; API http://127.0.0.1:52566; controller http://127.0.0.1:52565
+# {"case":"CAP009-dispatched-unknown","saved":{"state":"executing","intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}},"recovered":{"id":"capacity-run","groupId":"g","status":"running","endReason":null,"summary":null,"recoveryNote":"A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.","steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\\"stop_reason\\":\\"tool_use\\",\\"content\\":[{\\"type\\":\\"tool_use\\",\\"id\\":\\"kick-one\\",\\"name\\":\\"kick_user\\",\\"input\\":{\\"platform_user_id\\":\\"external-target\\",\\"reason\\":\\"engineering capacity observation\\"}}]}"}]},"kicks":1,"audits":1,"turns":1}
+# Subtest: CAP009 dispatch intent commit then pre-HTTP SIGKILL stays conservatively paused
+ok 3 - CAP009 dispatch intent commit then pre-HTTP SIGKILL stays conservatively paused
+  ---
+  duration_ms: 1330.514708
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_5784848f1cd64b46bfdd9d1fe23f5482; revision 57ecd83fd82703221cdc88042d8f5e096afef36e; guardian 91965; API http://127.0.0.1:52628; controller http://127.0.0.1:52627
+# {"case":"CAP009-intent-committed-before-http","saved":{"state":"executing","intent":{"accountId":"account-2","dispatchState":"dispatching","targetPlatformUserId":"external-target"}},"recovered":{"id":"capacity-run","groupId":"g","status":"running","endReason":null,"summary":null,"recoveryNote":"A kick was dispatched before interruption; membership changes cannot prove whether replay is safe.","steps":[{"ordinal":1,"kind":"tool_use","toolUseId":"kick-one","name":"kick_user","input":{"reason":"engineering capacity observation","platform_user_id":"external-target"},"resultSummary":"","isError":false,"errorCode":null,"auditVerdict":"pass","rawResponse":"{\\"stop_reason\\":\\"tool_use\\",\\"content\\":[{\\"type\\":\\"tool_use\\",\\"id\\":\\"kick-one\\",\\"name\\":\\"kick_user\\",\\"input\\":{\\"platform_user_id\\":\\"external-target\\",\\"reason\\":\\"engineering capacity observation\\"}}]}"}]},"kicks":0}
+# Subtest: CAP009 legacy executing intents without a dispatch stage remain paused
+ok 4 - CAP009 legacy executing intents without a dispatch stage remain paused
+  ---
+  duration_ms: 1207.287542
+  type: 'test'
+  ...
+# Developer-owned UUID database /kapibala_test_18ebf1b68bca4b8c9f266409e05b7f98; revision 57ecd83fd82703221cdc88042d8f5e096afef36e; guardian 92007; API http://127.0.0.1:52691; controller http://127.0.0.1:52690
+# Subtest: CAP009 two live Agent instances recover one admitted step without duplicate audit or effect
+ok 5 - CAP009 two live Agent instances recover one admitted step without duplicate audit or effect
+  ---
+  duration_ms: 250.482542
+  type: 'test'
+  ...
+# Independent database: kapibala_test_2bb6742055f146d6a4aeed04efcb9bf9
+# {"component":"postgres","event":"idle_connection_error","message":"terminating connection due to administrator command"}
+# Subtest: CAP009 failed durable dispatch write never reaches the gateway
+ok 6 - CAP009 failed durable dispatch write never reaches the gateway
+  ---
+  duration_ms: 227.557083
+  type: 'test'
+  ...
+# Independent database: kapibala_test_a8b31a18c2a64390ad0db035dc8fcba6
+# Subtest: CAP009 local kick validation runs before the durable dispatch hook
+ok 7 - CAP009 local kick validation runs before the durable dispatch hook
+  ---
+  duration_ms: 80.433208
+  type: 'test'
+  ...
+# Independent database: kapibala_test_134c8a86cac94c10ae99c88c1788a9b9
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6182.925042

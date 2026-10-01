@@ -196,7 +196,7 @@ test("DC03 lost PUT response remains addressable; TTL and explicit release race 
   });
 });
 
-test("DC04 exact before-ready crash retains old history and rebinds same API port to new guardian", async (t) => {
+test("DC04 exact before-ready crash resumes the saved step and rebinds same API port to new guardian", async (t) => {
   const f = await capacityFixture(t);
   await f.prepare();
   const lease = await f.hold("hold-after-refusal-before-ready");
@@ -226,6 +226,14 @@ test("DC04 exact before-ready crash retains old history and rebinds same API por
     "executing",
   );
   assert.equal(f.kicks(), 0);
+  assert.equal(
+    (
+      await f.db.query(
+        "SELECT intent->>'dispatchState' AS dispatch_state FROM agent_steps WHERE run_id='capacity-run'",
+      )
+    ).rows[0]!.dispatch_state,
+    "awaiting_admission",
+  );
   const old = f.target();
   await f.kill();
   const released = await f.snapshot(lease.id, "DELETE");
@@ -236,23 +244,23 @@ test("DC04 exact before-ready crash retains old history and rebinds same API por
   assert.equal(f.target().apiUrl, old.apiUrl);
   assert.equal((await f.capabilities(old)).status, 409);
   assert.equal((await f.capabilities()).status, 200);
-  await until(async () => Boolean((await f.run()).recoveryNote));
+  await until(async () => (await f.run()).status === "finished");
   const recovered = await f.run();
-  assert.equal(recovered.status, "running");
-  assert.ok(recovered.recoveryNote?.includes("kick"));
+  assert.equal(recovered.status, "finished");
+  assert.equal(recovered.recoveryNote, null);
   await delay(1500);
-  assert.equal(f.kicks(), 0);
+  assert.equal(f.kicks(), 1);
   assert.equal(f.audits(), 1);
-  assert.equal(f.turns(), 1);
+  assert.equal(f.turns(), 2);
   assert.deepEqual(await f.snapshot(lease.id, "DELETE"), released);
   f.evidence({
-    case: "DC04-known-product-gap",
+    case: "DC04-repaired-product-recovery",
     oldGuardian: old.pid,
     newGuardian: f.target().pid,
     held,
     recovered,
     limit:
-      "Development reproduction: precise CAP009 crash currently pauses; controller does not repair state. This is not a QA result.",
+      "Development regression: the saved pre-dispatch intent resumes without repeating its audit or model response. The controller does not repair state. This is not a QA result.",
   });
 });
 
