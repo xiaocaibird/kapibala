@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { AppContext } from "../../core/context.js";
+import type { TestAccountObservation } from "../../core/test-runtime-observer.js";
 import { emit, withSavepoint, type Queryable } from "../../core/db.js";
 import { AppError, RemoteError } from "../../core/errors.js";
 import type { AccountStatus } from "../../../../../packages/contracts/src/index.js";
@@ -26,15 +27,25 @@ export class Accounts {
       await this.ctx.db.query<AccountRow>("SELECT * FROM accounts ORDER BY id")
     ).rows.map(accountDto);
   }
-  async connect(id: string) {
+  async connect(id: string, requestId?: string) {
+    const observation = requestId
+      ? this.ctx.testRuntimeObserver?.account({
+          requestId,
+          accountId: id,
+          operation: "connect",
+        })
+      : undefined;
     let remoteSucceeded = false;
     try {
       return await this.ctx.db.transaction(async (tx) => {
-        const row = (
-          await tx.query<AccountRow>(
+        await observation?.transaction(tx);
+        const acquire = () =>
+          tx.query<AccountRow>(
             "SELECT * FROM accounts WHERE id=$1 FOR UPDATE",
             [id],
-          )
+          );
+        const row = (
+          await (observation ? observation.lock(acquire) : acquire())
         ).rows[0];
         if (!row) throw new AppError(404, "ACCOUNT_NOT_FOUND", "账号不存在");
         if (row.status !== "idle" && row.status !== "disconnected")
@@ -47,13 +58,21 @@ export class Accounts {
         const response = z
           .object({ platformUserId: z.string().min(1) })
           .parse(result);
-        return this.saveRemoteResult(tx, id, async () => {
-          await tx.query(
-            "UPDATE accounts SET platform_user_id=$2 WHERE id=$1",
-            [id, response.platformUserId],
-          );
-          return accountDto(await changeAccount(tx, id, "online", row.status));
-        });
+        observation?.remoteSucceeded();
+        return this.saveRemoteResult(
+          tx,
+          id,
+          async () => {
+            await tx.query(
+              "UPDATE accounts SET platform_user_id=$2 WHERE id=$1",
+              [id, response.platformUserId],
+            );
+            return accountDto(
+              await changeAccount(tx, id, "online", row.status),
+            );
+          },
+          observation,
+        );
       });
     } catch (error) {
       if (remoteSucceeded)
@@ -62,15 +81,32 @@ export class Accounts {
       throw error;
     }
   }
-  async transition(id: string, to: AccountStatus, expectedFrom: AccountStatus) {
+  async transition(
+    id: string,
+    to: AccountStatus,
+    expectedFrom: AccountStatus,
+    requestId?: string,
+  ) {
+    const observation = requestId
+      ? this.ctx.testRuntimeObserver?.account({
+          requestId,
+          accountId: id,
+          operation: "transition",
+          expectedFrom,
+          to,
+        })
+      : undefined;
     let remoteSucceeded: "connect" | "disconnect" | undefined;
     try {
       return await this.ctx.db.transaction(async (tx) => {
-        const account = (
-          await tx.query<AccountRow>(
+        await observation?.transaction(tx);
+        const acquire = () =>
+          tx.query<AccountRow>(
             "SELECT * FROM accounts WHERE id=$1 FOR UPDATE",
             [id],
-          )
+          );
+        const account = (
+          await (observation ? observation.lock(acquire) : acquire())
         ).rows[0];
         if (!account)
           throw new AppError(404, "ACCOUNT_NOT_FOUND", "账号不存在");
@@ -122,24 +158,29 @@ export class Accounts {
     tx: Queryable,
     accountId: string,
     persist: () => Promise<T>,
+    observation?: TestAccountObservation,
   ): Promise<T> {
     // The account lock predates the savepoint: later connect/disconnect requests
     // cannot overtake this known result. No new transaction or remote retry is
     // allowed, including after an unknown COMMIT or a lost connection.
     for (let attempt = 1; ; attempt++) {
       try {
-        return await withSavepoint(tx, persist);
+        return await withSavepoint(tx, async () => {
+          const result = await persist();
+          await observation?.save(tx);
+          return result;
+        });
       } catch (error) {
         const code =
           error && typeof error === "object" && "code" in error
             ? error.code
             : undefined;
-        if (
-          attempt >= 3 ||
-          typeof code !== "string" ||
-          !["40001", "40P01", "55P03"].includes(code)
-        )
-          throw error;
+        const willRetry =
+          attempt < 3 &&
+          typeof code === "string" &&
+          ["40001", "40P01", "55P03"].includes(code);
+        await observation?.saveFailed(error, willRetry);
+        if (!willRetry) throw error;
         this.ctx.log.warn(
           { accountId, attempt, code },
           "Retrying local account persistence under the original account lock",

@@ -110,6 +110,7 @@ export async function createApp(options: AppOptions = {}) {
         options.background !== false,
       ),
   );
+  ctx.testRuntimeObserver?.modules(progress.map((item) => item.name));
   app.get("/api/diagnostics/background", async (request) => {
     if (request.identity?.role !== "admin")
       throw new AppError(403, "FORBIDDEN", "后台运行诊断仅管理员可查看");
@@ -141,12 +142,23 @@ export async function createApp(options: AppOptions = {}) {
         setInterval(() => {
           if (busy) return;
           busy = true;
-          activity.start();
+          const observer = ctx.testRuntimeObserver;
+          if (!observer) activity.start();
           const tick = Promise.resolve()
-            .then(() => module.tick())
-            .then(() => activity.finish(true))
+            .then(async () => {
+              if (observer) {
+                await observer.beforeTick(activity.name);
+                activity.start();
+                await observer.tick(activity.name, () => module.tick());
+              } else await module.tick();
+            })
+            .then(() => {
+              activity.finish(true);
+              observer?.tickFinished(activity.name, true);
+            })
             .catch((err) => {
               activity.finish(false);
+              observer?.tickFinished(activity.name, false);
               app.log.error(
                 { err, module: activity.name },
                 "Module tick failed",

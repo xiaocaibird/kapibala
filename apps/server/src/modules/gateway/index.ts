@@ -116,7 +116,7 @@ export function createGatewayModule(
     registerGroupDirectory(app, ctx);
     app.get("/api/accounts", () => accounts.list());
     app.post("/api/accounts/:id/connect", (request) =>
-      accounts.connect(parse(idParams, request.params).id),
+      accounts.connect(parse(idParams, request.params).id, request.id),
     );
     app.post("/api/accounts/:id/transition", (request) => {
       const { to, expectedFrom } = parse(
@@ -130,6 +130,7 @@ export function createGatewayModule(
         parse(idParams, request.params).id,
         to,
         expectedFrom,
+        request.id,
       );
     });
     app.post("/api/groups", async (request, reply) => {
