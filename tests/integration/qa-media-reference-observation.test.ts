@@ -352,7 +352,7 @@ test(
     const row = await f.ready();
     const reference = await f.arm(
       "hold-media-reference",
-      ["reference-registered"],
+      ["reference-registered", "reference-committed"],
       { kind: "trigger", messageId: row.message_id },
     );
     await blocker.query("COMMIT");
@@ -366,6 +366,15 @@ test(
     assert.equal((await f.api(`/api/agent-runs/${runId}`)).status, 404);
     await f.advance(reference.id);
     const committed = await f.event(reference.id, "reference-committed");
+    assert.equal(committed.state, "held");
+    assert.equal((await f.refs()).length, 1);
+    assert.equal((await f.api(`/api/agent-runs/${runId}`)).status, 200);
+    assert.equal(
+      f.kicks(),
+      0,
+      "post-commit hold cannot execute the next business action",
+    );
+    await f.advance(reference.id);
     await until(async () =>
       Boolean(
         (
