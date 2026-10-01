@@ -1,0 +1,213 @@
+TAP version 13
+# Subtest: slow socket: an in-flight oversized frame cannot authorize further buffers, and stalled close is terminated
+ok 1 - slow socket: an in-flight oversized frame cannot authorize further buffers, and stalled close is terminated
+  ---
+  duration_ms: 453.37125
+  type: 'test'
+  ...
+# Subtest: slow socket: callback starvation closes even below the buffer watermark; ordinary close cancels the fallback
+ok 2 - slow socket: callback starvation closes even below the buffer watermark; ordinary close cancels the fallback
+  ---
+  duration_ms: 162.212584
+  type: 'test'
+  ...
+# Subtest: slow socket: a drained frame larger than the watermark still reaches an able consumer
+ok 3 - slow socket: a drained frame larger than the watermark still reaches an able consumer
+  ---
+  duration_ms: 0.301208
+  type: 'test'
+  ...
+# Subtest: slow socket: control replies wait for a permitted oversized frame instead of disconnecting it
+ok 4 - slow socket: control replies wait for a permitted oversized frame instead of disconnecting it
+  ---
+  duration_ms: 0.176292
+  type: 'test'
+  ...
+# Subtest: slow socket: pending frame admission is bounded and all waiters finish when closed
+ok 5 - slow socket: pending frame admission is bounded and all waiters finish when closed
+  ---
+  duration_ms: 10.900583
+  type: 'test'
+  ...
+# Subtest: realtime: a stopped TCP reader is disconnected without blocking a healthy peer; client cursor replays all remaining durable events
+ok 6 - realtime: a stopped TCP reader is disconnected without blocking a healthy peer; client cursor replays all remaining durable events
+  ---
+  duration_ms: 1983.164291
+  type: 'test'
+  ...
+# Independent database: kapibala_test_27ffc98d3c454137abbfb79cffccee37
+# Paused TCP reader removed; 80 durable events reached healthy peer and reconnect in exact order
+# Subtest: realtime: marker bursts batch one database request at a time without dropping admitted scope replies or skipping durable replay
+ok 7 - realtime: marker bursts batch one database request at a time without dropping admitted scope replies or skipping durable replay
+  ---
+  duration_ms: 222.809333
+  type: 'test'
+  ...
+# Independent database: kapibala_test_5cdf6b71a5dd4aec849e93f532f03206
+# Subtest: realtime: overflowing pending marker capacity closes without launching unbounded database work
+ok 8 - realtime: overflowing pending marker capacity closes without launching unbounded database work
+  ---
+  duration_ms: 283.654958
+  type: 'test'
+  ...
+# Independent database: kapibala_test_7c643941364743379e70da5371f658ec
+# Subtest: timeline: continuation transfers only its slice and preserves old frozen cursors across writes, page sizes and large offsets
+ok 9 - timeline: continuation transfers only its slice and preserves old frozen cursors across writes, page sizes and large offsets
+  ---
+  duration_ms: 278.359625
+  type: 'test'
+  ...
+# Independent database: kapibala_test_5842b29c35dc4d27823abe3b94ad63a6
+# Frozen snapshot 1252279 bytes; continuation database transfer maximum 91661 bytes for at most 9 items
+# Subtest: diagnostics: only admin sees disabled process-local scheduler data; public health stays unchanged
+ok 10 - diagnostics: only admin sees disabled process-local scheduler data; public health stays unchanged
+  ---
+  duration_ms: 86.000125
+  type: 'test'
+  ...
+# Independent database: kapibala_test_3519752aa6e744f2b25e1a071a27f129
+# Subtest: diagnostics: failures, hung ticks and later recovery are distinguishable without leaking error bodies or claiming business completion
+ok 11 - diagnostics: failures, hung ticks and later recovery are distinguishable without leaking error bodies or claiming business completion
+  ---
+  duration_ms: 514.23325
+  type: 'test'
+  ...
+# Independent database: kapibala_test_14de10735f214394b6b5fa1ea590541a
+# Subtest: C2 offline entry: independent process loads only local key fields, random localhost port, sanitized logs and graceful lock release
+ok 12 - C2 offline entry: independent process loads only local key fields, random localhost port, sanitized logs and graceful lock release
+  ---
+  duration_ms: 256.983917
+  type: 'test'
+  ...
+# {"childPid":57614,"exitCode":0,"serviceAddress":"http://127.0.0.1:65521","realGenerationCalls":0,"keyLogged":false,"ownerLockRemoved":true}
+# Subtest: C2 offline: actual backend tools and all four single-block decisions are compatible
+ok 13 - C2 offline: actual backend tools and all four single-block decisions are compatible
+  ---
+  duration_ms: 157.8835
+  type: 'test'
+  ...
+# Subtest: C2 offline: invalid tool declarations and schemas stop before inference
+ok 14 - C2 offline: invalid tool declarations and schemas stop before inference
+  ---
+  duration_ms: 16.891167
+  type: 'test'
+  ...
+# Subtest: C2 offline: malformed requests and oversized histories do not buy inference
+ok 15 - C2 offline: malformed requests and oversized histories do not buy inference
+  ---
+  duration_ms: 10.554833
+  type: 'test'
+  ...
+# Subtest: C2 offline: interleaved runs preserve complete error history and idempotency keys without cross-run state
+ok 16 - C2 offline: interleaved runs preserve complete error history and idempotency keys without cross-run state
+  ---
+  duration_ms: 51.506917
+  type: 'test'
+  ...
+# Subtest: C2 offline: persistent same-request replay and completed-history continuation survive adapter restart
+ok 17 - C2 offline: persistent same-request replay and completed-history continuation survive adapter restart
+  ---
+  duration_ms: 57.804625
+  type: 'test'
+  ...
+# Subtest: C2 offline: conflicting run histories, corrupt state, symlink state and a second writer fail closed
+ok 18 - C2 offline: conflicting run histories, corrupt state, symlink state and a second writer fail closed
+  ---
+  duration_ms: 26.073417
+  type: 'test'
+  ...
+# Subtest: C2 offline: malformed or multiple model decisions never become an invented completion
+ok 19 - C2 offline: malformed or multiple model decisions never become an invented completion
+  ---
+  duration_ms: 128.767125
+  type: 'test'
+  ...
+# Subtest: C2 offline: audit pass/fail preserved, errors never grant permission and audit context stays separate
+ok 20 - C2 offline: audit pass/fail preserved, errors never grant permission and audit context stays separate
+  ---
+  duration_ms: 9.986917
+  type: 'test'
+  ...
+# Subtest: C2 offline: same-run concurrent inference rejected and total live generations bounded to four
+ok 21 - C2 offline: same-run concurrent inference rejected and total live generations bounded to four
+  ---
+  duration_ms: 52.498583
+  type: 'test'
+  ...
+# Subtest: C2 offline provider: official HTTPS request, header-only key, bounded JSON generation, no executable tools
+ok 22 - C2 offline provider: official HTTPS request, header-only key, bounded JSON generation, no executable tools
+  ---
+  duration_ms: 12.166792
+  type: 'test'
+  ...
+# Subtest: C2 offline provider: provider HTTP/auth/rate errors never reflect bodies or manufacture audit verdicts
+ok 23 - C2 offline provider: provider HTTP/auth/rate errors never reflect bodies or manufacture audit verdicts
+  ---
+  duration_ms: 2.195167
+  type: 'test'
+  ...
+# Subtest: C2 offline provider: invalid JSON, multiple candidates, native tools, truncation and safety blocks fail explicitly
+ok 24 - C2 offline provider: invalid JSON, multiple candidates, native tools, truncation and safety blocks fail explicitly
+  ---
+  duration_ms: 5.751625
+  type: 'test'
+  ...
+# Subtest: C2 offline provider: actual abort signals stop bounded wait; no hidden automatic retry
+ok 25 - C2 offline provider: actual abort signals stop bounded wait; no hidden automatic retry
+  ---
+  duration_ms: 30.151667
+  type: 'test'
+  ...
+# Subtest: usage: real provider adapter records validated turn/audit attempts, cache adds no inference and missing/error usage stays unknown
+ok 26 - usage: real provider adapter records validated turn/audit attempts, cache adds no inference and missing/error usage stays unknown
+  ---
+  duration_ms: 103.894458
+  type: 'test'
+  ...
+# Subtest: usage: provider timeout and cancellation each emit one failed attempt without invented zero usage
+ok 27 - usage: provider timeout and cancellation each emit one failed attempt without invented zero usage
+  ---
+  duration_ms: 21.039833
+  type: 'test'
+  ...
+# Subtest: usage: retention bounds count, bytes and age, cleans only owned crash temporary files and preserves private permissions
+ok 28 - usage: retention bounds count, bytes and age, cleans only owned crash temporary files and preserves private permissions
+  ---
+  duration_ms: 44.118833
+  type: 'test'
+  ...
+# Subtest: usage: disabled config makes no files; unsafe storage and invalid config degrade with fixed diagnostics
+ok 29 - usage: disabled config makes no files; unsafe storage and invalid config degrade with fixed diagnostics
+  ---
+  duration_ms: 8.580875
+  type: 'test'
+  ...
+# Subtest: usage: optional journal write failure and bounded-queue overflow do not reject successful model responses
+ok 30 - usage: optional journal write failure and bounded-queue overflow do not reject successful model responses
+  ---
+  duration_ms: 41.75575
+  type: 'test'
+  ...
+# Subtest: timeline measurement: 1000 messages, real query plans and HTTP pages
+ok 31 - timeline measurement: 1000 messages, real query plans and HTTP pages
+  ---
+  duration_ms: 554.371917
+  type: 'test'
+  ...
+# {"count":1000,"database":"kapibala_test_7138fbf03ad944338f1d0b74797e7d89","first":{"elapsedMs":23.732832999999914,"responseBytes":22961,"heapUsedDelta":-5705648,"rssDelta":6406144},"continuation":{"elapsedMs":5.933667000000014,"responseBytes":22955,"heapUsedDelta":839472,"rssDelta":20889600},"selectedRows":1000,"storedSnapshotBytes":27824,"cleanup":"app, pools and exact temporary database closed"}
+# Subtest: timeline measurement: 10000 messages, real query plans and HTTP pages
+ok 32 - timeline measurement: 10000 messages, real query plans and HTTP pages
+  ---
+  duration_ms: 1478.8525
+  type: 'test'
+  ...
+# {"count":10000,"database":"kapibala_test_2b6de929841a428d9060c78197329f82","first":{"elapsedMs":120.65758399999982,"responseBytes":23065,"heapUsedDelta":25380664,"rssDelta":30883840},"continuation":{"elapsedMs":8.578875000000153,"responseBytes":23059,"heapUsedDelta":-33800904,"rssDelta":-7241728},"selectedRows":10000,"storedSnapshotBytes":274969,"cleanup":"app, pools and exact temporary database closed"}
+1..32
+# tests 32
+# suites 0
+# pass 32
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4209.464417
