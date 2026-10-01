@@ -1,0 +1,141 @@
+[
+  {
+    "priority": "P1",
+    "mode": "automated",
+    "automation": "tests/system/integration-streams.spec.ts",
+    "preconditions": [
+      "后续绑定专项范围授权；真实专属PostgreSQL与QA网关，固定已确认D044候选",
+      "不修改SUT内部WS发送器、缓冲常量或业务数据库来制造通过"
+    ],
+    "cleanup": [
+      "证据写失败也必须尝试关闭所有本轮WS；保留首次业务失败，另记证据/清理问题",
+      "仅清理本用例自有资源；单个WS关闭等待最多5000ms，未确认不能假装清理完成"
+    ],
+    "evidence": [
+      "HTTP/独立网关账本；实际接收帧身份、seq、完整应用payload字节、内容哈希、接收墙钟及单调时间；暂停/恢复/本端终止/真实关闭记录；分阶段观察与首次失败；清理前后快照。"
+    ],
+    "id": "INT-STREAM-001",
+    "title": "真实暂停TCP读取与健康消费者并行、按实际已收游标重放",
+    "requirements": [
+      "ENG-STREAM-01",
+      "R-A4-03",
+      "R-A4-04"
+    ],
+    "data": {
+      "projects": [
+        "system"
+      ],
+      "maxInjectedMessages": 2048,
+      "textPaddingBytes": 8192,
+      "injectionBudgetMs": 45000,
+      "closeObservationMs": 8000,
+      "replayObservationMs": 15000,
+      "historyMaxPages": 60,
+      "historyObservationMs": 30000,
+      "postReplayObservationMs": 1000,
+      "profileSource": "config/slow-reader-profile.ts",
+      "batchSize": 32,
+      "batchIntervalMs": 50,
+      "healthyDrainMs": 120000,
+      "pausedObservationMs": 8000,
+      "maxInjectedTextBytes": 18874368,
+      "receiptMaxFrames": 8192,
+      "receiptMaxPayloadBytes": 67108864,
+      "receiptMaxFramePayloadBytes": 16777216,
+      "peerClosePolicy": null
+    },
+    "steps": [
+      "两个真实WS连接鉴权，均收到checkpoint后暂停其中一个实际读取器并记录已收seq、应用消息payload字节及接收时间",
+      "按已冻结有限profile分批注入，注入阶段与健康端排空分开；时间或消息上限停止新注入但保留所有已发身份，每个阶段先核对两端所有已收协议/身份违约，再处理QA资源上限",
+      "健康端在独立有限排空窗口收齐全部已注入身份；通过公开消息接口最多60页读取checkpoint和本次全部已注入历史，验证文本哈希；正文大小不代表WS应用payload字节",
+      "持续实际暂停并观察后恢复读取，记录local terminate/close/error；未关闭、由QA关闭或缓冲区排空后没有缺失事件时BLOCKED；未知断流原因不能冒称慢读策略命中",
+      "使用慢端断开前最后实际收到的seq鉴权，核对原连接前缀及回放尾部，最终旧记录+回放恰好等于全部注入集合；继续采样1000ms检查迟到重复",
+      "外部关闭与回放断言完成后，再用已公开的精确close code/reason映射核对慢读策略原因；映射尚未交付或不匹配则保留已完成证据并BLOCKED，不提前中断独立回放检查"
+    ],
+    "expected": [
+      "健康连接不因另一个慢读断开；每次采样的已收消息身份唯一、seq合法递增，公开历史中的文本哈希对应独立注入样本；不对WS新增text必填要求",
+      "重连事件恰好覆盖实际未收到的区间，并核对旧记录与回放的完整集合；不能让max游标掩盖其之前已漏消息",
+      "不证明内部水位触发原因或内存上限，不冒充浏览器3秒恢复专项；有限注入不足必须显式BLOCKED",
+      "已观察到重复、乱序、缺seq、未知身份或错误文本即时FAIL，不被后续未触发关闭/回放缺口的BLOCKED掩盖",
+      "实际接收payload字节仅为完整WS应用消息体，不是TCP/WS线速总字节；记录单调时钟和墙钟、暂停/恢复、本端terminate及真实关闭来源；没有公开慢读关闭原因映射不得将关闭恢复冒充策略命中。",
+      "真实ws关闭时可能自动排空本地缓冲；完整记录closing时已收帧并推进实际游标，不将合法排空误判为产品违约；未关闭时暂停控制失效仅记QA前提BLOCKED。"
+    ],
+    "timing": [
+      "45000ms注入、120000ms健康端排空、8000ms暂停观察及8000ms恢复读后关闭观察、15000ms回放、30000ms公开历史遍历、1000ms负向采样是独立QA预算；另保留45000ms准备/清理，总执行预算272000ms，不新增产品吞吐/延迟门槛。"
+    ],
+    "faults": [
+      "仅暂停本用例真实ws/TCP reader；不伪造发送回调和服务端close"
+    ],
+    "preparation": {
+      "state": "script-ready",
+      "owner": "QA",
+      "details": [
+        "公开接口/独立网关/真实客户端控制和断言已补强；本次仅QA自身验证，未运行产品，旧BLOCKED结果不变。",
+        "默认2048条不保证触发真实背压；peerClosePolicy=null，需工程交付候选绑定的公开关闭原因映射或另评审只读连接诊断接入，禁止编造策略原因或修改内部发送回调。"
+      ]
+    }
+  },
+  {
+    "priority": "P1",
+    "mode": "automated",
+    "automation": "tests/system/integration-streams.spec.ts",
+    "preconditions": [
+      "后续绑定专项范围授权；真实专属PostgreSQL与QA网关，固定已确认D044候选",
+      "不修改SUT内部WS发送器、缓冲常量或业务数据库来制造通过"
+    ],
+    "cleanup": [
+      "仅清理本用例自有WS、进程、数据库、协议桩；保留首轮证据"
+    ],
+    "evidence": [
+      "HTTP/网关账本、真实接收帧序号与文本哈希、客户端暂停及关闭观察、完整断言取证"
+    ],
+    "id": "INT-STREAM-002",
+    "title": "续页改变页大小并交错发送确认、历史补投与新消息，冻结集合内容保持",
+    "requirements": [
+      "ENG-STREAM-01",
+      "R-A4-01",
+      "R-A4-02"
+    ],
+    "data": {
+      "projects": [
+        "system"
+      ],
+      "baselineExternalCount": 58,
+      "acceptedOwnCount": 1,
+      "firstPage": 7,
+      "pageSizes": [
+        1,
+        9,
+        4,
+        17,
+        3
+      ]
+    },
+    "steps": [
+      "通过网关种入58条已知时间/文本消息并收齐；在send请求屏障内为真实by-client-id响应设置屏障，省略SSE确认，accepted可见后再获取被测首屏",
+      "获取首屏7条，使用该首屏同一cursor的只读分支保存完整初始内容并确认own为accepted；释放真实查询和message_sent，再补投旧历史及最新消息",
+      "确认新视图已合并两条消息与own状态，再用原游标交替1/9/4/17/3页大小遍历至末尾",
+      "对比独立构造的59条身份/顺序/原文时间，以及同一被测cursor已取证的accepted own字段；对比新视图61条完整集合，禁止跨首屏快照比较"
+    ],
+    "expected": [
+      "原游标只返回首次59条，顺序固定、无重复/遗漏；续页请求页大小变化仍有效，单页不超limit",
+      "原快照未访问own保持首屏时accepted内容；新快照只有一条对应own且是sent、msgId/sentAt对应网关落地",
+      "历史与最新消息只进入新快照；原游标不夹带新成员或错误身份",
+      "每页及每次前提观察即检查身份唯一和已知内容，不将已观察到重复/未知身份/损坏字段误记为等待前提BLOCKED"
+    ],
+    "timing": [
+      "15000ms为种入/合并观察预算，未建立前提记BLOCKED，不新增业务SLA"
+    ],
+    "faults": [
+      "真实发送请求屏障中布置查询响应门，控制SSE确认和真实查询响应；响应可能按实际落地时机为404或200，不伪造状态；同一游标初值取证后释放，不改数据库快照"
+    ],
+    "preparation": {
+      "state": "script-ready",
+      "owner": "QA",
+      "details": [
+        "公开接口/独立网关/真实客户端操作及断言已准备；产品结果仍为NOT_RUN",
+        "真实有限负载能否触发慢端关闭和回放缺口需后续授权实跑；未建立前提必须BLOCKED，不能用工具自测代填通过"
+      ]
+    }
+  }
+]

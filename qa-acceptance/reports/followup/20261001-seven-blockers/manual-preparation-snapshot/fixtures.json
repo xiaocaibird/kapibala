@@ -1,0 +1,193 @@
+{
+  "sessionId": "fd6606a7-c28d-43d4-a75e-fd424adff503",
+  "sutRevision": "fb1589df08f00c10e9e62801007b1698d4d0155a",
+  "webUrl": "http://127.0.0.1:62395",
+  "apiUrl": "http://127.0.0.1:62304",
+  "fixtures": [
+    {
+      "label": "A",
+      "groupId": "9dd3bd7c-50d9-4d75-a66a-baf1e6d0ccc6",
+      "gatewayGroupId": "gateway-group-1",
+      "groupUrl": "http://127.0.0.1:62395/#/groups/9dd3bd7c-50d9-4d75-a66a-baf1e6d0ccc6",
+      "run": {
+        "id": "8074e28c-5797-402f-9b12-9f1592ea9403",
+        "groupId": "9dd3bd7c-50d9-4d75-a66a-baf1e6d0ccc6",
+        "status": "blocked",
+        "endReason": "audit_blocked",
+        "summary": null,
+        "recoveryNote": null,
+        "steps": [
+          {
+            "ordinal": 1,
+            "kind": "tool_use",
+            "toolUseId": "manual-audit-block",
+            "name": "send_message",
+            "input": {
+              "text": "本条不应实际发送",
+              "idempotency_key": "manual-blocked"
+            },
+            "resultSummary": "{\"code\":\"AUDIT_REJECTED\",\"message\":\"Audit service returned no conclusive verdict after three attempts.\",\"hint\":\"The run is blocked; no side effect was executed.\"}",
+            "isError": true,
+            "errorCode": "AUDIT_REJECTED",
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"manual-audit-block\",\"name\":\"send_message\",\"input\":{\"text\":\"本条不应实际发送\",\"idempotency_key\":\"manual-blocked\"}}]}"
+          }
+        ]
+      },
+      "runUrl": "http://127.0.0.1:62395/#/agent-runs/8074e28c-5797-402f-9b12-9f1592ea9403"
+    },
+    {
+      "label": "B",
+      "groupId": "2235881c-4ce7-492c-961a-74a35980d3e6",
+      "gatewayGroupId": "gateway-group-2",
+      "groupUrl": "http://127.0.0.1:62395/#/groups/2235881c-4ce7-492c-961a-74a35980d3e6",
+      "run": {
+        "id": "ca3c1ac3-7178-465d-97a6-e63f0cea7cfe",
+        "groupId": "2235881c-4ce7-492c-961a-74a35980d3e6",
+        "status": "finished",
+        "endReason": "final",
+        "summary": "任务已处理",
+        "recoveryNote": null,
+        "steps": [
+          {
+            "ordinal": 1,
+            "kind": "final",
+            "toolUseId": null,
+            "name": null,
+            "input": null,
+            "resultSummary": "\"任务已处理\"",
+            "isError": false,
+            "errorCode": null,
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"end_turn\",\"content\":[{\"type\":\"text\",\"text\":\"任务已处理\"}]}"
+          }
+        ]
+      },
+      "runUrl": "http://127.0.0.1:62395/#/agent-runs/ca3c1ac3-7178-465d-97a6-e63f0cea7cfe"
+    },
+    {
+      "label": "C",
+      "groupId": "2bae8ab5-41e7-4c74-821d-54aa086b0c2d",
+      "gatewayGroupId": "gateway-group-3",
+      "groupUrl": "http://127.0.0.1:62395/#/groups/2bae8ab5-41e7-4c74-821d-54aa086b0c2d",
+      "run": {
+        "id": "ca362f42-b9e9-4d6a-b07f-494d010567cf",
+        "groupId": "2bae8ab5-41e7-4c74-821d-54aa086b0c2d",
+        "status": "failed",
+        "endReason": "protocol_errors",
+        "summary": null,
+        "recoveryNote": null,
+        "steps": [
+          {
+            "ordinal": 1,
+            "kind": "protocol_error",
+            "toolUseId": null,
+            "name": null,
+            "input": null,
+            "resultSummary": "BAD_JSON",
+            "isError": true,
+            "errorCode": "BAD_JSON",
+            "auditVerdict": null,
+            "rawResponse": "not JSON"
+          },
+          {
+            "ordinal": 2,
+            "kind": "protocol_error",
+            "toolUseId": null,
+            "name": null,
+            "input": null,
+            "resultSummary": "BAD_JSON",
+            "isError": true,
+            "errorCode": "BAD_JSON",
+            "auditVerdict": null,
+            "rawResponse": "not JSON"
+          },
+          {
+            "ordinal": 3,
+            "kind": "protocol_error",
+            "toolUseId": null,
+            "name": null,
+            "input": null,
+            "resultSummary": "BAD_JSON",
+            "isError": true,
+            "errorCode": "BAD_JSON",
+            "auditVerdict": null,
+            "rawResponse": "not JSON"
+          }
+        ]
+      },
+      "runUrl": "http://127.0.0.1:62395/#/agent-runs/ca362f42-b9e9-4d6a-b07f-494d010567cf"
+    },
+    {
+      "label": "D",
+      "groupId": "4d323e90-fec2-4d56-9343-24e695068320",
+      "gatewayGroupId": "gateway-group-4",
+      "groupUrl": "http://127.0.0.1:62395/#/groups/4d323e90-fec2-4d56-9343-24e695068320",
+      "run": {
+        "id": "b7183d19-b997-49be-a9b7-10a947674a3a",
+        "groupId": "4d323e90-fec2-4d56-9343-24e695068320",
+        "status": "cancelled",
+        "endReason": "cancelled",
+        "summary": null,
+        "recoveryNote": null,
+        "steps": [
+          {
+            "ordinal": 1,
+            "kind": "tool_use",
+            "toolUseId": "manual-cancel",
+            "name": "get_recent_messages",
+            "input": {
+              "limit": 1
+            },
+            "resultSummary": "{\"messages\":[{\"msgId\":\"gateway-message-4\",\"senderPlatformUserId\":\"manual-outside\",\"isOwn\":false,\"text\":\"请处理这条测试消息\",\"sentAt\":\"2026-10-01T10:54:51.794Z\"}],\"truncated\":false}",
+            "isError": false,
+            "errorCode": null,
+            "auditVerdict": null,
+            "rawResponse": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"manual-cancel\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":1}}]}"
+          }
+        ]
+      },
+      "runUrl": "http://127.0.0.1:62395/#/agent-runs/b7183d19-b997-49be-a9b7-10a947674a3a"
+    },
+    {
+      "label": "IME",
+      "groupId": "67d9234f-7490-4a4d-a705-c927fe6779f6",
+      "gatewayGroupId": "gateway-group-5",
+      "groupUrl": "http://127.0.0.1:62395/#/groups/67d9234f-7490-4a4d-a705-c927fe6779f6",
+      "finalQuery": "测试"
+    },
+    {
+      "label": "IME",
+      "groupId": "96a48678-4556-4391-8c1e-e205b8764732",
+      "gatewayGroupId": "gateway-group-6",
+      "groupUrl": "http://127.0.0.1:62395/#/groups/96a48678-4556-4391-8c1e-e205b8764732",
+      "finalQuery": "群资料"
+    },
+    {
+      "label": "IME",
+      "groupId": "2c902db0-2d2a-4595-91b3-720459b81d2a",
+      "gatewayGroupId": "gateway-group-7",
+      "groupUrl": "http://127.0.0.1:62395/#/groups/2c902db0-2d2a-4595-91b3-720459b81d2a",
+      "finalQuery": "空 格"
+    },
+    {
+      "label": "E",
+      "groupId": "9a693ceb-3ccb-4726-989d-37be0fcb0311",
+      "gatewayGroupId": "gateway-group-8",
+      "groupUrl": "http://127.0.0.1:62395/#/groups/9a693ceb-3ccb-4726-989d-37be0fcb0311",
+      "message": {
+        "id": "627cdf4d-99d2-4094-84b4-85834163cd09",
+        "msgId": null,
+        "clientMsgId": "9e4a7c48-16bc-4b6b-a93d-0004d11846dd",
+        "senderPlatformUserId": "platform-account-1",
+        "isOwn": true,
+        "text": "等待外部确认的测试消息",
+        "sentAt": "2026-10-01T10:54:55.636Z",
+        "deliveryStatus": "unknown",
+        "failCode": null
+      },
+      "meaning": "unknown belongs to message delivery, not Agent run; finite query fault plans keep this live fixture pending"
+    }
+  ],
+  "formalAcceptanceResult": null
+}

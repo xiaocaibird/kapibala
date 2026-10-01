@@ -1,0 +1,42 @@
+{
+  "name": "kapibala-independent-qa",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "check:catalog": "tsx harness/catalog-check.ts",
+    "test:self": "tsx --test tests/self/*.test.ts",
+    "prepare:report": "tsx harness/cli.ts prepare",
+    "report": "tsx harness/cli.ts report",
+    "acceptance": "tsx harness/cli.ts run",
+    "acceptance:business": "tsx harness/cli.ts business",
+    "hash:business": "tsx harness/cli.ts hash-business",
+    "list": "playwright test --list",
+    "render:cases": "tsx harness/render-cases.ts",
+    "hash:target": "tsx harness/cli.ts hash-target",
+    "record:manual": "tsx harness/cli.ts record-manual",
+    "verify:tools": "tsx harness/verify-tools.ts",
+    "check:impact": "tsx harness/change-review-check.ts",
+    "preflight": "tsx harness/cli.ts preflight",
+    "check:suites": "tsx harness/suites-check.ts",
+    "hash:suite": "tsx harness/cli.ts hash-suite"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "@types/node": "24.19.0",
+    "@types/pg": "8.23.1",
+    "@types/ws": "8.18.2",
+    "prettier": "3.9.9",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "pg": "8.23.1",
+    "ws": "8.22.0"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-01T10:42:29.702877+00:00",
+  "source": {
+    "kind": "developer-thread-relay",
+    "threadId": "01a0f194-5588-7353-9a80-5ef7da3d0702",
+    "qaDirectlyViewedScreenshots": false
+  },
+  "environment": {
+    "reportedUrl": "http://127.0.0.1:5173",
+    "kind": "existing-demo",
+    "sutRevision": null,
+    "runtimeBindingVerified": false
+  },
+  "formalAcceptanceResult": null,
+  "previousReportsModified": false,
+  "observations": [
+    {
+      "id": "EXP-FOCUS-001",
+      "caseReference": "MAN-FOCUS-001",
+      "state": "UNBOUND_EXPLORATORY_OBSERVATION",
+      "userReport": "两个同群标签自行发送，操作后标题消息提示消失但标签favicon红点仍在。",
+      "developerReportedScreen": "10:40:53 UTC 原生Chrome截图：目录页标题“群组工作台 · Kapibala”无[有更新]，标签仍显示K+红点；截图取得在claim该tab之前。",
+      "evidenceOwner": "source thread; screenshot bytes not yet transferred to this QA package",
+      "candidateHypothesis": "缺少基础favicon，移除badge后浏览器可能缓存旧图标；尚未确认根因。",
+      "observationInterference": "后续浏览器控制扩展插入data-codex-favicon-badge；其DOM读取不能视为纯产品favicon证据。",
+      "requiredFollowup": [
+        "绑定实际版本与新人工run",
+        "使用无favicon覆盖干预的真实浏览器窗口",
+        "记录真实scope/候选/呈现/操作与标签栏全过程",
+        "保留原始屏幕证据及时间；复验确认后再判定"
+      ]
+    },
+    {
+      "id": "EXP-IME-001",
+      "caseReference": "MAN-IME-001",
+      "state": "UNBOUND_EXPLORATORY_OBSERVATION",
+      "userReport": "中文组合中显示“正在应用搜索条件…”，重置可点、刷新禁用。",
+      "developerReportedEvidence": "现场描述与截图，缺目录请求q时间线。",
+      "formalLimit": "可以记录文案理解问题；不能据按钮或文案推断已发中间拼音查询。",
+      "requiredFollowup": [
+        "绑定版本及实际系统输入法",
+        "捕获确认前后的q请求与真实composition时间",
+        "保留文案状态和首次用户理解记录"
+      ]
+    }
+  ]
+}

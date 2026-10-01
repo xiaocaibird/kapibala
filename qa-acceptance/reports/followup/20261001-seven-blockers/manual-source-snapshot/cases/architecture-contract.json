@@ -1,0 +1,83 @@
+[
+  {
+    "id": "ARC-API-001",
+    "title": "序列定义的独立严格输入矩阵",
+    "requirements": ["ENG-CONTRACT-01", "R-B1-02", "R-A0-03"],
+    "priority": "P1",
+    "mode": "automated",
+    "automation": "tests/api/sequence-contracts.spec.ts",
+    "preconditions": [
+      "后续产品执行授权有效；独立真实PostgreSQL及Gateway/Agent桩，未使用产品验证器作裁判"
+    ],
+    "data": {
+      "source": "原始B1及统一错误；D036与architecture-quality-closeout请求严格性/默认值兼容",
+      "boundaryScope": "结构、键语法与类型；不把原文未给出的数值上限升格业务硬要求"
+    },
+    "steps": [
+      "直接通过REST发送顶层/步骤额外字段、错误类型、不连续或重复步号、未知角色和负延迟",
+      "每个变体记录响应；再保存一个合法定义"
+    ],
+    "expected": [
+      "非法定义返回400 VALIDATION_ERROR及统一错误结构，不静默剥离字段",
+      "合法定义正常保存且没有任何发送副作用"
+    ],
+    "timing": ["合法步骤按已声明的一秒delay执行；等待上限仅为工具故障上限，不新增产品SLA"],
+    "faults": ["只注入公开请求输入，不修改产品数据库、代码或内部函数"],
+    "evidence": ["脱敏公开HTTP请求/响应、逐变体步骤、运行查询、Gateway请求与真实消息账本"],
+    "cleanup": ["仅回收本用例拥有的进程、数据库和桩；保存失败证据"]
+  },
+  {
+    "id": "ARC-API-002",
+    "title": "序列启动的键类型边界与失败后可重试",
+    "requirements": ["ENG-CONTRACT-01", "R-B1-02", "R-A0-03"],
+    "priority": "P1",
+    "mode": "automated",
+    "automation": "tests/api/sequence-contracts.spec.ts",
+    "preconditions": [
+      "后续产品执行授权有效；独立真实PostgreSQL及Gateway/Agent桩，未使用产品验证器作裁判"
+    ],
+    "data": {
+      "source": "原始B1及统一错误；D036与architecture-quality-closeout请求严格性/默认值兼容",
+      "boundaryScope": "结构、键语法与类型；不把原文未给出的数值上限升格业务硬要求"
+    },
+    "steps": [
+      "建群及合法单步序列；直接发送非法vars、stepVars、步骤键、额外字段和缺少sequenceId等变体",
+      "逐次检查没有activeSequenceRunId；最后合法启动并等待该运行完成"
+    ],
+    "expected": [
+      "非法请求返回400 VALIDATION_ERROR且没有运行中的记录",
+      "失败请求不产生发送；后续合法请求201、finished、只产生一条预期外部消息"
+    ],
+    "timing": ["合法步骤按已声明的一秒delay执行；等待上限仅为工具故障上限，不新增产品SLA"],
+    "faults": ["只注入公开请求输入，不修改产品数据库、代码或内部函数"],
+    "evidence": ["脱敏公开HTTP请求/响应、逐变体步骤、运行查询、Gateway请求与真实消息账本"],
+    "cleanup": ["仅回收本用例拥有的进程、数据库和桩；保存失败证据"]
+  },
+  {
+    "id": "ARC-API-003",
+    "title": "序列启动缺省变量对象兼容",
+    "requirements": ["ENG-CONTRACT-01", "R-B1-02", "R-A0-03"],
+    "priority": "P1",
+    "mode": "automated",
+    "automation": "tests/api/sequence-contracts.spec.ts",
+    "preconditions": [
+      "后续产品执行授权有效；独立真实PostgreSQL及Gateway/Agent桩，未使用产品验证器作裁判"
+    ],
+    "data": {
+      "source": "原始B1及统一错误；D036与architecture-quality-closeout请求严格性/默认值兼容",
+      "boundaryScope": "结构、键语法与类型；不把原文未给出的数值上限升格业务硬要求"
+    },
+    "steps": [
+      "保存不含占位符的合法单步定义",
+      "分别省略vars/stepVars、只传vars、只传stepVars启动并等待结束"
+    ],
+    "expected": [
+      "三次均正常完成；缺省对象等价于空对象",
+      "resolvedVars与varSources为空；独立外部账本恰好三条消息"
+    ],
+    "timing": ["合法步骤按已声明的一秒delay执行；等待上限仅为工具故障上限，不新增产品SLA"],
+    "faults": ["只注入公开请求输入，不修改产品数据库、代码或内部函数"],
+    "evidence": ["脱敏公开HTTP请求/响应、逐变体步骤、运行查询、Gateway请求与真实消息账本"],
+    "cleanup": ["仅回收本用例拥有的进程、数据库和桩；保存失败证据"]
+  }
+]

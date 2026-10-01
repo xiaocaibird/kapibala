@@ -1,0 +1,36 @@
+[
+  {
+    "id": "DIAG-001",
+    "title": "后台诊断仅管理员可读且不泄漏测试凭据或业务样本",
+    "requirements": ["ENG-DIAG-01"],
+    "priority": "P1",
+    "mode": "automated",
+    "preconditions": [
+      "仅后续明确授权的隔离候选与QA协议桩",
+      "D045批准诊断方向；以993f758公开文档限定接口与身份契约"
+    ],
+    "data": {
+      "projects": ["system"],
+      "path": "/api/diagnostics/background",
+      "profileSource": "docs/core-resource-observability.md:31-35@993f758"
+    },
+    "steps": [
+      "匿名和错误token请求诊断，随后viewer请求",
+      "admin经公开操作创建群并发送唯一隐私样本文本，确认真实消息已发出",
+      "读取诊断，对已知token/cookie、消息文本和群标识及连接串/堆栈模式逐项检查"
+    ],
+    "expected": [
+      "匿名和错误token为401，viewer为403，admin为200且返回非空JSON对象",
+      "本次种入业务样本及实际会话凭据不得出现在诊断响应中；已定义敏感字段不得携带值",
+      "不以tick、计数或200响应判定业务完成、容量可用或集群健康"
+    ],
+    "timing": ["不自造tick周期或诊断性能SLA"],
+    "faults": ["错误身份token；不在此例注入后台错误或内部计时状态"],
+    "evidence": [
+      "脱敏HTTP记录及诊断响应",
+      "隔离版本、权限和样本泄漏布尔断言；实际秘密不写入失败信息"
+    ],
+    "cleanup": ["仅QA fixture清理本轮自有进程/数据库/协议桩，保留证据"],
+    "automation": "tests/api/diagnostics.spec.ts"
+  }
+]

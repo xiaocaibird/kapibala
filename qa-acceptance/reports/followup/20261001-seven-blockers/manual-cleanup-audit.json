@@ -1,0 +1,70 @@
+{
+  "checkedAt": "2026-10-01T11:11:40.175753+00:00",
+  "kind": "manual-environment-cleanup-audit",
+  "rawCleanup": "manual-final-archive/cleanup.json",
+  "environmentCleanup": "manual-final-archive/environment/cleanup.json",
+  "dockerEventEvidence": "manual-cleanup-docker-events.json",
+  "runtimeSessionExitCode": 0,
+  "checks": [
+    {
+      "command": [
+        "docker",
+        "inspect",
+        "--format",
+        "{{.Id}}",
+        "d2074839f3e586649d671f22c100217d6959407512810efe7c329779794d6df6"
+      ],
+      "exitCode": 1,
+      "stdout": "\n",
+      "stderr": "error: no such object: d2074839f3e586649d671f22c100217d6959407512810efe7c329779794d6df6\n"
+    },
+    {
+      "command": [
+        "docker",
+        "ps",
+        "-a",
+        "--filter",
+        "label=qa.owner=971c6104-6070-4dc9-8565-c81a19df5004",
+        "--format",
+        "{{.ID}} {{.Names}}"
+      ],
+      "exitCode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "ps",
+        "-p",
+        "59894,60177",
+        "-o",
+        "pid=,command="
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "lsof",
+        "-n",
+        "-P",
+        "-iTCP:62395",
+        "-iTCP:62304",
+        "-iTCP:62300",
+        "-iTCP:62302",
+        "-sTCP:LISTEN"
+      ],
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "containerAbsent": true,
+  "knownProcessesAbsent": true,
+  "knownPortsNotListening": true,
+  "volumeEvidenceLimit": "原准备未归档精确Mounts。归属校验后docker rm --force --volumes正常结束、容器destroy与不存在已复核；不声称有逐个匿名卷独立核验，也未删除未知卷。",
+  "existingDemo5173Touched": false,
+  "newUnknownEnvironmentStarted": false,
+  "classificationNote": "Docker错误文本使用小写；派生结论按忽略大小写匹配，原始命令输出不变。"
+}

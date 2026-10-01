@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "kind": "execution-proposal-not-authorization",
+  "status": "AWAITING_EXECUTION_AUTHORIZATION",
+  "handoffId": "DEV-QA-20261001-01",
+  "phase": "developer-preflight",
+  "suiteId": "developer-smoke",
+  "projects": ["system"],
+  "caseIds": ["AUTH-001", "AUTH-002", "AUTH-003", "AUTH-006", "MSG-001", "SEQ-001"],
+  "suiteSha256": "8cb538eb2ff33fd72f04fd057a3765320a7e6c9e05220073c41c9a0bba4ccb1c",
+  "targetConfig": "config/target.integration-993f758.json",
+  "targetSha256": "3b153b66eee7c26b0caf357279f5d7862ad8136f525b687347cef9e4e2e308e6",
+  "sutRevision": "993f7588c1105894e0543554209a8c085423589f",
+  "sutDirectory": "/Users/zcm/.codex/worktrees/qa-sut-integration/kapibala",
+  "requestedActions": [
+    "start-isolated-sut",
+    "create-owned-database",
+    "fault-injection",
+    "kill-owned-process"
+  ],
+  "actionBoundary": {
+    "fault-injection": "仅MSG-001独立网关的发送延迟1500ms与重复事件2次",
+    "kill-owned-process": "本轮持有进程的异常/收尾清理；该子集不实施SUT崩溃恢复",
+    "browser-automation": false,
+    "formalBusinessAcceptance": false,
+    "releaseAssessment": false
+  },
+  "authorization": {
+    "approvedBy": null,
+    "approvalReference": null,
+    "approvedAt": null,
+    "expiresAt": null
+  },
+  "preparationPending": [
+    "固定SUT目录npm ci（未执行）",
+    "授权后检查Docker/镜像及工具运行可用性",
+    "根据真实负责人授权填写config/preflight-authorization.local.json并绑定上述摘要"
+  ],
+  "command": [
+    "npm",
+    "run",
+    "preflight",
+    "--",
+    "--suite",
+    "developer-smoke",
+    "--target",
+    "config/target.integration-993f758.json",
+    "--authorization",
+    "config/preflight-authorization.local.json"
+  ],
+  "reportDirectory": "reports/preflight/<run-id>",
+  "readinessNote": "只准备本子集；原13项及联调风险复核中的专项待办不因此完成。配置/用例子集变更须重新计算摘要。"
+}

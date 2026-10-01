@@ -1,0 +1,63 @@
+{
+  "kind": "historical-docker-events-read-after-cleanup",
+  "queriedAt": "2026-10-01T11:10:52.625049+00:00",
+  "since": "2026-10-01T10:54:40Z",
+  "until": "2026-10-01T11:09:45Z",
+  "events": [
+    {
+      "Type": "container",
+      "Action": "kill",
+      "Actor": {
+        "ID": "d2074839f3e586649d671f22c100217d6959407512810efe7c329779794d6df6",
+        "Attributes": {
+          "desktop.docker.io/ports.scheme": "v2",
+          "desktop.docker.io/ports/5432/tcp": "127.0.0.1:",
+          "image": "postgres:17-alpine",
+          "name": "qa-acceptance-971c6104-6070-4dc9-8565-c81a19df5004",
+          "qa.owner": "971c6104-6070-4dc9-8565-c81a19df5004",
+          "signal": "9"
+        }
+      },
+      "scope": "local",
+      "time": 1790852979,
+      "timeNano": 1790852979250231676
+    },
+    {
+      "Type": "container",
+      "Action": "die",
+      "Actor": {
+        "ID": "d2074839f3e586649d671f22c100217d6959407512810efe7c329779794d6df6",
+        "Attributes": {
+          "desktop.docker.io/ports.scheme": "v2",
+          "desktop.docker.io/ports/5432/tcp": "127.0.0.1:",
+          "execDuration": "894",
+          "exitCode": "137",
+          "image": "postgres:17-alpine",
+          "name": "qa-acceptance-971c6104-6070-4dc9-8565-c81a19df5004",
+          "qa.owner": "971c6104-6070-4dc9-8565-c81a19df5004"
+        }
+      },
+      "scope": "local",
+      "time": 1790852979,
+      "timeNano": 1790852979380168885
+    },
+    {
+      "Type": "container",
+      "Action": "destroy",
+      "Actor": {
+        "ID": "d2074839f3e586649d671f22c100217d6959407512810efe7c329779794d6df6",
+        "Attributes": {
+          "desktop.docker.io/ports.scheme": "v2",
+          "desktop.docker.io/ports/5432/tcp": "127.0.0.1:",
+          "image": "postgres:17-alpine",
+          "name": "qa-acceptance-971c6104-6070-4dc9-8565-c81a19df5004",
+          "qa.owner": "971c6104-6070-4dc9-8565-c81a19df5004"
+        }
+      },
+      "scope": "local",
+      "time": 1790852979,
+      "timeNano": 1790852979410147426
+    }
+  ],
+  "limitation": "Docker retained event history only; no pre-cleanup mount inspection was saved."
+}

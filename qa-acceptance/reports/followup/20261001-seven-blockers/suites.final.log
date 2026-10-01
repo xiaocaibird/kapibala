@@ -1,0 +1,92 @@
+npm notice run kapibala-independent-qa@0.1.0 check:suites
+npm notice run tsx harness/suites-check.ts evidence-followup-20261001
+{
+  "productExecuted": false,
+  "purpose": "仅解析共享用例ID并核对Playwright --list；不启动fixture或产品",
+  "reportBoundary": "开发预跑结果不得转为正式验收；未执行用例继续NOT_RUN",
+  "suites": [
+    {
+      "id": "evidence-followup-20261001",
+      "title": "七项工程证据补充验收",
+      "purpose": "引用已授权的七项原BLOCKED正式用例，在另行固定候选/QA源/环境后逐项补证；原报告与旧冻结环境不变。",
+      "caseIds": [
+        "AGENT-025",
+        "AGENT-028",
+        "INT-ACT-001",
+        "BLK-EXT-001",
+        "INT-STREAM-001",
+        "ARC-UI-015",
+        "UI-032"
+      ],
+      "projects": [
+        "system",
+        "chromium"
+      ],
+      "riskBoundaries": [
+        "此登记只是执行范围准备，不代表新观测已接入或产品已运行。",
+        "相同原需求和断言；无法形成真实计时/故障/公开操作证据时继续BLOCKED，已观察违约则FAIL。",
+        "不包含三个真人项，不把CAP003另行修复授权自动混入该七项子集；其复测独立登记。",
+        "不新增外部能力、不假造已落地结果、不用整页刷新替代同页操作。"
+      ],
+      "grep": "(?:^|\\s)\\[(?:AGENT-025|AGENT-028|INT-ACT-001|BLK-EXT-001|INT-STREAM-001|ARC-UI-015|UI-032)\\](?=\\s|$)",
+      "cases": [
+        {
+          "id": "AGENT-025",
+          "title": "run reaches sixty-second active wall-clock budget including slow turns",
+          "automation": "tests/system/agent.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "AGENT-028",
+          "title": "unknown send times out in five seconds and same key still cannot resend",
+          "automation": "tests/system/agent.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "INT-ACT-001",
+          "title": "安全阶段重启累计活动预算、恢复归因与完整尾段真值",
+          "automation": "tests/system/integration-runtime.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "BLK-EXT-001",
+          "title": "未收到响应的发送崩溃：相同前缀下落地/不落地两个分支",
+          "automation": "tests/system/protocol-boundaries.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "INT-STREAM-001",
+          "title": "真实暂停TCP读取与健康消费者并行、按实际已收游标重放",
+          "automation": "tests/system/integration-streams.spec.ts",
+          "projects": [
+            "system"
+          ]
+        },
+        {
+          "id": "ARC-UI-015",
+          "title": "耗尽后显式同页刷新可开始新一轮",
+          "automation": "tests/ui/architecture.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        },
+        {
+          "id": "UI-032",
+          "title": "提示确认与目录过期相互独立",
+          "automation": "tests/ui/console.spec.ts",
+          "projects": [
+            "chromium"
+          ]
+        }
+      ]
+    }
+  ]
+}

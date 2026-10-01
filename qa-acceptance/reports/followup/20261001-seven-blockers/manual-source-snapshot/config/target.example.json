@@ -1,0 +1,130 @@
+{
+  "version": 1,
+  "sut": {
+    "cwd": "..",
+    "revision": "REPLACE_WITH_AUTHORIZED_FULL_COMMIT_SHA",
+    "start": {
+      "command": "npm",
+      "args": ["run", "dev:server"]
+    },
+    "migrate": {
+      "command": "npm",
+      "args": ["run", "db:migrate"]
+    },
+    "web": {
+      "command": "npm",
+      "args": [
+        "exec",
+        "--workspace",
+        "apps/web",
+        "--",
+        "vite",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "{WEB_PORT}",
+        "--strictPort"
+      ]
+    },
+    "env": {
+      "AGENT_TURN_TIMEOUT_MS": "12000"
+    },
+    "startupTimeoutMs": 45000
+  },
+  "database": {
+    "image": "postgres:17-alpine"
+  },
+  "ui": {
+    "routes": {
+      "login": "/",
+      "accounts": "/#/accounts",
+      "groups": "/#/groups",
+      "group": "/#/groups/{id}",
+      "agentRun": "/#/agent-runs/{id}",
+      "sequences": "/#/sequences"
+    },
+    "selectors": {
+      "username": "input[name='username']",
+      "password": "input[type='password']",
+      "login": "button:has-text('登录')",
+      "groupName": "input[name='name']",
+      "groupDescription": "textarea[name='description']",
+      "createGroup": "button:has-text('创建群')",
+      "editProfile": "button:has-text('编辑资料')",
+      "saveProfile": "button:has-text('保存')",
+      "search": "input[type='search']",
+      "sequence": "select[name='sequenceId']",
+      "sequenceVars": "textarea[name='vars']",
+      "sequenceStepVars": "textarea[name='stepVars']",
+      "previewSequence": "button:has-text('预检')",
+      "startSequence": "button:has-text('启动')",
+      "accountRow": "[data-qa=\"accountRow\"]",
+      "agentFilter": "[data-qa=\"agentFilter\"]",
+      "attentionConfirm": "[data-qa=\"attentionConfirm\"]",
+      "attentionRefresh": "[data-qa=\"attentionRefresh\"]",
+      "attentionScopeConfirm": "[data-qa=\"attentionScopeConfirm\"]",
+      "attentionScopeSummary": "[data-qa=\"attentionScopeSummary\"]",
+      "clearSearch": "[data-qa=\"clearSearch\"]",
+      "closeCreateGroup": "[data-qa=\"closeCreateGroup\"]",
+      "closeProfile": "[data-qa=\"closeProfile\"]",
+      "confirmConflict": "[data-qa=\"confirmConflict\"]",
+      "continueEditing": "[data-qa=\"continueEditing\"]",
+      "directoryEmpty": "[data-qa=\"directoryEmpty\"]",
+      "directoryError": "[data-qa=\"directoryError\"]",
+      "directoryItem": "[data-qa=\"directoryItem\"]",
+      "directoryLoadedCount": "[data-qa=\"directoryLoadedCount\"]",
+      "directoryStale": "[data-qa=\"directoryStale\"]",
+      "discardChanges": "[data-qa=\"discardChanges\"]",
+      "groupCreatedAt": "[data-qa=\"groupCreatedAt\"]",
+      "groupDescriptionView": "[data-qa=\"groupDescriptionView\"]",
+      "loadEarlier": "[data-qa=\"loadEarlier\"]",
+      "loadMoreGroups": "[data-qa=\"loadMoreGroups\"]",
+      "logout": "[data-qa=\"logout\"]",
+      "messageError": "[data-qa=\"messageError\"]",
+      "messageInput": "[data-qa=\"messageInput\"]",
+      "messageRow": "[data-qa=\"messageRow\"]",
+      "navAccounts": "[data-qa=\"navAccounts\"]",
+      "order": "[data-qa=\"order\"]",
+      "profileDialog": "[data-qa=\"profileDialog\"]",
+      "rawResponseToggle": "[data-qa=\"rawResponseToggle\"]",
+      "refreshDirectory": "[data-qa=\"refreshDirectory\"]",
+      "resetFilters": "[data-qa=\"resetFilters\"]",
+      "retryDirectory": "[data-qa=\"retryDirectory\"]",
+      "retryMessages": "[data-qa=\"retryMessages\"]",
+      "runLink": "[data-qa=\"runLink\"]",
+      "sendMessage": "[data-qa=\"sendMessage\"]",
+      "senderAccount": "[data-qa=\"senderAccount\"]",
+      "sequencePreview": "[data-qa=\"sequencePreview\"]",
+      "sequencePreviewError": "[data-qa=\"sequencePreviewError\"]",
+      "sequenceErrorStepIndex": "[data-qa=\"sequenceErrorStepIndex\"]",
+      "sequenceErrorKey": "[data-qa=\"sequenceErrorKey\"]",
+      "statusFilter": "[data-qa=\"statusFilter\"]",
+      "directoryLink": "a",
+      "directorySummary": "[data-qa=\"directorySummary\"]",
+      "createSequence": "[data-qa=\"createSequence\"]",
+      "sequenceDefinitionInput": "[data-qa=\"sequenceDefinitionInput\"]",
+      "saveSequenceDefinition": "[data-qa=\"saveSequenceDefinition\"]",
+      "sequenceDefinitionError": "[data-qa=\"sequenceDefinitionError\"]",
+      "sequenceGroup": "[data-qa=\"sequenceGroup\"]",
+      "sequenceInputError": "[data-qa=\"sequenceInputError\"]",
+      "sequenceResourceError": "[data-qa=\"sequenceResourceError\"]",
+      "sequenceResourceRefresh": "[data-qa=\"sequenceResourceRefresh\"]",
+      "navSequences": "[data-qa=\"navSequences\"]"
+    },
+    "adapterConfirmed": false
+  },
+  "release": {
+    "approvedProfile": null,
+    "concurrentUsers": null,
+    "durationSeconds": null,
+    "p95LatencyMs": null,
+    "maxErrorRate": null,
+    "soakSeconds": null,
+    "rpoSeconds": null,
+    "rtoSeconds": null,
+    "monitoringEvidence": null,
+    "backupRestoreEvidence": null,
+    "rollbackEvidence": null,
+    "productionSecurityEvidence": null
+  }
+}

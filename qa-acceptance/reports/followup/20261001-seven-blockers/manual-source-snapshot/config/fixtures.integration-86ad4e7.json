@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "artifacts": {
+    "legacySchema": {
+      "manifest": "fixtures/20261001-86ad4e7/legacy-schema.json",
+      "sha256": "93985edc23351de52aa79c99015d02d67f862a1de507f57704b2a268f7a2f846"
+    },
+    "directoryPrecision": {
+      "manifest": "fixtures/20261001-86ad4e7/directory-precision.json",
+      "sha256": "b74456924618450e6471d054fb4b9a793664d1304f8a9277760dcbc582d98add"
+    }
+  },
+  "observation": {
+    "confirmed": true,
+    "candidateRevision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+    "reviewReference": "reports/integration/20261001-fixture-rebind-86ad4e7/review.json",
+    "rowSelector": "section:has(> .panel-header > h2:text-is(\"账号列表\")) tbody > tr:has(strong:text-is(\"{id}\"))",
+    "stateSelector": "td:nth-child(3) .badge",
+    "errorSelector": "main > [role=\"alert\"]",
+    "refreshSelector": ".page-header button:text-is(\"刷新\")",
+    "acknowledgeSelector": "td:nth-child(3) .badge",
+    "stateText": {
+      "online": "在线",
+      "disconnected": "已离线"
+    }
+  },
+  "unmigratedSchema": {
+    "confirmed": true,
+    "candidateRevision": "86ad4e7e63786f652c965308b032b98415bdd7ac",
+    "reviewReference": "reports/integration/20261001-fixture-rebind-86ad4e7/review.json",
+    "controlSchemaVersion": 8,
+    "rejectionLogIncludes": [
+      "Schema mismatch: installed=0, required=8; run npm run db:migrate"
+    ]
+  }
+}

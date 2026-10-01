@@ -1,0 +1,300 @@
+{
+  "schemaVersion": 1,
+  "owner": "QA",
+  "suites": [
+    {
+      "id": "developer-smoke",
+      "title": "开发提测前基础流程检查",
+      "purpose": "用现有QA标准检查健康、登录与权限、注销、基本消息投递和合法序列流程。",
+      "caseIds": [
+        "AUTH-001",
+        "AUTH-002",
+        "AUTH-003",
+        "AUTH-006",
+        "MSG-001",
+        "SEQ-001"
+      ],
+      "projects": [
+        "system"
+      ],
+      "riskBoundaries": [
+        "仅选短流程；不含15分钟token到期、60秒预算、故障杀进程、重启恢复、OPS或blocked用例。",
+        "每条仍使用隔离进程、数据库和协议桩；短流程不是无副作用dry-run，实际执行仍须有效预跑授权。",
+        "不覆盖完整异常矩阵、UI兼容、生产性能或外部协议强保证；通过不能替代正式验收。"
+      ]
+    },
+    {
+      "id": "architecture-regression",
+      "title": "架构局部改进公开行为回归",
+      "purpose": "引用已登记的序列API/UI契约、暂时读取恢复和公开并发/审计交错专项。",
+      "caseIds": [
+        "ARC-API-001",
+        "ARC-API-002",
+        "ARC-API-003",
+        "ARC-UI-001",
+        "ARC-UI-002",
+        "ARC-UI-003",
+        "ARC-UI-004",
+        "ARC-UI-005",
+        "ARC-UI-006",
+        "ARC-UI-007",
+        "ARC-UI-008",
+        "ARC-UI-009",
+        "ARC-UI-010",
+        "ARC-UI-011",
+        "ARC-UI-012",
+        "ARC-UI-013",
+        "ARC-UI-014",
+        "ARC-UI-015",
+        "ARC-UI-016",
+        "ARC-UI-017",
+        "ARC-UI-018",
+        "CAP-REG-001",
+        "CAP-REG-002",
+        "CAP-REG-003",
+        "CAP-REG-004"
+      ],
+      "projects": [
+        "system",
+        "chromium"
+      ],
+      "riskBoundaries": [
+        "只选择当前mode=automated的用例；自动化用例仍可能因缺浏览器、公开策略或适配前提而真实BLOCKED。",
+        "CAP-REG仅证明公开并发和审计前后边界，不证明触达容量拒绝；CAP-001..010的观测阻塞不因本子集通过而关闭。",
+        "当前只选Chromium，不宣称Firefox/WebKit或跨标签认证均已验证。",
+        "不含产品私有helper测试、生产负载或任意崩溃强恢复；实现参数不变成原始硬性业务指标。"
+      ]
+    },
+    {
+      "id": "sequence-failure-regression",
+      "title": "普通序列失败终止及既有例外回归",
+      "purpose": "依据QA-D6新裁定预跑普通失败后停止，并同时检查原跳过、限流等待和群不可写规则。",
+      "caseIds": [
+        "BLK-SPEC-002",
+        "SEQ-006",
+        "SEQ-007",
+        "SEQ-008",
+        "SEQ-010"
+      ],
+      "projects": [
+        "system"
+      ],
+      "riskBoundaries": [
+        "BLK-SPEC-002含两码首中末六个子场景、中间失败后的进程重启，以及unknown查询不可用恢复后失败组合；保留同一用例数据库与外部事实。",
+        "包括限流和故障注入，仍需独立环境及绑定本子集的后续执行授权；本次仅准备，不执行产品。",
+        "不覆盖全部序列排期、变量、UI、其他恢复窗口或生产上线指标；通过仅为开发预跑结论。"
+      ]
+    },
+    {
+      "id": "browser-adapter-regression",
+      "title": "浏览器接入校正定向复测",
+      "purpose": "在保留首轮原始结果后，用独立冻结的复测适配器核验页面导航、日期及过期提示定位；仅引用正式用例，不复制断言。",
+      "caseIds": [
+        "UI-001",
+        "UI-003",
+        "UI-006",
+        "UI-009",
+        "UI-010",
+        "UI-012",
+        "UI-013",
+        "UI-015",
+        "UI-017",
+        "UI-019",
+        "UI-022",
+        "UI-023",
+        "UI-029",
+        "UI-030",
+        "UI-032",
+        "UI-036",
+        "ARC-UI-004",
+        "ARC-UI-015",
+        "ARC-UI-BLK-001"
+      ],
+      "projects": [
+        "chromium",
+        "firefox-smoke",
+        "webkit-smoke"
+      ],
+      "riskBoundaries": [
+        "使用config/ui-adapter-0af6443-retest.json的ui与另行绑定的ObservationFixture冻结新target/授权，绝不替换运行中的资产。",
+        "全部所选用例在Chromium运行，Firefox/WebKit只执行原有@compat用例UI-001/003/006；不声称全量跨浏览器覆盖。",
+        "定位校正及序列导航/同文档卸载前提不改变需求断言。首轮QA工具错误不代表产品通过，需独立复测证据才能出结论。",
+        "原本缺少纯恢复或独立确认入口的ARC-UI-015/UI-032仍可BLOCKED；不增加生产控件要求、不用整页重载或force穿透模态。",
+        "该suite是QA维护的稳定子集入口；开发预跑模式的结果不能充当正式业务验收，正式复测须由当前执行用途的授权与报告登记。"
+      ]
+    },
+    {
+      "id": "final-integration-smoke",
+      "title": "最终候选组合环境联调冒烟",
+      "purpose": "对固定候选验证生产浏览器、三类工程控制器、schema夹具及已修正Agent协议前提后进入完整业务验收。",
+      "caseIds": [
+        "AUTH-001",
+        "AUTH-003",
+        "MSG-001",
+        "SEQ-001",
+        "GROUP-009",
+        "AGENT-001",
+        "CAP-001",
+        "INT-MSG-006",
+        "INT-ACCOUNT-001",
+        "INT-DIAG-002",
+        "BASE-001",
+        "BLK-MIG-001",
+        "UI-037",
+        "UI-001",
+        "ARC-UI-007"
+      ],
+      "projects": [
+        "system",
+        "chromium"
+      ],
+      "riskBoundaries": [
+        "仅引用正式用例；开发预跑结果单列，不能代替随后完整业务验收。",
+        "包含真实故障、数据库恢复和生产构建浏览器；要求固定完整SHA、独立资源和现有用户授权重新绑定。",
+        "任何FAIL/BLOCKED保留并进入正式报告，不因冒烟问题停止其余独立用例或放宽标准。"
+      ]
+    },
+    {
+      "id": "qa-premise-retest-20261001",
+      "title": "QA前提纠正后的原版本定向复测",
+      "purpose": "独立复测当前步取消、真实群不可写、目录回放/分页、并发401和移除工具焦点仿真后的提醒场景；引用正式用例，不改原全量结果。",
+      "caseIds": [
+        "CAP-002",
+        "CAP-005",
+        "UI-011",
+        "UI-020",
+        "UI-021",
+        "UI-024",
+        "UI-025",
+        "UI-028",
+        "UI-029",
+        "UI-030",
+        "UI-031",
+        "UI-032",
+        "UI-033",
+        "UI-034",
+        "UI-035",
+        "ARC-UI-BLK-001"
+      ],
+      "projects": [
+        "system",
+        "chromium"
+      ],
+      "riskBoundaries": [
+        "只对86ad原版本纠正QA场景前提；不继承旧PASS，不覆盖完整业务或上线门禁。",
+        "实际独立数据库、公开协议、真实故障控制器与浏览器；每项目首次运行，原失败留存。",
+        "有头Chromium移除Playwright默认always-focused仿真，使用真实原生标签焦点；不证明OS跨应用或输入法人工义务。"
+      ]
+    },
+    {
+      "id": "utf16-remediation-retest-20261001",
+      "title": "资料长度修复独立回归",
+      "purpose": "以原UTF-16公开契约验证资料边界及关联编辑、冲突和页面行为。",
+      "caseIds": [
+        "BLK-SPEC-006",
+        "EXT-001",
+        "EXT-002",
+        "EXT-008",
+        "EXT-009",
+        "EXT-010",
+        "EXT-012",
+        "UI-012",
+        "UI-013",
+        "UI-015",
+        "UI-022"
+      ],
+      "projects": [
+        "system",
+        "chromium"
+      ],
+      "riskBoundaries": [
+        "固定a6b14e7，独立复测既有业务标准，研发自测不计入QA结果。",
+        "仅资料改动及依赖公开流程；不声明新版本已全量复测，不覆盖上线评估。"
+      ]
+    },
+    {
+      "id": "utf16-remediation-api-20261001",
+      "title": "资料长度修复独立回归（API）",
+      "purpose": "以原UTF-16公开契约验证资料边界及关联编辑、冲突和页面行为。",
+      "caseIds": [
+        "BLK-SPEC-006",
+        "EXT-001",
+        "EXT-002",
+        "EXT-008",
+        "EXT-009",
+        "EXT-010",
+        "EXT-012"
+      ],
+      "projects": [
+        "system"
+      ],
+      "riskBoundaries": [
+        "固定a6b14e7，独立复测既有业务标准，研发自测不计入QA结果。",
+        "仅资料改动及依赖公开流程；不声明新版本已全量复测，不覆盖上线评估。",
+        "分阶段执行API子集；另一阶段独立登记结果，不能互相补计或视为已运行。"
+      ]
+    },
+    {
+      "id": "utf16-remediation-ui-20261001",
+      "title": "资料长度修复独立回归（UI）",
+      "purpose": "以原UTF-16公开契约验证资料边界及关联编辑、冲突和页面行为。",
+      "caseIds": [
+        "UI-012",
+        "UI-013",
+        "UI-015",
+        "UI-022"
+      ],
+      "projects": [
+        "chromium"
+      ],
+      "riskBoundaries": [
+        "固定a6b14e7，独立复测既有业务标准，研发自测不计入QA结果。",
+        "仅资料改动及依赖公开流程；不声明新版本已全量复测，不覆盖上线评估。",
+        "分阶段执行UI子集；另一阶段独立登记结果，不能互相补计或视为已运行。"
+      ]
+    },
+    {
+      "id": "qa-final-window-retest-20261001",
+      "title": "真实失败事件与提醒前提定向复测",
+      "purpose": "在已结束的16项复测后，修正403触发排队、搜索防抖及旧消息候选前提，复测既有三个正式用例。",
+      "caseIds": [
+        "CAP-005",
+        "UI-028",
+        "UI-030"
+      ],
+      "projects": [
+        "system",
+        "chromium"
+      ],
+      "riskBoundaries": [
+        "仍使用86ad原产品版本和真实公开协议；不重写前轮失败/阻塞。",
+        "先持久生成真实message_failed历史再通过断流恢复投递；必须实证容量拒绝与消息身份。",
+        "UI只通过真实输入/点击及网络回放收敛建立前提，不代产品清状态。"
+      ]
+    },
+    {
+      "id": "evidence-followup-20261001",
+      "title": "七项工程证据补充验收",
+      "purpose": "引用已授权的七项原BLOCKED正式用例，在另行固定候选/QA源/环境后逐项补证；原报告与旧冻结环境不变。",
+      "caseIds": [
+        "AGENT-025",
+        "AGENT-028",
+        "INT-ACT-001",
+        "BLK-EXT-001",
+        "INT-STREAM-001",
+        "ARC-UI-015",
+        "UI-032"
+      ],
+      "projects": [
+        "system",
+        "chromium"
+      ],
+      "riskBoundaries": [
+        "此登记只是执行范围准备，不代表新观测已接入或产品已运行。",
+        "相同原需求和断言；无法形成真实计时/故障/公开操作证据时继续BLOCKED，已观察违约则FAIL。",
+        "不包含三个真人项，不把CAP003另行修复授权自动混入该七项子集；其复测独立登记。",
+        "不新增外部能力、不假造已落地结果、不用整页刷新替代同页操作。"
+      ]
+    }
+  ]
+}

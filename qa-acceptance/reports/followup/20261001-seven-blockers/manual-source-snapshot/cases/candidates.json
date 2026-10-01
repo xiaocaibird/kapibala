@@ -1,0 +1,116 @@
+[
+  {
+    "id": "CAN-MEDIA-001",
+    "title": "下载媒体并保存可读取路径",
+    "requirements": ["CAND-C1-01"],
+    "priority": "P1",
+    "mode": "candidate",
+    "preconditions": ["C1获单独批准", "隔离媒体服务和专属media目录；下载失败/过期策略已澄清"],
+    "data": {
+      "files": ["UTF-8文本字节", "二进制图片字节"],
+      "upstream": ["200", "404", "503"]
+    },
+    "steps": [
+      "发送带mediaUrl的消息并对成功文件检查字节",
+      "制造过期404与暂时503，观察约定失败处理",
+      "重启后查询路径并读取文件"
+    ],
+    "expected": [
+      "200下载字节一致、路径属于专属media且消息关联正确",
+      "失败不伪造成功本地路径；具体重试策略按补充约定"
+    ],
+    "timing": [],
+    "faults": ["媒体404/503及下载期间重启"],
+    "evidence": ["上游字节hash、本地hash、消息路径与下载轨迹"],
+    "cleanup": ["删除本轮媒体文件和隔离消息"]
+  },
+  {
+    "id": "CAN-MEDIA-002",
+    "title": "保留期边界和默认30天",
+    "requirements": ["CAND-C1-02"],
+    "priority": "P1",
+    "mode": "candidate",
+    "preconditions": ["C1批准且文件年龄基准/清理周期确定"],
+    "data": {
+      "retentionDays": [30, 1],
+      "ages": ["N天前边界前", "等于边界", "边界后"]
+    },
+    "steps": ["按已批准时间控制方式准备三组文件", "运行实际清理调度并验证默认值及配置值"],
+    "expected": [
+      "仅超期的合格文件被清理，默认30天",
+      "等于边界以最终契约判断；不通过改变全局系统时间影响其他任务"
+    ],
+    "timing": ["清理周期与年龄基准须先明确"],
+    "faults": [],
+    "evidence": ["时间来源、配置、清理前后文件清单"],
+    "cleanup": ["移除专属文件并还原隔离时钟设置"]
+  },
+  {
+    "id": "CAN-MEDIA-003",
+    "title": "清理断点不留下悬空引用",
+    "requirements": ["CAND-C1-03"],
+    "priority": "P0",
+    "mode": "candidate",
+    "preconditions": ["C1批准；仅专属测试目录可注入删除故障"],
+    "data": {
+      "crashPoints": ["文件删除后引用更新前", "引用更新后文件删除前"]
+    },
+    "steps": ["在两处清理边界重启服务", "恢复后逐个检查消息路径是否仍指向不存在文件"],
+    "expected": ["最终无指向已删文件的有效localFilePath", "非本轮目录及未到期文件不被删除"],
+    "timing": [],
+    "faults": ["清理中止/磁盘删除失败"],
+    "evidence": ["清理动作及消息API快照、文件存在性"],
+    "cleanup": ["清理本轮文件与数据"]
+  },
+  {
+    "id": "CAN-MEDIA-004",
+    "title": "运行中Agent引用媒体不清理",
+    "requirements": ["CAND-C1-04"],
+    "priority": "P0",
+    "mode": "candidate",
+    "preconditions": ["C1批准；run媒体引用如何建立已有可观察契约"],
+    "data": {
+      "file": "已超期",
+      "runStates": ["running", "finished"]
+    },
+    "steps": [
+      "让running run引用超期文件并触发清理",
+      "结束run后再次触发到期清理",
+      "在run恢复场景重复"
+    ],
+    "expected": ["运行中包括恢复等待的有效引用不删", "run结束后按保留期可清理且引用一致"],
+    "timing": [],
+    "faults": ["引用存续期间重启"],
+    "evidence": ["run状态/引用证据与文件清单"],
+    "cleanup": ["结束本轮run并清理专属文件"]
+  },
+  {
+    "id": "CAN-LLM-001",
+    "title": "真实模型服务协议替换",
+    "requirements": ["CAND-C2-01"],
+    "priority": "P1",
+    "mode": "candidate",
+    "preconditions": [
+      "C2单独批准；选定Claude或Gemini、费用与凭据使用范围已授权",
+      "只用合成非敏感群内容，凭据不进入证据"
+    ],
+    "data": {
+      "provider": "待用户选定",
+      "tools": ["get_recent_messages", "send_message", "kick_user", "finish"]
+    },
+    "steps": [
+      "仅替换AGENT_URL连接独立模型适配服务",
+      "执行能覆盖工具请求/结果/结束的受控旅程，保存脱敏原协议",
+      "检验错误/超时和审计明确失败时不产生未授权外部副作用"
+    ],
+    "expected": [
+      "符合2.2工具与消息形状，后端不需业务代码切换",
+      "不以具体自然语言输出作为确定断言，不把随机输出重跑到满意当通过",
+      "模型适配服务本身需确定性协议测试，真实旅程报告供应商/模型/参数/成本边界"
+    ],
+    "timing": ["沿用A5预算；供应商未承诺延迟不编造保证"],
+    "faults": ["已批准范围内的网络失败"],
+    "evidence": ["脱敏请求响应/适配版本/外部副作用账本/实际费用"],
+    "cleanup": ["撤销本轮临时凭据或按授权回收，清理隔离内容"]
+  }
+]
