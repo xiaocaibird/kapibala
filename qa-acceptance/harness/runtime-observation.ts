@@ -69,6 +69,11 @@ export interface RuntimeEvent {
   epochIds?: string[];
   /** Required for activity evidence; false means lost tail has no proved bound. */
   includesUnsavedTail?: boolean;
+  epochObservation?: {
+    continuous: boolean;
+    startSource: 'run-creation' | 'clock-acquisition' | 'unwitnessed';
+  };
+  lastSuccessfulSample?: { epochId: string; windowMs: [number, number]; persistedActiveMs: number };
   /** Process liveness alone cannot establish that this run is accumulating activity. */
   activityState?: 'active' | 'recovery-paused' | 'terminal' | 'unknown';
   /** Durable continuation with no external request in flight, before the next dispatch. */
@@ -94,6 +99,22 @@ export interface RuntimeSnapshot {
   binding: { apiUrl: string; revision: string; pid: number; observedOwnerToken: string };
   correlation: RuntimeCorrelation;
   events: RuntimeEvent[];
+  clockObservation?: {
+    clockDomain: string;
+    clockUnit: 'ms';
+    applicationPid: number;
+    monotonicMs: number;
+  };
+  snapshotProvenance?: {
+    source: 'live-bridge' | 'retained-after-process-exit';
+    applicationPid: number;
+    applicationStarted: string;
+  };
+}
+export interface MeasuredRuntimeSnapshot {
+  parentClockDomain: string;
+  parentWindowMs: [number, number];
+  snapshot: RuntimeSnapshot;
 }
 const record = (v: unknown): v is Record<string, unknown> =>
   !!v && typeof v === 'object' && !Array.isArray(v);
@@ -223,6 +244,30 @@ export function validateRuntimeSnapshot(
   )
     throw new BlockedError('运行观测跨租约、关联错误或格式无效');
   binding(value.binding, target);
+  const clock = value.clockObservation,
+    provenance = value.snapshotProvenance;
+  if (
+    clock !== undefined &&
+    (!record(clock) ||
+      !text(clock.clockDomain) ||
+      clock.clockUnit !== 'ms' ||
+      !Number.isSafeInteger(clock.applicationPid) ||
+      Number(clock.applicationPid) <= 0 ||
+      typeof clock.monotonicMs !== 'number' ||
+      !Number.isFinite(clock.monotonicMs) ||
+      clock.monotonicMs < 0)
+  )
+    throw new BlockedError('跨epoch时钟读数格式无效；旧响应允许缺项，不能造默认值');
+  if (
+    provenance !== undefined &&
+    (!record(provenance) ||
+      !['live-bridge', 'retained-after-process-exit'].includes(String(provenance.source)) ||
+      !Number.isSafeInteger(provenance.applicationPid) ||
+      Number(provenance.applicationPid) <= 0 ||
+      !text(provenance.applicationStarted) ||
+      (record(clock) && clock.applicationPid !== provenance.applicationPid))
+  )
+    throw new BlockedError('跨epoch响应来源或实际应用启动身份无效');
   let seq = 0;
   for (const event of value.events) {
     if (
@@ -271,6 +316,30 @@ export function validateRuntimeSnapshot(
         throw new BlockedError('后续真实请求尚未被证明收到并等待原事务，不能声称并发竞争');
     }
     if (String(event.kind).startsWith('activity-')) {
+      const epoch = event.epochObservation,
+        sample = event.lastSuccessfulSample;
+      const interval = (v: unknown) =>
+        Array.isArray(v) &&
+        v.length === 2 &&
+        v.every((n) => typeof n === 'number' && Number.isFinite(n) && n >= 0) &&
+        v[0] <= v[1];
+      if (
+        epoch !== undefined &&
+        (!record(epoch) ||
+          typeof epoch.continuous !== 'boolean' ||
+          !['run-creation', 'clock-acquisition', 'unwitnessed'].includes(String(epoch.startSource)))
+      )
+        throw new BlockedError('跨epoch连续性声明格式无效');
+      if (
+        sample !== undefined &&
+        (!record(sample) ||
+          !text(sample.epochId) ||
+          !interval(sample.windowMs) ||
+          typeof sample.persistedActiveMs !== 'number' ||
+          !Number.isFinite(sample.persistedActiveMs) ||
+          sample.persistedActiveMs < 0)
+      )
+        throw new BlockedError('最后确认采样格式无效；不得当作最后实际提交');
       const bounds = event.activeElapsedMs;
       const validBounds =
         Array.isArray(bounds) &&
@@ -370,6 +439,14 @@ export class RuntimeLease {
   }
   async snapshot(): Promise<RuntimeSnapshot> {
     return this.accept(await this.send('GET'));
+  }
+  async snapshotMeasured(parentClockDomain: string): Promise<MeasuredRuntimeSnapshot> {
+    if (!text(parentClockDomain)) throw new BlockedError('父单调时钟域必须显式绑定');
+    // Includes transport, JSON, validation and evidence IO. This deliberately
+    // conservative envelope must never be tightened using assumed latency.
+    const before = performance.now();
+    const snapshot = await this.snapshot();
+    return { parentClockDomain, parentWindowMs: [before, performance.now()], snapshot };
   }
   async advance(): Promise<void> {
     if (

@@ -228,6 +228,12 @@ test('real shared manifests select only existing automation and keep smoke inten
       'budget-dispatch-followup-20261001',
       'manual-ui-repair-regression-20261001',
       'qa-observation-correction-retest-20261001',
+      'qa-2716-combined-smoke',
+      'qa-2716-send-regression',
+      'qa-2716-budget-retest',
+      'qa-2716-controller-regression',
+      'qa-2716-ui-retest',
+      'qa-2716-ui-compat',
     ],
   );
   const smoke = suites.find((suite) => suite.id === 'developer-smoke')!;
