@@ -8,8 +8,33 @@ export async function registerRealtime(
   db: Database,
   limits?: RealtimeLimits,
 ): Promise<void> {
-  app.get("/ws", { websocket: true }, (socket) => {
-    const sender = boundedSocketSender(socket, limits);
+  app.get("/ws", { websocket: true }, (socket, request) => {
+    const connection = {
+      connectionId: request.id,
+      pid: process.pid,
+      peerAddress: request.raw.socket.remoteAddress,
+      peerPort: request.raw.socket.remotePort,
+      localAddress: request.raw.socket.localAddress,
+      localPort: request.raw.socket.localPort,
+    };
+    const logObservation = (
+      fields: Record<string, unknown>,
+      message: string,
+    ) => {
+      try {
+        app.log.info({ ...connection, ...fields }, message);
+      } catch {
+        /* Diagnostics must not reject authentication or interrupt transport. */
+      }
+    };
+    // Bounded lifecycle summaries only: no tokens, message bodies, per-frame
+    // logs or client-receipt claims. The socket tuple links external readers.
+    const sender = boundedSocketSender(socket, limits, (transport) => {
+      logObservation(
+        { component: "realtime-transport", ...transport },
+        "Realtime transport observation",
+      );
+    });
     let token: string | undefined;
     let seq = 0;
     let authenticating = false;
@@ -101,6 +126,16 @@ export async function registerRealtime(
             ).rows[0]?.seq ?? 0,
           );
         token = auth.accessToken;
+        logObservation(
+          {
+            component: "realtime-auth",
+            at: new Date().toISOString(),
+            monotonicMs: performance.now(),
+            requestedSinceSeq: auth.sinceSeq ?? null,
+            replayAfterSeq: seq,
+          },
+          "Realtime authentication accepted",
+        );
         clearTimeout(deadline);
         await sender.send({ type: "auth", success: true });
       } catch {
