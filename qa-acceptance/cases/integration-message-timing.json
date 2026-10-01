@@ -1,0 +1,276 @@
+[
+  {
+    "priority": "P0",
+    "mode": "automated",
+    "preconditions": [
+      "执行须明确授权并冻结SUT/QA版本；本轮仅建设资产，产品结果NOT_RUN",
+      "每用例独立真实PostgreSQL、进程、Gateway和Agent；不使用开发或演示库",
+      "通过公开接口登录、连接和建群；读取客户端响应、独立真实副作用和请求时序，不导入产品实现"
+    ],
+    "timing": [
+      "原A2：明确504起5秒内确定；查询不可用期间unknown，恢复后2秒确定。上下界覆盖原时限，无新增容差",
+      "实际HTTP完成不等于SUT处理；网关504写出与公开unknown夹定接收起点，查询恢复用QA控制前后区间",
+      "观察预算到期不是新增业务deadline；明确违反即FAIL，前提未命中或区间重叠BLOCKED，不重试抹掉首次违反"
+    ],
+    "evidence": [
+      "脱敏公开HTTP、逐次状态与读回时刻区间",
+      "网关真实请求/消息/事件/屏障账本，包括响应快照、尝试写出、finish和提前close",
+      "原5秒/2秒的start/end上下界及判定；保留已知局限，不将独立网关自身测试当产品通过"
+    ],
+    "cleanup": [
+      "finally解除本用例网关屏障并恢复可用性；保存最终账本，记录失败不覆盖首次产品断言",
+      "fixture仅清理本次创建的进程/独立数据库/协议桩，保留运行证据"
+    ],
+    "automation": "tests/system/integration-message-timing.spec.ts",
+    "preparation": {
+      "state": "script-ready",
+      "owner": "QA",
+      "details": [
+        "独立公开协议操作与断言已实现；仅静态及协议桩自测，尚未对SUT执行",
+        "不包含504已收到后本地保存暂停、接收记录保存前后或多实例物理首次窗口，见contracts/message-receipt-observation.md"
+      ]
+    },
+    "id": "INT-MSG-001",
+    "title": "旧404跨过2秒确认窗不能否定已真实落地消息",
+    "requirements": ["R-A2-03", "R-A2-04"],
+    "data": {
+      "projects": ["system"],
+      "risk": "INT-R01",
+      "landingDelayMs": 1500,
+      "query": "真实查询快照404在2秒窗内、响应在窗后完整发出"
+    },
+    "steps": [
+      "在首发504响应前登记一次GET响应屏障；仅断开SSE传输，网关仍1500ms落地并生成/保留确认事件",
+      "取得真实unknown与响应时刻区间；验证候选确实在安全窗口前采集404，未形成此行为则BLOCKED",
+      "保持旧404直到收到504的最晚界超过2秒，核对远端已落地且满足原2秒保证，再释放旧响应",
+      "逐次核对无额外send、无false failed；等待后续正查询收敛到同一msgId，并按原504五秒区间判定"
+    ],
+    "expected": [
+      "旧404必须来自窗口内真实不存在的快照，不能用硬编码404制造错误外部事实",
+      "旧404不能成为安全否定依据：远端恰好一条消息，平台同一身份sent且不误失败或重发",
+      "若客户端已取消旧响应或候选不做早查询，记录BLOCKED未触达，而不强迫指定查询策略"
+    ],
+    "faults": ["仅延迟第一个查询响应；真实504后1500ms落地，无额外幂等保证"]
+  },
+  {
+    "priority": "P0",
+    "mode": "automated",
+    "preconditions": [
+      "执行须明确授权并冻结SUT/QA版本；本轮仅建设资产，产品结果NOT_RUN",
+      "每用例独立真实PostgreSQL、进程、Gateway和Agent；不使用开发或演示库",
+      "通过公开接口登录、连接和建群；读取客户端响应、独立真实副作用和请求时序，不导入产品实现"
+    ],
+    "timing": [
+      "原A2：明确504起5秒内确定；查询不可用期间unknown，恢复后2秒确定。上下界覆盖原时限，无新增容差",
+      "实际HTTP完成不等于SUT处理；网关504写出与公开unknown夹定接收起点，查询恢复用QA控制前后区间",
+      "观察预算到期不是新增业务deadline；明确违反即FAIL，前提未命中或区间重叠BLOCKED，不重试抹掉首次违反"
+    ],
+    "evidence": [
+      "脱敏公开HTTP、逐次状态与读回时刻区间",
+      "网关真实请求/消息/事件/屏障账本，包括响应快照、尝试写出、finish和提前close",
+      "原5秒/2秒的start/end上下界及判定；保留已知局限，不将独立网关自身测试当产品通过"
+    ],
+    "cleanup": [
+      "finally解除本用例网关屏障并恢复可用性；保存最终账本，记录失败不覆盖首次产品断言",
+      "fixture仅清理本次创建的进程/独立数据库/协议桩，保留运行证据"
+    ],
+    "automation": "tests/system/integration-message-timing.spec.ts",
+    "preparation": {
+      "state": "script-ready",
+      "owner": "QA",
+      "details": [
+        "独立公开协议操作与断言已实现；仅静态及协议桩自测，尚未对SUT执行",
+        "不包含504已收到后本地保存暂停、接收记录保存前后或多实例物理首次窗口，见contracts/message-receipt-observation.md"
+      ]
+    },
+    "id": "INT-MSG-002",
+    "title": "真实查询响应持续延迟跨5秒后仍unknown并按恢复2秒收敛",
+    "requirements": ["R-A2-03", "R-A2-04"],
+    "data": {
+      "projects": ["system"],
+      "risk": "INT-R01",
+      "landingDelayMs": 1500,
+      "queryGateCapacity": 128
+    },
+    "steps": [
+      "504前给查询登记同一个可释放before-response门，所有实际响应被截留；仅断开SSE，仍真实1500ms远端落地并保留确认事件",
+      "持续读取，证明实际查询已到达屏障且公开unknown超过原504五秒；128次计划若耗尽记BLOCKED",
+      "按QA时刻区间释放共享门，当前和后续登记计划都不再等待",
+      "取得完整200发送证据与本地sent；按恢复2秒区间判断，核对唯一外部消息/唯一send"
+    ],
+    "expected": [
+      "延迟/查询不可用不能使未知消息伪装失败、sent或触发重发",
+      "恢复后有真实200与对应msgId；不能只凭屏障release而没有查询证据宣称恢复通过",
+      "HTTP超时造成的已关闭请求不冒充实际送达，仍保留其账本"
+    ],
+    "faults": ["截留查询真实结果，不替换为伪造成功；释放门后无残留故障队列"]
+  },
+  {
+    "priority": "P0",
+    "mode": "automated",
+    "preconditions": [
+      "执行须明确授权并冻结SUT/QA版本；本轮仅建设资产，产品结果NOT_RUN",
+      "每用例独立真实PostgreSQL、进程、Gateway和Agent；不使用开发或演示库",
+      "通过公开接口登录、连接和建群；读取客户端响应、独立真实副作用和请求时序，不导入产品实现"
+    ],
+    "timing": [
+      "原A2：明确504起5秒内确定；查询不可用期间unknown，恢复后2秒确定。上下界覆盖原时限，无新增容差",
+      "实际HTTP完成不等于SUT处理；网关504写出与公开unknown夹定接收起点，查询恢复用QA控制前后区间",
+      "观察预算到期不是新增业务deadline；明确违反即FAIL，前提未命中或区间重叠BLOCKED，不重试抹掉首次违反"
+    ],
+    "evidence": [
+      "脱敏公开HTTP、逐次状态与读回时刻区间",
+      "网关真实请求/消息/事件/屏障账本，包括响应快照、尝试写出、finish和提前close",
+      "原5秒/2秒的start/end上下界及判定；保留已知局限，不将独立网关自身测试当产品通过"
+    ],
+    "cleanup": [
+      "finally解除本用例网关屏障并恢复可用性；保存最终账本，记录失败不覆盖首次产品断言",
+      "fixture仅清理本次创建的进程/独立数据库/协议桩，保留运行证据"
+    ],
+    "automation": "tests/system/integration-message-timing.spec.ts",
+    "preparation": {
+      "state": "script-ready",
+      "owner": "QA",
+      "details": [
+        "独立公开协议操作与断言已实现；仅静态及协议桩自测，尚未对SUT执行",
+        "不包含504已收到后本地保存暂停、接收记录保存前后或多实例物理首次窗口，见contracts/message-receipt-observation.md"
+      ]
+    },
+    "id": "INT-MSG-003",
+    "title": "慢但可用的确认查询仍从最初504计五秒",
+    "requirements": ["R-A2-03"],
+    "data": {
+      "projects": ["system"],
+      "risk": "INT-R01",
+      "landingDelayMs": 1500,
+      "queryResponseDelayMs": 1800
+    },
+    "steps": [
+      "仅断开SSE传输，首发504并在1500ms真实落地/记录确认，查询真实快照延迟1800ms回送",
+      "逐次检查平台状态与唯一send，区分慢完整响应与客户端提前断开",
+      "必须形成无503/无提前取消、至少一个完整200的可用路径，再对原504五秒判定",
+      "记录query快照和完成时刻，不能以最后一次查询重新开始五秒计时"
+    ],
+    "expected": [
+      "原504时限不随每次慢查询重置；保持同一msgId且无重复实际效果",
+      "可证明仍unknown下界已过5秒记FAIL；跨界测量记BLOCKED",
+      "1800ms是故障数据；若目标将其超时取消使查询不可用，则本无例外路径BLOCKED，不强行否定unknown例外"
+    ],
+    "faults": ["真实查询响应延迟1800ms，不指定产品HTTP超时或调度间隔"]
+  },
+  {
+    "priority": "P0",
+    "mode": "automated",
+    "preconditions": [
+      "执行须明确授权并冻结SUT/QA版本；本轮仅建设资产，产品结果NOT_RUN",
+      "每用例独立真实PostgreSQL、进程、Gateway和Agent；不使用开发或演示库",
+      "通过公开接口登录、连接和建群；读取客户端响应、独立真实副作用和请求时序，不导入产品实现"
+    ],
+    "timing": [
+      "原A2：明确504起5秒内确定；查询不可用期间unknown，恢复后2秒确定。上下界覆盖原时限，无新增容差",
+      "实际HTTP完成不等于SUT处理；网关504写出与公开unknown夹定接收起点，查询恢复用QA控制前后区间",
+      "观察预算到期不是新增业务deadline；明确违反即FAIL，前提未命中或区间重叠BLOCKED，不重试抹掉首次违反"
+    ],
+    "evidence": [
+      "脱敏公开HTTP、逐次状态与读回时刻区间",
+      "网关真实请求/消息/事件/屏障账本，包括响应快照、尝试写出、finish和提前close",
+      "原5秒/2秒的start/end上下界及判定；保留已知局限，不将独立网关自身测试当产品通过"
+    ],
+    "cleanup": [
+      "finally解除本用例网关屏障并恢复可用性；保存最终账本，记录失败不覆盖首次产品断言",
+      "fixture仅清理本次创建的进程/独立数据库/协议桩，保留运行证据"
+    ],
+    "automation": "tests/system/integration-message-timing.spec.ts",
+    "preparation": {
+      "state": "script-ready",
+      "owner": "QA",
+      "details": [
+        "独立公开协议操作与断言已实现；仅静态及协议桩自测，尚未对SUT执行",
+        "不包含504已收到后本地保存暂停、接收记录保存前后或多实例物理首次窗口，见contracts/message-receipt-observation.md"
+      ]
+    },
+    "id": "INT-MSG-004",
+    "title": "查询503恢复成慢200后仍保留原两秒判定",
+    "requirements": ["R-A2-04"],
+    "data": {
+      "projects": ["system"],
+      "risk": "INT-R01",
+      "landingDelayMs": 1500,
+      "queryResponseDelayMs": 1800
+    },
+    "steps": [
+      "504响应前令查询真实503，等待unknown超过五秒并核对至少一次实际503请求",
+      "网关恢复可用，随后查询200真实快照需1800ms返回；记录恢复控制上下界",
+      "逐次读取至sent或观察预算结束，核对200完整发送且没有客户端提前关闭",
+      "以服务恢复区间计算原2秒界限，核对msgId及真实唯一效果"
+    ],
+    "expected": [
+      "不可用阶段保持unknown；恢复不能重置为新的504五秒或等待任意时长",
+      "恢复成功200仍受原2秒判定；已证明超期FAIL，界限重叠BLOCKED",
+      "若新查询仍因提前断开/无完整200无法证明可用，则明确BLOCKED，不把该组合冒称已覆盖"
+    ],
+    "faults": ["查询真实503超过五秒后恢复，保留1800ms真实响应延迟"]
+  },
+  {
+    "priority": "P0",
+    "mode": "automated",
+    "preconditions": [
+      "执行须明确授权并冻结SUT/QA版本；本轮仅建设资产，产品结果NOT_RUN",
+      "每用例独立真实PostgreSQL、进程、Gateway和Agent；不使用开发或演示库",
+      "通过公开接口登录、连接和建群；读取客户端响应、独立真实副作用和请求时序，不导入产品实现"
+    ],
+    "timing": [
+      "10秒来自本例第二步delaySeconds；首次接收用QA递送/公开读回上下界，网关请求戳精度按1ms区间",
+      "1秒分时重放及500ms连续观察用于提供不同接收时间，不声称无限期不改动",
+      "首次读回已正常完成或重启跨原后步到期则BLOCKED；先检查明确提前/重复副作用仍FAIL；10/15秒观察预算均非新增业务SLA"
+    ],
+    "evidence": [
+      "脱敏公开HTTP、逐次状态与读回时刻区间",
+      "网关真实请求/消息/事件/屏障账本，包括响应快照、尝试写出、finish和提前close",
+      "原5秒/2秒的start/end上下界及判定；保留已知局限，不将独立网关自身测试当产品通过"
+    ],
+    "cleanup": [
+      "finally解除本用例网关屏障并恢复可用性；保存最终账本，记录失败不覆盖首次产品断言",
+      "fixture仅清理本次创建的进程/独立数据库/协议桩，保留运行证据"
+    ],
+    "automation": "tests/system/integration-message-timing.spec.ts",
+    "preparation": {
+      "state": "script-ready",
+      "owner": "QA",
+      "details": [
+        "独立公开协议操作与断言已实现；仅静态及协议桩自测，尚未对SUT执行",
+        "不包含504已收到后本地保存暂停、接收记录保存前后或多实例物理首次窗口，见contracts/message-receipt-observation.md"
+      ]
+    },
+    "id": "INT-MSG-005",
+    "title": "同一确认以不同eventId迟到并在公开提交后重启不改排期",
+    "requirements": ["R-B1-07", "R-B1-09", "R-A2-08"],
+    "data": {
+      "projects": ["system"],
+      "risk": "INT-R03",
+      "steps": [
+        {
+          "delaySeconds": 0
+        },
+        {
+          "delaySeconds": 10
+        }
+      ],
+      "identity": "same clientMsgId/msgId/sentAt; new eventIds",
+      "scope": "业务已提交后的普通恢复；不覆盖独立接收记录先提交窗口"
+    },
+    "steps": [
+      "两步序列首步真实落地但暂不自动推确认；QA首次发真实同身份message_sent，等待公开首步sent及后步scheduledAt",
+      "保留首次递送前和公开读回上界；先观察一秒，再以新eventId发相同确认，逐次核对首次时间及后步排期不变",
+      "保持网关/数据库重启SUT，确认重启早于原后步到期；否则BLOCKED，避免与原过期重排规则冲突",
+      "重启后再次用新eventId递送相同确认；直到序列完成核对固定首步时间、固定后步排期、两条唯一真实发送及消息身份"
+    ],
+    "expected": [
+      "不同eventId不能把同一确认的首次接收时间改为重放时刻，不能再次发送首步",
+      "公开已提交状态在正常重启后保留；尚未过期的后步排期不随重放重置",
+      "后步按首次接收后的10秒参数发送，明确提前FAIL；时间区间重叠或未完成观察BLOCKED",
+      "本例通过不能证明receipt已落盘但业务尚未提交、落盘前强杀或多实例物理最早时刻"
+    ],
+    "faults": ["同一确认不同eventId分时递送；只在公开业务提交已可读后硬重启，保持外部世界和数据库"]
+  }
+]

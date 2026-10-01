@@ -22,6 +22,8 @@ export interface GatewayEvent {
   eventId: number;
   type: GatewayEventType;
   data: JsonRecord;
+  /** QA ledger timestamp only; not included in the external SSE payload. */
+  recordedAt?: string;
 }
 export interface GatewayRequest {
   id: number;
@@ -31,6 +33,13 @@ export interface GatewayRequest {
   body: unknown;
   responseStatus?: number;
   completedAt?: string;
+  /** Route result captured before any response-delay/barrier; not SUT receipt. */
+  responsePreparedAt?: string;
+  preparedResponseStatus?: number;
+  /** HTTP transport evidence only; finish does not mean the SUT processed it. */
+  responseFinishedAt?: string;
+  responseClosedAt?: string;
+  responseClosedBeforeFinish?: boolean;
 }
 export interface GatewayMessage {
   groupId: string;
@@ -268,7 +277,12 @@ export class GatewaySimulator {
 
   emit(type: GatewayEventType, data: JsonRecord, options: EmitOptions = {}): GatewayEvent {
     const eventId = this.events.length + 1;
-    const event = { eventId, type, data: { ...structuredClone(data), eventId, type } };
+    const event = {
+      eventId,
+      type,
+      recordedAt: new Date().toISOString(),
+      data: { ...structuredClone(data), eventId, type },
+    };
     this.events.push(event);
     if (!options.storeOnly) this.deliver(eventId, options);
     return structuredClone(event);
@@ -382,6 +396,13 @@ export class GatewaySimulator {
       body,
     };
     this.requests.push(entry);
+    response.once('finish', () => {
+      entry.responseFinishedAt = new Date().toISOString();
+    });
+    response.once('close', () => {
+      entry.responseClosedAt = new Date().toISOString();
+      entry.responseClosedBeforeFinish = !response.writableFinished;
+    });
     if (this.config.unavailable || (url.pathname === '/events' && this.config.sseUnavailable)) {
       this.reply(response, entry, 503, { code: 'SERVICE_UNAVAILABLE' });
       return;
@@ -437,6 +458,8 @@ export class GatewaySimulator {
     }
     const action = this.route(method, url.pathname, record(body), plan);
     const status = plan.status ?? action.status;
+    entry.responsePreparedAt = new Date().toISOString();
+    entry.preparedResponseStatus = status;
     if (status >= 400)
       this.applyErrorState(
         action,

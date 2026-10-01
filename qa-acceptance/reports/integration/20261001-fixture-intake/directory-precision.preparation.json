@@ -1,0 +1,101 @@
+{
+  "status": "awaiting-final-candidate-binding-and-QA-artifact-review",
+  "version": 1,
+  "artifactId": "directory-precision-5d1885e76871460bb0c146fd4cc90032",
+  "kind": "directory-precision",
+  "candidateRevision": null,
+  "source": {
+    "producer": "scripts/prepare-qa-database-fixtures.mjs",
+    "revision": "4c035b8c24e95f33182b4248ee676fcd184f74a5",
+    "exportedAt": "2026-10-01T05:08:57.266Z",
+    "syntheticOnly": true,
+    "noPendingWork": true
+  },
+  "review": null,
+  "dump": {
+    "path": "fixtures/precision.dump",
+    "sha256": "0554319ab7ad4483f0a03fcb78416168267a0cd46ecf77b3a204cdea7e23ea38",
+    "bytes": 39173,
+    "format": "pg-custom"
+  },
+  "expected": {
+    "query": {
+      "q": "qa-precision-",
+      "pageSize": 2
+    },
+    "rows": [
+      {
+        "id": "qa-precision-group-0",
+        "createdAtMicros": "2026-10-01T00:00:00.000001Z",
+        "public": {
+          "id": "qa-precision-group-0",
+          "name": "qa-precision-0",
+          "createdAt": "2026-10-01T00:00:00.000Z"
+        }
+      },
+      {
+        "id": "qa-precision-group-1",
+        "createdAtMicros": "2026-10-01T00:00:00.000002Z",
+        "public": {
+          "id": "qa-precision-group-1",
+          "name": "qa-precision-1",
+          "createdAt": "2026-10-01T00:00:00.000Z"
+        }
+      },
+      {
+        "id": "qa-precision-group-2",
+        "createdAtMicros": "2026-10-01T00:00:00.000002Z",
+        "public": {
+          "id": "qa-precision-group-2",
+          "name": "qa-precision-2",
+          "createdAt": "2026-10-01T00:00:00.000Z"
+        }
+      },
+      {
+        "id": "qa-precision-group-3",
+        "createdAtMicros": "2026-10-01T00:00:00.000003Z",
+        "public": {
+          "id": "qa-precision-group-3",
+          "name": "qa-precision-3",
+          "createdAt": "2026-10-01T00:00:00.000Z"
+        }
+      },
+      {
+        "id": "qa-precision-group-4",
+        "createdAtMicros": "2026-10-01T00:00:00.000004Z",
+        "public": {
+          "id": "qa-precision-group-4",
+          "name": "qa-precision-4",
+          "createdAt": "2026-10-01T00:00:00.000Z"
+        }
+      },
+      {
+        "id": "qa-precision-group-5",
+        "createdAtMicros": "2026-10-01T00:00:00.000004Z",
+        "public": {
+          "id": "qa-precision-group-5",
+          "name": "qa-precision-5",
+          "createdAt": "2026-10-01T00:00:00.000Z"
+        }
+      }
+    ]
+  },
+  "producerMetadata": {
+    "ledgerSha256": "c9c16632a99880691498286235c4479687ec1677082c5b313fc131034529fac5",
+    "defaults": {
+      "creatorAccountId": "account-1",
+      "description": null,
+      "status": "active",
+      "agentEnabled": false,
+      "autoKickEnabled": false,
+      "memberCount": 0,
+      "activeAgentRunId": null,
+      "activeSequenceRunId": null,
+      "gatewayGroupIdPattern": "qa-precision-gateway-{index}",
+      "accounts": "all six idle",
+      "otherBusinessTables": "empty"
+    },
+    "schemaVersion": 8,
+    "note": "Preparation only: QA must review source, independent expected, contents and fill actual review. Final candidate must be authorized, schema8 and compatible with this source."
+  }
+}

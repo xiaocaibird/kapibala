@@ -1445,7 +1445,29 @@
       "atCommit": "993f7588c1105894e0543554209a8c085423589f",
       "approval": "D045批准必要运行诊断；本条将工程公开说明作为该候选的版本化接口profile，不视为原始接口已有要求"
     },
-    "expectation": "GET /api/diagnostics/background匿名401、viewer403、admin可读；仅进程级调度状态时间计数，不返回凭据/连接信息/业务内容/异常正文堆栈。tick不代表业务完成、外部健康或集群保证。DIAG-001只验证权限与有限泄漏样本，生命周期故障待专项接入。",
+    "expectation": "GET /api/diagnostics/background匿名401、viewer403、admin可读；仅进程级调度状态时间计数，不返回凭据/连接信息/业务内容/异常正文堆栈。tick不代表业务完成、外部健康或集群保证。DIAG-001验证权限与有限泄漏样本；版本化诊断还应如实显示未运行/失败/运行中/恢复、计数及时间，成功后清连续失败但保留最近失败时间。生命周期专项须真实tick故障接入，不能由tick推断业务完成。",
+    "scope": "required"
+  },
+  {
+    "id": "ENG-STREAM-01",
+    "title": "慢接收者隔离与已收游标恢复的版本化契约",
+    "source": {
+      "path": "docs/core-resource-observability.md",
+      "section": "D044 已批准资源边界与冻结快照语义",
+      "lines": [9, 27]
+    },
+    "expectation": "当前候选允许因真实慢读关闭该连接，保留持久事件并从客户端实际收到的seq后回放；健康消费者继续接收。续页改变消息页大小不改变冻结集合、顺序或内容。内部水位/超时不是生产SLA；未诱发关闭或未形成回放缺口时不能冒称已覆盖，不推导整体内存上界。",
+    "scope": "required"
+  },
+  {
+    "id": "ENG-ACCOUNT-RECOVERY-01",
+    "title": "已知远端成功后的原事务本地保存恢复",
+    "source": {
+      "path": "docs/decisions.md",
+      "section": "D043 已确认局部恢复边界；docs/core-account-contract-hardening.md",
+      "lines": [107, 109]
+    },
+    "expectation": "已知远端成功时，对同一原锁事务内可恢复本地保存错误做有界恢复，保持后续账号操作顺序；不得重发远端或换新事务晚写旧意图。永久错误明确报错，失败保存不发布成功状态变化；保留跨系统不一致诊断，不宣称双系统原子提交。重试次数和退避不作为新增业务指标。",
     "scope": "required"
   }
 ]

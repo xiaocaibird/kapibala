@@ -4,6 +4,8 @@ import { constants } from 'node:fs';
 import { randomUUID, createHash } from 'node:crypto';
 import type { CaseDefinition, CaseResult } from './types.js';
 import { isWithin, redact } from './security.js';
+import { executionPlan, validatePlanManifest } from './execution-plan.js';
+import { fileURLToPath } from 'node:url';
 export interface ManualReview {
   caseId: string;
   status: 'PASS' | 'FAIL' | 'BLOCKED';
@@ -50,7 +52,17 @@ export async function recordManual(
   )
     throw new Error('缺少真实人工状态/实际观察/执行人');
   const manifest = JSON.parse(await readFile(resolve(run, 'manifest.json'), 'utf8'));
-  if (manifest.phase !== 'execution') throw new Error('准备报告不能录入产品执行结果');
+  if (!['execution', 'business-acceptance'].includes(manifest.phase))
+    throw new Error('仅正式验收可录入人工执行结果');
+  if (manifest.phase === 'business-acceptance') {
+    const plan = await executionPlan(
+      fileURLToPath(new URL('../', import.meta.url)),
+      manifest.phase,
+    );
+    validatePlanManifest(plan, manifest);
+    if (!plan.businessScope!.cases.some((item) => item.id === c.id))
+      throw new Error('人工用例不在完整业务验收范围内');
+  }
   const at = Date.parse(review.performedAt),
     start = Date.parse(manifest.startedAt);
   if (!Number.isFinite(at) || !Number.isFinite(start) || at < start || at > now)

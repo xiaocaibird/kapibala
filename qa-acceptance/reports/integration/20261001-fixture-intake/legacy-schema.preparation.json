@@ -1,0 +1,45 @@
+{
+  "status": "awaiting-final-candidate-binding-and-QA-artifact-review",
+  "version": 1,
+  "artifactId": "legacy-schema-5d1885e76871460bb0c146fd4cc90032",
+  "kind": "legacy-schema",
+  "candidateRevision": null,
+  "source": {
+    "producer": "scripts/prepare-qa-database-fixtures.mjs",
+    "revision": "3d7e4f461238e752b2259e0a99dffa8521a00caa",
+    "exportedAt": "2026-10-01T05:08:56.379Z",
+    "syntheticOnly": true,
+    "noPendingWork": true
+  },
+  "review": null,
+  "dump": {
+    "path": "fixtures/legacy.dump",
+    "sha256": "24f49db6ecfb7cf54e614d6d00a3e9f77e7ade2f5dfd040ba31bb7550990cb4f",
+    "bytes": 37924,
+    "format": "pg-custom"
+  },
+  "expected": {
+    "schemaRelation": "older-than-candidate",
+    "rejectionLogIncludes": [
+      "Schema mismatch: installed=7, required=8"
+    ]
+  },
+  "producerMetadata": {
+    "ledgerSha256": "c9c16632a99880691498286235c4479687ec1677082c5b313fc131034529fac5",
+    "defaults": {
+      "creatorAccountId": "account-1",
+      "description": null,
+      "status": "active",
+      "agentEnabled": false,
+      "autoKickEnabled": false,
+      "memberCount": 0,
+      "activeAgentRunId": null,
+      "activeSequenceRunId": null,
+      "gatewayGroupIdPattern": "qa-precision-gateway-{index}",
+      "accounts": "all six idle",
+      "otherBusinessTables": "empty"
+    },
+    "schemaVersion": 7,
+    "note": "Preparation only: QA must review source, independent expected, contents and fill actual review. Final candidate must be authorized, schema8 and compatible with this source."
+  }
+}

@@ -22,7 +22,7 @@ export default async function executionGate(): Promise<void> {
   const plan = await currentExecutionPlan(root);
   const out = await realpath(process.env.QA_RUN_DIRECTORY);
   const allowed = await realpath(
-    resolve(root, plan.phase === 'execution' ? 'reports/runs' : 'reports/preflight'),
+    resolve(root, plan.phase === 'developer-preflight' ? 'reports/preflight' : 'reports/runs'),
   );
   if (!isWithin(allowed, out) || out === allowed)
     throw new BlockedError('运行证据目录与当前正式验收/开发预跑用途不一致');

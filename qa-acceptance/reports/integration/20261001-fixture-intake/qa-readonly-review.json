@@ -1,0 +1,72 @@
+{
+  "kind": "QA_FIXTURE_READONLY_INTAKE",
+  "reviewedAt": "2026-10-01T05:18:19.142Z",
+  "reviewer": "independent QA",
+  "phase": "preparation-only",
+  "sourceDirectory": "/Users/zcm/.codex/worktrees/architecture-contract-resource/kapibala/.runtime/qa-fixtures/5d1885e76871460bb0c146fd4cc90032",
+  "inputs": [
+    {
+      "name": "legacy.dump",
+      "bytes": 37924,
+      "sha256": "24f49db6ecfb7cf54e614d6d00a3e9f77e7ade2f5dfd040ba31bb7550990cb4f"
+    },
+    {
+      "name": "precision.dump",
+      "bytes": 39173,
+      "sha256": "0554319ab7ad4483f0a03fcb78416168267a0cd46ecf77b3a204cdea7e23ea38"
+    },
+    {
+      "name": "independent-ledger.json",
+      "bytes": 2507,
+      "sha256": "c9c16632a99880691498286235c4479687ec1677082c5b313fc131034529fac5"
+    },
+    {
+      "name": "legacy-schema.preparation.json",
+      "bytes": 1532,
+      "sha256": "249ce685bba3fa5cdae3921fa2b0c9e8476cb42c8106385e55c08c3253529f80"
+    },
+    {
+      "name": "directory-precision.preparation.json",
+      "bytes": 3119,
+      "sha256": "8eed61aafe20e4abf49a64843472821cfc57497d754c65f9444f9a9e38d6e30d"
+    },
+    {
+      "name": "producer-verification.json",
+      "bytes": 11810,
+      "sha256": "dd9137f487b047a98c335f587956ab892ef8a33312bfe69ee1befba97ec524e6"
+    }
+  ],
+  "verdict": "STATIC_CHECKS_COMPLETE_CONTENT_REVIEW_PENDING",
+  "productTestsExecuted": 0,
+  "databasesStarted": 0,
+  "containersStarted": 0,
+  "checks": {
+    "archiveHeaderAndRegularFiles": true,
+    "archiveDigestMatchesProducer": true,
+    "sourceMigrationHashesMatch": true,
+    "independentLedgerMatchesApprovedSixRowDesign": true,
+    "candidateRevision": null,
+    "artifactReview": null
+  },
+  "sourceRevisions": {
+    "legacySchema": "3d7e4f461238e752b2259e0a99dffa8521a00caa",
+    "precisionSchema": "4c035b8c24e95f33182b4248ee676fcd184f74a5"
+  },
+  "producerEvidenceOnly": [
+    "Restored schema 7 and 8 databases",
+    "Six idle accounts; six precision groups; other business tables empty",
+    "Candidate rejected schema 7; persisted content digest unchanged",
+    "Precision public projections matched pre-defined ledger, with background workers disabled"
+  ],
+  "provenanceLimits": [
+    "Executed generator bytes correspond to fa6bd5f; producer run HEAD 1cbaa79 included then-uncommitted generator corrections.",
+    "Later generator hardening 9a28518 did not regenerate these archives."
+  ],
+  "remaining": [
+    "Freeze final candidate and check schema compatibility",
+    "Independently decode or restore archive to check actual contents and absence of pending work",
+    "Normal-runtime external side-effect checks are not proved by worker-disabled producer checks",
+    "Only after full artifact review, fill real QA review and final candidate-bound manifest; product execution requires matching scope"
+  ],
+  "limitations": "No local pg_restore available; did not install or start resources to replace the missing decoder. Hash/source/ledger checks do not prove actual restored contents. Original producer JSON retained as source data, not QA test results."
+}
