@@ -2,14 +2,14 @@
 
 2026-10-02。本文记录研发对独立 QA 实测的处理，不替代 QA 自行维护的报告、用例及原始证据。初始被测产品为 `5906d8d6b230699fec4a51302677a79c409cac46`；首批 QA 工具源为 `87f5aea2519554616301f403643020b46e1d8a09`。新修复按新的固定提交复测，首次失败和阻塞保留。
 
-**当前阶段：第三批 SUT / QA 均已冻结为 `ed50ca14ae3f4140d7f020f282b313b137920209`，正在启动完整 112 项，尚无本批结果。** 第二批 `47423c1` 已结束并归档为 80 PASS / 4 FAIL / 28 BLOCKED；UI008、DIA005 在该批均 PASS。GRD003 已完成开发修复并进入第三批，待新源独立复验；当前文档变化不移动冻结源。第二批归档入口见文末。
+**当前阶段：第三批已结束，SUT / QA 均为 `ed50ca14ae3f4140d7f020f282b313b137920209`，run `2026-10-01T23-12-22.471Z-739fbbec`，112 项为 96 PASS / 6 FAIL / 10 BLOCKED / 0 NOT_RUN，`runnerErrors=[]`。第四批尚未开始，待下一候选完成组合验证并固定 main 后由 QA 执行。** 第二批 `47423c1` 的 80 PASS / 4 FAIL / 28 BLOCKED 保留；UI008、DIA005 在第二、三批均 PASS，GRD003 在第三批独立复验 PASS。媒体 raw NUL 入站保存失败正在修复，用量关闭和 run-lock 观察已完成开发验证，第三批结果不继承到第四批。
 
 ## 既有问题处理与已完成批次
 
 | 项目 | 已核实事实 | 当前处理与判定边界 |
 | --- | --- | --- |
-| SR-UI-008：序列创建保存中重置 | 真实创建请求的成功响应仍被持有时，实时列表读取到了新模板，弹窗继续显示但输入回默认值、保存状态解除。`PageAttentionScope` 的群/序列 key 变化会卸载内部创建表单；不能单凭同一时段按了 Escape 就归因为 Escape | 已修复表单生命周期，开发真实浏览器修前 3 FAIL / 1 PASS、修后 4 PASS；前端 134 PASS / 1 既有 SKIP。详见[修复与原始证据](second-round-sequence-save-guard-20261002.md)，QA 在固定 `47423c1` 第二批独立复验为 PASS；该批已结束，不能外推第三批结果 |
-| SR-BE-DIA-005：同实例多模块故障观察 | 初始工程控制器拒绝同实例第二条模块租约，无法用同进程双故障证明模块独立恢复 | 已补工程入口 `module-tick-independent`；同实例专项修前 2 FAIL、修后 2 PASS，相关 22 PASS。见[接入及证据](qa-multimodule-observation-20261002.md)；生产逻辑不变；QA 在固定 `47423c1` 第二批已独立复验 PASS |
+| SR-UI-008：序列创建保存中重置 | 真实创建请求的成功响应仍被持有时，实时列表读取到了新模板，弹窗继续显示但输入回默认值、保存状态解除。`PageAttentionScope` 的群/序列 key 变化会卸载内部创建表单；不能单凭同一时段按了 Escape 就归因为 Escape | 已修复表单生命周期，开发真实浏览器修前 3 FAIL / 1 PASS、修后 4 PASS；前端 134 PASS / 1 既有 SKIP。详见[修复与原始证据](second-round-sequence-save-guard-20261002.md)，QA 在固定 `47423c1` 第二批独立复验为 PASS；第三批另行独立复验亦为 PASS，不能外推第四批结果 |
+| SR-BE-DIA-005：同实例多模块故障观察 | 初始工程控制器拒绝同实例第二条模块租约，无法用同进程双故障证明模块独立恢复 | 已补工程入口 `module-tick-independent`；同实例专项修前 2 FAIL、修后 2 PASS，相关 22 PASS。见[接入及证据](qa-multimodule-observation-20261002.md)；生产逻辑不变；QA 在固定 `47423c1` 第二批及 `ed50ca14` 第三批均独立复验 PASS |
 | SR-C2-012：模型服务硬崩溃后的目录锁 | QA 在原进程被强制终止后启动同目录服务，得到 `SESSION_DIRECTORY_LOCKED`，未达到后续原运行恢复检查 | 保留原 FAIL；当前元数据不足以安全自动接管。下文记录可行改进方向及未决边界，不擅自清锁、不盲重发未知轮次 |
 | 部分页面控件定位 | QA 已将若干 label/combobox 定位失败归为执行器适配问题 | QA 独立维护适配，研发不修改 QA 文件；修正后以新运行记录复测，不改写首次结果 |
 
@@ -51,4 +51,19 @@ QA 此次 SR-C2-012 在“服务能否重启”断言处失败，不能将后续
 
 QA 固定 `47423c165f74d8b8908297974f7df71bc53b470d` 的 [2026-10-01T22-25-01.466Z-7951d02e 原报告](../qa-acceptance/reports/acceptance/20261002-second-round/batches/2026-10-01T22-25-01.466Z-7951d02e/report.md)已归档：80 PASS / 4 FAIL / 28 BLOCKED / 0 NOT_RUN。UI008、DIA005 已独立通过。四项原始失败中，C1-009 为清理重试期限之前过早断言，UI021 为导航提交之前读标题；两者由 QA 修正执行器并保留原结果。GRD003 是本次产品修复，C2-012 保留目录锁限制。新增三组工程入口、迁移等夹具和交付追踪仍待后续独立复测；本摘要不替代 QA 归档报告，不把各批通过项机械相加。
 
-归档中的 [manifest](../qa-acceptance/reports/acceptance/20261002-second-round/batches/2026-10-01T22-25-01.466Z-7951d02e/manifest.json)与 [results](../qa-acceptance/reports/acceptance/20261002-second-round/batches/2026-10-01T22-25-01.466Z-7951d02e/results.json)固定 SUT / QA 均为 47423c1；逐例原始文件由 [evidence-index](../qa-acceptance/reports/acceptance/20261002-second-round/batches/2026-10-01T22-25-01.466Z-7951d02e/evidence-index.json)和 [evidence.tar.gz](../qa-acceptance/reports/acceptance/20261002-second-round/batches/2026-10-01T22-25-01.466Z-7951d02e/evidence.tar.gz)保留。以上是第二批历史证据，第三批 ed50ca1 的实际 run、结果和清理仍由 QA 独立签发，不以本段代填。
+归档中的 [manifest](../qa-acceptance/reports/acceptance/20261002-second-round/batches/2026-10-01T22-25-01.466Z-7951d02e/manifest.json)与 [results](../qa-acceptance/reports/acceptance/20261002-second-round/batches/2026-10-01T22-25-01.466Z-7951d02e/results.json)固定 SUT / QA 均为 47423c1；逐例原始文件由 [evidence-index](../qa-acceptance/reports/acceptance/20261002-second-round/batches/2026-10-01T22-25-01.466Z-7951d02e/evidence-index.json)和 [evidence.tar.gz](../qa-acceptance/reports/acceptance/20261002-second-round/batches/2026-10-01T22-25-01.466Z-7951d02e/evidence.tar.gz)保留。以上仅是第二批历史证据；第三批的实际 run 和结果另见下节，不以第二批结果代填。
+
+
+## 第三批已执行结果与下一批准备
+
+QA 第三批固定 SUT / QA `ed50ca14ae3f4140d7f020f282b313b137920209`，run `2026-10-01T23-12-22.471Z-739fbbec`：112 项，96 PASS / 6 FAIL / 10 BLOCKED / 0 NOT_RUN，整体结论 FAIL，`runnerErrors=[]`。直接依据独立 QA 工作树的 [manifest](/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-01T23-12-22.471Z-739fbbec/manifest.json)、[results](/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-01T23-12-22.471Z-739fbbec/results.json)及 [原报告](/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-01T23-12-22.471Z-739fbbec/report.md)。这些链接是该次原运行位置，不冒充已合 main 的最终归档地址；归档仍由 QA 维护。
+
+六项原 FAIL 为 SR-C1-003、SR-C1-013、SR-C2-012、SR-C2-019、SR-BE-DIA-004、SR-BE-POL-005，保留该批原结果及子项证据；失败标签不自动等同产品归因。GRD003、UI008、DIA005 在该批独立 PASS；不拼接各批或把这些通过传播到新候选。
+
+| 当前研发处理 | 已有材料与剩余边界 |
+| --- | --- |
+| C1 非法来源路径 | [规范化前检查修复与开发证据](second-round-media-source-normalization-20261002.md)已交付；另 raw NUL 导致更早入站保存失败仍在修复，不能称 C1-003 全部闭环 |
+| C2 用量关闭观察 | [真实 writer 关闭接入与开发证据](qa-usage-writer-close-20261002.md)已完成；新入口待后续固定批次独立验证，不改写 C2-015 / C2-019 原结果 |
+| POL005 同运行竞争观察 | [真实 run-lock 观察与开发证据](qa-agent-ownership-witness-20261002.md)已完成，区分 lock_busy / capacity_unavailable；QA 仍须在 primary 实际持锁窗口安排 secondary。只补观察缺口，不关闭未知效果强恢复 FAIL |
+
+下一候选需完成组合验证、本地合 main 及固定身份后，才进入第四批独立执行；当前没有第四批结果。第一轮 1/8 留后处理、2–7 既定恢复/协议方向、C2-012 的 D047 披露不构成豁免、真实提供方新费用/凭据需另行授权等边界继续有效，不重复要求已经批准的范围决定。
