@@ -2812,6 +2812,7 @@ test('[UI-039] 真实零步骤failed与cancelled详情不再提示等待第一�
   try {
     const prepared = await preparePublicQueueZeroSteps(qa);
     blockers.push(...prepared.blocked);
+    if (Object.values(prepared.readyStates).some(Boolean)) await login(page, qa);
     for (const role of ['failed', 'cancelled'] as const) {
       const target = prepared.targets[role];
       const actual = prepared.final.targets[role].read.value;
@@ -2828,7 +2829,6 @@ test('[UI-039] 真实零步骤failed与cancelled详情不再提示等待第一�
         expect(actual.status).toBe(role);
         expect(actual.endReason).toBe(role === 'failed' ? 'wall_clock' : 'cancelled');
         expect(actual.steps).toHaveLength(0);
-        await login(page, qa);
         await go(page, qa, 'group', actual.groupId);
         const link = element(page, qa, 'runLink').and(
           page.locator(`a[href$="/${encodeURIComponent(actual.id)}"]`),
