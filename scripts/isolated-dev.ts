@@ -38,6 +38,11 @@ interface Manifest {
   urls?: { api: string; web: string; gateway: string; agent: string };
   gatewayState: string;
   agentState: string;
+  sample?: {
+    status: "preparing" | "ready" | "failed";
+    stage: string;
+    dataPath?: string;
+  };
 }
 const uuid =
   /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/;
@@ -50,13 +55,22 @@ async function docker(
   args: string[],
   timeout = 30_000,
 ): Promise<string> {
-  return (
-    await execute("docker", [...engineArgs, ...args], {
-      env: dockerEnv,
-      timeout,
-      maxBuffer: 2 * 1024 * 1024,
-    })
-  ).stdout.trim();
+  try {
+    return (
+      await execute("docker", [...engineArgs, ...args], {
+        env: dockerEnv,
+        timeout,
+        maxBuffer: 2 * 1024 * 1024,
+      })
+    ).stdout.trim();
+  } catch (error) {
+    // execFile errors include the full command, including the generated database
+    // password for `docker run`. Never forward that command or its cause.
+    const failure = error as { code?: string | number; signal?: string };
+    throw new Error(
+      `Docker ${args[0]} failed (code ${failure.code ?? "unknown"}, signal ${failure.signal ?? "none"})`,
+    );
+  }
 }
 async function started(pid: number): Promise<string> {
   const value = (
@@ -193,10 +207,16 @@ async function cleanupFile(path: string): Promise<void> {
   await cleanup(m);
 }
 
-async function start(smoke: boolean): Promise<void> {
+async function start(mode: "empty" | "smoke" | "sample"): Promise<void> {
   const [major, minor] = process.versions.node.split(".").map(Number);
   assert.ok(major === 24 && minor! >= 21, "Use the Node 24 version in .nvmrc");
   process.chdir(root);
+  if (mode === "sample") {
+    // Local sample defaults apply only to this foreground process. No .env or
+    // real Agent configuration is read, written or invoked.
+    process.env.NODE_ENV = "development";
+    process.env.AGENT_TURN_TIMEOUT_MS = "12000";
+  }
   const engineArgs = process.env.DOCKER_CONTEXT
     ? ["--context", process.env.DOCKER_CONTEXT]
     : process.env.DOCKER_HOST
@@ -238,6 +258,7 @@ async function start(smoke: boolean): Promise<void> {
     }),
   );
   const disposers: (() => Promise<unknown>)[] = [];
+  const startupController = new AbortController();
   let interrupted = false;
   let closePromise: Promise<void> | undefined;
   let wake!: () => void;
@@ -246,6 +267,7 @@ async function start(smoke: boolean): Promise<void> {
   });
   const onSignal = () => {
     interrupted = true;
+    startupController.abort(new Error("Isolated startup interrupted"));
     wake();
   };
   process.on("SIGINT", onSignal);
@@ -462,6 +484,59 @@ async function start(smoke: boolean): Promise<void> {
     });
     assert.equal(page.status, 200);
     assert.match(await page.text(), /<div id="root">/);
+    if (mode === "sample") {
+      m.sample = { status: "preparing", stage: "empty-environment" };
+      await persist(m);
+      try {
+        const { prepareSample } = await import("./sample-environment.js");
+        const sample = await prepareSample({
+          urls: m.urls,
+          revision: m.revision,
+          signal: startupController.signal,
+          onProgress(stage) {
+            m.sample!.stage = stage;
+            console.log(
+              JSON.stringify({
+                event: "isolated-sample-progress",
+                runId,
+                stage,
+              }),
+            );
+          },
+        });
+        check();
+        const dataPath = join(directory, "sample-data.json");
+        await writeFile(dataPath, JSON.stringify(sample, null, 2) + "\n", {
+          mode: 0o600,
+        });
+        m.sample = { status: "ready", stage: "verified", dataPath };
+        await persist(m);
+        console.log(
+          JSON.stringify({
+            event: "isolated-sample-ready",
+            runId,
+            dataPath,
+            groupCount: sample.groupCount,
+            historyMessagesSeeded: sample.historyMessagesSeeded,
+            completedAgentRun: sample.completedAgentRun,
+            completedSequenceRun: sample.completedSequenceRun,
+          }),
+        );
+      } catch (error) {
+        m.sample = { status: "failed", stage: m.sample!.stage };
+        console.error(
+          JSON.stringify({
+            event: "isolated-sample-failed",
+            runId,
+            stage: m.sample.stage,
+            error: error instanceof Error ? error.message : String(error),
+          }),
+        );
+        await persist(m);
+        throw error;
+      }
+    }
+    check();
     console.log(
       JSON.stringify({
         event: "isolated-ready",
@@ -472,12 +547,14 @@ async function start(smoke: boolean): Promise<void> {
         database: { host: "127.0.0.1", port: Number(match[1]), name: dbName },
         manifest: join(directory, "manifest.json"),
         health: healthBody,
+        mode: mode === "sample" ? "sample" : "empty",
+        ...(m.sample?.dataPath ? { sampleData: m.sample.dataPath } : {}),
       }),
     );
     console.log(
       "Admin admin/admin; read-only viewer/viewer. Ctrl-C deletes this isolated database and simulator state.",
     );
-    if (smoke) {
+    if (mode === "smoke") {
       await smokeCheck(m);
       console.log(
         JSON.stringify({
@@ -636,14 +713,29 @@ async function smokeCheck(m: Manifest): Promise<void> {
 const args = process.argv.slice(2);
 try {
   if (args[0] === "cleanup" && args.length === 2) await cleanupFile(args[1]!);
-  else if (args.length === 0 || (args.length === 1 && args[0] === "--smoke"))
-    await start(args[0] === "--smoke");
+  else if (
+    args.length === 0 ||
+    (args.length === 1 && ["--smoke", "--sample"].includes(args[0]!))
+  )
+    await start(
+      args[0] === "--smoke"
+        ? "smoke"
+        : args[0] === "--sample"
+          ? "sample"
+          : "empty",
+    );
   else
     throw new Error(
-      "Usage: npm run dev:isolated [-- --smoke | -- cleanup /absolute/manifest.json]",
+      "Usage: npm run dev:isolated [-- --smoke | -- --sample | -- cleanup /absolute/manifest.json] (or npm run demo:sample)",
     );
 } catch (error) {
-  console.error(error);
+  console.error(
+    error instanceof AggregateError
+      ? `${error.message}: ${error.errors.map((item: unknown) => (item instanceof Error ? item.message : String(item))).join("; ")}`
+      : error instanceof Error
+        ? error.message
+        : String(error),
+  );
   process.exitCode = 1;
 } finally {
   // Every local HTTP server lives in this process. Exit also closes an already
