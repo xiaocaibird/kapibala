@@ -1,6 +1,8 @@
 # 第二轮研发集成验证与交接
 
-**最新交接：** 媒体 NUL 修复的固定开发回归已完成（24 PASS / 0 FAIL / 0 SKIP），组合构建通过。第四批及原定补证已结束，SUT / QA 均固定为 `0be8575f326f709fe674e20033843d950385043d`。独立 QA 最终结论为 FAIL：103 PASS / 4 FAIL / 5 BLOCKED / 0 NOT_RUN；8 项 Firefox/WebKit 检查通过。报告与证据已合入 main，后续产品修复和再次复测已暂停，等待负责人判断。见[正式报告](../qa-acceptance/reports/acceptance/20261002-second-round/report.md)。详见[第四批候选交接](second-round-fourth-candidate-20261002.md)。下方批次与处理历史按各自时点保留。
+**当前处置（D053）：** 负责人已审阅八项遗留，接受第1/2/3/7项的明确限制或证据缺口，授权第4/5/6/8项一次定向复验（含有界真实模型调用）。QA结果出来后直接报告并停止，不自动追加修复/复测；原报告及原始证据不改。详见[八项处置与执行回执](second-round-disposition-20261002.md)。
+
+**上一阶段签发回执（保留原时点）：** 媒体 NUL 修复的固定开发回归已完成（24 PASS / 0 FAIL / 0 SKIP），组合构建通过。第四批及原定补证已结束，SUT / QA 均固定为 `0be8575f326f709fe674e20033843d950385043d`。独立 QA 最终结论为 FAIL：103 PASS / 4 FAIL / 5 BLOCKED / 0 NOT_RUN；8 项 Firefox/WebKit 检查通过。报告与证据已合入 main，后续产品修复和再次复测已暂停，等待负责人判断。见[正式报告](../qa-acceptance/reports/acceptance/20261002-second-round/report.md)。详见[第四批候选交接](second-round-fourth-candidate-20261002.md)。下方批次与处理历史按各自时点保留。
 
 2026-10-02（北京时间）。本文保留 C1/C2、全部五项 P0 和五项 P1 初始组合与补修的研发验证。**第三批已结束，SUT / QA 固定 `ed50ca14ae3f4140d7f020f282b313b137920209`，run `2026-10-01T23-12-22.471Z-739fbbec`：112 项为 96 PASS / 6 FAIL / 10 BLOCKED / 0 NOT_RUN，`runnerErrors=[]`。第四批尚未开始，待下一候选组合验证及 main 冻结。** 第二批 `47423c1` 的 80 PASS / 4 FAIL / 28 BLOCKED 原样保留；UI008、DIA005 在第二、三批均 PASS，GRD003 在第三批 PASS，均不继承到第四批。当前修复及原件入口见[处理记录](second-round-followup-20261002.md)及[执行总表](second-round-execution-20261002.md)。本文是开发证据，不是第二轮 QA 通过结论。QA 的目录、用例、断言和报告均由 QA 维护。
 

@@ -2,7 +2,7 @@
 
 日期：2026-10-01（北京时间）。源码基线：`fb1589df08f00c10e9e62801007b1698d4d0155a`。
 
-**原评估状态：仅评估和记录。后续决定（2026-10-02）：D050 已批准 P1-02 的最小两入口范围，已在独立分支完成开发与自测，见[本轮交付记录](final-enhancement-delivery-20261002.md)。** 下文保留 fb1589d 时的源码事实和较广初步方案；群→序列回程、全站提醒来源及其他全站改造仍未纳入本批。开发完成后须先由负责人审阅，不自动合 main 或启动第二轮 QA。
+**原评估状态：仅评估和记录。后续状态（2026-10-02）：D050批准P1-02最小两入口，D052已授权合main及第二轮独立QA。对应返回、高亮和深链等用例已PASS；跨实体提醒SR-UI-025仍BLOCKED，D053授权一次补证；全面人工验收尚未完成。** 当前入口见[八项处置](second-round-disposition-20261002.md)及[独立报告](../qa-acceptance/reports/acceptance/20261002-second-round/report.md)。下文保留fb1589d时的源码事实和较广初步方案；群→序列回程、全站提醒来源及其他全站改造仍未纳入本批。[原开发交付](final-enhancement-delivery-20261002.md)保留其历史时点，不代表仍待合入。
 
 关联：[人工评审与需求调整 H19](human-review-record.md)、[既有群目录方案](group-directory-profile-proposal.md)、[额外增强建议](product-enhancement-proposal.md)。
 
