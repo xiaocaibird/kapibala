@@ -1,0 +1,313 @@
+{
+  "phase": "FINAL_REVIEW_AFTER_AUTHORIZED_EXECUTION",
+  "executiveSummary": "本轮已批准的112条业务用例及原定Linux UID、有头Chromium、Firefox/WebKit补证均已完成登记。最终建议不通过：103 PASS、4 FAIL、5 BLOCKED；8条跨浏览器冒烟全部通过。4条失败对应3类既有未豁免差距：Agent硬崩溃锁恢复、未知kick原任务自动完成，以及已暂缓讨论的严格5秒边界。5条阻塞中，3条属于QA测试前提错误导致未完成有效验收，另2条分别缺少真实write失败夹具和真实模型调用许可。没有把这些阻塞算通过。所有产品执行已结束，按负责人最后指令先交付报告，不启动第五轮修复／复测。",
+  "evidenceLimits": "本报告只对本轮明确批准的 C1/C2、五项 P0、五项 P1 及受影响原功能作版本绑定判定。原128条要求保留追踪和历史，不把历史版本PASS移植为当前全量PASS。实际故障窗口、原始首次结果、人工和真实供应商边界分别保留。有限执行不证明任意故障下的全面保证。上线准备度未评估。",
+  "defects": [
+    {
+      "id": "SR-D-001",
+      "severity": "S1",
+      "status": "OPEN_EXISTING_NO_WAIVER",
+      "cases": [
+        "SR-C2-012"
+      ],
+      "summary": "独立 Agent 在模型请求在途时硬崩溃后，遗留 owner.lock 使正常重启报 SESSION_DIRECTORY_LOCKED，必须人工处理；不满足原自动恢复要求",
+      "reproduce": [
+        "触发原 run 并确认实际模型请求在途",
+        "SIGKILL 本例独立 Agent，保留原 session/owner.lock 与后端/数据库",
+        "用同一目录正常重启独立 Agent，观察启动诊断与原 run"
+      ],
+      "expected": "原任意时刻重启恢复义务保持；不能以新 run 或人工清锁代替自动恢复",
+      "actual": "真实原 PID 35665；重启 started=false，provider-2.log 报 SESSION_DIRECTORY_LOCKED；恢复后的恰一次发送及原 run 完成未到达",
+      "evidence": "第四批 run/cases/SR-C2-012/variant-1/provider-2.log、2-strong-recovery-service-restart.json、run/cases/SR-C2-012/result.json（见对应证据归档）",
+      "nextAction": "按用户收口指令先报告；后续由负责人决定补足恢复能力或明确变更验收要求，QA 不自动豁免或继续修复循环。"
+    },
+    {
+      "id": "SR-D-002",
+      "severity": "S1",
+      "status": "OPEN_EXISTING_NO_WAIVER",
+      "cases": [
+        "SR-BE-DIA-004",
+        "SR-BE-POL-005"
+      ],
+      "summary": "已派发 kick 的真实结果未知时，原 run 在重启后安全暂停，自动完成的强恢复保证仍不成立",
+      "reproduce": [
+        "分别制造真实 kick 已落地与未落地、请求响应未知两分支",
+        "保留原请求/副作用账本并真实重启应用",
+        "检查同一原 run、recoveryNote、外部调用与副作用次数"
+      ],
+      "expected": "原 A5.8 的恢复与完成要求，及无重复副作用分别满足",
+      "actual": "DIA004与POL005两分支均只派发一次、效果为0/1；真实不同PID重启后原run仍running/recovery-paused。POL005同一run的第二实例真实lock_busy、callback=false且无acquired；primary持锁时响应屏障仍在，竞争保护已通过，不能覆盖自动完成失败。",
+      "evidence": "第四批 run/cases/SR-BE-DIA-004/ 与 run/cases/SR-BE-POL-005/ 下两个 dispatched-*-unknown-restart-<UUID>/variant-observation.json、逐变体original-budget-and-completion.json；POL005 facts.secondObservation.witness包含实际双实例PID/attempt/key/result。",
+      "nextAction": "保留原 FAIL 和外部协议能力限制；不建议盲目重放。后续由负责人决定保证范围/外部能力方向。"
+    },
+    {
+      "id": "SR-QA-001",
+      "severity": "S2",
+      "status": "BLOCKED_QA_PREMISE",
+      "cases": [
+        "SR-C1-005"
+      ],
+      "summary": "媒体保留期零天变体未证明下载和清理已完成，导致过早断言旧路径；本次该义务缺少有效结论",
+      "reproduce": [
+        "N=0 启动独立媒体场景",
+        "媒体尚为 downloading 时仅等待 gateway tick 前进",
+        "紧接读取刚发布的 localFilePath 并断言 null"
+      ],
+      "expected": "先建立完整下载、符合年龄区间与真实清理终态，再判定路径/文件",
+      "actual": "原始断言 FAIL；独立时间线复核确认测试前提不足，最终 BLOCKED，无产品通过或确定产品缺陷结论",
+      "evidence": "见 caseReviews.SR-C1-005 的归档成员及实际时间线",
+      "nextAction": "按最后一批边界不追加测试；后续若授权，QA 修正前提后重新执行该用例。"
+    },
+    {
+      "id": "SR-D-003",
+      "severity": "S2",
+      "status": "OPEN_OWNER_DISCUSSION_DEFERRED",
+      "cases": [
+        "SR-C2-019"
+      ],
+      "summary": "严格工具状态等待实测 5000.265833 毫秒，超过原 5000 毫秒上限；不自行加容差",
+      "reproduce": [
+        "真实发送同一 clientMsgId 的工具调用并保持确认窗口",
+        "用实际应用单调时钟记录 tool wait 开始与结束",
+        "核对重用 key、原 run 及外部副作用"
+      ],
+      "expected": "按当前未改变的原始5000ms上限判定",
+      "actual": "同 PID 45138/同 clock 的区间1705.739875→6706.005708，超限0.265833ms；实际仅1 send/1 audit/1副作用，原run final，但不能覆盖时间失败",
+      "evidence": "第四批 run/cases/SR-C2-019/SR-C2-019-original-five-second-wait-and-confirmed-key-reuse.json 及关联原始生命周期/外部请求账本",
+      "nextAction": "沿负责人已决定的“第二轮后再讨论严格五秒口径”；不是本轮新修复或重新要求选择。"
+    },
+    {
+      "id": "SR-QA-002",
+      "severity": "S2",
+      "status": "BLOCKED_QA_PREMISE",
+      "cases": [
+        "SR-BE-USG-011"
+      ],
+      "summary": "用量容量造数并发32超过公开4个在途请求限制，因预期错误未能建立最大记录/字节边界",
+      "reproduce": [
+        "以公开容量配置启动独立服务",
+        "QA一次发起32个真实模型请求，逐个断言HTTP200",
+        "读取真实AGENT_BUSY 429与上游调用账本"
+      ],
+      "expected": "容量验证必须遵守公开并发限制，先形成所需真实成功记录",
+      "actual": "原始FAIL；实际合法429限流使10000条、16MiB及4096bytes容量断言未到达，最终BLOCKED",
+      "evidence": "见caseReviews.SR-BE-USG-011，实际请求响应、wire与usage-obligations-summary均保留",
+      "nextAction": "后续授权后由QA修正造数并发与节奏、重新实际验证；本次不进入新复测。"
+    },
+    {
+      "id": "SR-QA-003",
+      "severity": "S2",
+      "status": "BLOCKED_QA_PREMISE",
+      "cases": [
+        "SR-UI-025"
+      ],
+      "summary": "跨实体提醒脚本错误要求不存在且非必需的摘要弹层，导致后续导航与另一实体确认尚未验收",
+      "reproduce": [
+        "同一真实管理员在两个真实焦点标签页分别打开runA/runB",
+        "产生两实体更新；A点击实际刷新并查看更新",
+        "脚本错误等待.attention-summary，随后流程中断"
+      ],
+      "expected": "按实体清除并完成返回/另一实体确认，不能要求需求未规定的额外控件",
+      "actual": "已观察A清除且B保留，但后续未执行；rawFAIL保留、评审BLOCKED",
+      "evidence": "见caseReviews.SR-UI-025，headed批次eda667c0 trace@1056/1060和双页最终截图/日志",
+      "nextAction": "后续授权后QA修正控件假设并补足整个流程；本次不修改用例或再跑。"
+    }
+  ],
+  "remaining": [
+    {
+      "owner": "负责人：已决定第二轮后讨论",
+      "item": "严格5秒的硬上限及真人IME/系统焦点签字，沿原暂缓处置保留；本轮工具时钟实际超限不自动豁免",
+      "nextAction": "报告后结合实际误差与业务目标决定是否变更要求；未变更前原FAIL仍成立。"
+    },
+    {
+      "owner": "负责人／研发",
+      "item": "Agent owner.lock与未知kick原run暂停均是现有强恢复要求的明确差距，安全保护通过不代表自动完成通过",
+      "nextAction": "先阅读本报告再决定工程或需求路径；本次不启动第五轮产品修复／复测。"
+    },
+    {
+      "owner": "QA",
+      "item": "C1-005零天保留期场景前提不足，尚不能证明完整文件实际删除终态",
+      "nextAction": "记录脚本问题和原始FAIL，评审BLOCKED；后续授权后修正前提并独立复测。"
+    },
+    {
+      "owner": "QA／工程夹具",
+      "item": "C1-015已打开描述符的write失败未能通过当前Darwin文件标记稳定触发；打开失败与上限收紧两分支通过",
+      "nextAction": "需要能证明命中真实write系统调用失败的隔离夹具后才能补证，不以随机断网/手工改状态代替。"
+    },
+    {
+      "owner": "负责人",
+      "item": "C2-017真实模型调用没有本轮收费授权、安全凭据引用、模型与事前调用/费用限额",
+      "nextAction": "保持BLOCKED且零真实收费调用；未来若要完成该要求需单独提供边界，离线PASS不能替代。"
+    },
+    {
+      "owner": "独立上线评估",
+      "item": "本次范围不包含生产部署、真实容量SLA、长稳、备份恢复/回滚和告警上线门禁",
+      "nextAction": "本报告不作上线批准；上线评估另行定义并执行。"
+    },
+    {
+      "owner": "QA",
+      "item": "USG011容量测试以32并发超过公开4个在途限制，未建立10000条/16MiB/4096bytes真实边界",
+      "nextAction": "原FAIL留档、评审BLOCKED；需要后续授权后以契约允许的并发实际生成记录并重新验证。"
+    },
+    {
+      "owner": "QA",
+      "item": "UI025跨实体提醒只完成A确认/B保留阶段，脚本错误等待摘要弹层，后续返回与B自身确认缺证据",
+      "nextAction": "原FAIL留档、评审BLOCKED；后续授权后修正用例控制流程再测，不修改需求预期。"
+    }
+  ],
+  "caseReviews": {
+    "SR-C1-005": {
+      "classification": "QA_PREMISE_ERROR",
+      "reason": "原始 FAIL 保留，评审为 BLOCKED。variant-3 的清理夹具返回时任务仍 downloading、downloaded_at/local_file_path 均 null；随后源 GET 完成，API 返回刚发布的路径。测试没有先证明完整下载和真实清理已完成便断言路径为 null，现有证据不足以判定删除后残留，也不能判定该保留期变体通过。本批不修脚本、不追加复测。",
+      "evidence": [
+        "batches/2026-10-02T00-12-11.076Z-760cef1e/evidence.tar.gz :: run/cases/SR-C1-005/variant-3/media-cleanup-cycle.json",
+        "batches/2026-10-02T00-12-11.076Z-760cef1e/evidence.tar.gz :: run/cases/SR-C1-005/variant-3/media-source-ledger.json",
+        "batches/2026-10-02T00-12-11.076Z-760cef1e/evidence.tar.gz :: run/cases/SR-C1-005/variant-3/api.ndjson",
+        "batches/2026-10-02T00-12-11.076Z-760cef1e/evidence.tar.gz :: run/cases/SR-C1-005/error.json"
+      ],
+      "observedTimeline": {
+        "cycle": "00:16:08.701–00:16:08.702 UTC; tick 12→13, downloading",
+        "sourceComplete": "00:16:08.706 UTC, HTTP 200 / 8193 bytes",
+        "publicPath": "00:16:08.722 UTC, newly published non-null path"
+      },
+      "reviewers": "Independent root QA and media-provider QA; development read-only cross-check consistent",
+      "remainingObligation": "完整文件年龄阈值与默认/配置保留期全变体实际清理终态"
+    },
+    "SR-BE-USG-011": {
+      "classification": "QA_PREMISE_ERROR",
+      "reason": "原始 FAIL 保留，评审 BLOCKED。公开契约最多4个在途模型请求、超量返回429；QA容量造数以32并发且一律要求200，实际收到AGENT_BUSY。variant20的64次HTTP仅36次200/28次429，variant21与22各32次HTTP仅4次200/28次429，真实上游调用数吻合；三容量边界断言均未到达。records1/2、配置与年龄子项通过不能补足容量义务。未证明容量违规，也不计容量通过；本批不修脚本或补跑。",
+      "evidence": [
+        "0be8575:qa-acceptance/second-round/requirements/sources/c2-gemini-agent.md:62",
+        "0be8575:qa-acceptance/second-round/harness/provider-usage-supplement.ts:94",
+        "batches/2026-10-02T00-12-11.076Z-760cef1e/evidence.tar.gz :: run/cases/SR-BE-USG-011/usage-obligations-summary.json",
+        "batches/2026-10-02T00-12-11.076Z-760cef1e/evidence.tar.gz :: run/cases/SR-BE-USG-011/variant-{20,21,22}/*-provider-public-exchange.json"
+      ],
+      "remainingObligation": "10000条、16MiB与4096bytes实际形成容量边界及保留后缀验证",
+      "reviewers": "Independent media-provider QA; root review"
+    },
+    "SR-UI-025": {
+      "classification": "QA_PREMISE_ERROR",
+      "reason": "有头补证原始 FAIL 保留，评审 BLOCKED。真实同admin、排他焦点及A/B实体各自更新成立；A点击实际“刷新并查看更新”后只A清除提醒，B仍保留提醒。脚本随后错误要求额外.attention-summary弹层，而已冻结需求仅要求实体范围确认及返回不串。未继续执行A返回、B自身确认/返回，故不能由局部正确观察判整例PASS，也不足以认定产品违约。",
+      "evidence": [
+        "batches/2026-10-02T00-32-29.999Z-eda667c0/evidence.tar.gz :: run/cases/SR-UI-025/trace.zip (trace.trace call@1056 actual button, @1060 invalid summary expectation, @1102 A quiet, @1086 B still notified)",
+        "batches/2026-10-02T00-32-29.999Z-eda667c0/evidence.tar.gz :: run/cases/SR-UI-025/ui.ndjson (ord2-4 same identity, ord5 true focus, ord7 final A)",
+        "batches/2026-10-02T00-32-29.999Z-eda667c0/evidence.tar.gz :: run/cases/SR-UI-025/peer-entity/ui.ndjson (same admin and remaining B notification)",
+        "0be8575:qa-acceptance/second-round/harness/ui-runner.ts:409"
+      ],
+      "remainingObligation": "A返回不影响B，以及B自身确认和返回的完整流程",
+      "reviewers": "Independent UI QA with trace/API/visible snapshots; root review"
+    }
+  },
+  "finalExecutionBoundary": {
+    "humanMessageId": "01a0f9e3-5bed-7773-a4d4-bac5cc77ed87",
+    "lastFullRun": "2026-10-02T00-12-11.076Z-760cef1e",
+    "frozenSutRevision": "0be8575f326f709fe674e20033843d950385043d",
+    "rule": "一次第四批全量和原定Linux UID/headed Chromium/Firefox-WebKit补证后直接报告，不启动第五轮修复/复测。"
+  },
+  "existingDispositions": {
+    "firstRound1And8": "负责人已决定在第二轮后讨论严格五秒口径与真人IME/焦点；不重新要求选择。",
+    "firstRound2To7": "沿已确认工程方向和外部能力限制，保留原FAIL/BLOCKED；方向批准不自动变为原强保证豁免。",
+    "C2HardCrashLock": "披露或安全拒绝不等于原自动续跑保证已获豁免。",
+    "production": "独立上线评估未授权、未执行。",
+    "realProvider": "本轮无真实付费调用授权，不读取本机Key；离线实际协议证据不替代真实模型结果。"
+  },
+  "severityDefinitions": {
+    "S1": "阻断必验可靠性要求，当前不能无条件验收通过",
+    "S2": "局部功能或测试证据缺口，需要后续验证；不等同于已证实产品缺陷"
+  },
+  "verifiedHighlights": [
+    {
+      "caseId": "SR-C1-003",
+      "fact": "本批18个非法媒体URL分区及404/302/声明超限/20MiB+1字节流实际通过，真实进程出口序号连续；结论限于公开Node hooks覆盖。"
+    },
+    {
+      "caseId": "SR-C1-010",
+      "fact": "实际Darwin unlink EPERM；受阻A路径null但物理文件保留重试，B实际删除；解除故障后A删除。"
+    },
+    {
+      "caseId": "SR-C2-015",
+      "fact": "实际writer close及重复close，随后真实audit成功/唯一rejected-closed/文件hash不变；main/factory入口矩阵独立验证。"
+    },
+    {
+      "caseId": "SR-C2-019",
+      "fact": "turn timeout实际12013–12156ms，原200响应释放时下游已关闭，零后续副作用；跨epoch原run恢复后活动区间49581.136917–49916.680292ms，含未落盘尾段及启动不确定上界，均按60000ms原判据通过。"
+    },
+    {
+      "caseId": "SR-C2-010",
+      "fact": "12次真实call达到step预算终态；7次7s调用的wall-clock决定上界49512.683625ms。均非导入开发自测结论。"
+    },
+    {
+      "caseId": "SR-C1-013",
+      "fact": "headed真实排他焦点、created→media→media与新消息阳性对照完整，媒体发布/清理不增加提醒；不代签真人IME或焦点体验。"
+    },
+    {
+      "caseId": "SR-BE-POL-005",
+      "fact": "两真实分支均建立同run跨实例持锁重叠；第二实例lock_busy/no callback。原强恢复失败单列。"
+    },
+    {
+      "caseId": "SR-BE-POL-008",
+      "fact": "真实PG行锁阻塞跨预算边界，取消/未取消两分支均执行托管保护POLICY_DENIED且零kick；原活动上界58197ms。"
+    },
+    {
+      "caseId": "SR-BE-DB-002",
+      "fact": "同数据库标准入口单SELECT A/B/回滚还原完整分页相同；部分极端offset样本变慢，不能宣称所有查询更快。"
+    }
+  ],
+  "reportingToolRevision": "6a6b8c0",
+  "reportingToolBoundary": "仅修复报告器对第一批已签归档字段的兼容及完整校验；无产品代码或验收用例修正。SUT与执行QA均为0be8575f326f709fe674e20033843d950385043d。",
+  "supplementPreparation": {
+    "record": "foreign-uid-preflight-record.json",
+    "initialStatus": "BLOCKED_BEFORE_RUN_OR_RESOURCE_CREATION",
+    "resolution": "原full控制器已正常清理，补证不使用该三adapter；独立最小target去掉unused adapters并按相同human批准scope重新绑定target摘要。没有修改原full target/authorization或复活其已清理资源。",
+    "productAttempts": 1,
+    "qaRevision": "0be8575f326f709fe674e20033843d950385043d"
+  },
+  "versionBinding": {
+    "sut": "0be8575f326f709fe674e20033843d950385043d",
+    "executionQa": "0be8575f326f709fe674e20033843d950385043d",
+    "developmentCandidate": "0863cb74a4633f2f4242bd810a1080d488a7a37b",
+    "postFreezeDocsOnly": "2d63d00dbdcecd865e0c6d1e412a3b553f418f91",
+    "reportTools": "6a6b8c0a58b38cd1d893083b2d8b701a516da422",
+    "rule": "0be→2d63仅研发文档；报告分支后续只报告工具与QA证据，不以文档提交冒充新产品执行。"
+  },
+  "independentSupplements": {
+    "uid": {
+      "runId": "2026-10-02T00-31-13.776Z-b7d07e73",
+      "subObligations": "4 PASS",
+      "wholeCases": "Raw BLOCKED untouched; explicit sole-UID-gap composition only for C2-008 and USG006",
+      "platformLimit": "Darwin主场景 + Linux UID10001/10002真实补证，Node24.21/npm12.1；不能声称Darwin已直接执行跨UID故障"
+    },
+    "headed": {
+      "runId": "2026-10-02T00-32-29.999Z-eda667c0",
+      "C1013": "PASS",
+      "UI025": "RawFAIL/QA_PREMISE_ERROR/BLOCKED",
+      "humanImeOrFocusSigned": false
+    },
+    "compatibility": {
+      "firefox": "2026-10-02T00-33-44.268Z-5fc3dbb6",
+      "webkit": "2026-10-02T00-34-28.420Z-4a0f4a5b",
+      "each": "UI001/UI008/UI019/DEL006 actual PASS",
+      "limit": "Each engine four specified flow samples; not full suite compatibility guarantee"
+    }
+  },
+  "previousFixesIndependentlyVerified": [
+    {
+      "issue": "UI008真实输入/关闭保护旧版失败",
+      "developmentFix": "27a714b07e8402c5e2d01f8653ab63dd8a16269b",
+      "currentEvidence": "Fourth SR-UI-008 PASS; Firefox/WebKit independently PASS",
+      "historicalRun": "2026-10-01T21-48-07.275Z-4e425702"
+    },
+    {
+      "issue": "GRD003同key queued重复请求返回SEND_TIMEOUT而非原消息ID",
+      "developmentFix": "bc977f385286c2c6997c890d60b9d5a60d8535ed",
+      "currentEvidence": "Fourth SR-BE-GRD-003 six states PASS",
+      "historicalRun": "2026-10-01T22-25-01.466Z-7951d02e"
+    },
+    {
+      "issue": "C1003原始../路径先URL规范化后错误创建媒体请求",
+      "developmentFix": "Final candidate raw URL guard and raw NUL event handling",
+      "currentEvidence": "Fourth SR-C1-003 eighteen partitions PASS",
+      "historicalRun": "2026-10-01T23-12-22.471Z-739fbbec"
+    }
+  ]
+}

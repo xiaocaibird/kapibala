@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-02T00:30:57.948Z",
+  "originalRun": "2026-10-02T00-12-11.076Z-760cef1e",
+  "firstAttempt": {
+    "stage": "loadTarget before creating any run/resource or product process",
+    "status": "BLOCKED",
+    "error": "容量注册目录必须已存在、非符号链接、路径无符号链接别名、归当前uid且权限为0700",
+    "cause": "Original full-run controllers were correctly cleaned up; their unused adapter registry paths are no longer valid."
+  },
+  "adjustment": {
+    "removedAdapters": [
+      "runtimeObservation",
+      "capacityControl",
+      "messageObservation"
+    ],
+    "purpose": "Standalone Linux supplement does not use backend runtime/capacity/message controllers. Fresh minimal target declares only capabilities it uses; no stale registry resurrected.",
+    "sourceUnchanged": true,
+    "sutRevision": "0be8575f326f709fe674e20033843d950385043d",
+    "qaRevision": "0be8575f326f709fe674e20033843d950385043d",
+    "authorityUnchanged": true,
+    "scopeUnchanged": true,
+    "targetFingerprint": "4a3602b7be522b5e67020b8159756dd73cb34fefbd30ad627af9803bed743439"
+  },
+  "automaticProductRetries": 0
+}

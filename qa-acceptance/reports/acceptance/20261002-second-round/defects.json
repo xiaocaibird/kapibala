@@ -1,0 +1,111 @@
+[
+  {
+    "id": "SR-D-001",
+    "severity": "S1",
+    "status": "OPEN_EXISTING_NO_WAIVER",
+    "cases": [
+      "SR-C2-012"
+    ],
+    "summary": "独立 Agent 在模型请求在途时硬崩溃后，遗留 owner.lock 使正常重启报 SESSION_DIRECTORY_LOCKED，必须人工处理；不满足原自动恢复要求",
+    "reproduce": [
+      "触发原 run 并确认实际模型请求在途",
+      "SIGKILL 本例独立 Agent，保留原 session/owner.lock 与后端/数据库",
+      "用同一目录正常重启独立 Agent，观察启动诊断与原 run"
+    ],
+    "expected": "原任意时刻重启恢复义务保持；不能以新 run 或人工清锁代替自动恢复",
+    "actual": "真实原 PID 35665；重启 started=false，provider-2.log 报 SESSION_DIRECTORY_LOCKED；恢复后的恰一次发送及原 run 完成未到达",
+    "evidence": "第四批 run/cases/SR-C2-012/variant-1/provider-2.log、2-strong-recovery-service-restart.json、run/cases/SR-C2-012/result.json（见对应证据归档）",
+    "nextAction": "按用户收口指令先报告；后续由负责人决定补足恢复能力或明确变更验收要求，QA 不自动豁免或继续修复循环。"
+  },
+  {
+    "id": "SR-D-002",
+    "severity": "S1",
+    "status": "OPEN_EXISTING_NO_WAIVER",
+    "cases": [
+      "SR-BE-DIA-004",
+      "SR-BE-POL-005"
+    ],
+    "summary": "已派发 kick 的真实结果未知时，原 run 在重启后安全暂停，自动完成的强恢复保证仍不成立",
+    "reproduce": [
+      "分别制造真实 kick 已落地与未落地、请求响应未知两分支",
+      "保留原请求/副作用账本并真实重启应用",
+      "检查同一原 run、recoveryNote、外部调用与副作用次数"
+    ],
+    "expected": "原 A5.8 的恢复与完成要求，及无重复副作用分别满足",
+    "actual": "DIA004与POL005两分支均只派发一次、效果为0/1；真实不同PID重启后原run仍running/recovery-paused。POL005同一run的第二实例真实lock_busy、callback=false且无acquired；primary持锁时响应屏障仍在，竞争保护已通过，不能覆盖自动完成失败。",
+    "evidence": "第四批 run/cases/SR-BE-DIA-004/ 与 run/cases/SR-BE-POL-005/ 下两个 dispatched-*-unknown-restart-<UUID>/variant-observation.json、逐变体original-budget-and-completion.json；POL005 facts.secondObservation.witness包含实际双实例PID/attempt/key/result。",
+    "nextAction": "保留原 FAIL 和外部协议能力限制；不建议盲目重放。后续由负责人决定保证范围/外部能力方向。"
+  },
+  {
+    "id": "SR-QA-001",
+    "severity": "S2",
+    "status": "BLOCKED_QA_PREMISE",
+    "cases": [
+      "SR-C1-005"
+    ],
+    "summary": "媒体保留期零天变体未证明下载和清理已完成，导致过早断言旧路径；本次该义务缺少有效结论",
+    "reproduce": [
+      "N=0 启动独立媒体场景",
+      "媒体尚为 downloading 时仅等待 gateway tick 前进",
+      "紧接读取刚发布的 localFilePath 并断言 null"
+    ],
+    "expected": "先建立完整下载、符合年龄区间与真实清理终态，再判定路径/文件",
+    "actual": "原始断言 FAIL；独立时间线复核确认测试前提不足，最终 BLOCKED，无产品通过或确定产品缺陷结论",
+    "evidence": "见 caseReviews.SR-C1-005 的归档成员及实际时间线",
+    "nextAction": "按最后一批边界不追加测试；后续若授权，QA 修正前提后重新执行该用例。"
+  },
+  {
+    "id": "SR-D-003",
+    "severity": "S2",
+    "status": "OPEN_OWNER_DISCUSSION_DEFERRED",
+    "cases": [
+      "SR-C2-019"
+    ],
+    "summary": "严格工具状态等待实测 5000.265833 毫秒，超过原 5000 毫秒上限；不自行加容差",
+    "reproduce": [
+      "真实发送同一 clientMsgId 的工具调用并保持确认窗口",
+      "用实际应用单调时钟记录 tool wait 开始与结束",
+      "核对重用 key、原 run 及外部副作用"
+    ],
+    "expected": "按当前未改变的原始5000ms上限判定",
+    "actual": "同 PID 45138/同 clock 的区间1705.739875→6706.005708，超限0.265833ms；实际仅1 send/1 audit/1副作用，原run final，但不能覆盖时间失败",
+    "evidence": "第四批 run/cases/SR-C2-019/SR-C2-019-original-five-second-wait-and-confirmed-key-reuse.json 及关联原始生命周期/外部请求账本",
+    "nextAction": "沿负责人已决定的“第二轮后再讨论严格五秒口径”；不是本轮新修复或重新要求选择。"
+  },
+  {
+    "id": "SR-QA-002",
+    "severity": "S2",
+    "status": "BLOCKED_QA_PREMISE",
+    "cases": [
+      "SR-BE-USG-011"
+    ],
+    "summary": "用量容量造数并发32超过公开4个在途请求限制，因预期错误未能建立最大记录/字节边界",
+    "reproduce": [
+      "以公开容量配置启动独立服务",
+      "QA一次发起32个真实模型请求，逐个断言HTTP200",
+      "读取真实AGENT_BUSY 429与上游调用账本"
+    ],
+    "expected": "容量验证必须遵守公开并发限制，先形成所需真实成功记录",
+    "actual": "原始FAIL；实际合法429限流使10000条、16MiB及4096bytes容量断言未到达，最终BLOCKED",
+    "evidence": "见caseReviews.SR-BE-USG-011，实际请求响应、wire与usage-obligations-summary均保留",
+    "nextAction": "后续授权后由QA修正造数并发与节奏、重新实际验证；本次不进入新复测。"
+  },
+  {
+    "id": "SR-QA-003",
+    "severity": "S2",
+    "status": "BLOCKED_QA_PREMISE",
+    "cases": [
+      "SR-UI-025"
+    ],
+    "summary": "跨实体提醒脚本错误要求不存在且非必需的摘要弹层，导致后续导航与另一实体确认尚未验收",
+    "reproduce": [
+      "同一真实管理员在两个真实焦点标签页分别打开runA/runB",
+      "产生两实体更新；A点击实际刷新并查看更新",
+      "脚本错误等待.attention-summary，随后流程中断"
+    ],
+    "expected": "按实体清除并完成返回/另一实体确认，不能要求需求未规定的额外控件",
+    "actual": "已观察A清除且B保留，但后续未执行；rawFAIL保留、评审BLOCKED",
+    "evidence": "见caseReviews.SR-UI-025，headed批次eda667c0 trace@1056/1060和双页最终截图/日志",
+    "nextAction": "后续授权后QA修正控件假设并补足整个流程；本次不修改用例或再跑。"
+  }
+]
