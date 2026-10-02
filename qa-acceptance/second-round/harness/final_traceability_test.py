@@ -64,6 +64,34 @@ def fixture(root):
     return report, archive_dir, original
 
 
+def supplement_fixture(root):
+    directory = root / 'supplement'; directory.mkdir()
+    manifest = {'runId': 'qa-only-uid', 'sutRevision': 'a' * 40, 'qaRevision': 'b' * 40,
+                'autoRetries': 0, 'completedAt': '2026-10-02T00:00:00Z', 'secondRoundSha256': 'scope'}
+    ids = ['linux-owned-positive-control', 'SR-C2-008-foreign-uid-record',
+           'SR-BE-USG-006-safe-temp-positive-control', 'SR-BE-USG-006-foreign-uid-preservation']
+    obligations = [{'id': key, 'status': 'PASS', 'evidence': ['/owned/' + key + '.json']} for key in ids]
+    results = {'manifest': manifest, 'phase': 'SECOND_ROUND_LINUX_UID_SUPPLEMENT',
+               'subObligationVerdict': 'PASS', 'subObligations': obligations, 'cleanupErrors': [],
+               'wholeCaseVerdicts': {'SR-C2-008': 'NOT_ASSESSED_BY_SUPPLEMENT', 'SR-BE-USG-006': 'NOT_ASSESSED_BY_SUPPLEMENT'}}
+    raw = directory / 'raw'; raw.mkdir()
+    write(raw / 'results.json', results); write(raw / 'manifest.json', manifest)
+    for key in ids:
+        write(raw / (key + '.json'), {'ownedSelfFixture': True, 'id': key})
+    entries = []
+    with tarfile.open(directory / 'evidence.tar.gz', 'w:gz') as tar:
+        for path in sorted(raw.glob('*.json')):
+            member = 'run/' + path.name
+            entries.append({'member': member, 'source': '/owned/' + path.name, 'bytes': path.stat().st_size, 'sha256': MODULE.file_sha(path)})
+            tar.add(path, arcname=member, recursive=False)
+    archive = directory / 'evidence.tar.gz'
+    index = {'runId': manifest['runId'], 'archive': archive.name, 'sha256': MODULE.file_sha(archive),
+             'bytes': archive.stat().st_size, 'fileCount': len(entries), 'files': entries}
+    write(directory / 'evidence-index.json', index); write(directory / 'results.json', results); sign(directory, ['results.json'])
+    return dict(runId=manifest['runId'], sutRevision=manifest['sutRevision'], qaRevision=manifest['qaRevision'],
+                archive=str(directory), archiveSha256=index['sha256'], verdict='PASS', subObligations=obligations, cleanupErrors=[], runnerErrors=[])
+
+
 class FinalTraceabilityTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix='qa-final-traceability-self-')
@@ -125,6 +153,29 @@ class FinalTraceabilityTests(unittest.TestCase):
         self.mutate_final(change)
         with self.assertRaisesRegex(ValueError, 'Unexplained final/raw status change'):
             MODULE.refresh(self.report)
+
+    def test_separate_supplement_archive_is_fully_loaded_without_whole_case_claim(self):
+        binding = supplement_fixture(Path(self.temp.name)); batches = {}
+        archive = Path(binding['archive']) / 'evidence.tar.gz'; before = MODULE.file_sha(archive)
+        MODULE.load_supplement_archives([binding], batches, {'secondRoundSha256': 'scope'})
+        self.assertEqual(set(batches), {'qa-only-uid'})
+        batch = batches['qa-only-uid']
+        self.assertEqual(batch['verification']['verifiedFileCount'], 6)
+        self.assertEqual(set(batch['results']['wholeCaseVerdicts'].values()), {'NOT_ASSESSED_BY_SUPPLEMENT'})
+        self.assertEqual(before, MODULE.file_sha(archive))
+
+    def test_supplement_summary_must_match_immutable_raw_obligations(self):
+        binding = supplement_fixture(Path(self.temp.name)); binding['subObligations'][0]['status'] = 'BLOCKED'
+        with self.assertRaisesRegex(ValueError, 'Final/archived supplement outcome differs'):
+            MODULE.load_supplement_archives([binding], {}, {'secondRoundSha256': 'scope'})
+
+    def test_supplement_requires_same_scope_and_real_archive_hash(self):
+        binding = supplement_fixture(Path(self.temp.name))
+        with self.assertRaisesRegex(ValueError, 'requirement scope differs'):
+            MODULE.load_supplement_archives([binding], {}, {'secondRoundSha256': 'wrong'})
+        binding['archiveSha256'] = '0' * 64
+        with self.assertRaisesRegex(ValueError, 'Archive SHA256 mismatch'):
+            MODULE.load_supplement_archives([binding], {}, {'secondRoundSha256': 'scope'})
 
     def test_refuses_overwriting_unsigned_output(self):
         (self.report / 'final-traceability.json').write_text('unowned')

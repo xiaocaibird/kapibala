@@ -118,6 +118,30 @@ def verify_batch(binding, full=False):
                              'verifiedFileCount': len(seen), 'batchReportHashes': signed}}
 
 
+
+def load_supplement_archives(supplements, batches, reference):
+    """The finalizer lists independent UID supplements outside normal batches."""
+    bindings = unique(supplements, 'runId', 'supplement batches')
+    expected_ids = {'linux-owned-positive-control', 'SR-C2-008-foreign-uid-record',
+                    'SR-BE-USG-006-safe-temp-positive-control', 'SR-BE-USG-006-foreign-uid-preservation'}
+    for run_id, binding in bindings.items():
+        batch = verify_batch(binding)
+        if run_id in batches:
+            require(batch['verification'] == batches[run_id]['verification'], 'Conflicting duplicate supplement archive binding')
+        raw = batch['results']
+        require(raw.get('phase') == 'SECOND_ROUND_LINUX_UID_SUPPLEMENT', 'Unexpected supplement phase')
+        require(batch['manifest']['secondRoundSha256'] == reference['secondRoundSha256'], 'Supplement requirement scope differs')
+        require(raw['wholeCaseVerdicts'] == {'SR-C2-008': 'NOT_ASSESSED_BY_SUPPLEMENT', 'SR-BE-USG-006': 'NOT_ASSESSED_BY_SUPPLEMENT'}, 'Supplement must not claim whole-case verdicts')
+        require(raw['subObligationVerdict'] == binding['verdict'] and raw['subObligations'] == binding['subObligations'], 'Final/archived supplement outcome differs')
+        require(raw['cleanupErrors'] == binding['cleanupErrors'] and batch['manifest'].get('runnerErrors', []) == binding.get('runnerErrors', []), 'Final/archived supplement cleanup differs')
+        obligations = unique(raw['subObligations'], 'id', 'UID supplement obligations', 4)
+        require(set(obligations) == expected_ids, 'UID supplement obligation set differs')
+        sources = {entry['source'] for entry in batch['entries'].values()}
+        for obligation in obligations.values():
+            require(obligation.get('evidence') and all(path in sources for path in obligation['evidence']), 'Supplement obligation evidence missing from verified archive')
+        batches[run_id] = batch
+
+
 def member_reference(batch, name):
     require(name in batch['entries'], 'Missing archived evidence: ' + name)
     return dict(batch['entries'][name], runId=batch['manifest']['runId'], archiveSha256=batch['verification']['archiveSha256'])
@@ -152,6 +176,7 @@ def build_document(report_directory):
     bindings = unique(final['batches'], 'runId', 'final batches')
     require(reference['runId'] in bindings, 'Reference full batch absent')
     batches = {key: verify_batch(binding, key == reference['runId']) for key, binding in bindings.items()}
+    load_supplement_archives(final.get('supplements', []), batches, reference)
     full = batches[reference['runId']]
     require(full['manifest'] == reference, 'Final reference differs from archived full manifest')
     original = full['json'][TRACE_MEMBER]
@@ -186,8 +211,11 @@ def build_document(report_directory):
         value['compositionEvidence'] = None
         if row.get('composition'):
             composition = row['composition']
+            require(composition['supplementRunId'] in {item['runId'] for item in final.get('supplements', [])}, 'Composition does not reference a declared independent supplement')
             supplement = batches.get(composition['supplementRunId'])
             require(supplement is not None, 'Composition supplement archive missing: ' + case_id)
+            require(supplement['results']['subObligationVerdict'] == 'PASS' and not supplement['results']['cleanupErrors'] and not supplement['manifest'].get('runnerErrors', []), 'Composed supplement has unresolved outcomes')
+            require(composition['supplementVariants'] == supplement['results']['subObligations'] and all(item['status'] == 'PASS' for item in composition['supplementVariants']), 'Composed supplement variants differ from archived PASS obligations')
             for key in ('sutRevision', 'qaRevision'):
                 require(composition[key] == supplement['manifest'][key], 'Composition supplement version mismatch: ' + case_id)
             value['compositionEvidence'] = {'prerequisite': member_reference(batch, composition['prerequisiteArchiveMember']),
