@@ -2,6 +2,8 @@
 
 Node.js / TypeScript / PostgreSQL 后端，React 18 控制台，独立消息网关与 Agent 模拟服务。
 
+体验前建议查看[体验注意事项与故障处理](docs/experience-troubleshooting.md)：集中说明模型触发、Gemini 崩溃后的人工恢复、重置边界及结果未知时的处理方式；遇到问题可按现象快速查找。
+
 <a id="全新隔离启动"></a>
 
 ## 快速体验：初始环境、样例环境与重置
