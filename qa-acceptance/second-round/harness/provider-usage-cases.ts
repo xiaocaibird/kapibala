@@ -1,8 +1,12 @@
 import assert from 'node:assert/strict';
 import { randomUUID, createHash } from 'node:crypto';
-import { readFile, lstat } from 'node:fs/promises';
+import { readFile, lstat, readdir, mkdir, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { redact } from '../../harness/security.js';
 import { C2_CAPABILITIES as P, PreparationBlocked, type Json, type ProviderDriver, type ProviderFault, type UsageRecord } from '../contracts/media-provider.js';
 import { withOwnedDriver, turnRequest, assertTurnResponse, assertAuditResponse, providerPendingAndLock, providerCompletedReuse, providerUsageQueue } from '../tests/media-provider.js';
+import type { DriverContext } from './driver-factories.js';
+import { runUsageKeyFileIsolation, runUsageCapacitySupplement } from './provider-usage-supplement.js';
 import { decodeProviderWire } from './provider-wire.js';
 import { assertUsageRecord, expectedTokens, USAGE_FIELDS } from './backend-oracles.js';
 type Plan = Parameters<ProviderDriver['enqueue']>[0];
@@ -37,7 +41,7 @@ const run = (driver: ProviderDriver, id: string, body: (d: ProviderDriver) => Pr
 
 /** Each backend usage ID performs its own current-version observations. Missing
  * subscenarios are explicitly BLOCKED after runnable evidence is retained. */
-export async function runUsageCase(id: string, driver: ProviderDriver): Promise<void> {
+export async function runUsageCase(id: string, driver: ProviderDriver, context?:DriverContext): Promise<void> {
   if (id === 'SR-BE-USG-001') return run(driver, id, async (d) => {
     const a = await observedOne(d, successPlan(0)); assert.equal(a.record.outcome, 'success');
     for (const verdict of ['pass', 'fail'] as const) { const b = await observedOne(d, { purpose: 'audit', proposal: { kind: 'audit', verdict, reason: 'QA content verdict' }, actualUsage: verdict === 'pass' ? { inputTokens: 2, outputTokens: 1, totalTokens: 3 } : null }); assert.equal(b.record.outcome, 'success'); assert.equal((b.response.body as { verdict: string }).verdict, verdict); }
@@ -101,23 +105,30 @@ export async function runUsageCase(id: string, driver: ProviderDriver): Promise<
     if(errors.length)throw errors.find(e=>!(e instanceof PreparationBlocked))??errors[0];return;
   }
   if (id === 'SR-BE-USG-006' || id === 'SR-BE-USG-010') {
-    for (const enabled of [true, false]) await run(driver, `${id}-${enabled}`, async (d) => {
+    const obligations:[string,()=>Promise<void>][]=[...([true,false] as const).map(enabled=>[`${id}-${enabled}`,()=>run(driver, `${id}-${enabled}`, async (d) => {
       await d.enqueue(successPlan()); assert.equal((await d.exchange('/agent/turn', turnRequest())).status, 200); await d.settleUsage(); const files = await d.usageFiles(), value = await d.usage();
-      assert.equal(value.records.length, enabled ? 1 : 0); if (enabled) { assert.equal((await lstat(files.root)).mode & 0o777, 0o700); for (const path of files.files) assert.equal((await lstat(path)).mode & 0o777, 0o600); const prior = value.records; assert.equal((await d.restart('SIGTERM', { usageEnabled: false })).started, true); assert.deepEqual((await d.usage()).records, prior); }
-      else assert.equal(files.files.length, 0);
-      await d.evidence('usage-main-enable-disable-permissions', { enabled, files, value });
-    }, { usageEnabled: enabled });
-    if(id.endsWith('006'))await providerUsageTemporaryFiles(driver);
-    else await providerUsageEntryMatrix(driver);
-    throw new PreparationBlocked(id.endsWith('006') ? 'Owned temp/unsafe-mode/link/name cleanup and main permission/toggle executed; true foreign UID and key-file isolation remain unbound' : 'Main default/exact-false and factory absent/explicit matrices executed; production key-file-only import isolation remains unbound');
+      assert.equal(value.records.length, enabled ? 1 : 0);
+      if (enabled) {
+        assert.equal((await lstat(files.root)).mode & 0o777, 0o700);for(const path of files.files)assert.equal((await lstat(path)).mode&0o777,0o600);
+        const prior=value.records;assert.equal((await d.restart('SIGTERM',{usageEnabled:false})).started,true);assert.equal(d.usageContract?.enabled,false);
+        await d.enqueue(successPlan());assert.equal((await d.exchange('/agent/turn',turnRequest())).status,200);await d.settleUsage();assert.deepEqual((await d.usage()).records,prior,'disabled inference keeps prior journal without adding rows');
+      }else assert.equal(files.files.length,0);
+      await d.evidence('usage-main-enable-disable-permissions',{enabled,files,value});
+    },{usageEnabled:enabled})] as [string,()=>Promise<void>]),
+      ['entry-or-private-temp',()=>id.endsWith('006')?providerUsageTemporaryFiles(driver):providerUsageEntryMatrix(driver)],
+      ['key-file-import',async()=>{if(!context)throw new PreparationBlocked('Key-file isolation needs fixed authorized DriverContext');await runUsageKeyFileIsolation(context);}],
+    ];
+    if(id.endsWith('006'))obligations.push(['foreign-uid-proof',async()=>{throw new PreparationBlocked('Foreign UID evidence runs in a separately frozen Linux supplement; whole-case acceptance requires explicit same-candidate sub-obligation review, no inferred pass');}]);
+    await allUsageObligations(driver,obligations,context,id);return;
   }
   if (id === 'SR-BE-USG-011') {
-    for (const limit of [1, 2]) await run(driver, `${id}-records-${limit}`, async (d) => {
-      for (let i = 0; i < limit + 2; i++) { await d.enqueue(successPlan(i)); assert.equal((await d.exchange('/agent/turn', turnRequest())).status, 200); }
-      await d.settleUsage(); const actual = await d.usage(); assert.equal(actual.records.length, limit); assert.ok(actual.actualBytes <= 4096); await d.evidence('usage-actual-record-byte-bound', { configured: { records: limit, bytes: 4096 }, actual });
-    }, { usageMaxRecords: limit, usageMaxBytes: 4096 });
-    await providerUsageConfigurationMatrix(driver);await providerUsageRetention(driver);
-    throw new PreparationBlocked('Actual small retention, configuration matrix and stopped-file age input startup/write expiration executed; filling maximum 10000 record/16MiB capacity remains unbound');
+    const obligations:[string,()=>Promise<void>][]=[...([1,2] as const).map(limit=>[`${id}-records-${limit}`,()=>run(driver,`${id}-records-${limit}`,async d=>{
+      for(let i=0;i<limit+2;i++){await d.enqueue(successPlan(i));assert.equal((await d.exchange('/agent/turn',turnRequest())).status,200);}
+      await d.settleUsage();const actual=await d.usage();assert.equal(actual.records.length,limit);assert.ok(actual.actualBytes<=4096);await d.evidence('usage-actual-record-byte-bound',{configured:{records:limit,bytes:4096},actual});
+    },{usageMaxRecords:limit,usageMaxBytes:4096})] as [string,()=>Promise<void>]),
+      ['configuration',()=>providerUsageConfigurationMatrix(driver)],['retention-input',()=>providerUsageRetention(driver)],['actual-capacity',()=>runUsageCapacitySupplement(driver)],
+    ];
+    await allUsageObligations(driver,obligations,context,id);return;
   }
   if (id === 'SR-BE-USG-013') return run(driver, id, async (d) => {
     const base: Record<string, Json> = { promptTokenCount: 3, candidatesTokenCount: 4, totalTokenCount: 99 };
@@ -133,6 +144,26 @@ export async function runUsageCase(id: string, driver: ProviderDriver): Promise<
   throw new PreparationBlocked(`No reviewed usage operation mapping for ${id}`);
 }
 
+
+export async function allUsageObligations(driver:ProviderDriver,obligations:[string,()=>Promise<void>][],context:DriverContext|undefined,caseId:string) {
+  if(!context)throw new PreparationBlocked('Usage obligation report needs the fixed candidate and owned output context');
+  const names=obligations.map(([name])=>name);assert.ok(names.length>0);assert.equal(new Set(names).size,names.length);assert.ok(names.every(name=>/^[A-Za-z0-9-]+$/.test(name)));
+  const out=resolve(context.outputDir,'usage-obligations');await mkdir(out,{recursive:true});
+  const files=async()=>new Set((await readdir(context.outputDir,{recursive:true,withFileTypes:true})).filter(item=>item.isFile()).map(item=>resolve(item.parentPath,item.name)));
+  const errors:unknown[]=[],rows:{name:string;status:'PASS'|'FAIL'|'BLOCKED';reason?:string;startedAt:string;completedAt:string;evidence:string[]}[]=[];
+  for(const [name,body] of obligations){
+    const startedAt=new Date().toISOString();let primary:unknown,prior=new Set<string>(),executionEvidence:string[]=[];
+    try{prior=await files();}catch(error){primary=error;}
+    try{await body();}catch(error){if(error instanceof assert.AssertionError||!primary)primary=error;}
+    try{executionEvidence=[...await files()].filter(path=>!prior.has(path)).sort();if(!primary&&!executionEvidence.length)primary=new PreparationBlocked('Obligation produced no new execution evidence');}catch(error){primary??=error;}
+    const status: 'PASS'|'FAIL'|'BLOCKED'=primary?(primary instanceof assert.AssertionError?'FAIL':'BLOCKED'):'PASS',path=resolve(out,`${name}.json`);
+    const row={name,status,...(primary?{reason:String(primary)}:{}),startedAt,completedAt:new Date().toISOString(),evidence:[path,...executionEvidence]};rows.push(row);if(primary)errors.push(primary);
+    try{await writeFile(path,redact({schemaVersion:1,caseId,sutRevision:context.target.sut.revision,contractReference:driver.contractReference,...row,executionEvidence}),{flag:'wx'});}catch(error){errors.push(error);if(row.status!=='FAIL')row.status='BLOCKED';row.reason=[row.reason,`result evidence write failed: ${String(error)}`].filter(Boolean).join('; ');}
+  }
+  const status=rows.some(row=>row.status==='FAIL')?'FAIL':rows.some(row=>row.status!=='PASS')?'BLOCKED':'PASS';
+  await writeFile(resolve(context.outputDir,'usage-obligations-summary.json'),redact({schemaVersion:1,caseId,sutRevision:context.target.sut.revision,contractReference:driver.contractReference,status,exactNames:names,obligations:rows,counts:{PASS:rows.filter(r=>r.status==='PASS').length,FAIL:rows.filter(r=>r.status==='FAIL').length,BLOCKED:rows.filter(r=>r.status==='BLOCKED').length},externalSupplementMayAddressOnly:names.includes('foreign-uid-proof')?['foreign-uid-proof']:[],mergeRule:'Only same-candidate reviewed foreign UID evidence may satisfy that single obligation; all other exact names require their own PASS evidence. Existing attempt records are immutable.'}),{flag:'wx'});
+  if(errors.length)throw errors.find(e=>e instanceof assert.AssertionError)??errors[0];
+}
 
 export async function providerQueuedWriteCrash(driver:ProviderDriver) {
   return withOwnedDriver(driver,[P.protocol,P.upstream,P.usage,P.usageQueue,P.restart],'usage-held-write-crash',async d=>{

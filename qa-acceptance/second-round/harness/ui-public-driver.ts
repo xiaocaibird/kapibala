@@ -183,6 +183,20 @@ export class PublicUiDriver implements UiDriver {
     await expect(logout).toBeVisible();
     await this.evidence('login', { role, sessionLabel });
   }
+  /** Recheck this page's actually observed public access credential without
+   * login, logout, refresh or reading application/private browser state. */
+  async currentPublicIdentity(): Promise<{username:string;role:'admin'|'viewer'}> {
+    const observed=[...this.operationRequests].reverse().find(request=>publicOperation(request.method(),request.url())==='identity-read');
+    if(!observed)throw new BlockedError('This page has no observed public /me request to bind its identity');
+    const authorization=await observed.headerValue('authorization');
+    if(!authorization)throw new BlockedError('The observed page identity request has no access credential');
+    const url=new URL('/api/auth/me',this.options.baseUrl).href;
+    const response=await this.page.request.get(url,{headers:{authorization},maxRetries:0,maxRedirects:0,timeout:this.timeoutMs});
+    let body:unknown;try{body=await response.json();}catch{body=null;}
+    await this.evidence('public-identity-recheck',{url,status:response.status(),body,credentialValueRetained:false,sideEffects:'No login/logout/refresh was requested'});
+    if(response.status()!==200||!body||typeof body!=='object'||!('username' in body)||typeof body.username!=='string'||!('role' in body)||(body.role!=='admin'&&body.role!=='viewer'))throw new BlockedError('Original page public identity is no longer established');
+    return {username:body.username,role:body.role};
+  }
   async openGroup(id: string): Promise<void> {
     await this.navigate(`#/groups/${encodeURIComponent(id)}`);
     await expect(this.page.locator('.page-header')).toContainText(/网关群 ID|群/);

@@ -50,6 +50,9 @@ export const lifecycleKinds = [
   'kick-projection-body-settled',
   'kick-projection-request-settled',
   'agent-run-created',
+  'agent-run-lock-attempted',
+  'agent-run-lock-acquired',
+  'agent-run-lock-result',
   'agent-turn-dispatched',
   'agent-turn-response-received',
   'agent-termination-decided',
@@ -175,6 +178,13 @@ export function validateLifecycleEvents(
             event.transactionBeginAcknowledgedByMs <= insert[0],
           '创建事务/INSERT/BEGIN包围不成立',
         );
+      }
+      if (event.kind.startsWith('agent-run-lock-')) {
+        need(event.lockKey === `agent:${c.runId}` && ['run', 'paused-cancellation'].includes(String(event.purpose)) && text(event.instanceId),
+          '运行锁事件缺同run锁身份/用途/实际实例身份');
+        need(typeof event.callbackEntered === 'boolean', '运行锁事件缺实际callback进入事实');
+        if (event.kind === 'agent-run-lock-result') need(['executed', 'lock_busy', 'capacity_unavailable', 'error'].includes(String(event.lockStatus)),
+          '运行锁结果缺实际准入状态和callback进入事实');
       }
       if (event.kind === 'agent-termination-decided') {
         const decision = observationInterval(event.decisionWindowMs);

@@ -1,8 +1,14 @@
 # 第二轮研发集成验证与交接
 
-2026-10-02（北京时间）。本文保留 C1/C2、全部五项 P0 和五项 P1 初始组合与补修的研发验证。**当前 QA 正在固定 `47423c1` 执行完整 112 项复测；`cca7fd2` 的新增观察入口待 QA 在后续固定批次验证。** 当前修复和未闭合项见[执行中的处理记录](second-round-followup-20261002.md)及[执行总表](second-round-execution-20261002.md)。本文是开发证据，不是第二轮 QA 通过结论。QA 的目录、用例、断言和报告均由 QA 维护。
+**最新交接：** 媒体 NUL 修复的固定开发回归已完成（24 PASS / 0 FAIL / 0 SKIP），组合构建通过。第四批待最终 main 冻结后执行；本次复测结束后直接出报告，仍未通过则暂停继续修复和再测。详见[第四批候选交接](second-round-fourth-candidate-20261002.md)。下方批次与处理历史按各自时点保留。
 
-## 版本与验证范围
+2026-10-02（北京时间）。本文保留 C1/C2、全部五项 P0 和五项 P1 初始组合与补修的研发验证。**第三批已结束，SUT / QA 固定 `ed50ca14ae3f4140d7f020f282b313b137920209`，run `2026-10-01T23-12-22.471Z-739fbbec`：112 项为 96 PASS / 6 FAIL / 10 BLOCKED / 0 NOT_RUN，`runnerErrors=[]`。第四批尚未开始，待下一候选组合验证及 main 冻结。** 第二批 `47423c1` 的 80 PASS / 4 FAIL / 28 BLOCKED 原样保留；UI008、DIA005 在第二、三批均 PASS，GRD003 在第三批 PASS，均不继承到第四批。当前修复及原件入口见[处理记录](second-round-followup-20261002.md)及[执行总表](second-round-execution-20261002.md)。本文是开发证据，不是第二轮 QA 通过结论。QA 的目录、用例、断言和报告均由 QA 维护。
+
+当前开发交付已补[媒体 URL 规范化前拒绝](second-round-media-source-normalization-20261002.md)、[真实用量 writer 关闭观察](qa-usage-writer-close-20261002.md)及[真实 run-lock 尝试与拒绝观察](qa-agent-ownership-witness-20261002.md)。媒体 raw NUL 在更早入站保存阶段失败仍在修复；这些开发结果不覆盖第三批失败，也不表示下一候选已冻结或已通过 QA。
+
+下方表格及初始合入回执保留当时记录；各批实际 SUT/QA 身份、归档和当前状态以[执行总表](second-round-execution-20261002.md)及实际 manifest 为准，初始计划不替代首批实际 QA 工具源。
+
+## 历史研发版本与验证范围
 
 | 阶段 | 固定产品源 | 实际结果与证据 |
 |---|---|---|

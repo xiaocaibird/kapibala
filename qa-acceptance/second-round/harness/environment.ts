@@ -169,7 +169,11 @@ export class OwnedOfflineProvider {
     }
   }
   async stop(mode: 'SIGTERM'|'SIGKILL'='SIGTERM') {
-    if(this.process) { await this.process.stop(mode); this.lastStopOutcome=this.process.exitOutcome; this.process=undefined;const binding=this.providerEgressBindings.at(-1);if(binding&&this.lastStopOutcome)binding.exit=this.lastStopOutcome; }
+    if(this.process) {
+      const owner=this.process;
+      try { if(mode==='SIGKILL') await owner.killApplication(); }
+      finally { await owner.stop('SIGTERM'); this.lastStopOutcome=owner.exitOutcome; this.process=undefined;const binding=this.providerEgressBindings.at(-1);if(binding&&this.lastStopOutcome)binding.exit=this.lastStopOutcome; }
+    }
     return this.lastStopOutcome;
   }
   async egress(requireExit=false){return readProviderEgress(this.providerEgressBindings,requireExit);}

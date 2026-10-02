@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash } from 'node:crypto';
 import { writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { BlockedError, redact } from '../../harness/security.js';
@@ -11,6 +11,7 @@ import { classifyError, combineVariants, type VariantResult, type RoundResult } 
 import { observeBackend } from './backend-boundaries.js';
 import { record } from './backend-oracles.js';
 import { runProviderBudgetCase, type ProviderBackendContext } from './backend-provider-budgets.js';
+import { providerCrossEpochActivity } from './backend-provider-cross-epoch.js';
 
 export function assertOriginalTurnTimeout(start: [number, number], end: [number, number]) {
   assert.ok([...start, ...end].every(Number.isFinite));
@@ -20,6 +21,36 @@ export function assertOriginalTurnTimeout(start: [number, number], end: [number,
   assert.ok(elapsed[1] >= 10_000, 'Observed turn timeout is wholly earlier than original 10s minimum');
   if (elapsed[0] < 10_000 || elapsed[1] > 15_000) throw new BlockedError('Turn timeout interval crosses original 10–15s boundary; no tolerance or exact point inferred');
   return elapsed;
+}
+
+/** Independent causal proof for the selected real Agent response. A closed
+ * timed-out connection is reported as closed; never call it a delivered result. */
+export function assertDelayedAgentResponse(before: unknown, after: unknown, runId: string, timeout: [number, number]) {
+  const held = record(before), late = record(after), first = record(held.record), final = record(late.record);
+  assert.equal(late.holdId, held.holdId); assert.equal(final.id, first.id);
+  assert.equal(JSON.parse(String(first.requestBody)).runId, runId);
+  assert.equal(final.requestBody, first.requestBody); assert.equal(final.path, '/agent/turn');
+  assert.equal(final.clockDomain, first.clockDomain);
+  assert.equal(held.expired, false); assert.equal(late.expired, false); assert.equal(final.holdExpired, false);
+  assert.deepEqual(final.heldResponse, first.heldResponse, 'The late response must retain every original upstream byte/header/status');
+  const response = record(final.heldResponse), bytes = Buffer.from(String(response.bodyBase64), 'base64');
+  assert.equal(response.bytes, bytes.length); assert.equal(response.sha256, createHash('sha256').update(bytes).digest('hex'));
+  assert.equal(response.status, 200);
+  const completed = Date.parse(String(final.upstreamCompletedAt)), released = Date.parse(String(final.releaseAt));
+  assert.ok(Number.isFinite(completed) && Number.isFinite(released));
+  assert.ok(completed <= timeout[0], 'Real upstream finished before backend timeout was observed');
+  assert.ok(released >= timeout[1], 'Only release the original response after actual backend timeout');
+  assert.ok(Number(final.upstreamCompletedMonoMs) <= Number(final.releaseMonoMs));
+  if (final.releaseOutcome === 'downstream-already-closed') {
+    const closed = Date.parse(String(final.closedAt)); assert.ok(Number.isFinite(closed) && completed <= closed && closed <= released);
+    assert.ok(Number(final.upstreamCompletedMonoMs) <= Number(final.closedMonoMs) && Number(final.closedMonoMs) <= Number(final.releaseMonoMs));
+    assert.equal(final.responseFinishedAt, undefined, 'A closed socket must not masquerade as a delivered late response');
+  } else {
+    assert.equal(final.releaseOutcome, 'forwarded-original-response');
+    if (!final.responseFinishedAt) throw new BlockedError('Selected late response has no actual downstream finish or close evidence');
+    assert.ok(Date.parse(String(final.responseFinishedAt)) >= released);
+  }
+  assert.deepEqual(late.errors, []);
 }
 
 function providerResults(calls: Awaited<ReturnType<ProviderDriver['calls']>>, runId: string, toolId: string) {
@@ -49,18 +80,23 @@ export async function runProviderRegressionCase(input: ProviderBackendContext): 
   };
   await check('original-turn-timeout-and-late-result', async (d, save) => {
     const fixture = await d.backendGroup({ autoKickEnabled: false, executor: 'admin' }), qa = await input.providerEnvironment!();
-    const gate = await d.holdNextUpstream('turn'); let primary: unknown;
+    const gate = await d.holdNextAgentResponse('/agent/turn'); let primary: unknown;
+    let checkpoint: Record<string, unknown> = {};
     try {
-      await d.enqueue({ purpose: 'turn', proposal: { kind: 'tool', name: 'send_message', input: { text: 'late must never send', idempotency_key: randomUUID() } }, delayResponseMs: 16_000 });
+      // Complete the real provider normally. Delay only its unmodified Agent
+      // response to the backend; delaying model HTTP instead hits the service's
+      // independent 9s timeout and cannot establish the backend 10–15s premise.
+      await d.enqueue({ purpose: 'turn', proposal: { kind: 'tool', name: 'send_message', input: { text: 'late must never send', idempotency_key: randomUUID() } } });
       await d.enqueue({ purpose: 'turn', proposal: { kind: 'text', text: 'finish after timeout' } });
       const earliest = Date.now(), runId = await d.triggerBackend(fixture.groupId), held = await gate.reached();
-      const initial = await d.usageObservation(), attempts = initial.snapshot.transport.events.filter(event => event.kind === 'attempt');
-      if (initial.snapshot.transport.truncatedEvents || attempts.length !== 1)
-        throw new BlockedError('First delayed call lacks one isolated actual transport attempt; no index-based correlation');
-      const transportId = attempts[0]!.requestId;
-      const firstCalls = await d.calls(); assert.equal(firstCalls.length, 1);
-      const receivedAt = Date.parse(String(record(firstCalls[0]!.evidence.raw).receivedAt)); assert.ok(Number.isFinite(receivedAt));
-      await gate.release();
+      const heldRaw = record(held.raw), relay = record(heldRaw.record), response = record(relay.heldResponse);
+      const receivedAt = Date.parse(String(relay.at)); assert.ok(Number.isFinite(receivedAt));
+      assert.equal(JSON.parse(String(relay.requestBody)).runId, runId);
+      assert.equal(response.status, 200);
+      const body = JSON.parse(Buffer.from(String(response.bodyBase64), 'base64').toString('utf8'));
+      assert.equal(body.stop_reason, 'tool_use');
+      assert.ok(body.content.some((block: Record<string, unknown>) => block.type === 'tool_use' && block.name === 'send_message'), 'Actual held response must contain the delayed actionable proposal');
+      checkpoint = { runId, held, timeoutStart: [earliest, receivedAt] }; await save(checkpoint);
       let precedingRead = Date.now(), observedLower = precedingRead, observedUpper = precedingRead;
       const run = await observeBackend(async () => {
         const lower = precedingRead, value = await qa.api.agentRun(runId), upper = Date.now();
@@ -69,23 +105,19 @@ export async function runProviderRegressionCase(input: ProviderBackendContext): 
         return value;
       }, value => value.steps.some(step => step.errorCode === 'TURN_TIMEOUT'), 20_000, 'actual original backend TURN_TIMEOUT');
       const beforeLate = await d.backendFacts(fixture.groupId);
+      checkpoint = { ...checkpoint, timeout: run, timeoutEnd: [observedLower, observedUpper], beforeLate, heldAtTimeout: await gate.facts() }; await save(checkpoint);
       assert.equal(beforeLate.sends.length, 0); assert.equal(beforeLate.audits.length, 0);
-      // Observe the exact first transport response, not a fixed sleep or a
-      // later unrelated turn. Cancellation alone cannot prove late-response discard.
-      let lateFailure: unknown;
-      let late: Awaited<ReturnType<ProviderDriver['usageObservation']>> | undefined;
-      try { late = await observeBackend(() => d.usageObservation(), value => value.snapshot.transport.events.some(event => event.requestId === transportId && event.kind === 'response-end'), 20_000, 'first actual delayed provider response end'); }
-      catch (error) { lateFailure = error; late = await d.usageObservation(); }
-      const after = await observeBackend(() => qa.api.agentRun(runId), value => value.status !== 'running', 30_000, 'original timed-out run terminal'), facts = await d.backendFacts(fixture.groupId), calls = await d.calls();
-      await save({ runId, held, initial, firstCalls, transportId, timeout: run, timeoutStart: [earliest, receivedAt], timeoutEnd: [observedLower, observedUpper], late, after, beforeLate, facts, calls, lateFailure: lateFailure ? String(lateFailure) : null });
-      assert.equal(facts.sends.length, 0); assert.equal(facts.audits.length, 0); assert.equal(facts.effects.length, 0);
-      const timeout = run.steps.find(step => step.errorCode === 'TURN_TIMEOUT'); assert.equal(timeout?.kind, 'protocol_error');
       assertOriginalTurnTimeout([earliest, receivedAt], [observedLower, observedUpper]);
-      if (lateFailure) throw lateFailure;
-      assert.ok(late!.snapshot.transport.events.some(event => event.requestId === transportId && event.kind === 'response-end' && Date.parse(event.at) > observedUpper), 'Must prove the original response actually ended after backend timeout');
-    } catch (error) { primary = error; throw error; } finally {
-      try { await gate.release(); } catch (error) { if (!primary) throw error; }
-    }
+      await gate.release();
+      const late = await gate.facts();
+      const after = await observeBackend(() => qa.api.agentRun(runId), value => value.status !== 'running', 30_000, 'original timed-out run terminal');
+      const facts = await d.backendFacts(fixture.groupId), calls = await d.calls();
+      checkpoint = { ...checkpoint, late, after, facts, calls }; await save(checkpoint);
+      assert.equal(facts.sends.length, 0); assert.equal(facts.audits.length, 0); assert.equal(facts.effects.length, 0);
+      assert.equal(run.steps.find(step => step.errorCode === 'TURN_TIMEOUT')?.kind, 'protocol_error');
+      assertDelayedAgentResponse(held.raw, late.raw, runId, [observedLower, observedUpper]);
+    } catch (error) { primary = error; await save({ ...checkpoint, error: String(error), relayAtFailure: await gate.facts() }); throw error; }
+    finally { try { await gate.release(); } catch (error) { if (!primary) throw error; } }
   });
 
   await check('original-five-second-wait-and-confirmed-key-reuse', async (d, save) => {
@@ -136,8 +168,9 @@ export async function runProviderRegressionCase(input: ProviderBackendContext): 
   });
   const originalSlow = await runProviderBudgetCase(input, 'original-eight-second');
   variants.push(...originalSlow.variants.map(variant => ({ ...variant, id: 'original-AGENT-025-eight-second-' + variant.id })));
-  const uncoveredVariants = ['INT-ACT-001-complete-cross-epoch-tail-and-original-recovery'];
-  for (const id of uncoveredVariants) variants.push({ id, status: 'BLOCKED', evidence: [],
-    reason: 'Existing crash takeover observations explicitly lack a sound complete pre-crash tail bound; no fabricated epoch sum or provider replay guarantee.' });
+  await check('INT-ACT-001-complete-cross-epoch-tail-and-original-recovery', async (d, save) => {
+    await providerCrossEpochActivity(d, await input.providerEnvironment!(), save);
+  });
+  const uncoveredVariants: string[] = [];
   return { caseId, status: combineVariants(variants, uncoveredVariants), variants, uncoveredVariants };
 }

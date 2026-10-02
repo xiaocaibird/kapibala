@@ -46,6 +46,10 @@ export interface Barrier {
   release(): Promise<void>;
 }
 export interface MessageRef { groupId: string; msgId: string }
+export interface AgentResponseHold extends Barrier {
+  /** Actual upstream bytes and downstream release/close for one relay request. */
+  facts(): Promise<Evidence>;
+}
 export interface MediaMessage extends MessageRef {
   text: string;
   mediaUrl?: string;
@@ -202,6 +206,7 @@ export interface ProviderDriver extends DriverBase {
    * of product internals and no silent Google access if the seam is absent. */
   enqueue(input: { purpose: 'turn' | 'audit'; proposal?: Proposal; fault?: ProviderFault; actualUsage?: Record<string, number> | null; rawUsage?: Record<string, Json>; delayResponseMs?: number; redirectLocation?: string }): Promise<void>;
   holdNextUpstream(purpose: 'turn' | 'audit'): Promise<Barrier>;
+  holdNextAgentResponse(path: '/agent/turn' | '/agent/audit'): Promise<AgentResponseHold>;
   exchange(path: '/agent/turn' | '/agent/audit', body: unknown): Promise<HttpFact>;
   calls(): Promise<ProviderCall[]>;
   upstreamFacts(): Promise<{ records: {call:ProviderCall;responseStatus:number|null;responseFinishedAt:string|null;connectionClosedAt:string|null;aborted:boolean}[]; evidence:Evidence }>;

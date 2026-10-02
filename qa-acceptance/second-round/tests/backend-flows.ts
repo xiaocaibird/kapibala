@@ -417,12 +417,18 @@ export async function runBackendCase(caseId: string, context: BackendContext): P
         assertUnknownKickCompletion(observed);
         return { run: observed.run, after: observed.after, activity: observed.activity, settlement: observed.settlement };
       });
+      if (caseId === 'SR-BE-POL-005') await check(label + '-actual-lock-competition', async () => {
+        if (!observed) throw new BlockedError('Actual same-run contention evidence unavailable');
+        const value = record(observed.secondObservation); assert.equal(value.competition, 'PASS');
+        assert.ok(value.witness && value.holder && value.refusal);
+        return value;
+      });
       if (caseId === 'SR-BE-DIA-004') await check(label + '-next-step-semantic-review', async () => {
         if (!observed) throw new BlockedError('Actual unknown and diagnostic text not captured; semantic review cannot use a hypothetical message');
         return { reviews: reviewUnknownNextSteps(observed.diagnostics), recoveryNote: observed.rawRecoveryNote, completionAssumed: false };
       });
     }
-    if (caseId === 'SR-BE-POL-005') missing('second-instance-unknown-competition', 'Real second instance and automation progress are collected for both effects; no same-run ownership attempt/refusal observation is delivered, so no-HTTP and successful ticks cannot establish lock competition.');
+
   } else if (caseId === 'SR-BE-GRD-007') {
     await check('actual-event-insert-fault-atomic-rollback-and-next-success', () => profileCancellationRollback(qa));
   } else if (caseId === 'SR-BE-GRD-008') {

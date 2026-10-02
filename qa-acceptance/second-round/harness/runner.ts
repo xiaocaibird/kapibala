@@ -50,7 +50,7 @@ const out=resolve(secondRoundRoot,'reports/runs',runId),runtime=resolve(qaRoot,'
 await mkdir(out,{recursive:true});await mkdir(runtime,{recursive:true,mode:0o700});
 const fingerprint=await secondRoundFingerprint(),cases=await secondRoundCases();
 const manifest:Record<string,unknown>={runId,sutRevision:revision,qaRevision,secondRoundSha256:fingerprint,
-  startedAt:new Date().toISOString(),sutDirectory:sut,qaDirectory:qaRoot,authority:scope.authorization,
+  startedAt:new Date().toISOString(),sutDirectory:sut,qaDirectory:qaRoot,authority:scope.authorization,finalExecutionBoundary:scope.finalExecutionBoundary,
   autoRetries:0,browserName,node:process.version,productionReadiness:'NOT_ASSESSED',runnerErrors:[],
   originalRequirementSha256:createHash('sha256').update(await readFile(resolve(sut,'docs/original-interview-question.md'))).digest('hex')};
 const saveManifest=()=>writeFile(resolve(out,'manifest.json'),redact(manifest)+'\n');
@@ -129,7 +129,7 @@ try {
         const context={target:validated,cluster,outputDir:dir,runtimeDir:rt};
         await operation(c.id.startsWith('SR-C1-')?mediaDriver(context):providerDriver(context));result=pass('actual-independent-driver-and-all-declared-variants');
       } else if(c.id.startsWith('SR-BE-USG-')) {
-        await runUsageCase(c.id,providerDriver({target:validated,cluster,outputDir:dir,runtimeDir:rt}));result=pass('actual-provider-usage-case-obligations');
+        const context={target:validated,cluster,outputDir:dir,runtimeDir:rt};await runUsageCase(c.id,providerDriver(context),context);result=pass('actual-provider-usage-case-obligations');
       } else if(c.id.startsWith('SR-UI-')||c.id==='SR-BE-DEL-006') {
         if(!browser)browser=await ({chromium,firefox,webkit}[browserName as 'chromium'|'firefox'|'webkit']).launch({headless:validated.ui.headless??true});
         const checks=await runUiCase(c.id,{qa:await environment(),browser,outputDir:dir});

@@ -3,6 +3,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { lstat, readFile, realpath } from 'node:fs/promises';
 import { isAbsolute, relative, sep } from 'node:path';
 import { decodeProviderWire } from '../harness/provider-wire.js';
+import { mediaUrlRejectionMatrix } from '../harness/media-source-url-cases.js';
 import {
   C1_CAPABILITIES as M, C2_CAPABILITIES as P, PreparationBlocked,
   type DriverBase, type Ownership, type MediaDriver, type MediaMessage, type MessageRef,
@@ -165,13 +166,33 @@ export async function mediaSourceFailures(driver?: MediaDriver) {
     }
     const groupId = await d.createGroup(), baseline = await d.egress(); proof(baseline.evidence);
     const validSource = await d.source({ id: 'denied-url-controls', bytes: bytes() });
-    for (const mediaUrl of ['https://qa-foreign.invalid/media/x', 'file:///etc/passwd', 'http://127.0.0.1:1/not-media',
-      'http://user:password@127.0.0.1:1/media/x', `${validSource.url}?query=1`, `${validSource.url}#fragment`, `${validSource.url}/../escape`]) {
-      const ref = { groupId, msgId: randomUUID() };
-      proof(await d.emit({ ...ref, text: 'unsafe source remains text', mediaUrl }));
-      await d.read(ref); // establish actual ingestion before observing its download cycle
-      proof(await d.cycle('download')); cleared(await d.read(ref));
+    const urlResults:{id:string;status:'PASS'|'FAIL'|'BLOCKED';error?:unknown}[]=[];
+    for (const variant of mediaUrlRejectionMatrix(validSource.url)) {
+      const ref = { groupId, msgId: randomUUID() }, text=`unsafe source remains text:${variant.id}`;
+      const facts:Record<string,unknown>={variant,ref,expectedText:text,startedAt:new Date().toISOString()};
+      try {
+        const before=await d.egress();proof(before.evidence);facts.egressBefore=before;
+        const event=await d.emit({...ref,text,mediaUrl:variant.url});proof(event);facts.actualGatewayEvent=event;
+        const ingested=await d.read(ref);facts.actualIngestedMessage=ingested;
+        assert.equal(ingested.msgId,ref.msgId);assert.equal(ingested.text,text);
+        const cycle=await d.cycle('download');proof(cycle);facts.actualCompletedCycle=cycle;
+        const after=await d.egress();proof(after.evidence);facts.egressAfter=after;
+        facts.newAttempts=after.attempts.filter(row=>!before.attempts.some(prior=>prior.id===row.id));
+        const row=await d.read(ref);facts.messageAfter=row;
+        cleared(row);assert.equal(row.msgId,ref.msgId);assert.equal(row.text,text);
+        assert.deepEqual(after.attempts,before.attempts,'This exact invalid URL must not dispatch an actual HTTP request');
+        urlResults.push({id:variant.id,status:'PASS'});
+      } catch(error) {
+        const status=error instanceof assert.AssertionError?'FAIL':'BLOCKED';urlResults.push({id:variant.id,status,error});facts.status=status;facts.error=String(error);
+        // Preserve useful raw outcomes even if ingestion/cycle premises failed.
+        try{facts.egressAtFailure=await d.egress();}catch(secondary){facts.egressFailure=String(secondary);}
+      } finally {
+        facts.completedAt=new Date().toISOString();await d.evidence(`media-url-${variant.id}`,facts);
+      }
     }
+    await d.evidence('media-url-subscenario-results',urlResults.map(({id,status,error})=>({id,status,...(error?{error:String(error)}:{})})));
+    const failed=urlResults.find(row=>row.status==='FAIL');if(failed)throw failed.error;
+    const blocked=urlResults.filter(row=>row.status==='BLOCKED');if(blocked.length)throw new PreparationBlocked(`Actual URL rejection premises incomplete: ${blocked.map(row=>row.id).join(', ')}`);
     const after = await d.egress(); proof(after.evidence);
     assert.deepEqual(after.attempts, baseline.attempts, '独立出口不得收到非法来源请求');
     assert.ok(!after.attempts.some((r) => new URL(r.url).hostname === 'qa-foreign.invalid'), '重定向也不得发往外部目标');
@@ -344,8 +365,14 @@ export async function mediaDeletionFailure(driver?: MediaDriver) {
     const fault = await d.failUnlink(a.ref);
     await cleanupPreserving(d, () => fault.restore(), async () => {
       await expire(d, a.ref); await expire(d, b.ref);
-      proof(await d.cycle('cleanup')); proof(await fault.failure());
+      // A is deliberately unable to settle while its OS denial is installed.
+      // The real failed unlink plus B's physical deletion establish progress.
+      proof(await fault.failure());
+      const deadline=performance.now()+15000;let bAbsent=false;
+      do { bAbsent=await lstat(br.localFilePath!).then(()=>false,(error:NodeJS.ErrnoException)=>{if(error.code==='ENOENT')return true;throw error;});if(bAbsent)break;await new Promise(r=>setTimeout(r,30)); } while(performance.now()<deadline);
+      need(bAbsent,'Other eligible file deletion not observed while the exact first-file unlink denial remains installed');
       cleared(await d.read(a.ref)); cleared(await d.read(b.ref)); await absent(br.localFilePath!);
+      await d.evidence('unlink-failure-other-candidate-completed',{failedFile:ar.localFilePath,otherFile:br.localFilePath,otherPhysicallyAbsent:bAbsent});
     });
     proof(await d.cycle('cleanup')); await absent(ar.localFilePath!); cleared(await d.read(a.ref));
   });

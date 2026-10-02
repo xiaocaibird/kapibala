@@ -198,9 +198,9 @@ I- 证明实现位置，不证明测试或业务通过；含新观察接口的�
 | [SR-C2-015][Q-SR-C2-015] usage启用差异、默认限额、零值、年龄与关闭 | BLOCKED | [error.json][E-SR-C2-015-0] | 研发已补；QA复测：main-true、factory-false/true 生命周期子场景未成立；D-USG 提供明确入口，474 未执行。 |
 | [SR-C2-016][Q-SR-C2-016] usage有限队列与响应不等待磁盘 | BLOCKED | [error.json][E-SR-C2-016-0] | 研发已补；QA复测：队列持有/溢出入口原未接；D-USG 提供真实 writer 门、等待队列 64 与当前批独立观察；固定样本是 activeBatch=1，不冒充 activeBatch=64。 |
 | [SR-C2-017][Q-SR-C2-017] 最终候选真实提供方最小新增证据 | BLOCKED | [error.json][E-SR-C2-017-0] | 负责人有限授权；QA持条件执行：缺本轮真实提供方调用/费用/凭据条件，不读取本机 Key 或调用；独立离线事项继续。 |
-| [SR-C1-013][Q-SR-C1-013] 媒体通知不变新消息/提醒及页内更新 | BLOCKED | [error.json][E-SR-C1-013-0] | 研发供窗口；QA接线：实际落盘/提交故障窗口未绑定；使用[媒体复现契约](qa-media-scenarios-20261002.md)的真实文件/PG 屏障，不由源码推定。 |
-| [SR-C1-014][Q-SR-C1-014] 未知效果暂停中的running引用跨重启保留 | BLOCKED | [error.json][E-SR-C1-014-0] | 研发已补；QA接线：原无可执行引用/清理竞争入口；D-MR 支持两种锁序，待新固定源复验。 |
-| [SR-C1-015][Q-SR-C1-015] 文件打开/写入失败、部分文件与发布后收紧上限 | BLOCKED | [error.json][E-SR-C1-015-0] | 研发已补；QA接线：原未知结果跨重启媒体保护入口未接；D-MR 的未知效果仍未知，需 QA 独立账本。 |
+| [SR-C1-013][Q-SR-C1-013] 媒体通知不变新消息/提醒及页内更新 | BLOCKED | [error.json][E-SR-C1-013-0] | 研发供媒体事件契约；QA接线：实际 WS 的 message/changeKind=media、页面与提醒观察尚未绑定；核对消息身份不增加、未读/范围提醒不按新消息增长及路径更新，不由源码推定。 |
+| [SR-C1-014][Q-SR-C1-014] 未知效果暂停中的running引用跨重启保留 | BLOCKED | [error.json][E-SR-C1-014-0] | 研发已补；QA接线：原未知结果跨重启媒体保护入口未接；D-MR 提供真实 running 引用、同库同目录重启与过期清理观察。保护文件不等于未知业务结果恢复完成，需 QA 独立账本。 |
+| [SR-C1-015][Q-SR-C1-015] 文件打开/写入失败、部分文件与发布后收紧上限 | BLOCKED | [error.json][E-SR-C1-015-0] | 研发供 I/O 故障机制；QA接线：文件打开/写入失败、响应/文件描述符释放、部分文件及完整落盘后收紧上限窗口尚未绑定；按[媒体复现契约](qa-media-scenarios-20261002.md)与[C1 生命周期说明](c1-media-files.md#L66)独立核对有/无真实 running 引用时的路径、删除意图与终态清理。 |
 | [SR-C2-018][Q-SR-C2-018] usage非法token/无效配置/临时文件精确清理 | BLOCKED | [error.json][E-SR-C2-018-0] | 研发已补；QA接线：用量精确故障/边界入口原未绑定；D-USG 提供持有阶段，不代替全部年龄/大小矩阵。 |
 | [SR-C2-019][Q-SR-C2-019] 后端原turn超时/严格工具5秒/跨epoch关联回归 | BLOCKED | [error.json][E-SR-C2-019-0] | 研发/QA故障接线：未绑定真实派发故障窗口；需区分安全停止与最终完成，不新增外部结果查询。 |
 | [SR-C2-020][Q-SR-C2-020] 提供方目的地址、凭据header与退出资源 | BLOCKED | [error.json][E-SR-C2-020-0] | 研发已补；QA接线：原缺实际 owned 进程出口/取消；D-USG 仅该 provider transport，D-EGR 仅已实测内置路径，二者不可称全进程任意出口保证。 |

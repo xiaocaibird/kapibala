@@ -5,7 +5,7 @@ import { constants } from 'node:fs';
 import { open, readFile, lstat, readdir, realpath, chmod, writeFile, link, symlink, rm } from 'node:fs/promises';
 import { join, relative, isAbsolute } from 'node:path';
 import { PreparationBlocked, type Evidence, type Json, type ProviderCall, type ProviderDriver, type UsageContract, type UsageRecord } from '../contracts/media-provider.js';
-import { parseUsageJsonl, USAGE_FIELDS } from './backend-oracles.js';
+import { parseUsageJsonl, USAGE_FIELDS, uuid } from './backend-oracles.js';
 const proof = (reference: string, raw: unknown): Evidence => ({ reference, raw: JSON.parse(JSON.stringify(raw)) as Json });
 export interface ProviderUsageHost {
   sessionDirectory: string; resourceRoot: string; options: Record<string, Json>;
@@ -129,6 +129,26 @@ export class ProviderUsageFiles {
     }
     if(errors.length)throw errors.find(error=>!(error instanceof PreparationBlocked))??errors[0];
     return {evidence:proof('provider:actual-stopped-owner-temp-cleanup',{results,retainedRecords:beforeUsage.records})};
+  }
+
+  async shutdownUsageWriter(d:ProviderDriver):ReturnType<ProviderDriver['shutdownUsageWriter']>{
+    const observer=this.observer(),first=await observer.closeWriter(),second=await observer.closeWriter();
+    assert.equal(second.instanceId,first.instanceId);assert.deepEqual(second.usage.events,first.usage.events,'repeated close reuses completed shutdown');
+    const file=join(await this.ownedRoot(),'usage.jsonl'),beforeBytes=await readFile(file),before=await this.usage(),beforeCalls=(await this.calls()).length;
+    const lastSeq=second.usage.events.at(-1)?.seq??0,marker=`qa-after-writer-close-${randomUUID()}`;
+    await d.enqueue({purpose:'audit',proposal:{kind:'audit',verdict:'pass',reason:'QA writer closed business remains available'},actualUsage:{inputTokens:5,outputTokens:2,totalTokens:7}});
+    const reply=await d.exchange('/agent/audit',{groupId:marker,text:'QA synthetic writer lifecycle'});assert.equal(reply.status,200);assert.equal((reply.body as {verdict?:unknown}).verdict,'pass');
+    assert.equal((await this.calls()).length,beforeCalls+1,'closed journal does not suppress actual generation');
+    let after=await observer.snapshot();const until=performance.now()+5000;
+    while(!after.usage.events.some(e=>e.seq>lastSeq&&e.kind==='rejected-closed')&&performance.now()<until){await new Promise(r=>setTimeout(r,25));after=await observer.snapshot();}
+    const following=after.usage.events.filter(e=>e.seq>lastSeq),rejected=following.filter(e=>e.kind==='rejected-closed');
+    if(!rejected.length)throw new PreparationBlocked('Actual post-close call lacks rejected-closed observation');assert.equal(rejected.length,1);
+    for(const id of [rejected[0]!.requestId,rejected[0]!.attemptId])if(typeof id!=='string'||!uuid.test(id))throw new PreparationBlocked('Actual rejected-closed event lacks service requestId/attemptId correlation');
+    assert.ok(!following.some(e=>['enqueued','batch-dequeued','before-write','write-started'].includes(e.kind)));assert.equal(after.usage.queued,0);assert.equal(after.usage.activeBatch,0);assert.equal(after.usage.truncatedEvents,0);
+    assert.equal(after.usage.dropped,second.usage.dropped);assert.equal(after.usage.writeFailures,second.usage.writeFailures);
+    const afterBytes=await readFile(file);assert.deepEqual(afterBytes,beforeBytes);assert.deepEqual((await this.usage()).records,before.records);
+    const value={first,second,after,reply,rejected,wireCountBefore:beforeCalls,wireCountAfter:beforeCalls+1,priorFileSha256:createHash('sha256').update(beforeBytes).digest('hex'),afterFileSha256:createHash('sha256').update(afterBytes).digest('hex'),correlation:'one controlled real audit after real writer closed; service UUIDs do not claim upstream identity'};
+    await this.host().evidence?.('usage-real-closed-writer-rejection',value);return {rejectedAfterClose:true,evidence:proof('provider:actual-closed-writer-rejected-generation',value)};
   }
 
   async usageWriteFault(): ReturnType<ProviderDriver['usageWriteFault']> {

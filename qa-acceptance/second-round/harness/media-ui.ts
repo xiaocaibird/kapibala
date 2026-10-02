@@ -40,8 +40,9 @@ export async function runMediaUiCase(env:SecondRoundEnvironment,browser:Browser)
     await page.getByText(text,{exact:true}).click();
     const reminder=page.locator('.attention-notice > button');
     if(await reminder.isVisible()) {
-      await reminder.click();await expect(page.locator('.attention-summary')).toBeVisible();
-      await page.getByRole('button',{name:'确认当前范围更新',exact:true}).click();
+      // The group timeline's real '刷新并查看更新' control refreshes and
+      // confirms the visible region; it does not promise a summary dialog.
+      await reminder.click();await waitFor(async()=>!(await reminder.isVisible()),'initial message refresh acknowledgment');
     }
     await ui.paint();
     background=await nativeBackgroundTab(page,{record:facts=>env.evidence('media-ui-real-focus',facts)});

@@ -23,7 +23,7 @@ with tarfile.open(archive,'r:gz') as tar:
  assert len(tar.getmembers())==len(entries)
  for entry in entries:
   data=tar.extractfile(entry['member']).read();assert len(data)==entry['bytes'];assert hashlib.sha256(data).hexdigest()==entry['sha256']
-for name in ['report.md','results.json','junit.xml','manifest.json','events.ndjson','target.json','authorization.json','report-hashes.json','database-owner.json','database-cleanup-verification.json']:
+for name in ['report.md','results.json','junit.xml','manifest.json','events.ndjson','target.json','authorization.json','report-hashes.json','database-owner.json','database-cleanup-verification.json','result.json','cleanup-verification.json']:
  if (run/name).exists():shutil.copyfile(run/name,out/name)
 index={'runId':run.name,'archive':'evidence.tar.gz','bytes':archive.stat().st_size,'sha256':hashlib.sha256(archive.read_bytes()).hexdigest(),'fileCount':len(entries),'verification':'Every archived regular file read back and SHA256 checked; original run not changed','files':entries}
 (out/'evidence-index.json').write_text(json.dumps(index,ensure_ascii=False,indent=2)+'\n')

@@ -63,3 +63,14 @@ test('persistent age fixture stops its owned process and changes only the named 
     assert.equal((change.evidence.raw as Record<string,unknown>).systemClockChanged,false);assert.equal((change.evidence.raw as Record<string,unknown>).priorModelActuallyOccurredAtFixtureTime,false);
   }finally{await f.close();}
 });
+test('writer-close oracle requires actual new rejection IDs and unchanged real file, not just a successful business response',async()=>{
+ const f=await fixture();try{
+  await writeFile(f.file,JSON.stringify(row())+'\n',{mode:0o600});let actualCalls=0,ids=false;
+  const event=(kind:string,seq:number)=>({kind,seq,at:new Date().toISOString(),monotonicMs:seq,queued:0,activeBatch:0,dropped:0,writeFailures:0,batchId:null,attemptIds:[]});
+  const prior={instanceId:randomUUID(),usage:{events:[event('closing',1),event('closed',2)],queued:0,activeBatch:0,dropped:0,writeFailures:0,truncatedEvents:0}} as unknown as ProviderSnapshot;
+  f.host.observation={closeWriter:async()=>structuredClone(prior),snapshot:async()=>({...prior,usage:{...prior.usage,events:[...prior.usage.events,{...event('rejected-closed',3),...(ids?{requestId:randomUUID(),attemptId:randomUUID()}:{})}]}})} as unknown as ProviderObservationClient;
+  const helper=new ProviderUsageFiles(()=>f.host,async()=>Array.from({length:actualCalls},()=>({})) as never[],'qa-self-only');
+  const d={enqueue:async()=>{},exchange:async()=>{actualCalls++;return {status:200,body:{verdict:'pass'}};}} as unknown as import('../../contracts/media-provider.js').ProviderDriver;
+  await assert.rejects(helper.shutdownUsageWriter(d),/requestId\/attemptId/);assert.equal(actualCalls,1);ids=true;assert.equal((await helper.shutdownUsageWriter(d)).rejectedAfterClose,true);assert.equal(actualCalls,2);
+ }finally{await f.close();}
+});

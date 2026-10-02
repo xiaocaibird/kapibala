@@ -1,0 +1,56 @@
+{
+  "runId": "2026-10-01T23-12-22.471Z-739fbbec",
+  "sutRevision": "ed50ca14ae3f4140d7f020f282b313b137920209",
+  "rawEvidenceUnchanged": true,
+  "issues": [
+    {
+      "caseId": "SR-C1-003",
+      "type": "product-defect",
+      "fact": "Raw media URL contains /media/<id>/../escape. Actual HTTP creation ledger records /media/escape, after WHATWG normalization. Frozen source contract rejects dangerous path characters and requires one /media/:id segment.",
+      "development": "Main thread independently confirmed before-normalization validation gap; fix and independent retest pending. No real foreign network was called."
+    },
+    {
+      "caseId": "SR-C1-010",
+      "type": "qa-premise-error",
+      "fact": "Global cleanup cycle waits every deleting task to settle, while this scenario deliberately holds a real unlink EPERM. Revised observation requires actual EPERM, actual other-file unlink under that fault, and global settlement only after restoration."
+    },
+    {
+      "caseId": "SR-C1-013",
+      "type": "qa-premise-error",
+      "fact": "Trace shows group-timeline refresh-and-view control refreshes and acknowledges that region. QA incorrectly required an attention-summary dialog during setup. Revised setup observes real acknowledgment; media update and notification expectations remain unchanged.",
+      "trace": "cases/SR-C1-013/media-ui-trace.zip; calls5956/5960, trace wall time1790896744615"
+    },
+    {
+      "caseId": "SR-BE-GRD-003",
+      "type": "product-fix-independently-verified",
+      "fact": "All six independent original-run/same-key states passed against ed50; no inherited development result."
+    },
+    {
+      "caseId": "SR-BE-DIA-004",
+      "type": "existing-unwaived-strong-recovery-difference",
+      "fact": "Both real unknown kick variants prove safety/no replay and safe next-step. Original run still pauses across restart; safe pausing is not automatic completion. Raw FAIL retained; no blind resend recommendation."
+    },
+    {
+      "caseId": "SR-C2-020",
+      "type": "qa-exit-observation-error",
+      "fact": "Normal requests and normal shutdown complete. Hard kill also killed guardian before IPC child-exit notification; absence of IPC is not proof process stayed alive. QA now signals child only, receives actual OS exit, then reaps owned process group."
+    },
+    {
+      "caseId": "SR-C2-019",
+      "type": "mixed-existing-timing-difference-and-qa-premise-gap",
+      "fact": "Actual tool wait 5000.520583ms exceeds unchanged 5000ms; map deferred first-round timing issue. Timeout variant delayed model 16s, hitting provider 9s timeout before backend 10–15s; fixed QA relay holds already completed original Agent bytes instead. Cross-epoch missing evidence remains explicit."
+    },
+    {
+      "caseId": "SR-BE-POL-005",
+      "type": "existing-unwaived-strong-recovery-difference",
+      "fact": "Both effect/no-effect unknown kick original runs pause across actual restart; no duplicate effect is proved, automatic completion is not. Same-run second-instance lock contention is a separate blocked sub-obligation."
+    }
+  ],
+  "status": "Completed; raw 96 PASS / 6 FAIL / 10 BLOCKED / 0 NOT_RUN, runnerErrors=[], automatic retries=0. Historical observations are not replaced by this triage.",
+  "archive": {
+    "sha256": "965b6739ead7a93ee574afd47444dc5848992950f786b4694e15d297aceefcd2",
+    "bytes": 32570277,
+    "fileCount": 8011,
+    "readBackVerified": true
+  }
+}

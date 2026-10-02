@@ -5,7 +5,7 @@ import type { QaEnvironment } from '../../harness/environment.js';
 import type { AgentRun, Group } from '../../harness/platform-client.js';
 import { BlockedError } from '../../harness/security.js';
 import { capacityControlFor } from '../../harness/capacity-control.js';
-import { runtimeObservationFor } from '../../harness/runtime-observation.js';
+import { runtimeObservationFor, type RuntimeSnapshot } from '../../harness/runtime-observation.js';
 import { assertSingleEpochActivityBudget, assertSingleEpochLifecycleBudget } from '../../tests/support/agent-activity-budget.js';
 import { assertDiagnostics, record, type DiagnosticModule } from './backend-oracles.js';
 import { actualListenerIdentity } from './environment.js';
@@ -189,10 +189,10 @@ export async function noDispatchBudget(qa: QaEnvironment) {
 /** Effect has happened; gateway confirmation is unavailable to the product.
  * Private effect ledger is evidence for QA only and never feeds product recovery. */
 export async function dispatchedUnknownKick(qa: QaEnvironment, effect: boolean, restart: boolean, compete = false) {
-  const runtime = runtimeObservationFor(qa); let k: Awaited<ReturnType<typeof preparedKick>> | undefined;
+  const runtime = runtimeObservationFor(qa); let secondaryRuntime: ReturnType<typeof runtimeObservationFor> | undefined; let k: Awaited<ReturnType<typeof preparedKick>> | undefined;
   const responseBarrier = 'qa-unknown-kick-' + randomUUID(); let complete = false, primary: unknown;
   try {
-    await runtime.verify(['activity-witness', 'agent-lifecycle-witness']); k = await preparedKick(qa);
+    await runtime.verify(['activity-witness', 'agent-lifecycle-witness', ...(compete ? ['agent-run-lock-witness'] : [])]); k = await preparedKick(qa);
     const activity = await runtime.arm('observe-activity', { kind: 'activity', groupId: k.group.id, runId: k.runId, toolUseId: 'all-run-steps' });
     const lifecycle = await runtime.arm('observe-agent-lifecycle', { kind: 'tool-wait', groupId: k.group.id, runId: k.runId, toolUseId: 'all-run-steps' });
     qa.gateway.enqueue('/groups/' + k.group.gatewayGroupId + '/kick', { status: 504, code: 'NETWORK_TIMEOUT', effect: effect ? 'apply' : 'none', omitEvent: true, barrier: { phase: 'before-response', name: responseBarrier } });
@@ -200,6 +200,28 @@ export async function dispatchedUnknownKick(qa: QaEnvironment, effect: boolean, 
     assert.equal(calls(qa, k.group, 'kick').length, 1);
     const actualEffects = () => qa.gateway.snapshot().effects.filter(e => e.kind === 'kick' && e.groupId === k!.group.gatewayGroupId && e.platformUserId === k!.target);
     assert.equal(actualEffects().length, effect ? 1 : 0);
+    let secondObservation: unknown;
+    if (compete) {
+      // A paused run is intentionally excluded from ordinary scheduling. Start
+      // the competitor while the original kick response and real lock remain
+      // pending; only a witnessed same-run lock refusal proves contention.
+      const second = await qa.startSecondInstance(); await second.login();
+      const primaryIdentity = await actualListenerIdentity(qa.api.baseUrl), secondaryIdentity = await actualListenerIdentity(second.baseUrl);
+      assert.ok(secondaryIdentity.every(item => !primaryIdentity.some(primary => primary.pid === item.pid)));
+      secondaryRuntime = runtimeObservationFor({ config: qa.config, capacityControlTarget: () => qa.secondInstanceControlTarget(), evidence: (name, value) => qa.evidence('secondary-' + name, value) });
+      await secondaryRuntime.verify(['agent-lifecycle-witness', 'agent-run-lock-witness']);
+      const secondaryLease = await secondaryRuntime.arm('observe-agent-lifecycle', { kind: 'tool-wait', groupId: k.group.id, runId: k.runId, toolUseId: 'all-run-steps' });
+      const refusal = await observeBackend(() => secondaryLease.snapshot(), snapshot => snapshot.events.some(event => event.kind === 'agent-run-lock-result' && event.purpose === 'run' && event.lockStatus === 'lock_busy'), 7000, 'actual same-run lock refusal before original kick response');
+      const holder = await lifecycle.snapshot();
+      await qa.evidence('unknown-kick-lock-streams-before-assertion', { holder, refusal, primaryIdentity, secondaryIdentity });
+      const witness = assertUnknownLockContention(holder, refusal);
+      const pending = calls(qa, k.group, 'kick'); assert.equal(pending.length, 1);
+      if (pending[0]?.responseFinishedAt || pending[0]?.responseClosedAt) throw new BlockedError('Original kick response no longer held when actual competition was observed');
+      const secondRun = await second.agentRun(k.runId); assert.equal(secondRun.id, k.runId); assert.equal(secondRun.status, 'running');
+      assert.equal(record(secondRun).recoveryNote, null); assert.equal(actualEffects().length, effect ? 1 : 0);
+      secondObservation = { origin: second.baseUrl, primaryIdentity, secondaryIdentity, holder, refusal, witness, pending, secondRun, competition: 'PASS' };
+      await qa.evidence('unknown-kick-actual-lock-competition', secondObservation);
+    }
     qa.gateway.configure({ unavailable: true }); qa.gateway.barriers.release(responseBarrier);
     const settlement = await observeBackend(() => lifecycle.snapshot(), snapshot => snapshot.events.some(event =>
       event.kind === 'agent-terminal-committed' || event.kind === 'agent-activity-pause-committed'), 65_000, 'original run terminal or committed unknown-outcome pause');
@@ -224,20 +246,6 @@ export async function dispatchedUnknownKick(qa: QaEnvironment, effect: boolean, 
     let persisted;
     try { persisted = (await db.query('SELECT id,status,end_reason,recovery_note,history FROM agent_runs WHERE id=$1', [k.runId])).rows; }
     finally { await db.end(); }
-    let secondObservation: unknown;
-    if (compete) {
-      const second = await qa.startSecondInstance(); await second.login();
-      const primaryIdentity = await actualListenerIdentity(qa.api.baseUrl), secondaryIdentity = await actualListenerIdentity(second.baseUrl);
-      assert.ok(secondaryIdentity.every(item => !primaryIdentity.some(primary => primary.pid === item.pid)), 'second origin must have a different actual listener process');
-      const before = assertDiagnostics(await second.require(second.get('/api/diagnostics/background')));
-      const automation = before.find(module => module.name === 'automation');
-      if (!automation) throw new BlockedError('Second instance did not expose its own automation tick');
-      const afterTicks = await observeBackend(async () => assertDiagnostics(await second.require(second.get('/api/diagnostics/background'))), rows => rows.some(module => module.name === 'automation' && module.ticks > automation.ticks), 10_000, 'actual second-instance automation progress');
-      const secondRun = await second.agentRun(k.runId); assert.equal(secondRun.id, k.runId);
-      assert.equal(calls(qa, k.group, 'kick').length, 1); assert.equal(actualEffects().length, effect ? 1 : 0);
-      secondObservation = { origin: second.baseUrl, primaryIdentity, secondaryIdentity, before, afterTicks, secondRun,
-        competition: 'BLOCKED', reason: 'Actual second process and tick observed, but no public same-run ownership attempt/refusal witness; neither ticks nor zero additional HTTP proves contention.' };
-    }
     let afterRestart: unknown;
     if (restart) {
       const before = qa.capacityControlTarget(); await qa.restart(); await qa.api.login();
@@ -255,8 +263,31 @@ export async function dispatchedUnknownKick(qa: QaEnvironment, effect: boolean, 
     const after = await qa.api.agentRun(k.runId); assert.equal(after.id, k.runId);
     complete = true; return { effect, restart, compete, dispatched, settlement, paused, activity: actual, onlineInterval, run, rawRecoveryNote: raw.recoveryNote, persisted, diagnostics, confirmation, secondObservation, afterRestart, after, effects: actualEffects(), kicks: calls(qa, k.group, 'kick'), completionBoundary: 'Safety observations do not imply successful completion of an unconfirmed external effect.' };
   } catch (error) { primary = error; throw error; } finally {
-    await cleanupObserved(qa, primary, [() => !complete ? qa.kill() : undefined, () => qa.stopSecondInstance(), () => { qa.gateway.configure({ unavailable: false }); if (k) qa.agent.barriers.release(k.barrier); qa.gateway.barriers.release(responseBarrier); }, () => runtime.close()]);
+    await cleanupObserved(qa, primary, [() => !complete ? qa.kill() : undefined, () => qa.stopSecondInstance(), () => { qa.gateway.configure({ unavailable: false }); if (k) qa.agent.barriers.release(k.barrier); qa.gateway.barriers.release(responseBarrier); }, () => secondaryRuntime?.close(), () => runtime.close()]);
   }
+}
+
+export function assertUnknownLockContention(holder: RuntimeSnapshot, competitor: RuntimeSnapshot) {
+  if (holder.correlation.kind !== 'tool-wait' || competitor.correlation.kind !== 'tool-wait') throw new BlockedError('Lock contention requires actual run lifecycle streams');
+  assert.equal(holder.correlation.runId, competitor.correlation.runId); assert.equal(holder.correlation.groupId, competitor.correlation.groupId);
+  const refusal = competitor.events.find(event => event.kind === 'agent-run-lock-result' && event.purpose === 'run' && event.lockStatus === 'lock_busy');
+  if (!refusal) throw new BlockedError('No actual same-run lock_busy refusal; no-HTTP is not a contention witness');
+  const attempt = competitor.events.find(event => event.kind === 'agent-run-lock-attempted' && event.attemptId === refusal.attemptId);
+  if (!attempt) throw new BlockedError('Lock refusal lacks its actual attempt');
+  assert.ok(attempt.seq < refusal.seq); assert.equal(attempt.callbackEntered, false); assert.equal(refusal.callbackEntered, false);
+  assert.ok(!competitor.events.some(event => event.kind === 'agent-run-lock-acquired' && event.attemptId === refusal.attemptId));
+  const acquired = holder.events.findLast(event => event.kind === 'agent-run-lock-acquired' && event.purpose === 'run' && event.lockKey === refusal.lockKey);
+  if (!acquired) throw new BlockedError('Original application lacks actual same-run lock acquisition');
+  const originalAttempt = holder.events.find(event => event.kind === 'agent-run-lock-attempted' && event.attemptId === acquired.attemptId);
+  if (!originalAttempt) throw new BlockedError('Original lock acquisition has no actual attempt');
+  assert.ok(originalAttempt.seq < acquired.seq); assert.equal(originalAttempt.callbackEntered, false); assert.equal(acquired.callbackEntered, true);
+  if (holder.events.some(event => event.kind === 'agent-run-lock-result' && event.attemptId === acquired.attemptId)) throw new BlockedError('Original callback already returned; current held-lock overlap not established');
+  assert.equal(acquired.lockKey, 'agent:' + holder.correlation.runId);
+  assert.notEqual(acquired.applicationPid, refusal.applicationPid); assert.notEqual(holder.binding.pid, competitor.binding.pid);
+  assert.ok(typeof acquired.instanceId === 'string' && acquired.instanceId && typeof refusal.instanceId === 'string' && refusal.instanceId);
+  assert.notEqual(acquired.instanceId, refusal.instanceId);
+  assert.equal(attempt.instanceId, refusal.instanceId); assert.equal(originalAttempt.instanceId, acquired.instanceId);
+  return { originalAttempt, acquired, attempt, refusal, sameLockKey: acquired.lockKey, scope: 'Actual different-instance lock refusal while original callback has not returned' };
 }
 
 export function assertUnknownKickCompletion(facts: Awaited<ReturnType<typeof dispatchedUnknownKick>>) {

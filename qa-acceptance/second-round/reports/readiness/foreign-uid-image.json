@@ -1,0 +1,91 @@
+{
+  "status": "DEPENDENCY_IMAGE_READY_PRODUCT_NOT_RUN",
+  "inspectedAt": "2026-10-01T23:16:54.166634+00:00",
+  "pull": {
+    "command": [
+      "docker",
+      "pull",
+      "node:24.21.0-bookworm-slim"
+    ],
+    "exitCode": 0,
+    "digest": "sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6",
+    "status": "Downloaded newer image"
+  },
+  "image": {
+    "Id": "sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6",
+    "RepoTags": [
+      "node:24.21.0-bookworm-slim"
+    ],
+    "RepoDigests": [
+      "node@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6"
+    ],
+    "Comment": "buildkit.dockerfile.v0",
+    "Created": "2026-09-19T00:51:43.82234943Z",
+    "Config": {
+      "Env": [
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+        "NODE_VERSION=24.21.0",
+        "YARN_VERSION=1.22.22"
+      ],
+      "Entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "Cmd": [
+        "node"
+      ]
+    },
+    "Architecture": "arm64",
+    "Variant": "v8",
+    "Os": "linux",
+    "Size": 348359147,
+    "RootFS": {
+      "Type": "layers",
+      "Layers": [
+        "sha256:055ab12bd547e17a0630037f06a186cf405e3f61bb03a614562ca8f5ab52a8be",
+        "sha256:d72a355d0ef2414e65765fce96999c34bf31ec0bbf3b3d79307ba26457c52bbf",
+        "sha256:00aa6f17ffebf42a4a535794511e8025b8816bbcf4dd308e74dabf4c959ea0c6",
+        "sha256:3d44ad3b789d4f301c825e85f9f0a8d3f2b8a9830436da13afdf7c3f192301b3",
+        "sha256:6c9b0b51efdb379ab8b915e12c218d51e2bb55e764e94900b138bb83790417bd"
+      ]
+    },
+    "Metadata": {
+      "LastTagTime": "2026-10-01T23:14:20.845897512Z"
+    },
+    "Descriptor": {
+      "mediaType": "application/vnd.oci.image.index.v1+json",
+      "digest": "sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6",
+      "size": 3929
+    },
+    "Identity": {
+      "Pull": [
+        {
+          "Repository": "docker.io/library/node"
+        }
+      ]
+    }
+  },
+  "actualVersionProbe": {
+    "node": "v24.21.0",
+    "platform": "linux",
+    "arch": "arm64",
+    "uid": 10001,
+    "npm": "11.19.0",
+    "network": "none",
+    "rootfs": "read-only",
+    "mounts": "only temporary /tmp tmpfs; no host files",
+    "containerName": "qa-foreign-version-6b99535e-3fb8-443a-ae89-26c113e5c1b7",
+    "exitCode": 0,
+    "automaticRemoval": true
+  },
+  "preparationAdjustment": "The isolated dependency container installs pinned npm@12.1.0 before product npm ci; that installation has not yet run. Product engines are not bypassed.",
+  "scope": "No SUT started; Linux UID sub-obligation supplement remains NOT_RUN. Base image is retained for root execution, no existing user image removed.",
+  "explicitDaemonVerification": {
+    "verifiedAt": "2026-10-01T23:18:19.022911+00:00",
+    "host": "unix:///var/run/docker.sock",
+    "ID": "1fbf2675-d415-458c-866c-28fd59cd7267",
+    "ServerVersion": "29.8.1",
+    "OSType": "linux",
+    "sameImageOnExplicitDaemon": "sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6",
+    "versionProbeContainerAbsent": true
+  }
+}

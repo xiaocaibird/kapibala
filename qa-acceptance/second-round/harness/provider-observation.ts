@@ -38,6 +38,15 @@ export class ProviderObservationClient {
     return raw;
   }
   async snapshot():Promise<ProviderSnapshot> {const value=await this.request('/snapshot');validateSnapshot(value,this.instanceId,this.pids);await this.save('provider-observation-snapshot',value);return value;}
+  async closeWriter():Promise<ProviderSnapshot> {
+    const value=await this.request('/writer/close','POST') as {closed?:unknown;snapshot?:unknown};
+    assert.equal(value.closed,true);validateSnapshot(value.snapshot,this.instanceId,this.pids);
+    const snapshot=value.snapshot,events=snapshot.usage.events;
+    if(snapshot.usage.truncatedEvents||!events.some(e=>e.kind==='closing')||!events.some(e=>e.kind==='closed'))throw new PreparationBlocked('Writer close lacks complete actual closing/closed observation');
+    assert.equal(snapshot.usage.queued,0);assert.equal(snapshot.usage.activeBatch,0);
+    const closing=events.find(e=>e.kind==='closing')!,closed=events.find(e=>e.kind==='closed')!;assert.ok(closed.seq>closing.seq);
+    await this.save('provider-writer-closed',snapshot);return snapshot;
+  }
   async hold(ttlMs=120000):Promise<Barrier> {
     assert.ok(Number.isInteger(ttlMs)&&ttlMs>=100&&ttlMs<=120000);const id=randomUUID(),first=await this.request(`/holds/${id}`,'PUT',{ttlMs}) as UsageHold;
     assert.equal(first.id,id);assert.equal(first.ttlMs,ttlMs);assert.equal(first.state,'armed');assert.equal(first.reached,null);await this.save('provider-write-hold-created',first);

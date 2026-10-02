@@ -35,3 +35,9 @@ test('HTTP observation binds identity, real gate event, fixed TTL and persists n
     assert.equal(second.id.length,36);await assert.rejects(second.reached(),/not started persistence/);await second.release();
   }finally{await new Promise<void>(r=>server.close(()=>r()));}
 });
+test('writer close uses authenticated empty POST and requires real complete close events, not closed boolean alone',async()=>{
+ const s=snapshot(),token='q'.repeat(40),saved:unknown[]=[];let valid=false;
+ const server=createServer(async(req,res)=>{assert.equal(req.url,'/qa/usage/v1/writer/close');assert.equal(req.method,'POST');assert.equal(req.headers.authorization,`Bearer ${token}`);assert.equal(req.headers['x-qa-instance-id'],s.instanceId);let bytes=0;for await(const part of req)bytes+=part.length;assert.equal(bytes,0);res.setHeader('content-type','application/json');
+ if(valid)s.usage.events=['closing','closed'].map((kind,i)=>({seq:i+1,at:new Date().toISOString(),monotonicMs:i+1,kind,queued:0,activeBatch:0,dropped:0,writeFailures:0,batchId:null,attemptIds:[]}));res.end(JSON.stringify({closed:true,snapshot:s}));});
+ await new Promise<void>(r=>server.listen(0,'127.0.0.1',r));try{const c=new ProviderObservationClient(`http://127.0.0.1:${(server.address() as AddressInfo).port}`,token,s.instanceId,[process.pid],async(_n,v)=>{saved.push(v);});await assert.rejects(c.closeWriter(),/actual closing\/closed/);valid=true;await c.closeWriter();assert.equal(saved.length,1);assert.ok(!JSON.stringify(saved).includes(token));}finally{await new Promise<void>(r=>server.close(()=>r()));}
+});

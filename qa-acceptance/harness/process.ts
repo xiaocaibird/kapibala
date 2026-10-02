@@ -13,6 +13,7 @@ const guardian = `const {spawn}=require('node:child_process');
 const c=JSON.parse(process.argv[1]); const hold=setInterval(()=>{},1000);
 process.on('SIGTERM',()=>{}); process.on('disconnect',()=>{try{process.kill(-process.pid,'SIGKILL')}catch{process.exit(1)}});
 const p=spawn(c.command,c.args,{stdio:['ignore','inherit','inherit'],env:process.env});
+process.on('message',m=>{if(m?.type==='kill-application'&&p.exitCode===null&&p.signalCode===null)p.kill('SIGKILL')});
 p.once('spawn',()=>process.send?.({type:'ready'}));
 p.once('error',e=>process.send?.({type:'error',message:e.message}));
 p.once('exit',(code,signal)=>process.send?.({type:'exit',code,signal}));`;
@@ -92,6 +93,21 @@ export class OwnedProcess {
       await this.stop();
       throw e;
     }
+  }
+  /** Kill only the guardian's original child so the guardian can report the
+   * actual OS exit signal before group cleanup. Group SIGKILL cannot provide
+   * this evidence because it also destroys the reporter. */
+  async killApplication(): Promise<{ code: number | null; signal: NodeJS.Signals | null }> {
+    const child = this.child;
+    if (!child?.connected || !this.running) throw new Error('No live owned application guardian');
+    await new Promise<void>((ok, bad) => child.send({ type: 'kill-application' }, e => e ? bad(e) : ok()));
+    const until = performance.now() + 3000;
+    while (!this.outcome && performance.now() < until) {
+      if (child.exitCode !== null || child.signalCode !== null) throw new Error('Guardian exited before reporting application outcome');
+      await sleep(10);
+    }
+    if (!this.outcome) throw new Error('No observed application exit after requested SIGKILL');
+    return { ...this.outcome };
   }
   async stop(signal: NodeJS.Signals = 'SIGTERM'): Promise<void> {
     if (this.stopping) return this.stopping;

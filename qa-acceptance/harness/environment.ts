@@ -29,6 +29,7 @@ export class QaEnvironment {
   private webProxy?: BrowserProxy;
   private server?: OwnedProcess;
   private second?: OwnedProcess;
+  private secondPort = 0;
   private web?: OwnedProcess;
   private startedAt = '';
   private disposed = false;
@@ -200,6 +201,7 @@ export class QaEnvironment {
     await requireAuthorization(this.config);
     if (this.second) throw new Error('第二实例已启动');
     const port = await availablePort();
+    this.secondPort = port;
     const launch = await this.applicationLaunch(this.command(this.config.sut.start, port), await this.env(port));
     this.second = new OwnedProcess(
       launch.command,
@@ -218,6 +220,12 @@ export class QaEnvironment {
   async stopSecondInstance(): Promise<void> {
     await this.second?.stop();
     this.second = undefined;
+    this.secondPort = 0;
+  }
+  secondInstanceControlTarget(): { apiUrl: string; revision: string; pid: number; ownerToken: string } {
+    this.second?.assertRunning();
+    if (!this.second?.pid || !this.secondPort) throw new Error('没有本轮可绑定的第二实例');
+    return { apiUrl: `http://127.0.0.1:${this.secondPort}`, revision: this.config.sut.revision, pid: this.second.pid, ownerToken: this.resourceToken };
   }
   async interruptDatabase(): Promise<void> {
     this.proxy!.interrupt();

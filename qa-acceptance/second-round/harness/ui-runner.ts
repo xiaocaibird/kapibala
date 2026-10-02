@@ -375,9 +375,17 @@ async function entityAttention(ui: PublicUiDriver, qa: QaEnvironment, profile: U
       assert.equal(running.length, 1); runIds.push(running[0]!.id);
     }
     await ui.openRunFromGroup(profile.groupA, runIds[0]!);
+    const originalIdentity=await ui.currentPublicIdentity();
+    if(originalIdentity.role!=='admin')throw new BlockedError('Attention isolation requires the original admin identity');
     const second = await ui.page.context().newPage();
     peer = await PublicUiDriver.attach({ page: second, baseUrl: ui.options.baseUrl, outputDir: resolve(ui.options.outputDir, 'peer-entity'), allowedOrigins: qa.allowedBrowserOrigins });
-    await peer.login('admin', 'independent-peer-page'); await peer.openRunFromGroup(profile.groupB, runIds[1]!);
+    // Reuse the existing browser session. Explicit login() first logs out a
+    // restored page and would invalidate the shared cookie session of A.
+    await peer.navigate('#/groups');await expect(second.getByRole('button',{name:'退出登录',exact:true})).toBeVisible();
+    await peer.openRunFromGroup(profile.groupB, runIds[1]!);
+    const identities={original:originalIdentity,first:await ui.currentPublicIdentity(),second:await peer.currentPublicIdentity()};
+    await ui.evidence('attention-stable-public-identities',identities);
+    if(JSON.stringify(identities.first)!==JSON.stringify(originalIdentity)||JSON.stringify(identities.second)!==JSON.stringify(originalIdentity))throw new BlockedError('Both pages must retain the same originally established admin identity');
     if (second.context().browser()?.browserType().name() === 'chromium') {
       const cdp = await second.context().newCDPSession(second);
       await cdp.send('Emulation.setFocusEmulationEnabled', { enabled: false }); await cdp.detach();
@@ -414,7 +422,7 @@ async function entityAttention(ui: PublicUiDriver, qa: QaEnvironment, profile: U
     }
     await expect(second).toHaveTitle(quietB);
     await peer.returnToSource(); await assertOrigin(peer, 'group', profile.groupB);
-    await ui.evidence('entity-attention-isolation', { runIds, groups: groups.map((g) => g.id), summaries, quietA, quietB, pendingB, focus, checked: ['A own acknowledgment', 'A return source', 'B pending remains', 'B own acknowledgment'], realHumanFocusSigned: false });
+    await ui.evidence('entity-attention-isolation', { runIds, groups: groups.map((g) => g.id), summaries, quietA, quietB, pendingB, focus, identities, checked: ['A own acknowledgment', 'A return source', 'B pending remains', 'B own acknowledgment'], realHumanFocusSigned: false });
     peer.assertHealthy();
   } catch (error) { primary = error; throw error; }
   finally {

@@ -47,10 +47,13 @@ node --import tsx scripts/qa-gemini-agent.ts
 | `PUT /qa/usage/v1/holds/<UUID>` | 严格 JSON `{ "ttlMs": 100..120000 }`，创建下一批写入前的唯一门。返回 hold。 |
 | `GET /qa/usage/v1/holds/<UUID>` | 当前指定 hold；未知/旧 ID 为 HTTP 404 `QA_HOLD_NOT_FOUND`。 |
 | `DELETE /qa/usage/v1/holds/<UUID>` | 释放该门，返回实际状态；未知/旧 ID 不操作当前门。 |
+| `POST /qa/usage/v1/writer/close` | 无请求体；先释放已有门，再等待本实例真实 journal 关闭并排空已接收队列。返回 `{ "closed": true, "snapshot": <完整快照> }`。 |
 
 非法 UUID/请求体/TTL 返回 400 `QA_HOLD_INVALID`。无 usage 观测、journal 未初始化或控制已关闭时，PUT 返回 409 `QA_USAGE_WRITER_UNAVAILABLE`。已有 armed/held 门时另建新 ID 返回 409 `QA_HOLD_BUSY`。同 ID、同 TTL 重放返回原状态且不续期；同 ID 改 TTL 返回 409 `QA_HOLD_CONFLICT`。
 
-hold 字段为 `id,state,ttlMs,expiresAt,reached,releaseReason`。状态 `armed` 等待唯一 writer 的下一批，`held` 表示已进入真实 `before-write`；此时 `reached` 保存那次完整用量事件。`released` 表示 DELETE/正常关闭释放，`expired` 表示真实定时器到期；`releaseReason` 为 `delete|ttl|shutdown|null`。TTL 从 PUT 创建时开始，最低 100ms，不由后续请求延长。只能有一个当前门；它终止后可用新 UUID 建门，旧 ID 随即不可用于操作新门。门不暂停业务返回，也不挑选请求或改写用量内容。
+hold 字段为 `id,state,ttlMs,expiresAt,reached,releaseReason`。状态 `armed` 等待唯一 writer 的下一批，`held` 表示已进入真实 `before-write`；此时 `reached` 保存那次完整用量事件。`released` 表示 DELETE/正常关闭/独立 writer 关闭释放，`expired` 表示真实定时器到期；`releaseReason` 为 `delete|ttl|shutdown|writer-close|null`。TTL 从 PUT 创建时开始，最低 100ms，不由后续请求延长。只能有一个当前门；它终止后可用新 UUID 建门，旧 ID 随即不可用于操作新门。门不暂停业务返回，也不挑选请求或改写用量内容。
+
+`writer/close` 仅在显式 usage 观察启用、实际 journal 初始化并绑定后可用；usage 关闭、factory 省略 usage 对象或仅 transport 观察时，返回 409 `QA_USAGE_WRITER_UNAVAILABLE`。普通生产入口没有该路由。请求含任何 body（包括 `{}`）返回 400 `QA_WRITER_CLOSE_INVALID`；token/instance 校验沿用上述规则。并发及重复调用复用同一真实 close Promise，完成后均返回 200。关闭后不能再建写门；原 HTTP 服务、provider、session 继续正常工作。后续实际生成调用可成功，其原 `record(value)` 的关闭分支产生 `rejected-closed`，携带该 value 的 `requestId,attemptId`，不入队、不更新留存文件。只有重启进程才创建新 writer；控制接口不提供重开或伪造用量操作。`closed:true` 说明 journal 的 close 已完成，不代表此前失败的可选用量写入被补偿，写失败仍需读取真实事件和文件。
 
 ## 用量快照与真实写入阶段
 
@@ -60,7 +63,7 @@ hold 字段为 `id,state,ttlMs,expiresAt,reached,releaseReason`。状态 `armed`
 - `queued`：真实等待队列长度；`queuedIncludesActiveBatch:false` 明确不含当前批。`activeBatch`：唯一 writer 已取出的真实批条数。`dropped`：本进程实际 `queue.length >= 64` 拒绝分支累计次数；`writeFailures`：实际异步批写失败次数。重启重新计数，不是跨进程完整账本。
 - `diagnosticCodes`：实际出现的固定诊断；`events`：最新最多 2048 个事件；`truncatedEvents`：已经截去的事件数量。不得把截断快照解读为完整历史。
 
-每个 usage 事件含 `seq,at,monotonicMs,kind,queued,activeBatch,dropped,writeFailures,batchId,attemptIds`；入队与队列拒绝另含实际 `requestId,attemptId`，诊断含 `diagnosticCode`。这些 ID 来自真实 provider/service 调用；不包含 prompt、消息、runId、key、token 或文件路径。
+每个 usage 事件含 `seq,at,monotonicMs,kind,queued,activeBatch,dropped,writeFailures,batchId,attemptIds`；入队、队列拒绝和关闭后拒绝另含实际 `requestId,attemptId`，诊断含 `diagnosticCode`。这些 ID 来自真实 provider/service 调用；不包含 prompt、消息、runId、key、token 或文件路径。
 
 事件含义与顺序：
 
