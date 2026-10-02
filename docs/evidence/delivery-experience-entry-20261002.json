@@ -1,0 +1,186 @@
+{
+  "purpose": "开发侧交付体验入口验证；不构成新增 QA 验收或上线结论",
+  "date": "2026-10-02",
+  "baseCommit": "2dfa1fa33840da0d24d43ecd42e4bd42bfc57e60",
+  "candidateCommit": "32ada2236e9beadf31709b45f79429340bfec4e8",
+  "filesSha256": {
+    "README.md": "b01ac8e072a121c3ba2ec720a9e9151b4de1aaedab84b0e7425df452527fe18f",
+    "package.json": "21a3758613c1dfdd184e7bf1904065010d42a746d28e04041be1d74fee68d28f",
+    "scripts/isolated-dev.ts": "186eb0aa6cd0e81d30bb36e57361d3eaae811d24b557da7f7b9694518d471e3b",
+    "scripts/sample-environment.ts": "a1149ded41bd293edb7bd51544b1a6c44b3eac2fbb61b9b0599f2983c1f9700f",
+    "scripts/sample-environment.test.ts": "12562a07b970527512d10d4d22d4e5bdf941df267656809214945c60e1f3c28a"
+  },
+  "platform": "macOS / local Docker / Node 24.21.0 / npm 12.1.0",
+  "cycles": {
+    "purpose": "developer delivery-entry verification",
+    "cases": [
+      {
+        "name": "1-empty",
+        "ready": true,
+        "checks": [
+          "empty business history and six idle accounts"
+        ],
+        "runId": "932fb657-26d7-4b43-96f4-5790ed2480b8",
+        "health": {
+          "ok": true,
+          "schemaVersion": 9
+        },
+        "cleaned": true
+      },
+      {
+        "name": "2-sample",
+        "ready": true,
+        "checks": [
+          "22 groups, 2 templates, 4 online accounts",
+          "history pagination without duplicate IDs",
+          "completed Agent and sequence through normal flow",
+          "left group keeps external member",
+          "all sample automation idle at ready",
+          "manual profile change succeeds before reset"
+        ],
+        "runId": "72915eaa-1af5-4293-ba21-d03c8ad4ddb2",
+        "health": {
+          "ok": true,
+          "schemaVersion": 9
+        },
+        "sampleVersion": 1,
+        "cleaned": true
+      },
+      {
+        "name": "3-empty",
+        "ready": true,
+        "checks": [
+          "empty business history and six idle accounts"
+        ],
+        "runId": "b0a0794e-b594-4e62-ab28-345175e7a6de",
+        "health": {
+          "ok": true,
+          "schemaVersion": 9
+        },
+        "cleaned": true
+      },
+      {
+        "name": "4-sample",
+        "ready": true,
+        "checks": [
+          "22 groups, 2 templates, 4 online accounts",
+          "history pagination without duplicate IDs",
+          "completed Agent and sequence through normal flow",
+          "left group keeps external member",
+          "all sample automation idle at ready",
+          "manual profile change succeeds before reset"
+        ],
+        "runId": "a9bddc77-4cb4-4c71-982e-40d27ecf66ee",
+        "health": {
+          "ok": true,
+          "schemaVersion": 9
+        },
+        "sampleVersion": 1,
+        "cleaned": true
+      }
+    ],
+    "failure": null,
+    "passed": true,
+    "existingResourcesPreserved": true,
+    "existingHealthPreserved": true
+  },
+  "interruptions": [
+    {
+      "case": "cancel-during-seed",
+      "exitCode": 1,
+      "noReady": true,
+      "failureReported": true,
+      "ownedResourcesCleaned": true,
+      "otherResourcesPreserved": true
+    },
+    {
+      "case": "gateway-failure-during-seed",
+      "exitCode": 1,
+      "noReady": true,
+      "failureReported": true,
+      "ownedResourcesCleaned": true,
+      "otherResourcesPreserved": true
+    }
+  ],
+  "exportFromCommittedSource": {
+    "sourceCommit": "32ada2236e9beadf31709b45f79429340bfec4e8",
+    "pathContainsSpaces": true,
+    "gitMetadataPresent": false,
+    "npmCiPassed": true,
+    "invocation": "npm run demo:sample",
+    "result": {
+      "purpose": "developer delivery-entry verification",
+      "cases": [
+        {
+          "name": "1-sample",
+          "ready": true,
+          "checks": [
+            "22 groups, 2 templates, 4 online accounts",
+            "history pagination without duplicate IDs",
+            "completed Agent and sequence through normal flow",
+            "left group keeps external member",
+            "all sample automation idle at ready",
+            "manual profile change succeeds before reset"
+          ],
+          "runId": "4f5e52c1-5965-4a58-aeab-3826ef68287e",
+          "health": {
+            "ok": true,
+            "schemaVersion": 9
+          },
+          "sampleVersion": 1,
+          "cleaned": true
+        }
+      ],
+      "failure": null,
+      "passed": true,
+      "existingResourcesPreserved": true,
+      "existingHealthPreserved": true
+    }
+  },
+  "build": {
+    "command": "npm run build",
+    "passed": true
+  },
+  "existingSmoke": {
+    "command": "npm run dev:isolated -- --smoke",
+    "passed": true,
+    "runId": "a6927cc1-e758-4363-9da7-108323905831",
+    "checks": [
+      "web-entry",
+      "random-api-proxy",
+      "random-ws-proxy",
+      "both-roles",
+      "viewer-write-denied",
+      "admin-connect-disconnect",
+      "gateway-state-file",
+      "agent-state-file"
+    ],
+    "normalCleanup": true
+  },
+  "focusedGuards": {
+    "reportedBy": "交付入口脚本工作线",
+    "command": "node_modules/.bin/tsx --test scripts/sample-environment.test.ts",
+    "passed": 5,
+    "failed": 0,
+    "cases": [
+      "populated environment rejected",
+      "HTTP failure without write retry",
+      "failed job rejected",
+      "uncertain job rejected",
+      "hanging poll cancelled without replay"
+    ]
+  },
+  "review": {
+    "scope": "scripts/package/README static review",
+    "blockingFindings": 0,
+    "note": "入口事件名已明确为 isolated-ready；独立 guard 命令已列出"
+  },
+  "limitations": [
+    "未运行完整业务回归或启动新 QA 轮次。",
+    "只在 macOS 与本机 Docker 验证；不据此声明 Windows、远程 Docker 或 Linux 实机通过。",
+    "沿用现有隔离启动的数据库迁移等待边界；不承诺所有启动阶段均能有界取消。",
+    "继承的非法 MEDIA_* 等环境配置仍可能导致启动失败；样例失败会报错并清理独占资源。",
+    "样例基准保证场景、数量和状态，不保证随机编号、时间和端口字节一致。",
+    "没有调用真实模型，没有更改业务源码、QA目录或已有走查数据。"
+  ]
+}
