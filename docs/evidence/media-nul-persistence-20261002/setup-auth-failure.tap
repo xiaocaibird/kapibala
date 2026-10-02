@@ -1,0 +1,283 @@
+✖ C1 idle ticks leave execution capacity free, while due downloads and cleanup still acquire the real lock (13.95075ms)
+✔ C1 validates gateway media URLs and the default retention (2.262291ms)
+✖ C1 upgrade queues legacy attachments and preserves references of existing running sessions (4.443458ms)
+✖ C1 downloads once across duplicate events/workers and keeps message text (4.359958ms)
+✖ C1 transient failure retries later; expired URL, redirect, and oversized body remain unavailable (4.815333ms)
+✖ C1 timeout leaves no pointer and a replacement worker retries the interrupted body (4.375042ms)
+✖ C1 a local file-open failure closes the unconsumed HTTP response before its timeout (4.24825ms)
+✖ C1 own-message reconciliation preserves media attached before its acknowledgement (4.057666ms)
+✖ C1 own-message acknowledgement and expiry cannot restore a deleted file pointer (3.995792ms)
+✖ C1 configured retention preserves younger files and rejects a changed storage root (4.688542ms)
+✖ C1 a failed unlink retains a retryable tombstone and does not stop other expired files (3.09275ms)
+✖ C1 deletion clears message references and old cursor file availability without changing frozen content (3.300584ms)
+✖ C1 durable references serialize with cleanup and protect paused running sessions after restart (3.535792ms)
+✖ C1 actual Agent trigger and get_recent_messages register the files their messages reference (3.8205ms)
+✖ C1 cleanup winning the row lock prevents a new run from pinning an unavailable file (3.215125ms)
+✖ C1 SIGKILL during a streamed body discards its partial and retries on restart (3.020833ms)
+✖ C1 SIGKILL at ready DB save recovers from the durable filesystem/intent boundary (3.282916ms)
+✖ C1 SIGKILL at deleted DB save recovers from the durable filesystem/intent boundary (3.329125ms)
+✖ C1 SIGKILL at rejected DB save recovers from the durable filesystem/intent boundary (3.874042ms)
+✖ C1 SIGKILL at rejected-pinned DB save recovers from the durable filesystem/intent boundary (3.139ms)
+✖ C1 raw NUL source preserves SSE text and identity with an inert reversible witness, including real persistence retry (9.399833ms)
+
+Interrupted while running:
+
+⚠ tests/integration/media-nul-source.test.ts (tests/integration/media-nul-source.test.ts:1:1)
+✖ tests/integration/media-nul-source.test.ts (14017.069208ms)
+✖ tests/integration/media-source-url.test.ts
+ℹ tests 23
+ℹ suites 0
+ℹ pass 1
+ℹ fail 20
+ℹ cancelled 2
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 74252.809834
+
+✖ failing tests:
+
+test at tests/integration/media-files.test.ts:1:4031
+✖ C1 idle ticks leave execution capacity free, while due downloads and cleanup still acquire the real lock (13.95075ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:169:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at tests/integration/media-files.test.ts:1:5557
+✖ C1 upgrade queues legacy attachments and preserves references of existing running sessions (4.443458ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:226:21)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:6939
+✖ C1 downloads once across duplicate events/workers and keeps message text (4.359958ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:264:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:7774
+✖ C1 transient failure retries later; expired URL, redirect, and oversized body remain unavailable (4.815333ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:289:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:9180
+✖ C1 timeout leaves no pointer and a replacement worker retries the interrupted body (4.375042ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:335:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:9893
+✖ C1 a local file-open failure closes the unconsumed HTTP response before its timeout (4.24825ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:359:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:10813
+✖ C1 own-message reconciliation preserves media attached before its acknowledgement (4.057666ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:399:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:11455
+✖ C1 own-message acknowledgement and expiry cannot restore a deleted file pointer (3.995792ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:415:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:12773
+✖ C1 configured retention preserves younger files and rejects a changed storage root (4.688542ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:461:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:13477
+✖ C1 a failed unlink retains a retryable tombstone and does not stop other expired files (3.09275ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:484:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:14508
+✖ C1 deletion clears message references and old cursor file availability without changing frozen content (3.300584ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:516:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:15893
+✖ C1 durable references serialize with cleanup and protect paused running sessions after restart (3.535792ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:565:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:17132
+✖ C1 actual Agent trigger and get_recent_messages register the files their messages reference (3.8205ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:603:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:18649
+✖ C1 cleanup winning the row lock prevents a new run from pinning an unavailable file (3.215125ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:669:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:19735
+✖ C1 SIGKILL during a streamed body discards its partial and retries on restart (3.020833ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:705:13)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:21447
+✖ C1 SIGKILL at ready DB save recovers from the durable filesystem/intent boundary (3.282916ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:773:15)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:21447
+✖ C1 SIGKILL at deleted DB save recovers from the durable filesystem/intent boundary (3.329125ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:773:15)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:21447
+✖ C1 SIGKILL at rejected DB save recovers from the durable filesystem/intent boundary (3.874042ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:773:15)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-files.test.ts:1:21447
+✖ C1 SIGKILL at rejected-pinned DB save recovers from the durable filesystem/intent boundary (3.139ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async fixture (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:63:21)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-files.test.ts:773:15)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at tests/integration/media-nul-source.test.ts:1:835
+✖ C1 raw NUL source preserves SSE text and identity with an inert reversible witness, including real persistence retry (9.399833ms)
+  Error: SASL: SCRAM-SERVER-FIRST-MESSAGE: client password must be a string
+      at /Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/node_modules/pg-pool/index.js:45:11
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Database.query (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/apps/server/src/core/db.ts:143:20)
+      at async temporaryDatabase (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/support/temporary-database.ts:61:3)
+      at async TestContext.<anonymous> (/Users/zcm/.codex/worktrees/architecture-runtime-boundaries/kapibala/tests/integration/media-nul-source.test.ts:23:23)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3)
+
+test at tests/integration/media-nul-source.test.ts:1:1
+✖ tests/integration/media-nul-source.test.ts (14017.069208ms)
+  'Promise resolution is still pending but the event loop has already resolved'
+
+test at tests/integration/media-source-url.test.ts:1:1
+✖ tests/integration/media-source-url.test.ts
+  'Promise resolution is still pending but the event loop has already resolved'
