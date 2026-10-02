@@ -1,0 +1,152 @@
+{
+  "runId": "2026-10-02T01-31-12.546Z-live-a27892ae",
+  "caseId": "SR-C2-017",
+  "startedAt": "2026-10-02T01:31:12.546Z",
+  "sutRevision": "0be8575f326f709fe674e20033843d950385043d",
+  "qaRevision": "9454428af7f56c1ab42e11543a9ec8de1249be4b",
+  "scope": {
+    "schemaVersion": 1,
+    "active": true,
+    "phase": "BOUNDED_FOUR_CASE_CLOSEOUT",
+    "sutRevision": "0be8575f326f709fe674e20033843d950385043d",
+    "caseIds": [
+      "SR-C1-005",
+      "SR-BE-USG-011",
+      "SR-UI-025",
+      "SR-C2-017"
+    ],
+    "offlineCaseIds": [
+      "SR-C1-005",
+      "SR-BE-USG-011",
+      "SR-UI-025"
+    ],
+    "authorization": "[REDACTED]",
+    "realProvider": {
+      "caseId": "SR-C2-017",
+      "credentialReference": "[REDACTED]",
+      "model": "gemini-3.1-flash-lite",
+      "modelSource": "Existing main entry default; the approved env reference has no GEMINI_MODEL override",
+      "maximumPaidCalls": 8,
+      "plannedPaidCalls": 2,
+      "maximumSpend": {
+        "currency": "USD",
+        "amount": 1
+      },
+      "allowModelFallback": false,
+      "allowAutomaticRetry": false,
+      "credentialHandling": "[REDACTED]",
+      "scope": "One synthetic public turn and one synthetic public audit; actual upstream requests including failures consume pre-reserved count/cost. No full Agent loop."
+    },
+    "finalExecutionBoundary": {
+      "humanMessageId": "01a0fa2f-c9bc-7e71-aa69-01883f0bb80f",
+      "instruction": "一次定向复验后直接出报告，失败或阻塞也不再自动推进下一轮",
+      "allowedFinalExecution": [
+        "one headed Chromium batch of the three offline cases",
+        "one bounded SR-C2-017 real-provider attempt"
+      ],
+      "automaticRetries": 0,
+      "afterExecution": "Issue a separate disposition and retest report. Preserve the signed 103 PASS / 4 FAIL / 5 BLOCKED report. No further product fixes or test attempts without a new human decision."
+    },
+    "acceptedDispositions": [
+      {
+        "caseIds": [
+          "SR-C2-012"
+        ],
+        "disposition": "ACCEPTED_LIMITATION",
+        "technicalResultRemains": "FAIL",
+        "note": "Manual service recovery accepted; unresolved original turn is not recovered by clearing a lock."
+      },
+      {
+        "caseIds": [
+          "SR-BE-DIA-004",
+          "SR-BE-POL-005"
+        ],
+        "disposition": "ACCEPTED_LIMITATION",
+        "technicalResultRemains": "FAIL",
+        "note": "Safe pause accepted; no blind kick replay and no automatic-completion PASS."
+      },
+      {
+        "caseIds": [
+          "SR-C2-019"
+        ],
+        "disposition": "ACCEPTED_OBSERVED_DEVIATION",
+        "technicalResultRemains": "FAIL",
+        "note": "Only this measured 5000.265833 ms value is accepted. Original 5000 ms requirement and larger historical deviations are not waived."
+      },
+      {
+        "caseIds": [
+          "SR-C1-015"
+        ],
+        "disposition": "ACCEPTED_EVIDENCE_GAP_DEFERRED",
+        "technicalResultRemains": "BLOCKED",
+        "note": "Already-open descriptor write-failure fixture deferred; no product PASS inferred."
+      }
+    ],
+    "humanImeFocusSigned": false,
+    "productionReadiness": "NOT_ASSESSED"
+  },
+  "permission": {
+    "explicitlyAuthorized": true,
+    "authorizationReference": "[REDACTED]",
+    "stopInstructionReference": "thread:01a0f194-5588-7353-9a80-5ef7da3d0702/message:01a0fa2f-c9bc-7e71-aa69-01883f0bb80f",
+    "credentialReference": "[REDACTED]",
+    "model": "gemini-3.1-flash-lite",
+    "maximumPaidCalls": 8,
+    "maximumSpendUsd": 1,
+    "expiresAt": "2026-10-02T02:01:12.546Z"
+  },
+  "sourceHashes": {
+    "apps/gemini-agent/src/app.ts": "4c001dee35ebf4594739f0207201c595ef91cb6ac3576278e93668b8e738b3fe",
+    "apps/gemini-agent/src/main.ts": "be9b34b97d11885c3cf43d7b8d4de7040e6e3b91d14346b0c5ca49c724dbec33",
+    "apps/gemini-agent/src/protocol.ts": "d66f1053662eca32a55e053b6a09dd0a4188eeceae5485e633480d962c3e417b",
+    "apps/gemini-agent/src/provider.ts": "543c2e90c67fa15766a6b230319266245e9b92cc393162065c45720c02029f73",
+    "apps/gemini-agent/src/sessions.ts": "7754b8a8b00713e6892743fd6c03553a7554d94f49d642090e264a140ac356b2",
+    "apps/gemini-agent/src/usage.ts": "62b7c91c1c66d033787cd3c9f8a35a04feca7fa5d1368178c8ccb2059dac3101",
+    "package-lock.json": "1700ae5df97eb6f77ba62a0e4ecf56002c3c4a4e1029c7d6a4dfc22ab5831e51",
+    "package.json": "1826ceace79b37982e816ff6f531af0f6f2e12b0bd066d08322ed517060b01a5"
+  },
+  "pricing": {
+    "checkedAt": "2026-10-02",
+    "currency": "USD",
+    "inputTokens": 1048576,
+    "outputTokensIncludingThinking": 65536,
+    "inputUsdPerMillion": 0.25,
+    "outputUsdPerMillion": 1.5,
+    "reservationMicroUsdPerAttempt": 360448,
+    "pricingSource": "https://ai.google.dev/gemini-api/docs/pricing",
+    "limitsSource": "https://ai.google.dev/gemini-api/docs/models/gemini-3.1-flash-lite",
+    "diagnosticsSource": "https://github.com/nodejs/undici/blob/main/docs/docs/api/DiagnosticsChannel.md"
+  },
+  "autoRetries": 0,
+  "entry": "apps/gemini-agent/src/main.ts",
+  "transportInstrumentation": "QA standard global fetch wrapper denies before native fetch; native undici diagnostics record real requests. No request/response rewriting, no product imports.",
+  "data": "Only synthetic direct turn/audit. No backend, Gateway, DB, real groups or users; generated tools are inspected, never executed.",
+  "preparationCredentialHandling": "[REDACTED]",
+  "productionReadiness": "NOT_ASSESSED",
+  "guardianPid": 37635,
+  "exitOutcome": {
+    "code": 0,
+    "signal": null
+  },
+  "usage": {
+    "records": 2,
+    "distinctAttempts": 2,
+    "purposeCounts": {
+      "turn": 1,
+      "audit": 1
+    }
+  },
+  "costAndCalls": {
+    "admittedCalls": 2,
+    "nativeRequestCreations": 2,
+    "actualSendBoundaries": 2,
+    "maximumAuthorizedCalls": 8,
+    "maximumPlannedCalls": 2,
+    "reservedUsd": 0.720896,
+    "billingClaim": "Conservative reservation; cancellation or missing usage does not prove zero charge. This is not a provider invoice."
+  },
+  "ownedRuntimeRemoved": true,
+  "completedAt": "2026-10-02T01:31:15.572Z",
+  "status": "PASS",
+  "cleanupErrors": []
+}

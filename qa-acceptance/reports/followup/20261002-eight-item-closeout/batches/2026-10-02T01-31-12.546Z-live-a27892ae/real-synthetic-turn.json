@@ -1,0 +1,104 @@
+{
+  "began": "2026-10-02T01:31:12.790Z",
+  "completedAt": "2026-10-02T01:31:14.589Z",
+  "path": "/agent/turn",
+  "request": {
+    "runId": "qa-live-synthetic-ba452c64-7142-4b86-9070-36b61e739654",
+    "tools": [
+      {
+        "name": "get_recent_messages",
+        "description": "QA get_recent_messages",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "limit"
+          ]
+        }
+      },
+      {
+        "name": "send_message",
+        "description": "QA send_message",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "idempotency_key": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "text",
+            "idempotency_key"
+          ]
+        }
+      },
+      {
+        "name": "kick_user",
+        "description": "QA kick_user",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "platform_user_id": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "platform_user_id",
+            "reason"
+          ]
+        }
+      },
+      {
+        "name": "finish",
+        "description": "QA finish",
+        "input_schema": {
+          "type": "object",
+          "properties": {
+            "summary": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "summary"
+          ]
+        }
+      }
+    ],
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "{\"groupId\":\"qa-group\",\"triggerMessages\":[{\"msgId\":\"qa-trigger\",\"senderPlatformUserId\":\"qa-external\",\"text\":\"synthetic request\",\"sentAt\":\"2026-10-02T00:00:00.000Z\"}],\"policy\":{\"autoKickEnabled\":false},\"ownPlatformUserIds\":[\"qa-managed\"]}"
+          }
+        ]
+      }
+    ]
+  },
+  "status": 200,
+  "body": {
+    "stop_reason": "tool_use",
+    "content": [
+      {
+        "type": "tool_use",
+        "id": "8b28e891-dea1-4245-8a23-27290e2b0fbb",
+        "name": "get_recent_messages",
+        "input": {
+          "limit": 10
+        }
+      }
+    ]
+  },
+  "rawBody": "{\"stop_reason\":\"tool_use\",\"content\":[{\"type\":\"tool_use\",\"id\":\"8b28e891-dea1-4245-8a23-27290e2b0fbb\",\"name\":\"get_recent_messages\",\"input\":{\"limit\":10}}]}"
+}

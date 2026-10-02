@@ -1,4 +1,6 @@
-> 当前阶段：已获得第二轮实际执行授权，见 `config/execution-scope.json` 和 `requirements/current-execution.md`。以下旧准备期说明保留其历史含义；不得用它覆盖后续真实授权。当前共 112 条，旧准备报告的 111 条是当时快照。
+> 当前阶段：本次有限收尾已经结束，按用户最后指令停止，不再自动修复或复测。[最新收尾报告](../reports/followup/20261002-eight-item-closeout/report.md)记录本次3 PASS /1 BLOCKED，同一冻结产品的112项证据快照为106 PASS /4 FAIL /2 BLOCKED；[原签发报告](../reports/acceptance/20261002-second-round/report.md)103/4/5保持不变。`config/bounded-closeout.json`保留已执行的授权与停止边界，不是再次运行许可。真实模型已执行一次turn和一次audit，不能复用本轮许可重跑。
+
+以下为已完成执行及原准备期的操作说明，仅供复核和复现设计参考；实际新增执行需要新的范围决定。当前共112条，旧准备报告111条是当时快照。原授权来源为 `config/execution-scope.json` 和 `requirements/current-execution.md`，以最新停止边界为准。
 
 实际入口（在 QA 根目录运行；必须指定干净独立 SUT 和完整提交）：
 

@@ -1,0 +1,154 @@
+{
+  "runId": "2026-10-02T01-25-09.419Z-47c5b140",
+  "sutRevision": "0be8575f326f709fe674e20033843d950385043d",
+  "qaRevision": "9969f27ef6e4fc301bf5d30a634f1ea39bd03c3c",
+  "secondRoundSha256": "beb3e2eb1094133498fdf295d3f39417c397b950dcbd8b2d07a69ba43b44366e",
+  "startedAt": "2026-10-02T01:25:09.421Z",
+  "sutDirectory": "/Users/zcm/.codex/worktrees/qa-sut-evidence-retest/kapibala",
+  "qaDirectory": "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance",
+  "authority": {
+    "sourceThreadId": "01a0f194-5588-7353-9a80-5ef7da3d0702",
+    "humanApprovalMessageId": "01a0fa2e-f47d-7313-81c1-526df715ea4c",
+    "realProviderApprovalMessageId": "01a0fa2a-bf3a-7561-8f89-e9cf582bff18",
+    "scopeConfirmationMessageId": "01a0fa2b-b3b3-7a31-8358-67e80ae8cb27",
+    "stopMessageId": "01a0fa2f-c9bc-7e71-aa69-01883f0bb80f",
+    "verifiedBy": "read_thread actual human messages; one attempt per selected case then report regardless of outcome",
+    "approvedAt": "2026-10-02T01:16:16.000Z",
+    "approvedAtSource": "approval turn startedAt 1790903776; not a separately timestamped utterance",
+    "executionAuthorized": true,
+    "realProviderAuthorized": false,
+    "localMainMergeAuthorized": true
+  },
+  "finalExecutionBoundary": {
+    "humanMessageId": "01a0fa2f-c9bc-7e71-aa69-01883f0bb80f",
+    "instruction": "一次定向复验后直接出报告，失败或阻塞也不再自动推进下一轮",
+    "allowedFinalExecution": [
+      "one headed Chromium batch of the three offline cases",
+      "one bounded SR-C2-017 real-provider attempt"
+    ],
+    "automaticRetries": 0,
+    "afterExecution": "Issue a separate disposition and retest report. Preserve the signed 103 PASS / 4 FAIL / 5 BLOCKED report. No further product fixes or test attempts without a new human decision."
+  },
+  "autoRetries": 0,
+  "browserName": "chromium",
+  "node": "v24.21.0",
+  "productionReadiness": "NOT_ASSESSED",
+  "runnerErrors": [],
+  "phase": "BOUNDED_THREE_CASE_CLOSEOUT",
+  "closeoutAuthority": {
+    "schemaVersion": 1,
+    "active": true,
+    "phase": "BOUNDED_FOUR_CASE_CLOSEOUT",
+    "sutRevision": "0be8575f326f709fe674e20033843d950385043d",
+    "caseIds": [
+      "SR-C1-005",
+      "SR-BE-USG-011",
+      "SR-UI-025",
+      "SR-C2-017"
+    ],
+    "offlineCaseIds": [
+      "SR-C1-005",
+      "SR-BE-USG-011",
+      "SR-UI-025"
+    ],
+    "authorization": "[REDACTED]",
+    "realProvider": {
+      "caseId": "SR-C2-017",
+      "credentialReference": "[REDACTED]",
+      "model": "gemini-3.1-flash-lite",
+      "modelSource": "Existing main entry default; the approved env reference has no GEMINI_MODEL override",
+      "maximumPaidCalls": 8,
+      "plannedPaidCalls": 2,
+      "maximumSpend": {
+        "currency": "USD",
+        "amount": 1
+      },
+      "allowModelFallback": false,
+      "allowAutomaticRetry": false,
+      "credentialHandling": "[REDACTED]",
+      "scope": "One synthetic public turn and one synthetic public audit; actual upstream requests including failures consume pre-reserved count/cost. No full Agent loop."
+    },
+    "finalExecutionBoundary": {
+      "humanMessageId": "01a0fa2f-c9bc-7e71-aa69-01883f0bb80f",
+      "instruction": "一次定向复验后直接出报告，失败或阻塞也不再自动推进下一轮",
+      "allowedFinalExecution": [
+        "one headed Chromium batch of the three offline cases",
+        "one bounded SR-C2-017 real-provider attempt"
+      ],
+      "automaticRetries": 0,
+      "afterExecution": "Issue a separate disposition and retest report. Preserve the signed 103 PASS / 4 FAIL / 5 BLOCKED report. No further product fixes or test attempts without a new human decision."
+    },
+    "acceptedDispositions": [
+      {
+        "caseIds": [
+          "SR-C2-012"
+        ],
+        "disposition": "ACCEPTED_LIMITATION",
+        "technicalResultRemains": "FAIL",
+        "note": "Manual service recovery accepted; unresolved original turn is not recovered by clearing a lock."
+      },
+      {
+        "caseIds": [
+          "SR-BE-DIA-004",
+          "SR-BE-POL-005"
+        ],
+        "disposition": "ACCEPTED_LIMITATION",
+        "technicalResultRemains": "FAIL",
+        "note": "Safe pause accepted; no blind kick replay and no automatic-completion PASS."
+      },
+      {
+        "caseIds": [
+          "SR-C2-019"
+        ],
+        "disposition": "ACCEPTED_OBSERVED_DEVIATION",
+        "technicalResultRemains": "FAIL",
+        "note": "Only this measured 5000.265833 ms value is accepted. Original 5000 ms requirement and larger historical deviations are not waived."
+      },
+      {
+        "caseIds": [
+          "SR-C1-015"
+        ],
+        "disposition": "ACCEPTED_EVIDENCE_GAP_DEFERRED",
+        "technicalResultRemains": "BLOCKED",
+        "note": "Already-open descriptor write-failure fixture deferred; no product PASS inferred."
+      }
+    ],
+    "humanImeFocusSigned": false,
+    "productionReadiness": "NOT_ASSESSED"
+  },
+  "realProviderCallsPermittedByThisEntry": false,
+  "originalRequirementSha256": "c837475ae6b6564bc46c2e6c7f17756e375ec903cf67938a438ef81c18ec9c75",
+  "installation": {
+    "exitCode": 0,
+    "evidence": "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T01-25-09.419Z-47c5b140/installation.log",
+    "command": {
+      "command": "npm",
+      "args": [
+        "ci"
+      ]
+    },
+    "startedAt": "2026-10-02T01:25:09.422Z",
+    "completedAt": "2026-10-02T01:25:10.322Z"
+  },
+  "build": {
+    "exitCode": 0,
+    "evidence": "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T01-25-09.419Z-47c5b140/build.log",
+    "command": {
+      "command": "npm",
+      "args": [
+        "run",
+        "build"
+      ]
+    },
+    "startedAt": "2026-10-02T01:25:10.323Z",
+    "completedAt": "2026-10-02T01:25:13.980Z"
+  },
+  "targetSha256": "9d8baddd70f904e84fdd0236e598c12b2da605f0dcf6dab3f254e75ff15a6d75",
+  "selectedCaseIds": [
+    "SR-C1-005",
+    "SR-UI-025",
+    "SR-BE-USG-011"
+  ],
+  "selection": "explicit fixed retest batch",
+  "completedAt": "2026-10-02T01:30:14.523Z"
+}

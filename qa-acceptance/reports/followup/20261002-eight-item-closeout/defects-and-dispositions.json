@@ -1,0 +1,473 @@
+{
+  "retainedTechnicalFailures": [
+    {
+      "id": "SR-C2-012",
+      "title": "模型在途硬崩溃后的原强恢复义务",
+      "requirements": [
+        "SR-C2-05",
+        "SR-C2-06"
+      ],
+      "mode": "automated-driver",
+      "priority": "P1",
+      "evidenceCategory": "productRuntime",
+      "caseId": "SR-C2-012",
+      "status": "FAIL",
+      "reason": "AssertionError [ERR_ASSERTION]: 原强恢复不豁免硬崩溃后必须人工清owner.lock才能继续\n\nfalse !== true\n",
+      "variants": [
+        {
+          "id": "actual-attempt",
+          "status": "FAIL",
+          "reason": "AssertionError [ERR_ASSERTION]: 原强恢复不豁免硬崩溃后必须人工清owner.lock才能继续\n\nfalse !== true\n",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-C2-012/error.json"
+          ]
+        }
+      ],
+      "cleanupErrors": [],
+      "startedAt": "2026-10-02T00:18:22.294Z",
+      "completedAt": "2026-10-02T00:18:24.881Z",
+      "durationMs": 2587.3737919999985,
+      "attempt": 1,
+      "phase": "acceptance",
+      "executionRunId": "2026-10-02T00-12-11.076Z-760cef1e",
+      "executionSutRevision": "0be8575f326f709fe674e20033843d950385043d",
+      "executionQaRevision": "0be8575f326f709fe674e20033843d950385043d",
+      "retestHistory": [
+        {
+          "runId": "2026-10-02T00-12-11.076Z-760cef1e",
+          "status": "FAIL"
+        }
+      ],
+      "evidenceOrigin": "PRIOR_SIGNED_SAME_SUT_NOT_RERUN",
+      "acceptanceDisposition": {
+        "caseIds": [
+          "SR-C2-012"
+        ],
+        "disposition": "ACCEPTED_LIMITATION",
+        "technicalResultRemains": "FAIL",
+        "note": "Manual service recovery accepted; unresolved original turn is not recovered by clearing a lock."
+      }
+    },
+    {
+      "id": "SR-C2-019",
+      "title": "后端原turn超时/严格工具5秒/跨epoch关联回归",
+      "requirements": [
+        "SR-C2-06",
+        "SR-C2-05"
+      ],
+      "mode": "automated-driver",
+      "priority": "P1",
+      "evidenceCategory": "productRuntime",
+      "caseId": "SR-C2-019",
+      "status": "FAIL",
+      "variants": [
+        {
+          "id": "original-turn-timeout-and-late-result",
+          "status": "PASS",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-C2-019/SR-C2-019-original-turn-timeout-and-late-result.json"
+          ]
+        },
+        {
+          "id": "original-five-second-wait-and-confirmed-key-reuse",
+          "status": "FAIL",
+          "reason": "AssertionError [ERR_ASSERTION]: 实际工具状态等待下界超过原始5000ms上限",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-C2-019/SR-C2-019-original-five-second-wait-and-confirmed-key-reuse.json"
+          ]
+        },
+        {
+          "id": "original-AGENT-025-eight-second-real-wall-clock-budget",
+          "status": "PASS",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-C2-019/SR-C2-019-real-wall-clock-budget.json"
+          ]
+        },
+        {
+          "id": "INT-ACT-001-complete-cross-epoch-tail-and-original-recovery",
+          "status": "PASS",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-C2-019/SR-C2-019-INT-ACT-001-complete-cross-epoch-tail-and-original-recovery.json"
+          ]
+        }
+      ],
+      "uncoveredVariants": [],
+      "cleanupErrors": [],
+      "startedAt": "2026-10-02T00:19:36.494Z",
+      "completedAt": "2026-10-02T00:21:48.017Z",
+      "durationMs": 131520.09524999995,
+      "attempt": 1,
+      "phase": "acceptance",
+      "executionRunId": "2026-10-02T00-12-11.076Z-760cef1e",
+      "executionSutRevision": "0be8575f326f709fe674e20033843d950385043d",
+      "executionQaRevision": "0be8575f326f709fe674e20033843d950385043d",
+      "retestHistory": [
+        {
+          "runId": "2026-10-02T00-12-11.076Z-760cef1e",
+          "status": "FAIL"
+        }
+      ],
+      "evidenceOrigin": "PRIOR_SIGNED_SAME_SUT_NOT_RERUN",
+      "acceptanceDisposition": {
+        "caseIds": [
+          "SR-C2-019"
+        ],
+        "disposition": "ACCEPTED_OBSERVED_DEVIATION",
+        "technicalResultRemains": "FAIL",
+        "note": "Only this measured 5000.265833 ms value is accepted. Original 5000 ms requirement and larger historical deviations are not waived."
+      }
+    },
+    {
+      "id": "SR-BE-DIA-004",
+      "title": "未知外部效果只建议核对不盲重发",
+      "requirements": [
+        "SR-P1-03-05",
+        "SR-P1-03-02"
+      ],
+      "mode": "manual",
+      "priority": "P1",
+      "evidenceCategory": "productRuntime",
+      "caseId": "SR-BE-DIA-004",
+      "status": "FAIL",
+      "variants": [
+        {
+          "id": "dispatched-no-effect-unknown-restart",
+          "status": "PASS",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-DIA-004/SR-BE-DIA-004-dispatched-no-effect-unknown-restart.json"
+          ]
+        },
+        {
+          "id": "dispatched-no-effect-unknown-restart-original-budget-and-completion",
+          "status": "FAIL",
+          "reason": "原A5.8强恢复差异：真实未知外部结果使原run进入recovery-paused；安全不重放不等于完成",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-DIA-004/SR-BE-DIA-004-dispatched-no-effect-unknown-restart-original-budget-and-completion.json"
+          ]
+        },
+        {
+          "id": "dispatched-no-effect-unknown-restart-next-step-semantic-review",
+          "status": "PASS",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-DIA-004/SR-BE-DIA-004-dispatched-no-effect-unknown-restart-next-step-semantic-review.json"
+          ]
+        },
+        {
+          "id": "dispatched-effect-unknown-restart",
+          "status": "PASS",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-DIA-004/SR-BE-DIA-004-dispatched-effect-unknown-restart.json"
+          ]
+        },
+        {
+          "id": "dispatched-effect-unknown-restart-original-budget-and-completion",
+          "status": "FAIL",
+          "reason": "原A5.8强恢复差异：真实未知外部结果使原run进入recovery-paused；安全不重放不等于完成",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-DIA-004/SR-BE-DIA-004-dispatched-effect-unknown-restart-original-budget-and-completion.json"
+          ]
+        },
+        {
+          "id": "dispatched-effect-unknown-restart-next-step-semantic-review",
+          "status": "PASS",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-DIA-004/SR-BE-DIA-004-dispatched-effect-unknown-restart-next-step-semantic-review.json"
+          ]
+        }
+      ],
+      "partial": true,
+      "subchecks": [
+        {
+          "id": "dispatched-no-effect-unknown-restart",
+          "status": "PASS",
+          "evidence": "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-DIA-004/SR-BE-DIA-004-dispatched-no-effect-unknown-restart.json"
+        },
+        {
+          "id": "dispatched-no-effect-unknown-restart-original-budget-and-completion",
+          "status": "FAIL",
+          "evidence": "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-DIA-004/SR-BE-DIA-004-dispatched-no-effect-unknown-restart-original-budget-and-completion.json",
+          "reason": "原A5.8强恢复差异：真实未知外部结果使原run进入recovery-paused；安全不重放不等于完成"
+        },
+        {
+          "id": "dispatched-no-effect-unknown-restart-next-step-semantic-review",
+          "status": "PASS",
+          "evidence": "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-DIA-004/SR-BE-DIA-004-dispatched-no-effect-unknown-restart-next-step-semantic-review.json"
+        },
+        {
+          "id": "dispatched-effect-unknown-restart",
+          "status": "PASS",
+          "evidence": "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-DIA-004/SR-BE-DIA-004-dispatched-effect-unknown-restart.json"
+        },
+        {
+          "id": "dispatched-effect-unknown-restart-original-budget-and-completion",
+          "status": "FAIL",
+          "evidence": "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-DIA-004/SR-BE-DIA-004-dispatched-effect-unknown-restart-original-budget-and-completion.json",
+          "reason": "原A5.8强恢复差异：真实未知外部结果使原run进入recovery-paused；安全不重放不等于完成"
+        },
+        {
+          "id": "dispatched-effect-unknown-restart-next-step-semantic-review",
+          "status": "PASS",
+          "evidence": "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-DIA-004/SR-BE-DIA-004-dispatched-effect-unknown-restart-next-step-semantic-review.json"
+        }
+      ],
+      "uncoveredVariants": [],
+      "cleanupErrors": [],
+      "startedAt": "2026-10-02T00:14:46.729Z",
+      "completedAt": "2026-10-02T00:14:58.311Z",
+      "durationMs": 11581.476834000001,
+      "attempt": 1,
+      "phase": "smoke",
+      "executionRunId": "2026-10-02T00-12-11.076Z-760cef1e",
+      "executionSutRevision": "0be8575f326f709fe674e20033843d950385043d",
+      "executionQaRevision": "0be8575f326f709fe674e20033843d950385043d",
+      "retestHistory": [
+        {
+          "runId": "2026-10-02T00-12-11.076Z-760cef1e",
+          "status": "FAIL"
+        }
+      ],
+      "evidenceOrigin": "PRIOR_SIGNED_SAME_SUT_NOT_RERUN",
+      "acceptanceDisposition": {
+        "caseIds": [
+          "SR-BE-DIA-004",
+          "SR-BE-POL-005"
+        ],
+        "disposition": "ACCEPTED_LIMITATION",
+        "technicalResultRemains": "FAIL",
+        "note": "Safe pause accepted; no blind kick replay and no automatic-completion PASS."
+      }
+    },
+    {
+      "id": "SR-BE-POL-005",
+      "title": "已派发外部kick的未知结果不被新政策误重放",
+      "requirements": [
+        "SR-P1-04-03",
+        "SR-C2-06"
+      ],
+      "mode": "existing-regression",
+      "priority": "P1",
+      "evidenceCategory": "productRuntime",
+      "caseId": "SR-BE-POL-005",
+      "status": "FAIL",
+      "variants": [
+        {
+          "id": "dispatched-no-effect-unknown-restart",
+          "status": "PASS",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-POL-005/SR-BE-POL-005-dispatched-no-effect-unknown-restart.json"
+          ]
+        },
+        {
+          "id": "dispatched-no-effect-unknown-restart-original-budget-and-completion",
+          "status": "FAIL",
+          "reason": "原A5.8强恢复差异：真实未知外部结果使原run进入recovery-paused；安全不重放不等于完成",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-POL-005/SR-BE-POL-005-dispatched-no-effect-unknown-restart-original-budget-and-completion.json"
+          ]
+        },
+        {
+          "id": "dispatched-no-effect-unknown-restart-actual-lock-competition",
+          "status": "PASS",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-POL-005/SR-BE-POL-005-dispatched-no-effect-unknown-restart-actual-lock-competition.json"
+          ]
+        },
+        {
+          "id": "dispatched-effect-unknown-restart",
+          "status": "PASS",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-POL-005/SR-BE-POL-005-dispatched-effect-unknown-restart.json"
+          ]
+        },
+        {
+          "id": "dispatched-effect-unknown-restart-original-budget-and-completion",
+          "status": "FAIL",
+          "reason": "原A5.8强恢复差异：真实未知外部结果使原run进入recovery-paused；安全不重放不等于完成",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-POL-005/SR-BE-POL-005-dispatched-effect-unknown-restart-original-budget-and-completion.json"
+          ]
+        },
+        {
+          "id": "dispatched-effect-unknown-restart-actual-lock-competition",
+          "status": "PASS",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-POL-005/SR-BE-POL-005-dispatched-effect-unknown-restart-actual-lock-competition.json"
+          ]
+        }
+      ],
+      "partial": true,
+      "subchecks": [
+        {
+          "id": "dispatched-no-effect-unknown-restart",
+          "status": "PASS",
+          "evidence": "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-POL-005/SR-BE-POL-005-dispatched-no-effect-unknown-restart.json"
+        },
+        {
+          "id": "dispatched-no-effect-unknown-restart-original-budget-and-completion",
+          "status": "FAIL",
+          "evidence": "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-POL-005/SR-BE-POL-005-dispatched-no-effect-unknown-restart-original-budget-and-completion.json",
+          "reason": "原A5.8强恢复差异：真实未知外部结果使原run进入recovery-paused；安全不重放不等于完成"
+        },
+        {
+          "id": "dispatched-no-effect-unknown-restart-actual-lock-competition",
+          "status": "PASS",
+          "evidence": "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-POL-005/SR-BE-POL-005-dispatched-no-effect-unknown-restart-actual-lock-competition.json"
+        },
+        {
+          "id": "dispatched-effect-unknown-restart",
+          "status": "PASS",
+          "evidence": "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-POL-005/SR-BE-POL-005-dispatched-effect-unknown-restart.json"
+        },
+        {
+          "id": "dispatched-effect-unknown-restart-original-budget-and-completion",
+          "status": "FAIL",
+          "evidence": "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-POL-005/SR-BE-POL-005-dispatched-effect-unknown-restart-original-budget-and-completion.json",
+          "reason": "原A5.8强恢复差异：真实未知外部结果使原run进入recovery-paused；安全不重放不等于完成"
+        },
+        {
+          "id": "dispatched-effect-unknown-restart-actual-lock-competition",
+          "status": "PASS",
+          "evidence": "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-BE-POL-005/SR-BE-POL-005-dispatched-effect-unknown-restart-actual-lock-competition.json"
+        }
+      ],
+      "uncoveredVariants": [],
+      "cleanupErrors": [],
+      "startedAt": "2026-10-02T00:25:42.514Z",
+      "completedAt": "2026-10-02T00:25:55.394Z",
+      "durationMs": 12880.358499999973,
+      "attempt": 1,
+      "phase": "acceptance",
+      "executionRunId": "2026-10-02T00-12-11.076Z-760cef1e",
+      "executionSutRevision": "0be8575f326f709fe674e20033843d950385043d",
+      "executionQaRevision": "0be8575f326f709fe674e20033843d950385043d",
+      "retestHistory": [
+        {
+          "runId": "2026-10-02T00-12-11.076Z-760cef1e",
+          "status": "FAIL"
+        }
+      ],
+      "evidenceOrigin": "PRIOR_SIGNED_SAME_SUT_NOT_RERUN",
+      "acceptanceDisposition": {
+        "caseIds": [
+          "SR-BE-DIA-004",
+          "SR-BE-POL-005"
+        ],
+        "disposition": "ACCEPTED_LIMITATION",
+        "technicalResultRemains": "FAIL",
+        "note": "Safe pause accepted; no blind kick replay and no automatic-completion PASS."
+      }
+    }
+  ],
+  "remainingBlockers": [
+    {
+      "id": "SR-C1-015",
+      "title": "文件打开/写入失败、部分文件与发布后收紧上限",
+      "requirements": [
+        "SR-C1-05",
+        "SR-C1-04"
+      ],
+      "mode": "automated-driver",
+      "priority": "P1",
+      "evidenceCategory": "productRuntime",
+      "caseId": "SR-C1-015",
+      "status": "BLOCKED",
+      "variants": [
+        {
+          "id": "open-failure",
+          "status": "PASS",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-C1-015/open-failure"
+          ]
+        },
+        {
+          "id": "opened-file-write-failure",
+          "status": "BLOCKED",
+          "reason": "PreparationBlocked: [BLOCKED] Actual QA-only OS probe shows immutable flag does not reject already-open descriptor writes; no safe deterministic product write-syscall failure fixture, no product failure inferred",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-C1-015/opened-file-write-failure"
+          ]
+        },
+        {
+          "id": "tightened-no-reference",
+          "status": "PASS",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-C1-015/tightened-no-reference"
+          ]
+        },
+        {
+          "id": "tightened-running-reference",
+          "status": "PASS",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T00-12-11.076Z-760cef1e/cases/SR-C1-015/tightened-running-reference"
+          ]
+        }
+      ],
+      "cleanupErrors": [],
+      "startedAt": "2026-10-02T00:18:49.837Z",
+      "completedAt": "2026-10-02T00:19:05.711Z",
+      "durationMs": 15873.745208000008,
+      "attempt": 1,
+      "phase": "acceptance",
+      "executionRunId": "2026-10-02T00-12-11.076Z-760cef1e",
+      "executionSutRevision": "0be8575f326f709fe674e20033843d950385043d",
+      "executionQaRevision": "0be8575f326f709fe674e20033843d950385043d",
+      "retestHistory": [
+        {
+          "runId": "2026-10-02T00-12-11.076Z-760cef1e",
+          "status": "BLOCKED"
+        }
+      ],
+      "evidenceOrigin": "PRIOR_SIGNED_SAME_SUT_NOT_RERUN",
+      "acceptanceDisposition": {
+        "caseIds": [
+          "SR-C1-015"
+        ],
+        "disposition": "ACCEPTED_EVIDENCE_GAP_DEFERRED",
+        "technicalResultRemains": "BLOCKED",
+        "note": "Already-open descriptor write-failure fixture deferred; no product PASS inferred."
+      }
+    },
+    {
+      "id": "SR-UI-025",
+      "title": "来源导航和提醒确认不串实体",
+      "requirements": [
+        "SR-P1-02-06"
+      ],
+      "mode": "manual",
+      "priority": "P1",
+      "evidenceCategory": "productRuntime",
+      "caseId": "SR-UI-025",
+      "status": "BLOCKED",
+      "reason": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('main .attention-notice').first().getByRole('button', { name: '刷新并查看更新', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\">刷新并查看更新</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is not stable\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m  - element was detached from the DOM, retrying\u001b[22m\n",
+      "variants": [
+        {
+          "id": "actual-attempt",
+          "status": "BLOCKED",
+          "reason": "TimeoutError: locator.click: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('main .attention-notice').first().getByRole('button', { name: '刷新并查看更新', exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <button type=\"button\">刷新并查看更新</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is not stable\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m  - element was detached from the DOM, retrying\u001b[22m\n",
+          "evidence": [
+            "/Users/zcm/.codex/worktrees/qa-third-round/kapibala/qa-acceptance/second-round/reports/runs/2026-10-02T01-25-09.419Z-47c5b140/cases/SR-UI-025/error.json"
+          ]
+        }
+      ],
+      "cleanupErrors": [],
+      "startedAt": "2026-10-02T01:25:28.587Z",
+      "completedAt": "2026-10-02T01:25:49.771Z",
+      "durationMs": 21184.184875,
+      "attempt": 1,
+      "phase": "acceptance",
+      "previousSignedStatus": "BLOCKED",
+      "executionRunId": "2026-10-02T01-25-09.419Z-47c5b140",
+      "executionSutRevision": "0be8575f326f709fe674e20033843d950385043d",
+      "executionQaRevision": "9969f27ef6e4fc301bf5d30a634f1ea39bd03c3c",
+      "evidenceOrigin": "THIS_BOUNDED_RETEST",
+      "acceptanceDisposition": null
+    }
+  ],
+  "closedEvidenceGaps": [
+    "SR-C1-005",
+    "SR-BE-USG-011",
+    "SR-C2-017"
+  ],
+  "ownerAcceptanceDoesNotRewriteTechnicalStatus": true,
+  "noFurtherFixOrRetestScheduled": true
+}
