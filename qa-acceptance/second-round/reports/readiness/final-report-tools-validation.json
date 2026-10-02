@@ -1,0 +1,42 @@
+{
+  "recordedAt": "2026-10-02T00:28:19.079241+00:00",
+  "kind": "QA_REPORT_TOOL_SELF_VALIDATION_ONLY",
+  "productExecution": false,
+  "sourceFiles": {
+    "qa-acceptance/second-round/harness/finalize-report.py": "7c797366b0d73036bbdaeff0ab106a9a0a9895b98b85655e29b6d2670797e915",
+    "qa-acceptance/second-round/harness/finalize_report_archive_test.py": "41443e6a3aa3ab99e6c7c11016eca67096783921c5ed2a471607a913511f4027"
+  },
+  "checks": [
+    {
+      "command": "python3 qa-acceptance/second-round/harness/finalize_report_archive_test.py",
+      "result": "PASS",
+      "tests": 7,
+      "durationSeconds": 0.011
+    },
+    {
+      "command": "python3 qa-acceptance/second-round/harness/report_composition_test.py",
+      "result": "PASS",
+      "tests": 7,
+      "durationSeconds": 0.001
+    },
+    {
+      "command": "python3 qa-acceptance/second-round/harness/final_traceability_test.py",
+      "result": "PASS",
+      "tests": 8,
+      "durationSeconds": 0.379
+    }
+  ],
+  "evidenceSource": "Agent round2_ui actual tool stdout/stderr reported to root; no separate test log file was saved. Root reviewed resulting source diff.",
+  "realHistoricalArchiveCheck": {
+    "runs": [
+      "2026-10-01T21-48-07.275Z-4e425702",
+      "2026-10-01T22-25-01.466Z-7951d02e",
+      "2026-10-01T23-12-22.471Z-739fbbec"
+    ],
+    "filesVerified": 19830,
+    "originalsUnchanged": true,
+    "method": "Actual SHA256 and byte verification of each tar member; source index/archive/results/report-hashes compared before and after"
+  },
+  "toolOnlyOutput": "qa-acceptance/.runtime/finalizer-self/history-compatibility",
+  "scope": "Normalize legacy archive aliases in memory, preserving signed original artifacts. This is not new product execution and does not alter frozen SUT or executing QA revision."
+}

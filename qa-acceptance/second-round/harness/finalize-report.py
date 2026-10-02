@@ -9,12 +9,60 @@ p.add_argument('--full',required=True);p.add_argument('--retest',action='append'
 p.add_argument('--history',action='append',default=[]);p.add_argument('--supplement',action='append',default=[]);p.add_argument('--review',required=True);p.add_argument('--destination',required=True);a=p.parse_args()
 root=Path(__file__).resolve().parents[3];out=Path(a.destination).resolve();review=json.loads(Path(a.review).read_text())
 def read_batch(path):
- path=Path(path).resolve();d=json.loads((path/'results.json').read_text());m=d['manifest']
+ path=Path(path).resolve()
+ def artifact(name):
+  relative=Path(name)
+  assert not relative.is_absolute() and relative.parts and '..' not in relative.parts, 'Unsafe archive artifact path'
+  result=path/relative
+  assert result.is_file() and not result.is_symlink() and result.resolve().is_relative_to(path), 'Missing/nonregular/outside archive artifact: '+str(result)
+  return result
+ def digest_file(file):
+  digest=hashlib.sha256()
+  with file.open('rb') as stream:
+   for chunk in iter(lambda:stream.read(1024*1024),b''):digest.update(chunk)
+  return digest.hexdigest()
+ d=json.loads(artifact('results.json').read_text());m=d['manifest']
  assert m.get('completedAt'), 'Batch has not completed'
  assert m['autoRetries']==0
- for name,digest in json.loads((path/'report-hashes.json').read_text()).items():assert hashlib.sha256((path/name).read_bytes()).hexdigest()==digest
- idx=json.loads((path/'evidence-index.json').read_text());assert hashlib.sha256((path/idx['archive']).read_bytes()).hexdigest()==idx['sha256']
+ signed=json.loads(artifact('report-hashes.json').read_text())
+ assert 'results.json' in signed, 'Batch results must be signed'
+ for name,digest in signed.items():assert digest_file(artifact(name))==digest, 'Signed batch artifact hash mismatch: '+name
+ raw=json.loads(artifact('evidence-index.json').read_text())
+ modern={'runId','sha256','bytes'};legacy={'sourceRun','archiveSha256','archiveBytes'}
+ assert modern.issubset(raw) or legacy.issubset(raw), 'Unrecognized evidence-index schema'
+ # Normalize only in memory. The original historical index/archive stay read-only.
+ if modern.issubset(raw):
+  idx=dict(raw,indexSchema='runId/sha256/bytes')
+  for new,old in [('runId','sourceRun'),('sha256','archiveSha256'),('bytes','archiveBytes')]:
+   if old in raw:assert raw[new]==raw[old], 'Conflicting evidence-index aliases: '+old
+ else:
+  idx=dict(raw,runId=raw['sourceRun'],sha256=raw['archiveSha256'],bytes=raw['archiveBytes'],indexSchema='sourceRun/archiveSha256/archiveBytes')
+  for new,old in [('runId','sourceRun'),('sha256','archiveSha256'),('bytes','archiveBytes')]:
+   if new in raw:assert raw[new]==raw[old], 'Conflicting evidence-index aliases: '+new
+ assert idx['runId']==m['runId'], 'Archive index belongs to another run'
+ archive=artifact(idx['archive'])
+ assert archive.stat().st_size==idx['bytes'], 'Archive byte count mismatch'
+ assert digest_file(archive)==idx['sha256'], 'Archive SHA256 mismatch'
+ entries={entry['member']:entry for entry in idx['files']}
+ assert len(entries)==len(idx['files'])==idx['fileCount'], 'Archive index duplicate/count mismatch'
+ seen=set();original_results=None
+ with tarfile.open(archive,'r|gz') as tar:
+  for member in tar:
+   assert member.isfile() and member.name in entries and member.name not in seen, 'Unexpected/nonregular/duplicate archive member: '+member.name
+   assert not Path(member.name).is_absolute() and '..' not in Path(member.name).parts, 'Unsafe archive member'
+   entry=entries[member.name]
+   assert member.size==entry['bytes'], 'Archived member size mismatch: '+member.name
+   stream=tar.extractfile(member);digest=hashlib.sha256();size=0;chunks=[]
+   for chunk in iter(lambda:stream.read(1024*1024),b''):
+    digest.update(chunk);size+=len(chunk)
+    if member.name=='run/results.json':chunks.append(chunk)
+   assert size==entry['bytes'] and digest.hexdigest()==entry['sha256'], 'Archived member hash mismatch: '+member.name
+   if member.name=='run/results.json':original_results=json.loads(b''.join(chunks))
+   seen.add(member.name)
+ assert seen==set(entries), 'Archive index contains missing members'
+ assert original_results==d, 'Signed batch results differ from the archived original'
  return path,d,idx
+
 def code_tree(revision):
  raw=subprocess.check_output(['git','ls-tree','-r',revision,'--','apps','packages','db','scripts','package.json','package-lock.json','tsconfig.json'],cwd=root)
  return hashlib.sha256(raw).hexdigest()
