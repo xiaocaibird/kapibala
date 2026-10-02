@@ -73,15 +73,53 @@ npm run dev:isolated -- --smoke
 
 ## 可选 C2：真实 Gemini Agent
 
-独立服务提供原协议的 `/agent/turn` 和 `/agent/audit`。在本地 `.env` 设置 `GEMINI_API_KEY`（或显式环境变量），然后启动：
+真实模型是单独运行的服务，提供原协议的 `/agent/turn` 和 `/agent/audit`。**只填写 Key 不会自动切换模型。** `dev:isolated` 和 `demo:sample` 会把后端绑定到本次模拟 Agent，即使 `.env` 设置了 `AGENT_URL` 也不会切换；它们没有运行中切换入口。要从新克隆启动真实 Gemini，使用下面的常规环境流程。
+
+### 从新克隆启动：两个终端
+
+前提与快速体验相同：准备 Node.js 24.21.0、npm 12.1.0，并启动 Docker Desktop。以下命令都在项目根目录执行；本机 `55432`、`3100`、`3101`、`3102`、`3103`、`5173` 端口须空闲。这个流程使用固定端口和持久数据库，与隔离体验是两套环境，不会继承隔离入口的群组和样例数据。
+
+**1. 安装依赖并准备配置。** 新克隆且尚无 `.env` 时执行；已有配置不要覆盖：
 
 ```sh
-npm run dev:gemini-agent
+npm ci
+cp .env.example .env
 ```
 
-服务默认只监听 `127.0.0.1` 的随机端口，终端输出 `gemini-agent-ready.address`。在你已经配置好的后端环境中，仅把 `AGENT_URL` 改为该地址后启动后端；其数据库、网关、权限、工具执行、审计重试和原有时间预算均不变。`dev:isolated` 仍默认使用模拟 Agent，不会自动启用付费模型。
+**2. 编辑 `.env`，填写真实 Key 并修改后端模型地址，其余保持示例默认值：**
 
-可用 `GEMINI_ENV_FILE=/absolute/path/to/main-workspace/.env` 只读取已有文件的 Key 字段，不复制该文件，也不导入其中的数据库或网关配置。默认模型为本次 Key 实测完成工具往返的稳定 `gemini-3.1-flash-lite`，可用 `GEMINI_MODEL` 指定其他可用 Gemini 型号；不自动切换或重试计费请求。`GEMINI_AGENT_PORT` 可指定固定空闲端口，`GEMINI_SESSION_DIR` 指定该服务独占的私有会话目录。
+```dotenv
+GEMINI_API_KEY=填写你的真实Key
+AGENT_URL=http://127.0.0.1:3103
+```
+
+**3. 终端一启动 Gemini 服务，保持运行：**
+
+```sh
+GEMINI_AGENT_PORT=3103 npm run dev:gemini-agent
+```
+
+等待输出 `gemini-agent-ready`，确认地址为 `http://127.0.0.1:3103`。这里显式用环境变量固定端口：Gemini 服务从 `.env` 只读取 Key 字段，端口等其他参数应通过进程环境变量传入；不指定端口则随机分配。启动成功只表示服务已监听，不代表已完成真实模型请求。
+
+**4. 终端二启动数据库、执行迁移，再启动业务平台：**
+
+```sh
+docker compose up -d --wait
+npm run db:migrate
+npm run dev
+```
+
+以上按新数据库说明；如果本机已经有本项目的 Compose 数据卷，会继续使用原数据，不会自动清空。已有旧数据库先按下节升级边界处理。`npm run dev` 同时启动前后端及模拟器；终端虽会打印模拟 Agent 的地址，业务后端仍按 `.env` 中的 `AGENT_URL` 连接真实 Gemini，不应把它改回模拟地址。
+
+**5. 打开 `http://127.0.0.1:5173`，用 `admin/admin` 登录。** 连接服务账号、建群并开启该群 Agent 自动应答；通过模拟网关的外部成员消息触发后，可在 Agent 运行详情查看实际结果。平台自身服务账号发送的消息不等同外部触发。本流程的模型是真实 Gemini，消息网关仍是项目自带模拟器，不会自动连接真实聊天平台；模拟输入说明见[模拟场景与限制](docs/simulator.md)。真实模型请求会使用该 Key 的额度。
+
+结束时在两个终端分别按 Ctrl-C；数据库可用 `docker compose stop postgres` 停止。常规环境的数据库和 Gemini 会话会保留，**不采用隔离入口“退出即清空”的重置规则**。这套说明不提供真实模型环境的一键灌入样例或重置功能。
+
+### 已有后端与其他配置
+
+已有后端环境只需单独启动 Gemini 服务，将后端 `AGENT_URL` 设为它实际输出的地址，再启动或重启后端；其他数据库与网关配置保持原值。不要尝试用隔离启动命令完成此切换。
+
+可用 `GEMINI_ENV_FILE=/absolute/path/to/key-file` 指定已有的 Key 文件，不复制该文件，也不导入其数据库或网关配置。默认模型为当前实现配置的 `gemini-3.1-flash-lite`；`GEMINI_MODEL`、`GEMINI_AGENT_PORT`、`GEMINI_SESSION_DIR` 均通过启动命令的环境变量设置。服务不自动切换模型或重试计费请求。
 
 密钥、群上下文和会话文件不要提交；服务默认不打印请求正文、令牌或模型原始异常。会话持久化、故障保守处理、费用/资源上限和真实测试中的失败记录见 [C2 接入与验证](docs/c2-gemini-agent.md)。这项接入不消除既有后端未知执行结果的限制，也不构成任意故障下均能按时保存终态的保证。
 
