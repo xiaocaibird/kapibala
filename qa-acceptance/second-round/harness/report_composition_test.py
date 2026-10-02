@@ -44,4 +44,3 @@ class CompositionTest(unittest.TestCase):
   self.assertEqual(compose_uid_case(case,rows,supplement)['status'],'PASS');rows[0]['evidence']=[]
   with self.assertRaisesRegex(AssertionError,'without evidence'):compose_uid_case(case,rows,supplement)
 if __name__=='__main__':unittest.main()
-
