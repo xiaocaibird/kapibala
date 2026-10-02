@@ -83,7 +83,7 @@ npm run dev:gemini-agent
 
 可用 `GEMINI_ENV_FILE=/absolute/path/to/main-workspace/.env` 只读取已有文件的 Key 字段，不复制该文件，也不导入其中的数据库或网关配置。默认模型为本次 Key 实测完成工具往返的稳定 `gemini-3.1-flash-lite`，可用 `GEMINI_MODEL` 指定其他可用 Gemini 型号；不自动切换或重试计费请求。`GEMINI_AGENT_PORT` 可指定固定空闲端口，`GEMINI_SESSION_DIR` 指定该服务独占的私有会话目录。
 
-密钥、群上下文和会话文件不要提交；服务默认不打印请求正文、令牌或模型原始异常。会话持久化、故障保守处理、费用/资源上限和真实测试中的失败记录见 [C2 接入与验证](docs/c2-gemini-agent.md)。这项接入不消除既有后端未知执行结果或严格 60 秒终态的限制。
+密钥、群上下文和会话文件不要提交；服务默认不打印请求正文、令牌或模型原始异常。会话持久化、故障保守处理、费用/资源上限和真实测试中的失败记录见 [C2 接入与验证](docs/c2-gemini-agent.md)。这项接入不消除既有后端未知执行结果的限制，也不构成任意故障下均能按时保存终态的保证。
 
 ## 数据库升级边界
 
@@ -120,20 +120,19 @@ npm test
 AUTOMATION_TIMING_TESTS=1 npx tsx --test --test-name-pattern='timing:' tests/integration/automation.test.ts
 ```
 
-运行版本、进程及本批证据统一见[文档入口](docs/README.md)；当前能力与验证边界见[功能总表](docs/feature-matrix.md)。历史运行记录保留各自版本，不作为当前状态。通过编译或开发者浏览器检查不代表用户已完成人工验收。
+## 关键文档
 
-- [当前功能总表与需求追踪](docs/feature-matrix.md)
-- [首轮验收收尾、四条工作线与剩余确认](docs/first-acceptance-closeout-20261001.md)
-- [分批功能验收](docs/acceptance.md)
-- [逐条需求与验证证据](docs/requirements-matrix.md)
-- [工程要求](docs/engineering-requirements.md)
-- [决策与变更记录](docs/decisions.md)
-- [C1 媒体文件管理](docs/c1-media-files.md)
-- [C2 独立 Gemini 服务](docs/c2-gemini-agent.md)
-- [C1 / C2 交付与 QA 接入](docs/c1-c2-delivery-20261001.md)
-- [C1 / C2 最终组合回归](docs/c1-c2-final-combination-20261001.md)
-- [模块接口](docs/module-interfaces.md)
-- [实际工具链](docs/toolchain.md)
-- [模拟场景与限制](docs/simulator.md)
+两轮 QA 验收及限定范围的追加复验已结束，后续修复与复测已停止。交付保留已接受的限制及尚缺证据的范围，不代表全部原始要求无条件通过；开发验证、独立 QA 结果与人工体验分别记录。
+
+| 阅读目的 | 入口与内容 |
+| --- | --- |
+| 了解当前实现了什么 | [当前已实现需求总表](docs/feature-matrix.md)：原始要求、基于原要求的补强与取舍、原文之外的新增能力，逐项标明验证边界 |
+| 了解未来如何改进 | [第三轮优化规划与问题清单](docs/third-round-plan-20261002.md)：两轮遗留、历史建议、机制优化与人工走查；仅作规划，具体方案实施前仍需评审 |
+| 查看第一轮收尾 | [首轮验收收尾](docs/first-acceptance-closeout-20261001.md)：固定版本、后续补证与保留事项 |
+| 查看第二轮最终处置 | [第二轮处置汇总](docs/second-round-disposition-20261002.md)、[最后一次独立复验报告](qa-acceptance/reports/followup/20261002-eight-item-closeout/report.md)：原测试结果、已接受限制和剩余证据缺口 |
+| 理解设计与取舍 | [模块接口](docs/module-interfaces.md)、[决策与变更记录](docs/decisions.md)：职责边界、接口约定及历次决策依据 |
+| 复核启动、样例与重置 | [交付体验入口验证](docs/delivery-experience-entry-20261002.md)：上述命令的范围、数据隔离和开发验证；[模拟场景与限制](docs/simulator.md)说明模拟能力边界 |
+
+更多运行说明、逐条需求追踪、各批验证及历史材料见[完整文档索引](docs/README.md)。历史记录以各自版本与覆盖范围为准，不作为当前全量验收结果；编译成功或开发者浏览器检查也不代表全面人工验收通过。
 
 原始需求文件保持字节不变；开发提交及交付前均验证校验值。

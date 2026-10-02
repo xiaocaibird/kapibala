@@ -4,7 +4,7 @@
 
 [第三轮优化规划与问题清单](third-round-plan-20261002.md)汇总两轮历史未通过项及后续处置、27项机制优化对照、此前保留建议，以及本次七条初步人工走查反馈；已完成的搜索、筛选、分页等补强单独保留。既有方向经负责人初步认可，新走查具体方案未经初审，实施前仍须详细评审。本阶段只整理文档，不启动第三轮开发或 QA。
 
-两轮追加修复与复测均已停止，最新结果与已接受限制见[第二轮处置](second-round-disposition-20261002.md)及[独立有限复验报告](../qa-acceptance/reports/followup/20261002-eight-item-closeout/report.md)。历史章节的“待合入/待执行”等描述只代表当时阶段，不覆盖后续签发结论。交付辅助入口已另获批准并合入，见[初始、样例与重置的开发验证](delivery-experience-entry-20261002.md)。根目录 README 的最终交付整理另行进行。
+两轮追加修复与复测均已停止，最新结果与已接受限制见[第二轮处置](second-round-disposition-20261002.md)及[独立有限复验报告](../qa-acceptance/reports/followup/20261002-eight-item-closeout/report.md)。历史章节的“待合入/待执行”等描述只代表当时阶段，不覆盖后续签发结论。交付辅助入口已另获批准并合入，见[初始、样例与重置的开发验证](delivery-experience-entry-20261002.md)。快速体验与精选关键文档见[根目录 README](../README.md)；当前实现按三类汇总于[已实现需求总表](feature-matrix.md)。
 
 ## 第二轮当前执行入口（2026-10-02）
 
