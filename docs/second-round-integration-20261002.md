@@ -1,6 +1,6 @@
 # 第二轮研发集成验证与交接
 
-**当前处置（D053）：** 负责人已审阅八项遗留，接受第1/2/3/7项的明确限制或证据缺口，授权第4/5/6/8项一次定向复验（含有界真实模型调用）。QA结果出来后直接报告并停止，不自动追加修复/复测；原报告及原始证据不改。详见[八项处置与执行回执](second-round-disposition-20261002.md)。
+**当前处置（D053）：** 一次定向复验已完成，报告和证据已合入main。本次第4/5/8项PASS、第6项BLOCKED，共3 PASS / 0 FAIL / 1 BLOCKED；第1/2/3/7项按负责人决定接受限制或证据缺口，原技术结果保留。已停止追加修复/复测，等待负责人判断后续。详见[八项处置与最终回执](second-round-disposition-20261002.md)及[本次独立报告](../qa-acceptance/reports/followup/20261002-eight-item-closeout/report.md)。
 
 **上一阶段签发回执（保留原时点）：** 媒体 NUL 修复的固定开发回归已完成（24 PASS / 0 FAIL / 0 SKIP），组合构建通过。第四批及原定补证已结束，SUT / QA 均固定为 `0be8575f326f709fe674e20033843d950385043d`。独立 QA 最终结论为 FAIL：103 PASS / 4 FAIL / 5 BLOCKED / 0 NOT_RUN；8 项 Firefox/WebKit 检查通过。报告与证据已合入 main，后续产品修复和再次复测已暂停，等待负责人判断。见[正式报告](../qa-acceptance/reports/acceptance/20261002-second-round/report.md)。详见[第四批候选交接](second-round-fourth-candidate-20261002.md)。下方批次与处理历史按各自时点保留。
 

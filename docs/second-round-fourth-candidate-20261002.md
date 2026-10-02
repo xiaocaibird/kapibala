@@ -1,6 +1,6 @@
 # 第二轮第四批候选交接
 
-**当前处置（D053）：** 负责人已审阅八项遗留，接受第1/2/3/7项的明确限制或证据缺口，授权第4/5/6/8项一次定向复验（含有界真实模型调用）。QA结果出来后直接报告并停止，不自动追加修复/复测；原报告及原始证据不改。详见[八项处置与执行回执](second-round-disposition-20261002.md)。
+**当前处置（D053）：** 一次定向复验已完成，报告和证据已合入main。本次第4/5/8项PASS、第6项BLOCKED，共3 PASS / 0 FAIL / 1 BLOCKED；第1/2/3/7项按负责人决定接受限制或证据缺口，原技术结果保留。已停止追加修复/复测，等待负责人判断后续。详见[八项处置与最终回执](second-round-disposition-20261002.md)及[本次独立报告](../qa-acceptance/reports/followup/20261002-eight-item-closeout/report.md)。
 
 **第四批签发回执（保留原时点）：** QA 已完成既定完整执行和补证，正式报告及原始证据合入 `5b3bf96c63b92404afc1db8f98f329b098c58a39`。最终业务结论为 FAIL：103 PASS / 4 FAIL / 5 BLOCKED；独立浏览器检查 8 PASS。被测产品与执行 QA 仍固定为 `0be8575`，没有第五批。原全量 100 PASS / 6 FAIL / 6 BLOCKED 保留；三条 QA 前提错误评审为 BLOCKED，Linux 与有头浏览器补证各自保留来源。后续修复和再次复测已停止，等待负责人判断。详见[正式报告及责任清单](../qa-acceptance/reports/acceptance/20261002-second-round/report.md)。
 
