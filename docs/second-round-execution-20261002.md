@@ -1,6 +1,6 @@
 # 第二轮执行总表
 
-**最新交接：** 媒体 NUL 修复的固定开发回归已完成（24 PASS / 0 FAIL / 0 SKIP），组合构建通过。第四批已启动，SUT / QA 均固定为 `0be8575f326f709fe674e20033843d950385043d`；当前尚无最终结果。本次复测结束后直接出报告，仍未通过则暂停继续修复和再测。详见[第四批候选交接](second-round-fourth-candidate-20261002.md)。下方批次与处理历史按各自时点保留。
+**最新交接：** 媒体 NUL 修复的固定开发回归已完成（24 PASS / 0 FAIL / 0 SKIP），组合构建通过。第四批及原定补证已结束，SUT / QA 均固定为 `0be8575f326f709fe674e20033843d950385043d`。独立 QA 最终结论为 FAIL：103 PASS / 4 FAIL / 5 BLOCKED / 0 NOT_RUN；8 项 Firefox/WebKit 检查通过。报告与证据已合入 main，后续产品修复和再次复测已暂停，等待负责人判断。见[正式报告](../qa-acceptance/reports/acceptance/20261002-second-round/report.md)。详见[第四批候选交接](second-round-fourth-candidate-20261002.md)。下方批次与处理历史按各自时点保留。
 
 2026-10-02（北京时间）。**D052 已批准全部第二轮 P0/P1 产品、文档及 QA 资产本地合 main 后固定版本执行。第三批已结束：SUT / QA 均为 `ed50ca14ae3f4140d7f020f282b313b137920209`，run `2026-10-01T23-12-22.471Z-739fbbec`，112 项为 96 PASS / 6 FAIL / 10 BLOCKED / 0 NOT_RUN，`runnerErrors=[]`。第四批尚未开始，待下一候选完成组合验证并固定 main 后由 QA 独立执行。** 第二批 `47423c1` 的 80 PASS / 4 FAIL / 28 BLOCKED / 0 NOT_RUN 保留；UI008、DIA005 在第二、三批均 PASS，GRD003 在第三批独立复验 PASS。媒体 raw NUL 的入站保存失败仍在修复；用量关闭及 run-lock 观察已完成开发验证，尚无下一批 QA 结果。详见[修复与各批原证据](second-round-followup-20261002.md)。下方保留历史组合、交付和初始冻结记录，各批结果不拼接，第三批 PASS 不继承到第四批。
 
