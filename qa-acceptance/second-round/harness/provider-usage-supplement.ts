@@ -86,12 +86,17 @@ async function drainCurrent(d:ProviderDriver){
   }while(performance.now()<deadline);throw new PreparationBlocked('Capacity writer did not settle within finite QA observation window');
 }
 async function assertFile(d:ProviderDriver){const value=await d.usage();assert.equal(jsonlBytes(value.records),value.actualBytes,'UTF-8 JSONL byte count uses actual generated records');assert.equal(new Set(value.records.map(r=>r.attemptId)).size,value.records.length);return value;}
-async function actualRequests(d:ProviderDriver,mode:'records'|'bytes',first:number,count:number){
-  // <=32 requests cannot exceed the documented 64 waiting slots when prior
-  // batch is fully drained. Every response is observed; no retries.
-  assert.ok(count>0&&count<=32);for(let i=0;i<count;i++)await d.enqueue({purpose:mode==='records'?'audit':'turn',proposal:mode==='records'?{kind:'audit',verdict:'pass',reason:'QA synthetic bounded usage'}:{kind:'text',text:'QA synthetic bounded usage'},actualUsage:{inputTokens:7,outputTokens:3,totalTokens:10}});
-  const replies=await Promise.allSettled(Array.from({length:count},(_,i)=>mode==='records'?d.exchange('/agent/audit',{groupId:`qa-capacity-${first+i}`,text:'independent offline capacity sample'}):d.exchange('/agent/turn',{...turnRequest(),runId:capacityRunId(first+i)})));
-  for(const reply of replies){if(reply.status==='rejected')throw reply.reason;assert.equal(reply.value.status,200);}
+export async function actualRequests(d:ProviderDriver,mode:'records'|'bytes',first:number,count:number){
+  // Public service admission permits four in-flight model requests. The 64
+  // journal waiting slots are a different bound; neither permits 32 models.
+  // Keep the original sample count, observe every response, and never retry.
+  assert.ok(Number.isSafeInteger(first)&&first>=0&&Number.isSafeInteger(count)&&count>0&&count<=32);
+  for(let offset=0;offset<count;offset+=4){
+    const wave=Math.min(4,count-offset);
+    for(let i=0;i<wave;i++)await d.enqueue({purpose:mode==='records'?'audit':'turn',proposal:mode==='records'?{kind:'audit',verdict:'pass',reason:'QA synthetic bounded usage'}:{kind:'text',text:'QA synthetic bounded usage'},actualUsage:{inputTokens:7,outputTokens:3,totalTokens:10}});
+    const replies=await Promise.allSettled(Array.from({length:wave},(_,i)=>mode==='records'?d.exchange('/agent/audit',{groupId:`qa-capacity-${first+offset+i}`,text:'independent offline capacity sample'}):d.exchange('/agent/turn',{...turnRequest(),runId:capacityRunId(first+offset+i)})));
+    for(const reply of replies){if(reply.status==='rejected')throw reply.reason;assert.equal(reply.value.status,200);}
+  }
   return drainCurrent(d);
 }
 /** Real loopback generation volume. Each configured maximum has its own new

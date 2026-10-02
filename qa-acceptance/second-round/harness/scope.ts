@@ -29,5 +29,13 @@ export async function secondRoundFingerprint(root = secondRoundRoot): Promise<st
     const bytes = await readFile(resolve(root, file));
     hash.update(`${file}\0${bytes.length}\0`).update(bytes);
   }
+  // Later narrow authority is independently frozen without rewriting the original scope.
+  const closeout = 'config/bounded-closeout.json';
+  try {
+    const bytes = await readFile(resolve(root, closeout));
+    hash.update(`${closeout}\0${bytes.length}\0`).update(bytes);
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+  }
   return hash.digest('hex');
 }

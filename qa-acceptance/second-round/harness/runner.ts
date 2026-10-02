@@ -27,6 +27,7 @@ import { runUsageCase, providerUsageConfiguration } from './provider-usage-cases
 import * as operations from '../tests/media-provider.js';
 import { classifyError, combineVariants, type RoundResult } from './result.js';
 import { writeSecondRoundReport } from './report.js';
+import { assertCloseoutSelection } from './closeout-scope.js';
 
 // Only this explicit, separately authorized entry can execute second-round cases.
 // One fixed batch preserves its first outcome. A correction requires another run directory.
@@ -43,7 +44,13 @@ assert.equal(await git(sut,'rev-parse','HEAD'),revision);
 assert.equal(await git(sut,'status','--porcelain','--untracked-files=all'),'');
 const qaDirty=(await git(workspace,'status','--porcelain','--untracked-files=all')).split('\n').filter(Boolean).filter(line=>!line.startsWith('?? qa-acceptance/second-round/reports/runs/'));
 assert.deepEqual(qaDirty,[],'freeze all QA source, including untracked drivers, before execution');
-const qaRevision=await git(workspace,'rev-parse','HEAD'),scope=JSON.parse(await readFile(resolve(secondRoundRoot,'config/execution-scope.json'),'utf8'));
+const qaRevision=await git(workspace,'rev-parse','HEAD'),originalScope=JSON.parse(await readFile(resolve(secondRoundRoot,'config/execution-scope.json'),'utf8'));
+let closeout:Record<string,any>|undefined;
+try{closeout=JSON.parse(await readFile(resolve(secondRoundRoot,'config/bounded-closeout.json'),'utf8'));}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
+if(closeout?.active)assertCloseoutSelection(args,revision,closeout as {active:boolean;sutRevision:string;offlineCaseIds:string[]});
+else assert.ok(!args.includes('--closeout'),'No current bounded closeout authority');
+// This runner executes only the offline three-case portion. Real calls have their own bounded entry.
+const scope=closeout?.active?{...originalScope,authorization:{...closeout.authorization,realProviderAuthorized:false},finalExecutionBoundary:closeout.finalExecutionBoundary}:originalScope;
 assert.equal(scope.authorization.executionAuthorized,true);assert.equal(scope.authorization.realProviderAuthorized,false);
 const runId=`${new Date().toISOString().replaceAll(':','-')}-${randomUUID().slice(0,8)}`;
 const out=resolve(secondRoundRoot,'reports/runs',runId),runtime=resolve(qaRoot,'.runtime/second-round',runId);
@@ -52,6 +59,7 @@ const fingerprint=await secondRoundFingerprint(),cases=await secondRoundCases();
 const manifest:Record<string,unknown>={runId,sutRevision:revision,qaRevision,secondRoundSha256:fingerprint,
   startedAt:new Date().toISOString(),sutDirectory:sut,qaDirectory:qaRoot,authority:scope.authorization,finalExecutionBoundary:scope.finalExecutionBoundary,
   autoRetries:0,browserName,node:process.version,productionReadiness:'NOT_ASSESSED',runnerErrors:[],
+  ...(closeout?.active?{phase:'BOUNDED_THREE_CASE_CLOSEOUT',closeoutAuthority:closeout,realProviderCallsPermittedByThisEntry:false}:{}),
   originalRequirementSha256:createHash('sha256').update(await readFile(resolve(sut,'docs/original-interview-question.md'))).digest('hex')};
 const saveManifest=()=>writeFile(resolve(out,'manifest.json'),redact(manifest)+'\n');
 const event=async(v:unknown)=>{await appendFile(resolve(out,'events.ndjson'),JSON.stringify({at:new Date().toISOString(),...v as object})+'\n');};

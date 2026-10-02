@@ -218,6 +218,19 @@ export async function mediaRetryRecovery(driver?: MediaDriver) {
   });
 }
 export async function mediaRetention(driver?: MediaDriver) {
+  // A scheduler tick alone does not establish this file's download/deletion.
+  // Read the owned fixture's actual persisted observation, never infer terminal
+  // state from an initially null public path (zero-day paths may be transient).
+  const observed = (cycle: Evidence, ref: MessageRef, states: string[]) => {
+    proof(cycle);
+    need(object(cycle.raw) && Array.isArray(cycle.raw.rows), '媒体周期缺目标持久状态证据');
+    const rows = cycle.raw.rows.filter((row) => object(row) && row.group_id === ref.groupId && row.msg_id === ref.msgId);
+    need(rows.length === 1 && object(rows[0]), '媒体周期未唯一定位本例目标');
+    const row = rows[0];
+    need(states.includes(String(row.state)) && typeof row.downloaded_at === 'string' && Number.isFinite(Date.parse(row.downloaded_at)),
+      '目标完整下载或删除终态尚未真实建立，不能用调度tick/初始null路径代替');
+    return row;
+  };
   for (const retentionDays of [undefined, 2, 0]) {
     if (retentionDays === 0) need(driver?.retentionContract?.reference && driver.retentionContract.zeroDaysSupported,
       '零天边界缺最终公开接受范围；已完成default30/合法2天结果须分别留证，不猜零天合法');
@@ -227,22 +240,31 @@ export async function mediaRetention(driver?: MediaDriver) {
       const limit = retentionDays ?? 30;
       if (limit === 0) {
         await d.read(a.ref);
-        proof(await d.cycle('cleanup'));
-        cleared(await d.read(a.ref));
+        const download = await d.cycle('download'), completed = observed(download, a.ref, ['ready', 'deleting', 'deleted']);
+        need(typeof completed.id === 'string' && /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(completed.id),
+          '目标真实文件身份缺失');
+        assert.equal(completed.storage_root, configured.path);
+        // docs/qa-media-scenarios-20261002.md declares this stable filename.
+        const actualFile = `${configured.path}${sep}media-${completed.id}.bin`;
         const requests = (await d.sourceRequests()).filter((r) => r.url === a.source.url);
         assert.equal(requests.length, 1); assert.equal(requests[0]!.responseStatus, 200); assert.equal(requests[0]!.responseBytes, a.content.length);
-        await d.evidence('media-zero-day-boundary', { configured, requests, publicMessage: await d.read(a.ref), publicationNeedNotRemainVisible: true });
+        const cleanup = await d.cycle('cleanup'), deleted = observed(cleanup, a.ref, ['deleted']);
+        assert.equal(deleted.id, completed.id); assert.equal(deleted.local_file_path, null);
+        const publicMessage = await d.read(a.ref); cleared(publicMessage); await absent(actualFile);
+        await d.evidence('media-zero-day-boundary', { configured, requests, download, cleanup, completed, deleted,
+          actualFile, physicallyAbsent: true, publicMessage, publicationNeedNotRemainVisible: true });
         return;
       }
       const row = await published(d, a.ref, a.content);
       if (limit > 0) {
         assertAgeSide(await age(d, a.ref, limit - 0.001), limit, 'younger');
         const control = await attachment(d), controlRow = await published(d, control.ref, control.content);
-        await expire(d, control.ref, limit + 1); proof(await d.cycle('cleanup'));
+        await expire(d, control.ref, limit + 1); const cleanup = await d.cycle('cleanup'); observed(cleanup, control.ref, ['deleted']);
         cleared(await d.read(control.ref)); await absent(controlRow.localFilePath!);
         await assertOwnedBytes((await d.read(a.ref)).localFilePath, configured.path, a.content);
       }
-      assertAgeSide(await age(d, a.ref, limit + 0.001), limit, 'expired'); proof(await d.cycle('cleanup'));
+      assertAgeSide(await age(d, a.ref, limit + 0.001), limit, 'expired');
+      const cleanup = await d.cycle('cleanup'); observed(cleanup, a.ref, ['deleted']);
       cleared(await d.read(a.ref)); await absent(row.localFilePath!);
     }, retentionDays === undefined ? {} : { retentionDays });
   }

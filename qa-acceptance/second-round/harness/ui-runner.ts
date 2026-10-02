@@ -358,6 +358,32 @@ async function storageWriteFailure(ui: PublicUiDriver, profile: UiProfile): Prom
   }
   await ui.evidence('navigation-storage-write-failure', { keys, realNativeException: 'QuotaExceededError', groups: [profile.groupA, profile.groupB] });
 }
+/** Confirm the rendered run regions through their advertised public controls.
+ * Reading a region may acknowledge it immediately; remaining region notices
+ * offer refresh-and-view directly. No additional summary dialog is required. */
+export async function acknowledgeRunAttention(
+  page: Page, summary: string, record: (facts: unknown) => Promise<void>, timeoutMs = 5000,
+): Promise<void> {
+  const notices = page.locator('main .attention-notice');
+  const snapshot = async () => ({ title: await page.title(), notices: await notices.allTextContents() });
+  await record({ stage: 'before-read', ...await snapshot() });
+  await expect(page.getByText(summary, { exact: true }).first()).toBeVisible({ timeout: timeoutMs });
+  await page.getByText(summary, { exact: true }).first().click();
+  await record({ stage: 'after-read', ...await snapshot() });
+  // Each click addresses one still-rendered region, never retries a failed
+  // action. Agent completion is already settled before this function runs.
+  const initial = await notices.count();
+  for (let remaining = initial; remaining > 0;) {
+    const button = notices.first().getByRole('button', { name: '刷新并查看更新', exact: true });
+    await expect(button).toBeVisible({ timeout: timeoutMs });
+    await button.click();
+    await expect.poll(() => notices.count(), { timeout: timeoutMs }).toBeLessThan(remaining);
+    remaining = await notices.count();
+    await record({ stage: 'after-region-confirmation', remaining, ...await snapshot() });
+  }
+  await expect(notices).toHaveCount(0, { timeout: timeoutMs });
+  await record({ stage: 'all-rendered-regions-confirmed', ...await snapshot() });
+}
 async function entityAttention(ui: PublicUiDriver, qa: QaEnvironment, profile: UiProfile, groups: [Group, Group]): Promise<void> {
   const barriers = [`qa-attention-a-${randomUUID()}`, `qa-attention-b-${randomUUID()}`];
   const summaries = [`QA final A ${randomUUID()}`, `QA final B ${randomUUID()}`];
@@ -399,30 +425,29 @@ async function entityAttention(ui: PublicUiDriver, qa: QaEnvironment, profile: U
     await expect(ui.page).not.toHaveTitle(quietA); await expect(second).not.toHaveTitle(quietB);
     const pendingB = await second.title();
     await ui.page.bringToFront();
-    await expect(ui.page.getByText(summaries[0]!, { exact: true }).first()).toBeVisible();
-    await ui.page.getByText(summaries[0]!, { exact: true }).first().click();
-    // A may include a separate status region. Use its actual advertised scope
-    // confirmation only after opening and observing the summary.
-    const refresh = ui.page.locator('.attention-notice > button');
-    if (await refresh.isVisible()) {
-      await refresh.click();
-      await expect(ui.page.locator('.attention-summary')).toBeVisible();
-      await ui.page.getByRole('button', { name: '确认当前范围更新', exact: true }).click();
-    }
+    const stage = async (name: string) => ui.evidence('entity-attention-stage', {
+      stage: name,
+      first: { url: ui.page.url(), title: await ui.page.title(), notices: await ui.page.locator('main .attention-notice').allTextContents() },
+      second: { url: second.url(), title: await second.title(), notices: await second.locator('main .attention-notice').allTextContents() },
+    });
+    await stage('both-entities-pending');
+    await acknowledgeRunAttention(ui.page, summaries[0]!, facts => ui.evidence('entity-A-confirmation', facts));
     await expect(ui.page).toHaveTitle(quietA);
     await expect(second).toHaveTitle(pendingB);
+    await stage('A-confirmed-B-still-pending');
     await ui.returnToSource(); await assertOrigin(ui, 'group', profile.groupA);
     await expect(second).toHaveTitle(pendingB);
+    await stage('A-returned-to-own-group-B-still-pending');
     await second.bringToFront();
-    await second.getByText(summaries[1]!, { exact: true }).first().click();
-    const peerRefresh = second.locator('.attention-notice > button');
-    if (await peerRefresh.isVisible()) {
-      await peerRefresh.click(); await expect(second.locator('.attention-summary')).toBeVisible();
-      await second.getByRole('button', { name: '确认当前范围更新', exact: true }).click();
-    }
+    await acknowledgeRunAttention(second, summaries[1]!, facts => ui.evidence('entity-B-confirmation', facts));
     await expect(second).toHaveTitle(quietB);
+    await stage('B-independently-confirmed');
     await peer.returnToSource(); await assertOrigin(peer, 'group', profile.groupB);
-    await ui.evidence('entity-attention-isolation', { runIds, groups: groups.map((g) => g.id), summaries, quietA, quietB, pendingB, focus, identities, checked: ['A own acknowledgment', 'A return source', 'B pending remains', 'B own acknowledgment'], realHumanFocusSigned: false });
+    await assertOrigin(ui, 'group', profile.groupA);
+    await stage('both-returned-to-own-groups');
+    const finalIdentities = { first: await ui.currentPublicIdentity(), second: await peer.currentPublicIdentity() };
+    if (JSON.stringify(finalIdentities.first) !== JSON.stringify(originalIdentity) || JSON.stringify(finalIdentities.second) !== JSON.stringify(originalIdentity)) throw new BlockedError('Attention isolation requires both pages to retain the original public identity throughout confirmation and return');
+    await ui.evidence('entity-attention-isolation', { runIds, groups: groups.map((g) => g.id), summaries, quietA, quietB, pendingB, focus, identities, finalIdentities, checked: ['A own acknowledgment', 'A return source', 'B pending remains after A acknowledgment and return', 'B own acknowledgment', 'B return source', 'A source unchanged after B acknowledgment and return'], realHumanFocusSigned: false });
     peer.assertHealthy();
   } catch (error) { primary = error; throw error; }
   finally {
